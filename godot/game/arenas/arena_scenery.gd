@@ -46,7 +46,7 @@ const ArenaStyle := preload("res://game/arenas/arena_style.gd")
 ## The backdrop wall's world z. Behind `COURT`'s rear line (-6.35 m at this
 ## scale) and in front of the point where the ground plane leaves the frame, so
 ## the wall is visible above the far line and through the rear glass.
-const BACKDROP_Z := -8.0
+const BACKDROP_Z := -12.0
 ## How much of the reference's own arena artwork is shown. The reference paints the
 ## artwork over its whole canvas and its proscenium is the canvas' top 96 of 540 px
 ## (18%), so the top 18% of the artwork is what its proscenium shows. Cropping to
@@ -118,7 +118,7 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 		var kind := String(prop.get("kind", "spark"))
 		var container := Node3D.new()
 		container.name = "Dressing_%s%d" % [kind, i + 1]
-		container.position = Vector3(float(prop.get("x", 0.0)) * x_scale, 0.0, float(prop.get("z", BACKDROP_Z + 0.35)))
+		container.position = Vector3(float(prop.get("x", 0.0)) * x_scale, 0.0, float(prop.get("z", -7.65)) - 4.0)
 		container.set_meta("kind", kind)
 		root.add_child(container)
 		_build_prop(container, prop, ctx)
