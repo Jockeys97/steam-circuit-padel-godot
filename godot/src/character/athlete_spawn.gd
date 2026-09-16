@@ -128,8 +128,8 @@ static func make(athlete_id: StringName, outfit_id: StringName = DEFAULT_OUTFIT,
 
 	var rig: Node3D = RigScene.instantiate()
 	# Select the concrete mesh before get_load_error() builds the rig. Existing
-	# athletes keep the Volpe fallback; currently only Colosso opts into the new
-	# Solar Titan export.
+	# athletes keep the Volpe fallback; currently only Colosso opts into its own
+	# export (source model: solar-titan, see docs/art/roster-3d.json).
 	if not rig.set_athlete_asset(athlete_id):
 		push_error("AthleteSpawn.make: athlete asset '%s' was already built or unavailable" % athlete_id)
 		rig.free()

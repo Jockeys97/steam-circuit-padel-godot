@@ -85,8 +85,13 @@ const GLB_RUN := "res://assets/athletes/volpe-running.glb"
 ## One self-contained GLB per athlete. Keep this table deliberately small while
 ## the new models are introduced one at a time; every unknown id falls back to
 ## the proven Volpe rig below.
+##
+## File names are roster ids by rule, and the authority on which asset belongs to
+## which athlete is docs/art/roster-3d.json (frozen in docs/art/character-standard.md).
+## `python3 tools/character/validate_standard.py` checks the GLBs against it without
+## needing Godot.
 const ATHLETE_GLB := {
-	&"colosso": "res://assets/athletes/colosso-solar-titan-all-animations.glb",
+	&"colosso": "res://assets/athletes/colosso.glb",
 }
 
 const CLIP_IDLE := &"idle"

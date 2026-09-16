@@ -1,0 +1,112 @@
+{
+  "_standard": "docs/art/character-standard.md",
+  "_nota": "Registro dei modelli 3D del roster. Lo legge tools/character/validate_standard.py. Nessun numero misurato qui dentro: i triangoli, le ossa e le clip li conta il validatore sul file, cosi' non invecchiano.",
+  "_height_nota": "Solo pantera 1.72 e volpe 1.80 sono confermate (gia' passate al rigging). Le altre sono proposte ricavate dal campo `frame` del catalogo (slim/athletic/broad) e vanno confermate PRIMA della chiamata di rigging: height_meters cambia la scala del personaggio ed e' irreversibile senza rifare il rig.",
+  "_id_sorgente": "js/data.js -> ATHLETES (copia derivata in godot/assets/athletes/reference_catalogue.json)",
+  "scheletro": {
+    "nome": "mixamorig-28",
+    "radice": "mixamorig:Hips",
+    "ossa": [
+      "mixamorig:Hips",
+      "mixamorig:Spine",
+      "mixamorig:Spine1",
+      "mixamorig:Spine2",
+      "mixamorig:Neck",
+      "mixamorig:Head",
+      "mixamorig:HeadTop_End",
+      "headfront",
+      "mixamorig:LeftShoulder",
+      "mixamorig:LeftArm",
+      "mixamorig:LeftForeArm",
+      "mixamorig:LeftHand",
+      "mixamorig:LeftHandMiddle4",
+      "mixamorig:RightShoulder",
+      "mixamorig:RightArm",
+      "mixamorig:RightForeArm",
+      "mixamorig:RightHand",
+      "mixamorig:RightHandMiddle4",
+      "mixamorig:LeftUpLeg",
+      "mixamorig:LeftLeg",
+      "mixamorig:LeftFoot",
+      "mixamorig:LeftToeBase",
+      "mixamorig:LeftToe_End",
+      "mixamorig:RightUpLeg",
+      "mixamorig:RightLeg",
+      "mixamorig:RightFoot",
+      "mixamorig:RightToeBase",
+      "mixamorig:RightToe_End"
+    ]
+  },
+  "clip": {
+    "idle": "restpose",
+    "walk": "Walking",
+    "run": "Running"
+  },
+  "geometria": {
+    "triangoli_target": 12000,
+    "triangoli_min": 8000,
+    "triangoli_max": 20000,
+    "divario_massimo_fra_approvati": 2.5,
+    "_nota": "Rivisti il 2026-09-16 sul primo render in engine: alla camera di match un atleta e' alto 93 px su 900. Vedi docs/art/character-standard.md §4."
+  },
+  "materiali": {
+    "materiali_max": 1,
+    "immagini_max": 3
+  },
+  "atleti": [
+    {
+      "id": "maestro",
+      "nome": "IL MAESTRO",
+      "stato": "assente",
+      "sorgente": null,
+      "height_m": 1.8,
+      "glb": null,
+      "note": "Da generare."
+    },
+    {
+      "id": "pantera",
+      "nome": "LA PANTERA",
+      "stato": "legacy",
+      "sorgente": "meshy multi-image-to-3d + remesh + rig (pipeline vecchia, 40 crediti)",
+      "height_m": 1.72,
+      "glb": "tools/meshy/output/pantera/pantera-riggato.glb",
+      "note": "24 ossa senza prefisso mixamorig: fuori standard. Da rigenerare sulla pipeline nuova prima di importarla in godot/assets/."
+    },
+    {
+      "id": "steamer",
+      "nome": "LO STEAMER",
+      "stato": "assente",
+      "sorgente": "Titan Dash (avatar di riferimento della ricetta, mai importato)",
+      "height_m": 1.85,
+      "glb": null,
+      "note": "E' il riferimento visivo della ricetta in tools/meshy/generate_athlete.py, non un asset."
+    },
+    {
+      "id": "fiamma",
+      "nome": "LA FIAMMA",
+      "stato": "generato",
+      "sorgente": "neon-court-champion",
+      "height_m": 1.74,
+      "glb": "art/generated/athletes/fiamma/fiamma-all-animations.glb",
+      "note": "Identita' confermata contro lo sprite assets/athletes/fiamma.webp (canotta lime, gonna blu, coda riccia). 37.327 triangoli: fuori banda, da rimeshare a 12.000 prima di importarla."
+    },
+    {
+      "id": "oracolo",
+      "nome": "L'ORACOLO",
+      "stato": "generato",
+      "sorgente": "violet-arcane-sentinel",
+      "height_m": 1.76,
+      "glb": "art/generated/athletes/oracolo/oracolo-all-animations.glb",
+      "note": "Identita' confermata contro lo sprite assets/athletes/oracolo.webp (abito viola con corsetto e stivali alti). 45.406 triangoli, il piu' pesante: da rimeshare a 12.000 prima di importarlo."
+    },
+    {
+      "id": "colosso",
+      "nome": "IL COLOSSO",
+      "stato": "approvato",
+      "sorgente": "solar-titan",
+      "height_m": 1.9,
+      "glb": "godot/assets/athletes/colosso.glb",
+      "note": "Identita' confermata contro lo sprite assets/athletes/colosso.webp (gladiatore in cuoio nero e oro): il modello e' in tema. 8.928 triangoli, dentro la banda rivista. Promosso ad approvato il 2026-09-16 dopo roster_review."
+    }
+  ]
+}
