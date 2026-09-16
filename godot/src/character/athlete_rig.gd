@@ -24,6 +24,8 @@ extends Node3D
 ##
 ##   PADEL STROKES  (one-shot; locomotion resumes automatically)
 ##     play_stroke(stroke: StringName) -> bool      # &"drive" | &"slice" | &"lob" | &"serve"
+##     play_stroke_at(stroke, contact_phase, speed_scale) -> bool
+##                                                    # start at the sim contact frame
 ##     get_stroke_names() -> Array[StringName]
 ##     is_stroking() -> bool
 ##     signal stroke_finished(stroke: StringName)
@@ -124,6 +126,8 @@ var _facing_degrees: float = 0.0
 var _outfit: StringName = &"base"
 var _locomotion: StringName = CLIP_IDLE
 var _stroke: StringName = &""
+var _locomotion_speed_scale: float = 1.0
+var _stroke_speed_scale: float = 1.0
 var _use_glb_pbr: bool = false
 var _building: bool = false
 var _athlete_id: StringName = &""
@@ -616,17 +620,37 @@ func get_locomotion_states() -> Array:
 
 
 func set_locomotion_speed_scale(s: float) -> void:
-	if _anim != null:
-		_anim.speed_scale = maxf(s, 0.0)
+	_locomotion_speed_scale = maxf(s, 0.0)
+	# A locomotion speed must never slow a stroke. The sim's `motion` is normally
+	# zero on the exact tick of contact, which used to make every stroke play at
+	# 0.25x and visibly miss the ball. Keep the value for the resume path instead.
+	if _anim != null and _stroke == &"":
+		_anim.speed_scale = _locomotion_speed_scale
 
 
 func play_stroke(stroke: StringName) -> bool:
+	return play_stroke_at(stroke, 0.0, 1.0)
+
+
+## Starts a stroke at the normalized contact phase supplied by the simulation
+## presentation bridge. The browser sets `paddle.swing = 1` only after the hit;
+## starting the authored clip at its wind-up would therefore show the racket
+## arriving late. Seeking to the contact phase makes the first rendered pose the
+## same semantic instant as `hit_ball`, while the authored follow-through keeps
+## playing normally afterwards.
+func play_stroke_at(stroke: StringName, contact_phase: float = 0.0,
+		speed_scale: float = 1.0) -> bool:
 	_ensure_built()
 	if not _strokes.has(stroke):
 		return false
-	if not play_clip(stroke):
+	if _anim == null or not _anim.has_animation(stroke):
 		return false
 	_stroke = stroke
+	_stroke_speed_scale = maxf(speed_scale, 0.05)
+	_anim.speed_scale = _stroke_speed_scale
+	_anim.play(stroke)
+	var length: float = float(_strokes[stroke])
+	_anim.seek(clampf(contact_phase, 0.0, 1.0) * length, true, true)
 	return true
 
 
@@ -668,6 +692,8 @@ func _on_animation_finished(anim_name: StringName) -> void:
 	if _strokes.has(anim_name):
 		_stroke = &""
 		stroke_finished.emit(anim_name)
+		if _anim != null:
+			_anim.speed_scale = _locomotion_speed_scale
 		play_clip(_locomotion)
 
 

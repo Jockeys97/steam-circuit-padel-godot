@@ -187,23 +187,57 @@ func _sync_gait(role: String, rig: Node3D, paddle) -> void:
 func _sync_stroke(role: String, rig: Node3D, paddle) -> void:
 	var swinging := float(paddle.swing) > 0.0
 	if swinging and not _swing_seen[role]:
-		var stroke := stroke_for(String(paddle.actionIntent))
-		if rig.play_stroke(stroke):
+		var recipe := stroke_recipe(String(paddle.actionIntent))
+		var stroke: StringName = recipe["clip"]
+		var played: bool = rig.play_stroke_at(
+			stroke,
+			float(recipe["contact_phase"]),
+			float(recipe["speed_scale"]),
+		) if rig.has_method("play_stroke_at") else rig.play_stroke(stroke)
+		if played:
 			_last_stroke[role] = stroke
-	_swing_seen[role] = swinging
+		_swing_seen[role] = swinging
 
 
 ## `actionIntent` (`js/game.js`) -> the rig's own stroke vocabulary
 ## (`athlete_rig.gd::STROKE_SPECS`: drive / slice / lob / serve).
 static func stroke_for(intent: String) -> StringName:
+	return StringName(stroke_recipe(intent)["clip"])
+
+
+## Semantic shot -> authored rig recipe. The sim remains the authority on the
+## shot type; this table only decides which existing body motion is visible and
+## where its contact frame starts. Keeping it data-shaped makes the seam
+## inspectable and lets us replace individual clips later without touching rules.
+static func stroke_recipe(intent: String) -> Dictionary:
 	var word := intent.to_lower()
+	var clip: StringName = &"drive"
+	var contact_phase := 0.34
+	var speed_scale := 1.12
 	if word.contains("serve"):
-		return &"serve"
-	if word.contains("slice") or word.contains("vibora") or word.contains("chiquita"):
-		return &"slice"
-	if word.contains("lob") or word.contains("globo"):
-		return &"lob"
-	return &"drive"
+		clip = &"serve"
+		contact_phase = 0.30
+		speed_scale = 1.0
+	elif word.contains("lob") or word.contains("globo"):
+		clip = &"lob"
+		contact_phase = 0.40
+		speed_scale = 1.0
+	elif word.contains("slice") or word.contains("vibora") or word.contains("chiquita") \
+			or word.contains("cut-volley") or word.contains("bandeja"):
+		clip = &"slice"
+		contact_phase = 0.32 if not word.contains("bandeja") else 0.38
+		speed_scale = 1.18 if word.contains("vibora") or word.contains("cut-volley") else 1.08
+	elif word.contains("smash") or word.contains("wall-angle"):
+		# Smash and wall-angle keep the drive body mechanics for now, but start
+		# later in the follow-through so the contact reads as an overhead action.
+		clip = &"drive"
+		contact_phase = 0.46
+		speed_scale = 1.28
+	return {
+		"clip": clip,
+		"contact_phase": contact_phase,
+		"speed_scale": speed_scale,
+	}
 
 
 ## The racket rides the athlete's hand: the same numbers the previous slice used
