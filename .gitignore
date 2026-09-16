@@ -55,3 +55,4 @@ __pycache__/
 # La scena che le usa sta in res://prototypes/*, escluso da ogni preset di export.
 godot/prototypes/roster_review/assets/
 godot/prototypes/roster_review/out/
+godot/prototypes/racket_review/out/

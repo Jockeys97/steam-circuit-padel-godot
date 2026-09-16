@@ -6,6 +6,8 @@
 extends SceneTree
 
 const AthleteSpawn := preload("res://src/character/athlete_spawn.gd")
+const AthletesView := preload("res://game/athletes_view.gd")
+const Court := preload("res://game/court.gd")
 
 var _checks := 0
 var _failures := 0
@@ -28,7 +30,42 @@ func _initialize() -> void:
 		check_true(rig.play_locomotion(&"walk"), "Colosso walk clip plays")
 		check_true(rig.play_locomotion(&"run"), "Colosso run clip plays")
 		check_true(rig.play_stroke(&"drive"), "Colosso keeps the existing stroke API")
+		var skeleton: Skeleton3D = rig.get_skeleton()
+		var hand_name := "mixamorig:RightHand"
+		var hand_index := skeleton.find_bone(hand_name)
+		if hand_index < 0:
+			hand_name = "mixamorig_RightHand"
+			hand_index = skeleton.find_bone(hand_name)
+		check_true(hand_index >= 0, "Colosso exposes the standard right-hand bone")
+		var attachment: BoneAttachment3D = rig.make_standard_bone_attachment(
+			&"RightHand", &"RacketAnchorTest")
+		check_true(attachment != null, "Colosso creates a racket attachment on the standard skeleton")
+		if attachment != null:
+			check_eq(attachment.get_parent(), skeleton, "Racket attachment belongs to Colosso's skeleton")
+			check_eq(attachment.bone_name, hand_name, "Racket attachment resolves the exported hand name")
+			var racket := Court.make_racket_view(attachment, "RacketTest", Color.GOLD)
+			racket.position = Vector3(0.0, 0.24, 0.0)
+			check_eq(racket.get_parent(), attachment, "Racket geometry is parented to the hand attachment")
+			check_true(racket.get_node_or_null("Face") != null and racket.get_node_or_null("Grip") != null,
+				"Hand attachment carries the complete racket geometry")
 		rig.free()
+
+	# Exercise the real match integration too: the view must choose the wrist mount
+	# for a standard athlete rather than merely exposing a helper that nobody calls.
+	var athletes_view := AthletesView.new()
+	root.add_child(athletes_view)
+	var spawned := athletes_view.spawn(
+		{"player": {"id": "colosso"}},
+		{"player": &"base"},
+		{"player": Color.GOLD})
+	check_eq(spawned, 1, "Match athlete view spawns Colosso")
+	if spawned == 1:
+		var live_racket: Node3D = athletes_view.rackets["player"]
+		check_true(live_racket.get_parent() is BoneAttachment3D,
+			"Match athlete view mounts Colosso's racket on a bone attachment")
+		check_eq(live_racket.position, AthletesView.RACKET_HAND_LOCAL,
+			"Match racket uses the calibrated grip-centre offset")
+	athletes_view.free()
 	_finish()
 
 

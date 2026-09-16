@@ -54,7 +54,7 @@ const RUN_MOTION := 0.55
 var rigs: Dictionary = {}            # role -> Node3D
 var ids: Dictionary = {}             # role -> athlete id
 var outfits: Dictionary = {}         # role -> outfit id
-var rackets: Dictionary = {}         # role -> Node3D, parented to the rig
+var rackets: Dictionary = {}         # role -> Node3D, on hand bone or legacy rig fallback
 var spawn_ms: float = 0.0
 var spawn_rigs: int = 0
 var load_errors: int = 0
@@ -63,6 +63,13 @@ var _gait: Dictionary = {}           # role -> StringName, so the clip is set on
 var _swing_seen: Dictionary = {}     # role -> bool
 var _last_stroke: Dictionary = {}    # role -> StringName
 var _colors: Dictionary = {}
+var _racket_on_hand: Dictionary = {} # role -> bool; only standard Mixamo rigs
+
+## The racket root is the centre of its face. Its grip centre is 0.2405 m below
+## that root (`court.gd::make_racket_view`), so +0.24 along the hand/finger axis
+## puts the exported RightHand bone in the middle of the grip instead of the face.
+const RACKET_HAND_LOCAL := Vector3(0.0, 0.24, 0.0)
+const RACKET_HAND_ROTATION := Vector3.ZERO
 
 
 # ---------------------------------------------------------------------------
@@ -94,11 +101,23 @@ func spawn(lineup: Dictionary, outfit_map: Dictionary, colors: Dictionary) -> in
 			load_errors += 1
 			continue
 		add_child(rig)
-		var racket := Court.make_racket_view(rig, "Racket_%s" % role, _color_of(role))
-		# The racket is reparented onto the rig so it inherits the athlete's yaw;
-		# `make_racket_view` adds it to the parent, and its position becomes local.
+		# Standard Meshy/Mixamo athletes carry the racket on the actual wrist bone.
+		# The legacy Volpe skeleton is deliberately left on the old body-relative
+		# placement; AthleteRig rejects it rather than guessing across incompatible
+		# units and axes.
+		var racket_parent: Node3D = rig
+		var hand_anchor: BoneAttachment3D = rig.make_standard_bone_attachment(
+			&"RightHand", StringName("RacketAnchor_%s" % role))
+		var on_hand := hand_anchor != null
+		if on_hand:
+			racket_parent = hand_anchor
+		var racket := Court.make_racket_view(racket_parent, "Racket_%s" % role, _color_of(role))
+		if on_hand:
+			racket.position = RACKET_HAND_LOCAL
+			racket.rotation_degrees = RACKET_HAND_ROTATION
 		rigs[role] = rig
 		rackets[role] = racket
+		_racket_on_hand[role] = on_hand
 		ids[role] = String(athlete["id"])
 		outfits[role] = String(outfit_id)
 		_gait[role] = &"idle"
@@ -201,6 +220,10 @@ static func stroke_for(intent: String) -> StringName:
 ## athlete and the net, which the slice test asserts as a distance, not a sign.
 func _sync_racket(role: String, paddle) -> void:
 	var view: Node3D = rackets[role]
+	# A BoneAttachment3D already follows the animated wrist, including authored
+	# strokes. Reapplying the old procedural body offset here would detach it again.
+	if bool(_racket_on_hand.get(role, false)):
+		return
 	var swing: float = clampf(float(paddle.swing), 0.0, 1.0)
 	var swing_side: float = -1.0 if float(paddle.swingSide) < 0.0 else 1.0
 	view.position = Vector3(
