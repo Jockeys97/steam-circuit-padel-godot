@@ -4,19 +4,21 @@ Copy everything below the line into a fresh session on the local machine.
 
 ---
 
-You are picking up **Steam Circuit Padel Pro — the Godot 3D port**. A Linux host has been
-running the build/verification side all day; you are on the Mac, where the job is to run
-it, play it, judge the feel, and fix what playing exposes.
+You are picking up **Steam Circuit Padel Pro — the Godot 3D port**.
 
-## The project in one paragraph
+One repository, one remote, one destination — everything you need is inside it:
 
-Steam Circuit Padel Pro is a steampunk padel arcade game. The original is 8,500 lines of
-dependency-free JavaScript on HTML5 Canvas — it still lives in
-`https://github.com/Jockeys97/steam-circuit-padel-pro` and is **frozen: never push there,
-never edit it.** The 3D port is a Godot 4.7.2 project whose whole point is
-**gameplay compatibility**: same seed, same input, the same match, tick for tick. It lives
-in `https://github.com/Jockeys97/steam-circuit-padel-godot` (public) — that is the only
-repo you commit to.
+**`https://github.com/Jockeys97/steam-circuit-padel-godot`** (public)
+
+Clone it, work inside it, commit to it. Nothing else is involved.
+
+## What the project in front of you is
+
+A steampunk padel arcade game rebuilt in **Godot 4.7.2** from the browser game that ships
+in the same repository. The browser game lives in `js/` (with `index.html` and
+`styles.css`) and is the **frozen reference**: the port has to play the *same match* — same
+seed, same scripted input, tick for tick, same result. Read it, compare against it, never
+edit it. The Godot project sits in `godot/`.
 
 ## Get it running (macOS)
 
@@ -79,11 +81,11 @@ summary you will be handed.
 1. **Evidence over assertion.** Every claim needs the command and its exit code. A suite
    that prints `PASS` while its own log carries `SCRIPT ERROR` is not green.
 2. **Never fabricate output.** If a tool fails, say so and route around it.
-3. **The frozen 2D game is read-only.** The port reads it; nothing edits it.
-4. **One heavy process at a time.** The Linux side serialises every Godot run through
-   `flock -w 900 /tmp/padel-godot.lock` because the host has 3.9 GB RAM. On the Mac you
-   are free, but do not run suites in parallel against the same checkout.
-5. **The demo build must stays locked.** The demo is the same executable with a `demo`
+3. **The browser game in `js/` is the frozen reference.** The port reads it; nothing edits it.
+4. **One heavy process at a time.** Serialise engine runs so suites never race each other
+   over the same checkout — two Godot processes on one project produce failures that look
+   like bugs and are not.
+5. **The demo build must stay locked.** The demo is the same executable with a `demo`
    feature tag; the full game must never be reachable from it by argument or config.
 6. **Report plainly.** No raw IDs in prose, no jargon, no partial summaries — one message
    when the work is done, with the handles (commit, file path, exit code).
@@ -108,7 +110,7 @@ summary you will be handed.
    with a stale HUD).
 4. **Steam**: the GodotSteam GDExtension loads and the seam is verified, but the addon is
    not vendored into the project and nothing has been proven against a real client.
-5. **Anything you fix, fix at the seam and test at the seam** — then push to the new repo
+5. **Anything you fix, fix at the seam and test at the seam** — then push to the repo above
    with `git -c user.name="Luca Fantini" -c user.email="lucadefantini@gmail.com"`.
 
 ## Handing back
