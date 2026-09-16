@@ -38,6 +38,7 @@ extends Node3D
 ##   POSE READOUT
 ##     get_pose() -> Dictionary                  # {clip, time, length, facing_degrees, bones[*]}
 ##     get_skeleton() -> Skeleton3D              # escape hatch; prefer get_pose()
+##     make_standard_bone_attachment(bone, name) # null on a legacy/non-Mixamo rig
 ##     get_world_extent() -> AABB                # posed bounds in world units
 ##
 ##   RENDER / TEST HOOKS (deterministic, no frame loop required)
@@ -701,6 +702,30 @@ func get_pose() -> Dictionary:
 func get_skeleton() -> Skeleton3D:
 	_ensure_built()
 	return _skeleton
+
+
+## Creates a mount that follows one bone on the frozen 28-joint Mixamo standard.
+##
+## This intentionally rejects the 24-joint Volpe fallback even though it also has
+## a `RightHand`: that export lives under an Armature scaled 0.01 and uses different
+## bone axes. Silently applying the same racket offset there would make the racket
+## 100x too small or point it through the wrist. Legacy athletes keep the proven
+## body-relative fallback until they are regenerated on the standard skeleton.
+func make_standard_bone_attachment(requested_bone: StringName,
+		attachment_name: StringName = &"BoneAttachment") -> BoneAttachment3D:
+	_ensure_built()
+	if _skeleton == null:
+		return null
+	var resolved := _resolve_bone_name(String(requested_bone))
+	if not resolved.begins_with("mixamorig:") and not resolved.begins_with("mixamorig_"):
+		return null
+	if _skeleton.find_bone(resolved) < 0:
+		return null
+	var attachment := BoneAttachment3D.new()
+	attachment.name = String(attachment_name)
+	attachment.bone_name = resolved
+	_skeleton.add_child(attachment)
+	return attachment
 
 
 ## World-space bounds of the athlete.
