@@ -148,8 +148,11 @@ static func _remap(audit: AuditBase) -> void:
 
 	# After a batch of legal assignments the map is still covered, and resetting
 	# brings the InputMap's own bindings back. The buttons are free in the gameplay
-	# context (10, 16 and 17 are unused there: the map carries 0-7, 9 and 12-15).
-	var free_buttons := ["10", "16", "17"]
+	# context, in GODOT's numbering — the map carries 0-3 (A/B/X/Y), 6 (Start),
+	# 9-10 (LB/RB) and 11-14 (the D-pad), plus the two trigger axes. Button 10 used
+	# to be listed here as free because the browser calls RB "5"; that assumption is
+	# what the 2026-09-16 correction removed, and this list is the same claim.
+	var free_buttons := ["16", "17", "18"]
 	var rebind_actions := ["padel_drive", "padel_slice", "padel_special"]
 	for index in rebind_actions.size():
 		audit.check_true(
