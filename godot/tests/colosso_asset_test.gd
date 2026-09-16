@@ -19,7 +19,7 @@ func _initialize() -> void:
 	check_true(rig != null, "Colosso spawns through the normal factory")
 	if rig != null:
 		var details := AthleteSpawn.describe(rig)
-		check_eq(details.get("athlete_asset", &""), &"colosso", "Colosso selects the Solar Titan asset")
+		check_eq(details.get("athlete_asset", &""), &"colosso", "Colosso selects its own asset")
 		check_eq(details.get("load_error", -1), OK, "Colosso GLB loads")
 		check_true(int(details.get("joints", 0)) >= 28, "Colosso keeps the exported Mixamo skeleton")
 		check_true(&"idle" in (details.get("locomotion_states", []) as Array), "Colosso has idle")

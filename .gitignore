@@ -50,3 +50,8 @@ tools/sim-port/out/
 __pycache__/
 # Local agent config
 .claude/
+
+# Copie di sola revisione: 56 MB rigenerabili da art/generated/athletes/.
+# La scena che le usa sta in res://prototypes/*, escluso da ogni preset di export.
+godot/prototypes/roster_review/assets/
+godot/prototypes/roster_review/out/
