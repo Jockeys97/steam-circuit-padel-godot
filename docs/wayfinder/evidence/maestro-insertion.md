@@ -114,6 +114,9 @@ Measured through `AthleteRig.get_world_extent()` (bone-pose walk, correct headle
   `GLB_WALK`/`GLB_RUN`; other athletes with no table entry keep their old empty paths).
   `GLB_BASE`, `GLB_WALK`, `GLB_RUN` and `court.gd`'s `GLB_PATH` are untouched — the slice's own
   assertion that `AthleteRig.GLB_BASE == Court.GLB_PATH` still passes.
+  The rebase onto the moved `origin/main` kept upstream's freshly renamed Colosso entry
+  (`res://assets/athletes/colosso.glb`) and added the Maestro line beside it; that one hunk was
+  the whole merge conflict.
 - After the change the wired rig reports idle 4.033333 s, walk 1.066667 s, run 0.666667 s,
   30,980 triangles, 24 joints, one surface.
 - The quick-match log line, verbatim from the slice run (three runs agree except `spawn_ms`):
@@ -139,14 +142,21 @@ All from the repository root, `export GODOT=/Applications/Godot.app/Contents/Mac
 
 | # | Command (tail) | Exit | Tally line | SCRIPT ERROR count |
 |---|---|---|---|---|
-| 1 | `"$GODOT" --headless --path godot/ --import` | 0 | (import pass, four Maestro GLBs + Colosso sidecars) | 0 |
+| 1 | `"$GODOT" --headless --path godot/ --import` | 0 | (import pass; four Maestro GLBs) | 0 |
 | 2 | `"$GODOT" --headless --path godot/ --script res://tests/maestro_asset_test.gd` | 0 | `PASS 34/34` | 0 |
-| 3 | `"$GODOT" --headless --path godot/ --script res://tests/colosso_asset_test.gd` | 0 | `PASS 10/10` | 0 |
+| 3 | `"$GODOT" --headless --path godot/ --script res://tests/colosso_asset_test.gd` | 0 | `PASS 19/19` | 0 |
 | 4 | `"$GODOT" --headless --path godot/` (the run.sh harness gate) | 0 | `PASS 8/8` | 0 |
 | 5 | `"$GODOT" --headless --path godot/ --script res://tests/game_slice_test.gd` | 0 | `PASS 292/292` (292 `ok` lines, 0 `FAIL`) | 0 |
 
-The slice was run twice and returned `PASS 292/292` both times. No `PASS` line ever sat next to a
-`SCRIPT ERROR`.
+These five runs are the ones measured on the FINAL tree — the insertion commit after the rebase
+onto the moved `origin/main` (`8fed1da`). `origin/main` had gained two commits while this
+insertion was being written, so the hand-off's rule was followed: the remote/local comparison was
+done first, the insertion was rebased, the one conflict resolved (`ATHLETE_GLB`, above), and the
+whole gate sequence was then re-run on the rebased tree. Tallies changed in exactly one place:
+the Colosso gate is upstream's own grown version (19 checks, was 10) — gates 1, 2, 4 and 5 came
+back identical, and the Maestro gate's printed `MEASURED` values are byte-identical before and
+after the rebase, which is the reproducibility check for §2–§4. The slice was run twice and
+returned `PASS 292/292` both times. No `PASS` line ever sat next to a `SCRIPT ERROR`.
 
 New focused gate `godot/tests/maestro_asset_test.gd` (`PASS 34/34`) asserts, printing every
 measured value: spawns through `AthleteSpawn.make(&"maestro", &"base")`; `athlete_asset` =
@@ -173,7 +183,27 @@ reworked the pack check, and the slice now prints, verbatim:
 so a source checkout scores 292/292 with the pack checks explicitly not run (and a present but
 broken pack still fails them). `godot/build/` still does not exist on this host.
 
-## 7. Not copied, not measured, not claimed
+## 7. Cross-lane notes (origin/main moved while this insertion ran)
+
+- Two upstream commits landed during this work: `2f7b538` (the frozen athlete standard:
+  `docs/art/character-standard.md`, `docs/art/roster-3d.json`, the Colosso GLB renamed to
+  `colosso.glb`, new prototypes and a standalone validator) and `8fed1da` (Colosso's racket
+  mounted on the `RightHand` bone). This insertion was rebased onto both, as the hand-off
+  requires, and re-gated (§6).
+- Naming tension, recorded and not acted on: the fresh standard's rule is "file names are roster
+  ids"; its validator checks `base.startswith(<id>)`, which `maestro-rigged.glb` satisfies, and
+  its preferred game-asset spot is `godot/assets/athletes/<id>.glb` on the 28-joint
+  `mixamorig:` skeleton. The Maestro pack is the older 24-joint export with plain bone names —
+  the same class the roster calls "fuori standard" for `pantera` — and this lane's brief fixed
+  the four file names, so the names stayed as briefed. `docs/art/roster-3d.json` still lists
+  `maestro` as `assente` with a null GLB; it was NOT updated by this lane (outside its
+  allowlist, and whether Maestro is re-rigged on the new standard is an owner/lane decision).
+- Racket interplay: `8fed1da`'s `make_standard_bone_attachment()` deliberately rejects rigs
+  whose bones do not carry the `mixamorig:` prefix, so the Maestro player rig keeps the legacy
+  body-relative racket placement while Colosso rides the wrist. The final slice run passes both
+  shapes.
+
+## 8. Not copied, not measured, not claimed
 
 - `maestro-texture.png` and the thumbnails: intentionally not copied (see §1).
 - **No pixels and no frames were produced on this Mac.** The visual read — does Il Maestro look
@@ -183,32 +213,36 @@ broken pack still fails them). `godot/build/` still does not exist on this host.
 - Not re-run this session: the demo-variant slice, the saves/input/audits/music suites (they were
   not touched by this change and were green at the last recorded sweep), any performance
   measurement, and any DCC inspection of the mesh.
-- The import pass also generated three `.import` sidecars for untracked arena `.webp` art and
-  `godot/tests/colosso_asset_test.gd.uid`, plus the seven Colosso sidecars the tree was missing;
-  the Colosso sidecars are staged (they mirror the tracked Volpe pattern), the `.webp.import`
-  files and the Colosso test uid are left untracked exactly as found.
+- The import pass also generated three `.import` sidecars for untracked arena `.webp` art
+  (`godot/game/arenas/art/*.webp.import`); those are left untracked exactly as found. The same
+  pass generated Colosso sidecars under the GLB's then-current file name
+  (`colosso-solar-titan-all-animations.glb.*`); those are NOT part of this commit — the rebase
+  adopted upstream's rename to `colosso.glb` together with upstream's own sidecar set, and the
+  obsolete local files were deleted before the commit.
 
-## 8. Files changed in this insertion
+## 9. Files changed in this insertion
 
 - `godot/assets/athletes/maestro-rigged.glb`, `maestro-idle.glb`, `maestro-walking.glb`,
   `maestro-running.glb` + each one's `.glb.import`, `_texture_0.png`, `_texture_0.png.import`
   (12 generated files).
-- `godot/assets/athletes/colosso-solar-titan-all-animations.glb.import`,
-  `..._normal.png` + `.import`, `..._texture_0.png` + `.import`,
-  `..._texture_0_metallic_roughness.png` + `.import` (7 sidecars the import run generated for
-  the already-tracked Colosso GLB).
 - `godot/src/character/athlete_rig.gd` (asset table, companion-clip table, idle adoption,
   emission off, `get_material_state()` emission field).
 - `godot/tests/maestro_asset_test.gd` + its generated `.gd.uid`.
 - `docs/wayfinder/evidence/maestro-insertion.md` (this file) and
   `docs/wayfinder/evidence/maestro-pack-verify.md` (independent report, copied unchanged).
 - `docs/mission/LOG.md` (one appended entry).
+- (No Colosso files: the remote's `2f7b538` renamed the GLB to `colosso.glb` and committed its
+  own sidecar set, which the rebased tree carries.)
 
-## 9. Hand-off handles
+## 10. Hand-off handles
 
-A commit cannot contain its own SHA, so the insertion commit and its push verification are
-recorded in the follow-up documentation commit, which replaces this paragraph with:
-
-- the full SHA of the insertion commit (message: "feat: integrate Il Maestro Meshy athlete"),
-- the `git ls-remote origin -h refs/heads/main` output compared against local `HEAD` before and
-  after the push (the two must be equal).
+- Insertion commit: `91941e8cdeda463a0c4f413e4135aa25c06bde94` — "feat: integrate Il Maestro
+  Meshy athlete" (rebased onto the moved `origin/main`; the single `ATHLETE_GLB` hunk was the
+  only conflict).
+- Push verification: `git ls-remote origin -h refs/heads/main` returned
+  `91941e8cdeda463a0c4f413e4135aa25c06bde94` and `git rev-parse HEAD` returned the same value —
+  remote head equal to local HEAD, checked after the push (pre-push the remote stood at
+  `8fed1da36cc914be748d0b843746e2abea37392e`, so the push went out as the usual fast-forward
+  after the rebase).
+- This follow-up documentation commit corrects the final tallies and carries these handles; its
+  own push was verified the same way (remote head equal to local HEAD at push time).
