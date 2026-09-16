@@ -42,22 +42,22 @@ class_name AthleteSpawn
 ## WHAT YOU GET BACK
 ## ===========================================================================
 ## A fresh instance of `res://src/character/AthleteRig.tscn`: one Node3D with the
-## 24-joint Meshy skeleton under it, walk/run clips lifted from the other two GLBs,
-## four authored padel strokes, and surface override 0 already carrying the outfit
-## shader for (athlete_id, outfit_id). It is ready the instant `make()` returns — the
+## selected athlete's Meshy skeleton under it, locomotion clips and four authored
+## padel strokes, and surface override 0 already carrying the outfit shader for
+## (athlete_id, outfit_id). It is ready the instant `make()` returns — the
 ## rig builds itself on first use, not on its first frame, so you may query it before
 ## `add_child()` and before any frame has been drawn.
 ##
-## Each call builds its own rig from the GLBs (~3 loads). That is the honest cost; on
-## a two-player match it is paid twice at scene setup. Do NOT call `make()` per frame.
+## Each call builds its own rig from the selected GLB (plus the two Volpe companion
+## files for the fallback). That cost is paid at scene setup; do NOT call `make()`
+## per frame.
 ##
 ## ===========================================================================
 ## LIMITS YOU SHOULD KNOW ABOUT AT THE CALL SITE
 ## ===========================================================================
-## * All six athletes share ONE placeholder model. They differ by outfit colour only.
-##   Body frame, skin, hair and the per-outfit sprite artwork of the browser build are
-##   not expressible here — `OutfitCatalogue.resolve()` reports exactly which fields
-##   were dropped, per entry.
+## * Athletes without a registered 3D asset still use the Volpe placeholder model.
+##   Colosso is the first opt-in real Meshy model. Body frame, skin, hair and the
+##   per-outfit sprite artwork of the browser build remain separate art work.
 ## * The rig has no collision shape, no hitbox and no root motion. Movement is the
 ##   caller's; this seam only poses and colours.
 ## * `opts` is applied in a fixed order: position, facing, outfit, locomotion, speed.
@@ -127,6 +127,13 @@ static func make(athlete_id: StringName, outfit_id: StringName = DEFAULT_OUTFIT,
 		outfit_id = DEFAULT_OUTFIT
 
 	var rig: Node3D = RigScene.instantiate()
+	# Select the concrete mesh before get_load_error() builds the rig. Existing
+	# athletes keep the Volpe fallback; currently only Colosso opts into the new
+	# Solar Titan export.
+	if not rig.set_athlete_asset(athlete_id):
+		push_error("AthleteSpawn.make: athlete asset '%s' was already built or unavailable" % athlete_id)
+		rig.free()
+		return null
 	if rig.get_load_error() != OK:
 		push_error("AthleteSpawn.make: rig failed to load (error %d)" % rig.get_load_error())
 		rig.free()
@@ -166,6 +173,7 @@ static func describe(rig: Node3D) -> Dictionary:
 	var skel: Skeleton3D = rig.get_skeleton()
 	return {
 		"name": rig.name,
+		"athlete_asset": rig.get_athlete_asset(),
 		"load_error": rig.get_load_error(),
 		"joints": skel.get_bone_count() if skel != null else -1,
 		"triangles": rig.get_triangle_count(),

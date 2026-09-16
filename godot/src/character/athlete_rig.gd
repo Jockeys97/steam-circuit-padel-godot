@@ -36,9 +36,9 @@ extends Node3D
 ##     `src/character/outfit_catalogue.gd`, which drives this path.
 ##
 ##   POSE READOUT
-##     get_pose() -> Dictionary                  # {clip, time, length, facing_degrees, bones[24]}
+##     get_pose() -> Dictionary                  # {clip, time, length, facing_degrees, bones[*]}
 ##     get_skeleton() -> Skeleton3D              # escape hatch; prefer get_pose()
-##     get_world_extent() -> AABB                # posed bounds in world units (~1.68 m tall)
+##     get_world_extent() -> AABB                # posed bounds in world units
 ##
 ##   RENDER / TEST HOOKS (deterministic, no frame loop required)
 ##     play_clip(name: StringName) -> bool       # any registered clip, no state machine
@@ -52,13 +52,12 @@ extends Node3D
 ## ===========================================================================
 ## HOW IT IS BUILT, AND THE TWO CHOICES THAT ARE THE OWNER'S TO MAKE
 ## ===========================================================================
-## The three Meshy GLBs are loaded at RUNTIME through GLTFDocument, not through
-## Godot's import pipeline, so this scene needs no `.import` cache and no
-## `project.godot` change (that file belongs to another lane). Measured by
-## `res://src/character/tools/rig_probe.gd`: all three GLBs carry the SAME
-## 24-joint skeleton with the same bone names and the same animation track paths
-## (`Armature/Skeleton3D:<bone>`), so the walk and run clips apply to the base rig
-## directly — no retargeting step exists or is needed.
+## The GLBs are loaded at RUNTIME through GLTFDocument, not through Godot's
+## import pipeline, so this scene needs no `.import` cache and no `project.godot`
+## change. The original Volpe fallback is a 24-joint rig. The first real athlete,
+## Colosso, uses a self-contained Meshy Mixamo export with 28 joints and all three
+## locomotion clips in one file; aliases below keep the public API stable while
+## preserving the exported skeleton.
 ##
 ## OWNER DECISION 1 — PBR defaults. The GLB's single material imports with
 ## `metallic = 1.0, roughness = 1.0` (measured, rig_probe). Those are the glTF
@@ -77,9 +76,18 @@ extends Node3D
 
 signal stroke_finished(stroke: StringName)
 
+## The original Volpe files remain the safe default and are part of the public
+## compatibility contract. New athlete assets opt in before the rig is built.
 const GLB_BASE := "res://assets/athletes/volpe-rigged.glb"
 const GLB_WALK := "res://assets/athletes/volpe-walking.glb"
 const GLB_RUN := "res://assets/athletes/volpe-running.glb"
+
+## One self-contained GLB per athlete. Keep this table deliberately small while
+## the new models are introduced one at a time; every unknown id falls back to
+## the proven Volpe rig below.
+const ATHLETE_GLB := {
+	&"colosso": "res://assets/athletes/colosso-solar-titan-all-animations.glb",
+}
 
 const CLIP_IDLE := &"idle"
 const CLIP_WALK := &"walk"
@@ -112,6 +120,11 @@ var _locomotion: StringName = CLIP_IDLE
 var _stroke: StringName = &""
 var _use_glb_pbr: bool = false
 var _building: bool = false
+var _athlete_id: StringName = &""
+var _glb_base_path: String = GLB_BASE
+var _glb_walk_path: String = GLB_WALK
+var _glb_run_path: String = GLB_RUN
+var _track_prefix: String = "Armature/Skeleton3D"
 
 var _base_material: StandardMaterial3D = null
 var _override: StandardMaterial3D = null
@@ -122,6 +135,33 @@ var _catalogue_outfit: Dictionary = {}      # {athlete_id, outfit_id}, set by th
 
 func _ready() -> void:
 	_ensure_built()
+
+
+## Selects an athlete-specific, self-contained GLB before first use. This is
+## intentionally a pre-build operation: changing the mesh of a live rig would
+## invalidate its Skeleton3D, racket anchor and animation library. Returning false
+## after construction prevents an accidental mid-match model swap.
+func set_athlete_asset(athlete_id: StringName) -> bool:
+	if _load_error != ERR_UNCONFIGURED or _building:
+		return false
+	_athlete_id = athlete_id
+	_glb_base_path = String(ATHLETE_GLB.get(athlete_id, GLB_BASE))
+	# The Meshy export already contains all locomotion clips in one file. The
+	# fallback rig still uses its original walk/run companion files.
+	_glb_walk_path = GLB_WALK if _glb_base_path == GLB_BASE else ""
+	_glb_run_path = GLB_RUN if _glb_base_path == GLB_BASE else ""
+	return true
+
+
+func get_athlete_asset() -> StringName:
+	return _athlete_id
+
+
+## The legacy catalogue shader is authored for the Volpe atlas. A Meshy athlete
+## keeps its own baked PBR material until a matching recolour mask is authored;
+## applying the Volpe mask to a different texture would visibly corrupt it.
+func uses_catalogue_recolour() -> bool:
+	return _glb_base_path == GLB_BASE
 
 
 ## The rig builds itself on first use, not on the first frame. `_ready()` is not a
@@ -145,9 +185,9 @@ func _ensure_built() -> void:
 # =========================================================================
 
 func _build() -> int:
-	var base_root := _load_glb(GLB_BASE)
+	var base_root := _load_glb(_glb_base_path)
 	if base_root == null:
-		push_error("AthleteRig: could not load %s" % GLB_BASE)
+		push_error("AthleteRig: could not load %s" % _glb_base_path)
 		return ERR_CANT_OPEN
 	_model_root = base_root
 	add_child(_model_root)
@@ -162,6 +202,7 @@ func _build() -> int:
 	# Deterministic sampling: nothing advances unless we ask it to.
 	_anim.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_IDLE
 	_anim.animation_finished.connect(_on_animation_finished)
+	_track_prefix = _discover_track_prefix()
 
 	# A skinned pose can push geometry outside the cached AABB and get the whole
 	# instance frustum-culled (observed: two render frames came out empty). A generous
@@ -179,21 +220,27 @@ func _build() -> int:
 		lib = AnimationLibrary.new()
 		_anim.add_animation_library(&"", lib)
 
-	# The base GLB's only clip becomes `idle`. Measured: 0.30 s, 7 tracks, 10 keys
-	# per track — it is a short authored motion, not a single held key.
-	var base_clip := ""
-	for a in _anim.get_animation_list():
-		base_clip = a
-		break
-	if base_clip != "":
-		var idle: Animation = _anim.get_animation(base_clip).duplicate(true)
-		idle.loop_mode = Animation.LOOP_LINEAR
-		lib.add_animation(CLIP_IDLE, idle)
-
-	# Walk and run come from the other two GLBs. Their track paths are identical
-	# to the base rig's, so they are added as plain clips, not retargeted.
-	_adopt_clip(lib, GLB_WALK, CLIP_WALK)
-	_adopt_clip(lib, GLB_RUN, CLIP_RUN)
+	# A Meshy "All Animations" export is self-contained. Lift its named clips
+	# (restpose/Walking/Running) into the stable API names. The Volpe fallback has
+	# one base clip and keeps adopting walk/run from its companion GLBs.
+	var embedded := _animation_names()
+	if embedded.has("restpose"):
+		_alias_clip(lib, embedded["restpose"], CLIP_IDLE)
+	if embedded.has("walking"):
+		_alias_clip(lib, embedded["walking"], CLIP_WALK)
+	if embedded.has("running"):
+		_alias_clip(lib, embedded["running"], CLIP_RUN)
+	if not lib.has_animation(CLIP_IDLE):
+		var base_clip := ""
+		for a in _anim.get_animation_list():
+			base_clip = a
+			break
+		if base_clip != "":
+			_alias_clip(lib, base_clip, CLIP_IDLE)
+	if not lib.has_animation(CLIP_WALK) and _glb_walk_path != "":
+		_adopt_clip(lib, _glb_walk_path, CLIP_WALK)
+	if not lib.has_animation(CLIP_RUN) and _glb_run_path != "":
+		_adopt_clip(lib, _glb_run_path, CLIP_RUN)
 
 	_author_strokes(lib)
 	return OK
@@ -219,6 +266,42 @@ func _adopt_clip(lib: AnimationLibrary, path: String, clip_name: StringName) -> 
 	if not ok:
 		push_warning("AthleteRig: %s carries no animation; clip '%s' not registered" % [path, clip_name])
 	return ok
+
+
+func _alias_clip(lib: AnimationLibrary, source_name: String, clip_name: StringName) -> bool:
+	if _anim == null or not _anim.has_animation(source_name):
+		return false
+	var clip: Animation = _anim.get_animation(source_name).duplicate(true)
+	clip.loop_mode = Animation.LOOP_LINEAR if clip_name in LOCOMOTION else Animation.LOOP_NONE
+	if lib.has_animation(clip_name):
+		lib.remove_animation(clip_name)
+	lib.add_animation(clip_name, clip)
+	return true
+
+
+func _animation_names() -> Dictionary:
+	var names := {}
+	if _anim == null:
+		return names
+	for source_name in _anim.get_animation_list():
+		names[String(source_name).to_lower()] = source_name
+	return names
+
+
+## Returns the path prefix used by the imported GLB tracks. Meshy exports use a
+## Mixamo bone name containing a colon (for example
+## `Skeleton3D:mixamorig:Hips`), so splitting at the first colon is deliberate.
+func _discover_track_prefix() -> String:
+	if _anim == null:
+		return "Armature/Skeleton3D"
+	for source_name in _anim.get_animation_list():
+		var clip: Animation = _anim.get_animation(source_name)
+		for i in clip.get_track_count():
+			var raw := String(clip.track_get_path(i))
+			var colon := raw.find(":")
+			if colon > 0:
+				return raw.substr(0, colon)
+	return "Armature/Skeleton3D"
 
 
 func _load_glb(path: String) -> Node3D:
@@ -313,13 +396,14 @@ func _author_strokes(lib: AnimationLibrary) -> void:
 		anim.step = 0.0
 		var tracks := 0
 		for bone_name in (spec["keys"] as Dictionary):
-			var bone_idx := _skeleton.find_bone(bone_name)
+			var resolved_bone := _resolve_bone_name(String(bone_name))
+			var bone_idx := _skeleton.find_bone(resolved_bone)
 			if bone_idx < 0:
 				push_warning("AthleteRig: stroke '%s' references missing bone '%s'" % [name, bone_name])
 				continue
 			var rest_q: Quaternion = _skeleton.get_bone_rest(bone_idx).basis.get_rotation_quaternion()
 			var ti := anim.add_track(Animation.TYPE_ROTATION_3D)
-			anim.track_set_path(ti, NodePath("Armature/Skeleton3D:%s" % bone_name))
+			anim.track_set_path(ti, NodePath("%s:%s" % [_track_prefix, resolved_bone]))
 			anim.track_set_interpolation_type(ti, Animation.INTERPOLATION_CUBIC)
 			for key in (spec["keys"] as Dictionary)[bone_name]:
 				var t := float(key[0])
@@ -332,6 +416,34 @@ func _author_strokes(lib: AnimationLibrary) -> void:
 		if tracks > 0:
 			lib.add_animation(name, anim)
 			_strokes[name] = anim.length
+
+
+func _resolve_bone_name(requested: String) -> String:
+	if _skeleton == null:
+		return requested
+	var candidates := [
+		requested,
+		"mixamorig:" + requested,
+		"mixamorig:" + requested.capitalize(),
+	]
+	# Mixamo spells Spine01/02 as Spine1/2. The original Volpe rig uses the
+	# zero-padded form, so both exports can share the same authored stroke specs.
+	if requested == "Spine01":
+		candidates.append("mixamorig:Spine1")
+	if requested == "Spine02":
+		candidates.append("mixamorig:Spine2")
+	if requested == "neck":
+		candidates.append("mixamorig:Neck")
+	if requested == "Head":
+		candidates.append("mixamorig:Head")
+	if requested == "head_end":
+		candidates.append("mixamorig:HeadTop_End")
+	if requested == "headfront":
+		candidates.append("headfront")
+	for candidate in candidates:
+		if _skeleton.find_bone(candidate) >= 0:
+			return candidate
+	return requested
 
 
 # =========================================================================

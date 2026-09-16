@@ -307,6 +307,13 @@ static func apply(rig: Node, athlete_id: StringName, outfit_id: StringName) -> b
 		return false
 	if rig == null or not rig.has_method("get_mesh_instance"):
 		return false
+	# The recolour shader's anchor/mask values were measured against the legacy
+	# Volpe atlas. New Meshy athletes keep their baked material until a dedicated
+	# mask is authored; silently applying the old atlas would damage their look.
+	if rig.has_method("uses_catalogue_recolour") and not rig.uses_catalogue_recolour():
+		if rig.has_method("note_catalogue_outfit"):
+			rig.note_catalogue_outfit(athlete_id, outfit_id)
+		return true
 	var mi: MeshInstance3D = rig.get_mesh_instance()
 	if mi == null:
 		return false
