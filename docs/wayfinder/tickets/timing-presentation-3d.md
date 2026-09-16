@@ -98,3 +98,21 @@ verdict legible over the striker, and what is still not on the field.
 Two attempts, then a blocker naming the failing element and the frame that shows it.
 A marker that measures smaller than ~20 px at 1280x720 is not delivered: enlarge it
 and re-measure rather than arguing that it is there.
+
+## Corrections accepted from the lane (2026-09-17)
+
+- **"The words are already in the HUD" was too generous.** `shotAdvice_*` existed only
+  in `locale_data.gd` and was drawn *nowhere*; what the corner panel draws is
+  `shotFeedback`, a different element. So this ticket's guide half was not a
+  presentation fix — it was missing.
+- **The panel's energy bar is not a port of the reference's.** The 2D has no energy bar
+  in its HUD: it draws `drawActiveIndicator` bands (`js/main.js:1916`) with
+  `#56e8d8 / #ffd45c / #ff6b64`, and the call site for the timing HUD is
+  `js/main.js:1919` — `:1850` is `drawHitZone`, not `drawTimingHud`.
+- **The precision bar is the SPRINT input** (`sim.gd:2643`): no `--capture=match`
+  frame can ever contain it, so a throwaway single-frame probe was the only way to
+  measure it. The ticket's evidence recipe named no shot in which the ring could
+  appear; the lane added `timing.png` with its A/B.
+- Two hygiene items left out of the lane's allowlist and still open: `godot/game/run.sh`
+  lists the original four capture names only, and `godot/game/out/*.png` is **not**
+  gitignored while the four original captures are tracked.

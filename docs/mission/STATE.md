@@ -801,3 +801,14 @@ che c'erano nel 2d"*. Budget: no cap. Two attempts per gate, then a blocker.
 No allowlist overlaps; no lane may edit `STATE.md`, `LOG.md`, `BOARD.md`, `map.md` or
 any tracked file outside its allowlist (CEO-owned). `godot/src/sim/**` is frozen
 except for a divergence proven by the ticket's own reproduction.
+
+## Slice S14 — returned, verified, certified (2026-09-17 02:15 CEST)
+
+| Lane | Delivered | Verified by the CEO |
+|---|---|---|
+| crew-shotlogic (S14a) | `docs/wayfinder/evidence/shot-logic-parity.md`, `godot/tests/shot_logic_parity_test.gd`, `tools/sim-port/{shot-intent-probe,shot-intent-compare}.mjs` | PASS 675/675; comparator IDENTICAL 35/35 (657 fields, tol=0) with my own regenerated reference trace; my mutation → DIVERGED, exit 1 |
+| crew-timinglogic (S14b) | `docs/wayfinder/evidence/timing-logic-parity.md`, `godot/tests/timing_feedback_test.gd`, `tools/sim-port/{timing-trace.mjs,timing-compare.py}` | PASS 100/100; injected failure FAIL 96/100 exit 1; IDENTICAL on both scenarios; 1e-6 mutant → exit 1; `godot/src/sim/**` untouched |
+| crew-timinghud (S14c) | `godot/game/{match_controller,hud}.gd`, one `_timing_presentation` section in `godot/tests/game_slice_test.gd` (36 checks), `docs/wayfinder/evidence/timing-presentation-3d.md`, frames | slice 324/325 with the new section, 23/23 sections; A/B frame measurements reproduced in the evidence; steer delivered mid-flight (the verdict over the striker) |
+
+Open after S14: the owner's feel verdict; `run.sh`'s capture list and the `out/*.png`
+gitignore question; co-op/PvP and other tiers outside all three gates.

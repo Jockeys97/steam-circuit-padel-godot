@@ -46,7 +46,7 @@ Outfits per athlete: `{'maestro': 5, 'pantera': 5, 'steamer': 5, 'fiamma': 5, 'o
 
 ## Links
 
-107 relative links checked across 60 markdown files.
+107 relative links checked across 61 markdown files.
 
 ## Dependency graph
 
