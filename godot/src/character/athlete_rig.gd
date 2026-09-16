@@ -93,12 +93,27 @@ const GLB_RUN := "res://assets/athletes/volpe-running.glb"
 ## needing Godot.
 const ATHLETE_GLB := {
 	&"colosso": "res://assets/athletes/colosso.glb",
+	&"maestro": "res://assets/athletes/maestro-rigged.glb",
 }
 
 const CLIP_IDLE := &"idle"
 const CLIP_WALK := &"walk"
 const CLIP_RUN := &"run"
 const LOCOMOTION := [CLIP_IDLE, CLIP_WALK, CLIP_RUN]
+
+## Athletes whose rigged base does not carry every locomotion clip: athlete id ->
+## { clip name -> res:// path of a single-clip companion GLB }. Maestro's rigged
+## export is a bind/rest file — its idle / walking / running live in three
+## companion GLBs that each duplicate the mesh and skin; `_adopt_clip` lifts the
+## clip against this one body and frees the rest. The Volpe fallback keeps its own
+## GLB_WALK / GLB_RUN constants above and needs no entry here.
+const COMPANION_CLIPS := {
+	&"maestro": {
+		CLIP_IDLE: "res://assets/athletes/maestro-idle.glb",
+		CLIP_WALK: "res://assets/athletes/maestro-walking.glb",
+		CLIP_RUN: "res://assets/athletes/maestro-running.glb",
+	},
+}
 
 ## id -> res:// path of a 2048x2048 recoloured atlas, or "" for the GLB's own texture.
 ## Paths are copies of the offline recolour outputs; see the header, owner decision 2.
@@ -130,6 +145,7 @@ var _athlete_id: StringName = &""
 var _glb_base_path: String = GLB_BASE
 var _glb_walk_path: String = GLB_WALK
 var _glb_run_path: String = GLB_RUN
+var _glb_idle_path: String = ""
 var _track_prefix: String = "Armature/Skeleton3D"
 
 var _base_material: StandardMaterial3D = null
@@ -152,10 +168,17 @@ func set_athlete_asset(athlete_id: StringName) -> bool:
 		return false
 	_athlete_id = athlete_id
 	_glb_base_path = String(ATHLETE_GLB.get(athlete_id, GLB_BASE))
-	# The Meshy export already contains all locomotion clips in one file. The
-	# fallback rig still uses its original walk/run companion files.
-	_glb_walk_path = GLB_WALK if _glb_base_path == GLB_BASE else ""
-	_glb_run_path = GLB_RUN if _glb_base_path == GLB_BASE else ""
+	var companions: Dictionary = COMPANION_CLIPS.get(athlete_id, {})
+	_glb_idle_path = String(companions.get(CLIP_IDLE, ""))
+	if _glb_base_path == GLB_BASE:
+		# The fallback rig still uses its original walk/run companion files.
+		_glb_walk_path = GLB_WALK
+		_glb_run_path = GLB_RUN
+	else:
+		# A Meshy base may carry its clips itself (Colosso: empty paths) or point at
+		# single-clip companion files (Maestro, via COMPANION_CLIPS).
+		_glb_walk_path = String(companions.get(CLIP_WALK, ""))
+		_glb_run_path = String(companions.get(CLIP_RUN, ""))
 	return true
 
 
@@ -236,6 +259,11 @@ func _build() -> int:
 		_alias_clip(lib, embedded["walking"], CLIP_WALK)
 	if embedded.has("running"):
 		_alias_clip(lib, embedded["running"], CLIP_RUN)
+	# Maestro's base export carries only a 0.30 s single-key bind hold, not an idle.
+	# Adopt its real idle from the companion file BEFORE the first-embedded-clip
+	# fallback below, so the bind hold can never be aliased into the idle slot.
+	if not lib.has_animation(CLIP_IDLE) and _glb_idle_path != "":
+		_adopt_clip(lib, _glb_idle_path, CLIP_IDLE)
 	if not lib.has_animation(CLIP_IDLE):
 		var base_clip := ""
 		for a in _anim.get_animation_list():
@@ -482,6 +510,11 @@ func set_outfit(id: StringName) -> bool:
 	if not _use_glb_pbr:
 		_override.metallic = DEFAULT_METALLIC
 		_override.roughness = DEFAULT_ROUGHNESS
+		# The Meshy exports carry emissiveFactor (1,1,1) with the base-colour texture
+		# wired in as the emissive map; left on, that floods the athlete with its own
+		# albedo. Emission off is part of the same non-glTF override block, so
+		# `use_glb_pbr(true)` still renders exactly what the GLB asks for.
+		_override.emission_enabled = false
 	_mesh_instance.set_surface_override_material(0, _override)
 	_outfit = id
 	return true
@@ -523,6 +556,7 @@ func get_material_state() -> Dictionary:
 		"albedo_color": str(_override.albedo_color),
 		"metallic": "%.4f" % _override.metallic,
 		"roughness": "%.4f" % _override.roughness,
+		"emission": _override.emission_enabled,
 		"shading_mode": _override.shading_mode,
 		"glb_pbr": _use_glb_pbr,
 	}
