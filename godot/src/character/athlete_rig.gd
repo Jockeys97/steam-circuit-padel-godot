@@ -425,19 +425,27 @@ func _resolve_bone_name(requested: String) -> String:
 		requested,
 		"mixamorig:" + requested,
 		"mixamorig:" + requested.capitalize(),
+		# Godot sanitizes the colon in Mixamo names during GLTFDocument import.
+		"mixamorig_" + requested,
+		"mixamorig_" + requested.capitalize(),
 	]
 	# Mixamo spells Spine01/02 as Spine1/2. The original Volpe rig uses the
 	# zero-padded form, so both exports can share the same authored stroke specs.
 	if requested == "Spine01":
 		candidates.append("mixamorig:Spine1")
+		candidates.append("mixamorig_Spine1")
 	if requested == "Spine02":
 		candidates.append("mixamorig:Spine2")
+		candidates.append("mixamorig_Spine2")
 	if requested == "neck":
 		candidates.append("mixamorig:Neck")
+		candidates.append("mixamorig_Neck")
 	if requested == "Head":
 		candidates.append("mixamorig:Head")
+		candidates.append("mixamorig_Head")
 	if requested == "head_end":
 		candidates.append("mixamorig:HeadTop_End")
+		candidates.append("mixamorig_HeadTop_End")
 	if requested == "headfront":
 		candidates.append("headfront")
 	for candidate in candidates:
