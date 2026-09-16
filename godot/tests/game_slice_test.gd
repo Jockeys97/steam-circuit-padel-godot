@@ -1620,14 +1620,18 @@ func _arena_library() -> void:
 	check_eq("the fantasy arenas carry the reference's own gradient stops",
 		[String((storm["sky"] as Array)[0][1]), String((sky[sky.size() - 1])[1])], ["#07142f", "#287eb0"])
 	check_eq("the fantasy arenas carry the reference's own glow colour", String(storm["glow"]), "#79eeff")
-	# Artwork: the four arenas whose `image` field is their own file, copied from the
-	# reference, are the four the reference itself composites.
+	# Artwork: the reference gives EVERY arena an `image` field (`js/data.js` ARENAS),
+	# reusing two files where it wants the same scene on screen. The port must carry the
+	# same nine mappings — a subset is a gap, not a stylistic choice.
 	var with_art: Array[String] = []
 	for r in rows:
 		if String(ArenaStyle.artwork_path(String(r["id"]))) != "":
 			with_art.append(String(r["id"]))
-	check_eq("the four arenas with their own reference artwork are the four that load it",
-		with_art, ["tempesta", "abissale", "caldera", "orrery"])
+	check_eq("every arena the reference paints is painted here", with_art, Array(want))
+	check_eq("the two arenas that reuse another arena's backdrop reuse it here too",
+		[String(ArenaStyle.artwork_path("cattedrale")).get_file(),
+			String(ArenaStyle.artwork_path("forgia")).get_file()],
+		["deposito-locomotive.webp", "clockwork-factory.webp"])
 	var missing_art: Array[String] = []
 	var using_art: Array[String] = []
 	for id in with_art:
@@ -1640,7 +1644,8 @@ func _arena_library() -> void:
 				using_art.append(id)
 			built.free()
 	check("every copied arena artwork file is on disk", missing_art.is_empty(), str(missing_art))
-	check("the artwork actually decodes at runtime and reaches the backdrop", using_art.size() == 4, str(using_art))
+	check("the artwork actually decodes at runtime and reaches the backdrop for every painted arena",
+		using_art.size() == rows.size(), "%d of %d: %s" % [using_art.size(), rows.size(), str(using_art)])
 
 	# And the whole path: an arena chosen in the config is the arena the real match
 	# scene builds AND the arena the simulation runs on (`Sim.update_match` reads

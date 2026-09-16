@@ -75,7 +75,10 @@ const STYLES := {
 		"sky": [["0.00", "#51c6f4"], ["0.48", "#c8f1ff"], ["0.49", "#f5a277"], ["1.00", "#e57958"]],
 		"apron": "#e78c68",
 		"glow": "#7fd4ff",
-		"artwork": "",
+		# The reference paints this one too (`js/data.js` ARENAS[0].image), so the port
+		# copies its file like the other four: a gradient-only backdrop was a port gap,
+		# not a decision the reference made.
+		"artwork": "officina-vapore-standard.webp",
 		"props": [
 			{"kind": "floodlight", "x": -7.6, "h": 2.10},
 			{"kind": "floodlight", "x": 7.4, "h": 2.10},
@@ -94,7 +97,7 @@ const STYLES := {
 		"sky": [["0.00", "#071526"], ["0.46", "#1b4d5d"], ["0.47", "#5c5b50"], ["1.00", "#37444d"]],
 		"apron": "#4f5552",
 		"glow": "#78c9da",
-		"artwork": "",
+		"artwork": "deposito-locomotive.webp",
 		"props": [
 			{"kind": "loco", "x": 0.0, "tint": "gear"},
 			{"kind": "girder", "x": -6.4, "h": 2.10, "lean": -1.0},
@@ -113,7 +116,7 @@ const STYLES := {
 		"sky": [["0.00", "#160f31"], ["0.45", "#3b2048"], ["0.46", "#7b465b"], ["1.00", "#33214b"]],
 		"apron": "#4c344d",
 		"glow": "#ecaa43",
-		"artwork": "",
+		"artwork": "clockwork-factory.webp",
 		"props": [
 			{"kind": "clock", "x": 0.0, "y": 1.25, "r": 0.86, "tint": "#d4a64c"},
 			{"kind": "gear", "x": -4.3, "y": 1.0, "r": 0.6, "tint": "#c68737"},
@@ -127,12 +130,14 @@ const STYLES := {
 	},
 	"cattedrale": {
 		# Family `locomotive` (js/render.js:697-699); tints are the port's, taken
-		# from this arena's own palette in `js/data.js`. No artwork of its own.
+		# from this arena's own palette in `js/data.js`. The reference reuses the depot
+		# backdrop for it (`ARENAS[3].image`), so the port does the same rather than
+		# leaving the arena unpainted.
 		"family": "locomotive",
 		"sky": [["0.00", "#071526"], ["0.46", "#1b4d5d"], ["0.47", "#5c5b50"], ["1.00", "#37444d"]],
 		"apron": "#312b4f",
 		"glow": "#c98bff",
-		"artwork": "",
+		"artwork": "deposito-locomotive.webp",
 		"props": [
 			{"kind": "loco", "x": 0.0, "tint": "gear"},
 			{"kind": "girder", "x": -6.4, "h": 2.10, "lean": -1.0, "tint": "accent"},
@@ -146,12 +151,13 @@ const STYLES := {
 	},
 	"forgia": {
 		# Family `clockwork` (js/render.js:700-701); tints are the port's, from
-		# this arena's palette. No artwork of its own.
+		# this arena's palette. The reference reuses the factory backdrop here
+		# (`ARENAS[4].image`), so the port does the same.
 		"family": "clockwork",
 		"sky": [["0.00", "#160f31"], ["0.45", "#3b2048"], ["0.46", "#7b465b"], ["1.00", "#33214b"]],
 		"apron": "#42272b",
 		"glow": "#ffd54a",
-		"artwork": "",
+		"artwork": "clockwork-factory.webp",
 		"props": [
 			{"kind": "clock", "x": 0.0, "y": 1.3, "r": 0.8, "tint": "gear"},
 			{"kind": "gear", "x": -4.3, "y": 1.0, "r": 0.58, "tint": "gear"},
