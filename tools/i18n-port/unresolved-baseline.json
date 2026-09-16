@@ -1,0 +1,52 @@
+{
+  "schema": "steam-circuit-padel-pro.i18n-unresolved-baseline",
+  "schemaVersion": 1,
+  "title": "Message ids the ported simulation can emit that have no resolvable string today",
+  "policy": [
+    "This file is a debt ledger, not a permission slip. The drift test (tools/i18n-port/verify-i18n-port.mjs) fails when the observed unresolved set differs from these entries in ANY direction:",
+    "  - an id that is not resolvable and is not listed here  -> FAIL (a new unsolvable id reached the screen)",
+    "  - an id that is listed here but is resolvable now      -> FAIL (stale entry: delete it and let the test prove the fix)",
+    "  - a listed category that no longer matches             -> FAIL",
+    "Every entry carries the reference behaviour it deviates from and a fix path. Nothing here may be 'fixed' by editing js/** (frozen reference) or godot/src/sim/** (another owner's allowlist)."
+  ],
+  "rootCauses": {
+    "rc1-id-concatenation": {
+      "what": "godot/src/sim/sim.gd:2034 and :2038 build a message id by concatenating one id with a literal suffix ('%s secondServe' % reason) or by lowercasing an id ('doubleFault:%s' % reason.to_lower()). Neither result is a key of js/i18n.js.",
+      "reference": "js/game.js:2123 and :2128 render at emit time: `addEvent(state, `${reason} ${t(\"secondServeSuffix\")}`)` and `scorePoint(..., t(\"doubleFault\", { reason: reason.toLowerCase() }), ...)`, where `reason` is already the call site's `t(\"serveOutBox\")` / `t(\"serveWallFault\")`.",
+      "whyItsNotMine": "the fix is a sim-side encoding change (carry the suffix key as a separate field or a params dictionary instead of concatenating strings) and godot/src/sim/** is outside this task's write allowlist.",
+      "fixPath": "sim owner: replace the concatenation with `add_event(state, reason)` plus a declared params carrier, then bind the suffix through a `secondServeSuffix` param rule in locale_rules.json. The drift test will require the ledger entry to be deleted in the same change.",
+      "ids": [
+        "serveOutBox secondServe", "serveWallFault secondServe",
+        "doubleFault:serveoutbox", "doubleFault:servewallfault",
+        "pointYou:doubleFault:serveoutbox", "pointYou:doubleFault:servewallfault",
+        "pointOpp:doubleFault:serveoutbox", "pointOpp:doubleFault:servewallfault"
+      ]
+    },
+    "rc2-lost-parameters": {
+      "what": "godot/src/sim/sim.gd:782 and :805 store the bare id `serveHint`. Its value is `\"{ordinal} di servizio dal basso{suffix}: cerca il diagonale.\"`, and the port's event stream carries neither parameter, so resolving it prints the braces.",
+      "reference": "js/game.js:2629-2632 and :2657-2660 render `t(\"serveHint\", { ordinal: t(state.serveAttempts ? \"serveOrdSecond\" : \"serveOrdFirst\"), suffix: input.slice ? t(\"serveSliceSuffix\") : \"\" })` at emit time.",
+      "whyItsNotMine": "supplying the parameters means changing what the sim stores (a params dictionary alongside the id); godot/src/sim/** is outside this task's write allowlist. Inventing a default ordinal would be fabricating match state.",
+      "fixPath": "sim owner: store `{ id: \"serveHint\", params: { ordinal: ..., suffix: ... } }`; locale.gd already accepts a params dictionary.",
+      "ids": ["serveHint"]
+    },
+    "rc3-reference-hardcoded-literal": {
+      "what": "godot/src/sim/sim.gd:2045 sets `state.pointMessage = \"LET\"`. Per the port's own boundary rule the sim may not store rendered text, so it stores a short literal; the reference's let message is the hardcoded string \"LET · Servizio da ripetere\".",
+      "reference": "js/game.js:2135 — `state.pointMessage = \"LET · Servizio da ripetere\";` is a literal, not a `t()` call: this one string is not translatable in the reference either. Note the sentence \"Servizio da ripetere\" does exist, inside the value of the key `evLet`.",
+      "whyItsNotMine": "adding a new key to the reference string table is a product decision for Luca (the port must not invent strings the reference does not have), and editing js/** is forbidden.",
+      "fixPath": "open human decision: either accept the reference's own untranslated literal in the port, or add a `pointLet` key to the reference table (and then re-freeze the baseline) — record the choice in the locale contract, do not machine-invent it.",
+      "ids": ["LET"]
+    }
+  },
+  "entries": [
+    { "id": "LET", "category": "no-key", "rootCause": "rc3-reference-hardcoded-literal", "sites": ["godot/src/sim/sim.gd:2045"] },
+    { "id": "doubleFault:serveoutbox", "category": "no-key", "rootCause": "rc1-id-concatenation", "sites": ["godot/src/sim/sim.gd:1993"], "reachable": "yes — a second-serve fault off the diagonal box scores for the other side" },
+    { "id": "doubleFault:servewallfault", "category": "no-key", "rootCause": "rc1-id-concatenation", "sites": ["godot/src/sim/sim.gd:1993"], "reachable": "yes — same path, the ball hit the glass before the bounce" },
+    { "id": "pointOpp:doubleFault:serveoutbox", "category": "no-key", "rootCause": "rc1-id-concatenation", "sites": ["godot/src/sim/sim.gd:2027"], "reachable": "yes — `score_point` awards the point to the opponent, so the prefix is `pointOpp`" },
+    { "id": "pointOpp:doubleFault:servewallfault", "category": "no-key", "rootCause": "rc1-id-concatenation", "sites": ["godot/src/sim/sim.gd:2027"], "reachable": "yes" },
+    { "id": "pointYou:doubleFault:serveoutbox", "category": "no-key", "rootCause": "rc1-id-concatenation", "sites": ["godot/src/sim/sim.gd:2027"], "reachable": "no — a double fault always scores for `State.other(state.serveSide)`; kept because the id is derivable from the source and an unreachable unresolvable id is still a latent trap" },
+    { "id": "pointYou:doubleFault:servewallfault", "category": "no-key", "rootCause": "rc1-id-concatenation", "sites": ["godot/src/sim/sim.gd:2027"], "reachable": "no — same reason" },
+    { "id": "serveHint", "category": "no-params", "rootCause": "rc2-lost-parameters", "sites": ["godot/src/sim/sim.gd:782", "godot/src/sim/sim.gd:805"], "reachable": "yes — every human serve logs this event" },
+    { "id": "serveOutBox secondServe", "category": "no-key", "rootCause": "rc1-id-concatenation", "sites": ["godot/src/sim/sim.gd:2034"], "reachable": "yes" },
+    { "id": "serveWallFault secondServe", "category": "no-key", "rootCause": "rc1-id-concatenation", "sites": ["godot/src/sim/sim.gd:2034"], "reachable": "yes" }
+  ]
+}

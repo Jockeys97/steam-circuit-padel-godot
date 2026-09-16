@@ -1,0 +1,2944 @@
+{
+  "_tool": "tools/character/measure_roster_outfits.py",
+  "_source_manifest": "roster_manifest_512x512.json",
+  "resolution": "512x512",
+  "floor": 8.0,
+  "floor_metric": "garment_mask_mean_abs_255",
+  "outfit_frames": 26,
+  "body_eps_255": 6,
+  "garment_eps_255": 8,
+  "body_pixels": 47977,
+  "garment_mask_pixels": 6447,
+  "garment_window_pixels": 2102,
+  "garment_window_bbox_xyxy": [
+    201,
+    234,
+    244,
+    312
+  ],
+  "garment_window_frac_of_body": 0.043813,
+  "same_athlete_pairs": [
+    {
+      "a": "steamer:signature",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 2.5571,
+      "garment_window_mean_abs_255": 3.0427,
+      "whole_model_mean_abs_255": 0.3438
+    },
+    {
+      "a": "pantera:signature",
+      "b": "pantera:mythic",
+      "garment_mask_mean_abs_255": 6.3038,
+      "garment_window_mean_abs_255": 6.947,
+      "whole_model_mean_abs_255": 0.8472
+    },
+    {
+      "a": "oracolo:signature",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 13.2765,
+      "garment_window_mean_abs_255": 17.9608,
+      "whole_model_mean_abs_255": 1.7845
+    },
+    {
+      "a": "pantera:base",
+      "b": "pantera:signature",
+      "garment_mask_mean_abs_255": 18.1707,
+      "garment_window_mean_abs_255": 8.8048,
+      "whole_model_mean_abs_255": 2.4435
+    },
+    {
+      "a": "steamer:base",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 18.3021,
+      "garment_window_mean_abs_255": 10.6494,
+      "whole_model_mean_abs_255": 2.4611
+    },
+    {
+      "a": "steamer:base",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 20.4472,
+      "garment_window_mean_abs_255": 13.4139,
+      "whole_model_mean_abs_255": 2.7495
+    },
+    {
+      "a": "fiamma:signature",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 21.5306,
+      "garment_window_mean_abs_255": 17.4948,
+      "whole_model_mean_abs_255": 2.8943
+    },
+    {
+      "a": "pantera:base",
+      "b": "pantera:mythic",
+      "garment_mask_mean_abs_255": 22.4355,
+      "garment_window_mean_abs_255": 12.9256,
+      "whole_model_mean_abs_255": 3.0167
+    },
+    {
+      "a": "maestro:base",
+      "b": "maestro:signature",
+      "garment_mask_mean_abs_255": 24.4209,
+      "garment_window_mean_abs_255": 3.3067,
+      "whole_model_mean_abs_255": 3.2842
+    },
+    {
+      "a": "fiamma:base",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 39.9906,
+      "garment_window_mean_abs_255": 45.4489,
+      "whole_model_mean_abs_255": 5.3744
+    },
+    {
+      "a": "steamer:base",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 44.7117,
+      "garment_window_mean_abs_255": 52.209,
+      "whole_model_mean_abs_255": 6.0094
+    },
+    {
+      "a": "maestro:base",
+      "b": "maestro:circuit",
+      "garment_mask_mean_abs_255": 47.1782,
+      "garment_window_mean_abs_255": 60.5476,
+      "whole_model_mean_abs_255": 6.3403
+    },
+    {
+      "a": "fiamma:circuit",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 53.2244,
+      "garment_window_mean_abs_255": 59.8689,
+      "whole_model_mean_abs_255": 7.1537
+    },
+    {
+      "a": "oracolo:base",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 53.5484,
+      "garment_window_mean_abs_255": 64.1359,
+      "whole_model_mean_abs_255": 7.197
+    },
+    {
+      "a": "pantera:base",
+      "b": "pantera:legend",
+      "garment_mask_mean_abs_255": 54.1509,
+      "garment_window_mean_abs_255": 68.1435,
+      "whole_model_mean_abs_255": 7.2776
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "maestro:mythic",
+      "garment_mask_mean_abs_255": 56.3093,
+      "garment_window_mean_abs_255": 67.7567,
+      "whole_model_mean_abs_255": 7.5675
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "maestro:signature",
+      "garment_mask_mean_abs_255": 62.7261,
+      "garment_window_mean_abs_255": 63.852,
+      "whole_model_mean_abs_255": 8.4314
+    },
+    {
+      "a": "steamer:legend",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 62.9404,
+      "garment_window_mean_abs_255": 62.762,
+      "whole_model_mean_abs_255": 8.4604
+    },
+    {
+      "a": "fiamma:circuit",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 63.0297,
+      "garment_window_mean_abs_255": 65.7347,
+      "whole_model_mean_abs_255": 8.4719
+    },
+    {
+      "a": "pantera:legend",
+      "b": "pantera:signature",
+      "garment_mask_mean_abs_255": 63.2689,
+      "garment_window_mean_abs_255": 64.2578,
+      "whole_model_mean_abs_255": 8.5044
+    },
+    {
+      "a": "steamer:legend",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 64.9257,
+      "garment_window_mean_abs_255": 65.2915,
+      "whole_model_mean_abs_255": 8.7272
+    },
+    {
+      "a": "oracolo:base",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 65.9462,
+      "garment_window_mean_abs_255": 82.0967,
+      "whole_model_mean_abs_255": 8.8632
+    },
+    {
+      "a": "pantera:legend",
+      "b": "pantera:mythic",
+      "garment_mask_mean_abs_255": 69.3925,
+      "garment_window_mean_abs_255": 70.9841,
+      "whole_model_mean_abs_255": 9.3272
+    },
+    {
+      "a": "colosso:base",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 78.054,
+      "garment_window_mean_abs_255": 84.2328,
+      "whole_model_mean_abs_255": 10.4912
+    },
+    {
+      "a": "steamer:base",
+      "b": "steamer:circuit",
+      "garment_mask_mean_abs_255": 87.4019,
+      "garment_window_mean_abs_255": 101.9095,
+      "whole_model_mean_abs_255": 11.747
+    },
+    {
+      "a": "fiamma:base",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 89.1291,
+      "garment_window_mean_abs_255": 120.0124,
+      "whole_model_mean_abs_255": 11.9783
+    },
+    {
+      "a": "fiamma:legend",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 92.2035,
+      "garment_window_mean_abs_255": 118.6066,
+      "whole_model_mean_abs_255": 12.3918
+    },
+    {
+      "a": "maestro:base",
+      "b": "maestro:mythic",
+      "garment_mask_mean_abs_255": 93.508,
+      "garment_window_mean_abs_255": 126.3379,
+      "whole_model_mean_abs_255": 12.5661
+    },
+    {
+      "a": "maestro:legend",
+      "b": "maestro:mythic",
+      "garment_mask_mean_abs_255": 97.3099,
+      "garment_window_mean_abs_255": 131.6518,
+      "whole_model_mean_abs_255": 13.0771
+    },
+    {
+      "a": "fiamma:legend",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 98.1449,
+      "garment_window_mean_abs_255": 124.9259,
+      "whole_model_mean_abs_255": 13.1905
+    },
+    {
+      "a": "fiamma:base",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 98.5585,
+      "garment_window_mean_abs_255": 126.3257,
+      "whole_model_mean_abs_255": 13.2458
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 98.9265,
+      "garment_window_mean_abs_255": 111.6245,
+      "whole_model_mean_abs_255": 13.2962
+    },
+    {
+      "a": "colosso:base",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 100.473,
+      "garment_window_mean_abs_255": 131.0745,
+      "whole_model_mean_abs_255": 13.5031
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 101.2034,
+      "garment_window_mean_abs_255": 114.4299,
+      "whole_model_mean_abs_255": 13.6022
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 112.5085,
+      "garment_window_mean_abs_255": 147.4908,
+      "whole_model_mean_abs_255": 15.12
+    },
+    {
+      "a": "maestro:signature",
+      "b": "maestro:mythic",
+      "garment_mask_mean_abs_255": 113.6683,
+      "garment_window_mean_abs_255": 129.6446,
+      "whole_model_mean_abs_255": 15.2774
+    },
+    {
+      "a": "pantera:base",
+      "b": "pantera:circuit",
+      "garment_mask_mean_abs_255": 120.0403,
+      "garment_window_mean_abs_255": 146.8365,
+      "whole_model_mean_abs_255": 16.1323
+    },
+    {
+      "a": "maestro:base",
+      "b": "maestro:legend",
+      "garment_mask_mean_abs_255": 123.8724,
+      "garment_window_mean_abs_255": 163.1638,
+      "whole_model_mean_abs_255": 16.6468
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "pantera:mythic",
+      "garment_mask_mean_abs_255": 126.5774,
+      "garment_window_mean_abs_255": 148.6787,
+      "whole_model_mean_abs_255": 17.0121
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "pantera:signature",
+      "garment_mask_mean_abs_255": 132.6429,
+      "garment_window_mean_abs_255": 155.6258,
+      "whole_model_mean_abs_255": 17.8272
+    },
+    {
+      "a": "fiamma:circuit",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 134.8954,
+      "garment_window_mean_abs_255": 176.0885,
+      "whole_model_mean_abs_255": 18.128
+    },
+    {
+      "a": "fiamma:base",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 137.141,
+      "garment_window_mean_abs_255": 177.4968,
+      "whole_model_mean_abs_255": 18.4301
+    },
+    {
+      "a": "maestro:legend",
+      "b": "maestro:signature",
+      "garment_mask_mean_abs_255": 138.494,
+      "garment_window_mean_abs_255": 166.4638,
+      "whole_model_mean_abs_255": 18.6135
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "maestro:legend",
+      "garment_mask_mean_abs_255": 140.9797,
+      "garment_window_mean_abs_255": 181.5547,
+      "whole_model_mean_abs_255": 18.9459
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "pantera:legend",
+      "garment_mask_mean_abs_255": 143.3856,
+      "garment_window_mean_abs_255": 188.189,
+      "whole_model_mean_abs_255": 19.269
+    },
+    {
+      "a": "colosso:signature",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 164.7771,
+      "garment_window_mean_abs_255": 214.5747,
+      "whole_model_mean_abs_255": 22.1449
+    }
+  ],
+  "cross_athlete_pairs": [
+    {
+      "a": "maestro:legend",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 0.7418,
+      "garment_window_mean_abs_255": 0.837,
+      "whole_model_mean_abs_255": 0.0998
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 1.1488,
+      "garment_window_mean_abs_255": 1.2284,
+      "whole_model_mean_abs_255": 0.1544
+    },
+    {
+      "a": "pantera:legend",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 2.9168,
+      "garment_window_mean_abs_255": 2.4131,
+      "whole_model_mean_abs_255": 0.3926
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 6.8866,
+      "garment_window_mean_abs_255": 6.17,
+      "whole_model_mean_abs_255": 0.9257
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "pantera:circuit",
+      "garment_mask_mean_abs_255": 7.5683,
+      "garment_window_mean_abs_255": 7.229,
+      "whole_model_mean_abs_255": 1.0173
+    },
+    {
+      "a": "pantera:signature",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 7.5932,
+      "garment_window_mean_abs_255": 9.8819,
+      "whole_model_mean_abs_255": 1.0207
+    },
+    {
+      "a": "pantera:legend",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 7.7688,
+      "garment_window_mean_abs_255": 9.4391,
+      "whole_model_mean_abs_255": 1.0445
+    },
+    {
+      "a": "pantera:legend",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 9.0798,
+      "garment_window_mean_abs_255": 12.5255,
+      "whole_model_mean_abs_255": 1.2202
+    },
+    {
+      "a": "maestro:legend",
+      "b": "pantera:legend",
+      "garment_mask_mean_abs_255": 9.4183,
+      "garment_window_mean_abs_255": 13.2309,
+      "whole_model_mean_abs_255": 1.2657
+    },
+    {
+      "a": "fiamma:legend",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 9.4775,
+      "garment_window_mean_abs_255": 11.4141,
+      "whole_model_mean_abs_255": 1.2742
+    },
+    {
+      "a": "maestro:legend",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 9.8152,
+      "garment_window_mean_abs_255": 12.1175,
+      "whole_model_mean_abs_255": 1.3195
+    },
+    {
+      "a": "pantera:signature",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 9.9935,
+      "garment_window_mean_abs_255": 12.9223,
+      "whole_model_mean_abs_255": 1.3433
+    },
+    {
+      "a": "steamer:legend",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 10.6752,
+      "garment_window_mean_abs_255": 11.8493,
+      "whole_model_mean_abs_255": 1.4348
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 13.2612,
+      "garment_window_mean_abs_255": 16.0186,
+      "whole_model_mean_abs_255": 1.7825
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 13.9522,
+      "garment_window_mean_abs_255": 5.5006,
+      "whole_model_mean_abs_255": 1.8759
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 15.0757,
+      "garment_window_mean_abs_255": 9.4534,
+      "whole_model_mean_abs_255": 2.0271
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 15.6263,
+      "garment_window_mean_abs_255": 18.9017,
+      "whole_model_mean_abs_255": 2.1004
+    },
+    {
+      "a": "steamer:legend",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 15.9159,
+      "garment_window_mean_abs_255": 21.428,
+      "whole_model_mean_abs_255": 2.1393
+    },
+    {
+      "a": "maestro:legend",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 16.657,
+      "garment_window_mean_abs_255": 22.2631,
+      "whole_model_mean_abs_255": 2.2389
+    },
+    {
+      "a": "fiamma:mythic",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 16.7124,
+      "garment_window_mean_abs_255": 22.4729,
+      "whole_model_mean_abs_255": 2.2467
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 16.9807,
+      "garment_window_mean_abs_255": 8.4515,
+      "whole_model_mean_abs_255": 2.2835
+    },
+    {
+      "a": "oracolo:mythic",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 19.5159,
+      "garment_window_mean_abs_255": 0.8409,
+      "whole_model_mean_abs_255": 2.6243
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 20.3502,
+      "garment_window_mean_abs_255": 13.7789,
+      "whole_model_mean_abs_255": 2.7359
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 21.4159,
+      "garment_window_mean_abs_255": 14.0214,
+      "whole_model_mean_abs_255": 2.8792
+    },
+    {
+      "a": "pantera:base",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 21.5449,
+      "garment_window_mean_abs_255": 13.8002,
+      "whole_model_mean_abs_255": 2.8969
+    },
+    {
+      "a": "pantera:base",
+      "b": "steamer:base",
+      "garment_mask_mean_abs_255": 22.0585,
+      "garment_window_mean_abs_255": 26.6562,
+      "whole_model_mean_abs_255": 2.9654
+    },
+    {
+      "a": "pantera:base",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 23.4867,
+      "garment_window_mean_abs_255": 16.8419,
+      "whole_model_mean_abs_255": 3.1578
+    },
+    {
+      "a": "steamer:legend",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 25.5146,
+      "garment_window_mean_abs_255": 25.0603,
+      "whole_model_mean_abs_255": 3.4296
+    },
+    {
+      "a": "pantera:signature",
+      "b": "steamer:base",
+      "garment_mask_mean_abs_255": 27.3735,
+      "garment_window_mean_abs_255": 22.7407,
+      "whole_model_mean_abs_255": 3.6806
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 27.3768,
+      "garment_window_mean_abs_255": 26.6651,
+      "whole_model_mean_abs_255": 3.6797
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 27.7477,
+      "garment_window_mean_abs_255": 25.9377,
+      "whole_model_mean_abs_255": 3.7302
+    },
+    {
+      "a": "fiamma:mythic",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 28.0343,
+      "garment_window_mean_abs_255": 13.1922,
+      "whole_model_mean_abs_255": 3.7695
+    },
+    {
+      "a": "maestro:legend",
+      "b": "steamer:base",
+      "garment_mask_mean_abs_255": 28.0602,
+      "garment_window_mean_abs_255": 29.9497,
+      "whole_model_mean_abs_255": 3.7719
+    },
+    {
+      "a": "steamer:base",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 28.8018,
+      "garment_window_mean_abs_255": 30.7864,
+      "whole_model_mean_abs_255": 3.8716
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "steamer:circuit",
+      "garment_mask_mean_abs_255": 29.3318,
+      "garment_window_mean_abs_255": 35.3911,
+      "whole_model_mean_abs_255": 3.9421
+    },
+    {
+      "a": "fiamma:signature",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 29.6156,
+      "garment_window_mean_abs_255": 24.9128,
+      "whole_model_mean_abs_255": 3.9816
+    },
+    {
+      "a": "pantera:legend",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 30.9667,
+      "garment_window_mean_abs_255": 32.9443,
+      "whole_model_mean_abs_255": 4.1618
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 31.3894,
+      "garment_window_mean_abs_255": 34.3662,
+      "whole_model_mean_abs_255": 4.2191
+    },
+    {
+      "a": "fiamma:base",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 31.8138,
+      "garment_window_mean_abs_255": 34.6533,
+      "whole_model_mean_abs_255": 4.2761
+    },
+    {
+      "a": "oracolo:signature",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 31.8678,
+      "garment_window_mean_abs_255": 17.5138,
+      "whole_model_mean_abs_255": 4.2844
+    },
+    {
+      "a": "fiamma:circuit",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 31.9968,
+      "garment_window_mean_abs_255": 32.6657,
+      "whole_model_mean_abs_255": 4.3005
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 33.1456,
+      "garment_window_mean_abs_255": 33.8941,
+      "whole_model_mean_abs_255": 4.4549
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "steamer:base",
+      "garment_mask_mean_abs_255": 33.3131,
+      "garment_window_mean_abs_255": 29.2926,
+      "whole_model_mean_abs_255": 4.4787
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 34.0431,
+      "garment_window_mean_abs_255": 26.9481,
+      "whole_model_mean_abs_255": 4.5766
+    },
+    {
+      "a": "fiamma:mythic",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 34.0733,
+      "garment_window_mean_abs_255": 22.1962,
+      "whole_model_mean_abs_255": 4.5813
+    },
+    {
+      "a": "steamer:base",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 34.2197,
+      "garment_window_mean_abs_255": 40.5912,
+      "whole_model_mean_abs_255": 4.5993
+    },
+    {
+      "a": "pantera:legend",
+      "b": "steamer:base",
+      "garment_mask_mean_abs_255": 36.9522,
+      "garment_window_mean_abs_255": 42.7756,
+      "whole_model_mean_abs_255": 4.9668
+    },
+    {
+      "a": "fiamma:signature",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 38.2354,
+      "garment_window_mean_abs_255": 39.9591,
+      "whole_model_mean_abs_255": 5.1396
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "steamer:circuit",
+      "garment_mask_mean_abs_255": 38.808,
+      "garment_window_mean_abs_255": 50.1725,
+      "whole_model_mean_abs_255": 5.2152
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 39.7515,
+      "garment_window_mean_abs_255": 51.4009,
+      "whole_model_mean_abs_255": 5.342
+    },
+    {
+      "a": "maestro:legend",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 40.321,
+      "garment_window_mean_abs_255": 46.1448,
+      "whole_model_mean_abs_255": 5.4189
+    },
+    {
+      "a": "maestro:base",
+      "b": "pantera:circuit",
+      "garment_mask_mean_abs_255": 40.493,
+      "garment_window_mean_abs_255": 53.3186,
+      "whole_model_mean_abs_255": 5.4417
+    },
+    {
+      "a": "fiamma:signature",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 40.6538,
+      "garment_window_mean_abs_255": 39.6824,
+      "whole_model_mean_abs_255": 5.4652
+    },
+    {
+      "a": "maestro:base",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 41.6418,
+      "garment_window_mean_abs_255": 54.5469,
+      "whole_model_mean_abs_255": 5.5961
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 42.4276,
+      "garment_window_mean_abs_255": 49.1357,
+      "whole_model_mean_abs_255": 5.7026
+    },
+    {
+      "a": "maestro:legend",
+      "b": "pantera:base",
+      "garment_mask_mean_abs_255": 44.968,
+      "garment_window_mean_abs_255": 54.9266,
+      "whole_model_mean_abs_255": 6.0436
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "steamer:circuit",
+      "garment_mask_mean_abs_255": 45.2878,
+      "garment_window_mean_abs_255": 57.4015,
+      "whole_model_mean_abs_255": 6.0862
+    },
+    {
+      "a": "pantera:base",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 45.6123,
+      "garment_window_mean_abs_255": 55.6284,
+      "whole_model_mean_abs_255": 6.1302
+    },
+    {
+      "a": "maestro:legend",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 46.2892,
+      "garment_window_mean_abs_255": 40.5033,
+      "whole_model_mean_abs_255": 6.2223
+    },
+    {
+      "a": "steamer:signature",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 47.0309,
+      "garment_window_mean_abs_255": 41.34,
+      "whole_model_mean_abs_255": 6.3221
+    },
+    {
+      "a": "maestro:legend",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 48.2745,
+      "garment_window_mean_abs_255": 43.0328,
+      "whole_model_mean_abs_255": 6.4891
+    },
+    {
+      "a": "steamer:mythic",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 49.0161,
+      "garment_window_mean_abs_255": 43.8695,
+      "whole_model_mean_abs_255": 6.5889
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 50.7477,
+      "garment_window_mean_abs_255": 49.4125,
+      "whole_model_mean_abs_255": 6.8211
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 52.2233,
+      "garment_window_mean_abs_255": 64.7677,
+      "whole_model_mean_abs_255": 7.0186
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 52.281,
+      "garment_window_mean_abs_255": 58.6405,
+      "whole_model_mean_abs_255": 7.0269
+    },
+    {
+      "a": "steamer:signature",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 52.5115,
+      "garment_window_mean_abs_255": 51.2371,
+      "whole_model_mean_abs_255": 7.0588
+    },
+    {
+      "a": "pantera:base",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 52.6222,
+      "garment_window_mean_abs_255": 67.0247,
+      "whole_model_mean_abs_255": 7.0726
+    },
+    {
+      "a": "maestro:legend",
+      "b": "pantera:signature",
+      "garment_mask_mean_abs_255": 54.0952,
+      "garment_window_mean_abs_255": 51.0327,
+      "whole_model_mean_abs_255": 7.2716
+    },
+    {
+      "a": "maestro:signature",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 54.596,
+      "garment_window_mean_abs_255": 72.4602,
+      "whole_model_mean_abs_255": 7.3373
+    },
+    {
+      "a": "steamer:mythic",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 54.6518,
+      "garment_window_mean_abs_255": 53.999,
+      "whole_model_mean_abs_255": 7.3465
+    },
+    {
+      "a": "pantera:signature",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 54.7479,
+      "garment_window_mean_abs_255": 51.7425,
+      "whole_model_mean_abs_255": 7.3594
+    },
+    {
+      "a": "pantera:legend",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 55.1811,
+      "garment_window_mean_abs_255": 53.3292,
+      "whole_model_mean_abs_255": 7.4173
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 56.4873,
+      "garment_window_mean_abs_255": 65.8695,
+      "whole_model_mean_abs_255": 7.5921
+    },
+    {
+      "a": "pantera:legend",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 57.1663,
+      "garment_window_mean_abs_255": 55.8587,
+      "whole_model_mean_abs_255": 7.6841
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 57.673,
+      "garment_window_mean_abs_255": 69.797,
+      "whole_model_mean_abs_255": 7.751
+    },
+    {
+      "a": "fiamma:circuit",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 57.7596,
+      "garment_window_mean_abs_255": 70.7683,
+      "whole_model_mean_abs_255": 7.7627
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 58.6908,
+      "garment_window_mean_abs_255": 73.9267,
+      "whole_model_mean_abs_255": 7.8874
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "pantera:circuit",
+      "garment_mask_mean_abs_255": 58.7139,
+      "garment_window_mean_abs_255": 74.3489,
+      "whole_model_mean_abs_255": 7.8905
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 58.9084,
+      "garment_window_mean_abs_255": 71.9967,
+      "whole_model_mean_abs_255": 7.9171
+    },
+    {
+      "a": "maestro:signature",
+      "b": "pantera:circuit",
+      "garment_mask_mean_abs_255": 59.1906,
+      "garment_window_mean_abs_255": 56.6231,
+      "whole_model_mean_abs_255": 7.9565
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 59.6216,
+      "garment_window_mean_abs_255": 68.3178,
+      "whole_model_mean_abs_255": 8.013
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 59.6647,
+      "garment_window_mean_abs_255": 70.4562,
+      "whole_model_mean_abs_255": 8.0192
+    },
+    {
+      "a": "maestro:signature",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 59.7755,
+      "garment_window_mean_abs_255": 57.8514,
+      "whole_model_mean_abs_255": 8.035
+    },
+    {
+      "a": "maestro:legend",
+      "b": "pantera:mythic",
+      "garment_mask_mean_abs_255": 60.2159,
+      "garment_window_mean_abs_255": 57.7577,
+      "whole_model_mean_abs_255": 8.0942
+    },
+    {
+      "a": "pantera:base",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 60.8173,
+      "garment_window_mean_abs_255": 76.0428,
+      "whole_model_mean_abs_255": 8.1738
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 60.8672,
+      "garment_window_mean_abs_255": 58.4672,
+      "whole_model_mean_abs_255": 8.1816
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 61.2125,
+      "garment_window_mean_abs_255": 59.5647,
+      "whole_model_mean_abs_255": 8.2278
+    },
+    {
+      "a": "pantera:signature",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 61.3059,
+      "garment_window_mean_abs_255": 63.127,
+      "whole_model_mean_abs_255": 8.241
+    },
+    {
+      "a": "pantera:base",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 62.0097,
+      "garment_window_mean_abs_255": 82.9534,
+      "whole_model_mean_abs_255": 8.3337
+    },
+    {
+      "a": "pantera:base",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 62.0329,
+      "garment_window_mean_abs_255": 82.2664,
+      "whole_model_mean_abs_255": 8.3371
+    },
+    {
+      "a": "fiamma:mythic",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 62.2629,
+      "garment_window_mean_abs_255": 71.9602,
+      "whole_model_mean_abs_255": 8.3686
+    },
+    {
+      "a": "steamer:base",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 62.5874,
+      "garment_window_mean_abs_255": 74.7323,
+      "whole_model_mean_abs_255": 8.4116
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 62.7822,
+      "garment_window_mean_abs_255": 70.4748,
+      "whole_model_mean_abs_255": 8.4383
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 63.4114,
+      "garment_window_mean_abs_255": 66.1568,
+      "whole_model_mean_abs_255": 8.5232
+    },
+    {
+      "a": "pantera:signature",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 63.8889,
+      "garment_window_mean_abs_255": 74.7924,
+      "whole_model_mean_abs_255": 8.587
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "pantera:base",
+      "garment_mask_mean_abs_255": 64.5255,
+      "garment_window_mean_abs_255": 76.7417,
+      "whole_model_mean_abs_255": 8.6718
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 64.6683,
+      "garment_window_mean_abs_255": 81.5357,
+      "whole_model_mean_abs_255": 8.6913
+    },
+    {
+      "a": "steamer:mythic",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 64.8901,
+      "garment_window_mean_abs_255": 77.0806,
+      "whole_model_mean_abs_255": 8.7213
+    },
+    {
+      "a": "steamer:base",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 66.2856,
+      "garment_window_mean_abs_255": 90.4944,
+      "whole_model_mean_abs_255": 8.9084
+    },
+    {
+      "a": "pantera:signature",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 66.8759,
+      "garment_window_mean_abs_255": 74.6752,
+      "whole_model_mean_abs_255": 8.9885
+    },
+    {
+      "a": "steamer:signature",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 66.9221,
+      "garment_window_mean_abs_255": 79.8451,
+      "whole_model_mean_abs_255": 8.9945
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 67.4479,
+      "garment_window_mean_abs_255": 69.8571,
+      "whole_model_mean_abs_255": 9.0664
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 67.669,
+      "garment_window_mean_abs_255": 76.682,
+      "whole_model_mean_abs_255": 9.0951
+    },
+    {
+      "a": "fiamma:signature",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 68.5833,
+      "garment_window_mean_abs_255": 78.265,
+      "whole_model_mean_abs_255": 9.2181
+    },
+    {
+      "a": "steamer:mythic",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 68.6274,
+      "garment_window_mean_abs_255": 77.9215,
+      "whole_model_mean_abs_255": 9.2238
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 68.7292,
+      "garment_window_mean_abs_255": 84.1086,
+      "whole_model_mean_abs_255": 9.2379
+    },
+    {
+      "a": "maestro:base",
+      "b": "steamer:circuit",
+      "garment_mask_mean_abs_255": 69.2838,
+      "garment_window_mean_abs_255": 90.9469,
+      "whole_model_mean_abs_255": 9.3106
+    },
+    {
+      "a": "oracolo:base",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 69.8362,
+      "garment_window_mean_abs_255": 81.6497,
+      "whole_model_mean_abs_255": 9.386
+    },
+    {
+      "a": "pantera:signature",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 69.9648,
+      "garment_window_mean_abs_255": 72.1686,
+      "whole_model_mean_abs_255": 9.4046
+    },
+    {
+      "a": "steamer:signature",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 70.2417,
+      "garment_window_mean_abs_255": 80.686,
+      "whole_model_mean_abs_255": 9.4407
+    },
+    {
+      "a": "fiamma:circuit",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 70.3131,
+      "garment_window_mean_abs_255": 87.7057,
+      "whole_model_mean_abs_255": 9.4499
+    },
+    {
+      "a": "steamer:signature",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 70.3152,
+      "garment_window_mean_abs_255": 85.2269,
+      "whole_model_mean_abs_255": 9.4509
+    },
+    {
+      "a": "steamer:base",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 70.6451,
+      "garment_window_mean_abs_255": 95.765,
+      "whole_model_mean_abs_255": 9.4942
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 70.9002,
+      "garment_window_mean_abs_255": 88.1278,
+      "whole_model_mean_abs_255": 9.5288
+    },
+    {
+      "a": "steamer:legend",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 71.2273,
+      "garment_window_mean_abs_255": 72.4117,
+      "whole_model_mean_abs_255": 9.5738
+    },
+    {
+      "a": "steamer:mythic",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 71.8042,
+      "garment_window_mean_abs_255": 87.4903,
+      "whole_model_mean_abs_255": 9.6509
+    },
+    {
+      "a": "maestro:base",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 73.638,
+      "garment_window_mean_abs_255": 87.2104,
+      "whole_model_mean_abs_255": 9.8965
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "pantera:mythic",
+      "garment_mask_mean_abs_255": 73.6571,
+      "garment_window_mean_abs_255": 75.6572,
+      "whole_model_mean_abs_255": 9.9006
+    },
+    {
+      "a": "pantera:signature",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 73.7345,
+      "garment_window_mean_abs_255": 83.6291,
+      "whole_model_mean_abs_255": 9.9102
+    },
+    {
+      "a": "pantera:base",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 74.188,
+      "garment_window_mean_abs_255": 79.0853,
+      "whole_model_mean_abs_255": 9.9709
+    },
+    {
+      "a": "pantera:signature",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 74.8315,
+      "garment_window_mean_abs_255": 91.0557,
+      "whole_model_mean_abs_255": 10.0579
+    },
+    {
+      "a": "steamer:base",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 75.3223,
+      "garment_window_mean_abs_255": 92.4561,
+      "whole_model_mean_abs_255": 10.1229
+    },
+    {
+      "a": "steamer:signature",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 76.0673,
+      "garment_window_mean_abs_255": 84.5647,
+      "whole_model_mean_abs_255": 10.2236
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 76.0813,
+      "garment_window_mean_abs_255": 78.8917,
+      "whole_model_mean_abs_255": 10.2266
+    },
+    {
+      "a": "pantera:base",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 76.8587,
+      "garment_window_mean_abs_255": 83.4004,
+      "whole_model_mean_abs_255": 10.3301
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 77.2395,
+      "garment_window_mean_abs_255": 81.0886,
+      "whole_model_mean_abs_255": 10.3814
+    },
+    {
+      "a": "pantera:legend",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 77.4578,
+      "garment_window_mean_abs_255": 81.8286,
+      "whole_model_mean_abs_255": 10.4113
+    },
+    {
+      "a": "maestro:signature",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 77.9296,
+      "garment_window_mean_abs_255": 90.5171,
+      "whole_model_mean_abs_255": 10.4741
+    },
+    {
+      "a": "maestro:base",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 78.1009,
+      "garment_window_mean_abs_255": 75.7241,
+      "whole_model_mean_abs_255": 10.4979
+    },
+    {
+      "a": "steamer:mythic",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 78.1743,
+      "garment_window_mean_abs_255": 87.3153,
+      "whole_model_mean_abs_255": 10.5068
+    },
+    {
+      "a": "fiamma:circuit",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 79.0568,
+      "garment_window_mean_abs_255": 87.2586,
+      "whole_model_mean_abs_255": 10.6253
+    },
+    {
+      "a": "steamer:mythic",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 79.2474,
+      "garment_window_mean_abs_255": 92.1269,
+      "whole_model_mean_abs_255": 10.6509
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 79.4386,
+      "garment_window_mean_abs_255": 87.6808,
+      "whole_model_mean_abs_255": 10.6766
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "pantera:signature",
+      "garment_mask_mean_abs_255": 79.7226,
+      "garment_window_mean_abs_255": 82.6042,
+      "whole_model_mean_abs_255": 10.7156
+    },
+    {
+      "a": "steamer:signature",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 80.8912,
+      "garment_window_mean_abs_255": 94.8914,
+      "whole_model_mean_abs_255": 10.8718
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 81.2721,
+      "garment_window_mean_abs_255": 92.7401,
+      "whole_model_mean_abs_255": 10.9234
+    },
+    {
+      "a": "fiamma:base",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 81.9517,
+      "garment_window_mean_abs_255": 93.5858,
+      "whole_model_mean_abs_255": 11.0148
+    },
+    {
+      "a": "steamer:base",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 83.0013,
+      "garment_window_mean_abs_255": 91.3354,
+      "whole_model_mean_abs_255": 11.156
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 83.0532,
+      "garment_window_mean_abs_255": 101.5948,
+      "whole_model_mean_abs_255": 11.163
+    },
+    {
+      "a": "pantera:base",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 83.4566,
+      "garment_window_mean_abs_255": 99.7526,
+      "whole_model_mean_abs_255": 11.2166
+    },
+    {
+      "a": "pantera:base",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 83.8119,
+      "garment_window_mean_abs_255": 100.9918,
+      "whole_model_mean_abs_255": 11.2638
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "steamer:base",
+      "garment_mask_mean_abs_255": 83.9587,
+      "garment_window_mean_abs_255": 103.1971,
+      "whole_model_mean_abs_255": 11.2841
+    },
+    {
+      "a": "maestro:base",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 84.017,
+      "garment_window_mean_abs_255": 100.4003,
+      "whole_model_mean_abs_255": 11.2917
+    },
+    {
+      "a": "steamer:signature",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 84.2025,
+      "garment_window_mean_abs_255": 102.1711,
+      "whole_model_mean_abs_255": 11.3173
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 84.2928,
+      "garment_window_mean_abs_255": 89.7832,
+      "whole_model_mean_abs_255": 11.3297
+    },
+    {
+      "a": "pantera:signature",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 85.4595,
+      "garment_window_mean_abs_255": 97.0763,
+      "whole_model_mean_abs_255": 11.4861
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 85.9369,
+      "garment_window_mean_abs_255": 92.5477,
+      "whole_model_mean_abs_255": 11.5507
+    },
+    {
+      "a": "fiamma:legend",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 86.0764,
+      "garment_window_mean_abs_255": 93.8038,
+      "whole_model_mean_abs_255": 11.5695
+    },
+    {
+      "a": "steamer:mythic",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 86.1281,
+      "garment_window_mean_abs_255": 104.9765,
+      "whole_model_mean_abs_255": 11.576
+    },
+    {
+      "a": "maestro:legend",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 86.5119,
+      "garment_window_mean_abs_255": 94.638,
+      "whole_model_mean_abs_255": 11.6279
+    },
+    {
+      "a": "maestro:signature",
+      "b": "steamer:circuit",
+      "garment_mask_mean_abs_255": 88.0096,
+      "garment_window_mean_abs_255": 94.2536,
+      "whole_model_mean_abs_255": 11.8292
+    },
+    {
+      "a": "maestro:signature",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 88.0298,
+      "garment_window_mean_abs_255": 103.7069,
+      "whole_model_mean_abs_255": 11.8314
+    },
+    {
+      "a": "pantera:signature",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 89.1187,
+      "garment_window_mean_abs_255": 108.5419,
+      "whole_model_mean_abs_255": 11.978
+    },
+    {
+      "a": "pantera:base",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 90.5594,
+      "garment_window_mean_abs_255": 112.9424,
+      "whole_model_mean_abs_255": 12.1701
+    },
+    {
+      "a": "maestro:legend",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 91.5648,
+      "garment_window_mean_abs_255": 117.9009,
+      "whole_model_mean_abs_255": 12.3059
+    },
+    {
+      "a": "pantera:base",
+      "b": "steamer:circuit",
+      "garment_mask_mean_abs_255": 91.7966,
+      "garment_window_mean_abs_255": 109.206,
+      "whole_model_mean_abs_255": 12.3369
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 93.4318,
+      "garment_window_mean_abs_255": 114.7846,
+      "whole_model_mean_abs_255": 12.5573
+    },
+    {
+      "a": "steamer:base",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 93.6213,
+      "garment_window_mean_abs_255": 105.5408,
+      "whole_model_mean_abs_255": 12.5832
+    },
+    {
+      "a": "maestro:legend",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 94.0219,
+      "garment_window_mean_abs_255": 120.0065,
+      "whole_model_mean_abs_255": 12.6359
+    },
+    {
+      "a": "fiamma:legend",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 94.7634,
+      "garment_window_mean_abs_255": 120.8432,
+      "whole_model_mean_abs_255": 12.7354
+    },
+    {
+      "a": "fiamma:base",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 95.394,
+      "garment_window_mean_abs_255": 121.0555,
+      "whole_model_mean_abs_255": 12.8201
+    },
+    {
+      "a": "maestro:legend",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 97.5049,
+      "garment_window_mean_abs_255": 124.219,
+      "whole_model_mean_abs_255": 13.1043
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 97.6499,
+      "garment_window_mean_abs_255": 132.3587,
+      "whole_model_mean_abs_255": 13.1228
+    },
+    {
+      "a": "maestro:legend",
+      "b": "steamer:circuit",
+      "garment_mask_mean_abs_255": 97.8919,
+      "garment_window_mean_abs_255": 126.3682,
+      "whole_model_mean_abs_255": 13.1556
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "steamer:circuit",
+      "garment_mask_mean_abs_255": 98.1284,
+      "garment_window_mean_abs_255": 111.0482,
+      "whole_model_mean_abs_255": 13.1891
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 98.2297,
+      "garment_window_mean_abs_255": 127.072,
+      "whole_model_mean_abs_255": 13.2008
+    },
+    {
+      "a": "maestro:base",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 98.4105,
+      "garment_window_mean_abs_255": 117.895,
+      "whole_model_mean_abs_255": 13.2262
+    },
+    {
+      "a": "maestro:signature",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 98.5084,
+      "garment_window_mean_abs_255": 121.1931,
+      "whole_model_mean_abs_255": 13.2391
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 99.076,
+      "garment_window_mean_abs_255": 128.4803,
+      "whole_model_mean_abs_255": 13.3148
+    },
+    {
+      "a": "steamer:signature",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 99.0939,
+      "garment_window_mean_abs_255": 135.0715,
+      "whole_model_mean_abs_255": 13.3172
+    },
+    {
+      "a": "maestro:base",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 99.4008,
+      "garment_window_mean_abs_255": 125.313,
+      "whole_model_mean_abs_255": 13.3587
+    },
+    {
+      "a": "pantera:signature",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 99.4973,
+      "garment_window_mean_abs_255": 121.7317,
+      "whole_model_mean_abs_255": 13.3724
+    },
+    {
+      "a": "fiamma:signature",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 99.6784,
+      "garment_window_mean_abs_255": 130.0159,
+      "whole_model_mean_abs_255": 13.396
+    },
+    {
+      "a": "maestro:legend",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 99.7843,
+      "garment_window_mean_abs_255": 120.4535,
+      "whole_model_mean_abs_255": 13.4106
+    },
+    {
+      "a": "fiamma:legend",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 100.2256,
+      "garment_window_mean_abs_255": 121.2902,
+      "whole_model_mean_abs_255": 13.4697
+    },
+    {
+      "a": "maestro:base",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 100.3797,
+      "garment_window_mean_abs_255": 125.3343,
+      "whole_model_mean_abs_255": 13.4901
+    },
+    {
+      "a": "pantera:legend",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 100.7588,
+      "garment_window_mean_abs_255": 131.1305,
+      "whole_model_mean_abs_255": 13.5414
+    },
+    {
+      "a": "steamer:base",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 100.9971,
+      "garment_window_mean_abs_255": 124.5255,
+      "whole_model_mean_abs_255": 13.5736
+    },
+    {
+      "a": "steamer:mythic",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 101.1906,
+      "garment_window_mean_abs_255": 137.601,
+      "whole_model_mean_abs_255": 13.5991
+    },
+    {
+      "a": "steamer:mythic",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 101.2343,
+      "garment_window_mean_abs_255": 124.8679,
+      "whole_model_mean_abs_255": 13.6057
+    },
+    {
+      "a": "fiamma:base",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 101.7846,
+      "garment_window_mean_abs_255": 121.8961,
+      "whole_model_mean_abs_255": 13.6795
+    },
+    {
+      "a": "maestro:signature",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 102.6784,
+      "garment_window_mean_abs_255": 122.0704,
+      "whole_model_mean_abs_255": 13.8004
+    },
+    {
+      "a": "pantera:signature",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 102.8429,
+      "garment_window_mean_abs_255": 140.4261,
+      "whole_model_mean_abs_255": 13.8211
+    },
+    {
+      "a": "steamer:signature",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 102.8928,
+      "garment_window_mean_abs_255": 127.6372,
+      "whole_model_mean_abs_255": 13.8286
+    },
+    {
+      "a": "pantera:legend",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 102.9136,
+      "garment_window_mean_abs_255": 132.8324,
+      "whole_model_mean_abs_255": 13.8306
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 103.0808,
+      "garment_window_mean_abs_255": 133.7578,
+      "whole_model_mean_abs_255": 13.853
+    },
+    {
+      "a": "pantera:signature",
+      "b": "steamer:circuit",
+      "garment_mask_mean_abs_255": 104.1939,
+      "garment_window_mean_abs_255": 117.9952,
+      "whole_model_mean_abs_255": 14.0042
+    },
+    {
+      "a": "fiamma:mythic",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 104.795,
+      "garment_window_mean_abs_255": 136.3292,
+      "whole_model_mean_abs_255": 14.0838
+    },
+    {
+      "a": "maestro:signature",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 106.1797,
+      "garment_window_mean_abs_255": 128.6197,
+      "whole_model_mean_abs_255": 14.2703
+    },
+    {
+      "a": "pantera:base",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 106.4435,
+      "garment_window_mean_abs_255": 131.6213,
+      "whole_model_mean_abs_255": 14.3058
+    },
+    {
+      "a": "pantera:legend",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 106.6986,
+      "garment_window_mean_abs_255": 137.448,
+      "whole_model_mean_abs_255": 14.3399
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "pantera:legend",
+      "garment_mask_mean_abs_255": 106.7255,
+      "garment_window_mean_abs_255": 144.8807,
+      "whole_model_mean_abs_255": 14.3424
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 107.1074,
+      "garment_window_mean_abs_255": 144.5469,
+      "whole_model_mean_abs_255": 14.3943
+    },
+    {
+      "a": "steamer:legend",
+      "b": "fiamma:signature",
+      "garment_mask_mean_abs_255": 107.113,
+      "garment_window_mean_abs_255": 139.0279,
+      "whole_model_mean_abs_255": 14.3951
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 107.1198,
+      "garment_window_mean_abs_255": 143.7617,
+      "whole_model_mean_abs_255": 14.3959
+    },
+    {
+      "a": "pantera:legend",
+      "b": "steamer:circuit",
+      "garment_mask_mean_abs_255": 107.307,
+      "garment_window_mean_abs_255": 139.5947,
+      "whole_model_mean_abs_255": 14.4207
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 107.7041,
+      "garment_window_mean_abs_255": 138.4838,
+      "whole_model_mean_abs_255": 14.4747
+    },
+    {
+      "a": "oracolo:mythic",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 108.2227,
+      "garment_window_mean_abs_255": 131.9142,
+      "whole_model_mean_abs_255": 14.5449
+    },
+    {
+      "a": "oracolo:base",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 108.6764,
+      "garment_window_mean_abs_255": 132.925,
+      "whole_model_mean_abs_255": 14.6058
+    },
+    {
+      "a": "pantera:legend",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 108.8982,
+      "garment_window_mean_abs_255": 133.2794,
+      "whole_model_mean_abs_255": 14.6352
+    },
+    {
+      "a": "maestro:legend",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 108.9431,
+      "garment_window_mean_abs_255": 133.9916,
+      "whole_model_mean_abs_255": 14.6413
+    },
+    {
+      "a": "fiamma:legend",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 109.282,
+      "garment_window_mean_abs_255": 134.6985,
+      "whole_model_mean_abs_255": 14.6868
+    },
+    {
+      "a": "maestro:base",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 110.2744,
+      "garment_window_mean_abs_255": 144.3413,
+      "whole_model_mean_abs_255": 14.8198
+    },
+    {
+      "a": "maestro:base",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 110.439,
+      "garment_window_mean_abs_255": 140.0826,
+      "whole_model_mean_abs_255": 14.8422
+    },
+    {
+      "a": "steamer:legend",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 110.6731,
+      "garment_window_mean_abs_255": 142.2651,
+      "whole_model_mean_abs_255": 14.8739
+    },
+    {
+      "a": "fiamma:base",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 111.5259,
+      "garment_window_mean_abs_255": 136.1015,
+      "whole_model_mean_abs_255": 14.9885
+    },
+    {
+      "a": "steamer:base",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 111.5974,
+      "garment_window_mean_abs_255": 138.2755,
+      "whole_model_mean_abs_255": 14.9983
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 111.7467,
+      "garment_window_mean_abs_255": 127.4645,
+      "whole_model_mean_abs_255": 15.019
+    },
+    {
+      "a": "fiamma:circuit",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 111.7698,
+      "garment_window_mean_abs_255": 127.8866,
+      "whole_model_mean_abs_255": 15.0221
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 112.1241,
+      "garment_window_mean_abs_255": 152.7801,
+      "whole_model_mean_abs_255": 15.0682
+    },
+    {
+      "a": "steamer:legend",
+      "b": "fiamma:mythic",
+      "garment_mask_mean_abs_255": 113.3487,
+      "garment_window_mean_abs_255": 145.3473,
+      "whole_model_mean_abs_255": 15.2333
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 114.8289,
+      "garment_window_mean_abs_255": 134.0566,
+      "whole_model_mean_abs_255": 15.433
+    },
+    {
+      "a": "maestro:base",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 114.9239,
+      "garment_window_mean_abs_255": 140.3593,
+      "whole_model_mean_abs_255": 15.4451
+    },
+    {
+      "a": "maestro:base",
+      "b": "pantera:legend",
+      "garment_mask_mean_abs_255": 115.1246,
+      "garment_window_mean_abs_255": 150.395,
+      "whole_model_mean_abs_255": 15.4712
+    },
+    {
+      "a": "maestro:signature",
+      "b": "colosso:signature",
+      "garment_mask_mean_abs_255": 115.161,
+      "garment_window_mean_abs_255": 143.666,
+      "whole_model_mean_abs_255": 15.4777
+    },
+    {
+      "a": "steamer:legend",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 115.5052,
+      "garment_window_mean_abs_255": 142.7122,
+      "whole_model_mean_abs_255": 15.5234
+    },
+    {
+      "a": "maestro:signature",
+      "b": "oracolo:mythic",
+      "garment_mask_mean_abs_255": 116.3097,
+      "garment_window_mean_abs_255": 143.3893,
+      "whole_model_mean_abs_255": 15.6318
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "pantera:base",
+      "garment_mask_mean_abs_255": 117.388,
+      "garment_window_mean_abs_255": 139.6075,
+      "whole_model_mean_abs_255": 15.776
+    },
+    {
+      "a": "oracolo:signature",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 117.9328,
+      "garment_window_mean_abs_255": 146.105,
+      "whole_model_mean_abs_255": 15.8498
+    },
+    {
+      "a": "maestro:base",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 117.9569,
+      "garment_window_mean_abs_255": 152.7755,
+      "whole_model_mean_abs_255": 15.8524
+    },
+    {
+      "a": "pantera:legend",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 118.3593,
+      "garment_window_mean_abs_255": 147.2212,
+      "whole_model_mean_abs_255": 15.9067
+    },
+    {
+      "a": "pantera:base",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 119.0968,
+      "garment_window_mean_abs_255": 145.6082,
+      "whole_model_mean_abs_255": 16.0055
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "pantera:mythic",
+      "garment_mask_mean_abs_255": 119.8923,
+      "garment_window_mean_abs_255": 141.4497,
+      "whole_model_mean_abs_255": 16.1137
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "steamer:base",
+      "garment_mask_mean_abs_255": 120.5612,
+      "garment_window_mean_abs_255": 146.5251,
+      "whole_model_mean_abs_255": 16.203
+    },
+    {
+      "a": "steamer:base",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 120.7801,
+      "garment_window_mean_abs_255": 146.9443,
+      "whole_model_mean_abs_255": 16.2324
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 121.09,
+      "garment_window_mean_abs_255": 142.568,
+      "whole_model_mean_abs_255": 16.2744
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 122.9673,
+      "garment_window_mean_abs_255": 144.8314,
+      "whole_model_mean_abs_255": 16.5267
+    },
+    {
+      "a": "maestro:base",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 123.1407,
+      "garment_window_mean_abs_255": 162.3392,
+      "whole_model_mean_abs_255": 16.5483
+    },
+    {
+      "a": "maestro:signature",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 123.2463,
+      "garment_window_mean_abs_255": 144.2724,
+      "whole_model_mean_abs_255": 16.5642
+    },
+    {
+      "a": "steamer:legend",
+      "b": "oracolo:signature",
+      "garment_mask_mean_abs_255": 123.8553,
+      "garment_window_mean_abs_255": 155.1199,
+      "whole_model_mean_abs_255": 16.6455
+    },
+    {
+      "a": "pantera:mythic",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 125.4286,
+      "garment_window_mean_abs_255": 147.4504,
+      "whole_model_mean_abs_255": 16.8577
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "pantera:signature",
+      "garment_mask_mean_abs_255": 125.9578,
+      "garment_window_mean_abs_255": 148.3968,
+      "whole_model_mean_abs_255": 16.9287
+    },
+    {
+      "a": "steamer:signature",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 126.2267,
+      "garment_window_mean_abs_255": 148.0266,
+      "whole_model_mean_abs_255": 16.9648
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 127.3755,
+      "garment_window_mean_abs_255": 149.255,
+      "whole_model_mean_abs_255": 17.1192
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "steamer:base",
+      "garment_mask_mean_abs_255": 127.6308,
+      "garment_window_mean_abs_255": 153.1061,
+      "whole_model_mean_abs_255": 17.1532
+    },
+    {
+      "a": "steamer:mythic",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 128.5036,
+      "garment_window_mean_abs_255": 150.8321,
+      "whole_model_mean_abs_255": 17.2708
+    },
+    {
+      "a": "maestro:signature",
+      "b": "pantera:legend",
+      "garment_mask_mean_abs_255": 129.4584,
+      "garment_window_mean_abs_255": 153.6789,
+      "whole_model_mean_abs_255": 17.3993
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 129.6524,
+      "garment_window_mean_abs_255": 152.0604,
+      "whole_model_mean_abs_255": 17.4252
+    },
+    {
+      "a": "maestro:signature",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 130.0405,
+      "garment_window_mean_abs_255": 156.0733,
+      "whole_model_mean_abs_255": 17.4772
+    },
+    {
+      "a": "pantera:signature",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 131.4941,
+      "garment_window_mean_abs_255": 154.3974,
+      "whole_model_mean_abs_255": 17.6728
+    },
+    {
+      "a": "maestro:legend",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 133.3941,
+      "garment_window_mean_abs_255": 166.7241,
+      "whole_model_mean_abs_255": 17.927
+    },
+    {
+      "a": "fiamma:legend",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 133.732,
+      "garment_window_mean_abs_255": 167.4278,
+      "whole_model_mean_abs_255": 17.9723
+    },
+    {
+      "a": "maestro:legend",
+      "b": "pantera:circuit",
+      "garment_mask_mean_abs_255": 133.9704,
+      "garment_window_mean_abs_255": 174.9626,
+      "whole_model_mean_abs_255": 18.0038
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 134.3083,
+      "garment_window_mean_abs_255": 175.6663,
+      "whole_model_mean_abs_255": 18.0491
+    },
+    {
+      "a": "maestro:legend",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 134.5575,
+      "garment_window_mean_abs_255": 175.3847,
+      "whole_model_mean_abs_255": 18.0827
+    },
+    {
+      "a": "fiamma:base",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 135.9777,
+      "garment_window_mean_abs_255": 168.8362,
+      "whole_model_mean_abs_255": 18.2742
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 136.554,
+      "garment_window_mean_abs_255": 177.0747,
+      "whole_model_mean_abs_255": 18.3511
+    },
+    {
+      "a": "maestro:signature",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 138.0614,
+      "garment_window_mean_abs_255": 165.6389,
+      "whole_model_mean_abs_255": 18.5554
+    },
+    {
+      "a": "fiamma:signature",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 138.3234,
+      "garment_window_mean_abs_255": 175.556,
+      "whole_model_mean_abs_255": 18.5895
+    },
+    {
+      "a": "steamer:circuit",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 139.5278,
+      "garment_window_mean_abs_255": 166.1026,
+      "whole_model_mean_abs_255": 18.7523
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "fiamma:legend",
+      "garment_mask_mean_abs_255": 141.3175,
+      "garment_window_mean_abs_255": 182.2585,
+      "whole_model_mean_abs_255": 18.9913
+    },
+    {
+      "a": "oracolo:base",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 142.3846,
+      "garment_window_mean_abs_255": 178.8397,
+      "whole_model_mean_abs_255": 19.1356
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "fiamma:base",
+      "garment_mask_mean_abs_255": 142.7858,
+      "garment_window_mean_abs_255": 183.6668,
+      "whole_model_mean_abs_255": 19.1888
+    },
+    {
+      "a": "pantera:legend",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 142.8093,
+      "garment_window_mean_abs_255": 179.9505,
+      "whole_model_mean_abs_255": 19.1921
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 143.6768,
+      "garment_window_mean_abs_255": 187.0782,
+      "whole_model_mean_abs_255": 19.3087
+    },
+    {
+      "a": "fiamma:circuit",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 143.9054,
+      "garment_window_mean_abs_255": 187.5003,
+      "whole_model_mean_abs_255": 19.3394
+    },
+    {
+      "a": "pantera:legend",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 143.9727,
+      "garment_window_mean_abs_255": 188.6112,
+      "whole_model_mean_abs_255": 19.3479
+    },
+    {
+      "a": "steamer:legend",
+      "b": "oracolo:base",
+      "garment_mask_mean_abs_255": 148.3033,
+      "garment_window_mean_abs_255": 187.8432,
+      "whole_model_mean_abs_255": 19.9307
+    },
+    {
+      "a": "fiamma:mythic",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 148.8085,
+      "garment_window_mean_abs_255": 193.0507,
+      "whole_model_mean_abs_255": 19.9986
+    },
+    {
+      "a": "pantera:circuit",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 148.8796,
+      "garment_window_mean_abs_255": 196.0817,
+      "whole_model_mean_abs_255": 20.0076
+    },
+    {
+      "a": "maestro:signature",
+      "b": "pantera:mythic",
+      "garment_mask_mean_abs_255": 149.1027,
+      "garment_window_mean_abs_255": 205.3018,
+      "whole_model_mean_abs_255": 20.0378
+    },
+    {
+      "a": "steamer:legend",
+      "b": "fiamma:circuit",
+      "garment_mask_mean_abs_255": 149.4667,
+      "garment_window_mean_abs_255": 196.5038,
+      "whole_model_mean_abs_255": 20.0865
+    },
+    {
+      "a": "maestro:signature",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 150.3042,
+      "garment_window_mean_abs_255": 205.8781,
+      "whole_model_mean_abs_255": 20.1991
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "pantera:legend",
+      "garment_mask_mean_abs_255": 150.3948,
+      "garment_window_mean_abs_255": 194.7812,
+      "whole_model_mean_abs_255": 20.2112
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "colosso:base",
+      "garment_mask_mean_abs_255": 150.7919,
+      "garment_window_mean_abs_255": 193.6703,
+      "whole_model_mean_abs_255": 20.265
+    },
+    {
+      "a": "maestro:base",
+      "b": "steamer:base",
+      "garment_mask_mean_abs_255": 151.5782,
+      "garment_window_mean_abs_255": 192.8563,
+      "whole_model_mean_abs_255": 20.371
+    },
+    {
+      "a": "maestro:signature",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 152.6926,
+      "garment_window_mean_abs_255": 208.6835,
+      "whole_model_mean_abs_255": 20.5201
+    },
+    {
+      "a": "maestro:signature",
+      "b": "steamer:base",
+      "garment_mask_mean_abs_255": 153.9833,
+      "garment_window_mean_abs_255": 196.163,
+      "whole_model_mean_abs_255": 20.6945
+    },
+    {
+      "a": "maestro:signature",
+      "b": "pantera:signature",
+      "garment_mask_mean_abs_255": 155.1947,
+      "garment_window_mean_abs_255": 212.2488,
+      "whole_model_mean_abs_255": 20.8563
+    },
+    {
+      "a": "oracolo:signature",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 155.2885,
+      "garment_window_mean_abs_255": 197.0609,
+      "whole_model_mean_abs_255": 20.8696
+    },
+    {
+      "a": "maestro:circuit",
+      "b": "steamer:legend",
+      "garment_mask_mean_abs_255": 155.5952,
+      "garment_window_mean_abs_255": 202.6738,
+      "whole_model_mean_abs_255": 20.9102
+    },
+    {
+      "a": "maestro:base",
+      "b": "pantera:base",
+      "garment_mask_mean_abs_255": 155.9729,
+      "garment_window_mean_abs_255": 200.1529,
+      "whole_model_mean_abs_255": 20.9609
+    },
+    {
+      "a": "maestro:signature",
+      "b": "pantera:base",
+      "garment_mask_mean_abs_255": 158.4296,
+      "garment_window_mean_abs_255": 203.4596,
+      "whole_model_mean_abs_255": 21.2919
+    },
+    {
+      "a": "maestro:mythic",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 164.9947,
+      "garment_window_mean_abs_255": 201.2428,
+      "whole_model_mean_abs_255": 22.1747
+    },
+    {
+      "a": "maestro:base",
+      "b": "pantera:mythic",
+      "garment_mask_mean_abs_255": 167.0697,
+      "garment_window_mean_abs_255": 201.9951,
+      "whole_model_mean_abs_255": 22.4537
+    },
+    {
+      "a": "oracolo:mythic",
+      "b": "colosso:mythic",
+      "garment_mask_mean_abs_255": 167.6567,
+      "garment_window_mean_abs_255": 215.0217,
+      "whole_model_mean_abs_255": 22.5319
+    },
+    {
+      "a": "maestro:base",
+      "b": "steamer:signature",
+      "garment_mask_mean_abs_255": 167.8678,
+      "garment_window_mean_abs_255": 202.5714,
+      "whole_model_mean_abs_255": 22.5608
+    },
+    {
+      "a": "maestro:base",
+      "b": "steamer:mythic",
+      "garment_mask_mean_abs_255": 170.1447,
+      "garment_window_mean_abs_255": 205.3768,
+      "whole_model_mean_abs_255": 22.8668
+    },
+    {
+      "a": "maestro:base",
+      "b": "pantera:signature",
+      "garment_mask_mean_abs_255": 173.1353,
+      "garment_window_mean_abs_255": 208.9421,
+      "whole_model_mean_abs_255": 23.2688
+    }
+  ],
+  "per_outfit": [
+    {
+      "unlock_key": "maestro:base",
+      "athlete_id": "maestro",
+      "outfit_id": "base",
+      "primary_hex": "#08bfe8",
+      "trim_hex": "#f4fbff",
+      "art_dependent": false,
+      "file": "roster_maestro_base_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        72.423,
+        214.207,
+        220.586
+      ],
+      "garment_window_mean_rgb": [
+        37.108,
+        242.286,
+        253.622
+      ],
+      "body_mean_rgb": [
+        202.113,
+        217.289,
+        213.648
+      ]
+    },
+    {
+      "unlock_key": "maestro:circuit",
+      "athlete_id": "maestro",
+      "outfit_id": "circuit",
+      "primary_hex": "#315cff",
+      "trim_hex": "#9ef8ff",
+      "art_dependent": true,
+      "file": "roster_maestro_circuit_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        61.901,
+        87.929,
+        220.587
+      ],
+      "garment_window_mean_rgb": [
+        40.43,
+        63.969,
+        253.626
+      ],
+      "body_mean_rgb": [
+        200.698,
+        200.32,
+        213.648
+      ]
+    },
+    {
+      "unlock_key": "maestro:legend",
+      "athlete_id": "maestro",
+      "outfit_id": "legend",
+      "primary_hex": "#d5a62a",
+      "trim_hex": "#fff0a3",
+      "art_dependent": true,
+      "file": "roster_maestro_legend_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        229.393,
+        170.308,
+        49.85
+      ],
+      "garment_window_mean_rgb": [
+        252.724,
+        182.384,
+        39.67
+      ],
+      "body_mean_rgb": [
+        223.207,
+        211.39,
+        190.703
+      ]
+    },
+    {
+      "unlock_key": "maestro:signature",
+      "athlete_id": "maestro",
+      "outfit_id": "signature",
+      "primary_hex": "#03c7ed",
+      "trim_hex": "#162f61",
+      "art_dependent": true,
+      "file": "roster_maestro_signature_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        49.685,
+        201.71,
+        201.825
+      ],
+      "garment_window_mean_rgb": [
+        37.047,
+        252.142,
+        253.626
+      ],
+      "body_mean_rgb": [
+        199.055,
+        215.608,
+        211.126
+      ]
+    },
+    {
+      "unlock_key": "maestro:mythic",
+      "athlete_id": "maestro",
+      "outfit_id": "mythic",
+      "primary_hex": "#172f67",
+      "trim_hex": "#f5f1df",
+      "art_dependent": true,
+      "file": "roster_maestro_mythic_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        72.853,
+        70.036,
+        84.663
+      ],
+      "garment_window_mean_rgb": [
+        37.484,
+        40.144,
+        77.127
+      ],
+      "body_mean_rgb": [
+        202.171,
+        197.915,
+        195.382
+      ]
+    },
+    {
+      "unlock_key": "pantera:base",
+      "athlete_id": "pantera",
+      "outfit_id": "base",
+      "primary_hex": "#ed3e5d",
+      "trim_hex": "#ff7690",
+      "art_dependent": false,
+      "file": "roster_pantera_base_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        229.184,
+        56.706,
+        66.929
+      ],
+      "garment_window_mean_rgb": [
+        252.638,
+        44.534,
+        66.447
+      ],
+      "body_mean_rgb": [
+        223.179,
+        196.123,
+        192.998
+      ]
+    },
+    {
+      "unlock_key": "pantera:circuit",
+      "athlete_id": "pantera",
+      "outfit_id": "circuit",
+      "primary_hex": "#2c6fff",
+      "trim_hex": "#caefff",
+      "art_dependent": true,
+      "file": "roster_pantera_circuit_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        67.27,
+        101.255,
+        220.587
+      ],
+      "garment_window_mean_rgb": [
+        39.475,
+        84.701,
+        253.626
+      ],
+      "body_mean_rgb": [
+        201.42,
+        202.111,
+        213.648
+      ]
+    },
+    {
+      "unlock_key": "pantera:legend",
+      "athlete_id": "pantera",
+      "outfit_id": "legend",
+      "primary_hex": "#ffb626",
+      "trim_hex": "#fff0a0",
+      "art_dependent": true,
+      "file": "roster_pantera_legend_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        229.484,
+        197.677,
+        49.065
+      ],
+      "garment_window_mean_rgb": [
+        252.763,
+        221.423,
+        39.069
+      ],
+      "body_mean_rgb": [
+        223.219,
+        215.068,
+        190.598
+      ]
+    },
+    {
+      "unlock_key": "pantera:signature",
+      "athlete_id": "pantera",
+      "outfit_id": "signature",
+      "primary_hex": "#d20d43",
+      "trim_hex": "#17151e",
+      "art_dependent": true,
+      "file": "roster_pantera_signature_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        205.021,
+        46.282,
+        47.005
+      ],
+      "garment_window_mean_rgb": [
+        252.615,
+        37.2,
+        47.39
+      ],
+      "body_mean_rgb": [
+        219.929,
+        194.721,
+        190.32
+      ]
+    },
+    {
+      "unlock_key": "pantera:mythic",
+      "athlete_id": "pantera",
+      "outfit_id": "mythic",
+      "primary_hex": "#bd174a",
+      "trim_hex": "#11131c",
+      "art_dependent": true,
+      "file": "roster_pantera_mythic_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        189.294,
+        46.453,
+        49.767
+      ],
+      "garment_window_mean_rgb": [
+        236.013,
+        37.523,
+        51.306
+      ],
+      "body_mean_rgb": [
+        217.816,
+        194.744,
+        190.691
+      ]
+    },
+    {
+      "unlock_key": "steamer:base",
+      "athlete_id": "steamer",
+      "outfit_id": "base",
+      "primary_hex": "#f47713",
+      "trim_hex": "#ff9a35",
+      "art_dependent": false,
+      "file": "roster_steamer_base_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        228.872,
+        96.047,
+        40.46
+      ],
+      "garment_window_mean_rgb": [
+        252.35,
+        95.162,
+        37.42
+      ],
+      "body_mean_rgb": [
+        223.137,
+        201.41,
+        189.44
+      ]
+    },
+    {
+      "unlock_key": "steamer:circuit",
+      "athlete_id": "steamer",
+      "outfit_id": "circuit",
+      "primary_hex": "#087b86",
+      "trim_hex": "#c8fff5",
+      "art_dependent": true,
+      "file": "roster_steamer_circuit_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        65.275,
+        115.107,
+        120.009
+      ],
+      "garment_window_mean_rgb": [
+        37.108,
+        101.147,
+        121.921
+      ],
+      "body_mean_rgb": [
+        201.152,
+        203.972,
+        200.132
+      ]
+    },
+    {
+      "unlock_key": "steamer:legend",
+      "athlete_id": "steamer",
+      "outfit_id": "legend",
+      "primary_hex": "#e3c232",
+      "trim_hex": "#fff3af",
+      "art_dependent": true,
+      "file": "roster_steamer_legend_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        229.499,
+        217.541,
+        52.463
+      ],
+      "garment_window_mean_rgb": [
+        252.764,
+        247.411,
+        41.38
+      ],
+      "body_mean_rgb": [
+        223.221,
+        217.737,
+        191.055
+      ]
+    },
+    {
+      "unlock_key": "steamer:signature",
+      "athlete_id": "steamer",
+      "outfit_id": "signature",
+      "primary_hex": "#e85d16",
+      "trim_hex": "#252a31",
+      "art_dependent": true,
+      "file": "roster_steamer_signature_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        203.872,
+        66.369,
+        40.443
+      ],
+      "garment_window_mean_rgb": [
+        251.091,
+        64.615,
+        37.562
+      ],
+      "body_mean_rgb": [
+        219.775,
+        197.42,
+        189.438
+      ]
+    },
+    {
+      "unlock_key": "steamer:mythic",
+      "athlete_id": "steamer",
+      "outfit_id": "mythic",
+      "primary_hex": "#cf531c",
+      "trim_hex": "#29211c",
+      "art_dependent": true,
+      "file": "roster_steamer_mythic_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        204.477,
+        60.15,
+        40.101
+      ],
+      "garment_window_mean_rgb": [
+        251.505,
+        56.26,
+        37.915
+      ],
+      "body_mean_rgb": [
+        219.857,
+        196.585,
+        189.392
+      ]
+    },
+    {
+      "unlock_key": "fiamma:base",
+      "athlete_id": "fiamma",
+      "outfit_id": "base",
+      "primary_hex": "#a9e71d",
+      "trim_hex": "#d7ff4b",
+      "art_dependent": false,
+      "file": "roster_fiamma_base_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        172.786,
+        226.499,
+        41.685
+      ],
+      "garment_window_mean_rgb": [
+        186.675,
+        253.101,
+        38.002
+      ],
+      "body_mean_rgb": [
+        215.6,
+        218.941,
+        189.605
+      ]
+    },
+    {
+      "unlock_key": "fiamma:circuit",
+      "athlete_id": "fiamma",
+      "outfit_id": "circuit",
+      "primary_hex": "#326dff",
+      "trim_hex": "#c8ecff",
+      "art_dependent": true,
+      "file": "roster_fiamma_circuit_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        67.805,
+        98.96,
+        220.587
+      ],
+      "garment_window_mean_rgb": [
+        40.684,
+        82.225,
+        253.626
+      ],
+      "body_mean_rgb": [
+        201.492,
+        201.802,
+        213.648
+      ]
+    },
+    {
+      "unlock_key": "fiamma:legend",
+      "athlete_id": "fiamma",
+      "outfit_id": "legend",
+      "primary_hex": "#f2a72b",
+      "trim_hex": "#fff0a7",
+      "art_dependent": true,
+      "file": "roster_fiamma_legend_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        229.404,
+        171.916,
+        50.456
+      ],
+      "garment_window_mean_rgb": [
+        252.736,
+        184.683,
+        39.87
+      ],
+      "body_mean_rgb": [
+        223.208,
+        211.606,
+        190.785
+      ]
+    },
+    {
+      "unlock_key": "fiamma:signature",
+      "athlete_id": "fiamma",
+      "outfit_id": "signature",
+      "primary_hex": "#087a75",
+      "trim_hex": "#adf51e",
+      "art_dependent": true,
+      "file": "roster_fiamma_signature_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        61.43,
+        112.703,
+        81.031
+      ],
+      "garment_window_mean_rgb": [
+        37.108,
+        99.668,
+        95.039
+      ],
+      "body_mean_rgb": [
+        200.635,
+        203.649,
+        194.893
+      ]
+    },
+    {
+      "unlock_key": "fiamma:mythic",
+      "athlete_id": "fiamma",
+      "outfit_id": "mythic",
+      "primary_hex": "#075c68",
+      "trim_hex": "#f27b18",
+      "art_dependent": true,
+      "file": "roster_fiamma_mythic_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        72.126,
+        70.927,
+        68.931
+      ],
+      "garment_window_mean_rgb": [
+        37.095,
+        63.969,
+        78.267
+      ],
+      "body_mean_rgb": [
+        202.073,
+        198.034,
+        193.266
+      ]
+    },
+    {
+      "unlock_key": "oracolo:base",
+      "athlete_id": "oracolo",
+      "outfit_id": "base",
+      "primary_hex": "#6d42b8",
+      "trim_hex": "#a96cff",
+      "art_dependent": false,
+      "file": "roster_oracolo_base_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        92.065,
+        57.076,
+        199.474
+      ],
+      "garment_window_mean_rgb": [
+        81.269,
+        46.217,
+        232.221
+      ],
+      "body_mean_rgb": [
+        204.752,
+        196.172,
+        210.811
+      ]
+    },
+    {
+      "unlock_key": "oracolo:signature",
+      "athlete_id": "oracolo",
+      "outfit_id": "signature",
+      "primary_hex": "#38216f",
+      "trim_hex": "#29dfff",
+      "art_dependent": true,
+      "file": "roster_oracolo_signature_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        54.118,
+        65.514,
+        96.609
+      ],
+      "garment_window_mean_rgb": [
+        42.219,
+        38.166,
+        86.915
+      ],
+      "body_mean_rgb": [
+        199.651,
+        197.307,
+        196.988
+      ]
+    },
+    {
+      "unlock_key": "oracolo:mythic",
+      "athlete_id": "oracolo",
+      "outfit_id": "mythic",
+      "primary_hex": "#161224",
+      "trim_hex": "#28d7ff",
+      "art_dependent": true,
+      "file": "roster_oracolo_mythic_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        50.716,
+        63.613,
+        62.083
+      ],
+      "garment_window_mean_rgb": [
+        37.432,
+        37.319,
+        38.666
+      ],
+      "body_mean_rgb": [
+        199.194,
+        197.052,
+        192.348
+      ]
+    },
+    {
+      "unlock_key": "colosso:base",
+      "athlete_id": "colosso",
+      "outfit_id": "base",
+      "primary_hex": "#e8b400",
+      "trim_hex": "#ffe98a",
+      "art_dependent": false,
+      "file": "roster_colosso_base_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        229.47,
+        192.696,
+        45.345
+      ],
+      "garment_window_mean_rgb": [
+        252.756,
+        216.15,
+        37.122
+      ],
+      "body_mean_rgb": [
+        223.217,
+        214.399,
+        190.097
+      ]
+    },
+    {
+      "unlock_key": "colosso:signature",
+      "athlete_id": "colosso",
+      "outfit_id": "signature",
+      "primary_hex": "#25211e",
+      "trim_hex": "#ff7a12",
+      "art_dependent": true,
+      "file": "roster_colosso_signature_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        74.944,
+        52.549,
+        39.993
+      ],
+      "garment_window_mean_rgb": [
+        38.518,
+        38.166,
+        38.075
+      ],
+      "body_mean_rgb": [
+        202.452,
+        195.564,
+        189.377
+      ]
+    },
+    {
+      "unlock_key": "colosso:mythic",
+      "athlete_id": "colosso",
+      "outfit_id": "mythic",
+      "primary_hex": "#ede3c5",
+      "trim_hex": "#174b38",
+      "art_dependent": true,
+      "file": "roster_colosso_mythic_x0_512x512.png",
+      "garment_mask_mean_rgb": [
+        205.028,
+        205.065,
+        196.74
+      ],
+      "garment_window_mean_rgb": [
+        252.638,
+        253.075,
+        252.77
+      ],
+      "body_mean_rgb": [
+        219.93,
+        216.059,
+        210.442
+      ]
+    }
+  ],
+  "same_athlete_min_255": 2.5571,
+  "same_athlete_max_255": 164.7771,
+  "whole_model_min_255": 0.3438,
+  "whole_model_max_255": 22.1449,
+  "cross_athlete_min_255": 0.7418,
+  "pairs_below_floor": [
+    {
+      "pair": "steamer:signature|steamer:mythic",
+      "garment_mask_mean_abs_255": 2.5571,
+      "garment_window_mean_abs_255": 3.0427,
+      "whole_model_mean_abs_255": 0.3438
+    },
+    {
+      "pair": "pantera:signature|pantera:mythic",
+      "garment_mask_mean_abs_255": 6.3038,
+      "garment_window_mean_abs_255": 6.947,
+      "whole_model_mean_abs_255": 0.8472
+    }
+  ]
+}

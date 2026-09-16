@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok shot_quality/perfect_contact_registered
+ok shot_quality/early_contact_registered
+ok shot_quality/late_contact_registered
+ok shot_quality/control_contact_registered
+ok shot_quality/power_contact_registered
+ok shot_quality/perfect_timing_grades_perfect
+ok shot_quality/early_timing_grades_early
+ok shot_quality/late_timing_grades_late
+ok shot_quality/perfect_timing_has_better_quality
+ok shot_quality/low_charge_reads_control
+ok shot_quality/high_charge_reads_power
+ok shot_quality/power_costs_more_energy_than_control
+ok shot_quality/clean_power_travels_faster_than_control
+# report quality(perfect=1.000 early=0.642 late=0.779) energy(control=0.943 power=0.860) speed(control=227.1 power=357.4)
+# report reference quality(perfect=1.000 early=0.642 late=0.779) energy(control=0.943 power=0.860) speed(control=227.1 power=357.4)
+PASS 13/13

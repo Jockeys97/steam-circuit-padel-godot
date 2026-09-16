@@ -1,0 +1,270 @@
+{
+ "region_geometry": {
+  "engine_reported_dx_px": 501.4136,
+  "engine_reported_dy_px": 0.0,
+  "box_a_xyxy": [
+   241,
+   102,
+   538,
+   659
+  ],
+  "box_b_xyxy": [
+   742,
+   102,
+   1039,
+   659
+  ],
+  "box_wh": [
+   297,
+   557
+  ],
+  "torso_band_frac_of_body_height": [
+   0.14,
+   0.6
+  ],
+  "torso_band_y_offsets_in_box": [
+   78,
+   334
+  ]
+ },
+ "images": {
+  "ab": {
+   "path": "outfit_ab_side_by_side_1280x720.png",
+   "bytes": 277445,
+   "sha256": "a5797073fd13412b9d4344fd8e47a67d7d25c5b36b3eea018441dc005bd37764",
+   "size": [
+    1280,
+    720
+   ],
+   "mode": "RGBA",
+   "distinct_rgb_colours": 13587,
+   "mean_rgb_255": [
+    100.556,
+    104.307,
+    111.669
+   ],
+   "std_rgb_255": 61.2863,
+   "max_channel_255": 255,
+   "min_channel_255": 0
+  },
+  "a_only": {
+   "path": "outfit_a_only_1280x720.png",
+   "bytes": 157470,
+   "sha256": "47d9586f3a6aa40d2f46189df59664e6e99195446bd8659c669ed7620f7d2e82",
+   "size": [
+    1280,
+    720
+   ],
+   "mode": "RGBA",
+   "distinct_rgb_colours": 7858,
+   "mean_rgb_255": [
+    87.83,
+    92.375,
+    101.654
+   ],
+   "std_rgb_255": 47.7847,
+   "max_channel_255": 255,
+   "min_channel_255": 0
+  },
+  "b_only": {
+   "path": "outfit_b_only_1280x720.png",
+   "bytes": 152433,
+   "sha256": "aca8dcddff3210a4a6e07128bb855797bd3cd7afc46273363730eb45456ba2d1",
+   "size": [
+    1280,
+    720
+   ],
+   "mode": "RGBA",
+   "distinct_rgb_colours": 7744,
+   "mean_rgb_255": [
+    87.829,
+    92.489,
+    101.716
+   ],
+   "std_rgb_255": 48.2436,
+   "max_channel_255": 255,
+   "min_channel_255": 0
+  }
+ },
+ "diff_ab_side_by_side_FULLBODY": {
+  "pixels": 165429,
+  "mean_abs_overall_255": 21.3599,
+  "mean_abs_per_channel_255": [
+   22.2941,
+   22.1607,
+   19.6248
+  ],
+  "rms_overall_255": 57.9125,
+  "mean_euclidean_255": 38.1407,
+  "max_euclidean_255": 433.0704,
+  "pixels_euclidean_gt10": 41445,
+  "frac_euclidean_gt10": 0.25053,
+  "pixels_euclidean_gt25": 28854,
+  "frac_euclidean_gt25": 0.174419,
+  "mean_abs_over_changed_gt10_255": 82.4277
+ },
+ "diff_ab_side_by_side_TORSO": {
+  "pixels": 76032,
+  "mean_abs_overall_255": 28.327,
+  "mean_abs_per_channel_255": [
+   29.4837,
+   29.2414,
+   26.2557
+  ],
+  "rms_overall_255": 71.2389,
+  "mean_euclidean_255": 50.6643,
+  "max_euclidean_255": 414.7011,
+  "pixels_euclidean_gt10": 22115,
+  "frac_euclidean_gt10": 0.290864,
+  "pixels_euclidean_gt25": 15859,
+  "frac_euclidean_gt25": 0.208583,
+  "mean_abs_over_changed_gt10_255": 95.4393
+ },
+ "bg_colour_rgb": [
+  56,
+  61,
+  71
+ ],
+ "floor_colour_rgb": [
+  95,
+  101,
+  113
+ ],
+ "masked_body_pixels": 98702,
+ "masked_body_frac_of_box": 0.596643,
+ "diff_ab_MASKED_BODY": {
+  "pixels": 98702,
+  "mean_abs_overall_255": 29.8954,
+  "mean_abs_per_channel_255": [
+   30.8073,
+   31.0443,
+   27.8347
+  ],
+  "rms_overall_255": 68.5403,
+  "mean_euclidean_255": 53.5336,
+  "max_euclidean_255": 433.0704,
+  "pixels_euclidean_gt10": 36752,
+  "frac_euclidean_gt10": 0.372353,
+  "pixels_euclidean_gt25": 24200,
+  "frac_euclidean_gt25": 0.245182,
+  "mean_abs_over_changed_gt10_255": 77.456
+ },
+ "diff_ab_side_by_side_LEGS": {
+  "pixels": 71280,
+  "mean_abs_overall_255": 21.7702,
+  "mean_abs_per_channel_255": [
+   23.427,
+   23.0047,
+   18.8789
+  ],
+  "rms_overall_255": 54.7203,
+  "mean_euclidean_255": 38.5899,
+  "max_euclidean_255": 395.952,
+  "pixels_euclidean_gt10": 18931,
+  "frac_euclidean_gt10": 0.265586,
+  "pixels_euclidean_gt25": 13248,
+  "frac_euclidean_gt25": 0.185859,
+  "mean_abs_over_changed_gt10_255": 77.8681
+ },
+ "diff_ab_side_by_side_HEADBAND_control": {
+  "pixels": 19899,
+  "mean_abs_overall_255": 11.2684,
+  "mean_abs_per_channel_255": [
+   11.1503,
+   11.4994,
+   11.1554
+  ],
+  "rms_overall_255": 41.3048,
+  "mean_euclidean_255": 20.1118,
+  "max_euclidean_255": 433.0704,
+  "pixels_euclidean_gt10": 3125,
+  "frac_euclidean_gt10": 0.157043,
+  "pixels_euclidean_gt25": 2138,
+  "frac_euclidean_gt25": 0.107443,
+  "mean_abs_over_changed_gt10_255": 70.4228
+ },
+ "region_distinct_colours": {
+  "ab_frame_A_region": 6322,
+  "ab_frame_B_region": 6185,
+  "a_only_A_region": 6322,
+  "b_only_B_region": 6185
+ },
+ "null_control_A_abframe_vs_aonly": {
+  "pixels": 165429,
+  "mean_abs_overall_255": 0.0,
+  "mean_abs_per_channel_255": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "rms_overall_255": 0.0,
+  "mean_euclidean_255": 0.0,
+  "max_euclidean_255": 0.0,
+  "pixels_euclidean_gt10": 0,
+  "frac_euclidean_gt10": 0.0,
+  "pixels_euclidean_gt25": 0,
+  "frac_euclidean_gt25": 0.0,
+  "mean_abs_over_changed_gt10_255": 0.0
+ },
+ "null_control_B_abframe_vs_bonly": {
+  "pixels": 165429,
+  "mean_abs_overall_255": 0.0,
+  "mean_abs_per_channel_255": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "rms_overall_255": 0.0,
+  "mean_euclidean_255": 0.0,
+  "max_euclidean_255": 0.0,
+  "pixels_euclidean_gt10": 0,
+  "frac_euclidean_gt10": 0.0,
+  "pixels_euclidean_gt25": 0,
+  "frac_euclidean_gt25": 0.0,
+  "mean_abs_over_changed_gt10_255": 0.0
+ },
+ "diff_aonly_vs_bonly_FULLBODY": {
+  "pixels": 165429,
+  "mean_abs_overall_255": 21.3599,
+  "mean_abs_per_channel_255": [
+   22.2941,
+   22.1607,
+   19.6248
+  ],
+  "rms_overall_255": 57.9125,
+  "mean_euclidean_255": 38.1407,
+  "max_euclidean_255": 433.0704,
+  "pixels_euclidean_gt10": 41445,
+  "frac_euclidean_gt10": 0.25053,
+  "pixels_euclidean_gt25": 28854,
+  "frac_euclidean_gt25": 0.174419,
+  "mean_abs_over_changed_gt10_255": 82.4277
+ },
+ "diff_aonly_vs_bonly_TORSO": {
+  "pixels": 76032,
+  "mean_abs_overall_255": 28.327,
+  "mean_abs_per_channel_255": [
+   29.4837,
+   29.2414,
+   26.2557
+  ],
+  "rms_overall_255": 71.2389,
+  "mean_euclidean_255": 50.6643,
+  "max_euclidean_255": 414.7011,
+  "pixels_euclidean_gt10": 22115,
+  "frac_euclidean_gt10": 0.290864,
+  "pixels_euclidean_gt25": 15859,
+  "frac_euclidean_gt25": 0.208583,
+  "mean_abs_over_changed_gt10_255": 95.4393
+ },
+ "frame_check": {
+  "ab_pixels_differing_from_top_left_bg": 495519,
+  "ab_frac_differing_from_bg": 0.537673,
+  "bg_pixel_rgba": [
+   56,
+   61,
+   71,
+   255
+  ]
+ }
+}

@@ -1,0 +1,204 @@
+{
+  "beauty_png": "raised-backed-off__1152x648.png",
+  "cam_mode": "dolly-solved",
+  "camera": {
+    "dolly_back_m": 7.48586442321539,
+    "fov": 50.8660011291504,
+    "mode": "dolly-solved",
+    "position": {
+      "x": 0.0,
+      "y": 21.2506999969482,
+      "z": 9.53996181488037
+    },
+    "rotation_degrees": {
+      "x": -65.1999893188477,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "solve": "near-feet"
+  },
+  "frame": {
+    "h": 648,
+    "w": 1152
+  },
+  "geometry": {
+    "athletes": {
+      "opponent": {
+        "feet_px": {
+          "behind": false,
+          "x": 792.95947265625,
+          "y": 253.549270629883
+        },
+        "head_px": {
+          "behind": false,
+          "x": 807.290344238281,
+          "y": 228.100997924805
+        },
+        "near": false,
+        "world": {
+          "x": 7.82847690582275,
+          "y": 0.0,
+          "z": -3.07954335212708
+        }
+      },
+      "opponentMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 465.443634033203,
+          "y": 249.74723815918
+        },
+        "head_px": {
+          "behind": false,
+          "x": 458.162109375,
+          "y": 224.121978759766
+        },
+        "near": false,
+        "world": {
+          "x": -4.0,
+          "y": 0.0,
+          "z": -3.23868203163147
+        }
+      },
+      "player": {
+        "feet_px": {
+          "behind": false,
+          "x": 437.170074462891,
+          "y": 448.0
+        },
+        "head_px": {
+          "behind": false,
+          "x": 426.633544921875,
+          "y": 433.517822265625
+        },
+        "near": true,
+        "world": {
+          "x": -4.40000009536743,
+          "y": 0.0,
+          "z": 4.05000019073486
+        }
+      },
+      "playerMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 845.123168945312,
+          "y": 445.067321777344
+        },
+        "head_px": {
+          "behind": false,
+          "x": 865.508056640625,
+          "y": 430.391571044922
+        },
+        "near": true,
+        "world": {
+          "x": 8.54512023925781,
+          "y": 0.0,
+          "z": 3.95537948608398
+        }
+      }
+    },
+    "ball": {
+      "behind_camera": false,
+      "centre_px": {
+        "behind": false,
+        "x": 809.764526367188,
+        "y": 243.800765991211
+      },
+      "radius_m": 0.1,
+      "radius_px": 2.9405517578125,
+      "world": {
+        "x": 7.94962930679321,
+        "y": 1.36151337623596,
+        "z": -2.65454339981079
+      }
+    },
+    "court_corners_px": {
+      "far_left": {
+        "behind": false,
+        "x": 313.505859375,
+        "y": 179.342193603516
+      },
+      "far_right": {
+        "behind": false,
+        "x": 838.494140625,
+        "y": 179.342193603516
+      },
+      "near_left": {
+        "behind": false,
+        "x": 245.721618652344,
+        "y": 522.757446289062
+      },
+      "near_right": {
+        "behind": false,
+        "x": 906.278381347656,
+        "y": 522.757446289062
+      },
+      "net_left": {
+        "behind": false,
+        "x": 283.489318847656,
+        "y": 331.414825439453
+      },
+      "net_right": {
+        "behind": false,
+        "x": 868.510681152344,
+        "y": 331.414825439453
+      }
+    },
+    "court_grid": {
+      "in_frame": 1107,
+      "in_frame_pct": 100.0,
+      "near_half_in_frame": 533,
+      "near_half_in_frame_pct": 100.0,
+      "near_half_samples": 533,
+      "samples": 1107
+    },
+    "court_m": {
+      "depth": 12.7,
+      "length": 20.0
+    },
+    "frame": {
+      "h": 648.0,
+      "w": 1152.0
+    }
+  },
+  "hud_mode": "as-shipped",
+  "hud_panels": [
+    {
+      "h": 125.0,
+      "name": "ScorePanel",
+      "w": 720.0,
+      "x": 216.0,
+      "y": 10.0
+    },
+    {
+      "h": 160.0,
+      "name": "FeedbackPanel",
+      "w": 268.0,
+      "x": 442.0,
+      "y": 458.0
+    },
+    {
+      "h": 172.0,
+      "name": "LogPanel",
+      "w": 420.0,
+      "x": 12.0,
+      "y": 466.0
+    },
+    {
+      "h": 91.0,
+      "name": "DebugPanel",
+      "w": 196.0,
+      "x": 12.0,
+      "y": 10.0
+    },
+    {
+      "h": 113.0,
+      "name": "HintPanel",
+      "w": 260.0,
+      "x": 880.0,
+      "y": 148.0
+    }
+  ],
+  "id": "raised-backed-off",
+  "mask_png": "raised-backed-off__1152x648__mask.png",
+  "why": "Same look, same pitch, same FOV: the camera is dollied straight back along its own view axis until the near pair's feet, where they stand on this frozen frame, clear the bottom HUD band. The smallest camera move that fixes today's frame."
+}

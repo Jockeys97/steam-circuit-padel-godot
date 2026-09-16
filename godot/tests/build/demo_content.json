@@ -1,0 +1,33 @@
+{
+  "generatedBy": "tools/export/gen-demo-content.mjs",
+  "source": "js/build.js",
+  "sources": {
+    "js/build.js": "72e5296fb1fdb8640cbc6e737d18958da3efd9de16b9fd374f125229c87e5ce6",
+    "js/data.js": "c63c496cd967663a5ec9f708e77b6f6948e4b523ba5b0e4280a40af642ec6403",
+    "index.html": "c1060116462db0b96efe40a235262f1a804588375081bfaeb50d43b24058c13b"
+  },
+  "content": {
+    "athletes": [
+      "maestro",
+      "steamer"
+    ],
+    "arenas": [
+      "clockwork"
+    ],
+    "modes": [
+      "quick"
+    ],
+    "difficulty": "medium",
+    "outfitChallenges": true,
+    "wishlistUrl": "https://store.steampowered.com/"
+  },
+  "allModes": [
+    "quick",
+    "tournament",
+    "career"
+  ],
+  "outfitChallenges": {
+    "maestro": 4,
+    "steamer": 4
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "schema": "steam-circuit-padel-pro.locale-rules",
+  "schemaVersion": 1,
+  "title": "Engine-free locale resolution contract for the Godot port",
+  "reference": {
+    "file": "js/i18n.js",
+    "sha256": "a884267562d3aad30ea4d9634195a85cd727e421c7bd68bbb1cc3a9f6748ed30",
+    "bytes": 67726,
+    "lines": 1415,
+    "gitRev": "2979588",
+    "note": "The frozen browser build is the only source of strings. If this hash stops matching, the reference moved and this contract has to be re-derived by a human — the drift test fails on purpose."
+  },
+  "data": {
+    "generated": "godot/src/locale/locale_data.gd",
+    "generatedBy": "tools/i18n-port/extract-i18n.mjs",
+    "resolver": "godot/src/locale/locale.gd"
+  },
+  "locales": ["it", "en"],
+  "defaultLocale": "en",
+  "fallbackLang": "it",
+  "fallbackChain": ["<requested locale>", "it", "<the message id itself>"],
+  "fallbackEvidence": "js/i18n.js:1408-1414 — t() is `DICT[currentLang][key] ?? DICT.it[key] ?? key`, and `let currentLang = \"en\"` (js/i18n.js:1398). Falling back to Italian is deliberate in the reference; falling back to the raw key is what the AI_LEGGENDA_NAME bug looked like on screen.",
+  "unknownLocale": {
+    "resolvesTo": "it",
+    "evidence": "js/i18n.js:1400-1402 — setLang(lang) sets currentLang = DICT[lang] ? lang : \"it\", silently. Measured against the live module for de/fr/es/zz: getLang() === \"it\" for all four.",
+    "consequence": "A locale the reference does not have is NOT a missing string: it is a request that the reference answers in Italian. The port must do the same and must not invent a table."
+  },
+  "absentLocales": [
+    {
+      "locale": "de",
+      "status": "absent-from-reference",
+      "evidence": "js/i18n.js contains exactly two table blocks, `it:` (line 2) and `en:` (line 699); there is no `de` block anywhere in js/**, index.html or styles.css.",
+      "rule": "recorded missing, never machine-invented: a German-facing string is translated only when a human supplies it; until then the fallback chain answers, exactly as the reference does."
+    }
+  ],
+  "placeholder": {
+    "syntax": "{name}",
+    "substitution": "for each param, replaceAll(`{name}`, String(value)) — js/i18n.js:1411-1413",
+    "unbound": "left in the output verbatim, braces included (the reference leaves them on screen too)",
+    "rule": "a message id that carries placeholders must arrive with its parameters; an id alone cannot fill them"
+  },
+  "compositeSeparator": ":",
+  "compositeRules": {
+    "controlMsg": {
+      "binding": "placeholder",
+      "placeholder": "position",
+      "argument": "message-id",
+      "evidence": "js/game.js:455-456 — `const position = … ? t(\"roleBackPos\") : t(\"roleNetPos\"); addEvent(state, t(\"controlMsg\", { position }))`. The port stores `controlMsg:<role id>` because the sim may not call t() (simulation-port-boundary.md §2)."
+    },
+    "pointYou": {
+      "binding": "suffix",
+      "separator": " · ",
+      "argument": "message-id",
+      "evidence": "js/game.js:2110 — `state.pointMessage = `${t(\"pointYou\")}${reason ? ` · ${reason}` : \"\"}``, with `reason` already rendered at the call site (js/game.js:2154-2180)."
+    },
+    "pointOpp": {
+      "binding": "suffix",
+      "separator": " · ",
+      "argument": "message-id",
+      "evidence": "js/game.js:2110, the other branch of the same ternary."
+    }
+  },
+  "derivedKeyFamilies": [
+    {
+      "pattern": "athlete_{id}_{suffix}",
+      "idsFrom": "js/data.js:ATHLETES",
+      "idField": "id",
+      "suffixes": ["name", "role", "desc", "special"],
+      "evidence": "js/render.js and js/ui.js compose `athlete_${id}_name` and friends; scripts/i18n-audit.mjs:77-79 builds the same expected keys."
+    },
+    {
+      "pattern": "arena_{id}_{suffix}",
+      "idsFrom": "js/data.js:ARENAS",
+      "idField": "id",
+      "suffixes": ["name", "desc"],
+      "evidence": "js/render.js:907 composes `arena_${id}_name`; scripts/i18n-audit.mjs:80-82."
+    },
+    {
+      "pattern": "ai_{id}_{suffix}",
+      "idsFrom": "js/data.js:AI_OPPONENTS",
+      "idField": "id",
+      "suffixes": ["name"],
+      "evidence": "js/ui.js composes `ai_${id}_name`; the missing `ai_leggenda_name` is the AI_LEGGENDA_NAME bug (git 1652240)."
+    },
+    {
+      "pattern": "{nameKey}",
+      "idsFrom": "js/data.js:ATHLETE_OUTFITS[*].nameKey",
+      "evidence": "outfit name keys are already full keys in the data; scripts/i18n-audit.mjs:84-86."
+    },
+    {
+      "pattern": "obj_{id}",
+      "idsFrom": "js/data.js:OBJECTIVE_DEFS",
+      "evidence": "objective titles are composed from the def ids; scripts/i18n-audit.mjs:87."
+    }
+  ],
+  "invariants": [
+    "Every key of the fallback locale exists in every locale of `locales` (key parity). The reference currently has full parity: 688 keys in `it`, 688 in `en`.",
+    "A key uses the same placeholder set in every locale: a translation that drops {n} prints a half sentence, one that invents a placeholder leaves braces on screen.",
+    "Every id the ported simulation can emit resolves to a string in the requested locale or, failing that, in the fallback locale — never to the id itself.",
+    "Every runtime-composed key family in `derivedKeyFamilies` exists, in every locale. These are the keys no one reads while writing them: they only appear on screen, in match, for one combination of data."
+  ]
+}

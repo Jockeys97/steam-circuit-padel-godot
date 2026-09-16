@@ -1,0 +1,158 @@
+{
+ "windows": {
+  "head": {
+   "A_mean_rgb_255": [
+    175.5,
+    173.7,
+    167.5
+   ],
+   "B_mean_rgb_255": [
+    176.0,
+    175.1,
+    169.3
+   ],
+   "mean_abs_diff_255": 31.755,
+   "frac_pixels_euclid_gt10": 0.4541,
+   "max_euclid_255": 430.09
+  },
+  "neck_chest": {
+   "A_mean_rgb_255": [
+    247.6,
+    245.4,
+    233.8
+   ],
+   "B_mean_rgb_255": [
+    249.0,
+    245.8,
+    231.3
+   ],
+   "mean_abs_diff_255": 9.394,
+   "frac_pixels_euclid_gt10": 0.163,
+   "max_euclid_255": 333.31
+  },
+  "upper_back": {
+   "A_mean_rgb_255": [
+    228.9,
+    220.0,
+    203.2
+   ],
+   "B_mean_rgb_255": [
+    230.0,
+    220.4,
+    201.5
+   ],
+   "mean_abs_diff_255": 19.389,
+   "frac_pixels_euclid_gt10": 0.35,
+   "max_euclid_255": 326.84
+  },
+  "mid_torso": {
+   "A_mean_rgb_255": [
+    196.2,
+    194.5,
+    190.3
+   ],
+   "B_mean_rgb_255": [
+    196.3,
+    196.1,
+    193.3
+   ],
+   "mean_abs_diff_255": 51.931,
+   "frac_pixels_euclid_gt10": 0.4365,
+   "max_euclid_255": 405.06
+  },
+  "waist_hip": {
+   "A_mean_rgb_255": [
+    112.0,
+    114.4,
+    126.4
+   ],
+   "B_mean_rgb_255": [
+    108.3,
+    114.8,
+    128.3
+   ],
+   "mean_abs_diff_255": 90.073,
+   "frac_pixels_euclid_gt10": 0.7844,
+   "max_euclid_255": 395.54
+  },
+  "shorts": {
+   "A_mean_rgb_255": [
+    186.8,
+    184.1,
+    180.5
+   ],
+   "B_mean_rgb_255": [
+    188.7,
+    188.6,
+    184.8
+   ],
+   "mean_abs_diff_255": 51.361,
+   "frac_pixels_euclid_gt10": 0.6008,
+   "max_euclid_255": 394.87
+  },
+  "thigh": {
+   "A_mean_rgb_255": [
+    211.9,
+    209.4,
+    200.0
+   ],
+   "B_mean_rgb_255": [
+    212.4,
+    211.4,
+    202.1
+   ],
+   "mean_abs_diff_255": 36.783,
+   "frac_pixels_euclid_gt10": 0.4726,
+   "max_euclid_255": 252.68
+  },
+  "shin": {
+   "A_mean_rgb_255": [
+    155.6,
+    155.6,
+    156.2
+   ],
+   "B_mean_rgb_255": [
+    156.7,
+    157.7,
+    158.3
+   ],
+   "mean_abs_diff_255": 14.485,
+   "frac_pixels_euclid_gt10": 0.2828,
+   "max_euclid_255": 260.13
+  },
+  "feet": {
+   "A_mean_rgb_255": [
+    103.4,
+    107.8,
+    121.6
+   ],
+   "B_mean_rgb_255": [
+    102.7,
+    108.5,
+    124.4
+   ],
+   "mean_abs_diff_255": 38.952,
+   "frac_pixels_euclid_gt10": 0.5446,
+   "max_euclid_255": 389.09
+  }
+ },
+ "bands": {
+  "head_0-12pct": {
+   "mean_abs_255": 11.567,
+   "frac_gt10": 0.163
+  },
+  "upper_14-60pct": {
+   "mean_abs_255": 28.078,
+   "frac_gt10": 0.2902
+  },
+  "lower_55-98pct": {
+   "mean_abs_255": 21.284,
+   "frac_gt10": 0.2654
+  },
+  "feet_94-100pct": {
+   "mean_abs_255": 24.507,
+   "frac_gt10": 0.3341
+  }
+ },
+ "body_box_height_px": 561
+}

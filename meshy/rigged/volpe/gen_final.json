@@ -1,0 +1,33 @@
+{
+ "id": "01a0a77f-097d-7091-80b0-e904b7d93ecb",
+ "type": "multi-image-to-3d",
+ "name": "",
+ "art_style": "",
+ "object_prompt": "",
+ "style_prompt": "",
+ "negative_prompt": "",
+ "texture_prompt": "Anthropomorphic ivory-white spitz dog athlete standing in A-pose: fluffy curled tail, tall pointed ears, brass goggle strap on forehead, ivory tee with gold trim, navy shorts, brass wristbands",
+ "texture_image_url": "",
+ "text_style_prompt": "",
+ "image_style_url": "",
+ "status": "SUCCEEDED",
+ "created_at": 1789516523072,
+ "progress": 100,
+ "started_at": 1789516523075,
+ "finished_at": 1789517151152,
+ "expires_at": 1789776351152,
+ "task_error": null,
+ "model_url": "https://assets.meshy.ai/aafe693c-55ea-465a-9b37-2651c15b2a65/tasks/01a0a77f-097d-7091-80b0-e904b7d93ecb/output/model.glb?Expires=1789776351&Signature=Za2JL~9HA~ClJz9mJywz4u7MrJdfae1JARtBxcGAS5aVxx4yMVkrv2ixBioDQD6~aaq3fKHTZ2mc2Npn2EA9HYHG9Dth4Mas6ETEQ02TbeYW764DwZQAJtFS0mU~Y4x9suSq6sW~JylIhOohGBHIdHv1xn8yxBLf6vPHj~Xd3BhwX0pFPGO6Q5044IUuyXgIlkl-s5t37VCt394rwpuMRy~5iFfZUKmXFzHQ8qad1e35Qz4-ThNDTX4CJ3WsH5Duy9TD7--6PnniYlQBTG7s7lJg4k-DgYw5YqwLShBuFfWOnOiX8sSKnxTGBsoWbprVIQBa4TqoA~3bVReHOlDhYw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+ "model_urls": {
+  "glb": "https://assets.meshy.ai/aafe693c-55ea-465a-9b37-2651c15b2a65/tasks/01a0a77f-097d-7091-80b0-e904b7d93ecb/output/model.glb?Expires=1789776351&Signature=Za2JL~9HA~ClJz9mJywz4u7MrJdfae1JARtBxcGAS5aVxx4yMVkrv2ixBioDQD6~aaq3fKHTZ2mc2Npn2EA9HYHG9Dth4Mas6ETEQ02TbeYW764DwZQAJtFS0mU~Y4x9suSq6sW~JylIhOohGBHIdHv1xn8yxBLf6vPHj~Xd3BhwX0pFPGO6Q5044IUuyXgIlkl-s5t37VCt394rwpuMRy~5iFfZUKmXFzHQ8qad1e35Qz4-ThNDTX4CJ3WsH5Duy9TD7--6PnniYlQBTG7s7lJg4k-DgYw5YqwLShBuFfWOnOiX8sSKnxTGBsoWbprVIQBa4TqoA~3bVReHOlDhYw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+  "fbx": "https://assets.meshy.ai/aafe693c-55ea-465a-9b37-2651c15b2a65/tasks/01a0a77f-097d-7091-80b0-e904b7d93ecb/output/model.fbx?Expires=1789776351&Signature=a9HMxSMtN8fwY9vCiBfd~b7Sf7ZfVy7I3mmgQTxT4OyskYO6DxLWbCtnpwokjaIkry9xruy-Jobs686wAduGp9tEcEsE4~5ir4TfADM4pgHAPf0o1Tfyt4KDuEcQJ6ieLomksQxiCAzQkwv~BoYxHcdmqxfpvK-wWVvtovvb-IIj1qrPVCQ3HDgw0S~Yvmeqt9GLQEhy3P1A8FkCsb01s7oXkcpF1Zxz1LNoDvRmOQpbKu53qplPXuD68aMJOuaaIkqPpaN024K~IM3q4-SeziiQGdnTk1ZHJpwN5XTUEdQTLa9Jg3LLymTXEM-GwSKymIXL2iuHFg6kzsJ1Wa4xcA__&Key-Pair-Id=K1VGYTHIYLM9UM"
+ },
+ "thumbnail_url": "https://assets.meshy.ai/aafe693c-55ea-465a-9b37-2651c15b2a65/tasks/01a0a77f-097d-7091-80b0-e904b7d93ecb/output/preview.png?Expires=1789776351&Signature=eSwxnqZloLXntc-vLuE1oXrh7Eyd0xY0296qEseVD8YQnwhn1-Cgg~NaMSxE5kM-quo1NphFcIMMGi-nkk1yfF4PkgZWy~aFW5cZr5mql5GZZfK39tjAi5MOEfi9cy67btBZ78p8KY~S08hq-WZ-5McqLM6djMepxsvJ6KOylp53Y7fd3OlJXicUZnmQ~gvx-hBnQjFpFnNEfadhavpeK9bGdTxHOVZB88f5hcbZL5bhuJ5YTP2WJ2gPcQMmBpv45KSIwlhNdbxh22xSHtawZrthLydso7Cflj2itGyh26-oPNZJ~q9EdzF31okHNg3xMpKTMH-PCkwMgjINPu7RcQ__&Key-Pair-Id=K1VGYTHIYLM9UM",
+ "texture_urls": [
+  {
+   "base_color": "https://assets.meshy.ai/aafe693c-55ea-465a-9b37-2651c15b2a65/tasks/01a0a77f-097d-7091-80b0-e904b7d93ecb/output/texture_0.png?Expires=1789776351&Signature=KP9OM5OD55tPwcPLe6TqeKvUKkDeojUXFgI2aw3qiepzYDw7gMA68XeChKwLsIpK5ylNR025yBU2AVcj7Plxi2M-IRjnFLbAdHSGb3p2bnAnJZrRbdkNnnjdAjisWNvVkzyZdRbzao03m2BTdua9itmR4BL4hbj7MHw5jpIqLK-x7wETpo9a5OOB536uuaLDP4ukx2IM4DiXqM-wLtELd7SipG9MjXmBrnatUuiDo36orxQ8sL3rKJsxBgRRVXbY-~o9AxZYx2onM~OBLCXkzDAlvAXkkneNBKqsCS5rPXuORJDPQQZhmdtxdncNzXCJoMn79JZfCaEAMuIyx2A1eQ__&Key-Pair-Id=K1VGYTHIYLM9UM"
+  }
+ ],
+ "remove_lighting": true,
+ "consumed_credits": 30
+}

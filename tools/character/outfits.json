@@ -1,0 +1,34 @@
+{
+  "_comment": "Outfit palettes derived from the single baked baseColorTexture of the Volpe trial rig. Apply with tools/character/recolour_outfits.py. No Meshy call, no paid API.",
+  "source_texture": "meshy/rigged/volpe/volpe-texture.png",
+  "defaults": {
+    "protect_sat": 0.22,
+    "hue_tol_deg": 22.0,
+    "sat_min": 0.30,
+    "val_min": 0.05,
+    "val_max": 0.95,
+    "strength": 1.0,
+    "luma_clamp": [0.45, 1.7]
+  },
+  "outfits": [
+    {
+      "name": "outfit-a",
+      "label": "Midnight Violet",
+      "chroma": { "hue_shift_deg": 0.0, "sat_scale": 1.18, "val_scale": 0.94 },
+      "anchors": [
+        { "from": "#22304a", "to": "#3d2360", "note": "navy shorts and navy sneaker panels -> deep violet" },
+        { "from": "#ffc94a", "to": "#7ef0ff", "note": "gold trim and wristbands -> ice cyan" },
+        { "from": "#22304a", "to": "#2a1246", "note": "second, darker violet pass for shaded navy" }
+      ]
+    },
+    {
+      "name": "outfit-b",
+      "label": "Ember",
+      "chroma": { "hue_shift_deg": 18.0, "sat_scale": 1.35, "val_scale": 1.02 },
+      "anchors": [
+        { "from": "#22304a", "to": "#6b1420", "note": "navy shorts -> deep crimson" },
+        { "from": "#ffc94a", "to": "#ff8a2b", "note": "gold trim -> ember orange" }
+      ]
+    }
+  ]
+}

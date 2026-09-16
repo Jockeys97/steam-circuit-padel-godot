@@ -1,0 +1,204 @@
+{
+  "beauty_png": "raised-and-slim-band__1152x648.png",
+  "cam_mode": "dolly-solved",
+  "camera": {
+    "dolly_back_m": 6.76059368997812,
+    "fov": 50.8660011291504,
+    "mode": "dolly-solved",
+    "position": {
+      "x": 0.0,
+      "y": 20.5923156738281,
+      "z": 9.23574542999268
+    },
+    "rotation_degrees": {
+      "x": -65.1999893188477,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "solve": "near-baseline"
+  },
+  "frame": {
+    "h": 648,
+    "w": 1152
+  },
+  "geometry": {
+    "athletes": {
+      "opponent": {
+        "feet_px": {
+          "behind": false,
+          "x": 799.5546875,
+          "y": 251.407730102539
+        },
+        "head_px": {
+          "behind": false,
+          "x": 814.800659179688,
+          "y": 224.987030029297
+        },
+        "near": false,
+        "world": {
+          "x": 7.82847690582275,
+          "y": 0.0,
+          "z": -3.07954335212708
+        }
+      },
+      "opponentMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 462.09228515625,
+          "y": 247.496398925781
+        },
+        "head_px": {
+          "behind": false,
+          "x": 454.34716796875,
+          "y": 220.888488769531
+        },
+        "near": false,
+        "world": {
+          "x": -4.0,
+          "y": 0.0,
+          "z": -3.23868203163147
+        }
+      },
+      "player": {
+        "feet_px": {
+          "behind": false,
+          "x": 432.345123291016,
+          "y": 452.3095703125
+        },
+        "head_px": {
+          "behind": false,
+          "x": 421.033630371094,
+          "y": 437.623748779297
+        },
+        "near": true,
+        "world": {
+          "x": -4.40000009536743,
+          "y": 0.0,
+          "z": 4.05000019073486
+        }
+      },
+      "playerMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 854.458618164062,
+          "y": 449.266967773438
+        },
+        "head_px": {
+          "behind": false,
+          "x": 876.339782714844,
+          "y": 434.372131347656
+        },
+        "near": true,
+        "world": {
+          "x": 8.54512023925781,
+          "y": 0.0,
+          "z": 3.95537948608398
+        }
+      }
+    },
+    "ball": {
+      "behind_camera": false,
+      "centre_px": {
+        "behind": false,
+        "x": 817.318298339844,
+        "y": 241.209228515625
+      },
+      "radius_m": 0.1,
+      "radius_px": 3.03558349609375,
+      "world": {
+        "x": 7.94962930679321,
+        "y": 1.36151337623596,
+        "z": -2.65454339981079
+      }
+    },
+    "court_corners_px": {
+      "far_left": {
+        "behind": false,
+        "x": 305.960327148438,
+        "y": 175.183959960938
+      },
+      "far_right": {
+        "behind": false,
+        "x": 846.039672851562,
+        "y": 175.183959960938
+      },
+      "near_left": {
+        "behind": false,
+        "x": 233.686584472656,
+        "y": 530.0
+      },
+      "near_right": {
+        "behind": false,
+        "x": 918.313415527344,
+        "y": 530.0
+      },
+      "net_left": {
+        "behind": false,
+        "x": 274.088531494141,
+        "y": 331.653167724609
+      },
+      "net_right": {
+        "behind": false,
+        "x": 877.911499023438,
+        "y": 331.653167724609
+      }
+    },
+    "court_grid": {
+      "in_frame": 1107,
+      "in_frame_pct": 100.0,
+      "near_half_in_frame": 533,
+      "near_half_in_frame_pct": 100.0,
+      "near_half_samples": 533,
+      "samples": 1107
+    },
+    "court_m": {
+      "depth": 12.7,
+      "length": 20.0
+    },
+    "frame": {
+      "h": 648.0,
+      "w": 1152.0
+    }
+  },
+  "hud_mode": "slim",
+  "hud_panels": [
+    {
+      "h": 125.0,
+      "name": "ScorePanel",
+      "w": 720.0,
+      "x": 216.0,
+      "y": 10.0
+    },
+    {
+      "h": 100.0,
+      "name": "FeedbackPanel",
+      "w": 268.0,
+      "x": 442.0,
+      "y": 540.0
+    },
+    {
+      "h": 96.0,
+      "name": "LogPanel",
+      "w": 420.0,
+      "x": 12.0,
+      "y": 540.0
+    },
+    {
+      "h": 91.0,
+      "name": "DebugPanel",
+      "w": 196.0,
+      "x": 12.0,
+      "y": 10.0
+    },
+    {
+      "h": 113.0,
+      "name": "HintPanel",
+      "w": 260.0,
+      "x": 880.0,
+      "y": 148.0
+    }
+  ],
+  "id": "raised-and-slim-band",
+  "mask_png": "raised-and-slim-band__1152x648__mask.png",
+  "why": "The slim band plus the camera backed off until the whole NEAR BASELINE clears it - so a player standing anywhere on their own half is readable, not just where they happen to stand on this frame. The strict version, and the one that shows what that strictness costs."
+}

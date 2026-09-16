@@ -1,0 +1,9932 @@
+{
+  "generatedBy": "tools/modes-port/extract-modes.mjs",
+  "source": [
+    "js/data.js"
+  ],
+  "sourceSha256": {
+    "js/data.js": "c63c496cd967663a5ec9f708e77b6f6948e4b523ba5b0e4280a40af642ec6403",
+    "js/drill.js": "b3f346f65029e0a402eda2f6e73a1fd7897b0c1ee0c812e701eee911a89c8703"
+  },
+  "seasonObjectives": [
+    {
+      "season": 1,
+      "objectives": [
+        {
+          "id": "smashWins",
+          "target": 4
+        },
+        {
+          "id": "winners",
+          "target": 10
+        },
+        {
+          "id": "winRally",
+          "target": 10
+        }
+      ]
+    },
+    {
+      "season": 2,
+      "objectives": [
+        {
+          "id": "winners",
+          "target": 11
+        },
+        {
+          "id": "winRally",
+          "target": 11
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 2
+        }
+      ]
+    },
+    {
+      "season": 3,
+      "objectives": [
+        {
+          "id": "winRally",
+          "target": 12
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 2
+        },
+        {
+          "id": "winPoints",
+          "target": 24
+        }
+      ]
+    },
+    {
+      "season": 4,
+      "objectives": [
+        {
+          "id": "noDoubleFault",
+          "target": 1
+        },
+        {
+          "id": "winPoints",
+          "target": 25
+        },
+        {
+          "id": "fewErrors",
+          "target": 5
+        }
+      ]
+    },
+    {
+      "season": 5,
+      "objectives": [
+        {
+          "id": "winPoints",
+          "target": 26
+        },
+        {
+          "id": "fewErrors",
+          "target": 4
+        },
+        {
+          "id": "smashWins",
+          "target": 8
+        }
+      ]
+    },
+    {
+      "season": 6,
+      "objectives": [
+        {
+          "id": "fewErrors",
+          "target": 3
+        },
+        {
+          "id": "smashWins",
+          "target": 9
+        },
+        {
+          "id": "winners",
+          "target": 15
+        }
+      ]
+    },
+    {
+      "season": 7,
+      "objectives": [
+        {
+          "id": "smashWins",
+          "target": 10
+        },
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "season": 8,
+      "objectives": [
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        }
+      ]
+    },
+    {
+      "season": 9,
+      "objectives": [
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        }
+      ]
+    },
+    {
+      "season": 10,
+      "objectives": [
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        },
+        {
+          "id": "fewErrors",
+          "target": 3
+        }
+      ]
+    },
+    {
+      "season": 11,
+      "objectives": [
+        {
+          "id": "winPoints",
+          "target": 28
+        },
+        {
+          "id": "fewErrors",
+          "target": 3
+        },
+        {
+          "id": "smashWins",
+          "target": 10
+        }
+      ]
+    },
+    {
+      "season": 12,
+      "objectives": [
+        {
+          "id": "fewErrors",
+          "target": 3
+        },
+        {
+          "id": "smashWins",
+          "target": 10
+        },
+        {
+          "id": "winners",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "season": 13,
+      "objectives": [
+        {
+          "id": "smashWins",
+          "target": 10
+        },
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "season": 14,
+      "objectives": [
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        }
+      ]
+    },
+    {
+      "season": 15,
+      "objectives": [
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        }
+      ]
+    },
+    {
+      "season": 16,
+      "objectives": [
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        },
+        {
+          "id": "fewErrors",
+          "target": 3
+        }
+      ]
+    },
+    {
+      "season": 17,
+      "objectives": [
+        {
+          "id": "winPoints",
+          "target": 28
+        },
+        {
+          "id": "fewErrors",
+          "target": 3
+        },
+        {
+          "id": "smashWins",
+          "target": 10
+        }
+      ]
+    },
+    {
+      "season": 18,
+      "objectives": [
+        {
+          "id": "fewErrors",
+          "target": 3
+        },
+        {
+          "id": "smashWins",
+          "target": 10
+        },
+        {
+          "id": "winners",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "season": 19,
+      "objectives": [
+        {
+          "id": "smashWins",
+          "target": 10
+        },
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "season": 20,
+      "objectives": [
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        }
+      ]
+    },
+    {
+      "season": 21,
+      "objectives": [
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        }
+      ]
+    },
+    {
+      "season": 22,
+      "objectives": [
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        },
+        {
+          "id": "fewErrors",
+          "target": 3
+        }
+      ]
+    },
+    {
+      "season": 23,
+      "objectives": [
+        {
+          "id": "winPoints",
+          "target": 28
+        },
+        {
+          "id": "fewErrors",
+          "target": 3
+        },
+        {
+          "id": "smashWins",
+          "target": 10
+        }
+      ]
+    },
+    {
+      "season": 24,
+      "objectives": [
+        {
+          "id": "fewErrors",
+          "target": 3
+        },
+        {
+          "id": "smashWins",
+          "target": 10
+        },
+        {
+          "id": "winners",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "season": 25,
+      "objectives": [
+        {
+          "id": "smashWins",
+          "target": 10
+        },
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "season": 26,
+      "objectives": [
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        }
+      ]
+    },
+    {
+      "season": 27,
+      "objectives": [
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        }
+      ]
+    },
+    {
+      "season": 28,
+      "objectives": [
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        },
+        {
+          "id": "fewErrors",
+          "target": 3
+        }
+      ]
+    },
+    {
+      "season": 29,
+      "objectives": [
+        {
+          "id": "winPoints",
+          "target": 28
+        },
+        {
+          "id": "fewErrors",
+          "target": 3
+        },
+        {
+          "id": "smashWins",
+          "target": 10
+        }
+      ]
+    },
+    {
+      "season": 30,
+      "objectives": [
+        {
+          "id": "fewErrors",
+          "target": 3
+        },
+        {
+          "id": "smashWins",
+          "target": 10
+        },
+        {
+          "id": "winners",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "season": 31,
+      "objectives": [
+        {
+          "id": "smashWins",
+          "target": 10
+        },
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "season": 32,
+      "objectives": [
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        }
+      ]
+    },
+    {
+      "season": 33,
+      "objectives": [
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        }
+      ]
+    },
+    {
+      "season": 34,
+      "objectives": [
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        },
+        {
+          "id": "fewErrors",
+          "target": 3
+        }
+      ]
+    },
+    {
+      "season": 35,
+      "objectives": [
+        {
+          "id": "winPoints",
+          "target": 28
+        },
+        {
+          "id": "fewErrors",
+          "target": 3
+        },
+        {
+          "id": "smashWins",
+          "target": 10
+        }
+      ]
+    },
+    {
+      "season": 36,
+      "objectives": [
+        {
+          "id": "fewErrors",
+          "target": 3
+        },
+        {
+          "id": "smashWins",
+          "target": 10
+        },
+        {
+          "id": "winners",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "season": 37,
+      "objectives": [
+        {
+          "id": "smashWins",
+          "target": 10
+        },
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "season": 38,
+      "objectives": [
+        {
+          "id": "winners",
+          "target": 16
+        },
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        }
+      ]
+    },
+    {
+      "season": 39,
+      "objectives": [
+        {
+          "id": "winRally",
+          "target": 16
+        },
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        }
+      ]
+    },
+    {
+      "season": 40,
+      "objectives": [
+        {
+          "id": "noDoubleFault",
+          "target": 0
+        },
+        {
+          "id": "winPoints",
+          "target": 28
+        },
+        {
+          "id": "fewErrors",
+          "target": 3
+        }
+      ]
+    }
+  ],
+  "matchObjective": [
+    {
+      "season": 1,
+      "matchIndex": 0,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 1,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 1,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 2,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 2,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 2,
+      "matchIndex": 2,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 3,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 3,
+      "matchIndex": 1,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 3,
+      "matchIndex": 2,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 4,
+      "matchIndex": 0,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 4,
+      "matchIndex": 1,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 4,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 5,
+      "matchIndex": 0,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 5,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 5,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 6,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 6,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 6,
+      "matchIndex": 2,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 7,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 7,
+      "matchIndex": 1,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 7,
+      "matchIndex": 2,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 8,
+      "matchIndex": 0,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 8,
+      "matchIndex": 1,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 8,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 9,
+      "matchIndex": 0,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 9,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 9,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 10,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 10,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 10,
+      "matchIndex": 2,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 11,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 11,
+      "matchIndex": 1,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 11,
+      "matchIndex": 2,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 12,
+      "matchIndex": 0,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 12,
+      "matchIndex": 1,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 12,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 13,
+      "matchIndex": 0,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 13,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 13,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 14,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 14,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 14,
+      "matchIndex": 2,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 15,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 15,
+      "matchIndex": 1,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 15,
+      "matchIndex": 2,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 16,
+      "matchIndex": 0,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 16,
+      "matchIndex": 1,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 16,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 17,
+      "matchIndex": 0,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 17,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 17,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 18,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 18,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 18,
+      "matchIndex": 2,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 19,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 19,
+      "matchIndex": 1,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 19,
+      "matchIndex": 2,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 20,
+      "matchIndex": 0,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 20,
+      "matchIndex": 1,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 20,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 21,
+      "matchIndex": 0,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 21,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 21,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 22,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 22,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 22,
+      "matchIndex": 2,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 23,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 23,
+      "matchIndex": 1,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 23,
+      "matchIndex": 2,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 24,
+      "matchIndex": 0,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 24,
+      "matchIndex": 1,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 24,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 25,
+      "matchIndex": 0,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 25,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 25,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 26,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 26,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 26,
+      "matchIndex": 2,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 27,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 27,
+      "matchIndex": 1,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 27,
+      "matchIndex": 2,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 28,
+      "matchIndex": 0,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 28,
+      "matchIndex": 1,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 28,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 29,
+      "matchIndex": 0,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 29,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 29,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 30,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 30,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 30,
+      "matchIndex": 2,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 31,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 31,
+      "matchIndex": 1,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 31,
+      "matchIndex": 2,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 32,
+      "matchIndex": 0,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 32,
+      "matchIndex": 1,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 32,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 33,
+      "matchIndex": 0,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 33,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 33,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 34,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 34,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 34,
+      "matchIndex": 2,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 35,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 35,
+      "matchIndex": 1,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 35,
+      "matchIndex": 2,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 36,
+      "matchIndex": 0,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 36,
+      "matchIndex": 1,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 36,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 37,
+      "matchIndex": 0,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 37,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 37,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 38,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    },
+    {
+      "season": 38,
+      "matchIndex": 1,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 38,
+      "matchIndex": 2,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 39,
+      "matchIndex": 0,
+      "objective": {
+        "id": "winners",
+        "target": 2
+      }
+    },
+    {
+      "season": 39,
+      "matchIndex": 1,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 39,
+      "matchIndex": 2,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 40,
+      "matchIndex": 0,
+      "objective": {
+        "id": "smashWins",
+        "target": 1
+      }
+    },
+    {
+      "season": 40,
+      "matchIndex": 1,
+      "objective": {
+        "id": "noDoubleFault",
+        "target": 0
+      }
+    },
+    {
+      "season": 40,
+      "matchIndex": 2,
+      "objective": {
+        "id": "winRally",
+        "target": 6
+      }
+    }
+  ],
+  "careerRival": [
+    {
+      "season": 1,
+      "rival": "rivale"
+    },
+    {
+      "season": 2,
+      "rival": "ingegnere"
+    },
+    {
+      "season": 3,
+      "rival": "campione"
+    },
+    {
+      "season": 4,
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "rival": "leggenda"
+    }
+  ],
+  "careerAiProfile": [
+    {
+      "season": 1,
+      "matchIndex": 0,
+      "id": "rivale",
+      "skill": 0.46,
+      "speed": 310,
+      "power": 0.88
+    },
+    {
+      "season": 1,
+      "matchIndex": 1,
+      "id": "rivale",
+      "skill": 0.5,
+      "speed": 315.6,
+      "power": 0.92
+    },
+    {
+      "season": 1,
+      "matchIndex": 2,
+      "id": "rivale",
+      "skill": 0.54,
+      "speed": 321.2,
+      "power": 0.96
+    },
+    {
+      "season": 2,
+      "matchIndex": 0,
+      "id": "ingegnere",
+      "skill": 0.6,
+      "speed": 341,
+      "power": 0.96
+    },
+    {
+      "season": 2,
+      "matchIndex": 1,
+      "id": "ingegnere",
+      "skill": 0.64,
+      "speed": 346.6,
+      "power": 1
+    },
+    {
+      "season": 2,
+      "matchIndex": 2,
+      "id": "ingegnere",
+      "skill": 0.6799999999999999,
+      "speed": 352.2,
+      "power": 1.04
+    },
+    {
+      "season": 3,
+      "matchIndex": 0,
+      "id": "campione",
+      "skill": 0.76,
+      "speed": 377,
+      "power": 1.05
+    },
+    {
+      "season": 3,
+      "matchIndex": 1,
+      "id": "campione",
+      "skill": 0.8,
+      "speed": 382.6,
+      "power": 1.09
+    },
+    {
+      "season": 3,
+      "matchIndex": 2,
+      "id": "campione",
+      "skill": 0.84,
+      "speed": 388.2,
+      "power": 1.1300000000000001
+    },
+    {
+      "season": 4,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.9,
+      "speed": 398,
+      "power": 1.14
+    },
+    {
+      "season": 4,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.9400000000000001,
+      "speed": 403.6,
+      "power": 1.18
+    },
+    {
+      "season": 4,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 409.2,
+      "power": 1.2
+    },
+    {
+      "season": 5,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.9500000000000001,
+      "speed": 405,
+      "power": 1.19
+    },
+    {
+      "season": 5,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 410.6,
+      "power": 1.2
+    },
+    {
+      "season": 5,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 416.2,
+      "power": 1.2
+    },
+    {
+      "season": 6,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 412,
+      "power": 1.2
+    },
+    {
+      "season": 6,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 417.6,
+      "power": 1.2
+    },
+    {
+      "season": 6,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 423.2,
+      "power": 1.2
+    },
+    {
+      "season": 7,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 419,
+      "power": 1.2
+    },
+    {
+      "season": 7,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 424.6,
+      "power": 1.2
+    },
+    {
+      "season": 7,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 430.2,
+      "power": 1.2
+    },
+    {
+      "season": 8,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 426,
+      "power": 1.2
+    },
+    {
+      "season": 8,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 431.6,
+      "power": 1.2
+    },
+    {
+      "season": 8,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 437.2,
+      "power": 1.2
+    },
+    {
+      "season": 9,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 433,
+      "power": 1.2
+    },
+    {
+      "season": 9,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 438.6,
+      "power": 1.2
+    },
+    {
+      "season": 9,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 10,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 440,
+      "power": 1.2
+    },
+    {
+      "season": 10,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 10,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 11,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 11,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 11,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 12,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 12,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 12,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 13,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 13,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 13,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 14,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 14,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 14,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 15,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 15,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 15,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 16,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 16,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 16,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 17,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 17,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 17,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 18,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 18,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 18,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 19,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 19,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 19,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 20,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 20,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 20,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 21,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 21,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 21,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 22,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 22,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 22,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 23,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 23,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 23,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 24,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 24,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 24,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 25,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 25,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 25,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 26,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 26,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 26,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 27,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 27,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 27,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 28,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 28,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 28,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 29,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 29,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 29,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 30,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 30,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 30,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 31,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 31,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 31,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 32,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 32,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 32,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 33,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 33,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 33,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 34,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 34,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 34,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 35,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 35,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 35,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 36,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 36,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 36,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 37,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 37,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 37,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 38,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 38,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 38,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 39,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 39,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 39,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 40,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 40,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 40,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 41,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 41,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 41,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 42,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 42,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 42,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 43,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 43,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 43,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 44,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 44,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 44,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 45,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 45,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 45,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 46,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 46,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 46,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 47,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 47,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 47,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 48,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 48,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 48,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 49,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 49,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 49,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 50,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 50,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 50,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 51,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 51,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 51,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 52,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 52,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 52,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 53,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 53,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 53,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 54,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 54,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 54,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 55,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 55,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 55,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 56,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 56,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 56,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 57,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 57,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 57,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 58,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 58,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 58,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 59,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 59,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 59,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 60,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 60,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 60,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 61,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 61,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 61,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 62,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 62,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 62,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 63,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 63,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 63,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 64,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 64,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 64,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 65,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 65,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 65,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 66,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 66,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 66,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 67,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 67,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 67,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 68,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 68,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 68,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 69,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 69,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 69,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 70,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 70,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 70,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 71,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 71,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 71,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 72,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 72,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 72,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 73,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 73,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 73,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 74,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 74,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 74,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 75,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 75,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 75,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 76,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 76,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 76,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 77,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 77,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 77,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 78,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 78,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 78,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 79,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 79,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 79,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 80,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 80,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 80,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 81,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 81,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 81,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 82,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 82,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 82,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 83,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 83,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 83,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 84,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 84,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 84,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 85,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 85,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 85,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 86,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 86,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 86,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 87,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 87,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 87,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 88,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 88,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 88,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 89,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 89,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 89,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 90,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 90,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 90,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 91,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 91,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 91,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 92,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 92,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 92,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 93,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 93,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 93,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 94,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 94,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 94,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 95,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 95,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 95,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 96,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 96,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 96,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 97,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 97,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 97,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 98,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 98,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 98,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 99,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 99,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 99,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 100,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 100,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 100,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 101,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 101,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 101,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 102,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 102,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 102,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 103,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 103,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 103,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 104,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 104,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 104,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 105,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 105,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 105,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 106,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 106,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 106,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 107,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 107,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 107,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 108,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 108,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 108,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 109,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 109,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 109,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 110,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 110,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 110,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 111,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 111,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 111,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 112,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 112,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 112,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 113,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 113,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 113,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 114,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 114,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 114,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 115,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 115,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 115,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 116,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 116,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 116,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 117,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 117,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 117,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 118,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 118,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 118,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 119,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 119,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 119,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 120,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 120,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 120,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 121,
+      "matchIndex": 0,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 121,
+      "matchIndex": 1,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    },
+    {
+      "season": 121,
+      "matchIndex": 2,
+      "id": "leggenda",
+      "skill": 0.96,
+      "speed": 442,
+      "power": 1.2
+    }
+  ],
+  "careerFixture": [
+    {
+      "season": 1,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "rivale"
+    },
+    {
+      "season": 1,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "rivale"
+    },
+    {
+      "season": 2,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 2,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "ingegnere"
+    },
+    {
+      "season": 3,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "campione"
+    },
+    {
+      "season": 3,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "campione"
+    },
+    {
+      "season": 4,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 4,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 5,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 6,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 7,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 8,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 9,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 10,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 11,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 12,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 13,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 14,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 15,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 16,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 17,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 18,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 19,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 20,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 21,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 22,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 23,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 24,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 25,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 26,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 27,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 28,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 29,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 30,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 31,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 32,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 33,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 34,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 35,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 36,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 37,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "abissale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "caldera",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 38,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "orrery",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 39,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 0,
+      "arenaCount": 0,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 0,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 0,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 0,
+      "arenaCount": 3,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 0,
+      "arenaCount": 4,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 0,
+      "arenaCount": 9,
+      "arena": "cattedrale",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 1,
+      "arenaCount": 0,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 1,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 1,
+      "arenaCount": 2,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 1,
+      "arenaCount": 3,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 1,
+      "arenaCount": 4,
+      "arena": "locomotive",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 1,
+      "arenaCount": 9,
+      "arena": "forgia",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 2,
+      "arenaCount": 0,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 2,
+      "arenaCount": 1,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 2,
+      "arenaCount": 2,
+      "arena": "officina",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 2,
+      "arenaCount": 3,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 2,
+      "arenaCount": 4,
+      "arena": "clockwork",
+      "rival": "leggenda"
+    },
+    {
+      "season": 40,
+      "matchIndex": 2,
+      "arenaCount": 9,
+      "arena": "tempesta",
+      "rival": "leggenda"
+    }
+  ],
+  "tournamentFixture": [
+    {
+      "round": 0,
+      "arenaCount": 0,
+      "arena": "officina"
+    },
+    {
+      "round": 0,
+      "arenaCount": 1,
+      "arena": "officina"
+    },
+    {
+      "round": 0,
+      "arenaCount": 2,
+      "arena": "officina"
+    },
+    {
+      "round": 0,
+      "arenaCount": 3,
+      "arena": "officina"
+    },
+    {
+      "round": 0,
+      "arenaCount": 4,
+      "arena": "officina"
+    },
+    {
+      "round": 0,
+      "arenaCount": 9,
+      "arena": "officina"
+    },
+    {
+      "round": 1,
+      "arenaCount": 0,
+      "arena": "abissale"
+    },
+    {
+      "round": 1,
+      "arenaCount": 1,
+      "arena": "officina"
+    },
+    {
+      "round": 1,
+      "arenaCount": 2,
+      "arena": "locomotive"
+    },
+    {
+      "round": 1,
+      "arenaCount": 3,
+      "arena": "locomotive"
+    },
+    {
+      "round": 1,
+      "arenaCount": 4,
+      "arena": "clockwork"
+    },
+    {
+      "round": 1,
+      "arenaCount": 9,
+      "arena": "abissale"
+    },
+    {
+      "round": 2,
+      "arenaCount": 0,
+      "arena": "orrery"
+    },
+    {
+      "round": 2,
+      "arenaCount": 1,
+      "arena": "officina"
+    },
+    {
+      "round": 2,
+      "arenaCount": 2,
+      "arena": "locomotive"
+    },
+    {
+      "round": 2,
+      "arenaCount": 3,
+      "arena": "clockwork"
+    },
+    {
+      "round": 2,
+      "arenaCount": 4,
+      "arena": "cattedrale"
+    },
+    {
+      "round": 2,
+      "arenaCount": 9,
+      "arena": "orrery"
+    },
+    {
+      "round": 3,
+      "arenaCount": 0,
+      "arena": "orrery"
+    },
+    {
+      "round": 3,
+      "arenaCount": 1,
+      "arena": "officina"
+    },
+    {
+      "round": 3,
+      "arenaCount": 2,
+      "arena": "locomotive"
+    },
+    {
+      "round": 3,
+      "arenaCount": 3,
+      "arena": "clockwork"
+    },
+    {
+      "round": 3,
+      "arenaCount": 4,
+      "arena": "cattedrale"
+    },
+    {
+      "round": 3,
+      "arenaCount": 9,
+      "arena": "orrery"
+    },
+    {
+      "round": 4,
+      "arenaCount": 0,
+      "arena": "orrery"
+    },
+    {
+      "round": 4,
+      "arenaCount": 1,
+      "arena": "officina"
+    },
+    {
+      "round": 4,
+      "arenaCount": 2,
+      "arena": "locomotive"
+    },
+    {
+      "round": 4,
+      "arenaCount": 3,
+      "arena": "clockwork"
+    },
+    {
+      "round": 4,
+      "arenaCount": 4,
+      "arena": "cattedrale"
+    },
+    {
+      "round": 4,
+      "arenaCount": 9,
+      "arena": "orrery"
+    }
+  ],
+  "emptySeasonProgress": {
+    "pointsWon": 0,
+    "winners": 0,
+    "smashWinners": 0,
+    "errors": 0,
+    "doubleFaults": 0,
+    "longestRally": 0
+  },
+  "objectiveIdsInSeasons": [
+    "fewErrors",
+    "noDoubleFault",
+    "smashWins",
+    "winPoints",
+    "winRally",
+    "winners"
+  ]
+}

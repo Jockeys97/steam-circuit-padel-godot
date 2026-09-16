@@ -1,0 +1,204 @@
+{
+  "beauty_png": "tactical-wide__1152x648.png",
+  "cam_mode": "preset-wide",
+  "camera": {
+    "dolly_back_m": 0.0,
+    "fov": 60.0,
+    "mode": "preset-wide",
+    "position": {
+      "x": 0.0,
+      "y": 16.6235008239746,
+      "z": 7.40000009536743
+    },
+    "rotation_degrees": {
+      "x": -67.9999923706055,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "solve": ""
+  },
+  "frame": {
+    "h": 648,
+    "w": 1152
+  },
+  "geometry": {
+    "athletes": {
+      "opponent": {
+        "feet_px": {
+          "behind": false,
+          "x": 803.171875,
+          "y": 222.748397827148
+        },
+        "head_px": {
+          "behind": false,
+          "x": 823.046936035156,
+          "y": 194.053268432617
+        },
+        "near": false,
+        "world": {
+          "x": 7.82847690582275,
+          "y": 0.0,
+          "z": -3.07954335212708
+        }
+      },
+      "opponentMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 460.282104492188,
+          "y": 218.791000366211
+        },
+        "head_px": {
+          "behind": false,
+          "x": 450.191864013672,
+          "y": 189.846664428711
+        },
+        "near": false,
+        "world": {
+          "x": -4.0,
+          "y": 0.0,
+          "z": -3.23868203163147
+        }
+      },
+      "player": {
+        "feet_px": {
+          "behind": false,
+          "x": 427.858917236328,
+          "y": 429.086151123047
+        },
+        "head_px": {
+          "behind": false,
+          "x": 412.607635498047,
+          "y": 416.562438964844
+        },
+        "near": true,
+        "world": {
+          "x": -4.40000009536743,
+          "y": 0.0,
+          "z": 4.05000019073486
+        }
+      },
+      "playerMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 863.090209960938,
+          "y": 425.915649414062
+        },
+        "head_px": {
+          "behind": false,
+          "x": 892.577392578125,
+          "y": 413.095611572266
+        },
+        "near": true,
+        "world": {
+          "x": 8.54512023925781,
+          "y": 0.0,
+          "z": 3.95537948608398
+        }
+      }
+    },
+    "ball": {
+      "behind_camera": false,
+      "centre_px": {
+        "behind": false,
+        "x": 824.99072265625,
+        "y": 211.082336425781
+      },
+      "radius_m": 0.1,
+      "radius_px": 3.132080078125,
+      "world": {
+        "x": 7.94962930679321,
+        "y": 1.36151337623596,
+        "z": -2.65454339981079
+      }
+    },
+    "court_corners_px": {
+      "far_left": {
+        "behind": false,
+        "x": 303.101898193359,
+        "y": 146.029388427734
+      },
+      "far_right": {
+        "behind": false,
+        "x": 848.898071289062,
+        "y": 146.029388427734
+      },
+      "near_left": {
+        "behind": false,
+        "x": 220.963317871094,
+        "y": 510.526702880859
+      },
+      "near_right": {
+        "behind": false,
+        "x": 931.036682128906,
+        "y": 510.526702880859
+      },
+      "net_left": {
+        "behind": false,
+        "x": 267.40478515625,
+        "y": 304.438568115234
+      },
+      "net_right": {
+        "behind": false,
+        "x": 884.59521484375,
+        "y": 304.438568115234
+      }
+    },
+    "court_grid": {
+      "in_frame": 1107,
+      "in_frame_pct": 100.0,
+      "near_half_in_frame": 533,
+      "near_half_in_frame_pct": 100.0,
+      "near_half_samples": 533,
+      "samples": 1107
+    },
+    "court_m": {
+      "depth": 12.7,
+      "length": 20.0
+    },
+    "frame": {
+      "h": 648.0,
+      "w": 1152.0
+    }
+  },
+  "hud_mode": "as-shipped",
+  "hud_panels": [
+    {
+      "h": 125.0,
+      "name": "ScorePanel",
+      "w": 720.0,
+      "x": 216.0,
+      "y": 10.0
+    },
+    {
+      "h": 160.0,
+      "name": "FeedbackPanel",
+      "w": 268.0,
+      "x": 442.0,
+      "y": 458.0
+    },
+    {
+      "h": 172.0,
+      "name": "LogPanel",
+      "w": 420.0,
+      "x": 12.0,
+      "y": 466.0
+    },
+    {
+      "h": 91.0,
+      "name": "DebugPanel",
+      "w": 196.0,
+      "x": 12.0,
+      "y": 10.0
+    },
+    {
+      "h": 113.0,
+      "name": "HintPanel",
+      "w": 260.0,
+      "x": 880.0,
+      "y": 148.0
+    }
+  ],
+  "id": "tactical-wide",
+  "mask_png": "tactical-wide__1152x648__mask.png",
+  "why": "The existing 'wide' preset already in game/court.gd (16.62 m up, -68 deg, 60 deg FOV): a higher tactical view, no new art direction, so the owner can see what more court costs in ball size."
+}

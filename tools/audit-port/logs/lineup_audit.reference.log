@@ -1,0 +1,26 @@
+{
+  "rosterAverage": {
+    "speed": 1.003,
+    "power": 1.073,
+    "control": 1.083,
+    "reach": 1.033,
+    "stamina": 1.107
+  },
+  "compagnoRacchetta": {
+    "controllo": 117.33,
+    "potenza": 111.37
+  },
+  "avversarioVelocita": {
+    "veloce": 406.5,
+    "lento": 287.7,
+    "riferimento": 313.7
+  },
+  "avversarioColpo": {
+    "potente": 428.2,
+    "tecnico": 335.2
+  },
+  "energiaSquadra": {
+    "resistente": 0.529,
+    "fragile": 0.44
+  }
+}

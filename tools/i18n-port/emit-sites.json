@@ -1,0 +1,140 @@
+{
+  "schema": "steam-circuit-padel-pro.i18n-emit-sites",
+  "schemaVersion": 1,
+  "title": "Dynamic message-id emit sites in the ported simulation",
+  "readFrom": "godot/src/sim/*.gd at the working tree state recorded in docs/wayfinder/evidence/i18n-port-contract.md",
+  "why": [
+    "Literal emit sites (`add_event(state, \"evChiquita\")`, a ternary of literals) are found automatically by tools/i18n-port/emit-analysis.mjs. A site that computes its id — a `%` format or a bare variable — is invisible to that scan unless it is declared here.",
+    "So: every dynamic site must be declared, and every declared substitution must be re-derivable from the source it comes from. A new dynamic site fails the drift test until it is declared; a substituted value that no longer matches its source (someone added a fourth tactic, a new score reason, a fifth AI tier) fails too. That is the `AI_LEGGENDA_NAME` door, closed.",
+    "Declarations anchor on content, never on line numbers: this file must not go stale because someone inserted a line above it, only because the code actually changed."
+  ],
+  "substitutionSets": {
+    "serveFaultReason": {
+      "why": "the reason string serve_fault() is called with",
+      "verify": { "kind": "literalsAtCallSitesOf", "file": "godot/src/sim/sim.gd", "target": "serve_fault", "argIndex": 1 },
+      "values": ["serveOutBox", "serveWallFault"]
+    },
+    "scorePointReason": {
+      "why": "the reason string score_point() is called with, plus the double-fault template it builds itself",
+      "verify": { "kind": "literalsAtCallSitesOf", "file": "godot/src/sim/sim.gd", "target": "score_point", "argIndex": 2 },
+      "values": ["doubleFault:%s", "msgNetFault", "msgOut", "msgNetShort", "msgDoubleBounce", "msgWallNoBounce", "msgSmashX3Wall", "msgSmashReturned"],
+      "expand": [
+        {
+          "value": "doubleFault:%s",
+          "kind": "template-substitution",
+          "lower": true,
+          "from": "serveFaultReason",
+          "why": "godot/src/sim/sim.gd:2038 — `\"doubleFault:%s\" % reason.to_lower()`"
+        }
+      ]
+    },
+    "positionRole": {
+      "why": "the role id set_active_player() picks when it announces the switch",
+      "verify": { "kind": "idLiteralsInFunction", "file": "godot/src/sim/sim.gd", "target": "set_active_player" },
+      "values": ["roleBackPos", "roleNetPos"]
+    },
+    "tactic": {
+      "why": "the pair-tactic suffixes; derived from the reference table's own `tactic_*` keys, so a tactic with no string cannot be declared here",
+      "verify": { "kind": "suffixesOfTableKeys", "pattern": "^tactic_([a-z]+)$" },
+      "values": ["attack", "defend", "staggered", "balanced"]
+    }
+  },
+  "dynamicSites": [
+    {
+      "id": "control-role",
+      "file": "godot/src/sim/sim.gd",
+      "kind": "add_event",
+      "fn": "set_active_player",
+      "expr": "\"controlMsg:%s\" % position",
+      "expansion": { "kind": "template-substitution", "template": "controlMsg:%s", "from": "positionRole" },
+      "anchors": ["var position := \"roleBackPos\" if state.paddle(key).y > float(Frozen.court()[\"netY\"]) + 150.0 else \"roleNetPos\""],
+      "resolution": "the composite id `controlMsg:<role id>` is resolved by the `controlMsg` composite rule in tools/i18n-port/resolve-rules.json (placeholder binding), which reproduces js/game.js:455-456.",
+      "emits": ["controlMsg:roleBackPos", "controlMsg:roleNetPos"]
+    },
+    {
+      "id": "serve-hint",
+      "file": "godot/src/sim/sim.gd",
+      "kind": "add_event",
+      "fn": "update_serving",
+      "expr": "\"serveHint\"",
+      "literalSite": true,
+      "note": "Not dynamic — listed here only so the port's loss of the two parameters is recorded next to the other parameterised ids. js/game.js:2629 renders `t(\"serveHint\", { ordinal, suffix })` at emit time; the port stores the bare id, so `{ordinal}` and `{suffix}` cannot be filled and the placeholders would reach the screen. Baselined in tools/i18n-port/unresolved-baseline.json as `no-params`."
+    },
+    {
+      "id": "shot-error-kind",
+      "file": "godot/src/sim/sim.gd",
+      "kind": "add_event",
+      "fn": "report_shot_error",
+      "expr": "id",
+      "expansion": {
+        "kind": "enum",
+        "values": ["evShotLong", "evShotWide", "evShotNet"],
+        "verify": { "kind": "idLiteralsInFunction", "file": "godot/src/sim/sim.gd", "target": "report_shot_error" }
+      },
+      "anchors": ["var id := \"evShotLong\" if kind == \"long\" else (\"evShotWide\" if kind == \"wide\" else \"evShotNet\")"],
+      "emits": ["evShotLong", "evShotWide", "evShotNet"]
+    },
+    {
+      "id": "event-line",
+      "file": "godot/src/sim/sim.gd",
+      "kind": "add_event",
+      "fn": "hit_ball",
+      "expr": "\"eventLine%d\" % int(floor(Rng.next_random(state) * float(Frozen.event_lines().size())))",
+      "expansion": { "kind": "template-range", "template": "eventLine%d", "countFromFrozen": "eventLines" },
+      "anchors": ["if state.rallyHits > 0 and state.rallyHits % 5 == 0:", "Frozen.event_lines()"],
+      "resolution": "the range comes from the frozen reference table (godot/src/sim/frozen/data.json `eventLines`, serialised from js/data.js EVENT_LINES): six lines, six keys eventLine0..eventLine5.",
+      "emits": ["eventLine0", "eventLine1", "eventLine2", "eventLine3", "eventLine4", "eventLine5"]
+    },
+    {
+      "id": "score-reason",
+      "file": "godot/src/sim/sim.gd",
+      "kind": "add_event",
+      "fn": "score_point",
+      "expr": "reason",
+      "expansion": { "kind": "ids", "from": "scorePointReason" },
+      "anchors": ["static func score_point(state: State, winner: String, reason: String, kind: Variant = null) -> String"],
+      "emits": ["doubleFault:serveoutbox", "doubleFault:servewallfault", "msgNetFault", "msgOut", "msgNetShort", "msgDoubleBounce", "msgWallNoBounce", "msgSmashX3Wall", "msgSmashReturned"]
+    },
+    {
+      "id": "second-serve-suffix",
+      "file": "godot/src/sim/sim.gd",
+      "kind": "add_event",
+      "fn": "serve_fault",
+      "expr": "\"%s secondServe\" % reason",
+      "expansion": { "kind": "template-substitution", "template": "%s secondServe", "from": "serveFaultReason" },
+      "anchors": ["add_event(state, \"%s secondServe\" % reason)"],
+      "note": "js/game.js:2123 emits `${reason} ${t(\"secondServeSuffix\")}` where `reason` is already the rendered text of the call site's t(). The port composes two ids into one string that is not an id: `secondServe` is not a key (the key is `secondServeSuffix`) and there is no separator. Baselined in tools/i18n-port/unresolved-baseline.json as `no-key`.",
+      "emits": ["serveOutBox secondServe", "serveWallFault secondServe"]
+    },
+    {
+      "id": "tactic",
+      "file": "godot/src/sim/sim.gd",
+      "kind": "add_event",
+      "fn": "set_player_team_tactic",
+      "expr": "\"tactic_%s\" % String(tactic)",
+      "expansion": { "kind": "template-substitution", "template": "tactic_%s", "from": "tactic" },
+      "anchors": ["state.tacticFlash = 1.1"],
+      "emits": ["tactic_attack", "tactic_defend", "tactic_staggered", "tactic_balanced"]
+    },
+    {
+      "id": "point-message-reason",
+      "file": "godot/src/sim/sim.gd",
+      "kind": "pointMessage",
+      "fn": "score_point",
+      "expr": "\":%s\" % reason if reason != \"\" else \"\"",
+      "expansion": { "kind": "suffix-append", "separator": ":", "prefixes": ["pointYou", "pointOpp"], "suffixesFrom": "scorePointReason" },
+      "anchors": ["state.pointMessage = \"pointYou\" if winner == \"player\" else \"pointOpp\"", "sync_point_display(state)"],
+      "resolution": "the preceding assignment sets `pointYou`/`pointOpp`; this line appends `:<reason id>`. Resolved by the `pointYou` / `pointOpp` composite rules (js/game.js:2110).",
+      "emits": [
+        "pointYou:doubleFault:serveoutbox", "pointYou:doubleFault:servewallfault", "pointYou:msgNetFault", "pointYou:msgOut",
+        "pointYou:msgNetShort", "pointYou:msgDoubleBounce", "pointYou:msgWallNoBounce", "pointYou:msgSmashX3Wall", "pointYou:msgSmashReturned",
+        "pointOpp:doubleFault:serveoutbox", "pointOpp:doubleFault:servewallfault", "pointOpp:msgNetFault", "pointOpp:msgOut",
+        "pointOpp:msgNetShort", "pointOpp:msgDoubleBounce", "pointOpp:msgWallNoBounce", "pointOpp:msgSmashX3Wall", "pointOpp:msgSmashReturned"
+      ]
+    }
+  ],
+  "notes": [
+    "`state.pointMessage = \"\"` (create_match_state) clears the field and is not an id site.",
+    "The `emits` lists are documentation of what the drift test derives independently — they are not read by the test, so a stale list cannot make it green."
+  ]
+}

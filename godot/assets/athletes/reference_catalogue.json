@@ -1,0 +1,452 @@
+{
+  "_source": "js/data.js",
+  "_source_sha256": "c63c496cd967663a5ec9f708e77b6f6948e4b523ba5b0e4280a40af642ec6403",
+  "_tool": "tools/character/extract_reference_catalogue.py",
+  "_note": "Derived, not hand-written. Re-run with --check to prove it still matches the reference. Anchors map the reference's two-colour outfit definition onto the two recolourable texel families of the single baked atlas.",
+  "anchors": {
+    "primary": "#22304a",
+    "trim": "#ffc94a"
+  },
+  "athletes": [
+    {
+      "id": "maestro",
+      "name": "IL MAESTRO",
+      "role": "Tecnica",
+      "color": "#00e5ff",
+      "visual": {
+        "frame": "athletic",
+        "skin": "#c98258",
+        "hair": "#241b19",
+        "hairStyle": "short",
+        "headband": "#f4fbff",
+        "kit": "#08bfe8",
+        "secondary": "#102d68",
+        "accent": "#f4fbff",
+        "kitStyle": "diagonal",
+        "shoes": "#123f78"
+      }
+    },
+    {
+      "id": "pantera",
+      "name": "LA PANTERA",
+      "role": "Velocità",
+      "color": "#ff4b6e",
+      "visual": {
+        "frame": "slim",
+        "skin": "#b96543",
+        "hair": "#251516",
+        "hairStyle": "long-pony",
+        "headband": "#f52f61",
+        "kit": "#ed3e5d",
+        "secondary": "#29283b",
+        "accent": "#ff7690",
+        "kitStyle": "side",
+        "shoes": "#9d304b"
+      }
+    },
+    {
+      "id": "steamer",
+      "name": "LO STEAMER",
+      "role": "Potenza",
+      "color": "#ff8c00",
+      "visual": {
+        "frame": "broad",
+        "skin": "#cf7b4e",
+        "hair": "#43251b",
+        "hairStyle": "spiked",
+        "headband": "#ff711c",
+        "kit": "#f47713",
+        "secondary": "#172c57",
+        "accent": "#ff9a35",
+        "kitStyle": "raglan",
+        "shoes": "#e66b18",
+        "beard": true
+      }
+    },
+    {
+      "id": "fiamma",
+      "name": "LA FIAMMA",
+      "role": "Resistenza",
+      "color": "#1aff8a",
+      "visual": {
+        "frame": "slim",
+        "skin": "#c87848",
+        "hair": "#251717",
+        "hairStyle": "curly-pony",
+        "headband": null,
+        "kit": "#a9e71d",
+        "secondary": "#162d56",
+        "accent": "#d7ff4b",
+        "kitStyle": "side",
+        "shoes": "#9ee31d"
+      }
+    },
+    {
+      "id": "oracolo",
+      "name": "L'ORACOLO",
+      "role": "Tecnica",
+      "color": "#c98bff",
+      "visual": {
+        "frame": "slim",
+        "skin": "#8a5a3b",
+        "hair": "#0e0c16",
+        "hairStyle": "long-pony",
+        "headband": "#c98bff",
+        "kit": "#6b3df0",
+        "secondary": "#1a0f38",
+        "accent": "#e3c6ff",
+        "kitStyle": "diagonal",
+        "shoes": "#3c1f8a"
+      }
+    },
+    {
+      "id": "colosso",
+      "name": "IL COLOSSO",
+      "role": "Potenza",
+      "color": "#ffd54a",
+      "visual": {
+        "frame": "broad",
+        "skin": "#b06a3f",
+        "hair": "#1c130d",
+        "hairStyle": "spiked",
+        "headband": "#ffd54a",
+        "kit": "#e8b400",
+        "secondary": "#2b1e07",
+        "accent": "#ffe98a",
+        "kitStyle": "raglan",
+        "shoes": "#8a6a00",
+        "beard": true
+      }
+    }
+  ],
+  "outfits": {
+    "maestro": [
+      {
+        "id": "base",
+        "unlock_key": "maestro:base",
+        "name_key": "outfitBase",
+        "colors": [
+          "#08bfe8",
+          "#f4fbff"
+        ],
+        "has_challenge": false,
+        "has_sprites": false,
+        "preview": ""
+      },
+      {
+        "id": "circuit",
+        "unlock_key": "maestro:circuit",
+        "name_key": "outfitCircuit",
+        "colors": [
+          "#315cff",
+          "#9ef8ff"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/maestro/circuit-preview.webp"
+      },
+      {
+        "id": "legend",
+        "unlock_key": "maestro:legend",
+        "name_key": "outfitLegend",
+        "colors": [
+          "#d5a62a",
+          "#fff0a3"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/maestro/legend-preview.webp"
+      },
+      {
+        "id": "signature",
+        "unlock_key": "maestro:signature",
+        "name_key": "outfitSignatureMaestro",
+        "colors": [
+          "#03c7ed",
+          "#162f61"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/maestro/signature-preview.webp"
+      },
+      {
+        "id": "mythic",
+        "unlock_key": "maestro:mythic",
+        "name_key": "outfitMythicMaestro",
+        "colors": [
+          "#172f67",
+          "#f5f1df"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/maestro/mythic-preview.webp"
+      }
+    ],
+    "pantera": [
+      {
+        "id": "base",
+        "unlock_key": "pantera:base",
+        "name_key": "outfitBase",
+        "colors": [
+          "#ed3e5d",
+          "#ff7690"
+        ],
+        "has_challenge": false,
+        "has_sprites": false,
+        "preview": ""
+      },
+      {
+        "id": "circuit",
+        "unlock_key": "pantera:circuit",
+        "name_key": "outfitCircuit",
+        "colors": [
+          "#2c6fff",
+          "#caefff"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/pantera/circuit-preview.webp"
+      },
+      {
+        "id": "legend",
+        "unlock_key": "pantera:legend",
+        "name_key": "outfitLegend",
+        "colors": [
+          "#ffb626",
+          "#fff0a0"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/pantera/legend-preview.webp"
+      },
+      {
+        "id": "signature",
+        "unlock_key": "pantera:signature",
+        "name_key": "outfitSignaturePantera",
+        "colors": [
+          "#d20d43",
+          "#17151e"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/pantera/signature-preview.webp"
+      },
+      {
+        "id": "mythic",
+        "unlock_key": "pantera:mythic",
+        "name_key": "outfitMythicPantera",
+        "colors": [
+          "#bd174a",
+          "#11131c"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/pantera/mythic-preview.webp"
+      }
+    ],
+    "steamer": [
+      {
+        "id": "base",
+        "unlock_key": "steamer:base",
+        "name_key": "outfitBase",
+        "colors": [
+          "#f47713",
+          "#ff9a35"
+        ],
+        "has_challenge": false,
+        "has_sprites": false,
+        "preview": ""
+      },
+      {
+        "id": "circuit",
+        "unlock_key": "steamer:circuit",
+        "name_key": "outfitCircuit",
+        "colors": [
+          "#087b86",
+          "#c8fff5"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/steamer/circuit-preview.webp"
+      },
+      {
+        "id": "legend",
+        "unlock_key": "steamer:legend",
+        "name_key": "outfitLegend",
+        "colors": [
+          "#e3c232",
+          "#fff3af"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/steamer/legend-preview.webp"
+      },
+      {
+        "id": "signature",
+        "unlock_key": "steamer:signature",
+        "name_key": "outfitSignatureSteamer",
+        "colors": [
+          "#e85d16",
+          "#252a31"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/steamer/signature-preview.webp"
+      },
+      {
+        "id": "mythic",
+        "unlock_key": "steamer:mythic",
+        "name_key": "outfitMythicSteamer",
+        "colors": [
+          "#cf531c",
+          "#29211c"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/steamer/mythic-preview.webp"
+      }
+    ],
+    "fiamma": [
+      {
+        "id": "base",
+        "unlock_key": "fiamma:base",
+        "name_key": "outfitBase",
+        "colors": [
+          "#a9e71d",
+          "#d7ff4b"
+        ],
+        "has_challenge": false,
+        "has_sprites": false,
+        "preview": ""
+      },
+      {
+        "id": "circuit",
+        "unlock_key": "fiamma:circuit",
+        "name_key": "outfitCircuit",
+        "colors": [
+          "#326dff",
+          "#c8ecff"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/fiamma/circuit-preview.webp"
+      },
+      {
+        "id": "legend",
+        "unlock_key": "fiamma:legend",
+        "name_key": "outfitLegend",
+        "colors": [
+          "#f2a72b",
+          "#fff0a7"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/fiamma/legend-preview.webp"
+      },
+      {
+        "id": "signature",
+        "unlock_key": "fiamma:signature",
+        "name_key": "outfitSignatureFiamma",
+        "colors": [
+          "#087a75",
+          "#adf51e"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/fiamma/signature-preview.webp"
+      },
+      {
+        "id": "mythic",
+        "unlock_key": "fiamma:mythic",
+        "name_key": "outfitMythicFiamma",
+        "colors": [
+          "#075c68",
+          "#f27b18"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/fiamma/mythic-preview.webp"
+      }
+    ],
+    "oracolo": [
+      {
+        "id": "base",
+        "unlock_key": "oracolo:base",
+        "name_key": "outfitBase",
+        "colors": [
+          "#6d42b8",
+          "#a96cff"
+        ],
+        "has_challenge": false,
+        "has_sprites": false,
+        "preview": ""
+      },
+      {
+        "id": "signature",
+        "unlock_key": "oracolo:signature",
+        "name_key": "outfitSignatureOracolo",
+        "colors": [
+          "#38216f",
+          "#29dfff"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/oracolo/signature-preview.webp"
+      },
+      {
+        "id": "mythic",
+        "unlock_key": "oracolo:mythic",
+        "name_key": "outfitMythicOracolo",
+        "colors": [
+          "#161224",
+          "#28d7ff"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/oracolo/mythic-preview.webp"
+      }
+    ],
+    "colosso": [
+      {
+        "id": "base",
+        "unlock_key": "colosso:base",
+        "name_key": "outfitBase",
+        "colors": [
+          "#e8b400",
+          "#ffe98a"
+        ],
+        "has_challenge": false,
+        "has_sprites": false,
+        "preview": ""
+      },
+      {
+        "id": "signature",
+        "unlock_key": "colosso:signature",
+        "name_key": "outfitSignatureColosso",
+        "colors": [
+          "#25211e",
+          "#ff7a12"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/colosso/signature-preview.webp"
+      },
+      {
+        "id": "mythic",
+        "unlock_key": "colosso:mythic",
+        "name_key": "outfitMythicColosso",
+        "colors": [
+          "#ede3c5",
+          "#174b38"
+        ],
+        "has_challenge": true,
+        "has_sprites": true,
+        "preview": "assets/outfits/colosso/mythic-preview.webp"
+      }
+    ]
+  },
+  "counts": {
+    "athletes": 6,
+    "outfit_entries": 26
+  }
+}

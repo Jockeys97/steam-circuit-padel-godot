@@ -1,0 +1,14 @@
+{
+ "volpe-rigged.glb": {
+  "bytes": 8898424,
+  "sha256": "ab6b3086e6a455d9cdaaf8b198dfb762924b31cd77ee01bd8fe0135e9d687ec5"
+ },
+ "volpe-walking.glb": {
+  "bytes": 8911212,
+  "sha256": "8ee2447b6fa6d7f7c71ad781aefecbda914a6d4a6497b53f6d7e7cffb4f3e8f1"
+ },
+ "volpe-running.glb": {
+  "bytes": 8906600,
+  "sha256": "47192d80c8bfb860c2da77c9ca9431ed753da50942fcc61e79887cd6cecc9e11"
+ }
+}

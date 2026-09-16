@@ -1,0 +1,204 @@
+{
+  "beauty_png": "current-composition__1280x720.png",
+  "cam_mode": "game-default",
+  "camera": {
+    "dolly_back_m": 0.0,
+    "fov": 50.8660011291504,
+    "mode": "game-default",
+    "position": {
+      "x": 0.0,
+      "y": 14.4552001953125,
+      "z": 6.40000009536743
+    },
+    "rotation_degrees": {
+      "x": -65.1999893188477,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "solve": ""
+  },
+  "frame": {
+    "h": 720,
+    "w": 1280
+  },
+  "geometry": {
+    "athletes": {
+      "opponent": {
+        "feet_px": {
+          "behind": false,
+          "x": 986.60791015625,
+          "y": 247.45002746582
+        },
+        "head_px": {
+          "behind": false,
+          "x": 1020.50634765625,
+          "y": 202.232116699219
+        },
+        "near": false,
+        "world": {
+          "x": 7.82847690582275,
+          "y": 0.0,
+          "z": -3.07954335212708
+        }
+      },
+      "opponentMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 463.587646484375,
+          "y": 241.516464233398
+        },
+        "head_px": {
+          "behind": false,
+          "x": 446.408050537109,
+          "y": 195.913681030273
+        },
+        "near": false,
+        "world": {
+          "x": -4.0,
+          "y": 0.0,
+          "z": -3.23868203163147
+        }
+      },
+      "player": {
+        "feet_px": {
+          "behind": false,
+          "x": 403.893768310547,
+          "y": 570.885192871094
+        },
+        "head_px": {
+          "behind": false,
+          "x": 375.315185546875,
+          "y": 554.070983886719
+        },
+        "near": true,
+        "world": {
+          "x": -4.40000009536743,
+          "y": 0.0,
+          "z": 4.05000019073486
+        }
+      },
+      "playerMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 1097.24914550781,
+          "y": 565.697326660156
+        },
+        "head_px": {
+          "behind": false,
+          "x": 1152.42114257812,
+          "y": 548.31005859375
+        },
+        "near": true,
+        "world": {
+          "x": 8.54512023925781,
+          "y": 0.0,
+          "z": 3.95537948608398
+        }
+      }
+    },
+    "ball": {
+      "behind_camera": false,
+      "centre_px": {
+        "behind": false,
+        "x": 1023.70886230469,
+        "y": 228.358291625977
+      },
+      "radius_m": 0.1,
+      "radius_px": 4.8267822265625,
+      "world": {
+        "x": 7.94962930679321,
+        "y": 1.36151337623596,
+        "z": -2.65454339981079
+      }
+    },
+    "court_corners_px": {
+      "far_left": {
+        "behind": false,
+        "x": 230.131149291992,
+        "y": 134.125473022461
+      },
+      "far_right": {
+        "behind": false,
+        "x": 1049.86889648438,
+        "y": 134.125473022461
+      },
+      "near_left": {
+        "behind": false,
+        "x": 64.0065383911133,
+        "y": 706.625732421875
+      },
+      "near_right": {
+        "behind": false,
+        "x": 1215.99340820312,
+        "y": 706.625732421875
+      },
+      "net_left": {
+        "behind": false,
+        "x": 161.065399169922,
+        "y": 372.140502929688
+      },
+      "net_right": {
+        "behind": false,
+        "x": 1118.9345703125,
+        "y": 372.140502929688
+      }
+    },
+    "court_grid": {
+      "in_frame": 1107,
+      "in_frame_pct": 100.0,
+      "near_half_in_frame": 533,
+      "near_half_in_frame_pct": 100.0,
+      "near_half_samples": 533,
+      "samples": 1107
+    },
+    "court_m": {
+      "depth": 12.7,
+      "length": 20.0
+    },
+    "frame": {
+      "h": 720.0,
+      "w": 1280.0
+    }
+  },
+  "hud_mode": "as-shipped",
+  "hud_panels": [
+    {
+      "h": 125.0,
+      "name": "ScorePanel",
+      "w": 720.0,
+      "x": 280.0,
+      "y": 10.0
+    },
+    {
+      "h": 160.0,
+      "name": "FeedbackPanel",
+      "w": 268.0,
+      "x": 506.0,
+      "y": 530.0
+    },
+    {
+      "h": 172.0,
+      "name": "LogPanel",
+      "w": 420.0,
+      "x": 12.0,
+      "y": 538.0
+    },
+    {
+      "h": 91.0,
+      "name": "DebugPanel",
+      "w": 196.0,
+      "x": 12.0,
+      "y": 10.0
+    },
+    {
+      "h": 113.0,
+      "name": "HintPanel",
+      "w": 260.0,
+      "x": 1008.0,
+      "y": 148.0
+    }
+  ],
+  "id": "current-composition",
+  "mask_png": "current-composition__1280x720__mask.png",
+  "why": "The composition the game produces today: game/court.gd preset 'default' with the shipping HUD. The baseline everything else is measured against."
+}

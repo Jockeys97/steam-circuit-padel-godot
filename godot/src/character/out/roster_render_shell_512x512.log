@@ -1,0 +1,82 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 26.0.8-1ubuntu0.3 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 21.1.8, 256 bits)
+ALSA lib confmisc.c:855:(parse_card) [error.core] cannot find card '0'
+ALSA lib conf.c:5211:(_snd_config_evaluate) [error.core] function snd_func_card_inum returned error: No such file or directory
+ALSA lib confmisc.c:422:(snd_func_concat) [error.core] error evaluating strings
+ALSA lib conf.c:5211:(_snd_config_evaluate) [error.core] function snd_func_concat returned error: No such file or directory
+ALSA lib confmisc.c:1342:(snd_func_refer) [error.core] error evaluating name
+ALSA lib conf.c:5211:(_snd_config_evaluate) [error.core] function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5734:(snd_config_expand) [error.core] Evaluate error: No such file or directory
+ALSA lib pcm.c:2722:(snd_pcm_open_noupdate) [error.pcm] Unknown PCM default
+ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
+   at: init_output_device (drivers/alsa/audio_driver_alsa.cpp:97)
+WARNING: All audio drivers failed, falling back to the dummy driver.
+     at: initialize (servers/audio/audio_server.cpp:258)
+
+ROSTER_RENDER_START
+CATALOGUE { "source": "js/data.js", "source_sha256": "c63c496cd967663a5ec9f708e77b6f6948e4b523ba5b0e4280a40af642ec6403", "tool": "tools/character/extract_reference_catalogue.py", "athletes": 6, "outfit_entries": 26, "anchor_primary": "#22304a", "anchor_trim": "#ffc94a" }
+RIG { "name": &"RosterSubject", "load_error": 0, "joints": 24, "triangles": 31325, "surfaces": 1, "position": (0.0, 0.0, 0.0), "facing_degrees": 180.0, "locomotion": &"idle", "locomotion_states": [&"idle", &"walk", &"run"], "strokes": [&"drive", &"slice", &"lob", &"serve"], "catalogue_outfit": { "athlete_id": &"maestro", "outfit_id": &"base" }, "material": { "material_class": "ShaderMaterial", "resource_name": "Outfit_maestro:base", "shader_path": "res://src/character/outfit_recolour.gdshader", "target_primary": (0.031373, 0.74902, 0.909804), "target_trim": (0.956863, 0.984314, 1.0), "anchor_primary": (0.133333, 0.188235, 0.290196), "anchor_trim": (1.0, 0.788235, 0.290196), "protect_sat": 0.22, "metallic": 0.0, "roughness": 0.85, "source_tex": "set" } }
+EXTENT world pos=(-0.522217, 0.044973, -0.277535) size=(1.041607, 1.678306, 0.266738) centre=(-0.001413, 0.884126, -0.144166) (framed height 2.0140 m)
+CAM pos=(0.0, 0.884126, 2.622499) fov=40.000 FRAMING_SHIFT_PX dx=0.0000 dy=0.0000
+SAVE err=0 path=res://src/character/out/roster_background_only_512x512.png size=512x512
+FRAME maestro:base primary=#08bfe8 trim=#f4fbff art_dependent=false
+SAVE err=0 path=res://src/character/out/roster_maestro_base_x0_512x512.png size=512x512
+SAVE err=0 path=res://src/character/out/athlete_maestro_base_x0_512x512.png size=512x512
+FRAME maestro:circuit primary=#315cff trim=#9ef8ff art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_maestro_circuit_x0_512x512.png size=512x512
+FRAME maestro:legend primary=#d5a62a trim=#fff0a3 art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_maestro_legend_x0_512x512.png size=512x512
+FRAME maestro:signature primary=#03c7ed trim=#162f61 art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_maestro_signature_x0_512x512.png size=512x512
+FRAME maestro:mythic primary=#172f67 trim=#f5f1df art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_maestro_mythic_x0_512x512.png size=512x512
+FRAME pantera:base primary=#ed3e5d trim=#ff7690 art_dependent=false
+SAVE err=0 path=res://src/character/out/roster_pantera_base_x0_512x512.png size=512x512
+SAVE err=0 path=res://src/character/out/athlete_pantera_base_x0_512x512.png size=512x512
+FRAME pantera:circuit primary=#2c6fff trim=#caefff art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_pantera_circuit_x0_512x512.png size=512x512
+FRAME pantera:legend primary=#ffb626 trim=#fff0a0 art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_pantera_legend_x0_512x512.png size=512x512
+FRAME pantera:signature primary=#d20d43 trim=#17151e art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_pantera_signature_x0_512x512.png size=512x512
+FRAME pantera:mythic primary=#bd174a trim=#11131c art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_pantera_mythic_x0_512x512.png size=512x512
+FRAME steamer:base primary=#f47713 trim=#ff9a35 art_dependent=false
+SAVE err=0 path=res://src/character/out/roster_steamer_base_x0_512x512.png size=512x512
+SAVE err=0 path=res://src/character/out/athlete_steamer_base_x0_512x512.png size=512x512
+FRAME steamer:circuit primary=#087b86 trim=#c8fff5 art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_steamer_circuit_x0_512x512.png size=512x512
+FRAME steamer:legend primary=#e3c232 trim=#fff3af art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_steamer_legend_x0_512x512.png size=512x512
+FRAME steamer:signature primary=#e85d16 trim=#252a31 art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_steamer_signature_x0_512x512.png size=512x512
+FRAME steamer:mythic primary=#cf531c trim=#29211c art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_steamer_mythic_x0_512x512.png size=512x512
+FRAME fiamma:base primary=#a9e71d trim=#d7ff4b art_dependent=false
+SAVE err=0 path=res://src/character/out/roster_fiamma_base_x0_512x512.png size=512x512
+SAVE err=0 path=res://src/character/out/athlete_fiamma_base_x0_512x512.png size=512x512
+FRAME fiamma:circuit primary=#326dff trim=#c8ecff art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_fiamma_circuit_x0_512x512.png size=512x512
+FRAME fiamma:legend primary=#f2a72b trim=#fff0a7 art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_fiamma_legend_x0_512x512.png size=512x512
+FRAME fiamma:signature primary=#087a75 trim=#adf51e art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_fiamma_signature_x0_512x512.png size=512x512
+FRAME fiamma:mythic primary=#075c68 trim=#f27b18 art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_fiamma_mythic_x0_512x512.png size=512x512
+FRAME oracolo:base primary=#6d42b8 trim=#a96cff art_dependent=false
+SAVE err=0 path=res://src/character/out/roster_oracolo_base_x0_512x512.png size=512x512
+SAVE err=0 path=res://src/character/out/athlete_oracolo_base_x0_512x512.png size=512x512
+FRAME oracolo:signature primary=#38216f trim=#29dfff art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_oracolo_signature_x0_512x512.png size=512x512
+FRAME oracolo:mythic primary=#161224 trim=#28d7ff art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_oracolo_mythic_x0_512x512.png size=512x512
+FRAME colosso:base primary=#e8b400 trim=#ffe98a art_dependent=false
+SAVE err=0 path=res://src/character/out/roster_colosso_base_x0_512x512.png size=512x512
+SAVE err=0 path=res://src/character/out/athlete_colosso_base_x0_512x512.png size=512x512
+FRAME colosso:signature primary=#25211e trim=#ff7a12 art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_colosso_signature_x0_512x512.png size=512x512
+FRAME colosso:mythic primary=#ede3c5 trim=#174b38 art_dependent=true
+SAVE err=0 path=res://src/character/out/roster_colosso_mythic_x0_512x512.png size=512x512
+ROSTER_RENDER_PASS frames=33

@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Padel audio audition — web build sounds, Godot port catalogue</title>
+<style>
+  :root { color-scheme: dark; --bg:#0d1117; --panel:#161b22; --line:#30363d; --ink:#e6edf3; --dim:#8b949e; --accent:#d8ff5f; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  header { padding:18px 22px; border-bottom:1px solid var(--line); }
+  h1 { margin:0 0 4px; font-size:16px; letter-spacing:.02em; }
+  h2 { margin:26px 0 10px; font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--dim); }
+  main { padding:0 22px 60px; max-width:1180px; }
+  .sub { color:var(--dim); font-size:12px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(330px, 1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px; }
+  .card h3 { margin:0 0 6px; font-size:14px; }
+  .card .meta { color:var(--dim); font-size:11.5px; }
+  .card .params { margin:7px 0 9px; color:#c9d1d9; font-size:12px; }
+  button { font:inherit; background:#21262d; color:var(--ink); border:1px solid var(--line); border-radius:6px; padding:6px 12px; cursor:pointer; }
+  button:hover { border-color:var(--accent); color:var(--accent); }
+  button:active { transform:translateY(1px); }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px; }
+  input[type=range] { width:240px; }
+  #log { white-space:pre-wrap; background:#010409; border:1px solid var(--line); border-radius:8px; padding:12px; max-height:420px; overflow:auto; font-size:12px; }
+  code { color:var(--accent); }
+  table { border-collapse:collapse; width:100%; font-size:12px; }
+  th, td { text-align:left; padding:4px 8px; border-bottom:1px solid var(--line); }
+  .ok { color:#3fb950; } .bad { color:#f85149; } .warn { color:#d29922; }
+  .flag { display:inline-block; min-width:44px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Padel audio audition — every sound the web build makes</h1>
+  <div class="sub">
+    Loads the game's own <code>../js/audio.js</code> read-only (no copy, no edit).
+    Catalogue source: <code>audition-core.js</code>. Serve the repo root over http — this page cannot run from <code>file://</code>.
+  </div>
+  <div class="sub">
+    Two headless verifiers drive this page and the catalogue:
+    <code>node tools/audio-audition/verify-stub.mjs</code> (stubbed WebAudio, asserts every
+    parameter reaches the API) and <code>python3 tools/audio-audition/verify_browser.py</code>
+    (real headless Chromium, offline-renders each sound, bakes WAVs into <code>baked/</code>).
+    Neither one listens: this host has no sound device, so the click-to-play cards below are
+    the human ear check, and the baked WAVs are the artefacts for it.
+  </div>
+</header>
+<main>
+  <h2>Transport</h2>
+  <div class="panel">
+    <div class="row">
+      <button id="musicStart">▶ start music</button>
+      <button id="musicStop">■ stop music</button>
+      <button id="unlock">unlock AudioContext</button>
+      <span class="sub">master</span>
+      <input id="volume" type="range" min="0" max="1" step="0.01" value="0.5" />
+      <span id="volumeOut" class="sub">50% (0.5 = -6.0 dB)</span>
+      <button id="mute">mute: off</button>
+      <span id="stateOut" class="sub">AudioContext: —</span>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <span class="sub">rally intensity (js/main.js:1226)</span>
+      <input id="intensity" type="range" min="0" max="1" step="0.01" value="0.12" />
+      <span id="intensityOut" class="sub"></span>
+      <button data-preset="0.12">match start 0.12</button>
+      <button data-preset="0.4">mid rally 0.40</button>
+      <button data-preset="0.5">arp on 0.50</button>
+      <button data-preset="0.9">hot 0.90</button>
+      <button data-preset="1">slam 1.00</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span class="sub">intensity → tempo (js/audio.js:267):</span>
+      <span id="tempoOut" class="sub"></span>
+    </div>
+    <div class="row" style="margin-top:6px">
+      <span class="sub">active music voices at this intensity:</span>
+      <span id="voicesOut" class="sub"></span>
+    </div>
+  </div>
+
+  <h2>One-shot effects — click to hear (10)</h2>
+  <div class="grid" id="sfxGrid"></div>
+
+  <h2>Music voices — they appear as intensity rises (5)</h2>
+  <div class="grid" id="musicGrid"></div>
+
+  <h2>Mixer (gain stages, not sounds)</h2>
+  <div class="panel" id="mixerPanel"></div>
+
+  <h2>Offline self-test — real WebAudio, measured samples</h2>
+  <div class="panel">
+    <div class="row">
+      <button id="selftest">run offline render + WAV bake for all 10 one-shots</button>
+      <span id="selftestOut" class="sub">not run</span>
+    </div>
+    <div id="selftestTable" style="margin-top:12px"></div>
+  </div>
+
+  <h2>Log</h2>
+  <div id="log"></div>
+</main>
+<script type="module">
+  import * as api from "../../js/audio.js";
+  import { SFX, MUSIC, MIXER, CATALOGUE, PERSISTENCE, bpmForIntensity, activeVoices } from "./audition-core.js";
+
+  const logEl = document.getElementById("log");
+  const t0 = performance.now();
+  function log(msg) {
+    logEl.textContent += `[${((performance.now() - t0) / 1000).toFixed(2)}s] ${msg}\n`;
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  const playLog = [];
+  window.__audition = { ready: false, log: playLog, api, core: { SFX, MUSIC, MIXER } };
+
+  // ---- one-shot buttons -----------------------------------------------------
+  const sfxGrid = document.getElementById("sfxGrid");
+  for (const entry of SFX) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h3>${entry.label} <span class="sub">sfx.${entry.id.startsWith("point") ? `point(${entry.id === "point-win"})` : entry.id}</span></h3>
+      <div class="meta">synth ${entry.synth}</div>
+      <div class="meta">trigger ${entry.trigger}</div>
+      <div class="params">${entry.params}</div>
+      <div class="row">
+        <button data-sound="${entry.id}">▶ play</button>
+        <button data-sound-x3="${entry.id}">▶ ▶ ▶ (stack check)</button>
+      </div>`;
+    sfxGrid.appendChild(card);
+  }
+
+  function fire(id) {
+    const entry = SFX.find((e) => e.id === id);
+    api.initAudio();
+    try {
+      entry.play(api);
+      playLog.push({ id, ok: true, at: performance.now() - t0, muted: api.isMuted() });
+      log(`played ${id}`);
+    } catch (error) {
+      playLog.push({ id, ok: false, error: String(error) });
+      log(`FAILED ${id}: ${error}`);
+    }
+    refreshState();
+  }
+
+  sfxGrid.addEventListener("click", (event) => {
+    const one = event.target.closest("[data-sound]");
+    const three = event.target.closest("[data-sound-x3]");
+    if (one) fire(one.dataset.sound);
+    if (three) { fire(three.dataset.soundX3); setTimeout(() => fire(three.dataset.soundX3), 60); setTimeout(() => fire(three.dataset.soundX3), 120); }
+  });
+
+  // ---- music ---------------------------------------------------------------
+  const musicGrid = document.getElementById("musicGrid");
+  for (const voice of MUSIC.voices) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h3>${voice.label} <span class="sub">${voice.id}</span></h3>
+      <div class="meta">synth ${voice.synth}</div>
+      <div class="meta">gate ${voice.gate}</div>
+      <div class="params">${voice.params}</div>
+      <div class="meta">intensity: ${voice.intensityEffect}</div>`;
+    musicGrid.appendChild(card);
+  }
+
+  const mixerPanel = document.getElementById("mixerPanel");
+  mixerPanel.innerHTML = `<table><tr><th>stage</th><th>linear</th><th>dB</th><th>anchor</th></tr>${
+    MIXER.map((m) => `<tr><td>${m.id}</td><td>${m.value}</td><td>${m.db.toFixed(2)}</td><td class="meta">${m.anchor}</td></tr>`).join("")
+  }</table>
+  <div class="sub" style="margin-top:8px">persistence — mute: ${PERSISTENCE.mute}</div>
+  <div class="sub">persistence — volume: ${PERSISTENCE.volume}</div>
+  <div class="sub">unlock: ${PERSISTENCE.unlock}</div>
+  <div class="sub">music start/stop: ${MUSIC.start} · ${MUSIC.stop}</div>
+  <div class="sub">reduced motion: ${MUSIC.reducedMotion}</div>`;
+
+  const intens = document.getElementById("intensity");
+  const intensOut = document.getElementById("intensityOut");
+  const tempoOut = document.getElementById("tempoOut");
+  const voicesOut = document.getElementById("voicesOut");
+
+  function refreshTempo() {
+    const i = Number(intens.value);
+    api.music.setIntensity(i);
+    const bpm = bpmForIntensity(i);
+    intensOut.textContent = i.toFixed(2);
+    const spb = 60 / bpm;
+    tempoOut.textContent = `${bpm.toFixed(1)} BPM · ${(spb * 1000).toFixed(1)} ms/beat · ${(spb * 250).toFixed(1)} ms/16th step`;
+    const voices = activeVoices(i);
+    voicesOut.innerHTML = Object.entries(voices)
+      .filter(([id]) => id !== "music-bass-offbeat")
+      .map(([id, state]) => `<span class="flag ${state === "on" ? "ok" : ""}">${id.replace("music-", "")}:${state === "on" ? "on" : "off"}</span>`)
+      .join(" ") + ` <span class="flag ${voices["music-bass-offbeat"] === "on" ? "warn" : ""}">bass-offbeat:${voices["music-bass-offbeat"].replace("on", "on")}</span>`;
+  }
+  intens.addEventListener("input", refreshTempo);
+  document.querySelectorAll("[data-preset]").forEach((button) => {
+    button.addEventListener("click", () => { intens.value = button.dataset.preset; refreshTempo(); });
+  });
+
+  document.getElementById("musicStart").addEventListener("click", () => { api.initAudio(); api.music.setIntensity(Number(intens.value)); api.music.start(); log("music.start()"); refreshState(); });
+  document.getElementById("musicStop").addEventListener("click", () => { api.music.stop(); log("music.stop()"); refreshState(); });
+  document.getElementById("unlock").addEventListener("click", () => { api.initAudio(); log("initAudio()"); refreshState(); });
+  document.getElementById("volume").addEventListener("input", (event) => {
+    api.setVolume(Number(event.target.value));
+    const v = Number(event.target.value);
+    document.getElementById("volumeOut").textContent = `${Math.round(v * 100)}% (${v.toFixed(2)} = ${(20 * Math.log10(Math.max(v, 1e-6))).toFixed(1)} dB)`;
+  });
+  document.getElementById("mute").addEventListener("click", (event) => {
+    api.initAudio();
+    api.setMuted(!api.isMuted());
+    event.target.textContent = `mute: ${api.isMuted() ? "on" : "off"}`;
+    log(`setMuted(${api.isMuted()}) — js/audio.js:278`);
+    refreshState();
+  });
+
+  function refreshState() {
+    const state = api.isMuted() ? "muted (audio._muted true; tone/noise/mTone return before building a node)" : "unmuted";
+    document.getElementById("stateOut").textContent = `AudioContext: ${state} · volume ${api.getVolume().toFixed(2)}`;
+  }
+
+  // ---- offline render + WAV bake -------------------------------------------
+  // A fresh module instance per sound, so audio._ctx cannot be reused across
+  // measurements; window.AudioContext is temporarily swapped for a 2 s offline
+  // context whose rendered buffer we can actually measure.
+  function encodeWav(buffer) {
+    const channels = buffer.numberOfChannels;
+    const frames = buffer.length;
+    const bytes = 44 + frames * channels * 2;
+    const view = new DataView(new ArrayBuffer(bytes));
+    const ascii = (offset, text) => { for (let i = 0; i < text.length; i += 1) view.setUint8(offset + i, text.charCodeAt(i)); };
+    ascii(0, "RIFF"); view.setUint32(4, bytes - 8, true); ascii(8, "WAVE");
+    ascii(12, "fmt "); view.setUint32(16, 16, true); view.setUint16(20, 1, true);
+    view.setUint16(22, channels, true); view.setUint32(24, buffer.sampleRate, true);
+    view.setUint32(28, buffer.sampleRate * channels * 2, true); view.setUint16(32, channels * 2, true);
+    view.setUint16(34, 16, true); ascii(36, "data"); view.setUint32(40, frames * channels * 2, true);
+    let offset = 44;
+    const data = [];
+    for (let c = 0; c < channels; c += 1) data.push(buffer.getChannelData(c));
+    for (let i = 0; i < frames; i += 1) {
+      for (let c = 0; c < channels; c += 1) {
+        const s = Math.max(-1, Math.min(1, data[c][i]));
+        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+        offset += 2;
+      }
+    }
+    let binary = "";
+    const u8 = new Uint8Array(view.buffer);
+    for (let i = 0; i < u8.length; i += 1) binary += String.fromCharCode(u8[i]);
+    return btoa(binary);
+  }
+
+  function measure(buffer) {
+    const data = buffer.getChannelData(0);
+    let peak = 0; let sumSq = 0; let last = -1;
+    for (let i = 0; i < data.length; i += 1) {
+      const a = Math.abs(data[i]);
+      if (a > peak) peak = a;
+      sumSq += data[i] * data[i];
+      if (a > 1e-4) last = i;
+    }
+    return {
+      frames: data.length,
+      sampleRate: buffer.sampleRate,
+      peak: Number(peak.toFixed(6)),
+      rms: Number(Math.sqrt(sumSq / data.length).toFixed(6)),
+      audibleFrames: last + 1,
+      audibleSeconds: Number(((last + 1) / buffer.sampleRate).toFixed(4)),
+    };
+  }
+
+  // Sounds that stagger their notes with setTimeout (point-win, victory,
+  // defeat — js/audio.js:88, 96, 101) do not touch the AudioContext until the
+  // timer fires. Take the context *after* giving those timers time to run, or
+  // we would render the previous entry's already-rendered context and hit
+  // "cannot call startRendering on an OfflineAudioContext in a stopped state".
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  window.__auditionBake = async function auditionBake({ renderSeconds = 1.5, sampleRate = 44100, settleMs = 900 } = {}) {
+    const Real = window.AudioContext;
+    const results = [];
+    const wavs = [];
+    const instances = [];
+    class OfflineShim extends window.OfflineAudioContext {
+      constructor() { super(1, Math.round(sampleRate * renderSeconds), sampleRate); instances.push(this); }
+      get state() { return "running"; }        // ctx() must not call resume()
+      resume() { return Promise.resolve(); }
+    }
+    try {
+      for (const entry of SFX) {
+        window.AudioContext = OfflineShim;
+        const before = instances.length;
+        const api2 = await import(`../../js/audio.js?audition=${entry.id}-${renderSeconds}`);
+        entry.play(api2);
+        await sleep(settleMs);
+        if (instances.length === before) throw new Error(`${entry.id}: no OfflineAudioContext was created`);
+        const context = instances[instances.length - 1];
+        const buffer = await context.startRendering();
+        const stats = measure(buffer);
+        const wav = encodeWav(buffer);
+        wavs.push({ id: entry.id, bytes: Math.floor(wav.length * 3 / 4) - (wav.endsWith("=") ? (wav.endsWith("==") ? 2 : 1) : 0), base64: wav });
+        results.push({ id: entry.id, label: entry.label, ...stats, wavBase64Length: wav.length });
+      }
+      // muted path must render pure silence
+      window.AudioContext = OfflineShim;
+      const before = instances.length;
+      const mutedApi = await import(`../../js/audio.js?audition=muted-${renderSeconds}`);
+      mutedApi.setMuted(true);
+      SFX.find((e) => e.id === "special").play(mutedApi);
+      await sleep(settleMs);
+      if (instances.length === before) throw new Error("muted-special: no OfflineAudioContext was created");
+      const mutedBuffer = await instances[instances.length - 1].startRendering();
+      results.push({ id: "muted-special", label: "special() while muted (expect silence)", muted: true, ...measure(mutedBuffer) });
+    } finally {
+      window.AudioContext = Real;
+    }
+    return { results, wavs, sampleRate, renderSeconds, settleMs };
+  };
+
+  document.getElementById("selftest").addEventListener("click", async () => {
+    const out = document.getElementById("selftestOut");
+    out.textContent = "rendering…";
+    const { results } = await window.__auditionBake();
+    const rows = results.map((r) => `<tr><td>${r.id}</td><td>${r.sampleRate}</td><td>${r.frames}</td><td>${r.peak}</td><td>${r.rms}</td><td>${r.audibleSeconds}</td><td class="${r.muted ? (r.peak === 0 ? "ok" : "bad") : (r.peak > 0 ? "ok" : "bad")}">${r.muted ? (r.peak === 0 ? "silent as designed" : "LEAKED") : (r.peak > 0 ? "audible" : "SILENT")}</td></tr>`).join("");
+    document.getElementById("selftestTable").innerHTML =
+      `<table><tr><th>sound</th><th>Hz</th><th>frames</th><th>peak</th><th>rms</th><th>audible s</th><th>verdict</th></tr>${rows}</table>`;
+    out.textContent = `${results.filter((r) => r.muted ? r.peak === 0 : r.peak > 0).length}/${results.length} as expected`;
+    log("offline self-test complete");
+  });
+
+  refreshTempo();
+  refreshState();
+  window.__audition.ready = true;
+  log("page ready — js/audio.js loaded from ../js/audio.js");
+</script>
+</body>
+</html>

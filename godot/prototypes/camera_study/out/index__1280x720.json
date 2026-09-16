@@ -1,0 +1,1337 @@
+{
+  "athlete_source": {
+    "opponent": {
+      "class": "Node3D",
+      "is_rig": true,
+      "node": "Rig_opponent"
+    },
+    "opponentMate": {
+      "class": "Node3D",
+      "is_rig": true,
+      "node": "Rig_opponentMate"
+    },
+    "player": {
+      "class": "Node3D",
+      "is_rig": true,
+      "node": "Rig_player"
+    },
+    "playerMate": {
+      "class": "Node3D",
+      "is_rig": true,
+      "node": "Rig_playerMate"
+    }
+  },
+  "bodies": "game",
+  "frame": {
+    "h": 720,
+    "w": 1280
+  },
+  "frozen": {
+    "ball_px": {
+      "x": 797.985173738921,
+      "y": 203.818266666667,
+      "z": 54.4605374056079
+    },
+    "ball_scale": 1.0,
+    "ball_world": {
+      "x": 7.94962930679321,
+      "y": 1.36151337623596,
+      "z": -2.65454339981079
+    },
+    "predicate": "rallyHits>=3 and ball.z<140 (game/match_controller.gd capture plan, rally.png)",
+    "rally_hits": 3,
+    "score": "0-0",
+    "tick": 420
+  },
+  "log": [
+    "STUDY_START bodies=game driver=llvmpipe (LLVM 21.1.8, 256 bits) display=X11",
+    "MATCH_BUILT arena=? cam_preset=default",
+    "BODIES game rigs=4/4 source=match_controller.build_athletes()",
+    "FROZEN tick=420 rally=3 ball_px=(798.0,203.8,54.5) score=0-0",
+    "FRAME size=1280x720",
+    "SAVE err=0 path=res://prototypes/camera_study/out/current-composition__1280x720.png size=1280x720",
+    "SAVE err=0 path=res://prototypes/camera_study/out/current-composition__1280x720__mask.png size=1280x720",
+    "JSON path=res://prototypes/camera_study/out/current-composition__1280x720.json",
+    "OPTION_DONE id=current-composition cam=game-default hud=as-shipped png=current-composition__1280x720.png",
+    "SOLVE_DOLLY criterion=near-feet t=4.4867 band_top=530.0 target=520.0 probe_y_at_0=570.9 probe_y_at_t=520.0",
+    "SAVE err=0 path=res://prototypes/camera_study/out/raised-backed-off__1280x720.png size=1280x720",
+    "SAVE err=0 path=res://prototypes/camera_study/out/raised-backed-off__1280x720__mask.png size=1280x720",
+    "JSON path=res://prototypes/camera_study/out/raised-backed-off__1280x720.json",
+    "OPTION_DONE id=raised-backed-off cam=dolly-solved hud=as-shipped png=raised-backed-off__1280x720.png",
+    "SAVE err=0 path=res://prototypes/camera_study/out/slim-bottom-band__1280x720.png size=1280x720",
+    "SAVE err=0 path=res://prototypes/camera_study/out/slim-bottom-band__1280x720__mask.png size=1280x720",
+    "JSON path=res://prototypes/camera_study/out/slim-bottom-band__1280x720.json",
+    "OPTION_DONE id=slim-bottom-band cam=game-default hud=slim png=slim-bottom-band__1280x720.png",
+    "SOLVE_DOLLY criterion=near-baseline t=5.6822 band_top=612.0 target=602.0 probe_y_at_0=706.6 probe_y_at_t=602.0",
+    "SAVE err=0 path=res://prototypes/camera_study/out/raised-and-slim-band__1280x720.png size=1280x720",
+    "SAVE err=0 path=res://prototypes/camera_study/out/raised-and-slim-band__1280x720__mask.png size=1280x720",
+    "JSON path=res://prototypes/camera_study/out/raised-and-slim-band__1280x720.json",
+    "OPTION_DONE id=raised-and-slim-band cam=dolly-solved hud=slim png=raised-and-slim-band__1280x720.png",
+    "SAVE err=0 path=res://prototypes/camera_study/out/tactical-wide__1280x720.png size=1280x720",
+    "SAVE err=0 path=res://prototypes/camera_study/out/tactical-wide__1280x720__mask.png size=1280x720",
+    "JSON path=res://prototypes/camera_study/out/tactical-wide__1280x720.json",
+    "OPTION_DONE id=tactical-wide cam=preset-wide hud=as-shipped png=tactical-wide__1280x720.png",
+    "SAVE err=0 path=res://prototypes/camera_study/out/behind-the-baseline__1280x720.png size=1280x720",
+    "SAVE err=0 path=res://prototypes/camera_study/out/behind-the-baseline__1280x720__mask.png size=1280x720",
+    "JSON path=res://prototypes/camera_study/out/behind-the-baseline__1280x720.json",
+    "OPTION_DONE id=behind-the-baseline cam=preset-playable hud=as-shipped png=behind-the-baseline__1280x720.png"
+  ],
+  "mask_colors": {
+    "ball": [
+      255,
+      255,
+      0
+    ],
+    "court": [
+      0,
+      255,
+      255
+    ],
+    "opponent": [
+      0,
+      0,
+      255
+    ],
+    "opponentMate": [
+      255,
+      0,
+      255
+    ],
+    "player": [
+      255,
+      0,
+      0
+    ],
+    "playerMate": [
+      0,
+      255,
+      0
+    ]
+  },
+  "options": [
+    {
+      "beauty_png": "current-composition__1280x720.png",
+      "cam_mode": "game-default",
+      "camera": {
+        "dolly_back_m": 0.0,
+        "fov": 50.8660011291504,
+        "mode": "game-default",
+        "position": {
+          "x": 0.0,
+          "y": 14.4552001953125,
+          "z": 6.40000009536743
+        },
+        "rotation_degrees": {
+          "x": -65.1999893188477,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": ""
+      },
+      "frame": {
+        "h": 720,
+        "w": 1280
+      },
+      "geometry": {
+        "athletes": {
+          "opponent": {
+            "feet_px": {
+              "behind": false,
+              "x": 986.60791015625,
+              "y": 247.45002746582
+            },
+            "head_px": {
+              "behind": false,
+              "x": 1020.50634765625,
+              "y": 202.232116699219
+            },
+            "near": false,
+            "world": {
+              "x": 7.82847690582275,
+              "y": 0.0,
+              "z": -3.07954335212708
+            }
+          },
+          "opponentMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 463.587646484375,
+              "y": 241.516464233398
+            },
+            "head_px": {
+              "behind": false,
+              "x": 446.408050537109,
+              "y": 195.913681030273
+            },
+            "near": false,
+            "world": {
+              "x": -4.0,
+              "y": 0.0,
+              "z": -3.23868203163147
+            }
+          },
+          "player": {
+            "feet_px": {
+              "behind": false,
+              "x": 403.893768310547,
+              "y": 570.885192871094
+            },
+            "head_px": {
+              "behind": false,
+              "x": 375.315185546875,
+              "y": 554.070983886719
+            },
+            "near": true,
+            "world": {
+              "x": -4.40000009536743,
+              "y": 0.0,
+              "z": 4.05000019073486
+            }
+          },
+          "playerMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 1097.24914550781,
+              "y": 565.697326660156
+            },
+            "head_px": {
+              "behind": false,
+              "x": 1152.42114257812,
+              "y": 548.31005859375
+            },
+            "near": true,
+            "world": {
+              "x": 8.54512023925781,
+              "y": 0.0,
+              "z": 3.95537948608398
+            }
+          }
+        },
+        "ball": {
+          "behind_camera": false,
+          "centre_px": {
+            "behind": false,
+            "x": 1023.70886230469,
+            "y": 228.358291625977
+          },
+          "radius_m": 0.1,
+          "radius_px": 4.8267822265625,
+          "world": {
+            "x": 7.94962930679321,
+            "y": 1.36151337623596,
+            "z": -2.65454339981079
+          }
+        },
+        "court_corners_px": {
+          "far_left": {
+            "behind": false,
+            "x": 230.131149291992,
+            "y": 134.125473022461
+          },
+          "far_right": {
+            "behind": false,
+            "x": 1049.86889648438,
+            "y": 134.125473022461
+          },
+          "near_left": {
+            "behind": false,
+            "x": 64.0065383911133,
+            "y": 706.625732421875
+          },
+          "near_right": {
+            "behind": false,
+            "x": 1215.99340820312,
+            "y": 706.625732421875
+          },
+          "net_left": {
+            "behind": false,
+            "x": 161.065399169922,
+            "y": 372.140502929688
+          },
+          "net_right": {
+            "behind": false,
+            "x": 1118.9345703125,
+            "y": 372.140502929688
+          }
+        },
+        "court_grid": {
+          "in_frame": 1107,
+          "in_frame_pct": 100.0,
+          "near_half_in_frame": 533,
+          "near_half_in_frame_pct": 100.0,
+          "near_half_samples": 533,
+          "samples": 1107
+        },
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        },
+        "frame": {
+          "h": 720.0,
+          "w": 1280.0
+        }
+      },
+      "hud_mode": "as-shipped",
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 160.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 530.0
+        },
+        {
+          "h": 172.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 538.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "id": "current-composition",
+      "mask_png": "current-composition__1280x720__mask.png",
+      "why": "The composition the game produces today: game/court.gd preset 'default' with the shipping HUD. The baseline everything else is measured against."
+    },
+    {
+      "beauty_png": "raised-backed-off__1280x720.png",
+      "cam_mode": "dolly-solved",
+      "camera": {
+        "dolly_back_m": 4.48674228042364,
+        "fov": 50.8660011291504,
+        "mode": "dolly-solved",
+        "position": {
+          "x": 0.0,
+          "y": 18.5281639099121,
+          "z": 8.28197383880615
+        },
+        "rotation_degrees": {
+          "x": -65.1999893188477,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": "near-feet"
+      },
+      "frame": {
+        "h": 720,
+        "w": 1280
+      },
+      "geometry": {
+        "athletes": {
+          "opponent": {
+            "feet_px": {
+              "behind": false,
+              "x": 914.560852050781,
+              "y": 270.845062255859
+            },
+            "head_px": {
+              "behind": false,
+              "x": 935.407653808594,
+              "y": 237.51628112793
+            },
+            "near": false,
+            "world": {
+              "x": 7.82847690582275,
+              "y": 0.0,
+              "z": -3.07954335212708
+            }
+          },
+          "opponentMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 500.144256591797,
+              "y": 266.068908691406
+            },
+            "head_px": {
+              "behind": false,
+              "x": 489.560516357422,
+              "y": 232.489227294922
+            },
+            "near": false,
+            "world": {
+              "x": -4.0,
+              "y": 0.0,
+              "z": -3.23868203163147
+            }
+          },
+          "player": {
+            "feet_px": {
+              "behind": false,
+              "x": 460.864593505859,
+              "y": 520.0
+            },
+            "head_px": {
+              "behind": false,
+              "x": 444.880615234375,
+              "y": 503.064544677734
+            },
+            "near": true,
+            "world": {
+              "x": -4.40000009536743,
+              "y": 0.0,
+              "z": 4.05000019073486
+            }
+          },
+          "playerMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 987.152954101562,
+              "y": 516.169677734375
+            },
+            "head_px": {
+              "behind": false,
+              "x": 1018.05712890625,
+              "y": 498.932525634766
+            },
+            "near": true,
+            "world": {
+              "x": 8.54512023925781,
+              "y": 0.0,
+              "z": 3.95537948608398
+            }
+          }
+        },
+        "ball": {
+          "behind_camera": false,
+          "centre_px": {
+            "behind": false,
+            "x": 938.357788085938,
+            "y": 257.640289306641
+          },
+          "radius_m": 0.1,
+          "radius_px": 3.75311279296875,
+          "world": {
+            "x": 7.94962930679321,
+            "y": 1.36151337623596,
+            "z": -2.65454339981079
+          }
+        },
+        "court_corners_px": {
+          "far_left": {
+            "behind": false,
+            "x": 310.236846923828,
+            "y": 178.270935058594
+          },
+          "far_right": {
+            "behind": false,
+            "x": 969.763122558594,
+            "y": 178.270935058594
+          },
+          "near_left": {
+            "behind": false,
+            "x": 210.595367431641,
+            "y": 618.410400390625
+          },
+          "near_right": {
+            "behind": false,
+            "x": 1069.40466308594,
+            "y": 618.410400390625
+          },
+          "net_left": {
+            "behind": false,
+            "x": 266.955139160156,
+            "y": 369.456298828125
+          },
+          "net_right": {
+            "behind": false,
+            "x": 1013.04486083984,
+            "y": 369.456298828125
+          }
+        },
+        "court_grid": {
+          "in_frame": 1107,
+          "in_frame_pct": 100.0,
+          "near_half_in_frame": 533,
+          "near_half_in_frame_pct": 100.0,
+          "near_half_samples": 533,
+          "samples": 1107
+        },
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        },
+        "frame": {
+          "h": 720.0,
+          "w": 1280.0
+        }
+      },
+      "hud_mode": "as-shipped",
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 160.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 530.0
+        },
+        {
+          "h": 172.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 538.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "id": "raised-backed-off",
+      "mask_png": "raised-backed-off__1280x720__mask.png",
+      "why": "Same look, same pitch, same FOV: the camera is dollied straight back along its own view axis until the near pair's feet, where they stand on this frozen frame, clear the bottom HUD band. The smallest camera move that fixes today's frame."
+    },
+    {
+      "beauty_png": "slim-bottom-band__1280x720.png",
+      "cam_mode": "game-default",
+      "camera": {
+        "dolly_back_m": 0.0,
+        "fov": 50.8660011291504,
+        "mode": "game-default",
+        "position": {
+          "x": 0.0,
+          "y": 14.4552001953125,
+          "z": 6.40000009536743
+        },
+        "rotation_degrees": {
+          "x": -65.1999893188477,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": ""
+      },
+      "frame": {
+        "h": 720,
+        "w": 1280
+      },
+      "geometry": {
+        "athletes": {
+          "opponent": {
+            "feet_px": {
+              "behind": false,
+              "x": 986.60791015625,
+              "y": 247.45002746582
+            },
+            "head_px": {
+              "behind": false,
+              "x": 1020.50634765625,
+              "y": 202.232116699219
+            },
+            "near": false,
+            "world": {
+              "x": 7.82847690582275,
+              "y": 0.0,
+              "z": -3.07954335212708
+            }
+          },
+          "opponentMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 463.587646484375,
+              "y": 241.516464233398
+            },
+            "head_px": {
+              "behind": false,
+              "x": 446.408050537109,
+              "y": 195.913681030273
+            },
+            "near": false,
+            "world": {
+              "x": -4.0,
+              "y": 0.0,
+              "z": -3.23868203163147
+            }
+          },
+          "player": {
+            "feet_px": {
+              "behind": false,
+              "x": 403.893768310547,
+              "y": 570.885192871094
+            },
+            "head_px": {
+              "behind": false,
+              "x": 375.315185546875,
+              "y": 554.070983886719
+            },
+            "near": true,
+            "world": {
+              "x": -4.40000009536743,
+              "y": 0.0,
+              "z": 4.05000019073486
+            }
+          },
+          "playerMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 1097.24914550781,
+              "y": 565.697326660156
+            },
+            "head_px": {
+              "behind": false,
+              "x": 1152.42114257812,
+              "y": 548.31005859375
+            },
+            "near": true,
+            "world": {
+              "x": 8.54512023925781,
+              "y": 0.0,
+              "z": 3.95537948608398
+            }
+          }
+        },
+        "ball": {
+          "behind_camera": false,
+          "centre_px": {
+            "behind": false,
+            "x": 1023.70886230469,
+            "y": 228.358291625977
+          },
+          "radius_m": 0.1,
+          "radius_px": 4.8267822265625,
+          "world": {
+            "x": 7.94962930679321,
+            "y": 1.36151337623596,
+            "z": -2.65454339981079
+          }
+        },
+        "court_corners_px": {
+          "far_left": {
+            "behind": false,
+            "x": 230.131149291992,
+            "y": 134.125473022461
+          },
+          "far_right": {
+            "behind": false,
+            "x": 1049.86889648438,
+            "y": 134.125473022461
+          },
+          "near_left": {
+            "behind": false,
+            "x": 64.0065383911133,
+            "y": 706.625732421875
+          },
+          "near_right": {
+            "behind": false,
+            "x": 1215.99340820312,
+            "y": 706.625732421875
+          },
+          "net_left": {
+            "behind": false,
+            "x": 161.065399169922,
+            "y": 372.140502929688
+          },
+          "net_right": {
+            "behind": false,
+            "x": 1118.9345703125,
+            "y": 372.140502929688
+          }
+        },
+        "court_grid": {
+          "in_frame": 1107,
+          "in_frame_pct": 100.0,
+          "near_half_in_frame": 533,
+          "near_half_in_frame_pct": 100.0,
+          "near_half_samples": 533,
+          "samples": 1107
+        },
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        },
+        "frame": {
+          "h": 720.0,
+          "w": 1280.0
+        }
+      },
+      "hud_mode": "slim",
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 100.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 612.0
+        },
+        {
+          "h": 96.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 612.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "id": "slim-bottom-band",
+      "mask_png": "slim-bottom-band__1280x720__mask.png",
+      "why": "Camera untouched; the bottom band is the thing that shrinks. Log panel cut to two smaller lines, feedback panel kept where the reference puts it but reduced to the score word and the energy bar."
+    },
+    {
+      "beauty_png": "raised-and-slim-band__1280x720.png",
+      "cam_mode": "dolly-solved",
+      "camera": {
+        "dolly_back_m": 5.68224787712097,
+        "fov": 50.8660011291504,
+        "mode": "dolly-solved",
+        "position": {
+          "x": 0.0,
+          "y": 19.6134166717529,
+          "z": 8.78343105316162
+        },
+        "rotation_degrees": {
+          "x": -65.1999893188477,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": "near-baseline"
+      },
+      "frame": {
+        "h": 720,
+        "w": 1280
+      },
+      "geometry": {
+        "athletes": {
+          "opponent": {
+            "feet_px": {
+              "behind": false,
+              "x": 900.152099609375,
+              "y": 275.523834228516
+            },
+            "head_px": {
+              "behind": false,
+              "x": 918.794006347656,
+              "y": 244.404724121094
+            },
+            "near": false,
+            "world": {
+              "x": 7.82847690582275,
+              "y": 0.0,
+              "z": -3.07954335212708
+            }
+          },
+          "opponentMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 507.462310791016,
+              "y": 270.983947753906
+            },
+            "head_px": {
+              "behind": false,
+              "x": 497.994720458984,
+              "y": 239.637969970703
+            },
+            "near": false,
+            "world": {
+              "x": -4.0,
+              "y": 0.0,
+              "z": -3.23868203163147
+            }
+          },
+          "player": {
+            "feet_px": {
+              "behind": false,
+              "x": 471.686065673828,
+              "y": 510.33447265625
+            },
+            "head_px": {
+              "behind": false,
+              "x": 457.650573730469,
+              "y": 493.701416015625
+            },
+            "near": true,
+            "world": {
+              "x": -4.40000009536743,
+              "y": 0.0,
+              "z": 4.05000019073486
+            }
+          },
+          "playerMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 966.223693847656,
+              "y": 506.754455566406
+            },
+            "head_px": {
+              "behind": false,
+              "x": 993.3681640625,
+              "y": 489.859558105469
+            },
+            "near": true,
+            "world": {
+              "x": 8.54512023925781,
+              "y": 0.0,
+              "z": 3.95537948608398
+            }
+          }
+        },
+        "ball": {
+          "behind_camera": false,
+          "centre_px": {
+            "behind": false,
+            "x": 921.663879394531,
+            "y": 263.367584228516
+          },
+          "radius_m": 0.1,
+          "radius_px": 3.5430908203125,
+          "world": {
+            "x": 7.94962930679321,
+            "y": 1.36151337623596,
+            "z": -2.65454339981079
+          }
+        },
+        "court_corners_px": {
+          "far_left": {
+            "behind": false,
+            "x": 326.559661865234,
+            "y": 187.26628112793
+          },
+          "far_right": {
+            "behind": false,
+            "x": 953.440368652344,
+            "y": 187.26628112793
+          },
+          "near_left": {
+            "behind": false,
+            "x": 237.864761352539,
+            "y": 602.0
+          },
+          "near_right": {
+            "behind": false,
+            "x": 1042.13525390625,
+            "y": 602.0
+          },
+          "net_left": {
+            "behind": false,
+            "x": 287.709014892578,
+            "y": 368.930206298828
+          },
+          "net_right": {
+            "behind": false,
+            "x": 992.291015625,
+            "y": 368.930206298828
+          }
+        },
+        "court_grid": {
+          "in_frame": 1107,
+          "in_frame_pct": 100.0,
+          "near_half_in_frame": 533,
+          "near_half_in_frame_pct": 100.0,
+          "near_half_samples": 533,
+          "samples": 1107
+        },
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        },
+        "frame": {
+          "h": 720.0,
+          "w": 1280.0
+        }
+      },
+      "hud_mode": "slim",
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 100.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 612.0
+        },
+        {
+          "h": 96.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 612.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "id": "raised-and-slim-band",
+      "mask_png": "raised-and-slim-band__1280x720__mask.png",
+      "why": "The slim band plus the camera backed off until the whole NEAR BASELINE clears it - so a player standing anywhere on their own half is readable, not just where they happen to stand on this frame. The strict version, and the one that shows what that strictness costs."
+    },
+    {
+      "beauty_png": "tactical-wide__1280x720.png",
+      "cam_mode": "preset-wide",
+      "camera": {
+        "dolly_back_m": 0.0,
+        "fov": 60.0,
+        "mode": "preset-wide",
+        "position": {
+          "x": 0.0,
+          "y": 16.6235008239746,
+          "z": 7.40000009536743
+        },
+        "rotation_degrees": {
+          "x": -67.9999923706055,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": ""
+      },
+      "frame": {
+        "h": 720,
+        "w": 1280
+      },
+      "geometry": {
+        "athletes": {
+          "opponent": {
+            "feet_px": {
+              "behind": false,
+              "x": 892.413208007812,
+              "y": 247.49821472168
+            },
+            "head_px": {
+              "behind": false,
+              "x": 914.49658203125,
+              "y": 215.614730834961
+            },
+            "near": false,
+            "world": {
+              "x": 7.82847690582275,
+              "y": 0.0,
+              "z": -3.07954335212708
+            }
+          },
+          "opponentMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 511.424560546875,
+              "y": 243.101119995117
+            },
+            "head_px": {
+              "behind": false,
+              "x": 500.213165283203,
+              "y": 210.940734863281
+            },
+            "near": false,
+            "world": {
+              "x": -4.0,
+              "y": 0.0,
+              "z": -3.23868203163147
+            }
+          },
+          "player": {
+            "feet_px": {
+              "behind": false,
+              "x": 475.398803710938,
+              "y": 476.762420654297
+            },
+            "head_px": {
+              "behind": false,
+              "x": 458.452941894531,
+              "y": 462.84716796875
+            },
+            "near": true,
+            "world": {
+              "x": -4.40000009536743,
+              "y": 0.0,
+              "z": 4.05000019073486
+            }
+          },
+          "playerMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 958.989135742188,
+              "y": 473.239624023438
+            },
+            "head_px": {
+              "behind": false,
+              "x": 991.752624511719,
+              "y": 458.9951171875
+            },
+            "near": true,
+            "world": {
+              "x": 8.54512023925781,
+              "y": 0.0,
+              "z": 3.95537948608398
+            }
+          }
+        },
+        "ball": {
+          "behind_camera": false,
+          "centre_px": {
+            "behind": false,
+            "x": 916.656372070312,
+            "y": 234.535934448242
+          },
+          "radius_m": 0.1,
+          "radius_px": 3.4801025390625,
+          "world": {
+            "x": 7.94962930679321,
+            "y": 1.36151337623596,
+            "z": -2.65454339981079
+          }
+        },
+        "court_corners_px": {
+          "far_left": {
+            "behind": false,
+            "x": 336.779907226562,
+            "y": 162.254867553711
+          },
+          "far_right": {
+            "behind": false,
+            "x": 943.220092773438,
+            "y": 162.254867553711
+          },
+          "near_left": {
+            "behind": false,
+            "x": 245.514801025391,
+            "y": 567.251892089844
+          },
+          "near_right": {
+            "behind": false,
+            "x": 1034.48522949219,
+            "y": 567.251892089844
+          },
+          "net_left": {
+            "behind": false,
+            "x": 297.116424560547,
+            "y": 338.265075683594
+          },
+          "net_right": {
+            "behind": false,
+            "x": 982.883544921875,
+            "y": 338.265075683594
+          }
+        },
+        "court_grid": {
+          "in_frame": 1107,
+          "in_frame_pct": 100.0,
+          "near_half_in_frame": 533,
+          "near_half_in_frame_pct": 100.0,
+          "near_half_samples": 533,
+          "samples": 1107
+        },
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        },
+        "frame": {
+          "h": 720.0,
+          "w": 1280.0
+        }
+      },
+      "hud_mode": "as-shipped",
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 160.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 530.0
+        },
+        {
+          "h": 172.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 538.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "id": "tactical-wide",
+      "mask_png": "tactical-wide__1280x720__mask.png",
+      "why": "The existing 'wide' preset already in game/court.gd (16.62 m up, -68 deg, 60 deg FOV): a higher tactical view, no new art direction, so the owner can see what more court costs in ball size."
+    },
+    {
+      "beauty_png": "behind-the-baseline__1280x720.png",
+      "cam_mode": "preset-playable",
+      "camera": {
+        "dolly_back_m": 0.0,
+        "fov": 60.0,
+        "mode": "preset-playable",
+        "position": {
+          "x": 0.0,
+          "y": 3.20000004768372,
+          "z": 5.80000019073486
+        },
+        "rotation_degrees": {
+          "x": -18.6873512268066,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": ""
+      },
+      "frame": {
+        "h": 720,
+        "w": 1280
+      },
+      "geometry": {
+        "athletes": {
+          "opponent": {
+            "feet_px": {
+              "behind": false,
+              "x": 1157.27270507812,
+              "y": 372.307220458984
+            },
+            "head_px": {
+              "behind": false,
+              "x": 1188.52368164062,
+              "y": 261.675445556641
+            },
+            "near": false,
+            "world": {
+              "x": 7.82847690582275,
+              "y": 0.0,
+              "z": -3.07954335212708
+            }
+          },
+          "opponentMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 379.852661132812,
+              "y": 368.797546386719
+            },
+            "head_px": {
+              "behind": false,
+              "x": 364.397705078125,
+              "y": 259.800140380859
+            },
+            "near": false,
+            "world": {
+              "x": -4.0,
+              "y": 0.0,
+              "z": -3.23868203163147
+            }
+          },
+          "player": {
+            "feet_px": {
+              "behind": false,
+              "x": -382.561798095703,
+              "y": 934.166687011719
+            },
+            "head_px": {
+              "behind": false,
+              "x": -638.816528320312,
+              "y": 616.069885253906
+            },
+            "near": true,
+            "world": {
+              "x": -4.40000009536743,
+              "y": 0.0,
+              "z": 4.05000019073486
+            }
+          },
+          "playerMate": {
+            "feet_px": {
+              "behind": false,
+              "x": 2561.69140625,
+              "y": 908.787658691406
+            },
+            "head_px": {
+              "behind": false,
+              "x": 3023.95556640625,
+              "y": 597.342712402344
+            },
+            "near": true,
+            "world": {
+              "x": 8.54512023925781,
+              "y": 0.0,
+              "z": 3.95537948608398
+            }
+          }
+        },
+        "ball": {
+          "behind_camera": false,
+          "centre_px": {
+            "behind": false,
+            "x": 1216.52514648438,
+            "y": 289.848815917969
+          },
+          "radius_m": 0.1,
+          "radius_px": 7.252197265625,
+          "world": {
+            "x": 7.94962930679321,
+            "y": 1.36151337623596,
+            "z": -2.65454339981079
+          }
+        },
+        "court_corners_px": {
+          "far_left": {
+            "behind": false,
+            "x": 142.55256652832,
+            "y": 317.139526367188
+          },
+          "far_right": {
+            "behind": false,
+            "x": 1137.44738769531,
+            "y": 317.139526367188
+          },
+          "near_left": {
+            "behind": false,
+            "x": -11724.71875,
+            "y": 4326.01025390625
+          },
+          "near_right": {
+            "behind": false,
+            "x": 13004.71875,
+            "y": 4326.01025390625
+          },
+          "net_left": {
+            "behind": false,
+            "x": -316.417175292969,
+            "y": 472.18359375
+          },
+          "net_right": {
+            "behind": false,
+            "x": 1596.41711425781,
+            "y": 472.18359375
+          }
+        },
+        "court_grid": {
+          "in_frame": 638,
+          "in_frame_pct": 57.6332429990967,
+          "near_half_in_frame": 120,
+          "near_half_in_frame_pct": 22.5140712945591,
+          "near_half_samples": 533,
+          "samples": 1107
+        },
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        },
+        "frame": {
+          "h": 720.0,
+          "w": 1280.0
+        }
+      },
+      "hud_mode": "as-shipped",
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 160.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 530.0
+        },
+        {
+          "h": 172.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 538.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "id": "behind-the-baseline",
+      "mask_png": "behind-the-baseline__1280x720__mask.png",
+      "why": "The existing 'playable' preset already in game/court.gd (3.2 m up, level, looking at the net): the closest behind-the-server view the port has ever rendered, and the one that reads footwork best."
+    }
+  ]
+}

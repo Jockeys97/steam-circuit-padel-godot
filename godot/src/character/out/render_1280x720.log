@@ -1,0 +1,56 @@
+RIG_RENDER_START
+RIG load_error=0 bones=24 tris=31325 surfaces=1 facing=180.0 pos=(0.0, 0.0, 0.0)
+RIG clips=[&"idle", &"walk", &"run"] strokes=[&"drive", &"slice", &"lob", &"serve"] outfits=[&"base", &"glacier", &"vermilion", &"midnight_violet", &"ember"]
+EXTENT world pos=(-0.522217, 0.044973, -0.277535) size=(1.041607, 1.678306, 0.266738) centre=(-0.001413, 0.884126, -0.144166) (framed height 2.2657 m)
+CAM pos=(0.0, 0.884126, 2.968332) fov=40.000 look_at=(0,0.8841,-0.1442) FRAMING_SHIFT_PX dx=0.0000 dy=0.0000
+SAVE err=0 path=res://src/character/out/background_only_1280x720.png size=1280x720
+FRAME outfit=base state={ "override_present": true, "outfit": &"base", "material_class": "StandardMaterial3D", "resource_name": "Outfit_base", "albedo_texture_digest": "e0fe60ab7b674941", "albedo_texture_size": "2048x2048", "albedo_color": "(1.0, 1.0, 1.0, 1.0)", "metallic": "0.0000", "roughness": "0.8500", "shading_mode": 1, "glb_pbr": false }
+SAVE err=0 path=res://src/character/out/outfit_base_x0_1280x720.png size=1280x720
+FRAME outfit=glacier state={ "override_present": true, "outfit": &"glacier", "material_class": "StandardMaterial3D", "resource_name": "Outfit_glacier", "albedo_texture_digest": "f568182b4bd5e686", "albedo_texture_size": "2048x2048", "albedo_color": "(1.0, 1.0, 1.0, 1.0)", "metallic": "0.0000", "roughness": "0.8500", "shading_mode": 1, "glb_pbr": false }
+SAVE err=0 path=res://src/character/out/outfit_glacier_x0_1280x720.png size=1280x720
+FRAME outfit=vermilion state={ "override_present": true, "outfit": &"vermilion", "material_class": "StandardMaterial3D", "resource_name": "Outfit_vermilion", "albedo_texture_digest": "657fd75f3d84111b", "albedo_texture_size": "2048x2048", "albedo_color": "(1.0, 1.0, 1.0, 1.0)", "metallic": "0.0000", "roughness": "0.8500", "shading_mode": 1, "glb_pbr": false }
+SAVE err=0 path=res://src/character/out/outfit_vermilion_x0_1280x720.png size=1280x720
+FRAME outfit=midnight_violet state={ "override_present": true, "outfit": &"midnight_violet", "material_class": "StandardMaterial3D", "resource_name": "Outfit_midnight_violet", "albedo_texture_digest": "af94fd765bee3c3d", "albedo_texture_size": "2048x2048", "albedo_color": "(1.0, 1.0, 1.0, 1.0)", "metallic": "0.0000", "roughness": "0.8500", "shading_mode": 1, "glb_pbr": false }
+SAVE err=0 path=res://src/character/out/outfit_midnight_violet_x0_1280x720.png size=1280x720
+FRAME outfit=ember state={ "override_present": true, "outfit": &"ember", "material_class": "StandardMaterial3D", "resource_name": "Outfit_ember", "albedo_texture_digest": "fb3b1909872df6ca", "albedo_texture_size": "2048x2048", "albedo_color": "(1.0, 1.0, 1.0, 1.0)", "metallic": "0.0000", "roughness": "0.8500", "shading_mode": 1, "glb_pbr": false }
+SAVE err=0 path=res://src/character/out/outfit_ember_x0_1280x720.png size=1280x720
+FRAME_GLBPBR outfit=glacier state={ "override_present": true, "outfit": &"glacier", "material_class": "StandardMaterial3D", "resource_name": "Outfit_glacier", "albedo_texture_digest": "f568182b4bd5e686", "albedo_texture_size": "2048x2048", "albedo_color": "(1.0, 1.0, 1.0, 1.0)", "metallic": "1.0000", "roughness": "1.0000", "shading_mode": 1, "glb_pbr": true }
+SAVE err=0 path=res://src/character/out/pbrglb_outfit_glacier_x0_1280x720.png size=1280x720
+FRAME_GLBPBR outfit=vermilion state={ "override_present": true, "outfit": &"vermilion", "material_class": "StandardMaterial3D", "resource_name": "Outfit_vermilion", "albedo_texture_digest": "657fd75f3d84111b", "albedo_texture_size": "2048x2048", "albedo_color": "(1.0, 1.0, 1.0, 1.0)", "metallic": "1.0000", "roughness": "1.0000", "shading_mode": 1, "glb_pbr": true }
+SAVE err=0 path=res://src/character/out/pbrglb_outfit_vermilion_x0_1280x720.png size=1280x720
+FRAME_GLBPBR outfit=base state={ "override_present": true, "outfit": &"base", "material_class": "StandardMaterial3D", "resource_name": "Outfit_base", "albedo_texture_digest": "e0fe60ab7b674941", "albedo_texture_size": "2048x2048", "albedo_color": "(1.0, 1.0, 1.0, 1.0)", "metallic": "1.0000", "roughness": "1.0000", "shading_mode": 1, "glb_pbr": true }
+SAVE err=0 path=res://src/character/out/pbrglb_outfit_base_x0_1280x720.png size=1280x720
+STRIP clip=run f=0 t=0.0000 Hips=(0.52555,0.52447,0.54011,-0.39624) RightForeArm=(-0.60681,0.02498,-0.48433,0.62974)
+SAVE err=0 path=res://src/character/out/anim_run_f0_1280x720.png size=1280x720
+STRIP clip=run f=1 t=0.0833 Hips=(0.50935,0.52995,0.53749,-0.41331) RightForeArm=(-0.68568,-0.00376,-0.57962,0.44030)
+SAVE err=0 path=res://src/character/out/anim_run_f1_1280x720.png size=1280x720
+STRIP clip=run f=2 t=0.1667 Hips=(0.51367,0.52438,0.52371,-0.43231) RightForeArm=(-0.66689,-0.00570,-0.56203,0.48923)
+SAVE err=0 path=res://src/character/out/anim_run_f2_1280x720.png size=1280x720
+STRIP clip=run f=3 t=0.2500 Hips=(0.52816,0.52233,0.45768,-0.48862) RightForeArm=(-0.55291,0.02246,-0.43354,0.71122)
+SAVE err=0 path=res://src/character/out/anim_run_f3_1280x720.png size=1280x720
+STRIP clip=run f=4 t=0.3333 Hips=(0.51738,0.50638,0.45773,-0.51613) RightForeArm=(-0.55112,0.02381,-0.43390,0.71234)
+SAVE err=0 path=res://src/character/out/anim_run_f4_1280x720.png size=1280x720
+STRIP clip=run f=5 t=0.4167 Hips=(0.53863,0.47734,0.46934,-0.51161) RightForeArm=(-0.59287,0.02180,-0.48336,0.64373)
+SAVE err=0 path=res://src/character/out/anim_run_f5_1280x720.png size=1280x720
+STRIP clip=run f=6 t=0.5000 Hips=(0.54226,0.48508,0.47126,-0.49856) RightForeArm=(-0.57844,0.02936,-0.46406,0.67022)
+SAVE err=0 path=res://src/character/out/anim_run_f6_1280x720.png size=1280x720
+STRIP clip=run f=7 t=0.5833 Hips=(0.52087,0.51374,0.52134,-0.43928) RightForeArm=(-0.53843,0.03759,-0.41435,0.73280)
+SAVE err=0 path=res://src/character/out/anim_run_f7_1280x720.png size=1280x720
+STRIP clip=drive f=0 t=0.0000 Hips=(0.55907,0.55907,0.46474,-0.39861) RightForeArm=(-0.20734,0.08005,-0.08224,0.97151)
+SAVE err=0 path=res://src/character/out/anim_drive_f0_1280x720.png size=1280x720
+STRIP clip=drive f=1 t=0.0775 Hips=(0.49431,0.50286,0.53311,-0.46753) RightForeArm=(-0.21838,0.04135,-0.25608,0.94076)
+SAVE err=0 path=res://src/character/out/anim_drive_f1_1280x720.png size=1280x720
+STRIP clip=drive f=2 t=0.1550 Hips=(0.40113,0.42022,0.60633,-0.54302) RightForeArm=(-0.22167,-0.01613,-0.48914,0.84341)
+SAVE err=0 path=res://src/character/out/anim_drive_f2_1280x720.png size=1280x720
+STRIP clip=drive f=3 t=0.2325 Hips=(0.46279,0.47510,0.56069,-0.49571) RightForeArm=(-0.22198,-0.01109,-0.46986,0.85430)
+SAVE err=0 path=res://src/character/out/anim_drive_f3_1280x720.png size=1280x720
+STRIP clip=drive f=4 t=0.3100 Hips=(0.60224,0.59571,0.40725,-0.34144) RightForeArm=(-0.21956,0.03453,-0.28523,0.93233)
+SAVE err=0 path=res://src/character/out/anim_drive_f4_1280x720.png size=1280x720
+STRIP clip=drive f=5 t=0.3875 Hips=(0.65660,0.64025,0.31213,-0.24805) RightForeArm=(-0.21252,0.06506,-0.15130,0.96318)
+SAVE err=0 path=res://src/character/out/anim_drive_f5_1280x720.png size=1280x720
+STRIP clip=drive f=6 t=0.4650 Hips=(0.63908,0.62616,0.34659,-0.28173) RightForeArm=(-0.20861,0.07668,-0.09799,0.97005)
+SAVE err=0 path=res://src/character/out/anim_drive_f6_1280x720.png size=1280x720
+STRIP clip=drive f=7 t=0.5425 Hips=(0.59044,0.58578,0.42418,-0.35821) RightForeArm=(-0.20736,0.08001,-0.08241,0.97150)
+SAVE err=0 path=res://src/character/out/anim_drive_f7_1280x720.png size=1280x720
+FRAME_ARENA cam=(0.0, 3.2, 5.8) fov=60.000
+SAVE err=0 path=res://src/character/out/arena_composition_1280x720.png size=1280x720

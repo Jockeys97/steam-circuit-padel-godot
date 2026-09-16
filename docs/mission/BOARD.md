@@ -1,0 +1,468 @@
+# Board report — tick 17, 2026-09-16
+
+Written 13:45 CEST by the interactive session (org-simulation CEO role). This is the
+milestone report for the shift from "a simulation with prototypes" to **a game that
+runs**: the port now boots a menu, plays a quick match in 3D through the verified
+simulation core, and shows a working HUD.
+
+## What shipped, and how it was checked
+
+1. **A playable quick match.** Menu (opponent tier, athlete, arena, seed) → match →
+   rally → points → result. Built on the ported deterministic core, at the original
+   120 Hz tick. My own run of the slice test prints **106 checks, all green**; the
+   engine harness stays at **8 of 8**; a scripted match plays to a real result in 33
+   seconds of wall time. This is machinery, not a claim about how it feels — the feel
+   verdict is still yours.
+2. **Sound and language are wired, not just designed.** Every event the simulation
+   emits now resolves to a written line of Italian instead of a raw internal id (the
+   readiness check went from 22 leaking ids to zero, and I verified the check is not a
+   rubber stamp: breaking one label turns it red). The match requests the right sounds
+   for serves, hits, bounces, wall contacts, net faults, points and the result. Nobody
+   can hear it on this machine — it has no sound device — so that is asserted on engine
+   state and said plainly, not dressed up as a listening test.
+3. **The rules are no longer only in the browser.** Ten of the original game's rule
+   audits (wall rules, court speed, match format, shot quality, shot balance, smash
+   input, difficulty, AI attack, lineup, controller tactics) now exist on the Godot side
+   under their original names and reproduce the original's own numbers — **221 checks,
+   zero failures, nothing dropped**. One deliberate substitution is recorded: two audits
+   that assert on Italian text now assert on message ids instead, because the port is
+   deliberately not allowed to hard-code display strings.
+4. **Saves and Steam groundwork.** A versioned, corruption-safe offline save that
+   mirrors exactly what the browser game persists (**137 checks green**), plus
+   achievement and cloud-save interfaces behind an honest mock. No live Steam claim is
+   made anywhere: the App ID is still yours to issue, and the one-line swap point for
+   the real Steam library is documented.
+5. **The athletes exist and move.** A reusable rig with real walk/run animation and a
+   stroke authored in Godot, plus a colour-variant outfit catalogue covering the
+   reference's own roster data — the previously reported "outfits barely differ" problem
+   is fixed where it matters: the strong pair went from a 1.2-in-255 tint to about 12 in
+   255 whole-model and about 22 in 255 on the shorts, measured from rendered pixels, not
+   predicted. Two outfit pairs still fall below the quality floor the lane set for
+   itself; that is flagged as your call, not silently shipped.
+6. **Defect repair on the build.** Five of the six defects I found by looking at the
+   renders are gone (racket geometry, stray court markers, net mesh, HUD overlap, raw
+   ids in the log). One remains honestly open: the rear glass wall still does not read
+   as glass, and it is being worked now.
+
+## Gate-by-gate
+
+| Gate | State |
+|---|---|
+| 1 — planning questions resolved with evidence | COMPLETE |
+| 2 — implementation plan and named tickets | COMPLETE (13 slices, every ticket carrying its eight required sections) |
+| 3 — import/camera/UI prototypes proven in engine | COMPLETE for the prototypes; the camera verdict is yours |
+| 4 — vertical slices: parity + quick match | Parity proven for the healthy window through a full point sequence; quick match playable and green |
+| 5 — feature parity, exports, saves, controller, locales, audio | In progress: audio, locales, saves and controls groundwork landed; arenas, modes, export underway |
+| 6 — independent review and parent-verifiable evidence | Every claim above was re-run by me; screenshots inspected by eye |
+
+## Spend
+
+Zero. No Meshy credits, no paid API, no purchases. Work ran on the requested
+subscription lanes plus the granted Claude subscription.
+
+## Blockers
+
+None technical. The gates below are yours, and each has a cheap artifact waiting to be
+judged rather than a question to answer in the abstract: camera and feel, UI approach,
+the parity gate's formal definition, the court's true proportions, roster order, arena
+art direction, product scope and platforms, the demo rule, the Steam App ID — and now
+also the two outfit pairs below the floor and the near-half framing that clips the
+athletes' legs.
+
+## Next
+
+Nine arenas and the remaining court/HUD repair; drill, tournament and career rules;
+export presets and a packaged build; controller navigation and accessibility. Feel and
+visual direction stay open until you look at it.
+
+---
+
+# Board report — tick 14, 2026-09-16
+
+Written 09:58 CEST by the mission's cron driver (org-simulation CEO role). Scope this
+tick: close the last two unexercised branches of the simulation-parity proof, and open
+the one feature-parity area that needs neither an engine nor a human verdict — audio.
+
+## What shipped
+
+1. **The port now reproduces a full point sequence, not just the healthy stretch of a
+   rally.** Previous ticks had proven the two engines agree while nothing unusual
+   happens. This tick adds the two missing branches: a *double fault* (both serves
+   missed, the point lost) and a *completed set* (six games won). Both run through the
+   original JavaScript game and the Godot port, compared tick by tick with the strictest
+   comparator we have: identical, every field, every tick — including the double fault
+   landing on the same tick in both engines. The old scenarios still reproduce exactly,
+   so nothing was re-tuned to make the new ones pass.
+2. **Audio went from "route chosen" to "contract verified".** Ten sound events are now
+   mapped to the ten sound files we already have, each mapping anchored to the actual
+   line in the original game that triggers it, and a test fails loudly if any of that
+   drifts (it caught all seven deliberately broken cases we threw at it, including a
+   real one run as a control). This is the groundwork the Godot audio layer will be
+   built against — no engine code yet, so nothing here claims a sound has ever played.
+
+## Gate-by-gate
+
+- Gate 1 (planning questions resolved, baseline diagnosed): **passed**, unchanged.
+- Gate 2 (implementation plan and dependency-linked tickets): **passed** at the
+  documentation level, unchanged.
+- Gate 3 (smallest Godot import and camera/UI prototypes): **partly done** — arena and
+  character renders exist in-engine; camera and feel remain Luca's verdict, so the gate
+  stays open by design.
+- Gate 4 (unblocked vertical slices — simulation parity first): **strong progress this
+  tick.** Parity now covers faults, second serves, double faults, completed games and a
+  completed set. The gate's own done verdict still waits on Luca's parity answer, so the
+  slice is *proven*, not *closed*.
+- Gate 5 (feature parity, exports, saves, controller, accessibility, locales, audio):
+  **started.** Audio has a verified contract; the rest is untouched.
+- Gate 6 (independent review, real Steam release proof): not reached.
+
+## Spend, drift and gates
+
+Zero paid spend, zero image credits, no commits, no pushes, no deployments, no secrets
+touched. Every file written this tick sits in the two lanes' allowlists, and the frozen
+test harness is byte-identical to before. Routing unchanged and re-checked: the same
+OpenCode Go lane, same requested model, no provider setting touched. One heavy process at
+a time, which is why the character render diagnostic was deferred a second tick.
+
+## Honest gaps
+
+- The double fault only occurs when the serving character is the *second* athlete: with
+  the frozen test's own character the serve physically cannot miss. That is a property of
+  the original game's tuning, verified as such — not a port defect — but it means the
+  covered branch is athlete-dependent.
+- The completed set arrives much earlier than the old estimate predicted (because the new
+  runner serves much harder), so that number in the earlier notes is superseded.
+- Everything after a match ends is still outside the runners' scope.
+- Agreement is exact at the six decimals the digest prints, not bit-for-bit floating
+  point.
+- Audio is data and source assertions only: no Godot audio module exists, nothing has been
+  played, and the host has no sound device, so there is no listening test. The original
+  game also defines no target loudness — recorded as unknown rather than invented.
+- The character outfit question stays open: the recolour limit is texture authoring, not
+  the render path, and the diagnostic render that would settle it is still pending.
+
+## Open decisions for Luca (nothing self-approved)
+
+Camera and feel, UI approach, the parity gate verdict, arena direction, athlete roster
+order, product scope and platforms, the demo gate rule, and the live Steam app id. The
+court-aspect question (the original layout is not a pure scale plan) is still
+unanswered.
+
+## Next lever
+
+One heavy lane per tick: either the first Godot audio module consuming the verified
+contract, or the character render diagnostic at the centre of the court with the stronger
+colour targets that make it informative. If a tick's window is too short for either, the
+engine-free fallback is the locale port (Gate 5's "locales", no engine, no human verdict).
+
+---
+
+# Board report — tick 13, 2026-09-16
+
+Written 09:25 CEST by the mission's cron driver (org-simulation CEO role). Scope this
+tick: take the two unblocked items the last report named — the charging runner that
+reaches serve faults, and the deferred character render — and verify both returns
+independently. One was completed; the other was deliberately swapped for its offline
+half because the host could not carry a render.
+
+## What shipped
+
+1. **The port now reproduces a serve fault and a second serve, and the two engines
+   agree byte-for-byte on it.** This closes the branch that every previous parity
+   claim had to exclude. A new runner strikes serves at full charge — the frozen test
+   harness strikes them far too gently to ever miss — and the same scenario was run
+   through the original JavaScript game and the Godot port. On 601 consecutive ticks
+   compared field-by-field, the two engines produce identical output, including the
+   fault, the second serve and the point that follows. Re-checked by me on my own
+   runs, not from the team's summary.
+2. **The outfit limit is now measured and costed rather than suspected.** The
+   character team proved last tick that the recolour *mechanism* works but the two
+   outfits look nearly the same. This tick's offline analysis says why, with numbers:
+   only ~14 % of the packed texture is recolourable at all, so the render physically
+   cannot show more than the texture carries. It also prescribes the stronger colour
+   targets that would quadruple the visible difference, so the next render is a
+   guaranteed-informative run instead of another coin flip.
+3. **The character render was intentionally not run.** The host was memory-starved
+   and a neighbouring job's own process was killed by the kernel minutes before
+   dispatch. Rather than risk a second OOM kill that would leave no evidence, the
+   render waited and its offline half ran instead. The render is still owed and is
+   named as the next action.
+
+## Gate-by-gate
+
+| Gate | Status | Proof |
+|---|---|---|
+| 1. Planning questions resolved with evidence | PARTIAL | Unchanged. Human questions stay open; no guess was substituted. |
+| 2. Implementation plan + named tickets | COMPLETE (documentation level) | Unchanged. |
+| 3. Smallest import + camera/UI prototypes | PARTIAL, FROZEN at the human gate | Camera and feel are still Luca's verdict. The character work is technical evidence only. |
+| 4. Unblocked vertical slices (parity, quick match) | ADVANCED | The uncovered serve-fault/second-serve branch is now covered by byte-identical cross-engine evidence. Remaining: the double fault, a completed game and a completed set, plus the quick-match slice itself. |
+| 6. Independent review per completed slice | ONGOING | Every claim this tick was re-run by me before being accepted; two children's self-reports were not enough on their own. |
+
+## Spend, drift and gates
+
+- Spend: **$0 paid, 0 Meshy credits**, existing subscription inference only.
+- Drift: none. No tracked file changed, no commit, no push, no deployment, no
+  secrets printed. Every file written sits inside a lane's declared allowlist, and
+  the frozen test harness is byte-identical before and after.
+- Human gates: none touched, none self-approved. Camera/feel, UI approach, parity
+  gate, roster order, arena direction, product scope, demo gate, Steam App ID and
+  the court-aspect question all remain open and unanswered.
+
+## Next lever
+
+Two runs that use the engine slot one at a time: the double-fault and
+completed-set scenarios through both engines (the last uncovered parity branches),
+and the character render on the prescribed stronger textures.
+
+---
+
+# Board report — tick 12, 2026-09-16
+
+Written 08:45 CEST by the mission's cron driver (org-simulation CEO role). Scope
+this tick: take the two unblocked items the last report named — the character
+render the ticket still owed, and the question of what the parity proof does not
+cover — and verify both returns independently.
+
+## What shipped
+
+1. **The character outfit path is now proved mechanically and measured honestly.**
+   A new Godot prototype renders the same rigged athlete twice in one frame, one
+   copy per outfit, by duplicating the model's single material and replacing only
+   its colour texture. The mechanism works and is reproducible: re-running the
+   render produced byte-identical images. The honest finding is that the two
+   outfits are **not** visually distinct in engine — the rendered model colour
+   moves about 1.2/255 between them — and the limit is the authored textures, not
+   the render path. The ticket therefore stays open with a named, zero-cost next
+   step rather than being closed on a technicality.
+2. **The parity proof's two blind spots are now explained, not just admitted.**
+   Serve faults and second serves have never fired because the frozen test harness
+   strikes every serve far too gently to miss (charge ≤ 0.33 where a fault needs
+   ≈ 0.90), and the AI's serve is pinned at a charge that cannot miss by
+   construction. The long-run "runaway ball" is a harness artefact: the test script
+   keeps stepping after the match has already been decided, while the real game
+   stops there. Both answers were re-checked by the mission owner against the
+   engine output and the game source, not taken from the report.
+3. **A concrete, costed plan to close the remaining parity gap:** the exact
+   scenario parameters that would make faults and second serves actually happen
+   are written down and ready to run through both engines next tick.
+
+## Gate-by-gate
+
+| Gate | Status | Proof |
+|---|---|---|
+| 1. Planning questions resolved with evidence | PARTIAL | Unchanged from last report; character pipeline now advances one real measurement further (mechanism proved, visible distinctness not achieved). |
+| 2. Implementation plan + named tickets | COMPLETE (documentation level) | Unchanged. |
+| 3. Smallest import + camera/UI prototypes | PARTIAL, FROZEN at the human gate | Camera and feel remain Luca's verdict. The character prototype is new technical evidence, not a taste verdict. |
+| 4. Unblocked vertical slices (parity, quick match) | ADVANCED, not closed | 12/12 matrix scenarios still identical, re-verified this tick. New: the exact reasons the uncovered branches are uncovered, and the scenario spec that reaches them. Faults, second serves, completed games and sets still unexercised in engine. |
+
+## Spend, drift and gates
+
+- Spend: **$0 paid, 0 Meshy credits**, existing subscription inference only. Two
+  render attempts (one failed on a script parse error, one succeeded).
+- Drift: none. No tracked file changed, no commit, no push, no deployment, no
+  secrets. Every file written this tick sits inside a lane's declared allowlist.
+- Human gates: none self-approved. Camera, feel, UI, arena direction, roster
+  order, parity gate, product scope and the Steam App ID all remain open with Luca.
+- Environment: the host is still memory-starved (3,910 MB, no swap) and the
+  sibling DemonPet job's own Godot process was OOM-killed mid-tick. The
+  one-heavy-process rule held: this tick ran one render lane and one read-only
+  lane, nothing was lost.
+
+## Next action
+
+Build the full-charge serve runner the spec calls for and drive it through both
+engines — the first test where faults and second serves actually fire — and
+re-render the character prototype with one copy centred to settle whether the
+outfit difference is an authoring limit. Both are unblocked and cost nothing.
+
+---
+
+# Board report — tick 11, 2026-09-16
+
+Written 08:07 CEST by the mission's cron driver (org-simulation CEO role). Scope
+this tick: root-cause the repeated lost dispatches, re-dispatch the carried-forward
+work, and verify everything independently.
+
+## What shipped
+
+1. **The lost dispatches are explained and fixed as a class of failure.** Ticks 5,
+   6, 7, 9 and 10 all ended without writing anything because the kernel OOM killer
+   terminated this mission's own worker inside its cgroup (`dmesg`: `Killed
+   process … (python3) … anon-rss:879272kB` at 07:29:41, `…752644kB` at 07:10:18).
+   The host has 3,910 MB RAM, 0 swap, ~3,450 MB held by other long-lived work, and
+   this mission's processes carry the highest kill score. New operating rules, now
+   in force: one memory-heavy process at a time, evidence written incrementally,
+   state saved before dispatch. Result this tick: three lanes ran, all three
+   delivered, nothing was lost.
+2. **A real, silent correctness bug in the Godot port was found, root-caused and
+   fixed.** The port is no longer parity-correct only up to ~18 seconds; it is now
+   identical across the whole tested window.
+3. **The character pipeline now has real measured numbers** instead of adjectives.
+
+## Gate-by-gate
+
+| Gate | Status | Proof |
+|---|---|---|
+| 1. Planning questions resolved with evidence | PARTIAL | Baseline audit green (27/27), Godot version pinned from the binary, map dependency corrected. Character-pipeline economics now carries measured numbers but stays OPEN on one item (see below). |
+| 2. Implementation plan + named tickets | COMPLETE (documentation level) | `docs/implementation/PLAN.md` plus two build tickets with all eight required sections. |
+| 3. Smallest import + camera/UI prototypes | PARTIAL, FROZEN at the human gate | Camera spike renders exist and were reproduced by the CEO. The motion pass is frozen after two dead attempts (the mission's own two-strikes rule). Camera, feel and UI are Luca's verdict, never self-approved. |
+| 4. Unblocked vertical slices (simulation parity, quick match) | ADVANCED, not closed | Slice S1 parity: the diverging scenarios now match. 12 of 12 matrix scenarios IDENTICAL after the fix, verified by the CEO re-running the matrix personally. Coach/rally coverage still stops short of faults, second serves, games and tie-breaks. |
+| 5. Full parity, exports, saves, Steam interfaces | NOT STARTED | Blocked behind gates 3–4 and the human decisions. |
+| 6. Independent review and parent-verifiable evidence | ONGOING | Every claim this tick was re-run by the CEO: baseline digest, fine probe, three previously-diverging scenarios, the full matrix, the engine smoke test (PASS 8/8) and the source semantics of the fix. |
+
+## The bug, in plain terms
+
+The web game clamps a paddle's movement penalty using a fallback that can never
+fire, because the value it falls back from is always a number. The Godot port
+translated that fallback as "if the value is zero, use the animation echo instead".
+So whenever a paddle stood still while its animation was still settling, the port
+charged the player a movement penalty the original never charged. That single
+mistranslation moved the smash aim, which moved the ball, and from about 18 seconds
+into a match the two engines described different games. Two lines in the ported
+simulation core were corrected; the reference was not touched.
+
+## Independent verification (all re-run by the mission owner, not accepted on report)
+
+| Claim | My own command | Result |
+|---|---|---|
+| Baseline parity intact | both engines, seed 12345 / 1,440 ticks / every 60 | PASS, digest `a7136682…` unchanged on both sides, 25 tick lines byte-identical |
+| The divergence was real | both engines, seed 2024 / every 1 tick | first differing tick 2207, `v.x` off by 1.398015 — ~1,000× the tolerance |
+| The fix works | same probe after the fix | 2,216 ticks compared, **zero differences** |
+| The fix generalises | seed 7 / 4,320 and seed 999 / 28,800 scenarios | zero differences |
+| Full coverage matrix | the 12-scenario matrix, re-run end to end | **12 identical / 12** (was 8 diverged / 4 identical) |
+| No regression in the engine | headless smoke suite | PASS 8/8, exit 0 |
+
+## Spend and boundaries
+
+- Meshy credits this tick: **0**. Paid API spend: **$0**. Inference ran only on the
+  pinned OpenCode Go lane; cost telemetry for that lane is not exposed, so it is
+  recorded as unknown rather than guessed.
+- No commits, no pushes, no deployments, no Steam publication, no secret exposure,
+  no provider/config/profile changes. Other projects and other cron jobs untouched.
+
+## Blocked / waiting on Luca (nothing self-approved)
+
+1. **Camera and feel** — verdict owed on the existing spike captures; the motion
+   pass stays frozen until then.
+2. **UI approach** for the 3D build.
+3. **Parity gate definition** — recommend the field-by-field digest, now stronger
+   because the digest catches real defects.
+4. **Court proportions** — the shipped layout is 1.575:1 while the rules text says
+   20×10 m; recommend keeping the shipped proportions.
+5. **Arena art direction, athlete roster order, strangler policy, product scope,
+   demo gate rule, Steam App ID** — all standing.
+
+## Honest gaps
+
+- Parity covers the healthy opening phase at four seeds, sampled. Faults, second
+  serves, games and tie-breaks are **not** exercised by any scenario yet, so the
+  port is not proven over a complete match.
+- Rendering on this host is software GL, so no frame-rate claim is possible.
+- The character pipeline's recolour route still has no in-engine render; the texture
+  mask cannot tell an ivory tee from ivory fur, so a shipping pipeline wants real
+  garment zones.
+
+## Next action (tick 12)
+
+One heavy lane: the in-engine material render that closes the character ticket's
+last item. Second lane, read-only: exercise a full point sequence through the frozen
+harness so the coverage claim can stop at nothing less than a full sequence of play.
+
+---
+
+## Previous board report (tick 8, kept for continuity)
+
+# Board report — 2026-09-16 (tick 8, ~06:34–06:53 CEST)
+
+Mission: Steam Circuit Padel Pro — Godot 3D port. Status: **RUNNING** (not
+complete, not waiting — unblocked technical work remains). One live driver, the
+scheduled mission job on `opencode-go` / `deepseek-v4.1-flash`.
+
+Milestone: **the port stopped being a plan and started running code.**
+
+## Shipped this tick
+
+**1. The Godot simulation core exists and reproduces the web game exactly, on the
+tracer scenario.** A headless GDScript port of the match simulation now runs under
+the engine and prints the same parity digest as the web build for the same seed
+and the same scripted inputs. Verified by me, not taken on report:
+
+- I ran the Godot digest and a live JavaScript digest and diffed them line for
+  line: **25 of 25 sampled states identical, byte for byte**, the same digest
+  fingerprint on both sides, ending on the same random-number state, both exit 0.
+- **I checked it is real computation, not a copy.** With the JavaScript reference
+  file moved out of the tree, the Godot digest lines and fingerprint came out
+  unchanged; there is no hardcoded fingerprint and no shell-out to Node inside
+  the ported core. The numbers are produced by the port.
+- A second seed (999, 900 ticks) also matched (run by the crew lane; the tracer
+  scenario above is the one I reproduced end to end myself).
+
+**2. A comparator that answers the porting question that matters: "does the new
+engine still behave the same, and if not, where does it first drift?"** It compares
+two parity streams field by field and names the first differing tick and field. I
+ran it on my own two live streams: identical, clean exit. Its own suite injects 23
+deliberate faults (drifted values, missing ticks, extra ticks, reordered fields,
+tampered lines, truncated summaries) and catches every one at the right tick and
+field, so a future green result carries meaning.
+
+**3. Gate 2 is complete.** The two build tickets the implementation plan promised
+exist and carry every required section: objective, real source anchors, file
+ownership, inputs and outputs, tests, execution commands, expected evidence,
+failure and recovery criteria. The plan itself is unchanged (13 slices).
+
+**4. The character recolouring tool is green.** The carried-forward crash is
+genuinely fixed. I re-ran the tool myself: it completes with no traceback and
+writes its provenance record, its diff report and both recoloured textures (mean
+per-pixel difference 4.9/255 across 14.6 % of the texture; the two outfits differ
+from each other by 4.9/255). The earlier failure was the run being killed, not a
+live bug.
+
+## Verified independently
+
+| Claim | How I checked it |
+|---|---|
+| Godot digest equals the web digest | Ran both myself, diffed line by line: identical, sha256 `a7136682…` on both sides, exit 0 |
+| The digest is computed, not echoed | Removed the JavaScript reference from the tree; the Godot digest lines and hash are unchanged |
+| Comparator works on real streams | Ran it on my own two live outputs: `IDENTICAL`, exit 0 |
+| Nothing regressed | `PASS 8/8` headless suite still green, exit 0 |
+| No unintended changes | `git status` shows no tracked file changed; no commit, no push, no deploy |
+| Recolour tool | Re-ran it end to end myself: no traceback, provenance and diff report written |
+
+## Honest gaps
+
+- The parity proof covers **one short scenario**: 12 s of match time, 25 sampled
+  states, two seeds, one point. It exercises the serve, one rally and one point;
+  it does **not** reach games, sets, tie-breaks, faults, second serves or the
+  special shot. Agreement is at six printed decimals, not bit-exact floating
+  point. Slice S1 is proven for the tracer, not closed.
+- The arena camera/feel motion pass stays **frozen**: two consecutive attempts
+  produced nothing, so the mission's own two-strikes rule stops a third identical
+  attempt until Luca rules.
+- Rendering here is software-only, so no frame-rate or target-hardware claim.
+
+## Decision queue for Luca (nothing self-approved)
+
+| # | Decision | Recommendation | Tangible artifact |
+|---|---|---|---|
+| 1 | Court proportions: the layout is 1.575 wide-to-deep, the rules text says 20 x 10 m (2.0) | Keep the shipped game layout (1.575) — parity means matching the game that exists | The playing-field spike captures already in the repo |
+| 2 | Camera and feel | Your eyes on the playable spike before anything is built on it | The rendered captures from the camera spike |
+| 3 | Parity gate: what counts as "the same game" | Field-by-field digest: discrete state exact, positions within a small tolerance | The comparator and its self-test |
+| 4 | UI approach in 3D | Your call; a throwaway comparison is cheap on request | Not built yet |
+| 5 | Arena art direction, roster order, strangler policy, product scope, demo gate, Steam App ID | Each has a ticket with a recommended option | Ticket files under the mission's wayfinder folder |
+
+## Cost
+
+**0 Meshy credits and $0** this tick and to date. No metered inference, no
+purchases, no paid services — the existing OpenCode Go subscription only. Cost
+telemetry on this lane is unavailable, so it is recorded as unknown, not estimated.
+
+## Next tick
+
+Widen the parity proof before building on it: denser sampling, longer runs and
+more seeds so games, sets and faults are actually reached, compared live by the
+new comparator. In parallel, close the open character-pipeline economics ticket,
+which the recolour numbers now answer.
+
+*(Earlier reports: tick-1 report is preserved at
+`docs/mission/board-2026-09-16-tick1.md`; per-tick outcomes are in `LOG.md` and
+`STATE.md`.)*

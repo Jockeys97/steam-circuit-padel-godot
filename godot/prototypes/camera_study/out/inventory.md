@@ -1,0 +1,51 @@
+| file | bytes | dimensions | sha256 |
+|---|---:|---|---|
+| `behind-the-baseline__1152x648.json` | 4440 |  | `895dbb6ce7b3330c448b0244ff80de256d6c0daebcbc7517dec927af15fd35be` |
+| `behind-the-baseline__1152x648.png` | 187261 | 1152x648 | `2436767d7f3a1e175a311e6497eadbcc56ca03f7e4a0e9501f20dce204d6bc64` |
+| `behind-the-baseline__1152x648__mask.png` | 5908 | 1152x648 | `af1dd59309ef88abd60068b0c323c26739741279a035daf8e1e94368db77c3dc` |
+| `behind-the-baseline__1280x720.json` | 4432 |  | `20f2d45d9a4d3ade46ec1cef982e70d36b91cd3c217f14880f0d9b1a11058774` |
+| `behind-the-baseline__1280x720.png` | 207855 | 1280x720 | `c82306b4f7a87a5f13a8fc5a4bc1c4402f379c627d78bdef4948ce32543d677e` |
+| `behind-the-baseline__1280x720__mask.png` | 6919 | 1280x720 | `706344df4e9f96615b63b8e7e40065c2a7bba6845306d2ecd0e27284594e7f94` |
+| `contact-sheet-mask__1152x648.png` | 45789 | 1800x610 | `8efc6868eb25d3d1b4a3729f12c1385152aa6dd04dbdf31f266efdffbca18278` |
+| `contact-sheet-mask__1280x720.png` | 46164 | 1800x610 | `47c286722e3cdfc229fc831da44387067a63a0f0c92c6fc3fbf8a575186ae60f` |
+| `contact-sheet__1152x648.png` | 481247 | 1800x610 | `ae7060d54136892e1d16dd1b0444bf07e08e0a33b2557e753704e5601737b6c5` |
+| `contact-sheet__1280x720.png` | 444748 | 1800x610 | `8248492a3b8eb4705d95890bfa1bd7aae1a5b8728eef788320ae4dfb5d7c75d6` |
+| `current-composition__1152x648.json` | 4381 |  | `0ff869ca6d00c1670af3c285b69a0dd3d2d48378ff6f506fa0d7dfe16023dac7` |
+| `current-composition__1152x648.png` | 189708 | 1152x648 | `ccd1122181a65f461fb5c60f024f56ca81bb8ee417742e434f9f222946d7a137` |
+| `current-composition__1152x648__mask.png` | 6671 | 1152x648 | `b8d5427edb7d95372cbcc13cd76d4cc3ec4a336c83f07711f5874c8f2331ffd0` |
+| `current-composition__1280x720.json` | 4381 |  | `92ce5cffdbd82cc3cd055cbe648cd9b4505e51660c6935aa4faa89963d725a4f` |
+| `current-composition__1280x720.png` | 217128 | 1280x720 | `18c6f410197653b7eca781c4d84b90074612649b6afd0d26c5a3695026a30e70` |
+| `current-composition__1280x720__mask.png` | 7729 | 1280x720 | `98968998e75de4f48812cc796fbd98cb9a81aed5b089b650b74c9d428f4e874c` |
+| `index__1152x648.json` | 35754 |  | `50b6595a3fd2bfb36f65b0cca6f32f1b2b2702f9b73ee36890b29764a40cdaf5` |
+| `index__1280x720.json` | 35765 |  | `bc6dbd75eb6668432958b08066d1ec004a10990033b48b4e7cd7d4af202e88ee` |
+| `measure__1152x648.json` | 37982 |  | `a1b91d4cc8973e5aba00f985bfa633de0756017e9d857a1425aa9e0e41a0ef49` |
+| `measure__1152x648.md` | 7058 |  | `f6a5faa317d999257b42ea30b7e3ed8956698062df147b28875fe11eba939520` |
+| `measure__1280x720.json` | 37918 |  | `c5d9babfe6cd6c9f6de2899d7f7b4b2121a5e9c66f2edebdf1123a8a77a57702` |
+| `measure__1280x720.md` | 7064 |  | `3eacf4dc6d2bb94458cac4ce39ce43123c43c705986b80eb0d4c06f4418eb045` |
+| `raised-and-slim-band__1152x648.json` | 4497 |  | `4b7a02288dceb901441dbe66dbeb7661342447d69ff8f40deeeb1fe10585f033` |
+| `raised-and-slim-band__1152x648.png` | 148348 | 1152x648 | `f47d50c8796d5d4da9b454aa5b78f26676fab1d3e9763017ea071a140239c814` |
+| `raised-and-slim-band__1152x648__mask.png` | 5747 | 1152x648 | `c6a49c2dd595cc87439a8b290d2f28bac4182fac2f51f1901854bc9dcf2c0710` |
+| `raised-and-slim-band__1280x720.json` | 4498 |  | `55b6bdc0be02b20fc9fe77ab28957f5677f2a849b623b575efa10972e1fab77c` |
+| `raised-and-slim-band__1280x720.png` | 169025 | 1280x720 | `ff011ebab6aa970708aed17bcf64a6e6eb0ea0c0c918629a14562404bc94a7f8` |
+| `raised-and-slim-band__1280x720__mask.png` | 6829 | 1280x720 | `f3ff91537c276e9ac774a63d1d8cc50cd21ac36424087ba2635eb6de63eb0301` |
+| `raised-backed-off__1152x648.json` | 4471 |  | `7542ee2f08961a8ed8d4bf818ae323ab6a0fc1740f23e3c397ba987533abebae` |
+| `raised-backed-off__1152x648.png` | 161420 | 1152x648 | `a10f70d83ed8941ecb52b77fcf1a5ad6aa2491889e5606613ae8723e0285ef33` |
+| `raised-backed-off__1152x648__mask.png` | 5730 | 1152x648 | `7bbacce9a1e1402785cca52801d4768965f2d165d8643fecc7538348c0846160` |
+| `raised-backed-off__1280x720.json` | 4483 |  | `c20b7676484f3e757648d09a389a598ee9ee50862f3e5ea13324b76e2c1ed3c1` |
+| `raised-backed-off__1280x720.png` | 201835 | 1280x720 | `3e24387f0e6ab17da1ad2390d47a97cefb1ff70aee1ac88907f29a2883b3b995` |
+| `raised-backed-off__1280x720__mask.png` | 7059 | 1280x720 | `12b34b844f0208635f615b54cba378646ae65117d0a2bc155d11865d9eab6cfc` |
+| `reference-in-game-rally__1280x720.png` | 208444 | 1280x720 | `ea810e7c5af2d4c3821483310a0e0a4f0caf6267579028bdf34e922a42316397` |
+| `render_1152x648.log` | 4660 |  | `b0a0a2d5362458b80a62a616d88c2cc7b02d64c556a7bb3cf9a81426043a6a3a` |
+| `render_1280x720.log` | 4660 |  | `f00df15ed6044a0a103c5f4e3818c5f43445cede54e9619b4399cd865c660ad1` |
+| `slim-bottom-band__1152x648.json` | 4415 |  | `90fffd4b1468a043ee83b7534127fd4a9000d27145bb9dd8f0602d4e20030979` |
+| `slim-bottom-band__1152x648.png` | 169848 | 1152x648 | `74f857534c4cb0b043902a80769ed9ebf7395507646a9d445a84993a70e7ab20` |
+| `slim-bottom-band__1152x648__mask.png` | 6658 | 1152x648 | `7989a45fa50f44f87153ab53cbfd36b69867256e3b330e09fbdb99ea9c2e87df` |
+| `slim-bottom-band__1280x720.json` | 4415 |  | `dd07d2f89cce9ec9abb69752caa0e65fe30ac2e6f406b39f27b5732a2101cacb` |
+| `slim-bottom-band__1280x720.png` | 197645 | 1280x720 | `cc5c87aef8acffc5d603eb6451d350e7bfc409b330e3bdb2d154f20ba442fb2a` |
+| `slim-bottom-band__1280x720__mask.png` | 7758 | 1280x720 | `33fa0e1ff9f892444e37bd6483cefdf07a188d7018db1e3403dd5b941ebd5342` |
+| `tactical-wide__1152x648.json` | 4387 |  | `95a5cadf60882ffd1fe16c79bdf148881f50f213a0b9cf0b56f17354013e732b` |
+| `tactical-wide__1152x648.png` | 161796 | 1152x648 | `b3d94816868b88155ba2c09f1bd6ac830d9a6e85a276182d94821fe541a07df8` |
+| `tactical-wide__1152x648__mask.png` | 5827 | 1152x648 | `3ba4c1e3c24dae783836d664031f072165dc986634ce65ac554b52504f48f407` |
+| `tactical-wide__1280x720.json` | 4393 |  | `496334af7eaafed917a3185651ac37d4fd0e74d1fa750003f13afdcc47581c73` |
+| `tactical-wide__1280x720.png` | 185067 | 1280x720 | `64e499acfb5724d17ccba4692bb1625b39cd97a3b05347ac0fd45a51722e2b24` |
+| `tactical-wide__1280x720__mask.png` | 6856 | 1280x720 | `337fe115124dcbbeaccbc02130863350ecaa3400bd960e0389207a6847df6f90` |

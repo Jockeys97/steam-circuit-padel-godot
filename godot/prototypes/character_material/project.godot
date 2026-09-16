@@ -1,0 +1,30 @@
+; character_material — one rigged GLB, two outfits, proved in engine.
+;
+; Purpose: the owed artifact of the "Character pipeline economics" Wayfinder
+; ticket. The same rigged meshy GLB is placed TWICE in one scene, each copy
+; branching from its own load of the same file (identical pose, identical
+; camera, identical lighting), and each copy's Material_1 surface is replaced
+; by a StandardMaterial3D whose albedo_texture is one of the two recoloured
+; 2048x2048 textures from tools/character/out/. Nothing else differs.
+;
+; Self-contained: no imported resources, the GLB and both PNGs are read from
+; res://assets/ at runtime (GLTFDocument + Image.load_png_from_buffer), so the
+; project needs no .godot import cache.
+config_version=5
+
+[application]
+
+config/name="Character Material"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="disabled"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

@@ -1,0 +1,1554 @@
+{
+  "frame": {
+    "h": 720,
+    "w": 1280
+  },
+  "bodies": "game",
+  "frozen": {
+    "ball_px": {
+      "x": 797.985173738921,
+      "y": 203.818266666667,
+      "z": 54.4605374056079
+    },
+    "ball_scale": 1.0,
+    "ball_world": {
+      "x": 7.94962930679321,
+      "y": 1.36151337623596,
+      "z": -2.65454339981079
+    },
+    "predicate": "rallyHits>=3 and ball.z<140 (game/match_controller.gd capture plan, rally.png)",
+    "rally_hits": 3,
+    "score": "0-0",
+    "tick": 420
+  },
+  "mask_colors": {
+    "ball": [
+      255,
+      255,
+      0
+    ],
+    "court": [
+      0,
+      255,
+      255
+    ],
+    "opponent": [
+      0,
+      0,
+      255
+    ],
+    "opponentMate": [
+      255,
+      0,
+      255
+    ],
+    "player": [
+      255,
+      0,
+      0
+    ],
+    "playerMate": [
+      0,
+      255,
+      0
+    ]
+  },
+  "options": [
+    {
+      "id": "current-composition",
+      "frame": {
+        "w": 1280,
+        "h": 720
+      },
+      "camera": {
+        "dolly_back_m": 0.0,
+        "fov": 50.8660011291504,
+        "mode": "game-default",
+        "position": {
+          "x": 0.0,
+          "y": 14.4552001953125,
+          "z": 6.40000009536743
+        },
+        "rotation_degrees": {
+          "x": -65.1999893188477,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": ""
+      },
+      "hud_mode": "as-shipped",
+      "bottom_band_top_px": 530.0,
+      "bottom_band_h_px": 190.0,
+      "bottom_band_pct_of_frame": 26.38888888888889,
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 160.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 530.0
+        },
+        {
+          "h": 172.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 538.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "athletes": {
+        "player": {
+          "label": "near player",
+          "near": true,
+          "body_px": 1232,
+          "px_under_hud": 1232,
+          "px_readable": 0,
+          "readable_pct_of_drawn": 0.0,
+          "mask_bbox": [
+            353,
+            539,
+            427,
+            582
+          ],
+          "feet_px_y": 570.885192871094,
+          "head_px_y": 554.070983886719,
+          "height_px": 16.814208984375,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 0.0,
+          "feet_below_band_top": true
+        },
+        "playerMate": {
+          "label": "near partner",
+          "near": true,
+          "body_px": 1600,
+          "px_under_hud": 0,
+          "px_readable": 1600,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            1081,
+            534,
+            1162,
+            577
+          ],
+          "feet_px_y": 565.697326660156,
+          "head_px_y": 548.31005859375,
+          "height_px": 17.387268066406023,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 0.0,
+          "feet_below_band_top": true
+        },
+        "opponent": {
+          "label": "far player",
+          "near": false,
+          "body_px": 1017,
+          "px_under_hud": 502,
+          "px_readable": 515,
+          "readable_pct_of_drawn": 50.63913470993117,
+          "mask_bbox": [
+            974,
+            211,
+            1036,
+            249
+          ],
+          "feet_px_y": 247.45002746582,
+          "head_px_y": 202.232116699219,
+          "height_px": 45.217910766600994,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "opponentMate": {
+          "label": "far partner",
+          "near": false,
+          "body_px": 896,
+          "px_under_hud": 0,
+          "px_readable": 896,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            437,
+            200,
+            471,
+            260
+          ],
+          "feet_px_y": 241.516464233398,
+          "head_px_y": 195.913681030273,
+          "height_px": 45.602783203125,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        }
+      },
+      "unclassified_px": 0,
+      "ball": {
+        "px": 53,
+        "diameter_px_from_area": 8.214724333230155,
+        "diameter_px_projected": 9.653564453125,
+        "bbox": [
+          1018,
+          225,
+          1029,
+          233
+        ],
+        "bbox_w": 11,
+        "bbox_h": 8,
+        "px_under_hud": 53,
+        "world": {
+          "x": 7.94962930679321,
+          "y": 1.36151337623596,
+          "z": -2.65454339981079
+        },
+        "radius_m": 0.1
+      },
+      "court": {
+        "grid_in_frame_pct": 100.0,
+        "grid_near_half_in_frame_pct": 100.0,
+        "grid_samples": 1107,
+        "bed_px_drawn": 560142,
+        "bed_px_under_hud": 106917,
+        "bed_pct_of_frame": 60.779296875,
+        "quad_px_total": 564406.427349613,
+        "quad_px_in_frame": 564406.427349613,
+        "quad_in_frame_pct": 100.0,
+        "any_corner_behind_camera": false,
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        }
+      },
+      "background_px": 356660,
+      "unclassified_pct": 0.0,
+      "panels_over_court": [
+        {
+          "name": "ScorePanel",
+          "rect": [
+            280.0,
+            10.0,
+            720.0,
+            125.0
+          ],
+          "area_px": 90000.0,
+          "court_bed_px_covered": 720
+        },
+        {
+          "name": "FeedbackPanel",
+          "rect": [
+            506.0,
+            530.0,
+            268.0,
+            160.0
+          ],
+          "area_px": 42880.0,
+          "court_bed_px_covered": 42880
+        },
+        {
+          "name": "LogPanel",
+          "rect": [
+            12.0,
+            538.0,
+            420.0,
+            172.0
+          ],
+          "area_px": 72240.0,
+          "court_bed_px_covered": 56833
+        },
+        {
+          "name": "DebugPanel",
+          "rect": [
+            12.0,
+            10.0,
+            196.0,
+            91.0
+          ],
+          "area_px": 17836.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "HintPanel",
+          "rect": [
+            1008.0,
+            148.0,
+            260.0,
+            113.0
+          ],
+          "area_px": 29380.0,
+          "court_bed_px_covered": 6484
+        }
+      ],
+      "court_bed_px_under_hud_total": 106917,
+      "delta_vs_current": {
+        "near_body_readable_px": 0,
+        "ball_diameter_px": 0.0,
+        "court_quad_in_frame_pct": 0.0,
+        "court_bed_px_under_hud": 0,
+        "court_grid_in_frame_pp": 0.0,
+        "hud_area_px": 0.0
+      }
+    },
+    {
+      "id": "raised-backed-off",
+      "frame": {
+        "w": 1280,
+        "h": 720
+      },
+      "camera": {
+        "dolly_back_m": 4.48674228042364,
+        "fov": 50.8660011291504,
+        "mode": "dolly-solved",
+        "position": {
+          "x": 0.0,
+          "y": 18.5281639099121,
+          "z": 8.28197383880615
+        },
+        "rotation_degrees": {
+          "x": -65.1999893188477,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": "near-feet"
+      },
+      "hud_mode": "as-shipped",
+      "bottom_band_top_px": 530.0,
+      "bottom_band_h_px": 190.0,
+      "bottom_band_pct_of_frame": 26.38888888888889,
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 160.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 530.0
+        },
+        {
+          "h": 172.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 538.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "athletes": {
+        "player": {
+          "label": "near player",
+          "near": true,
+          "body_px": 698,
+          "px_under_hud": 0,
+          "px_readable": 698,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            426,
+            493,
+            480,
+            527
+          ],
+          "feet_px_y": 520.0,
+          "head_px_y": 503.064544677734,
+          "height_px": 16.935455322266023,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "playerMate": {
+          "label": "near partner",
+          "near": true,
+          "body_px": 812,
+          "px_under_hud": 0,
+          "px_readable": 812,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            975,
+            489,
+            1030,
+            523
+          ],
+          "feet_px_y": 516.169677734375,
+          "head_px_y": 498.932525634766,
+          "height_px": 17.237152099608977,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "opponent": {
+          "label": "far player",
+          "near": false,
+          "body_px": 816,
+          "px_under_hud": 0,
+          "px_readable": 816,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            900,
+            233,
+            952,
+            283
+          ],
+          "feet_px_y": 270.845062255859,
+          "head_px_y": 237.51628112793,
+          "height_px": 33.32878112792898,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "opponentMate": {
+          "label": "far partner",
+          "near": false,
+          "body_px": 539,
+          "px_under_hud": 0,
+          "px_readable": 539,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            482,
+            233,
+            506,
+            283
+          ],
+          "feet_px_y": 266.068908691406,
+          "head_px_y": 232.489227294922,
+          "height_px": 33.579681396484034,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        }
+      },
+      "unclassified_px": 0,
+      "ball": {
+        "px": 47,
+        "diameter_px_from_area": 7.735777827895049,
+        "diameter_px_projected": 7.5062255859375,
+        "bbox": [
+          934,
+          254,
+          942,
+          261
+        ],
+        "bbox_w": 8,
+        "bbox_h": 7,
+        "px_under_hud": 0,
+        "world": {
+          "x": 7.94962930679321,
+          "y": 1.36151337623596,
+          "z": -2.65454339981079
+        },
+        "radius_m": 0.1
+      },
+      "court": {
+        "grid_in_frame_pct": 100.0,
+        "grid_near_half_in_frame_pct": 100.0,
+        "grid_samples": 1107,
+        "bed_px_drawn": 331056,
+        "bed_px_under_hud": 40565,
+        "bed_pct_of_frame": 35.921875,
+        "quad_px_total": 334139.70327088644,
+        "quad_px_in_frame": 334139.70327088644,
+        "quad_in_frame_pct": 100.0,
+        "any_corner_behind_camera": false,
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        }
+      },
+      "background_px": 587632,
+      "unclassified_pct": 0.0,
+      "panels_over_court": [
+        {
+          "name": "ScorePanel",
+          "rect": [
+            280.0,
+            10.0,
+            720.0,
+            125.0
+          ],
+          "area_px": 90000.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "FeedbackPanel",
+          "rect": [
+            506.0,
+            530.0,
+            268.0,
+            160.0
+          ],
+          "area_px": 42880.0,
+          "court_bed_px_covered": 23584
+        },
+        {
+          "name": "LogPanel",
+          "rect": [
+            12.0,
+            538.0,
+            420.0,
+            172.0
+          ],
+          "area_px": 72240.0,
+          "court_bed_px_covered": 16981
+        },
+        {
+          "name": "DebugPanel",
+          "rect": [
+            12.0,
+            10.0,
+            196.0,
+            91.0
+          ],
+          "area_px": 17836.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "HintPanel",
+          "rect": [
+            1008.0,
+            148.0,
+            260.0,
+            113.0
+          ],
+          "area_px": 29380.0,
+          "court_bed_px_covered": 0
+        }
+      ],
+      "court_bed_px_under_hud_total": 40565,
+      "delta_vs_current": {
+        "near_body_readable_px": -90,
+        "ball_diameter_px": -0.47894650533510585,
+        "court_quad_in_frame_pct": 0.0,
+        "court_bed_px_under_hud": -66352,
+        "court_grid_in_frame_pp": 0.0,
+        "hud_area_px": 0.0
+      }
+    },
+    {
+      "id": "slim-bottom-band",
+      "frame": {
+        "w": 1280,
+        "h": 720
+      },
+      "camera": {
+        "dolly_back_m": 0.0,
+        "fov": 50.8660011291504,
+        "mode": "game-default",
+        "position": {
+          "x": 0.0,
+          "y": 14.4552001953125,
+          "z": 6.40000009536743
+        },
+        "rotation_degrees": {
+          "x": -65.1999893188477,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": ""
+      },
+      "hud_mode": "slim",
+      "bottom_band_top_px": 612.0,
+      "bottom_band_h_px": 108.0,
+      "bottom_band_pct_of_frame": 15.0,
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 100.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 612.0
+        },
+        {
+          "h": 96.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 612.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "athletes": {
+        "player": {
+          "label": "near player",
+          "near": true,
+          "body_px": 1232,
+          "px_under_hud": 0,
+          "px_readable": 1232,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            353,
+            539,
+            427,
+            582
+          ],
+          "feet_px_y": 570.885192871094,
+          "head_px_y": 554.070983886719,
+          "height_px": 16.814208984375,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "playerMate": {
+          "label": "near partner",
+          "near": true,
+          "body_px": 1600,
+          "px_under_hud": 0,
+          "px_readable": 1600,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            1081,
+            534,
+            1162,
+            577
+          ],
+          "feet_px_y": 565.697326660156,
+          "head_px_y": 548.31005859375,
+          "height_px": 17.387268066406023,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "opponent": {
+          "label": "far player",
+          "near": false,
+          "body_px": 1008,
+          "px_under_hud": 421,
+          "px_readable": 587,
+          "readable_pct_of_drawn": 58.23412698412698,
+          "mask_bbox": [
+            976,
+            203,
+            1029,
+            263
+          ],
+          "feet_px_y": 247.45002746582,
+          "head_px_y": 202.232116699219,
+          "height_px": 45.217910766600994,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "opponentMate": {
+          "label": "far partner",
+          "near": false,
+          "body_px": 898,
+          "px_under_hud": 0,
+          "px_readable": 898,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            437,
+            200,
+            471,
+            260
+          ],
+          "feet_px_y": 241.516464233398,
+          "head_px_y": 195.913681030273,
+          "height_px": 45.602783203125,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        }
+      },
+      "unclassified_px": 0,
+      "ball": {
+        "px": 82,
+        "diameter_px_from_area": 10.217907939900583,
+        "diameter_px_projected": 9.653564453125,
+        "bbox": [
+          1018,
+          223,
+          1029,
+          233
+        ],
+        "bbox_w": 11,
+        "bbox_h": 10,
+        "px_under_hud": 82,
+        "world": {
+          "x": 7.94962930679321,
+          "y": 1.36151337623596,
+          "z": -2.65454339981079
+        },
+        "radius_m": 0.1
+      },
+      "court": {
+        "grid_in_frame_pct": 100.0,
+        "grid_near_half_in_frame_pct": 100.0,
+        "grid_samples": 1107,
+        "bed_px_drawn": 560120,
+        "bed_px_under_hud": 66377,
+        "bed_pct_of_frame": 60.77690972222222,
+        "quad_px_total": 564406.427349613,
+        "quad_px_in_frame": 564406.427349613,
+        "quad_in_frame_pct": 100.0,
+        "any_corner_behind_camera": false,
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        }
+      },
+      "background_px": 356660,
+      "unclassified_pct": 0.0,
+      "panels_over_court": [
+        {
+          "name": "ScorePanel",
+          "rect": [
+            280.0,
+            10.0,
+            720.0,
+            125.0
+          ],
+          "area_px": 90000.0,
+          "court_bed_px_covered": 720
+        },
+        {
+          "name": "FeedbackPanel",
+          "rect": [
+            506.0,
+            612.0,
+            268.0,
+            100.0
+          ],
+          "area_px": 26800.0,
+          "court_bed_px_covered": 25460
+        },
+        {
+          "name": "LogPanel",
+          "rect": [
+            12.0,
+            612.0,
+            420.0,
+            96.0
+          ],
+          "area_px": 40320.0,
+          "court_bed_px_covered": 33661
+        },
+        {
+          "name": "DebugPanel",
+          "rect": [
+            12.0,
+            10.0,
+            196.0,
+            91.0
+          ],
+          "area_px": 17836.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "HintPanel",
+          "rect": [
+            1008.0,
+            148.0,
+            260.0,
+            113.0
+          ],
+          "area_px": 29380.0,
+          "court_bed_px_covered": 6536
+        }
+      ],
+      "court_bed_px_under_hud_total": 66377,
+      "delta_vs_current": {
+        "near_body_readable_px": 1232,
+        "ball_diameter_px": 2.0031836066704276,
+        "court_quad_in_frame_pct": 0.0,
+        "court_bed_px_under_hud": -40540,
+        "court_grid_in_frame_pp": 0.0,
+        "hud_area_px": -48000.0
+      }
+    },
+    {
+      "id": "raised-and-slim-band",
+      "frame": {
+        "w": 1280,
+        "h": 720
+      },
+      "camera": {
+        "dolly_back_m": 5.68224787712097,
+        "fov": 50.8660011291504,
+        "mode": "dolly-solved",
+        "position": {
+          "x": 0.0,
+          "y": 19.6134166717529,
+          "z": 8.78343105316162
+        },
+        "rotation_degrees": {
+          "x": -65.1999893188477,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": "near-baseline"
+      },
+      "hud_mode": "slim",
+      "bottom_band_top_px": 612.0,
+      "bottom_band_h_px": 108.0,
+      "bottom_band_pct_of_frame": 15.0,
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 100.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 612.0
+        },
+        {
+          "h": 96.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 612.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "athletes": {
+        "player": {
+          "label": "near player",
+          "near": true,
+          "body_px": 621,
+          "px_under_hud": 0,
+          "px_readable": 621,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            439,
+            484,
+            490,
+            517
+          ],
+          "feet_px_y": 510.33447265625,
+          "head_px_y": 493.701416015625,
+          "height_px": 16.633056640625,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "playerMate": {
+          "label": "near partner",
+          "near": true,
+          "body_px": 693,
+          "px_under_hud": 0,
+          "px_readable": 693,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            954,
+            480,
+            1006,
+            513
+          ],
+          "feet_px_y": 506.754455566406,
+          "head_px_y": 489.859558105469,
+          "height_px": 16.894897460937045,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "opponent": {
+          "label": "far player",
+          "near": false,
+          "body_px": 533,
+          "px_under_hud": 0,
+          "px_readable": 533,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            898,
+            245,
+            927,
+            291
+          ],
+          "feet_px_y": 275.523834228516,
+          "head_px_y": 244.404724121094,
+          "height_px": 31.119110107422017,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "opponentMate": {
+          "label": "far partner",
+          "near": false,
+          "body_px": 469,
+          "px_under_hud": 0,
+          "px_readable": 469,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            490,
+            240,
+            513,
+            287
+          ],
+          "feet_px_y": 270.983947753906,
+          "head_px_y": 239.637969970703,
+          "height_px": 31.34597778320301,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        }
+      },
+      "unclassified_px": 0,
+      "ball": {
+        "px": 40,
+        "diameter_px_from_area": 7.136496464611085,
+        "diameter_px_projected": 7.086181640625,
+        "bbox": [
+          918,
+          260,
+          925,
+          267
+        ],
+        "bbox_w": 7,
+        "bbox_h": 7,
+        "px_under_hud": 0,
+        "world": {
+          "x": 7.94962930679321,
+          "y": 1.36151337623596,
+          "z": -2.65454339981079
+        },
+        "radius_m": 0.1
+      },
+      "court": {
+        "grid_in_frame_pct": 100.0,
+        "grid_near_half_in_frame_pct": 100.0,
+        "grid_samples": 1107,
+        "bed_px_drawn": 294584,
+        "bed_px_under_hud": 0,
+        "bed_pct_of_frame": 31.96440972222222,
+        "quad_px_total": 296773.3295854209,
+        "quad_px_in_frame": 296773.3295854209,
+        "quad_in_frame_pct": 100.0,
+        "any_corner_behind_camera": false,
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        }
+      },
+      "background_px": 624660,
+      "unclassified_pct": 0.0,
+      "panels_over_court": [
+        {
+          "name": "ScorePanel",
+          "rect": [
+            280.0,
+            10.0,
+            720.0,
+            125.0
+          ],
+          "area_px": 90000.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "FeedbackPanel",
+          "rect": [
+            506.0,
+            612.0,
+            268.0,
+            100.0
+          ],
+          "area_px": 26800.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "LogPanel",
+          "rect": [
+            12.0,
+            612.0,
+            420.0,
+            96.0
+          ],
+          "area_px": 40320.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "DebugPanel",
+          "rect": [
+            12.0,
+            10.0,
+            196.0,
+            91.0
+          ],
+          "area_px": 17836.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "HintPanel",
+          "rect": [
+            1008.0,
+            148.0,
+            260.0,
+            113.0
+          ],
+          "area_px": 29380.0,
+          "court_bed_px_covered": 0
+        }
+      ],
+      "court_bed_px_under_hud_total": 0,
+      "delta_vs_current": {
+        "near_body_readable_px": -286,
+        "ball_diameter_px": -1.07822786861907,
+        "court_quad_in_frame_pct": 0.0,
+        "court_bed_px_under_hud": -106917,
+        "court_grid_in_frame_pp": 0.0,
+        "hud_area_px": -48000.0
+      }
+    },
+    {
+      "id": "tactical-wide",
+      "frame": {
+        "w": 1280,
+        "h": 720
+      },
+      "camera": {
+        "dolly_back_m": 0.0,
+        "fov": 60.0,
+        "mode": "preset-wide",
+        "position": {
+          "x": 0.0,
+          "y": 16.6235008239746,
+          "z": 7.40000009536743
+        },
+        "rotation_degrees": {
+          "x": -67.9999923706055,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": ""
+      },
+      "hud_mode": "as-shipped",
+      "bottom_band_top_px": 530.0,
+      "bottom_band_h_px": 190.0,
+      "bottom_band_pct_of_frame": 26.38888888888889,
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 160.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 530.0
+        },
+        {
+          "h": 172.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 538.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "athletes": {
+        "player": {
+          "label": "near player",
+          "near": true,
+          "body_px": 590,
+          "px_under_hud": 0,
+          "px_readable": 590,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            442,
+            453,
+            492,
+            484
+          ],
+          "feet_px_y": 476.762420654297,
+          "head_px_y": 462.84716796875,
+          "height_px": 13.915252685546989,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "playerMate": {
+          "label": "near partner",
+          "near": true,
+          "body_px": 712,
+          "px_under_hud": 0,
+          "px_readable": 712,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            948,
+            449,
+            1001,
+            480
+          ],
+          "feet_px_y": 473.239624023438,
+          "head_px_y": 458.9951171875,
+          "height_px": 14.244506835938012,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "opponent": {
+          "label": "far player",
+          "near": false,
+          "body_px": 491,
+          "px_under_hud": 0,
+          "px_readable": 491,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            885,
+            216,
+            920,
+            259
+          ],
+          "feet_px_y": 247.49821472168,
+          "head_px_y": 215.614730834961,
+          "height_px": 31.883483886719006,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "opponentMate": {
+          "label": "far partner",
+          "near": false,
+          "body_px": 460,
+          "px_under_hud": 0,
+          "px_readable": 460,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            493,
+            214,
+            517,
+            257
+          ],
+          "feet_px_y": 243.101119995117,
+          "head_px_y": 210.940734863281,
+          "height_px": 32.160385131835994,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        }
+      },
+      "unclassified_px": 0,
+      "ball": {
+        "px": 42,
+        "diameter_px_from_area": 7.312732791431452,
+        "diameter_px_projected": 6.960205078125,
+        "bbox": [
+          913,
+          231,
+          920,
+          238
+        ],
+        "bbox_w": 7,
+        "bbox_h": 7,
+        "px_under_hud": 0,
+        "world": {
+          "x": 7.94962930679321,
+          "y": 1.36151337623596,
+          "z": -2.65454339981079
+        },
+        "radius_m": 0.1
+      },
+      "court": {
+        "grid_in_frame_pct": 100.0,
+        "grid_near_half_in_frame_pct": 100.0,
+        "grid_samples": 1107,
+        "bed_px_drawn": 280223,
+        "bed_px_under_hud": 15227,
+        "bed_pct_of_frame": 30.406141493055557,
+        "quad_px_total": 282568.5733408383,
+        "quad_px_in_frame": 282568.5733408383,
+        "quad_in_frame_pct": 100.0,
+        "any_corner_behind_camera": false,
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        }
+      },
+      "background_px": 639082,
+      "unclassified_pct": 0.0,
+      "panels_over_court": [
+        {
+          "name": "ScorePanel",
+          "rect": [
+            280.0,
+            10.0,
+            720.0,
+            125.0
+          ],
+          "area_px": 90000.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "FeedbackPanel",
+          "rect": [
+            506.0,
+            530.0,
+            268.0,
+            160.0
+          ],
+          "area_px": 42880.0,
+          "court_bed_px_covered": 9916
+        },
+        {
+          "name": "LogPanel",
+          "rect": [
+            12.0,
+            538.0,
+            420.0,
+            172.0
+          ],
+          "area_px": 72240.0,
+          "court_bed_px_covered": 5311
+        },
+        {
+          "name": "DebugPanel",
+          "rect": [
+            12.0,
+            10.0,
+            196.0,
+            91.0
+          ],
+          "area_px": 17836.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "HintPanel",
+          "rect": [
+            1008.0,
+            148.0,
+            260.0,
+            113.0
+          ],
+          "area_px": 29380.0,
+          "court_bed_px_covered": 0
+        }
+      ],
+      "court_bed_px_under_hud_total": 15227,
+      "delta_vs_current": {
+        "near_body_readable_px": -298,
+        "ball_diameter_px": -0.9019915417987026,
+        "court_quad_in_frame_pct": 0.0,
+        "court_bed_px_under_hud": -91690,
+        "court_grid_in_frame_pp": 0.0,
+        "hud_area_px": 0.0
+      }
+    },
+    {
+      "id": "behind-the-baseline",
+      "frame": {
+        "w": 1280,
+        "h": 720
+      },
+      "camera": {
+        "dolly_back_m": 0.0,
+        "fov": 60.0,
+        "mode": "preset-playable",
+        "position": {
+          "x": 0.0,
+          "y": 3.20000004768372,
+          "z": 5.80000019073486
+        },
+        "rotation_degrees": {
+          "x": -18.6873512268066,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "solve": ""
+      },
+      "hud_mode": "as-shipped",
+      "bottom_band_top_px": 530.0,
+      "bottom_band_h_px": 190.0,
+      "bottom_band_pct_of_frame": 26.38888888888889,
+      "hud_panels": [
+        {
+          "h": 125.0,
+          "name": "ScorePanel",
+          "w": 720.0,
+          "x": 280.0,
+          "y": 10.0
+        },
+        {
+          "h": 160.0,
+          "name": "FeedbackPanel",
+          "w": 268.0,
+          "x": 506.0,
+          "y": 530.0
+        },
+        {
+          "h": 172.0,
+          "name": "LogPanel",
+          "w": 420.0,
+          "x": 12.0,
+          "y": 538.0
+        },
+        {
+          "h": 91.0,
+          "name": "DebugPanel",
+          "w": 196.0,
+          "x": 12.0,
+          "y": 10.0
+        },
+        {
+          "h": 113.0,
+          "name": "HintPanel",
+          "w": 260.0,
+          "x": 1008.0,
+          "y": 148.0
+        }
+      ],
+      "athletes": {
+        "player": {
+          "label": "near player",
+          "near": true,
+          "body_px": 0,
+          "px_under_hud": 0,
+          "px_readable": 0,
+          "readable_pct_of_drawn": 0.0,
+          "mask_bbox": null,
+          "feet_px_y": 934.166687011719,
+          "head_px_y": 616.069885253906,
+          "height_px": 318.09680175781295,
+          "body_in_frame_pct": 32.67248025499561,
+          "body_above_band_pct": 0.0,
+          "feet_below_band_top": true
+        },
+        "playerMate": {
+          "label": "near partner",
+          "near": true,
+          "body_px": 0,
+          "px_under_hud": 0,
+          "px_readable": 0,
+          "readable_pct_of_drawn": 0.0,
+          "mask_bbox": null,
+          "feet_px_y": 908.787658691406,
+          "head_px_y": 597.342712402344,
+          "height_px": 311.44494628906205,
+          "body_in_frame_pct": 39.38329681028565,
+          "body_above_band_pct": 0.0,
+          "feet_below_band_top": true
+        },
+        "opponent": {
+          "label": "far player",
+          "near": false,
+          "body_px": 3649,
+          "px_under_hud": 7,
+          "px_readable": 3642,
+          "readable_pct_of_drawn": 99.80816662099205,
+          "mask_bbox": [
+            1123,
+            259,
+            1218,
+            382
+          ],
+          "feet_px_y": 372.307220458984,
+          "head_px_y": 261.675445556641,
+          "height_px": 110.63177490234295,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        },
+        "opponentMate": {
+          "label": "far partner",
+          "near": false,
+          "body_px": 2893,
+          "px_under_hud": 0,
+          "px_readable": 2893,
+          "readable_pct_of_drawn": 100.0,
+          "mask_bbox": [
+            346,
+            259,
+            399,
+            382
+          ],
+          "feet_px_y": 368.797546386719,
+          "head_px_y": 259.800140380859,
+          "height_px": 108.99740600586,
+          "body_in_frame_pct": 100.0,
+          "body_above_band_pct": 100.0,
+          "feet_below_band_top": false
+        }
+      },
+      "unclassified_px": 0,
+      "ball": {
+        "px": 222,
+        "diameter_px_from_area": 16.812470934731934,
+        "diameter_px_projected": 14.50439453125,
+        "bbox": [
+          1207,
+          283,
+          1226,
+          297
+        ],
+        "bbox_w": 19,
+        "bbox_h": 14,
+        "px_under_hud": 0,
+        "world": {
+          "x": 7.94962930679321,
+          "y": 1.36151337623596,
+          "z": -2.65454339981079
+        },
+        "radius_m": 0.1
+      },
+      "court": {
+        "grid_in_frame_pct": 57.6332429990967,
+        "grid_near_half_in_frame_pct": 22.5140712945591,
+        "grid_samples": 1107,
+        "bed_px_drawn": 506602,
+        "bed_px_under_hud": 115120,
+        "bed_pct_of_frame": 54.96983506944444,
+        "quad_px_total": 51562761.413906656,
+        "quad_px_in_frame": 508796.70880967315,
+        "quad_in_frame_pct": 0.986752250767642,
+        "any_corner_behind_camera": false,
+        "court_m": {
+          "depth": 12.7,
+          "length": 20.0
+        }
+      },
+      "background_px": 408234,
+      "unclassified_pct": 0.0,
+      "panels_over_court": [
+        {
+          "name": "ScorePanel",
+          "rect": [
+            280.0,
+            10.0,
+            720.0,
+            125.0
+          ],
+          "area_px": 90000.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "FeedbackPanel",
+          "rect": [
+            506.0,
+            530.0,
+            268.0,
+            160.0
+          ],
+          "area_px": 42880.0,
+          "court_bed_px_covered": 42880
+        },
+        {
+          "name": "LogPanel",
+          "rect": [
+            12.0,
+            538.0,
+            420.0,
+            172.0
+          ],
+          "area_px": 72240.0,
+          "court_bed_px_covered": 72240
+        },
+        {
+          "name": "DebugPanel",
+          "rect": [
+            12.0,
+            10.0,
+            196.0,
+            91.0
+          ],
+          "area_px": 17836.0,
+          "court_bed_px_covered": 0
+        },
+        {
+          "name": "HintPanel",
+          "rect": [
+            1008.0,
+            148.0,
+            260.0,
+            113.0
+          ],
+          "area_px": 29380.0,
+          "court_bed_px_covered": 0
+        }
+      ],
+      "court_bed_px_under_hud_total": 115120,
+      "delta_vs_current": {
+        "near_body_readable_px": -1600,
+        "ball_diameter_px": 8.597746601501779,
+        "court_quad_in_frame_pct": -99.01324774923236,
+        "court_bed_px_under_hud": 8203,
+        "court_grid_in_frame_pp": -42.3667570009033,
+        "hud_area_px": 0.0
+      }
+    }
+  ]
+}

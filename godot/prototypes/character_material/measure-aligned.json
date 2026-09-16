@@ -1,0 +1,95 @@
+{
+ "alignment": {
+  "engine_dx_px": 501.4136,
+  "engine_dy_px": 0.0,
+  "integer_offset_used": 501,
+  "fractional_residual_px": 0.4136,
+  "region_wh": [
+   301,
+   561
+  ],
+  "body_pixels": 99902,
+  "body_frac": 0.591623
+ },
+ "A_vs_B_aligned_ALL_PIXELS": {
+  "pixels": 168861,
+  "mean_abs_overall_255": 21.1214,
+  "mean_abs_per_channel_255": [
+   22.1178,
+   21.9094,
+   19.3371
+  ],
+  "rms_overall_255": 56.9463,
+  "mean_euclidean_255": 37.6775,
+  "p95_euclidean_255": 296.9545,
+  "max_euclidean_255": 430.0938,
+  "pixels_euclidean_gt5": 53435,
+  "frac_euclidean_gt5": 0.316444,
+  "pixels_euclidean_gt10": 42400,
+  "frac_euclidean_gt10": 0.251094,
+  "pixels_euclidean_gt25": 29707,
+  "frac_euclidean_gt25": 0.175926,
+  "mean_abs_over_pixels_gt10_255": 81.3247
+ },
+ "A_vs_B_aligned_BODY_ONLY": {
+  "pixels": 99902,
+  "mean_abs_overall_255": 29.5729,
+  "mean_abs_per_channel_255": [
+   30.5671,
+   30.7056,
+   27.446
+  ],
+  "rms_overall_255": 67.5333,
+  "mean_euclidean_255": 52.8989,
+  "p95_euclidean_255": 358.3076,
+  "max_euclidean_255": 430.0938,
+  "pixels_euclidean_gt5": 48121,
+  "frac_euclidean_gt5": 0.481682,
+  "pixels_euclidean_gt10": 37101,
+  "frac_euclidean_gt10": 0.371374,
+  "pixels_euclidean_gt25": 24508,
+  "frac_euclidean_gt25": 0.24532,
+  "mean_abs_over_pixels_gt10_255": 76.809
+ },
+ "alignment_floor_A_resampled_vs_A": {
+  "pixels": 168861,
+  "mean_abs_overall_255": 1.3527,
+  "mean_abs_per_channel_255": [
+   1.2316,
+   1.3951,
+   1.4314
+  ],
+  "rms_overall_255": 7.7475,
+  "mean_euclidean_255": 2.5045,
+  "p95_euclidean_255": 6.6176,
+  "max_euclidean_255": 181.2545,
+  "pixels_euclidean_gt5": 10471,
+  "frac_euclidean_gt5": 0.06201,
+  "pixels_euclidean_gt10": 6117,
+  "frac_euclidean_gt10": 0.036225,
+  "pixels_euclidean_gt25": 2930,
+  "frac_euclidean_gt25": 0.017352,
+  "mean_abs_over_pixels_gt10_255": 29.4034
+ },
+ "alignment_floor_body_only": {
+  "pixels": 99902,
+  "mean_abs_overall_255": 1.934,
+  "mean_abs_per_channel_255": [
+   1.7023,
+   1.9934,
+   2.1063
+  ],
+  "rms_overall_255": 8.7682,
+  "mean_euclidean_255": 3.6182,
+  "p95_euclidean_255": 11.1825,
+  "max_euclidean_255": 181.2545,
+  "pixels_euclidean_gt5": 9856,
+  "frac_euclidean_gt5": 0.098657,
+  "pixels_euclidean_gt10": 5508,
+  "frac_euclidean_gt10": 0.055134,
+  "pixels_euclidean_gt25": 2415,
+  "frac_euclidean_gt25": 0.024174,
+  "mean_abs_over_pixels_gt10_255": 26.2698
+ },
+ "signal_to_alignment_ratio_body": 15.291
+}

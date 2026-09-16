@@ -1,0 +1,54 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 26.0.8-1ubuntu0.3 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 21.1.8, 256 bits)
+ALSA lib confmisc.c:855:(parse_card) [error.core] cannot find card '0'
+ALSA lib conf.c:5211:(_snd_config_evaluate) [error.core] function snd_func_card_inum returned error: No such file or directory
+ALSA lib confmisc.c:422:(snd_func_concat) [error.core] error evaluating strings
+ALSA lib conf.c:5211:(_snd_config_evaluate) [error.core] function snd_func_concat returned error: No such file or directory
+ALSA lib confmisc.c:1342:(snd_func_refer) [error.core] error evaluating name
+ALSA lib conf.c:5211:(_snd_config_evaluate) [error.core] function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5734:(snd_config_expand) [error.core] Evaluate error: No such file or directory
+ALSA lib pcm.c:2722:(snd_pcm_open_noupdate) [error.pcm] Unknown PCM default
+ERROR: Condition "status < 0" is true. Returning: ERR_CANT_OPEN
+   at: init_output_device (drivers/alsa/audio_driver_alsa.cpp:97)
+WARNING: All audio drivers failed, falling back to the dummy driver.
+     at: initialize (servers/audio/audio_server.cpp:258)
+
+CHARACTER_MATERIAL_START
+RENDERER=gl_compatibility ADAPTER=llvmpipe (LLVM 21.1.8, 256 bits) API=4.5 (Core Profile) Mesa 26.0.8-1ubuntu0.3
+HOST rss_at_start=30.7 MB
+TEX_A path=res://assets/outfit-a.png bytes=5586280 size=2048x2048 format=4 load_ms=104
+TEX_B path=res://assets/outfit-b.png bytes=5661745 size=2048x2048 format=4 load_ms=98
+GLB_a_APPEND err=0 path=res://assets/volpe-rigged.glb
+GLB_a_LOADED in 183 ms rss=57.1 MB
+ANIM_a list=["Armature|clip0|baselayer"]
+ANIM_a held 'Armature|clip0|baselayer' at t=0.300 length=0.300 tracks=7
+GLB_b_APPEND err=0 path=res://assets/volpe-rigged.glb
+GLB_b_LOADED in 141 ms rss=57.4 MB
+ANIM_b list=["Armature|clip0|baselayer"]
+ANIM_b held 'Armature|clip0|baselayer' at t=0.300 length=0.300 tracks=7
+MESH_a mesh_instances=1
+MESH_a 'char1' surfaces=1 faces=31325 verts_surface0=44829
+MAT_a surface=0 ORIG albedo_texture=2048x2048
+MAT_a surface=0 class=StandardMaterial3D shading_mode=1 has_albedo_texture=true albedo_color=(1.0, 1.0, 1.0, 1.0)
+MAT_a surface=0 OVERRIDE class=StandardMaterial3D albedo_texture=2048x2048 albedo_color=white shading_mode=1
+MESH_b mesh_instances=1
+MESH_b 'char1' surfaces=1 faces=31325 verts_surface0=44829
+MAT_b surface=0 ORIG albedo_texture=2048x2048
+MAT_b surface=0 class=StandardMaterial3D shading_mode=1 has_albedo_texture=true albedo_color=(1.0, 1.0, 1.0, 1.0)
+MAT_b surface=0 OVERRIDE class=StandardMaterial3D albedo_texture=2048x2048 albedo_color=white shading_mode=1
+OVERRIDE_SUMMARY surfaces_a=1 surfaces_b=1
+CAM pos=(0.0, 0.9, 2.6) target=(0.0, 0.9, 0.0) fov_v=45.0 deg keep_aspect=KEEP_HEIGHT
+CAM half_height_at_model_plane=1.0770 m half_width=1.9146 m (16:9)
+FRAMING_a foot_px=(389.29,660.85) head_px=(389.29,99.83) x_span_px=238.87..539.72 viewport=1280x720
+FRAMING_b foot_px=(890.71,660.85) head_px=(890.71,99.83) x_span_px=740.28..1041.13 viewport=1280x720
+FRAMING_SHIFT_PX dx=501.4136 dy=0.0000 (B minus A; whole metres of the same model)
+RSS_before_capture=45.2 MB
+SAVE err=0 path=/root/projects/steam-circuit-padel-pro/godot/prototypes/character_material/outfit_ab_side_by_side_1280x720.png size=1280x720
+FRAME_AB both_visible=1 rss=52.2 MB
+SAVE err=0 path=/root/projects/steam-circuit-padel-pro/godot/prototypes/character_material/outfit_a_only_1280x720.png size=1280x720
+FRAME_A b_hidden=1 rss=52.2 MB
+SAVE err=0 path=/root/projects/steam-circuit-padel-pro/godot/prototypes/character_material/outfit_b_only_1280x720.png size=1280x720
+FRAME_B a_hidden=1 rss=52.2 MB
+CM_PASS rss_final=52.2 MB

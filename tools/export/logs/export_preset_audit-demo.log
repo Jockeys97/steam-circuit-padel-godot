@@ -1,0 +1,58 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# export_preset_audit — reading res://export_presets.cfg
+ok export_presets.cfg is inside the project
+ok export_presets.cfg parses as a ConfigFile
+ok three presets are declared
+ok at least one preset is declared
+ok the full desktop preset exists
+ok the demo preset exists
+ok the demo self-check preset exists
+ok preset linux-x86_64 targets Linux
+ok preset linux-x86_64 is marked runnable
+ok preset linux-x86_64 writes an x86_64 binary
+ok preset linux-x86_64 does not carry the demo feature tag
+ok preset linux-x86_64 declares a main scene (res://game/Main.tscn)
+ok preset linux-x86_64 does not boot the test harness scene
+ok preset linux-x86_64 includes *.json
+ok preset linux-x86_64 excludes the prototype projects
+ok preset linux-x86_64 excludes the rig render evidence
+ok preset linux-x86_64 excludes the slice's screenshots
+ok preset linux-x86_64 excludes a directory tree, not a file: res://prototypes/*
+ok preset linux-x86_64 excludes a directory tree, not a file: res://src/character/out/*
+ok preset linux-x86_64 excludes a directory tree, not a file: res://game/out/*
+ok preset linux-x86_64-demo targets Linux
+ok preset linux-x86_64-demo is marked runnable
+ok preset linux-x86_64-demo writes an x86_64 binary
+ok preset linux-x86_64-demo carries the demo feature tag
+ok preset linux-x86_64-demo declares a main scene (res://game/Main.tscn)
+ok preset linux-x86_64-demo does not boot the test harness scene
+ok preset linux-x86_64-demo includes *.json
+ok preset linux-x86_64-demo excludes the prototype projects
+ok preset linux-x86_64-demo excludes the rig render evidence
+ok preset linux-x86_64-demo excludes the slice's screenshots
+ok preset linux-x86_64-demo excludes a directory tree, not a file: res://prototypes/*
+ok preset linux-x86_64-demo excludes a directory tree, not a file: res://src/character/out/*
+ok preset linux-x86_64-demo excludes a directory tree, not a file: res://game/out/*
+ok preset linux-x86_64-demo-selfcheck targets Linux
+ok preset linux-x86_64-demo-selfcheck is marked runnable
+ok preset linux-x86_64-demo-selfcheck writes an x86_64 binary
+ok preset linux-x86_64-demo-selfcheck carries the demo feature tag
+ok preset linux-x86_64-demo-selfcheck declares a main scene (res://tests/build/DemoSelfReport.tscn)
+ok preset linux-x86_64-demo-selfcheck does not boot the test harness scene
+ok preset linux-x86_64-demo-selfcheck includes *.json
+ok preset linux-x86_64-demo-selfcheck excludes the prototype projects
+ok preset linux-x86_64-demo-selfcheck excludes the rig render evidence
+ok preset linux-x86_64-demo-selfcheck excludes the slice's screenshots
+ok preset linux-x86_64-demo-selfcheck excludes a directory tree, not a file: res://prototypes/*
+ok preset linux-x86_64-demo-selfcheck excludes a directory tree, not a file: res://src/character/out/*
+ok preset linux-x86_64-demo-selfcheck excludes a directory tree, not a file: res://game/out/*
+ok preset names are distinct
+ok preset output paths are distinct
+ok exactly the two demo presets carry the demo feature tag
+ok the exclude pattern matches a nested prototype file (res://prototypes/arena_spike/assets/volpe-rigged.glb)
+ok and it does not match the harness scene
+ok the demo preset ships the same resource set as the full one
+ok and excludes the same paths
+ok the demo preset's tags are the full preset's plus demo
+PASS 54/54

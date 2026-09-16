@@ -1,0 +1,44 @@
+; padel_audio_bus.tres — the bus layout the audio port uses, as a resource.
+;
+; This file is NOT loaded from project.godot (that file is owned by another lane).
+; godot/src/audio/audio_port.gd builds the same three buses at runtime through the
+; AudioServer API, and godot/tests/audio_port_test.gd asserts that this resource and
+; the runtime-built layout agree bus-for-bus.
+;
+; The one-line project setting that would make it the editor default is recorded as
+; a request in docs/wayfinder/evidence/audio-module-godot.md §"Not done".
+;
+; Volumes are the reference's, not tuned:
+;   Master  0.0 dB  — js/audio.js:15 applies a master gain of 0.5 (js/audio.js:5),
+;                     and the baked WAVs in tools/audio-audition/baked already
+;                     contain it (bounce synth gain 0.3 -> measured peak 0.1266 =
+;                     0.3 x 0.5), so unity here reproduces the baked level.
+;                     The 0..1 master slider is re-applied at runtime, relative to
+;                     that 0.5 default, by audio_port.gd::set_master_gain().
+;   SFX     0.0 dB  — no per-event runtime volume exists in the reference
+;                     (event-map.json mixer.unknowns[1]); each baked WAV carries
+;                     its own synth gain.
+;   Music  -5.1927 dB — js/audio.js:149 music bus gain 0.55 -> 20*log10(0.55) = -5.1927.
+;                     No WAV in this contract routes through it (mixer.musicBusGain.scope).
+
+[gd_resource type="AudioBusLayout" format=3]
+
+[resource]
+bus/0/name = &"Master"
+bus/0/solo = false
+bus/0/mute = false
+bus/0/bypass_fx = false
+bus/0/volume_db = 0.0
+bus/0/send = &""
+bus/1/name = &"SFX"
+bus/1/solo = false
+bus/1/mute = false
+bus/1/bypass_fx = false
+bus/1/volume_db = 0.0
+bus/1/send = &"Master"
+bus/2/name = &"Music"
+bus/2/solo = false
+bus/2/mute = false
+bus/2/bypass_fx = false
+bus/2/volume_db = -5.1927
+bus/2/send = &"Master"

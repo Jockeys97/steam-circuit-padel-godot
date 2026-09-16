@@ -1,0 +1,194 @@
+{
+  "beauty_png": "raised-and-slim-band__1280x720.png",
+  "cam_mode": "dolly-solved",
+  "camera": {
+    "fov": 50.8660011291504,
+    "mode": "dolly-solved",
+    "position": {
+      "x": 0.0,
+      "y": 16.4877548217773,
+      "z": 7.33917236328125
+    },
+    "rotation_degrees": {
+      "x": -65.1999893188477,
+      "y": 0.0,
+      "z": 0.0
+    }
+  },
+  "frame": {
+    "h": 720,
+    "w": 1280
+  },
+  "geometry": {
+    "athletes": {
+      "opponent": {
+        "feet_px": {
+          "behind": false,
+          "x": 946.474670410156,
+          "y": 260.482055664062
+        },
+        "head_px": {
+          "behind": false,
+          "x": 972.680725097656,
+          "y": 222.061889648438
+        },
+        "near": false,
+        "world": {
+          "x": 7.82847690582275,
+          "y": 0.0,
+          "z": -3.07954335212708
+        }
+      },
+      "opponentMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 483.943908691406,
+          "y": 255.188323974609
+        },
+        "head_px": {
+          "behind": false,
+          "x": 470.649658203125,
+          "y": 216.460632324219
+        },
+        "near": false,
+        "world": {
+          "x": -4.0,
+          "y": 0.0,
+          "z": -3.23868203163147
+        }
+      },
+      "player": {
+        "feet_px": {
+          "behind": false,
+          "x": 436.233459472656,
+          "y": 542.0
+        },
+        "head_px": {
+          "behind": false,
+          "x": 415.294738769531,
+          "y": 524.757385253906
+        },
+        "near": true,
+        "world": {
+          "x": -4.40000009536743,
+          "y": 0.0,
+          "z": 4.05000019073486
+        }
+      },
+      "playerMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 1034.77099609375,
+          "y": 537.591003417969
+        },
+        "head_px": {
+          "behind": false,
+          "x": 1075.22875976562,
+          "y": 519.942565917969
+        },
+        "near": true,
+        "world": {
+          "x": 8.54512023925781,
+          "y": 0.0,
+          "z": 3.95537948608398
+        }
+      }
+    },
+    "ball": {
+      "behind_camera": false,
+      "centre_px": {
+        "behind": false,
+        "x": 975.774169921875,
+        "y": 244.803619384766
+      },
+      "radius_m": 0.1,
+      "radius_px": 4.2237548828125,
+      "world": {
+        "x": 7.94962930679321,
+        "y": 1.36151337623596,
+        "z": -2.65454339981079
+      }
+    },
+    "court_corners_px": {
+      "far_left": {
+        "behind": false,
+        "x": 274.445556640625,
+        "y": 158.54670715332
+      },
+      "far_right": {
+        "behind": false,
+        "x": 1005.55444335938,
+        "y": 158.54670715332
+      },
+      "near_left": {
+        "behind": false,
+        "x": 147.848999023438,
+        "y": 656.170349121094
+      },
+      "near_right": {
+        "behind": false,
+        "x": 1132.15100097656,
+        "y": 656.170349121094
+      },
+      "net_left": {
+        "behind": false,
+        "x": 220.490081787109,
+        "y": 370.634124755859
+      },
+      "net_right": {
+        "behind": false,
+        "x": 1059.50988769531,
+        "y": 370.634124755859
+      }
+    },
+    "court_m": {
+      "depth": 12.7,
+      "length": 20.0
+    },
+    "frame": {
+      "h": 720.0,
+      "w": 1280.0
+    }
+  },
+  "hud_mode": "slim",
+  "hud_panels": [
+    {
+      "h": 125.0,
+      "name": "ScorePanel",
+      "w": 720.0,
+      "x": 280.0,
+      "y": 10.0
+    },
+    {
+      "h": 160.0,
+      "name": "FeedbackPanel",
+      "w": 272.0,
+      "x": 996.0,
+      "y": 552.0
+    },
+    {
+      "h": 121.0,
+      "name": "LogPanel",
+      "w": 408.0,
+      "x": 12.0,
+      "y": 591.0
+    },
+    {
+      "h": 91.0,
+      "name": "DebugPanel",
+      "w": 196.0,
+      "x": 12.0,
+      "y": 10.0
+    },
+    {
+      "h": 113.0,
+      "name": "HintPanel",
+      "w": 260.0,
+      "x": 1008.0,
+      "y": 148.0
+    }
+  ],
+  "id": "raised-and-slim-band",
+  "mask_png": "raised-and-slim-band__1280x720__mask.png",
+  "why": "The two fixes together, to show whether they are additive or whether either alone is enough."
+}

@@ -1,0 +1,1272 @@
+{
+  "tool": "scripts/parity-digest.mjs",
+  "side": "js",
+  "seed": 12345,
+  "ticks": 1440,
+  "every": 60,
+  "fixedStep": 0.008333333333333333,
+  "inputScript": {
+    "kind": "pure-function-of-tick",
+    "swingEvery": 30,
+    "chargeFromTick": 60,
+    "moveX": "((floor(tick/120) % 3) - 1) * 0.5",
+    "moveY": "tick % 240 < 120 ? -1 : 0"
+  },
+  "sampledTicks": [
+    0,
+    60,
+    120,
+    180,
+    240,
+    300,
+    360,
+    420,
+    480,
+    540,
+    600,
+    660,
+    720,
+    780,
+    840,
+    900,
+    960,
+    1020,
+    1080,
+    1140,
+    1200,
+    1260,
+    1320,
+    1380,
+    1440
+  ],
+  "samples": [
+    {
+      "tick": 0,
+      "rngState": 12345,
+      "rngCalls": 0,
+      "ball": {
+        "x": 596,
+        "y": 462,
+        "z": 34,
+        "vx": 0,
+        "vy": 0,
+        "vz": 0,
+        "spin": 0,
+        "shotType": "serve",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 568,
+          "y": 486
+        },
+        "playerMate": {
+          "x": 328,
+          "y": 372
+        },
+        "opponent": {
+          "x": 304,
+          "y": 130
+        },
+        "opponentMate": {
+          "x": 656,
+          "y": 130
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 0,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 60,
+      "rngState": 12345,
+      "rngCalls": 0,
+      "ball": {
+        "x": 596,
+        "y": 462,
+        "z": 34,
+        "vx": 0,
+        "vy": 0,
+        "vz": 0,
+        "spin": 0,
+        "shotType": "serve",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 568,
+          "y": 486
+        },
+        "playerMate": {
+          "x": 328,
+          "y": 372
+        },
+        "opponent": {
+          "x": 304,
+          "y": 130
+        },
+        "opponentMate": {
+          "x": 656,
+          "y": 130
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 0,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 120,
+      "rngState": 1199742488,
+      "rngCalls": 3,
+      "ball": {
+        "x": 465.54865757679136,
+        "y": 377.11438601712615,
+        "z": 155.2432159004169,
+        "vx": -257.9498947114559,
+        "vy": -165.86607465157448,
+        "vz": 69.5963713228818,
+        "spin": -8.715989387355119,
+        "shotType": "serve",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 523.3410399999976,
+          "y": 425.5174144000007
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 304,
+          "y": 130
+        },
+        "opponentMate": {
+          "x": 656,
+          "y": 130
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 0,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 180,
+      "rngState": 1199742488,
+      "rngCalls": 0,
+      "ball": {
+        "x": 339.0058103548301,
+        "y": 295.9905871111537,
+        "z": 100.04140156185791,
+        "vx": -248.01389311271714,
+        "vy": -158.56219276645092,
+        "vz": -290.4036286771182,
+        "spin": -5.3829088023202285,
+        "shotType": "serve",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 523.3410399999976,
+          "y": 425.5174144000007
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 304,
+          "y": 130
+        },
+        "opponentMate": {
+          "x": 656,
+          "y": 130
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 0,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 240,
+      "rngState": 1199742488,
+      "rngCalls": 0,
+      "ball": {
+        "x": 219.65455527585578,
+        "y": 220.04809469659435,
+        "z": 50.8206577864669,
+        "vx": -228.64941985882695,
+        "vy": -144.75883884918642,
+        "vz": 125.8746393219754,
+        "spin": -2.3271018493085274,
+        "shotType": "serve",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 1
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 523.3410399999976,
+          "y": 425.5174144000007
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 228.1843333333337,
+          "y": 130
+        },
+        "opponentMate": {
+          "x": 656,
+          "y": 130
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 0,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 300,
+      "rngState": -695764522,
+      "rngCalls": 6,
+      "ball": {
+        "x": 278.23152104440055,
+        "y": 216.20608069509439,
+        "z": 119.33530288783147,
+        "vx": 375.986343469137,
+        "vy": 241.06292134038276,
+        "vz": 103.20637617036442,
+        "spin": 13.698384691999369,
+        "shotType": "drive",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 567.46744,
+          "y": 365.5055104000014
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 259.44245412519115,
+          "y": 148
+        },
+        "opponentMate": {
+          "x": 640,
+          "y": 140
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 1,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 360,
+      "rngState": -695764522,
+      "rngCalls": 0,
+      "ball": {
+        "x": 462.7231931280724,
+        "y": 334.10806876338097,
+        "z": 80.93849097301366,
+        "vx": 361.6659412781687,
+        "vy": 230.44776023494526,
+        "vz": -256.7936238296356,
+        "spin": 8.459986842469954,
+        "shotType": "drive",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 611.5938400000024,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 336.968,
+          "y": 398
+        },
+        "opponent": {
+          "x": 416.30245412519037,
+          "y": 148
+        },
+        "opponentMate": {
+          "x": 615.6236229162413,
+          "y": 140
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 1,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 420,
+      "rngState": -127870049,
+      "rngCalls": 5,
+      "ball": {
+        "x": 476.0453262126016,
+        "y": 304.5375468568039,
+        "z": 114.67933014938983,
+        "vx": -104.16363086298732,
+        "vy": -83.6156533246139,
+        "vz": 86.84633270392891,
+        "spin": -9.786685398375663,
+        "shotType": "drive",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 567.46744,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 458.1317874585235,
+          "y": 159.71221333333324
+        },
+        "opponentMate": {
+          "x": 650.1317874585235,
+          "y": 152.22144000000003
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 2,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 480,
+      "rngState": -191811246,
+      "rngCalls": 7,
+      "ball": {
+        "x": 432.6684470182149,
+        "y": 234.68933038496007,
+        "z": 76.82670046538314,
+        "vx": 218.3364628937364,
+        "vy": 466.87176790535744,
+        "vz": 104.0680186153258,
+        "spin": 8.541184997473753,
+        "shotType": "smash-x2",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 523.3410399999976,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 465.97478745852345,
+          "y": 201.60792000000004
+        },
+        "opponentMate": {
+          "x": 658.3157874585233,
+          "y": 191.41696
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 3,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 540,
+      "rngState": 376083227,
+      "rngCalls": 5,
+      "ball": {
+        "x": 449.8024589467363,
+        "y": 312.957453378572,
+        "z": 194.90750367273859,
+        "vx": -44.251108203970645,
+        "vy": -61.96800228539096,
+        "vz": 219.45001049353897,
+        "spin": -9.84841882373651,
+        "shotType": "drive",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 523.3410399999976,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 506.65528846599136,
+          "y": 148
+        },
+        "opponentMate": {
+          "x": 505.5477874585259,
+          "y": 140
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 4,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 600,
+      "rngState": 376083227,
+      "rngCalls": 0,
+      "ball": {
+        "x": 427.72843959666824,
+        "y": 282.6493884740096,
+        "z": 214.63250891950793,
+        "vx": -43.91014778188995,
+        "vy": -59.23925277889707,
+        "vz": -140.54998950646103,
+        "spin": -6.082286017022612,
+        "shotType": "drive",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 523.3410399999976,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 506.65528846599136,
+          "y": 206
+        },
+        "opponentMate": {
+          "x": 341.86778745852536,
+          "y": 196
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 4,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 660,
+      "rngState": 376083227,
+      "rngCalls": 0,
+      "ball": {
+        "x": 405.9860568393125,
+        "y": 253.67593359560587,
+        "z": 54.35751416627735,
+        "vx": -42.96942827725628,
+        "vy": -56.63066325165986,
+        "vz": -500.54998950646103,
+        "spin": -3.7563596608732657,
+        "shotType": "drive",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 567.46744,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 506.65528846599136,
+          "y": 206
+        },
+        "opponentMate": {
+          "x": 314.65528846599136,
+          "y": 196
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 4,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 720,
+      "rngState": 376083227,
+      "rngCalls": 0,
+      "ball": {
+        "x": 385.1009569712352,
+        "y": 226.94987698053853,
+        "z": 86.81468691071389,
+        "vx": -40.88337834729772,
+        "vy": -51.70078006958599,
+        "vz": 74.14538392841848,
+        "spin": -1.6239233905873098,
+        "shotType": "drive",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 1
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 611.5938400000024,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 506.65528846599136,
+          "y": 206
+        },
+        "opponentMate": {
+          "x": 314.65528846599136,
+          "y": 196
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 4,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 780,
+      "rngState": 376083227,
+      "rngCalls": 0,
+      "ball": {
+        "x": 365.03412373320464,
+        "y": 201.66343010188982,
+        "z": 33.8873788749231,
+        "vx": -39.34817116150155,
+        "vy": -49.42414579226168,
+        "vz": -285.8546160715815,
+        "spin": -1.0029190175664897,
+        "shotType": "drive",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 1
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 567.46744,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 506.65528846599136,
+          "y": 183.66343010188982
+        },
+        "opponentMate": {
+          "x": 314.65528846599136,
+          "y": 173.66343010188982
+        }
+      },
+      "score": {
+        "points": "0-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "0",
+        "aiScore": "0",
+        "pointsWon": "0-0",
+        "rallyHits": 4,
+        "serveAttempts": 0,
+        "longestRally": 0
+      }
+    },
+    {
+      "tick": 840,
+      "rngState": 376083227,
+      "rngCalls": 0,
+      "ball": {
+        "x": 360.78833369847206,
+        "y": 196.33318476949137,
+        "z": -1.3052045328315618,
+        "vx": -39.00937943853336,
+        "vy": -48.944243681517406,
+        "vz": -363.8546160715815,
+        "spin": -0.9034780473784845,
+        "shotType": "drive",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 2
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 557.9067199999995,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 506.65528846599136,
+          "y": 178.74135971293032
+        },
+        "opponentMate": {
+          "x": 314.65528846599136,
+          "y": 168.74135971293032
+        }
+      },
+      "score": {
+        "points": "1-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "15",
+        "aiScore": "0",
+        "pointsWon": "1-0",
+        "rallyHits": 0,
+        "serveAttempts": 0,
+        "longestRally": 4
+      }
+    },
+    {
+      "tick": 900,
+      "rngState": 376083227,
+      "rngCalls": 0,
+      "ball": {
+        "x": 360.78833369847206,
+        "y": 196.33318476949137,
+        "z": -1.3052045328315618,
+        "vx": -39.00937943853336,
+        "vy": -48.944243681517406,
+        "vz": -363.8546160715815,
+        "spin": -0.9034780473784845,
+        "shotType": "drive",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 2
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 557.9067199999995,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 506.65528846599136,
+          "y": 178.74135971293032
+        },
+        "opponentMate": {
+          "x": 314.65528846599136,
+          "y": 168.74135971293032
+        }
+      },
+      "score": {
+        "points": "1-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "15",
+        "aiScore": "0",
+        "pointsWon": "1-0",
+        "rallyHits": 0,
+        "serveAttempts": 0,
+        "longestRally": 4
+      }
+    },
+    {
+      "tick": 960,
+      "rngState": 376083227,
+      "rngCalls": 0,
+      "ball": {
+        "x": 360.78833369847206,
+        "y": 196.33318476949137,
+        "z": -1.3052045328315618,
+        "vx": -39.00937943853336,
+        "vy": -48.944243681517406,
+        "vz": -363.8546160715815,
+        "spin": -0.9034780473784845,
+        "shotType": "drive",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 2
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 557.9067199999995,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 304,
+          "y": 398
+        },
+        "opponent": {
+          "x": 506.65528846599136,
+          "y": 178.74135971293032
+        },
+        "opponentMate": {
+          "x": 314.65528846599136,
+          "y": 168.74135971293032
+        }
+      },
+      "score": {
+        "points": "1-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "15",
+        "aiScore": "0",
+        "pointsWon": "1-0",
+        "rallyHits": 0,
+        "serveAttempts": 0,
+        "longestRally": 4
+      }
+    },
+    {
+      "tick": 1020,
+      "rngState": 1575813370,
+      "rngCalls": 3,
+      "ball": {
+        "x": 484.859214716395,
+        "y": 399.4863277266382,
+        "z": 108.62380087703049,
+        "vx": 201.33823274482492,
+        "vy": -165.76270106842532,
+        "vz": 221.78814156012606,
+        "spin": 11.090893324746157,
+        "shotType": "serve",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 429.1325599999995,
+          "y": 434.99424640000035
+        },
+        "playerMate": {
+          "x": 656,
+          "y": 398
+        },
+        "opponent": {
+          "x": 304,
+          "y": 130
+        },
+        "opponentMate": {
+          "x": 656,
+          "y": 130
+        }
+      },
+      "score": {
+        "points": "1-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "15",
+        "aiScore": "0",
+        "pointsWon": "1-0",
+        "rallyHits": 0,
+        "serveAttempts": 0,
+        "longestRally": 4
+      }
+    },
+    {
+      "tick": 1080,
+      "rngState": 1575813370,
+      "rngCalls": 0,
+      "ball": {
+        "x": 583.8177108129805,
+        "y": 318.41308803109627,
+        "z": 129.5178716570936,
+        "vx": 194.28278801715447,
+        "vy": -158.46337121989484,
+        "vz": -138.21185843987394,
+        "spin": 6.849625974761219,
+        "shotType": "serve",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 473.25895999999847,
+          "y": 374.9823424000011
+        },
+        "playerMate": {
+          "x": 656,
+          "y": 398
+        },
+        "opponent": {
+          "x": 304,
+          "y": 130
+        },
+        "opponentMate": {
+          "x": 656,
+          "y": 130
+        }
+      },
+      "score": {
+        "points": "1-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "15",
+        "aiScore": "0",
+        "pointsWon": "1-0",
+        "rallyHits": 0,
+        "serveAttempts": 0,
+        "longestRally": 4
+      }
+    },
+    {
+      "tick": 1140,
+      "rngState": 1575813370,
+      "rngCalls": 0,
+      "ball": {
+        "x": 678.7418113255551,
+        "y": 241.3087388690389,
+        "z": 16.118883710859734,
+        "vx": 180.0258662609715,
+        "vy": -144.6686200392473,
+        "vz": 236.83329706169712,
+        "spin": 2.9611828582471897,
+        "shotType": "serve",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 1
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 429.1325599999995,
+          "y": 374.9823424000011
+        },
+        "playerMate": {
+          "x": 656,
+          "y": 398
+        },
+        "opponent": {
+          "x": 304,
+          "y": 130
+        },
+        "opponentMate": {
+          "x": 677.8239999999996,
+          "y": 130
+        }
+      },
+      "score": {
+        "points": "1-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "15",
+        "aiScore": "0",
+        "pointsWon": "1-0",
+        "rallyHits": 0,
+        "serveAttempts": 0,
+        "longestRally": 4
+      }
+    },
+    {
+      "tick": 1200,
+      "rngState": -319693640,
+      "rngCalls": 6,
+      "ball": {
+        "x": 701.6885112531634,
+        "y": 186.32379182853444,
+        "z": 104.93690422149717,
+        "vx": -314.2963989773884,
+        "vy": 293.05109360320546,
+        "vz": 329.8435869101136,
+        "spin": -22.283952414916687,
+        "shotType": "lob",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 385.00616000000053,
+          "y": 374.9823424000011
+        },
+        "playerMate": {
+          "x": 656,
+          "y": 398
+        },
+        "opponent": {
+          "x": 320,
+          "y": 140
+        },
+        "opponentMate": {
+          "x": 700.1220098880176,
+          "y": 148
+        }
+      },
+      "score": {
+        "points": "1-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "15",
+        "aiScore": "0",
+        "pointsWon": "1-0",
+        "rallyHits": 1,
+        "serveAttempts": 0,
+        "longestRally": 4
+      }
+    },
+    {
+      "tick": 1260,
+      "rngState": -319693640,
+      "rngCalls": 0,
+      "ball": {
+        "x": 546.9930451945547,
+        "y": 329.6527880478108,
+        "z": 179.85869767655404,
+        "vx": -304.09398664617464,
+        "vy": 280.14664295842863,
+        "vz": -30.156413089886428,
+        "spin": -13.762348515334756,
+        "shotType": "lob",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 385.00616000000053,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 633.1760000000005,
+          "y": 398
+        },
+        "opponent": {
+          "x": 294.1742478653198,
+          "y": 140
+        },
+        "opponentMate": {
+          "x": 536.4420098880205,
+          "y": 148
+        }
+      },
+      "score": {
+        "points": "1-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "15",
+        "aiScore": "0",
+        "pointsWon": "1-0",
+        "rallyHits": 1,
+        "serveAttempts": 0,
+        "longestRally": 4
+      }
+    },
+    {
+      "tick": 1320,
+      "rngState": -319693640,
+      "rngCalls": 0,
+      "ball": {
+        "x": 397.66056190540564,
+        "y": 466.6703184577106,
+        "z": 74.78049113161089,
+        "vx": -292.9497923556001,
+        "vy": 267.8104374083757,
+        "vz": -390.1564130898864,
+        "spin": -8.499490266850168,
+        "shotType": "lob",
+        "smashStage": 0,
+        "bounces": {
+          "player": 0,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 385.00616000000053,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 481.0160000000031,
+          "y": 398
+        },
+        "opponent": {
+          "x": 440.8109078856982,
+          "y": 200.02509333333285
+        },
+        "opponentMate": {
+          "x": 372.76200988802043,
+          "y": 210.63488000000015
+        }
+      },
+      "score": {
+        "points": "1-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "15",
+        "aiScore": "0",
+        "pointsWon": "1-0",
+        "rallyHits": 1,
+        "serveAttempts": 0,
+        "longestRally": 4
+      }
+    },
+    {
+      "tick": 1380,
+      "rngState": -319693640,
+      "rngCalls": 0,
+      "ball": {
+        "x": 258.57415270314965,
+        "y": 518.2864817586683,
+        "z": 66.86559506925104,
+        "vx": -263.95087512409486,
+        "vy": -217.60203535497115,
+        "vz": 80.13406181306112,
+        "spin": 1.6534983426318866,
+        "shotType": "lob",
+        "smashStage": 0,
+        "bounces": {
+          "player": 1,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 429.1325599999995,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 617.9600000000008,
+          "y": 398
+        },
+        "opponent": {
+          "x": 597.6709078856975,
+          "y": 202.7194666666669
+        },
+        "opponentMate": {
+          "x": 209.0820098880199,
+          "y": 209.44639999999993
+        }
+      },
+      "score": {
+        "points": "1-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "15",
+        "aiScore": "0",
+        "pointsWon": "1-0",
+        "rallyHits": 1,
+        "serveAttempts": 0,
+        "longestRally": 4
+      }
+    },
+    {
+      "tick": 1440,
+      "rngState": -319693640,
+      "rngCalls": 0,
+      "ball": {
+        "x": 129.5502332012484,
+        "y": 411.85902940140335,
+        "z": 16.932625975781583,
+        "vx": -252.0579346678903,
+        "vy": -208.01997001982767,
+        "vz": -279.8659381869389,
+        "spin": 1.021184215309835,
+        "shotType": "lob",
+        "smashStage": 0,
+        "bounces": {
+          "player": 1,
+          "ai": 0
+        }
+      },
+      "paddles": {
+        "player": {
+          "x": 473.25895999999847,
+          "y": 352
+        },
+        "playerMate": {
+          "x": 656,
+          "y": 398
+        },
+        "opponent": {
+          "x": 640,
+          "y": 140
+        },
+        "opponentMate": {
+          "x": 152,
+          "y": 148
+        }
+      },
+      "score": {
+        "points": "1-0",
+        "games": "0-0",
+        "sets": "0-0",
+        "playerScore": "15",
+        "aiScore": "0",
+        "pointsWon": "1-0",
+        "rallyHits": 1,
+        "serveAttempts": 0,
+        "longestRally": 4
+      }
+    }
+  ],
+  "digestSha256": "a71366820986b4bd9a9c2c30fd51e82b9fda6dd3caa23c6860949f2d215c27dd",
+  "digestLineCount": 25,
+  "finalRngState": -319693640
+}

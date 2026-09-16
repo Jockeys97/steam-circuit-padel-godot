@@ -1,0 +1,42 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok difficulty/frozen_has_four_tiers
+ok difficulty/first_tier_is_rivale
+ok difficulty/last_tier_is_leggenda
+ok difficulty/leggenda_has_a_reaction_skill_override
+ok difficulty/leggenda_reaction_skill_is_pinned_at_0.78
+ok difficulty/rivale_has_no_reaction_skill_override
+ok difficulty/ingegnere_has_no_reaction_skill_override
+ok difficulty/campione_has_no_reaction_skill_override
+# report tier rivale skill=0.46 speed=280.9 reactionMs=165 aimErr=23.8 rallyErr=0.275 serveReturn=1.000 x2Win=0.371 x3Win=0.938
+# report tier ingegnere skill=0.60 speed=313.7 reactionMs=130 aimErr=17.6 rallyErr=0.138 serveReturn=1.000 x2Win=0.100 x3Win=0.592
+# report tier campione skill=0.76 speed=352.9 reactionMs=90 aimErr=10.6 rallyErr=0.071 serveReturn=1.000 x2Win=0.046 x3Win=0.321
+# report tier leggenda skill=0.90 speed=378.1 reactionMs=85 aimErr=4.4 rallyErr=0.032 serveReturn=1.000 x2Win=0.017 x3Win=0.279
+ok difficulty/hardest_tier_caps_the_x3_winner_rate
+ok difficulty/x3_spread_between_first_and_last_tier
+ok difficulty/ingegnere_skill_rises
+ok difficulty/ingegnere_effective_speed_rises
+ok difficulty/ingegnere_reaction_time_does_not_worsen
+ok difficulty/ingegnere_aim_error_falls
+ok difficulty/ingegnere_long_rally_errors_fall
+ok difficulty/ingegnere_x2_defence_improves
+ok difficulty/ingegnere_x3_defence_does_not_worsen
+ok difficulty/campione_skill_rises
+ok difficulty/campione_effective_speed_rises
+ok difficulty/campione_reaction_time_does_not_worsen
+ok difficulty/campione_aim_error_falls
+ok difficulty/campione_long_rally_errors_fall
+ok difficulty/campione_x2_defence_improves
+ok difficulty/campione_x3_defence_does_not_worsen
+ok difficulty/leggenda_skill_rises
+ok difficulty/leggenda_effective_speed_rises
+ok difficulty/leggenda_reaction_time_does_not_worsen
+ok difficulty/leggenda_aim_error_falls
+ok difficulty/leggenda_long_rally_errors_fall
+ok difficulty/leggenda_x2_defence_improves
+ok difficulty/leggenda_x3_defence_does_not_worsen
+ok difficulty/rivale_returns_valid_serves
+ok difficulty/ingegnere_returns_valid_serves
+ok difficulty/campione_returns_valid_serves
+ok difficulty/leggenda_returns_valid_serves
+PASS 35/35

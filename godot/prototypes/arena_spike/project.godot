@@ -1,0 +1,22 @@
+; arena_spike — smallest real in-engine prototype for the camera/feel spike.
+; Self-contained: the court, net, glass and ball are built in code from the
+; COURT constant copied verbatim out of js/data.js; the athlete is the rigged
+; Meshy GLB copied into assets/ (identical sha256 to meshy/rigged/volpe/).
+config_version=5
+
+[application]
+
+config/name="Arena Spike"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="disabled"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

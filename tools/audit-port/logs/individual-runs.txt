@@ -1,0 +1,12 @@
+wall_rules exit=0 PASS 22/22
+court_speed exit=0 PASS 25/25
+match_format exit=0 PASS 26/26
+shot_quality exit=0 PASS 13/13
+smash_input exit=0 PASS 24/24
+lineup exit=0 PASS 23/23
+controller_tactics exit=0 PASS 14/14
+ai_attack exit=0 PASS 16/16
+difficulty exit=0 PASS 35/35
+shot_balance exit=0 PASS 23/23
+run_all exit=0 PASS 10/10
+script exit=0

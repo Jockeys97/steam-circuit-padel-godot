@@ -1,0 +1,204 @@
+{
+  "beauty_png": "behind-the-baseline__1280x720.png",
+  "cam_mode": "preset-playable",
+  "camera": {
+    "dolly_back_m": 0.0,
+    "fov": 60.0,
+    "mode": "preset-playable",
+    "position": {
+      "x": 0.0,
+      "y": 3.20000004768372,
+      "z": 5.80000019073486
+    },
+    "rotation_degrees": {
+      "x": -18.6873512268066,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "solve": ""
+  },
+  "frame": {
+    "h": 720,
+    "w": 1280
+  },
+  "geometry": {
+    "athletes": {
+      "opponent": {
+        "feet_px": {
+          "behind": false,
+          "x": 1157.27270507812,
+          "y": 372.307220458984
+        },
+        "head_px": {
+          "behind": false,
+          "x": 1188.52368164062,
+          "y": 261.675445556641
+        },
+        "near": false,
+        "world": {
+          "x": 7.82847690582275,
+          "y": 0.0,
+          "z": -3.07954335212708
+        }
+      },
+      "opponentMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 379.852661132812,
+          "y": 368.797546386719
+        },
+        "head_px": {
+          "behind": false,
+          "x": 364.397705078125,
+          "y": 259.800140380859
+        },
+        "near": false,
+        "world": {
+          "x": -4.0,
+          "y": 0.0,
+          "z": -3.23868203163147
+        }
+      },
+      "player": {
+        "feet_px": {
+          "behind": false,
+          "x": -382.561798095703,
+          "y": 934.166687011719
+        },
+        "head_px": {
+          "behind": false,
+          "x": -638.816528320312,
+          "y": 616.069885253906
+        },
+        "near": true,
+        "world": {
+          "x": -4.40000009536743,
+          "y": 0.0,
+          "z": 4.05000019073486
+        }
+      },
+      "playerMate": {
+        "feet_px": {
+          "behind": false,
+          "x": 2561.69140625,
+          "y": 908.787658691406
+        },
+        "head_px": {
+          "behind": false,
+          "x": 3023.95556640625,
+          "y": 597.342712402344
+        },
+        "near": true,
+        "world": {
+          "x": 8.54512023925781,
+          "y": 0.0,
+          "z": 3.95537948608398
+        }
+      }
+    },
+    "ball": {
+      "behind_camera": false,
+      "centre_px": {
+        "behind": false,
+        "x": 1216.52514648438,
+        "y": 289.848815917969
+      },
+      "radius_m": 0.1,
+      "radius_px": 7.252197265625,
+      "world": {
+        "x": 7.94962930679321,
+        "y": 1.36151337623596,
+        "z": -2.65454339981079
+      }
+    },
+    "court_corners_px": {
+      "far_left": {
+        "behind": false,
+        "x": 142.55256652832,
+        "y": 317.139526367188
+      },
+      "far_right": {
+        "behind": false,
+        "x": 1137.44738769531,
+        "y": 317.139526367188
+      },
+      "near_left": {
+        "behind": false,
+        "x": -11724.71875,
+        "y": 4326.01025390625
+      },
+      "near_right": {
+        "behind": false,
+        "x": 13004.71875,
+        "y": 4326.01025390625
+      },
+      "net_left": {
+        "behind": false,
+        "x": -316.417175292969,
+        "y": 472.18359375
+      },
+      "net_right": {
+        "behind": false,
+        "x": 1596.41711425781,
+        "y": 472.18359375
+      }
+    },
+    "court_grid": {
+      "in_frame": 638,
+      "in_frame_pct": 57.6332429990967,
+      "near_half_in_frame": 120,
+      "near_half_in_frame_pct": 22.5140712945591,
+      "near_half_samples": 533,
+      "samples": 1107
+    },
+    "court_m": {
+      "depth": 12.7,
+      "length": 20.0
+    },
+    "frame": {
+      "h": 720.0,
+      "w": 1280.0
+    }
+  },
+  "hud_mode": "as-shipped",
+  "hud_panels": [
+    {
+      "h": 125.0,
+      "name": "ScorePanel",
+      "w": 720.0,
+      "x": 280.0,
+      "y": 10.0
+    },
+    {
+      "h": 160.0,
+      "name": "FeedbackPanel",
+      "w": 268.0,
+      "x": 506.0,
+      "y": 530.0
+    },
+    {
+      "h": 172.0,
+      "name": "LogPanel",
+      "w": 420.0,
+      "x": 12.0,
+      "y": 538.0
+    },
+    {
+      "h": 91.0,
+      "name": "DebugPanel",
+      "w": 196.0,
+      "x": 12.0,
+      "y": 10.0
+    },
+    {
+      "h": 113.0,
+      "name": "HintPanel",
+      "w": 260.0,
+      "x": 1008.0,
+      "y": 148.0
+    }
+  ],
+  "id": "behind-the-baseline",
+  "mask_png": "behind-the-baseline__1280x720__mask.png",
+  "why": "The existing 'playable' preset already in game/court.gd (3.2 m up, level, looking at the net): the closest behind-the-server view the port has ever rendered, and the one that reads footwork best."
+}

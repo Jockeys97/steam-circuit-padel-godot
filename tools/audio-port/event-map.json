@@ -1,0 +1,427 @@
+{
+  "schema": "steam-circuit-padel-pro.audio-event-map",
+  "schemaVersion": 1,
+  "title": "Engine-free audio port contract — event -> sound mapping",
+  "readFrom": "git HEAD 2979588 (js/**, tools/audio-audition/** read-only)",
+  "sources": {
+    "referenceSim": "js/game.js",
+    "referenceAudio": "js/audio.js",
+    "portSim": "godot/src/sim/sim.gd",
+    "portState": "godot/src/sim/state.gd",
+    "bakedDir": "tools/audio-audition/baked"
+  },
+  "notes": [
+    "One entry per audio event the game can emit. An 'event' is a distinct sound a player can hear, not a source line: sfx.point(win) at js/game.js:2111 is one call site that emits two different sounds (point-win / point-loss), so it is two events sharing one anchor.",
+    "Every anchor.line is the line of the sfx call itself and must contain anchor.call verbatim. The test re-reads the source and fails if it does not.",
+    "port.eventIdAnchors are the message ids the ported sim actually stores in state.events / state.pointMessage at the cited godot/src/sim/sim.gd line, each with the function that must enclose it; an empty list means the port emits no event id at that trigger, which is recorded honestly rather than invented.",
+    "The 10 baked WAVs in tools/audio-audition/baked are the ground truth of the sound set; each is bound to exactly one event and carries the sha256 of the verified asset."
+  ],
+  "soundIds": [
+    "hit",
+    "bounce",
+    "wall",
+    "net",
+    "serve",
+    "special",
+    "point-win",
+    "point-loss",
+    "victory",
+    "defeat"
+  ],
+  "mixer": {
+    "masterGainDefault": {
+      "value": 0.5,
+      "anchor": "js/audio.js:5",
+      "applied": "js/audio.js:15",
+      "setter": "js/audio.js:286-289 (setVolume, clamped Math.min(1, Math.max(0, ...)))"
+    },
+    "masterGainRange": {
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "anchor": "index.html:426, index.html:603 (type=range min=0 max=1 step=0.01 value=0.5)"
+    },
+    "musicBusGain": {
+      "value": 0.55,
+      "anchor": "js/audio.js:149",
+      "scope": "music only — no baked WAV in this contract is routed through the music bus"
+    },
+    "mute": {
+      "type": "boolean global",
+      "default": false,
+      "anchor": "js/audio.js:4",
+      "setter": "js/audio.js:278-280 (setMuted Boolean())",
+      "gates": "js/audio.js:24, :41, :157, :184, :202, :262 — every synth entry point returns early when muted; there is no per-sound mute"
+    },
+    "persistence": {
+      "volumeKey": "prefs.volume",
+      "volumeRead": "js/main.js:2213",
+      "volumeWrite": "js/main.js:2426 (slider input -> setVolume -> savePrefs)",
+      "mutedKey": "prefs.muted",
+      "mutedRead": "js/main.js:2199",
+      "mutedWrite": "js/main.js:2193 (mute button -> savePrefs)"
+    },
+    "reducedMotion": {
+      "affectsAudio": false,
+      "anchor": "js/audio.js — no occurrence of 'reduce'/'motion'; evidence docs/wayfinder/evidence/audio-port-route.md §'reduced-motion branch'"
+    },
+    "ducking": {
+      "defined": false,
+      "note": "the reference defines no ducking, compressor, master limiter or fade; overlap is pure additive summation (point-win + victory + music can sum)"
+    },
+    "panning": {
+      "defined": false,
+      "note": "no StereoPannerNode / 3D positioning anywhere in js/audio.js — the reference is mono-per-voice, no distance attenuation"
+    },
+    "unknowns": [
+      "the reference never states a target loudness or headroom; only per-voice synth gains",
+      "no per-event runtime volume exists: each baked WAV already contains its synth gain (e.g. hit tone 0.4 at js/audio.js:62)",
+      "no definition of how two overlapping events should be prioritised if a Godot mixer ever needs to duck"
+    ]
+  },
+  "events": [
+    {
+      "id": "serve",
+      "sound": "serve",
+      "wav": {
+        "path": "tools/audio-audition/baked/serve.wav",
+        "sha256": "1e584b02c92620498ea1de72be31317289bf8ded422a4bda2b30d7997cd5d2dd",
+        "bytes": 132344
+      },
+      "anchor": {
+        "file": "js/game.js",
+        "line": 750,
+        "fn": "performServe",
+        "call": "sfx.serve()"
+      },
+      "trigger": "a serve is struck: performServe() places the ball on its trajectory",
+      "overlaps": [],
+      "synth": {
+        "source": "js/audio.js:76-79",
+        "voices": "noise 0.22s bandpass 600Hz gain 0.12 + sine 330->720Hz rising 0.18s gain 0.12",
+        "perPlayRandomness": "noise buffer is a fresh Math.random() draw (js/audio.js:45)"
+      },
+      "port": {
+        "file": "godot/src/sim/sim.gd",
+        "line": 689,
+        "fn": "perform_serve",
+        "eventIdAnchors": [],
+        "note": "the ported perform_serve stores no event id at the strike; the nearest stored event is evServeValid (sim.gd:2091), which fires on the first valid bounce instead"
+      }
+    },
+    {
+      "id": "hit",
+      "sound": "hit",
+      "wav": {
+        "path": "tools/audio-audition/baked/hit.wav",
+        "sha256": "3045ce7154535ac208cb734bb0027992cf43fe990c4b85fd9970856546dfc0ee",
+        "bytes": 132344
+      },
+      "anchor": {
+        "file": "js/game.js",
+        "line": 1893,
+        "fn": "hitBall",
+        "call": "sfx.hit()"
+      },
+      "trigger": "a paddle successfully contacts the ball (every successful hit, including a special)",
+      "overlaps": [
+        "special"
+      ],
+      "synth": {
+        "source": "js/audio.js:61-64",
+        "voices": "triangle 230->92Hz 0.09s gain 0.4 + noise 0.04s bandpass 2800Hz gain 0.12",
+        "perPlayRandomness": "noise buffer is a fresh Math.random() draw (js/audio.js:45)"
+      },
+      "port": {
+        "file": "godot/src/sim/sim.gd",
+        "line": 1527,
+        "fn": "hit_ball",
+        "eventIdAnchors": [],
+        "note": "the port's hit_ball stores trajectory/quality events (evChiquita, evGlobo, evSlice, ...) but none at the raw contact point; sfx.hit has no port event-id counterpart"
+      }
+    },
+    {
+      "id": "special",
+      "sound": "special",
+      "wav": {
+        "path": "tools/audio-audition/baked/special.wav",
+        "sha256": "0b6771cf472b6e78b0089430cf173e282c714e2c68af3e12075b7ac404d0cc53",
+        "bytes": 132344
+      },
+      "anchor": {
+        "file": "js/game.js",
+        "line": 1898,
+        "fn": "hitBall",
+        "call": "sfx.special()"
+      },
+      "trigger": "hitBall() runs with isSpecial=true (the energy-bar shot)",
+      "overlaps": [
+        "hit"
+      ],
+      "synth": {
+        "source": "js/audio.js:80-84",
+        "voices": "noise 0.3s bandpass 1400Hz gain 0.2 + sawtooth 1200->240Hz 0.3s gain 0.14 + sine 210->90Hz 0.3s gain 0.2",
+        "perPlayRandomness": "noise buffer is a fresh Math.random() draw (js/audio.js:45)"
+      },
+      "port": {
+        "file": "godot/src/sim/sim.gd",
+        "line": 1783,
+        "fn": "hit_ball (is_special branch) -> apply_special",
+        "eventIdAnchors": [
+          { "id": "evPrecision", "file": "godot/src/sim/sim.gd", "line": 1884, "fn": "apply_special" },
+          { "id": "evLightningDash", "file": "godot/src/sim/sim.gd", "line": 1889, "fn": "apply_special" },
+          { "id": "evSteamSmash", "file": "godot/src/sim/sim.gd", "line": 1897, "fn": "apply_special" },
+          { "id": "evSteamShield", "file": "godot/src/sim/sim.gd", "line": 1902, "fn": "apply_special" },
+          { "id": "evPerfectVision", "file": "godot/src/sim/sim.gd", "line": 1909, "fn": "apply_special" },
+          { "id": "evSteamHammer", "file": "godot/src/sim/sim.gd", "line": 1915, "fn": "apply_special" }
+        ],
+        "note": "apply_special (sim.gd:1874) selects the message id by athlete id: maestro evPrecision (1884), pantera evLightningDash (1889), steamer evSteamSmash (1897), fiamma evSteamShield (1902), oracolo evPerfectVision (1909), colosso evSteamHammer (1915)"
+      }
+    },
+    {
+      "id": "point-win",
+      "sound": "point-win",
+      "wav": {
+        "path": "tools/audio-audition/baked/point-win.wav",
+        "sha256": "92a0faf0bfb51371cbd1bb9bfe813a329d0164b2e98d248a6a7e96985e41ba8e",
+        "bytes": 132344
+      },
+      "anchor": {
+        "file": "js/game.js",
+        "line": 2111,
+        "fn": "scorePoint",
+        "call": "sfx.point(winner === \"player\")"
+      },
+      "trigger": "scorePoint() awards a point to the player and state.result is still null (match not over)",
+      "branch": "win === true",
+      "overlaps": [],
+      "synth": {
+        "source": "js/audio.js:86-89",
+        "voices": "triangle 523/659/784Hz staggered 0/100/200ms, 0.16s gain 0.22",
+        "perPlayRandomness": "none",
+        "note": "baked as ONE sequence file because the stagger uses wall-clock setTimeout (js/audio.js:88)"
+      },
+      "port": {
+        "file": "godot/src/sim/sim.gd",
+        "line": 1990,
+        "fn": "score_point",
+        "eventIdAnchors": [
+          { "id": "pointYou", "file": "godot/src/sim/sim.gd", "line": 2026, "fn": "score_point" }
+        ],
+        "note": "the port stores the message id instead of the localized text: state.pointMessage = \"pointYou\" at sim.gd:2026, inside the state.result == null branch"
+      }
+    },
+    {
+      "id": "point-loss",
+      "sound": "point-loss",
+      "wav": {
+        "path": "tools/audio-audition/baked/point-loss.wav",
+        "sha256": "c0fe349e219e8eebe2bdc2eca3443ecf35d5a91f6eb59be9e0e52634d678467b",
+        "bytes": 132344
+      },
+      "anchor": {
+        "file": "js/game.js",
+        "line": 2111,
+        "fn": "scorePoint",
+        "call": "sfx.point(winner === \"player\")"
+      },
+      "trigger": "scorePoint() awards a point to the AI and state.result is still null (match not over)",
+      "branch": "win === false",
+      "overlaps": [],
+      "synth": {
+        "source": "js/audio.js:90-92",
+        "voices": "triangle 240->150Hz 0.28s gain 0.2",
+        "perPlayRandomness": "none"
+      },
+      "port": {
+        "file": "godot/src/sim/sim.gd",
+        "line": 1990,
+        "fn": "score_point",
+        "eventIdAnchors": [
+          { "id": "pointOpp", "file": "godot/src/sim/sim.gd", "line": 2026, "fn": "score_point" }
+        ],
+        "note": "state.pointMessage = \"pointOpp\" at sim.gd:2026, same branch as point-win"
+      }
+    },
+    {
+      "id": "victory",
+      "sound": "victory",
+      "wav": {
+        "path": "tools/audio-audition/baked/victory.wav",
+        "sha256": "6131d7dbf6f9beeb24a61113b61f482ca87f6b27a29417e0ca264e5702c5ace2",
+        "bytes": 132344
+      },
+      "anchor": {
+        "file": "js/game.js",
+        "line": 2113,
+        "fn": "scorePoint",
+        "call": "sfx.victoryMatch()"
+      },
+      "trigger": "scorePoint() with state.result set and winner === \"player\" (match won)",
+      "overlaps": [],
+      "synth": {
+        "source": "js/audio.js:94-98",
+        "voices": "triangle 659/784/1047/1319Hz staggered 0/130/260/390ms, 0.2s gain 0.24",
+        "perPlayRandomness": "none",
+        "note": "baked as ONE sequence file; music is already stopped before this by js/main.js:1385"
+      },
+      "port": {
+        "file": "godot/src/sim/sim.gd",
+        "line": 1990,
+        "fn": "score_point",
+        "eventIdAnchors": [
+          { "id": "setToYou", "file": "godot/src/sim/sim.gd", "line": 1947, "fn": "finish_set" }
+        ],
+        "note": "the port's score_point has no victory branch (the JS else-if was dropped with sfx); the nearest stored event id is setToYou at sim.gd:1947 in finish_set, and the authoritative port signal is state.result being set"
+      }
+    },
+    {
+      "id": "defeat",
+      "sound": "defeat",
+      "wav": {
+        "path": "tools/audio-audition/baked/defeat.wav",
+        "sha256": "6ee4fad1d952ef203eb0e9ee4ead6baf378211e633900a38c70e7515c808f15b",
+        "bytes": 132344
+      },
+      "anchor": {
+        "file": "js/game.js",
+        "line": 2115,
+        "fn": "scorePoint",
+        "call": "sfx.defeatMatch()"
+      },
+      "trigger": "scorePoint() with state.result set and winner === \"ai\" (match lost)",
+      "overlaps": [],
+      "synth": {
+        "source": "js/audio.js:99-103",
+        "voices": "triangle 392/330/262/196Hz staggered 0/180/360/540ms, 0.28s gain 0.2",
+        "perPlayRandomness": "none"
+      },
+      "port": {
+        "file": "godot/src/sim/sim.gd",
+        "line": 1990,
+        "fn": "score_point",
+        "eventIdAnchors": [
+          { "id": "setToCircuit", "file": "godot/src/sim/sim.gd", "line": 1947, "fn": "finish_set" }
+        ],
+        "note": "mirror of victory: no defeat branch survives in the port; nearest stored id is setToCircuit at sim.gd:1947"
+      }
+    },
+    {
+      "id": "bounce",
+      "sound": "bounce",
+      "wav": {
+        "path": "tools/audio-audition/baked/bounce.wav",
+        "sha256": "b09f28b49df37d286f6c85e4598ef448240011a827b91762f951cc95e7d191a6",
+        "bytes": 132344
+      },
+      "anchor": {
+        "file": "js/game.js",
+        "line": 2209,
+        "fn": "handleGroundBounce",
+        "call": "sfx.bounce()"
+      },
+      "trigger": "the ball rebounds off the court floor",
+      "overlaps": [],
+      "synth": {
+        "source": "js/audio.js:65-67",
+        "voices": "sine 150->68Hz 0.1s gain 0.3",
+        "perPlayRandomness": "none (the only fully deterministic one-shot besides point-loss)"
+      },
+      "port": {
+        "file": "godot/src/sim/sim.gd",
+        "line": 2071,
+        "fn": "handle_ground_bounce",
+        "eventIdAnchors": [
+          { "id": "evServeValid", "file": "godot/src/sim/sim.gd", "line": 2091, "fn": "handle_ground_bounce" },
+          { "id": "evSmashValid", "file": "godot/src/sim/sim.gd", "line": 2115, "fn": "handle_ground_bounce" }
+        ],
+        "note": "the port stores no event at the raw rebound (the sfx call site itself stores none in JS either); the events it can store inside this function are evServeValid (sim.gd:2091, first valid service bounce) and evSmashValid (sim.gd:2115)"
+      }
+    },
+    {
+      "id": "wall",
+      "sound": "wall",
+      "wav": {
+        "path": "tools/audio-audition/baked/wall.wav",
+        "sha256": "bfe0ff28009942a950835ae221611660d4f384ffb6955bd05afd5d7dff898706",
+        "bytes": 132344
+      },
+      "anchor": {
+        "file": "js/game.js",
+        "line": 2363,
+        "fn": "handleWalls",
+        "call": "sfx.wall()"
+      },
+      "trigger": "the ball contacts a wall (glass or side)",
+      "overlaps": [],
+      "synth": {
+        "source": "js/audio.js:68-71",
+        "voices": "noise 0.16s bandpass 900Hz gain 0.32 + sine 92->54Hz 0.22s gain 0.4 (loudest low one-shot)",
+        "perPlayRandomness": "noise buffer is a fresh Math.random() draw (js/audio.js:45)"
+      },
+      "port": {
+        "file": "godot/src/sim/sim.gd",
+        "line": 2140,
+        "fn": "handle_walls",
+        "eventIdAnchors": [
+          { "id": "evWallValid", "file": "godot/src/sim/sim.gd", "line": 2242, "fn": "handle_walls" }
+        ],
+        "note": "the only 1:1 audio counterpart in the port: JS stores addEvent(t(\"evWallValid\")) at js/game.js:2365 right after the sfx call, and the port stores evWallValid at sim.gd:2242, gated by the same wallEventTimer cooldown"
+      }
+    },
+    {
+      "id": "net",
+      "sound": "net",
+      "wav": {
+        "path": "tools/audio-audition/baked/net.wav",
+        "sha256": "3ba222905ca101085695f42eed411779efaf5152164d03b3758a6f2a64beab02",
+        "bytes": 132344
+      },
+      "anchor": {
+        "file": "js/game.js",
+        "line": 2382,
+        "fn": "handleNetCollision",
+        "call": "sfx.net()"
+      },
+      "trigger": "the ball touches the net (band or cord)",
+      "overlaps": [],
+      "synth": {
+        "source": "js/audio.js:72-75",
+        "voices": "noise 0.06s bandpass 1600Hz gain 0.16 + triangle 310->170Hz 0.06s gain 0.18 (shortest burst in the game)",
+        "perPlayRandomness": "noise buffer is a fresh Math.random() draw (js/audio.js:45)"
+      },
+      "port": {
+        "file": "godot/src/sim/sim.gd",
+        "line": 2247,
+        "fn": "handle_net_collision",
+        "eventIdAnchors": [
+          { "id": "evTape", "file": "godot/src/sim/sim.gd", "line": 2273, "fn": "handle_net_collision" },
+          { "id": "evNetRebound", "file": "godot/src/sim/sim.gd", "line": 2284, "fn": "handle_net_collision" }
+        ],
+        "note": "the port stores evTape (sim.gd:2273, band/tape contact) and evNetRebound (sim.gd:2284, full net rebound) inside the same function, after the same crossing/clearance test as the JS"
+      }
+    }
+  ],
+  "notInContract": [
+    {
+      "what": "the 5 generative music voices (bass, pad, arp, kick, hat)",
+      "why": "they are not event-triggered and have no baked WAV in tools/audio-audition/baked (the bake wrote only the 10 one-shots); they are scheduling logic driven by rally intensity, owned by the audio-port-route ticket, not by an event->sound mapping"
+    },
+    {
+      "what": "one-shot multiplicative variants (AudioStreamRandomizer on hit/wall/net/serve/special)",
+      "why": "the reference has no variant concept — the variation is inside the noise buffer drawn per play (js/audio.js:45). How many variants a Godot player holds is a realisation choice (ticket audio-port-route, 4-6 variants), not an event-mapping fact"
+    },
+    {
+      "what": "the drill mode's audio",
+      "why": "js/drill.js contains zero sfx call sites; the drill delegates all physics to updateMatch (js/drill.js:355) and therefore emits exactly the events above through the same sim"
+    }
+  ],
+  "honestUnknowns": [
+    "no Godot-side audio module exists: godot/src/sim/sim.gd:17 states sfx.* / emit* / updateFx / resetFx are deliberately not called, so nothing in this contract has ever been played by the engine",
+    "no engine playback, no mixer wiring, no AudioStreamPlayer / AudioStreamRandomizer tree exists; the mapping is data + source-verified anchors only",
+    "no volume-tuned numbers beyond the two reference defaults (master 0.5, music bus 0.55): the reference defines no target loudness, no headroom, no ducking",
+    "the port's event ids are strings (message ids), not numbers: state.gd:18-20 says events/pointMessage hold message ids; sim.gd add_event takes a String. There is no numeric event-id space in the port today, so the contract binds to the string ids that exist",
+    "which port event id, if any, should carry each sfx sound is a presentation-layer decision that does not exist yet; where the port stores no id at the trigger, this map records an empty list rather than inventing one",
+    "porting parity of overlaid events (hit + special played together) is asserted from source, not measured in the engine"
+  ]
+}

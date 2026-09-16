@@ -1,0 +1,34 @@
+
+> steam-circuit-padel-pro@0.1.0 audit
+> node scripts/run-audits.mjs
+
+✅ ai-attack             4219 ms
+✅ api-feedback           679 ms
+✅ arena-scenery          973 ms
+✅ assets                 926 ms
+✅ career                 684 ms
+✅ controller-tactics     629 ms
+✅ court-speed            576 ms
+✅ demo                   431 ms
+✅ determinism           1107 ms
+✅ difficulty            9226 ms
+✅ drill                 1283 ms
+✅ feedback               510 ms
+✅ gamepad-nav            446 ms
+✅ i18n                   935 ms
+✅ lineup                 820 ms
+✅ match-format          1078 ms
+✅ module-contract        658 ms
+✅ modules                764 ms
+✅ outfit-assets        21802 ms
+✅ outfit-challenges      419 ms
+✅ reachability           491 ms
+✅ shot-balance         15471 ms
+✅ shot-quality           784 ms
+✅ smash-input            507 ms
+✅ tournament             716 ms
+✅ unlockable-animation  2540 ms
+✅ wall-rules            1100 ms
+
+27/27 audit passano
+EXIT_CODE=0

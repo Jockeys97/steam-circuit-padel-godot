@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok shot_balance/controlled_lobs_bounce_in_court
+ok shot_balance/charge_increases_lob_depth_short_over_medium
+ok shot_balance/charge_increases_lob_depth_medium_over_deep
+# report lobDepths(short=210.283 medium=172.117 deep=119.304)
+ok shot_balance/pantera_max_lob_error_rate_in_band
+# report panteraLobErrorRate=0.430 (129/300)
+ok shot_balance/deep_lob_reaches_the_glass
+ok shot_balance/ai_answers_after_its_own_glass
+ok shot_balance/ai0_x2_develops_through_the_glass
+ok shot_balance/ai0_x2_strong_but_defendable
+# report ai0 x2ThroughGlass=300 x2Winners=111 interception=0.000
+ok shot_balance/ai1_x2_develops_through_the_glass
+ok shot_balance/ai1_x2_strong_but_defendable
+# report ai1 x2ThroughGlass=272 x2Winners=26 interception=0.093
+ok shot_balance/ai2_x2_develops_through_the_glass
+ok shot_balance/ai2_x2_strong_but_defendable
+# report ai2 x2ThroughGlass=250 x2Winners=11 interception=0.167
+ok shot_balance/ai3_x2_develops_through_the_glass
+ok shot_balance/ai3_x2_strong_but_defendable
+# report ai3 x2ThroughGlass=239 x2Winners=4 interception=0.203
+ok shot_balance/hardest_tier_reads_the_smash_more_often
+ok shot_balance/medium_x3_special_but_not_automatic
+# report mediumX3WinnerRate=0.603 (181/300)
+ok shot_balance/ai_repertoire_has_drive
+ok shot_balance/ai_repertoire_has_lob
+ok shot_balance/ai_repertoire_has_volley
+ok shot_balance/ai_repertoire_has_vibora
+ok shot_balance/ai_repertoire_has_smash-x2
+ok shot_balance/ai_repertoire_has_smash-x3
+ok shot_balance/ai_repertoire_has_error
+# report aiRepertoire=["drive","error","lob","smash-x2","smash-x3","vibora","volley"]
+PASS 23/23

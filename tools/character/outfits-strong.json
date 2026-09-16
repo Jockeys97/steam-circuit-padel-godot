@@ -1,0 +1,34 @@
+{
+  "_comment": "STRONGER outfit pair for the recolour path. Same schema as tools/character/outfits.json, same tool (tools/character/recolour_outfits.py), same source texture, same single material slot, same fur guard (protect_sat 0.22). This file does NOT replace outfits.json - it is the prescribed stronger target colours for the next in-engine render, so that two outfits from one model are visibly distinct. Derived and validated offline by tools/character/analyse_recolour_delta.py --stage strong (0 credits, 0 API calls, no render).",
+  "_design": "Everything that can be strong is strong and nothing that guards fur is loosened: protect_sat stays 0.22; hue_tol_deg widens 22 -> 45 so every texel of the movable garment class reaches anchor weight 1.0; hue_shift_deg goes to 0 because a hue rotation moves texels away from the anchor hue and multiplied their anchor weight down (measured: outfit-b navy anchor maxed at 0.003 of the atlas with +20 deg); sat_scale/val_scale then carry the per-outfit tint. The target colours are the actual lever: navy -> vivid azure vs navy -> vivid vermilion, i.e. near-opposite in R and B.",
+  "source_texture": "meshy/rigged/volpe/volpe-texture.png",
+  "defaults": {
+    "protect_sat": 0.22,
+    "hue_tol_deg": 45.0,
+    "sat_min": 0.18,
+    "val_min": 0.02,
+    "val_max": 0.98,
+    "strength": 1.0,
+    "luma_clamp": [0.45, 1.7]
+  },
+  "outfits": [
+    {
+      "name": "outfit-a",
+      "label": "Glacier",
+      "chroma": { "hue_shift_deg": 0.0, "sat_scale": 1.15, "val_scale": 0.95 },
+      "anchors": [
+        { "from": "#22304a", "to": "#12a7e0", "note": "navy shorts/top and navy sneaker panels -> vivid azure" },
+        { "from": "#ffc94a", "to": "#7ff0ff", "note": "gold trim and wristbands -> icy cyan" }
+      ]
+    },
+    {
+      "name": "outfit-b",
+      "label": "Vermilion",
+      "chroma": { "hue_shift_deg": 0.0, "sat_scale": 1.3, "val_scale": 1.08 },
+      "anchors": [
+        { "from": "#22304a", "to": "#e8451a", "note": "navy shorts/top -> vivid vermilion" },
+        { "from": "#ffc94a", "to": "#ff9a1f", "note": "gold trim -> hot orange" }
+      ]
+    }
+  ]
+}

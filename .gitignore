@@ -31,3 +31,22 @@ signal-preview.svg.png
 # dal compilatore Rust. Entrambi si ricostruiscono con `npm run desktop`.
 dist/
 src-tauri/target/
+
+# --- Godot 3D port (steam-circuit-padel-godot) ---
+# Engine caches and export output: regenerable, never committed.
+.godot/
+godot/build/
+**/*.import.log
+# Downloaded third-party artifacts (GodotSteam addon + unpacked copies): fetched, not vendored.
+tools/steam-verify/dl/
+tools/steam-verify/unpacked/
+tools/steam-verify/probe/
+*.zip
+# Generated streams and bulk tool output: reproducible from the committed scripts.
+tools/*/out/
+tools/character/out/
+tools/character/out-strong/
+tools/sim-port/out/
+__pycache__/
+# Local agent config
+.claude/

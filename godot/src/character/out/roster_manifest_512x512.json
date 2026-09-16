@@ -1,0 +1,381 @@
+{
+  "background_rgb8": [
+    56,
+    61,
+    71
+  ],
+  "catalogue": {
+    "anchor_primary": "#22304a",
+    "anchor_trim": "#ffc94a",
+    "athletes": 6,
+    "outfit_entries": 26,
+    "source": "js/data.js",
+    "source_sha256": "c63c496cd967663a5ec9f708e77b6f6948e4b523ba5b0e4280a40af642ec6403",
+    "tool": "tools/character/extract_reference_catalogue.py"
+  },
+  "facing_degrees": 180.0,
+  "frames": [
+    {
+      "file": "roster_background_only_512x512.png",
+      "kind": "background",
+      "save_error": 0
+    },
+    {
+      "art_dependent": false,
+      "athlete_id": "maestro",
+      "file": "roster_maestro_base_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_maestro:base\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.031373, 0.74902, 0.909804), \"target_trim\": (0.956863, 0.984314, 1.0), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "base",
+      "primary_hex": "#08bfe8",
+      "save_error": 0,
+      "trim_hex": "#f4fbff",
+      "unlock_key": "maestro:base"
+    },
+    {
+      "athlete_id": "maestro",
+      "file": "athlete_maestro_base_x0_512x512.png",
+      "kind": "athlete_base",
+      "outfit_id": "base",
+      "save_error": 0
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "maestro",
+      "file": "roster_maestro_circuit_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_maestro:circuit\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.192157, 0.360784, 1.0), \"target_trim\": (0.619608, 0.972549, 1.0), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "circuit",
+      "primary_hex": "#315cff",
+      "save_error": 0,
+      "trim_hex": "#9ef8ff",
+      "unlock_key": "maestro:circuit"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "maestro",
+      "file": "roster_maestro_legend_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_maestro:legend\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.835294, 0.65098, 0.164706), \"target_trim\": (1.0, 0.941176, 0.639216), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "legend",
+      "primary_hex": "#d5a62a",
+      "save_error": 0,
+      "trim_hex": "#fff0a3",
+      "unlock_key": "maestro:legend"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "maestro",
+      "file": "roster_maestro_signature_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_maestro:signature\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.011765, 0.780392, 0.929412), \"target_trim\": (0.086275, 0.184314, 0.380392), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "signature",
+      "primary_hex": "#03c7ed",
+      "save_error": 0,
+      "trim_hex": "#162f61",
+      "unlock_key": "maestro:signature"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "maestro",
+      "file": "roster_maestro_mythic_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_maestro:mythic\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.090196, 0.184314, 0.403922), \"target_trim\": (0.960784, 0.945098, 0.87451), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "mythic",
+      "primary_hex": "#172f67",
+      "save_error": 0,
+      "trim_hex": "#f5f1df",
+      "unlock_key": "maestro:mythic"
+    },
+    {
+      "art_dependent": false,
+      "athlete_id": "pantera",
+      "file": "roster_pantera_base_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_pantera:base\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.929412, 0.243137, 0.364706), \"target_trim\": (1.0, 0.462745, 0.564706), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "base",
+      "primary_hex": "#ed3e5d",
+      "save_error": 0,
+      "trim_hex": "#ff7690",
+      "unlock_key": "pantera:base"
+    },
+    {
+      "athlete_id": "pantera",
+      "file": "athlete_pantera_base_x0_512x512.png",
+      "kind": "athlete_base",
+      "outfit_id": "base",
+      "save_error": 0
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "pantera",
+      "file": "roster_pantera_circuit_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_pantera:circuit\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.172549, 0.435294, 1.0), \"target_trim\": (0.792157, 0.937255, 1.0), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "circuit",
+      "primary_hex": "#2c6fff",
+      "save_error": 0,
+      "trim_hex": "#caefff",
+      "unlock_key": "pantera:circuit"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "pantera",
+      "file": "roster_pantera_legend_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_pantera:legend\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (1.0, 0.713726, 0.14902), \"target_trim\": (1.0, 0.941176, 0.627451), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "legend",
+      "primary_hex": "#ffb626",
+      "save_error": 0,
+      "trim_hex": "#fff0a0",
+      "unlock_key": "pantera:legend"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "pantera",
+      "file": "roster_pantera_signature_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_pantera:signature\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.823529, 0.05098, 0.262745), \"target_trim\": (0.090196, 0.082353, 0.117647), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "signature",
+      "primary_hex": "#d20d43",
+      "save_error": 0,
+      "trim_hex": "#17151e",
+      "unlock_key": "pantera:signature"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "pantera",
+      "file": "roster_pantera_mythic_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_pantera:mythic\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.741176, 0.090196, 0.290196), \"target_trim\": (0.066667, 0.07451, 0.109804), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "mythic",
+      "primary_hex": "#bd174a",
+      "save_error": 0,
+      "trim_hex": "#11131c",
+      "unlock_key": "pantera:mythic"
+    },
+    {
+      "art_dependent": false,
+      "athlete_id": "steamer",
+      "file": "roster_steamer_base_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_steamer:base\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.956863, 0.466667, 0.07451), \"target_trim\": (1.0, 0.603922, 0.207843), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "base",
+      "primary_hex": "#f47713",
+      "save_error": 0,
+      "trim_hex": "#ff9a35",
+      "unlock_key": "steamer:base"
+    },
+    {
+      "athlete_id": "steamer",
+      "file": "athlete_steamer_base_x0_512x512.png",
+      "kind": "athlete_base",
+      "outfit_id": "base",
+      "save_error": 0
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "steamer",
+      "file": "roster_steamer_circuit_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_steamer:circuit\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.031373, 0.482353, 0.52549), \"target_trim\": (0.784314, 1.0, 0.960784), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "circuit",
+      "primary_hex": "#087b86",
+      "save_error": 0,
+      "trim_hex": "#c8fff5",
+      "unlock_key": "steamer:circuit"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "steamer",
+      "file": "roster_steamer_legend_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_steamer:legend\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.890196, 0.760784, 0.196078), \"target_trim\": (1.0, 0.952941, 0.686275), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "legend",
+      "primary_hex": "#e3c232",
+      "save_error": 0,
+      "trim_hex": "#fff3af",
+      "unlock_key": "steamer:legend"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "steamer",
+      "file": "roster_steamer_signature_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_steamer:signature\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.909804, 0.364706, 0.086275), \"target_trim\": (0.145098, 0.164706, 0.192157), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "signature",
+      "primary_hex": "#e85d16",
+      "save_error": 0,
+      "trim_hex": "#252a31",
+      "unlock_key": "steamer:signature"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "steamer",
+      "file": "roster_steamer_mythic_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_steamer:mythic\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.811765, 0.32549, 0.109804), \"target_trim\": (0.160784, 0.129412, 0.109804), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "mythic",
+      "primary_hex": "#cf531c",
+      "save_error": 0,
+      "trim_hex": "#29211c",
+      "unlock_key": "steamer:mythic"
+    },
+    {
+      "art_dependent": false,
+      "athlete_id": "fiamma",
+      "file": "roster_fiamma_base_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_fiamma:base\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.662745, 0.905882, 0.113725), \"target_trim\": (0.843137, 1.0, 0.294118), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "base",
+      "primary_hex": "#a9e71d",
+      "save_error": 0,
+      "trim_hex": "#d7ff4b",
+      "unlock_key": "fiamma:base"
+    },
+    {
+      "athlete_id": "fiamma",
+      "file": "athlete_fiamma_base_x0_512x512.png",
+      "kind": "athlete_base",
+      "outfit_id": "base",
+      "save_error": 0
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "fiamma",
+      "file": "roster_fiamma_circuit_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_fiamma:circuit\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.196078, 0.427451, 1.0), \"target_trim\": (0.784314, 0.92549, 1.0), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "circuit",
+      "primary_hex": "#326dff",
+      "save_error": 0,
+      "trim_hex": "#c8ecff",
+      "unlock_key": "fiamma:circuit"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "fiamma",
+      "file": "roster_fiamma_legend_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_fiamma:legend\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.94902, 0.654902, 0.168627), \"target_trim\": (1.0, 0.941176, 0.654902), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "legend",
+      "primary_hex": "#f2a72b",
+      "save_error": 0,
+      "trim_hex": "#fff0a7",
+      "unlock_key": "fiamma:legend"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "fiamma",
+      "file": "roster_fiamma_signature_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_fiamma:signature\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.031373, 0.478431, 0.458824), \"target_trim\": (0.678431, 0.960784, 0.117647), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "signature",
+      "primary_hex": "#087a75",
+      "save_error": 0,
+      "trim_hex": "#adf51e",
+      "unlock_key": "fiamma:signature"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "fiamma",
+      "file": "roster_fiamma_mythic_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_fiamma:mythic\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.027451, 0.360784, 0.407843), \"target_trim\": (0.94902, 0.482353, 0.094118), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "mythic",
+      "primary_hex": "#075c68",
+      "save_error": 0,
+      "trim_hex": "#f27b18",
+      "unlock_key": "fiamma:mythic"
+    },
+    {
+      "art_dependent": false,
+      "athlete_id": "oracolo",
+      "file": "roster_oracolo_base_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_oracolo:base\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.427451, 0.258824, 0.721569), \"target_trim\": (0.662745, 0.423529, 1.0), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "base",
+      "primary_hex": "#6d42b8",
+      "save_error": 0,
+      "trim_hex": "#a96cff",
+      "unlock_key": "oracolo:base"
+    },
+    {
+      "athlete_id": "oracolo",
+      "file": "athlete_oracolo_base_x0_512x512.png",
+      "kind": "athlete_base",
+      "outfit_id": "base",
+      "save_error": 0
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "oracolo",
+      "file": "roster_oracolo_signature_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_oracolo:signature\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.219608, 0.129412, 0.435294), \"target_trim\": (0.160784, 0.87451, 1.0), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "signature",
+      "primary_hex": "#38216f",
+      "save_error": 0,
+      "trim_hex": "#29dfff",
+      "unlock_key": "oracolo:signature"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "oracolo",
+      "file": "roster_oracolo_mythic_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_oracolo:mythic\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.086275, 0.070588, 0.141176), \"target_trim\": (0.156863, 0.843137, 1.0), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "mythic",
+      "primary_hex": "#161224",
+      "save_error": 0,
+      "trim_hex": "#28d7ff",
+      "unlock_key": "oracolo:mythic"
+    },
+    {
+      "art_dependent": false,
+      "athlete_id": "colosso",
+      "file": "roster_colosso_base_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_colosso:base\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.909804, 0.705882, 0.0), \"target_trim\": (1.0, 0.913725, 0.541176), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "base",
+      "primary_hex": "#e8b400",
+      "save_error": 0,
+      "trim_hex": "#ffe98a",
+      "unlock_key": "colosso:base"
+    },
+    {
+      "athlete_id": "colosso",
+      "file": "athlete_colosso_base_x0_512x512.png",
+      "kind": "athlete_base",
+      "outfit_id": "base",
+      "save_error": 0
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "colosso",
+      "file": "roster_colosso_signature_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_colosso:signature\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.145098, 0.129412, 0.117647), \"target_trim\": (1.0, 0.478431, 0.070588), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "signature",
+      "primary_hex": "#25211e",
+      "save_error": 0,
+      "trim_hex": "#ff7a12",
+      "unlock_key": "colosso:signature"
+    },
+    {
+      "art_dependent": true,
+      "athlete_id": "colosso",
+      "file": "roster_colosso_mythic_x0_512x512.png",
+      "kind": "outfit",
+      "material": "{ \"material_class\": \"ShaderMaterial\", \"resource_name\": \"Outfit_colosso:mythic\", \"shader_path\": \"res://src/character/outfit_recolour.gdshader\", \"target_primary\": (0.929412, 0.890196, 0.772549), \"target_trim\": (0.090196, 0.294118, 0.219608), \"anchor_primary\": (0.133333, 0.188235, 0.290196), \"anchor_trim\": (1.0, 0.788235, 0.290196), \"protect_sat\": 0.22, \"metallic\": 0.0, \"roughness\": 0.85, \"source_tex\": \"set\" }",
+      "outfit_id": "mythic",
+      "primary_hex": "#ede3c5",
+      "save_error": 0,
+      "trim_hex": "#174b38",
+      "unlock_key": "colosso:mythic"
+    }
+  ],
+  "hold_clip": "idle",
+  "hold_time": 0.15,
+  "resolution": "512x512"
+}

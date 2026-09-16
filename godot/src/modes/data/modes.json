@@ -1,0 +1,529 @@
+{
+  "generatedBy": "tools/modes-port/extract-modes.mjs",
+  "source": [
+    "js/data.js",
+    "js/drill.js"
+  ],
+  "sourceSha256": {
+    "js/data.js": "c63c496cd967663a5ec9f708e77b6f6948e4b523ba5b0e4280a40af642ec6403",
+    "js/drill.js": "b3f346f65029e0a402eda2f6e73a1fd7897b0c1ee0c812e701eee911a89c8703"
+  },
+  "career": {
+    "matches": 3,
+    "pointsToWin": 11,
+    "promotionWins": 2,
+    "finalSeason": 6,
+    "ramp": {
+      "skillCap": 0.96,
+      "powerCap": 1.2,
+      "speedCap": 442,
+      "seasonGain": 0.05,
+      "matchGain": 0.04
+    },
+    "seasonMetricAgg": {
+      "pointsWon": "sum",
+      "winners": "sum",
+      "smashWinners": "sum",
+      "errors": "max",
+      "doubleFaults": "max",
+      "longestRally": "max"
+    },
+    "objectiveDefs": {
+      "smashWins": {
+        "metric": "smashWinners",
+        "unit": "count"
+      },
+      "noDoubleFault": {
+        "metric": "doubleFaults",
+        "unit": "max"
+      },
+      "winPoints": {
+        "metric": "pointsWon",
+        "unit": "count"
+      },
+      "winRally": {
+        "metric": "longestRally",
+        "unit": "count"
+      },
+      "winners": {
+        "metric": "winners",
+        "unit": "count"
+      },
+      "fewErrors": {
+        "metric": "errors",
+        "unit": "max"
+      }
+    },
+    "unlockCode": "GAPROVA"
+  },
+  "outfits": {
+    "maestro": [
+      {
+        "id": "base",
+        "nameKey": "outfitBase",
+        "unlockKey": "maestro:base",
+        "athleteId": "maestro",
+        "colors": [
+          "#08bfe8",
+          "#f4fbff"
+        ],
+        "challenge": null,
+        "unlock": null
+      },
+      {
+        "id": "circuit",
+        "nameKey": "outfitCircuit",
+        "unlockKey": "maestro:circuit",
+        "athleteId": "maestro",
+        "colors": [
+          "#315cff",
+          "#9ef8ff"
+        ],
+        "challenge": {
+          "metric": "winners",
+          "target": 4
+        },
+        "unlock": null
+      },
+      {
+        "id": "legend",
+        "nameKey": "outfitLegend",
+        "unlockKey": "maestro:legend",
+        "athleteId": "maestro",
+        "colors": [
+          "#d5a62a",
+          "#fff0a3"
+        ],
+        "challenge": {
+          "metric": "errors",
+          "target": 4,
+          "atMost": true,
+          "win": true
+        },
+        "unlock": null
+      },
+      {
+        "id": "signature",
+        "nameKey": "outfitSignatureMaestro",
+        "unlockKey": "maestro:signature",
+        "athleteId": "maestro",
+        "colors": [
+          "#03c7ed",
+          "#162f61"
+        ],
+        "challenge": {
+          "metric": "doubleFaults",
+          "target": 0,
+          "atMost": true,
+          "win": true,
+          "also": {
+            "metric": "winners",
+            "target": 6
+          }
+        },
+        "unlock": null
+      },
+      {
+        "id": "mythic",
+        "nameKey": "outfitMythicMaestro",
+        "unlockKey": "maestro:mythic",
+        "athleteId": "maestro",
+        "colors": [
+          "#172f67",
+          "#f5f1df"
+        ],
+        "challenge": {
+          "metric": "errors",
+          "target": 2,
+          "atMost": true,
+          "win": true,
+          "minSkill": 0.7,
+          "also": {
+            "metric": "winners",
+            "target": 6
+          }
+        },
+        "unlock": null
+      }
+    ],
+    "pantera": [
+      {
+        "id": "base",
+        "nameKey": "outfitBase",
+        "unlockKey": "pantera:base",
+        "athleteId": "pantera",
+        "colors": [
+          "#ed3e5d",
+          "#ff7690"
+        ],
+        "challenge": null,
+        "unlock": null
+      },
+      {
+        "id": "circuit",
+        "nameKey": "outfitCircuit",
+        "unlockKey": "pantera:circuit",
+        "athleteId": "pantera",
+        "colors": [
+          "#2c6fff",
+          "#caefff"
+        ],
+        "challenge": {
+          "metric": "longestRally",
+          "target": 8
+        },
+        "unlock": null
+      },
+      {
+        "id": "legend",
+        "nameKey": "outfitLegend",
+        "unlockKey": "pantera:legend",
+        "athleteId": "pantera",
+        "colors": [
+          "#ffb626",
+          "#fff0a0"
+        ],
+        "challenge": {
+          "metric": "longestRally",
+          "target": 12,
+          "win": true
+        },
+        "unlock": null
+      },
+      {
+        "id": "signature",
+        "nameKey": "outfitSignaturePantera",
+        "unlockKey": "pantera:signature",
+        "athleteId": "pantera",
+        "colors": [
+          "#d20d43",
+          "#17151e"
+        ],
+        "challenge": {
+          "metric": "longestRally",
+          "target": 18,
+          "win": true
+        },
+        "unlock": null
+      },
+      {
+        "id": "mythic",
+        "nameKey": "outfitMythicPantera",
+        "unlockKey": "pantera:mythic",
+        "athleteId": "pantera",
+        "colors": [
+          "#bd174a",
+          "#11131c"
+        ],
+        "challenge": {
+          "metric": "errors",
+          "target": 3,
+          "atMost": true,
+          "win": true,
+          "minSkill": 0.7,
+          "also": {
+            "metric": "longestRally",
+            "target": 15
+          }
+        },
+        "unlock": null
+      }
+    ],
+    "steamer": [
+      {
+        "id": "base",
+        "nameKey": "outfitBase",
+        "unlockKey": "steamer:base",
+        "athleteId": "steamer",
+        "colors": [
+          "#f47713",
+          "#ff9a35"
+        ],
+        "challenge": null,
+        "unlock": null
+      },
+      {
+        "id": "circuit",
+        "nameKey": "outfitCircuit",
+        "unlockKey": "steamer:circuit",
+        "athleteId": "steamer",
+        "colors": [
+          "#087b86",
+          "#c8fff5"
+        ],
+        "challenge": {
+          "metric": "smashWinners",
+          "target": 2
+        },
+        "unlock": null
+      },
+      {
+        "id": "legend",
+        "nameKey": "outfitLegend",
+        "unlockKey": "steamer:legend",
+        "athleteId": "steamer",
+        "colors": [
+          "#e3c232",
+          "#fff3af"
+        ],
+        "challenge": {
+          "metric": "winners",
+          "target": 6
+        },
+        "unlock": null
+      },
+      {
+        "id": "signature",
+        "nameKey": "outfitSignatureSteamer",
+        "unlockKey": "steamer:signature",
+        "athleteId": "steamer",
+        "colors": [
+          "#e85d16",
+          "#252a31"
+        ],
+        "challenge": {
+          "metric": "smashWinners",
+          "target": 5,
+          "win": true
+        },
+        "unlock": null
+      },
+      {
+        "id": "mythic",
+        "nameKey": "outfitMythicSteamer",
+        "unlockKey": "steamer:mythic",
+        "athleteId": "steamer",
+        "colors": [
+          "#cf531c",
+          "#29211c"
+        ],
+        "challenge": {
+          "metric": "smashWinners",
+          "target": 6,
+          "win": true,
+          "minSkill": 0.7
+        },
+        "unlock": null
+      }
+    ],
+    "fiamma": [
+      {
+        "id": "base",
+        "nameKey": "outfitBase",
+        "unlockKey": "fiamma:base",
+        "athleteId": "fiamma",
+        "colors": [
+          "#a9e71d",
+          "#d7ff4b"
+        ],
+        "challenge": null,
+        "unlock": null
+      },
+      {
+        "id": "circuit",
+        "nameKey": "outfitCircuit",
+        "unlockKey": "fiamma:circuit",
+        "athleteId": "fiamma",
+        "colors": [
+          "#326dff",
+          "#c8ecff"
+        ],
+        "challenge": {
+          "metric": "totalRallyHits",
+          "target": 45
+        },
+        "unlock": null
+      },
+      {
+        "id": "legend",
+        "nameKey": "outfitLegend",
+        "unlockKey": "fiamma:legend",
+        "athleteId": "fiamma",
+        "colors": [
+          "#f2a72b",
+          "#fff0a7"
+        ],
+        "challenge": {
+          "metric": "totalRallyHits",
+          "target": 70,
+          "win": true
+        },
+        "unlock": null
+      },
+      {
+        "id": "signature",
+        "nameKey": "outfitSignatureFiamma",
+        "unlockKey": "fiamma:signature",
+        "athleteId": "fiamma",
+        "colors": [
+          "#087a75",
+          "#adf51e"
+        ],
+        "challenge": {
+          "metric": "errors",
+          "target": 3,
+          "atMost": true,
+          "win": true,
+          "also": {
+            "metric": "totalRallyHits",
+            "target": 90
+          }
+        },
+        "unlock": null
+      },
+      {
+        "id": "mythic",
+        "nameKey": "outfitMythicFiamma",
+        "unlockKey": "fiamma:mythic",
+        "athleteId": "fiamma",
+        "colors": [
+          "#075c68",
+          "#f27b18"
+        ],
+        "challenge": {
+          "metric": "totalRallyHits",
+          "target": 115,
+          "win": true,
+          "minSkill": 0.7
+        },
+        "unlock": null
+      }
+    ],
+    "oracolo": [
+      {
+        "id": "base",
+        "nameKey": "outfitBase",
+        "unlockKey": "oracolo:base",
+        "athleteId": "oracolo",
+        "colors": [
+          "#6d42b8",
+          "#a96cff"
+        ],
+        "challenge": null,
+        "unlock": null
+      },
+      {
+        "id": "signature",
+        "nameKey": "outfitSignatureOracolo",
+        "unlockKey": "oracolo:signature",
+        "athleteId": "oracolo",
+        "colors": [
+          "#38216f",
+          "#29dfff"
+        ],
+        "challenge": {
+          "metric": "errors",
+          "target": 3,
+          "atMost": true,
+          "win": true
+        },
+        "unlock": null
+      },
+      {
+        "id": "mythic",
+        "nameKey": "outfitMythicOracolo",
+        "unlockKey": "oracolo:mythic",
+        "athleteId": "oracolo",
+        "colors": [
+          "#161224",
+          "#28d7ff"
+        ],
+        "challenge": {
+          "metric": "errors",
+          "target": 4,
+          "atMost": true,
+          "win": true,
+          "minSkill": 0.85
+        },
+        "unlock": null
+      }
+    ],
+    "colosso": [
+      {
+        "id": "base",
+        "nameKey": "outfitBase",
+        "unlockKey": "colosso:base",
+        "athleteId": "colosso",
+        "colors": [
+          "#e8b400",
+          "#ffe98a"
+        ],
+        "challenge": null,
+        "unlock": null
+      },
+      {
+        "id": "signature",
+        "nameKey": "outfitSignatureColosso",
+        "unlockKey": "colosso:signature",
+        "athleteId": "colosso",
+        "colors": [
+          "#25211e",
+          "#ff7a12"
+        ],
+        "challenge": {
+          "metric": "winners",
+          "target": 9,
+          "win": true
+        },
+        "unlock": null
+      },
+      {
+        "id": "mythic",
+        "nameKey": "outfitMythicColosso",
+        "unlockKey": "colosso:mythic",
+        "athleteId": "colosso",
+        "colors": [
+          "#ede3c5",
+          "#174b38"
+        ],
+        "challenge": {
+          "metric": "smashWinners",
+          "target": 5,
+          "win": true,
+          "minSkill": 0.85
+        },
+        "unlock": null
+      }
+    ]
+  },
+  "drill": {
+    "exercises": [
+      {
+        "id": "precision",
+        "feed": "flat",
+        "rivals": false,
+        "targets": true,
+        "kinds": [
+          "short",
+          "deep"
+        ]
+      },
+      {
+        "id": "smash",
+        "feed": "lob",
+        "rivals": true,
+        "targets": false,
+        "kinds": []
+      },
+      {
+        "id": "rally",
+        "feed": "flat",
+        "rivals": true,
+        "targets": false,
+        "kinds": []
+      },
+      {
+        "id": "serve",
+        "feed": "serve",
+        "rivals": true,
+        "targets": false,
+        "kinds": []
+      }
+    ],
+    "targetR": 46,
+    "bullseye": 0.42,
+    "squashFlat": 255,
+    "squashLow": 185,
+    "freeze": 5
+  }
+}
