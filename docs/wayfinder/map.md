@@ -28,8 +28,20 @@ below are met — not before.
   fiamma, oracolo, colosso), **9 arenas**, **26 outfit entries = 6 base + 20
   unlockable** (maestro 5, pantera 5, steamer 5, fiamma 5, oracolo 3, colosso 3),
   **4 AI opponents** (rivale, ingegnere, campione, leggenda), **13 screens**,
-  **27 audit scripts**. Twenty unlockable outfits is the correct unlock set;
+  **28 audit scripts**. Twenty unlockable outfits is the correct unlock set;
   26 is the total.
+- **Correction, 2026-09-17 — the audit count is 28, not 27.** `scripts/` holds 28
+  `*-audit.mjs` files in both trees, and the runner GLOBS them
+  (`scripts/run-audits.mjs:21-23`: `readdir` + `filter`, no list to edit), so every
+  one of the 28 is wired and none is orphaned. The earlier "27" and the validator's
+  matching expectation were stale together, not a drift: the newest audit file is
+  dated 2026-09-10, days before this mission started. Corrected in `validate.py`
+  (the expected value, never the check) and here. Two consequences recorded rather
+  than smoothed over: the bullet above quotes the Linux host's `27/27`, which cannot
+  be the total of a tree with 28 files unless that run skipped one — this session
+  cannot resolve it from this Mac; and on the owner's Mac the suite cannot run at all
+  yet, because `node_modules/` is absent and `sharp` does not resolve (`npm run
+  audit` → module-not-found, 28 reds, not 28 passes).
 - Reference commit `2979588` is the frozen baseline. **The audit suite is now
   green on this host: 27/27, exit 0**, after installing the devDependencies the
   repo already declared. Both former reds had one cause — `node_modules/` was
@@ -135,6 +147,9 @@ ticket's own `Blocked by` line, so the map cannot drift from the tickets.
 | [UI port approach](tickets/ui-port-approach.md) | open | prototype / HITL | unassigned | Godot headless harness |
 | [Arena art direction](tickets/arena-art-direction.md) | open | grilling / HITL | unassigned | Camera and feel spike |
 | [Athlete roster order](tickets/athlete-roster-order.md) | open | grilling / HITL | unassigned | Character pipeline economics |
+| [Shot logic parity](tickets/shot-logic-parity.md) | open | task / AFK | crew-shotlogic | none |
+| [Timing logic parity](tickets/timing-logic-parity.md) | open | task / AFK | crew-timinglogic | none |
+| [Timing presentation in 3D](tickets/timing-presentation-3d.md) | open | task / AFK | crew-timinghud | none |
 
 **Dependency correction, 2026-09-16:** [Steamworks integration
 route](tickets/steamworks-integration-route.md) is no longer blocked by
