@@ -785,3 +785,19 @@ with `tools/parity/parity-compare.mjs`, and record the coverage evidence. In
 parallel, close the open `Character pipeline economics` map ticket now that the
 recolour path has real PROVENANCE and diff numbers. The arena-spike motion pass
 stays frozen until Luca rules on camera/feel.
+
+## Slice S14 — shot logic parity + timing presentation (claimed 2026-09-17 01:05 CEST)
+
+Owner's words: *"se i colpi corrispondono come logica a quelle della versione 2d,
+inoltre vorrei mettere anche qui le scritte e le logiche del timing con Perfetto...
+che c'erano nel 2d"*. Budget: no cap. Two attempts per gate, then a blocker.
+
+| Lane | Realm | Allowed writes |
+|---|---|---|
+| crew-shotlogic | S14a — every shot intent, anchor to anchor | `docs/wayfinder/evidence/shot-logic-parity.md`, `godot/tests/shot_logic_parity_test.gd`, `tools/sim-port/intent-trace/**` |
+| crew-timinglogic | S14b — the numbers behind PERFETTO | `docs/wayfinder/evidence/timing-logic-parity.md`, `godot/tests/timing_feedback_test.gd`, `tools/sim-port/timing-trace/**` |
+| crew-timinghud | S14c — the ring, the words, the bars on the field | `godot/game/hud.gd`, `godot/game/match_controller.gd`, one new section `_timing_presentation` in `godot/tests/game_slice_test.gd`, `docs/wayfinder/evidence/timing-presentation-3d.md`, `godot/game/out/*.png` |
+
+No allowlist overlaps; no lane may edit `STATE.md`, `LOG.md`, `BOARD.md`, `map.md` or
+any tracked file outside its allowlist (CEO-owned). `godot/src/sim/**` is frozen
+except for a divergence proven by the ticket's own reproduction.

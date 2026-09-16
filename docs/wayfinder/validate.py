@@ -108,7 +108,10 @@ def main():
     assert counts["outfits_total"] == counts["outfits_base"] + counts["outfits_unlockable"]
     map_txt = read(os.path.join(HERE, "map.md"))
     claims = {
-        "27 audit scripts": counts["audits"] == 27,
+        # 28, measured 2026-09-17: `scripts/` holds 28 `*-audit.mjs` files and the
+        # runner globs the directory (`run-audits.mjs:21-23`), so all 28 are wired.
+        # The expected VALUE was stale; the check is unchanged.
+        "28 audit scripts": counts["audits"] == 28,
         "26 outfit entries": counts["outfits_total"] == 26,
         "6 base outfits": counts["outfits_base"] == 6,
         "20 unlockable outfits": counts["outfits_unlockable"] == 20,
@@ -121,7 +124,7 @@ def main():
     for label, ok in claims.items():
         if not ok:
             errors.append(f"source count mismatch: {label} (actual from source: {counts})")
-    for want in ["27 audit", "26 outfit", "6 base", "20\n  unlockable", "6 athletes", "9 arenas", "13 screens"]:
+    for want in ["28 audit", "26 outfit", "6 base", "20\n  unlockable", "6 athletes", "9 arenas", "13 screens"]:
         pass  # textual checks are advisory only; counts are the authority
 
     # 2. required fields on every ticket
@@ -252,7 +255,7 @@ def main():
     row("Base outfits", counts["outfits_base"], 6)
     row("Unlockable outfits", counts["outfits_unlockable"], 20)
     row("Screens", counts["screens"], 13)
-    row("Audit scripts", counts["audits"], 27)
+    row("Audit scripts", counts["audits"], 28)
     row("Fixed step", counts["tick"], "1 / 120")
     lines.append("")
     lines.append(f"Outfits per athlete: `{counts['outfits_per_athlete']}`. "
