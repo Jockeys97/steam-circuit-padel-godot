@@ -149,12 +149,19 @@ func _check_dump() -> bool:
 	var engine_bytes := FileAccess.get_file_as_bytes(ENGINE_DUMP)
 	var repo_path := _repo.path_join(REPO_DUMP)
 	var repo_bytes := FileAccess.get_file_as_bytes(repo_path)
-	var same := engine_bytes.size() > 0 and engine_bytes.size() == repo_bytes.size() and engine_bytes == repo_bytes
-	_check("dump is vendored byte-identical to the generated one", same,
-		"%d vs %d bytes, sha256 %s vs %s" % [
-			engine_bytes.size(), repo_bytes.size(),
-			MusicPort.sha256_of(ENGINE_DUMP), MusicPort.sha256_of(repo_path),
-		])
+	# The generated dump lives under `tools/*/out/`, which is gitignored, so a source
+	# checkout has none. That absence is not a defect of the checkout and is not scored —
+	# but it is stated, so a green run is never read as "the generated dump was compared".
+	# The provenance and payload checks below run in every mode and can still fail.
+	if repo_bytes.size() == 0:
+		print("# DUMP_MODE generated %s absent (source checkout) — byte-identity not compared, not scored" % repo_path)
+	else:
+		var same := engine_bytes.size() > 0 and engine_bytes.size() == repo_bytes.size() and engine_bytes == repo_bytes
+		_check("dump is vendored byte-identical to the generated one", same,
+			"%d vs %d bytes, sha256 %s vs %s" % [
+				engine_bytes.size(), repo_bytes.size(),
+				MusicPort.sha256_of(ENGINE_DUMP), MusicPort.sha256_of(repo_path),
+			])
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(ENGINE_DUMP))
 	if typeof(parsed) != TYPE_DICTIONARY:
 		_check("dump parses as a JSON object", false, "not a dictionary")

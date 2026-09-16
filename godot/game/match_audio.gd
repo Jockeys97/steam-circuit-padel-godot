@@ -54,6 +54,15 @@
 extends Node
 
 const AudioPortScript := preload("res://src/audio/audio_port.gd")
+## The port's MUSIC engine (`js/audio.js:106-271`). It is a module of its own, not an
+## event: the reference starts it with the match (`js/main.js:1211-1212`), re-drives its
+## intensity from the rally and the scoreboard every frame (`:1273-1279`) and stops it
+## when the match ends (`:1438`). Until this seam existed the module was tested and never
+## heard, which is the one open item the hand-off named ("you will hear effects only").
+const MusicScript := preload("res://src/audio/music.gd")
+
+## `js/main.js:1211` — the intensity a match opens at, before the first rally.
+const REFERENCE_START_INTENSITY := 0.12
 
 ## The routing decision, as data. Keys are message ids the ported simulation can
 ## store at the reference's own `sfx.*` call site (contract `port.eventIdAnchors`).
@@ -83,6 +92,12 @@ const POINT_PREFIXES := {
 
 ## The audio module, built from the contract at `_ready()`.
 var port: Node = null
+## The music engine, built at `_ready()` and driven from the match's own state.
+var music: Node = null
+## How many times the score has been stopped (a match end), for the read-back.
+var music_stops: int = 0
+## The last intensity this seam pushed into the score.
+var music_last_intensity: float = -1.0
 ## Every sound requested, in order: {tick, event, source, started}.
 var requests: Array[Dictionary] = []
 ## Requests the module refused, with the reason it gave.
@@ -105,6 +120,12 @@ func _ready() -> void:
 	port = AudioPortScript.new()
 	port.name = "AudioPort"
 	add_child(port)
+	music = MusicScript.new()
+	music.name = "Music"
+	add_child(music)
+	# The menu context is the reference's own name for silence (there is no menu
+	# theme — see `music.gd`'s header), so a scene that never starts a match stays quiet.
+	music.set_context(MusicScript.CONTEXT_MENU)
 
 
 ## Forget the previous match: the ring, the edge detectors and the request log.
@@ -123,6 +144,14 @@ func reset() -> void:
 	last_playing_probe.clear()
 	if port != null:
 		port.stop_all()
+	# The reference starts the score with the match, at its opening intensity
+	# (`js/main.js:1211-1212`), and a rematch is that same call — so a restart never
+	# inherits the previous match's tempo.
+	if music != null:
+		music.stop()
+		music.set_intensity(REFERENCE_START_INTENSITY)
+		music_last_intensity = REFERENCE_START_INTENSITY
+		music.set_context(MusicScript.CONTEXT_MATCH)
 
 
 # ---------------------------------------------------------------------------
@@ -162,6 +191,7 @@ func observe(state, tick: int) -> Array:
 		played.append_array(sounds)
 	_prev_ring = ring.duplicate()
 	played.append_array(_transition_sounds(state, tick))
+	_drive_music(state)
 	return played
 
 
@@ -276,4 +306,52 @@ func summary() -> Dictionary:
 		"errors": errors.duplicate(),
 		"playing_probe": last_playing_probe.duplicate(),
 		"contract_events": (Array(port.event_ids()) if port != null else []),
+		"music": music_summary(),
+	}
+
+
+## The reference's own drive, ported line for line (`js/main.js:1273-1279`):
+##
+##     rallyTension = min(1, rallyHits / 12)
+##     stakes       = min(0.35, (sets.p + sets.a) * 0.15 + (games.p + games.a) * 0.02)
+##     intensity    = min(1, 0.12 + rallyTension * 0.55 + stakes)
+##
+## and the stop at the match's end (`:1438`). A paused frame in the reference still
+## re-drives the intensity (`gameLoop` runs while paused), so this does too: pause is not
+## a reason to freeze the tempo map, only to stop advancing the match.
+func _drive_music(state) -> void:
+	if music == null:
+		return
+	if state.result != null:
+		if bool(music.playing):
+			music.stop()
+			music_stops += 1
+		return
+	var rally_tension: float = minf(1.0, float(state.rallyHits) / 12.0)
+	var stakes: float = minf(0.35,
+		float(int(state.sets["player"]) + int(state.sets["ai"])) * 0.15
+		+ float(int(state.games["player"]) + int(state.games["ai"])) * 0.02)
+	var want: float = minf(1.0, REFERENCE_START_INTENSITY + rally_tension * 0.55 + stakes)
+	music.set_intensity(want)
+	music_last_intensity = want
+	if not bool(music.playing):
+		music.start()
+
+
+## What the slice test and the evidence file read back about the score: the engine's own
+## state, never a flag this seam keeps about itself.
+func music_summary() -> Dictionary:
+	if music == null:
+		return {"present": false}
+	return {
+		"present": true,
+		"playing": bool(music.playing),
+		"context": String(music.context),
+		"intensity": float(music.intensity),
+		"last_intensity_set": music_last_intensity,
+		"voices_started": int(music.voices_started),
+		"stops": music_stops,
+		"muted": bool(music.is_muted()),
+		"master_gain": float(music.master_gain()),
+		"music_bus_gain": float(music.reference_music_bus_gain()),
 	}

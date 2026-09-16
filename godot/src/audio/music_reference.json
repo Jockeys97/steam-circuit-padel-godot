@@ -8,8 +8,8 @@
    "bytes": 8547
   },
   "js/main.js": {
-   "sha256": "f4d24f7c0bad20971b70e31b86c2cd835b82bdc63134d5c2527109e3fdf25529",
-   "bytes": 95899
+   "sha256": "d1e2d3d20b37395eb1e9fbd3ad8e1dc83c3fc392e75711380fc93b48306a4e0a",
+   "bytes": 100390
   }
  },
  "anchors": {
@@ -25,7 +25,7 @@
   "volume": "js/audio.js:286-289",
   "contexts": "js/main.js:1158-1159 (start), :1220-1226 (intensity), :1385, :1553 (stop)",
   "intensity_formula_source": "  const rallyTension = Math.min(1, matchState.rallyHits / 12);\n  const stakes = Math.min(\n    0.35,\n    (matchState.sets.player + matchState.sets.ai) * 0.15\n      + (matchState.games.player + matchState.games.ai) * 0.02,\n  );\n  music.setIntensity(Math.min(1, 0.12 + rallyTension * 0.55 + stakes));",
-  "intensity_formula_lines": "js/main.js:1220-1226"
+  "intensity_formula_lines": "js/main.js:1273-1279"
  },
  "engine": {
   "sample_rate": 44100,
