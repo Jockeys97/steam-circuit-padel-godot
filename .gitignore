@@ -1,0 +1,33 @@
+.DS_Store
+.idea/
+.vscode/
+node_modules/
+
+# File e progetti locali estranei a Steam Circuit Padel Pro
+.activeflow-build/
+.codex-tmp/
+activeflow-v5/
+activeflow-v6/
+alessio-tailored-cv-skill/
+alessio-tailored-cv-skill.zip
+assets/alessio_profile.png
+flagship-edit/
+notebooklm-mcp-codex/
+output/
+site-edit/
+tmp/
+ActiveFlow - Portfolio Demo.json
+ActiveFlow - Service Continuity Flagship.json
+Alessio_Fantini_*.md
+create_capgemini_letter.py
+scripts/update_cv_figma_framer.py
+signal-dashboard-preview.png
+signal-preview.svg
+signal-preview.svg.png
+.vercel
+.env*
+
+# Pacchetto desktop: `dist/` e' generato da scripts/build-dist.mjs, `target/`
+# dal compilatore Rust. Entrambi si ricostruiscono con `npm run desktop`.
+dist/
+src-tauri/target/

@@ -1,0 +1,85 @@
+{
+  "name": "Padel · Triage feedback giocatori",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "padel-feedback-intake-7e0b0c",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-520, 260],
+      "id": "8cbef278-0018-4f66-b46c-cf3e7d466013",
+      "name": "Ricevi feedback Padel",
+      "webhookId": "padel-feedback-intake-7e0b0c"
+    },
+    {
+      "parameters": {
+        "jsCode": "const envelope = $input.first().json;\nconst body = envelope.body ?? envelope;\nconst content = String(body.content ?? '').trim().slice(0, 1900);\nif (!content) throw new Error('feedback senza contenuto');\n\nconst topic = (content.match(/^\\[([^\\]]+)\\]/m)?.[1] ?? 'other').toLowerCase();\nconst urgent = /(crash|blocc|freeze|non si avvia|salvataggio|perd|invisibil|trasparen)/i.test(content);\nconst important = urgent || /\\[(bug|performance)\\]/i.test(content);\nconst priority = urgent ? 'URGENTE' : important ? 'ALTA' : topic === 'balance' ? 'MEDIA' : 'NORMALE';\nconst now = new Date();\nconst day = now.toISOString().slice(0, 10).replace(/-/g, '');\nlet hash = 2166136261;\nfor (const char of content) { hash ^= char.charCodeAt(0); hash = Math.imul(hash, 16777619); }\nconst ticket = `FB-${day}-${(hash >>> 0).toString(16).slice(0, 6).toUpperCase()}`;\n\nlet diagnostics = {};\nconst rawDiagnostics = content.match(/--- contesto tecnico ---\\s*([\\s\\S]+)$/);\nif (rawDiagnostics) { try { diagnostics = JSON.parse(rawDiagnostics[1]); } catch {} }\nconst colour = priority === 'URGENTE' ? 15158332 : priority === 'ALTA' ? 15105570 : priority === 'MEDIA' ? 3447003 : 5763719;\nconst cleanMessage = content.replace(/--- contesto tecnico ---[\\s\\S]*$/, '').trim();\nconst fields = [\n  { name: 'Categoria', value: topic.toUpperCase(), inline: true },\n  { name: 'Priorità', value: priority, inline: true },\n  { name: 'Stato', value: 'NUOVO', inline: true },\n];\nif (diagnostics.version) fields.push({ name: 'Versione', value: String(diagnostics.version).slice(0, 100), inline: true });\nif (diagnostics.balance) fields.push({ name: 'Bilanciamento', value: String(diagnostics.balance).slice(0, 100), inline: true });\n\nreturn [{ json: {\n  ticket, topic, priority, receivedAt: now.toISOString(), diagnostics,\n  discordPayload: {\n    embeds: [{ title: `${ticket} · ${priority}`, description: cleanMessage.slice(0, 3900), color: colour, fields, footer: { text: 'Steam Circuit Padel Pro · feedback in triage' }, timestamp: now.toISOString() }],\n    allowed_mentions: { parse: [] }\n  }\n} }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-240, 260],
+      "id": "d1e424ce-0578-4599-90fd-e1fd68679ec9",
+      "name": "Classifica e prepara scheda"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "__DISCORD_WEBHOOK_URL__",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json.discordPayload) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [32, 260],
+      "id": "ec491dc7-6d89-465c-a174-c3061b4e37d2",
+      "name": "Pubblica scheda Discord"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, received: 1 } }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Cache-Control", "value": "no-store" }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [304, 260],
+      "id": "a9b779e1-2da0-4b9a-87e7-1b65b2543d91",
+      "name": "Conferma consegna"
+    }
+  ],
+  "connections": {
+    "Ricevi feedback Padel": {
+      "main": [[{ "node": "Classifica e prepara scheda", "type": "main", "index": 0 }]]
+    },
+    "Classifica e prepara scheda": {
+      "main": [[{ "node": "Pubblica scheda Discord", "type": "main", "index": 0 }]]
+    },
+    "Pubblica scheda Discord": {
+      "main": [[{ "node": "Conferma consegna", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  }
+}

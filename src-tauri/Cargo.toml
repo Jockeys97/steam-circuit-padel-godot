@@ -1,0 +1,28 @@
+[package]
+name = "steam-circuit-padel-pro"
+version = "0.1.0"
+description = "Steam Circuit Padel Pro"
+edition = "2021"
+rust-version = "1.77"
+
+# La demo e' lo stesso codice con una riga diversa: si compila con
+# `--features demo` e cambia solo cio' che `window.__PADEL_BUILD` vale.
+[features]
+default = []
+demo = []
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+
+# Il gioco e' un ciclo a 120 Hz dentro una webview: la dimensione del binario
+# conta meno della fluidita', ma un binario piu' piccolo si scarica prima e su
+# Steam e' l'unica cosa che l'utente aspetta prima di giocare.
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

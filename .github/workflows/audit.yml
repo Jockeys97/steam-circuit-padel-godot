@@ -1,0 +1,36 @@
+# Gli audit di Steam Circuit Padel Pro, a ogni push.
+#
+# Non sono test del codice: sono test del *bilanciamento* e dell'integrita' del
+# gioco. Verificano che una sfida sia raggiungibile, che una difficolta' sia piu'
+# dura della precedente, che ogni schermata abbia una porta, che le due lingue
+# dicano le stesse cose. Sono la parte di questo progetto che vale la pena
+# proteggere, e finora giravano solo quando qualcuno si ricordava di lanciarli.
+name: audit
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      # `sharp` serve a due audit, quelli che aprono davvero i file degli sprite
+      # e ne misurano dimensioni e trasparenza. Il gioco resta senza dipendenze
+      # a runtime: qui si installano solo gli strumenti.
+      - name: Installa gli strumenti
+        run: npm ci
+
+      - name: Esegui gli audit
+        run: npm run audit

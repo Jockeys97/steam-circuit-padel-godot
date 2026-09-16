@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Steam Circuit Padel Pro — arcade padel steampunk con fisica realistica, 4 campioni e modalità torneo."
+    />
+    <title>Steam Circuit Padel Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260910-sprite-gate-v41" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <filter id="colorblind-fx" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="
+          0.43 0.72 -0.15 0 0
+          0.34 0.57 0.09 0 0
+          0.02 0.12 0.86 0 0
+          0 0 0 1 0" />
+      </filter>
+    </svg>
+    <div id="app">
+      <!-- MENU PRINCIPALE -->
+      <section class="screen screen--active" id="screen-menu" aria-label="Menu principale" data-i18n-aria="ariaMenu">
+        <nav class="top-nav">
+          <div class="brand">
+            <svg class="brand-logo" viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="32" r="28" fill="none" stroke="#00e5ff" stroke-width="4" />
+              <circle cx="44" cy="22" r="8" fill="#ffcc00" />
+            </svg>
+            <span data-i18n="brand">STEAM CIRCUIT PADEL PRO</span>
+          </div>
+          <div class="top-nav__actions">
+            <button class="top-nav-btn" type="button" data-action="to-profile" title="Profilo" data-i18n-title="profile" aria-label="Profilo" data-i18n-aria="ariaProfile">👤</button>
+            <button class="top-nav-btn" type="button" data-action="to-settings" title="Impostazioni" data-i18n-title="settings" aria-label="Impostazioni" data-i18n-aria="ariaSettings">⚙️</button>
+            <button class="lang-toggle" type="button" id="langToggle" title="Language">IT</button>
+          </div>
+        </nav>
+
+        <div class="hero">
+          <div class="hero-copy">
+            <div class="badge">
+              <span class="badge-dot"></span>
+              <span data-i18n="heroBadge">VIDEOGIOCO · PC · BROWSER</span>
+            </div>
+            <h1><span data-i18n="heroTitle1">IL CIRCUITO A VAPORE</span><br /><span data-i18n="heroTitle2">TI ASPETTA</span></h1>
+            <p data-i18n="heroSub">
+              Gameplay arcade esplosivo, fisica realistica del padel e arene steampunk.
+              Sfida l'IA o scala il circuito in solitaria.
+            </p>
+            <p class="hero-hint"><span class="hero-hint__icon" aria-hidden="true">🎮</span><span data-i18n="heroPadNote">Si gioca anche con la tastiera, ma l'esperienza vera è con un controller collegato.</span></p>
+            <div class="hero-actions">
+              <button class="btn btn--primary" type="button" data-action="to-modes" data-i18n="playNow">GIOCA ORA</button>
+              <button class="btn btn--secondary" type="button" data-action="to-drill" data-i18n="training">ALLENAMENTO</button>
+              <button class="btn btn--secondary" type="button" data-action="to-help" data-i18n="howTo">COME SI GIOCA</button>
+              <button class="btn btn--secondary" type="button" data-action="to-history" data-i18n="history">ALBO D'ORO</button>
+              <button class="btn btn--secondary" type="button" data-action="to-challenges" data-i18n="challenges">OBIETTIVI</button>
+              <button class="btn btn--secondary" type="button" data-action="to-feedback" data-i18n="feedback">DAI UN FEEDBACK</button>
+            </div>
+          </div>
+          <div class="hero-preview">
+            <figure class="hero-poster">
+              <img src="assets/ui/steam-circuit-key-art.webp" alt="I quattro campioni di Steam Circuit Padel Pro in una partita nell'arena steampunk" data-i18n-alt="ariaHeroImg" />
+              <figcaption class="hero-poster__title" aria-hidden="true">
+                <span>STEAM CIRCUIT</span>
+                <strong>PADEL PRO</strong>
+              </figcaption>
+            </figure>
+            <div class="hero-tags">
+              <!-- Visibile solo nelle build limitate: lo accende `applyDemoLimits`,
+                   che ne scrive anche il testo (DEMO o BETA). Su una pagina
+                   pubblica chi prova deve sapere cosa sta provando. -->
+              <span class="hero-tags__build" data-demo-badge hidden>BETA</span>
+              <span data-i18n="tagPc">PC Browser</span>
+              <span data-i18n="tagArcade">Arcade</span>
+              <span>Alpha 0.2</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SELEZIONE ATLETA -->
+      <section class="screen" id="screen-characters" aria-label="Selezione atleta" data-i18n-aria="ariaSelectAthlete">
+        <header class="screen-header">
+          <button class="btn btn--ghost" type="button" data-action="to-modes" data-back data-i18n="back">← Indietro</button>
+          <div>
+            <h2 data-i18n="charactersTitle">GLI ATLETI</h2>
+            <p data-i18n="charactersSub">4 campioni con stili e abilità uniche — chi scegli?</p>
+          </div>
+        </header>
+        <div class="athlete-grid__head" id="athleteGridHead" aria-live="polite" hidden></div>
+        <div class="athlete-grid" id="athleteGrid"></div>
+      </section>
+
+      <!-- SELEZIONE MODALITÀ -->
+      <section class="screen" id="screen-modes" aria-label="Selezione modalità" data-i18n-aria="ariaSelectModes">
+        <header class="screen-header">
+          <button class="btn btn--ghost" type="button" data-action="to-menu" data-back data-i18n="back">← Indietro</button>
+          <div>
+            <h2 data-i18n="modesTitle">MODALITÀ DI GIOCO</h2>
+            <p data-i18n="modesSub">Scegli come scendere in campo</p>
+          </div>
+        </header>
+        <div class="mode-grid">
+          <article class="mode-card" data-mode="quick">
+            <div class="mode-card__art mode-card__art--quick" role="img" aria-label="Scambio rapido in un campo da padel steampunk" data-i18n-aria="ariaQuickModeArt"></div>
+            <h3 data-i18n="quickMode">PARTITA RAPIDA</h3>
+            <p data-i18n="quickModeDesc">Scendi in campo subito contro l'IA.</p>
+            <span class="mode-card__tag mode-card__tag--ready" data-i18n="available">Disponibile</span>
+          </article>
+          <article class="mode-card" data-mode="tournament">
+            <div class="mode-card__art mode-card__art--tournament" role="img" aria-label="Finale di torneo davanti al trofeo del circuito" data-i18n-aria="ariaTournamentModeArt"></div>
+            <h3 data-i18n="tournamentMode">TORNEO CAMPIONATO</h3>
+            <p data-i18n="tournamentModeDesc">3 match con difficoltà crescente. Conquista il trofeo del circuito.</p>
+            <span class="mode-card__tag mode-card__tag--ready" data-i18n="available">Disponibile</span>
+          </article>
+          <article class="mode-card" data-mode="career">
+            <div class="mode-card__art mode-card__art--career" role="img" aria-label="Atleta davanti al lungo percorso della carriera" data-i18n-aria="ariaCareerModeArt"></div>
+            <h3 data-i18n="careerMode">CARRIERA</h3>
+            <p data-i18n="careerModeDesc">Crea il tuo campione e scala i vertici del circuito nel lungo percorso verso la gloria.</p>
+            <span class="mode-card__tag mode-card__tag--ready" id="careerTag">Stagione 1 · 0/3</span>
+            <span class="mode-card__fixture" id="careerFixture"></span>
+          </article>
+        </div>
+        <div class="match-setup" id="matchSetup">
+          <div class="setup-group">
+            <span class="setup-group__label" data-i18n="difficulty">Difficoltà</span>
+            <div class="segmented" id="difficultySeg" role="group" aria-label="Difficoltà" data-i18n-aria="difficulty">
+              <button type="button" data-value="easy" data-i18n="diffEasy">Facile</button>
+              <button type="button" data-value="medium" data-i18n="diffMedium">Medio</button>
+              <button type="button" data-value="hard" data-i18n="diffHard">Difficile</button>
+              <button type="button" data-value="legend" data-i18n="diffLegend">Leggenda</button>
+            </div>
+          </div>
+          <div class="setup-group">
+            <span class="setup-group__label" data-i18n="matchLength">Lunghezza partita</span>
+            <div class="segmented" id="lengthSeg" role="group" aria-label="Lunghezza partita" data-i18n-aria="matchLength">
+              <button type="button" data-value="points11" data-i18n="len11">11 punti</button>
+              <button type="button" data-value="points21" data-i18n="len21">21 punti</button>
+              <button type="button" data-value="games3" data-i18n="lenGames3">3 game</button>
+              <button type="button" data-value="games5" data-i18n="lenGames5">5 game</button>
+              <button type="button" data-value="set" data-i18n="lenSet">1 set</button>
+              <button type="button" data-value="match2" data-i18n="lenMatch2">2 set</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ARENA -->
+      <section class="screen" id="screen-arena" aria-label="Selezione arena" data-i18n-aria="ariaSelectArena">
+        <header class="screen-header">
+          <button class="btn btn--ghost" type="button" data-action="to-characters" data-back data-i18n="back">← Indietro</button>
+          <div>
+            <h2 data-i18n="arenaTitle">CAMPI STEAMPUNK</h2>
+            <p data-i18n="arenaSub">Scegli l'arena del circuito</p>
+          </div>
+        </header>
+        <div class="arena-grid" id="arenaGrid"></div>
+        <div class="player-mode-panel" id="playerModeSetup">
+          <div class="player-mode-panel__head">
+            <svg class="player-mode-panel__icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6.59 5h10.82c1.03 0 2.06.35 2.86 1.02 1.63 1.37 2.92 4.08 2.92 5.98 0 1.17-.47 2.3-1.3 3.5-.8 1.16-1.89 2.5-3.02 2.5-.97 0-1.62-.76-2.3-1.56-.63-.75-1.33-1.44-2.57-1.44s-1.94.69-2.57 1.44c-.68.8-1.33 1.56-2.3 1.56-1.13 0-2.22-1.34-3.02-2.5C1.47 15.3 1 14.17 1 13c0-1.9 1.29-4.61 2.92-5.98A4.25 4.25 0 0 1 6.59 5zM7.5 8a.5.5 0 0 0-.5.5V10H5.5a.5.5 0 0 0 0 1H7v1.5a.5.5 0 0 0 1 0V11h1.5a.5.5 0 0 0 0-1H8V8.5a.5.5 0 0 0-.5-.5zm9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" fill="currentColor" /></svg>
+            <span class="setup-group__label" data-i18n="playerMode">Giocatori</span>
+          </div>
+          <div class="segmented" id="playerModeSeg" role="group" aria-label="Giocatori" data-i18n-aria="playerMode">
+            <button type="button" data-value="solo" data-i18n="pmSolo">1 giocatore</button>
+            <button type="button" data-value="coop" data-i18n="pmCoop">Co-op 2</button>
+            <button type="button" data-value="pvp" data-i18n="pmPvp">Versus locale</button>
+          </div>
+          <p class="setup-group__hint" data-i18n="pmHint">Co-op: due controller nella stessa squadra. Versus: uno contro l'altro.</p>
+        </div>
+      </section>
+
+      <!-- AIUTO / TUTORIAL -->
+      <section class="screen" id="screen-help" aria-label="Come si gioca" data-i18n-aria="ariaHelp">
+        <header class="screen-header">
+          <button class="btn btn--ghost" type="button" data-action="to-menu" data-back data-i18n="back">← Indietro</button>
+          <div>
+            <h2 data-i18n="helpTitle">COME SI GIOCA</h2>
+            <p data-i18n="helpIntro">Padella in mano, vapore nei motori: tutto quello che serve per dominare il circuito.</p>
+          </div>
+        </header>
+        <div class="help-layout">
+          <div class="help-sections">
+            <article class="help-card">
+              <h3 data-i18n="helpObj">Obiettivo</h3>
+              <p data-i18n="helpObjDesc">Segna più punti dell'avversario. Colpisci la palla nel campo avversario e falla rimbalzare due volte: i muri sono parte del gioco!</p>
+            </article>
+            <article class="help-card">
+              <h3 data-i18n="helpCharge">Carica e colpisci</h3>
+              <p data-i18n="helpChargeDesc">Tieni premuto il tasto colpo per caricare potenza, poi rilascia. Muovi lo stick mentre carichi per mirare.</p>
+            </article>
+            <article class="help-card help-card--academy">
+              <h3 data-i18n="helpAcademy">Academy del Circuito</h3>
+              <p data-i18n="helpAcademyDesc">Impara timing, vetro, recupero della rete, víbora e smash. Il consiglio live indica la scelta più sicura, senza giocare al posto tuo.</p>
+            </article>
+            <article class="help-card">
+              <h3 data-i18n="helpSlice">Slice</h3>
+              <p data-i18n="helpSliceDesc">Effetto che abbassa la traiettoria e sorprende l'avversario.</p>
+            </article>
+            <article class="help-card">
+              <h3 data-i18n="helpSpecial">Speciale</h3>
+              <p data-i18n="helpSpecialDesc">Quando la barra Abilità è piena, scatena il colpo speciale del tuo campione.</p>
+            </article>
+            <article class="help-card">
+              <h3 data-i18n="helpSwitch">Cambio giocatore</h3>
+              <p data-i18n="helpSwitchDesc">In doppio puoi cambiare il controllo tra fondo e rete, o lasciare l'assistenza automatica.</p>
+            </article>
+            <article class="help-card">
+              <h3 data-i18n="helpServe">Servizio</h3>
+              <p data-i18n="helpServeDesc">Ogni punto parte dal servizio. Rimbalzo nel riquadro corretto e palla in campo avversario.</p>
+            </article>
+            <article class="help-card">
+              <h3 data-i18n="helpScore">Punteggio</h3>
+              <p data-i18n="helpScoreDesc">Nei punti, vince chi arriva al target senza subire rimbalzi. Nel tennis, 6 giochi con 2 di scarto (tie-break a 7).</p>
+            </article>
+          </div>
+          <aside class="help-controls">
+            <div class="help-input-tabs segmented" role="tablist" aria-label="Dispositivo di controllo" data-i18n-aria="ariaInputTabs">
+              <button class="is-active" id="helpKeyboardTab" type="button" role="tab" aria-selected="true" data-help-input="keyboard" data-i18n="helpKeyboard">Tastiera</button>
+              <button id="helpControllerTab" type="button" role="tab" aria-selected="false" data-help-input="controller" data-i18n="helpGamepad">Controller</button>
+            </div>
+
+            <div class="help-input-panel is-active" role="tabpanel" aria-labelledby="helpKeyboardTab" data-help-panel="keyboard">
+              <div class="kbd-guide">
+                <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span data-i18n="moveNet">Muovi e vai a rete</span></div>
+                <div><kbd>Space</kbd><span data-i18n="chargeShot">Carica e rilascia il colpo</span></div>
+                <div><kbd>⌘</kbd><span data-i18n="chargeSlice">Carica e rilascia lo slice</span></div>
+                <div><kbd>A</kbd><kbd>D</kbd><kbd>←</kbd><kbd>→</kbd><span data-i18n="aimWhile">Mira mentre carichi</span></div>
+                <div><kbd>Option</kbd><span data-i18n="specialBtn">Abilità speciale</span></div>
+                <div><kbd>Z</kbd><span data-i18n="switchBtn">Cambia giocatore</span></div>
+                <div><kbd>Esc</kbd><span data-i18n="pauseBtn">Pausa</span></div>
+              </div>
+            </div>
+
+            <div class="help-input-panel" role="tabpanel" aria-labelledby="helpControllerTab" data-help-panel="controller" hidden>
+              <figure class="help-controller-art controls-guide__visual">
+                <img data-controller-image src="assets/ui/xbox-controller-steam.webp" alt="Controller con disposizione dei comandi di gioco" data-i18n-alt="ariaControllerImg" />
+                <figcaption data-controller-caption data-i18n="xboxLayout">XBOX SERIES X · LAYOUT STANDARD</figcaption>
+              </figure>
+              <div class="controls-guide__legend help-controller-legend" aria-label="Mappatura comandi controller" data-i18n-aria="ariaControlsLegend">
+                <div><kbd>LS</kbd><span><strong data-i18n="moveLbl">Movimento / mira</strong><span data-i18n="padMoveDesc">Muovi; durante la carica scegli l'angolo</span></span></div>
+                <div><kbd>RS</kbd><span><strong data-i18n="aimLbl">Cambio direzionale</strong><span data-i18n="padAimDesc">Seleziona il compagno quando non stai caricando</span></span></div>
+                <div><kbd>A</kbd><span><strong data-i18n="driveLbl">Drive</strong><span data-i18n="padDriveDesc">Carica e rilascia il colpo</span></span></div>
+                <div><kbd>X</kbd><span><strong data-i18n="sliceLbl">Slice</strong><span data-i18n="padSliceDesc">Colpo tagliato e vibora</span></span></div>
+                <div><kbd>Y</kbd><span><strong data-i18n="lobLbl">Lob</strong><span data-i18n="padLobDesc">Pallonetto sopra la coppia a rete</span></span></div>
+                <div><kbd>B</kbd><span><strong data-i18n="specialLbl">Speciale</strong><span data-i18n="padSpecialDesc">Usa l'abilità dell'atleta</span></span></div>
+                <div><kbd>LB</kbd><span><strong data-i18n="switchLbl">Cambio</strong><span data-i18n="padSwitchDesc">Seleziona rapidamente il compagno</span></span></div>
+                <div><kbd>LT</kbd><span><strong data-i18n="splitStepLbl">Split-step</strong><span data-i18n="padSplitStepDesc">Assetto difensivo e lettura del vetro</span></span></div>
+                <div><kbd>RT</kbd><span><strong data-i18n="sprintLbl">Angolo</strong><span data-i18n="padSprintDesc">Angolo analogico: mira piu stretta, piu rischio di parete</span></span></div>
+                <div><kbd>RB</kbd><span><strong data-i18n="technicalLbl">Tecnica</strong><span data-i18n="padTechnicalDesc">A chiquita, X vibora, Y lob difensivo</span></span></div>
+                <div><kbd>D-PAD</kbd><span><strong data-i18n="tacticsLbl">Tattiche</strong><span data-i18n="padTacticsDesc">Rete, difesa, sfalsata o equilibrio</span></span></div>
+                <div><kbd>A+A</kbd><span><strong data-i18n="smashLbl">Smash</strong><span data-i18n="padSmashDesc">Carica e rilascia, poi premi A all'impatto</span></span></div>
+                <div><kbd>☰</kbd><span><strong data-i18n="pauseLbl">Pausa</strong><span data-i18n="padPauseDesc">Apri o chiudi il menu</span></span></div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ALBO D'ORO -->
+      <section class="screen" id="screen-history" aria-label="Albo d'oro" data-i18n-aria="ariaHistory">
+        <header class="screen-header">
+          <button class="btn btn--ghost" type="button" data-action="to-menu" data-back data-i18n="back">← Indietro</button>
+          <div>
+            <h2 data-i18n="historyTitle">ALBO D'ORO</h2>
+            <p data-i18n="historySub">Le tue imprese sul circuito, match dopo match.</p>
+          </div>
+        </header>
+        <div class="history-stats" id="historyStats" aria-label="Riepilogo carriera" data-i18n-aria="ariaHistoryStats"></div>
+        <ul class="history-list" id="historyList"></ul>
+      </section>
+
+      <!-- SFIDE DEI COMPLETI -->
+      <section class="screen" id="screen-challenges" aria-label="Sfide dei completi" data-i18n-aria="ariaChallenges">
+        <header class="screen-header">
+          <button class="btn btn--ghost" type="button" data-action="to-menu" data-back data-i18n="back">← Indietro</button>
+          <div>
+            <h2 data-i18n="challengesTitle">OBIETTIVI DEL CIRCUITO</h2>
+            <p data-i18n="challengesSub">Tutto quello che puoi conquistare: personaggi e arene con la progressione, costumi con le sfide sul campo.</p>
+          </div>
+        </header>
+        <div class="challenge-board" id="challengeBoard"></div>
+      </section>
+
+      <!-- PROFILO CARRIERA -->
+      <section class="screen" id="screen-profile" aria-label="Profilo carriera" data-i18n-aria="ariaProfile">
+        <header class="screen-header">
+          <button class="btn btn--ghost" type="button" data-action="to-menu" data-back data-i18n="back">← Indietro</button>
+          <div>
+            <h2 data-i18n="profileTitle">PROFILO CARRIERA</h2>
+            <p data-i18n="profileSub">Il tuo percorso sul circuito a vapore.</p>
+          </div>
+        </header>
+        <div class="profile-stats" id="profileStats"></div>
+        <h3 class="profile-section-title" data-i18n="objSeasonTitle">Obiettivi di stagione</h3>
+        <div class="profile-objectives" id="profileObjectives"></div>
+        <h3 class="profile-section-title" data-i18n="profileUnlocksTitle">Contenuti sbloccabili</h3>
+        <div class="profile-unlocks" id="profileUnlocks"></div>
+      </section>
+
+      <!-- ALLENAMENTO / DRILL -->
+      <!-- FEEDBACK -->
+      <section class="screen" id="screen-feedback" aria-label="Feedback" data-i18n-aria="ariaFeedback">
+        <header class="screen-header">
+          <button class="btn btn--ghost" type="button" data-action="to-menu" data-back data-i18n="back">← Indietro</button>
+          <div>
+            <h2 data-i18n="feedbackTitle">DAI UN FEEDBACK</h2>
+            <p data-i18n="feedbackSub">Cosa non torna, cosa manca, cosa ti ha fatto smettere. Serve tutto.</p>
+          </div>
+        </header>
+        <form class="feedback" id="feedbackForm">
+          <div class="setup-group">
+            <span class="setup-group__label" data-i18n="feedbackTopic">Di cosa si tratta</span>
+            <div class="segmented feedback-topics" id="feedbackTopics" role="group" aria-label="Argomento" data-i18n-aria="feedbackTopic">
+              <button type="button" data-value="bug" data-i18n="fbTopicBug">Bug</button>
+              <button type="button" data-value="balance" data-i18n="fbTopicBalance">Bilanciamento</button>
+              <button type="button" data-value="controls" data-i18n="fbTopicControls">Controlli</button>
+              <button type="button" data-value="performance" data-i18n="fbTopicPerformance">Prestazioni</button>
+              <button type="button" data-value="idea" data-i18n="fbTopicIdea">Idea</button>
+              <button type="button" data-value="other" data-i18n="fbTopicOther">Altro</button>
+            </div>
+          </div>
+          <div class="setup-group">
+            <label class="setup-group__label" for="feedbackMessage" data-i18n="feedbackMessage">Il tuo messaggio</label>
+            <textarea id="feedbackMessage" class="feedback__text" rows="6" maxlength="1200"
+              data-i18n-placeholder="feedbackPlaceholder"
+              placeholder="Racconta cosa è successo: dove eri, cosa hai premuto, cosa ti aspettavi."></textarea>
+            <span class="feedback__count" id="feedbackCount">0 / 1200</span>
+          </div>
+          <div class="setup-group">
+            <label class="setup-group__label" for="feedbackContact" data-i18n="feedbackContact">Contatto (facoltativo)</label>
+            <input id="feedbackContact" class="feedback__input" type="text" maxlength="120"
+              data-i18n-placeholder="feedbackContactHint" placeholder="Solo se vuoi una risposta" />
+          </div>
+          <label class="feedback__attach">
+            <input type="checkbox" id="feedbackAttach" checked />
+            <span data-i18n="feedbackAttach">Allega il contesto tecnico</span>
+          </label>
+          <details class="feedback__details">
+            <summary data-i18n="feedbackWhatIsAttached">Cosa viene allegato</summary>
+            <pre class="feedback__diag" id="feedbackDiag"></pre>
+          </details>
+          <div class="feedback__actions">
+            <button class="btn btn--primary" type="submit" data-i18n="feedbackSend">Invia</button>
+            <button class="btn btn--secondary" type="button" id="feedbackCopyBtn" data-i18n="feedbackCopy">Copia negli appunti</button>
+            <button class="btn btn--secondary" type="button" id="feedbackSteam" data-i18n="feedbackSteam" hidden>Apri le discussioni</button>
+          </div>
+          <!-- Ultima rete: se rete, posta e appunti falliscono tutti, il testo si vede
+               qui gia' selezionato e si copia a mano. Non dipende da niente. -->
+          <div class="feedback__manual" id="feedbackManual" hidden>
+            <label class="setup-group__label" for="feedbackManualText" data-i18n="feedbackManualTitle">Copia questo e incollalo dove vuoi</label>
+            <textarea class="feedback__text feedback__text--manual" id="feedbackManualText" rows="5" readonly></textarea>
+          </div>
+          <p class="feedback__note" id="feedbackNote"></p>
+          <p class="feedback__status" id="feedbackStatus" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="screen" id="screen-drill" aria-label="Allenamento" data-i18n-aria="ariaDrill">
+        <header class="screen-header">
+          <button class="btn btn--ghost" type="button" data-action="to-menu" data-back data-i18n="back">← Indietro</button>
+          <div>
+            <h2 data-i18n="drillTitle">ALLENAMENTO</h2>
+            <p id="drillSub">Bersagli nella metà avversaria: il corto chiede il taglio, il profondo la spinta.</p>
+          </div>
+        </header>
+        <div class="segmented drill-seg" id="drillSeg" role="group" aria-label="Esercizio" data-i18n-aria="drillExercise">
+          <button type="button" data-value="precision" data-i18n="drill_precision_name">Precisione</button>
+          <button type="button" data-value="smash" data-i18n="drill_smash_name">Smash</button>
+          <button type="button" data-value="rally" data-i18n="drill_rally_name">Scambio</button>
+          <button type="button" data-value="serve" data-i18n="drill_serve_name">Servizio</button>
+        </div>
+        <div class="segmented drill-seg drill-seg--difficulty" id="drillDiffSeg" role="group" aria-label="Difficoltà" data-i18n-aria="difficulty">
+          <button type="button" data-value="easy" data-i18n="diffEasy">Facile</button>
+          <button type="button" data-value="medium" data-i18n="diffMedium">Medio</button>
+          <button type="button" data-value="hard" data-i18n="diffHard">Difficile</button>
+          <button type="button" data-value="legend" data-i18n="diffLegend">Leggenda</button>
+        </div>
+        <div class="drill-hud">
+          <div class="drill-hud__box"><span id="drillLabel0">Punti</span><b id="drillValue0">0</b></div>
+          <div class="drill-hud__box"><span id="drillLabel1">Record</span><b id="drillValue1">0</b></div>
+          <div class="drill-hud__box"><span id="drillLabel2">Precisione</span><b id="drillValue2">0/0</b></div>
+          <div class="drill-hud__box drill-hud__box--streak"><span id="drillLabel3">Streak</span><b id="drillValue3">0</b></div>
+        </div>
+        <div class="drill-canvas-wrap">
+          <canvas id="drillCanvas" width="960" height="700" aria-label="Campo di allenamento" data-i18n-aria="ariaDrillCourt"></canvas>
+        </div>
+        <p class="drill-instructions" id="drillHint">Carica, rilascia nella finestra verde e mira. X per il taglio.</p>
+      </section>
+
+      <!-- IMPOSTAZIONI -->
+      <section class="screen" id="screen-settings" aria-label="Impostazioni" data-i18n-aria="ariaSettings">
+        <header class="screen-header">
+          <button class="btn btn--ghost" type="button" data-action="to-menu" data-back data-i18n="back">← Indietro</button>
+          <div>
+            <h2 data-i18n="settingsTitle">IMPOSTAZIONI</h2>
+            <p data-i18n="settingsSub">Lingua, accessibilità e feedback.</p>
+          </div>
+        </header>
+        <div class="settings-grid">
+          <div class="settings-group">
+            <span class="controller-settings__title" data-i18n="language">Lingua</span>
+            <div class="segmented" id="settingsLangSeg" role="group" aria-label="Lingua" data-i18n-aria="language">
+              <button type="button" data-value="it">IT</button>
+              <button type="button" data-value="en">EN</button>
+            </div>
+          </div>
+          <div class="settings-group">
+            <span class="controller-settings__title" data-i18n="accessibility">Accessibilità</span>
+            <label class="controller-toggle" for="optReduceMotion">
+              <input id="optReduceMotion" type="checkbox" checked />
+              <span data-i18n="reduceMotion">Riduci movimento</span>
+            </label>
+            <label class="controller-toggle" for="optColorblind">
+              <input id="optColorblind" type="checkbox" />
+              <span data-i18n="colorblind">Modalità daltonismo</span>
+            </label>
+          </div>
+          <div class="settings-group">
+            <span class="controller-settings__title" data-i18n="audioSettings">Audio e controller</span>
+            <label class="controller-range" for="settingsVolume">
+              <span><span data-i18n="volume">VOLUME</span> <b id="settingsVolumeValue">50%</b></span>
+              <input id="settingsVolume" type="range" min="0" max="1" step="0.01" value="0.5" />
+            </label>
+            <label class="controller-range" for="settingsDeadzone">
+              <span><span data-i18n="deadzone">DEADZONE</span> <b id="settingsDeadzoneValue">15%</b></span>
+              <input id="settingsDeadzone" type="range" min="0.08" max="0.30" step="0.01" value="0.15" />
+            </label>
+            <label class="controller-toggle" for="settingsVibration">
+              <input id="settingsVibration" type="checkbox" checked />
+              <span data-i18n="vibration">VIBRAZIONE</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- PARTITA -->
+      <section class="screen" id="screen-game" aria-label="Partita in corso" data-i18n-aria="ariaGame">
+        <div class="game-hud">
+          <section class="scoreboard" aria-label="Punteggio partita" data-i18n-aria="ariaScoreboard">
+            <span class="scoreboard__title" data-i18n="score">SCORE</span>
+            <div class="scoreboard__teams">
+              <div><span class="game-hud__label" id="playerName" data-i18n="you">TU</span><strong id="playerScore">0</strong></div>
+              <span class="scoreboard__versus">VS</span>
+              <div><span class="game-hud__label" id="aiName" data-i18n="opponent">AVVERSARIO</span><strong id="aiScore">0</strong></div>
+            </div>
+            <div class="scoreboard__meta">
+              <span class="scoreboard__match" id="matchInfo">Partita Rapida</span>
+              <span class="scoreboard__control" id="activePlayerLabel">CONTROLLO: FONDO</span>
+              <span class="scoreboard__tactic" id="teamTacticLabel">COPPIA: EQUILIBRIO</span>
+              <span id="comboDisplay">Combo x1</span>
+            </div>
+          </section>
+          <div class="game-hud__actions">
+            <section class="game-timer" aria-label="Tempo partita" data-i18n-aria="ariaGameTimer">
+              <span class="game-timer__ball" aria-hidden="true"></span>
+              <span><small data-i18n="gameTime">GAME TIME</small><strong id="gameTimer">00:00</strong></span>
+            </section>
+            <button class="hud-pause hud-pause--panel" type="button" id="panelBtn" aria-pressed="false" aria-label="Mostra comandi e misuratori" data-i18n-aria="ariaTogglePanel" title="Comandi e misuratori" data-i18n-title="togglePanel">▤</button>
+            <button class="hud-pause hud-pause--mute" type="button" id="muteBtn" aria-label="Disattiva audio" data-i18n-aria="ariaMute" title="Audio on/off" data-i18n-title="muteOn">🔊</button>
+            <span class="hud-pause hud-pause--pad" id="gamepadIndicator" hidden title="Controller connesso" data-i18n-title="gamepadConnected" aria-label="Controller connesso" data-i18n-aria="gamepadConnected">🎮</span>
+            <button class="hud-pause" type="button" data-action="pause" aria-label="Metti in pausa" data-i18n-aria="ariaPause" title="Pausa" data-i18n-title="pauseLbl">
+              <span aria-hidden="true">Ⅱ</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="game" width="960" height="700" aria-label="Campo da padel" data-i18n-aria="ariaCourt"></canvas>
+          <div class="serve-banner" id="serveBanner" data-i18n="serveFirst">SERVIZIO</div>
+          <aside class="mini-map" aria-label="Mini mappa campo" data-i18n-aria="ariaMiniMap">
+            <span data-i18n="map">MAPPA</span>
+            <canvas id="miniMap" width="108" height="154" aria-hidden="true"></canvas>
+          </aside>
+          <div class="action-deck" aria-label="Azioni di gioco" data-i18n-aria="ariaActionDeck">
+            <button data-dir="hit" type="button" aria-label="Colpo" data-i18n-aria="shot"><b>◒</b><span data-i18n="shot">COLPO</span></button>
+            <button data-dir="switch" type="button" aria-label="Cambia giocatore" data-i18n-aria="switchBtn"><b>⇄</b><span data-i18n="switch">CAMBIA</span></button>
+            <button data-dir="special" type="button" aria-label="Abilità speciale" data-i18n-aria="specialBtn"><b>✦</b><span data-i18n="special">SPECIALE</span></button>
+          </div>
+          <div class="touch-controls" aria-label="Controlli touch" data-i18n-aria="ariaTouch">
+            <button data-dir="up" type="button" aria-label="Avanti" data-i18n-aria="dirUp">▲</button>
+            <button data-dir="left" type="button" aria-label="Sinistra" data-i18n-aria="dirLeft">◀</button>
+            <button data-dir="hit" type="button" aria-label="Colpo" data-i18n-aria="shot">HIT</button>
+            <button data-dir="right" type="button" aria-label="Destra" data-i18n-aria="dirRight">▶</button>
+            <button data-dir="down" type="button" aria-label="Indietro" data-i18n-aria="dirDown">▼</button>
+            <button data-dir="switch" type="button" aria-label="Cambia giocatore" data-i18n-aria="switchBtn">⇄</button>
+            <button data-dir="special" type="button" aria-label="Colpo speciale" data-i18n-aria="dirSpecial">⚡</button>
+          </div>
+        </div>
+
+        <div class="match-panel" id="matchPanel">
+        <div class="control-row">
+          <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span data-i18n="moveNet">Muovi e vai a rete</span></div>
+          <div><kbd>Space</kbd><span data-i18n="chargeShot">Carica e rilascia il colpo</span></div>
+          <div><kbd>⌘</kbd><span data-i18n="chargeSlice">Carica e rilascia lo slice</span></div>
+          <div><kbd>A</kbd><kbd>D</kbd><kbd>←</kbd><kbd>→</kbd><span data-i18n="aimWhile">Mira mentre carichi</span></div>
+          <div><kbd>Option</kbd><span data-i18n="specialBtn">Abilità speciale</span></div>
+          <div><kbd>Z</kbd><span data-i18n="switchBtn">Cambia giocatore</span></div>
+          <div><kbd>Esc</kbd><span data-i18n="pauseBtn">Pausa</span></div>
+          <div><kbd>LS</kbd><span data-i18n="padMove360">Muovi · mentre carichi mira a 360°</span></div>
+          <div><kbd>🎮</kbd><span data-i18n="padButtons">A drive · X slice · Y lob · B speciale</span></div>
+          <div><kbd>A</kbd><kbd>A</kbd><span data-i18n="padSmashHint">Smash · carica, rilascia e premi di nuovo A all'impatto</span></div>
+          <div><kbd>LB</kbd><span data-i18n="padSwitchHint">Cambio rapido · stick destro libero cambio direzionale</span></div>
+          <div><kbd>🎮</kbd><span data-i18n="padMenuHint">Nei menu: stick/D-pad naviga · A conferma · B indietro</span></div>
+        </div>
+
+        <div class="special-meter">
+          <span data-i18n="ability">Abilità</span>
+          <div class="special-meter__bar"><div id="specialFill"></div></div>
+        </div>
+        <div class="shot-meter" aria-label="Controllo colpo" data-i18n-aria="ariaShotMeter">
+          <strong class="shot-meter__intent" id="shotIntentLabel" data-i18n="shot">COLPO</strong>
+          <strong class="shot-meter__advice" id="shotAdviceLabel">LEGGI LA PALLA</strong>
+          <span data-i18n="power">Potenza</span>
+          <div class="shot-meter__power"><div id="shotPowerFill"></div></div>
+          <span data-i18n="aim">Mira</span>
+          <div class="shot-meter__aim"><i id="shotAimNeedle"></i></div>
+          <span>TIMING</span>
+          <div class="shot-meter__timing"><i id="shotTimingPerfect"></i><b id="shotTimingNeedle"></b></div>
+        </div>
+        </div>
+
+        <div class="match-feed">
+          <button class="match-feed__toggle" id="eventLogToggle" type="button" aria-expanded="false" aria-controls="eventLog" title="Apri cronaca" data-i18n-title="ariaOpenLog">
+            <span aria-hidden="true">☰</span><span data-i18n="chronicle">CRONACA</span>
+          </button>
+          <ul class="event-log" id="eventLog" aria-live="polite" hidden></ul>
+        </div>
+      </section>
+
+      <!-- RISULTATO -->
+      <section class="screen" id="screen-result" aria-label="Risultato partita" data-i18n-aria="ariaResult">
+        <div class="result-card">
+          <p class="badge" data-i18n="matchOver">Fine match</p>
+          <h2 id="resultTitle" data-i18n="victory">VITTORIA!</h2>
+          <p id="resultMessage" data-i18n="defeatMsg">Hai conquistato l'arena.</p>
+          <div class="result-scores">
+            <div><span data-i18n="statYou">Tu</span><strong id="resultPlayer">0</strong></div>
+            <div><span data-i18n="statOpp">Avversario</span><strong id="resultAi">0</strong></div>
+          </div>
+          <div class="result-stats" id="resultStats"></div>
+          <div class="result-objectives" id="resultObjectives"></div>
+          <div class="demo-cta" id="demoCta" hidden>
+            <h3 data-i18n="demoResultTitle">Ti è piaciuto?</h3>
+            <p id="ctaBodyDemo" data-i18n="demoResultBody">Questa è una demo.</p>
+            <p id="ctaBodyBeta" data-i18n="betaResultBody" hidden>Questa è una beta: il gioco completo arriva su Steam.</p>
+            <!-- Nessun `data-i18n`: l'etichetta la decide `applyStoreCta` in base alla
+                 destinazione, e `applyLanguage` la sovrascriverebbe. -->
+            <a class="btn btn--primary" id="demoWishlist" href="#" target="_blank" rel="noopener">AGGIUNGI ALLA WISHLIST</a>
+          </div>
+          <div class="result-actions">
+            <button class="btn btn--primary" type="button" data-action="rematch" data-i18n="rematch">RIGIOCA</button>
+            <button class="btn btn--ghost" type="button" data-action="to-menu" data-i18n="menu">MENU</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAUSA -->
+      <div class="pause-overlay" id="pauseOverlay" hidden>
+        <div class="pause-card">
+          <h2 data-i18n="pause">PAUSA</h2>
+          <div class="pause-tabs" role="tablist" aria-label="Menu pausa" data-i18n-aria="ariaPauseMenu">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-pause-tab="match" data-i18n="tabMatch">PARTITA</button>
+            <button type="button" role="tab" aria-selected="false" data-pause-tab="controller" data-i18n="tabController">CONTROLLER</button>
+            <button type="button" role="tab" aria-selected="false" data-pause-tab="controls" data-i18n="commands">COMANDI</button>
+          </div>
+
+          <section class="pause-panel pause-panel--match is-active" role="tabpanel" data-pause-panel="match">
+            <div class="pause-match-status">
+              <span data-i18n="pauseInProgress">PARTITA IN CORSO</span>
+              <strong>STEAM CIRCUIT</strong>
+            </div>
+            <div class="pause-actions">
+              <button class="btn btn--primary" type="button" data-action="resume" data-i18n="continue">CONTINUA</button>
+              <button class="btn btn--secondary" type="button" data-action="replay" data-i18n="replayBtn">RIGUARDA PUNTO</button>
+              <button class="btn btn--secondary" type="button" data-action="rematch" data-i18n="rematch">RIGIOCA</button>
+              <button class="btn btn--ghost" type="button" data-action="quit-match" data-i18n="quit">ESCI</button>
+            </div>
+          </section>
+
+          <section class="pause-panel pause-panel--controller" role="tabpanel" data-pause-panel="controller" hidden>
+            <div class="controller-settings" aria-label="Impostazioni controller" data-i18n-aria="ariaControllerSettings">
+              <span class="controller-settings__title" data-i18n="controlPlayers">CONTROLLO GIOCATORI</span>
+              <div class="control-mode-toggle" id="controlModeToggle" role="group" aria-label="Modalità cambio giocatore" data-i18n-aria="ariaControlMode">
+                <button type="button" data-control-mode="assisted" data-i18n="auto">AUTO</button>
+                <button type="button" data-control-mode="semi" data-i18n="semi">SEMI</button>
+                <button type="button" data-control-mode="manual" data-i18n="manual">MANUALE</button>
+              </div>
+              <label class="controller-range" for="gamepadDeadzone">
+                <span><span data-i18n="deadzone">DEADZONE</span> <b id="deadzoneValue">15%</b></span>
+                <input id="gamepadDeadzone" type="range" min="0.08" max="0.30" step="0.01" value="0.15" />
+              </label>
+              <div class="stick-monitor" aria-label="Test stick analogici" data-i18n-aria="ariaStickTest">
+                <div><span data-i18n="stickMove">MOVE</span><i><b id="leftStickDot"></b></i></div>
+                <div><span data-i18n="stickAimSwitch">SWITCH</span><i><b id="rightStickDot"></b></i></div>
+              </div>
+              <label class="controller-toggle" for="gamepadVibration">
+                <input id="gamepadVibration" type="checkbox" checked />
+                <span data-i18n="vibration">VIBRAZIONE</span>
+              </label>
+              <label class="controller-range" for="masterVolume">
+                <span><span data-i18n="volume">VOLUME</span> <b id="volumeValue">50%</b></span>
+                <input id="masterVolume" type="range" min="0" max="1" step="0.01" value="0.5" />
+              </label>
+            </div>
+          </section>
+
+          <section class="pause-panel pause-panel--controls" role="tabpanel" data-pause-panel="controls" hidden>
+            <div class="controls-guide" id="pauseControlsOverview">
+              <figure class="controls-guide__visual">
+                <img data-controller-image src="assets/ui/xbox-controller-steam.webp" alt="Controller con disposizione dei comandi di gioco" data-i18n-alt="ariaControllerImg" />
+                <figcaption data-controller-caption data-i18n="xboxLayout">XBOX SERIES X · LAYOUT STANDARD</figcaption>
+              </figure>
+              <div class="controls-guide__legend" aria-label="Mappatura comandi controller" data-i18n-aria="ariaControlsLegend">
+                <div><kbd>LS</kbd><span><strong data-i18n="moveLbl">Movimento / mira</strong><span data-i18n="padMoveDesc">Muovi; durante la carica scegli l'angolo</span></span></div>
+                <div><kbd>RS</kbd><span><strong data-i18n="aimLbl">Cambio direzionale</strong><span data-i18n="padAimDesc">Seleziona il compagno quando non stai caricando</span></span></div>
+                <div><kbd>A</kbd><span><strong data-i18n="driveLbl">Drive</strong><span data-i18n="padDriveDesc">Carica e rilascia il colpo</span></span></div>
+                <div><kbd>X</kbd><span><strong data-i18n="sliceLbl">Slice</strong><span data-i18n="padSliceDesc">Colpo tagliato e vibora</span></span></div>
+                <div><kbd>Y</kbd><span><strong data-i18n="lobLbl">Lob</strong><span data-i18n="padLobDesc">Pallonetto sopra la coppia a rete</span></span></div>
+                <div><kbd>B</kbd><span><strong data-i18n="specialLbl">Speciale</strong><span data-i18n="padSpecialDesc">Usa l'abilità dell'atleta</span></span></div>
+                <div><kbd>LB</kbd><span><strong data-i18n="switchLbl">Cambio</strong><span data-i18n="padSwitchDesc">Seleziona rapidamente il compagno</span></span></div>
+                <div><kbd>LT</kbd><span><strong data-i18n="splitStepLbl">Split-step</strong><span data-i18n="padSplitStepDesc">Assetto difensivo e lettura del vetro</span></span></div>
+                <div><kbd>RT</kbd><span><strong data-i18n="sprintLbl">Angolo</strong><span data-i18n="padSprintDesc">Angolo analogico: mira piu stretta, piu rischio di parete</span></span></div>
+                <div><kbd>RB</kbd><span><strong data-i18n="technicalLbl">Tecnica</strong><span data-i18n="padTechnicalDesc">A chiquita, X vibora, Y lob difensivo</span></span></div>
+                <div><kbd>D-PAD</kbd><span><strong data-i18n="tacticsLbl">Tattiche</strong><span data-i18n="padTacticsDesc">Su rete, giu difesa, sinistra sfalsata, destra equilibrio</span></span></div>
+                <button class="controls-guide__tutorial-link" id="openSmashTutorial" type="button">
+                  <kbd>A+A</kbd>
+                  <span><strong data-i18n="smashLbl">Smash</strong><span data-i18n="padSmashDesc">Carica e rilascia, poi premi A all'impatto</span></span>
+                  <b aria-hidden="true">›</b>
+                </button>
+                <div><kbd>☰</kbd><span><strong data-i18n="pauseLbl">Pausa</strong><span data-i18n="padPauseDesc">Apri o chiudi questo menu</span></span></div>
+              </div>
+            </div>
+
+            <section class="smash-tutorial" id="smashTutorial" hidden aria-labelledby="smashTutorialTitle">
+              <header class="smash-tutorial__header">
+                <button class="icon-back" id="closeSmashTutorial" type="button" aria-label="Torna ai comandi" data-i18n-aria="smashTutorialBack">←</button>
+                <div>
+                  <span data-i18n="smashTutorialEyebrow">TECNICA DI GIOCO</span>
+                  <h3 id="smashTutorialTitle" data-i18n="smashTutorialTitle">COME FARE LO SMASH</h3>
+                  <p data-i18n="smashTutorialIntro">Lo smash si attiva solo su una palla alta e quando sei abbastanza vicino alla rete.</p>
+                </div>
+              </header>
+
+              <div class="smash-tutorial__body">
+                <ol class="smash-steps">
+                  <li><b>1</b><span><strong data-i18n="smashStep1Title">Vai a rete</strong><small data-i18n="smashStep1Desc">Porta il giocatore nella zona offensiva, davanti alla linea di servizio.</small></span></li>
+                  <li><b>2</b><span><strong data-i18n="smashStep2Title">Aspetta una palla alta</strong><small data-i18n="smashStep2Desc">Lob e rimbalzi alti sono le occasioni giuste. Una palla bassa diventa bandeja.</small></span></li>
+                  <li><b>3</b><span><strong data-i18n="smashStep3Title">Carica con A, poi rilascia</strong><small data-i18n="smashStep3Desc">Supera il marker: lo smash rimane preparato per il secondo tap.</small></span></li>
+                  <li><b>4</b><span><strong data-i18n="smashStep4Title">Premi nuovamente A all'impatto</strong><small data-i18n="smashStep4Desc">Quando compare PREMI A ORA, fai il secondo tap. LS sceglie la variante.</small></span></li>
+                </ol>
+
+                <div class="smash-stick-guide">
+                  <div class="smash-stick-guide__diagram" aria-label="Direzioni levetta sinistra per le varianti smash" data-i18n-aria="ariaSmashStick">
+                    <span class="smash-stick-guide__label smash-stick-guide__label--up">X2</span>
+                    <span class="smash-stick-guide__label smash-stick-guide__label--left">X3</span>
+                    <span class="smash-stick-guide__label smash-stick-guide__label--right">X3</span>
+                    <span class="smash-stick-guide__label smash-stick-guide__label--down" data-i18n="bandejaShort">BANDEJA</span>
+                    <i><b>LS</b></i>
+                  </div>
+                  <div class="smash-results">
+                    <div><kbd>LS ↑</kbd><span><strong data-i18n="smashX2Title">Smash X2</strong><small data-i18n="smashX2Desc">Esce dalla parete laterale dopo il rimbalzo.</small></span></div>
+                    <div><kbd>LS ↖ ↗</kbd><span><strong data-i18n="smashX3Title">Smash X3</strong><small data-i18n="smashX3Desc">Diagonale estrema: richiede più precisione.</small></span></div>
+                    <div><kbd>LS •</kbd><span><strong data-i18n="smashFlatTitle">Piatto</strong><small data-i18n="smashFlatDesc">Smash potente e profondo senza uscita.</small></span></div>
+                    <div><kbd>LS ↓</kbd><span><strong data-i18n="smashBandejaTitle">Bandeja</strong><small data-i18n="smashBandejaDesc">Colpo sicuro per mantenere la rete.</small></span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="smash-ready">
+                <strong data-i18n="smashReadyTitle">PRIMA DI RILASCIARE CONTROLLA:</strong>
+                <span data-i18n="smashConditionNet">A rete</span>
+                <span data-i18n="smashConditionHigh">Palla alta</span>
+                <span data-i18n="smashConditionCharge">Carica oltre il marker</span>
+                <span data-i18n="smashConditionTiming">Timing buono o perfetto</span>
+              </div>
+              <button class="btn btn--primary smash-tutorial__try" id="trySmashTutorial" type="button" data-i18n="smashTutorialTry">RIPRENDI E PROVA</button>
+            </section>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="asset-loading" id="assetLoading" role="status" aria-live="polite" hidden>
+      <span class="asset-loading__spinner" aria-hidden="true"></span>
+      <strong data-loading-text>Preparazione degli atleti…</strong>
+    </div>
+
+    <script type="module" src="js/main.js?v=20260910-sprite-gate-v41"></script>
+        <!-- TASTIERA SU SCHERMO -->
+      <!-- I tasti sono veri <button>: cosi' la navigazione geometrica dei menu li
+           raggiunge senza codice dedicato, e funzionano anche col mouse. -->
+      <div class="osk" id="osk" hidden aria-label="Tastiera su schermo" data-i18n-aria="ariaOsk">
+        <div class="osk__panel">
+          <div class="osk__head">
+            <span class="osk__label" id="oskLabel"></span>
+            <span class="osk__preview" id="oskPreview" aria-live="polite"></span>
+          </div>
+          <div class="osk__grid" id="oskGrid"></div>
+        </div>
+      </div>
+</body>
+</html>
