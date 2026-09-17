@@ -106,6 +106,12 @@ below are met — not before.
 - Ticket header convention: Status (open/resolved), Type
   (research/prototype/grilling/task), Mode (AFK/HITL), Owner, Blocked by. The
   frontier is every open ticket whose blockers are all resolved.
+- **The stands evidence now exists, but the `arena-bleachers` ticket stays `open`.**
+  `docs/wayfinder/evidence/arena-bleachers.md` measures the shipped config (2 copies,
+  919,856 triangles, 86.1 % of the scene) and its frame-time cost (interleaved arms:
+  +5.87 ms engine p50, −37 % fps); two items are still outstanding — the owner's look
+  verdict and the missing `godot/assets/bleachers/bleachers.meshy-task.json` (its
+  `taskId`/`consumedCredits` are not known and not invented).
 
 ## Decisions so far
 
@@ -147,9 +153,12 @@ ticket's own `Blocked by` line, so the map cannot drift from the tickets.
 | [UI port approach](tickets/ui-port-approach.md) | open | prototype / HITL | unassigned | Godot headless harness |
 | [Arena art direction](tickets/arena-art-direction.md) | open | grilling / HITL | unassigned | Camera and feel spike |
 | [Athlete roster order](tickets/athlete-roster-order.md) | open | grilling / HITL | unassigned | Character pipeline economics |
-| [Shot logic parity](tickets/shot-logic-parity.md) | open | task / AFK | crew-shotlogic | none |
-| [Timing logic parity](tickets/timing-logic-parity.md) | open | task / AFK | crew-timinglogic | none |
-| [Timing presentation in 3D](tickets/timing-presentation-3d.md) | open | task / AFK | crew-timinghud | none |
+| [Shot logic parity](tickets/shot-logic-parity.md) | resolved | task / AFK | crew-shotlogic | none |
+| [Timing logic parity](tickets/timing-logic-parity.md) | resolved | task / AFK | crew-timinglogic | none |
+| [Timing presentation in 3D](tickets/timing-presentation-3d.md) | resolved | task / AFK | crew-timinghud | none |
+| [Timing labels are too big](tickets/timing-label-scale.md) | resolved | task / AFK | crew-labelscale | none |
+| [Court width: the render, not the reality](tickets/court-width-render.md) | resolved | prototype / HITL | crew-courtwidth | none |
+| [The stands: the owner's bleachers model](tickets/arena-bleachers.md) | open | prototype / HITL | crew-bleachers | none |
 
 **Dependency correction, 2026-09-16:** [Steamworks integration
 route](tickets/steamworks-integration-route.md) is no longer blocked by
@@ -161,7 +170,8 @@ prerequisites ticket.
 
 Frontier (open, no open blockers): Character pipeline economics, Web build
 strangler policy, Steamworks prerequisites, Product scope and platforms, Demo
-gate rule.
+gate rule, Save and cloud format, Camera and feel spike, UI port approach, The
+stands.
 
 **Status reconciliation, 2026-09-16 (tick 9):** [Audio port
 route](tickets/audio-port-route.md) and [Steamworks integration
@@ -173,6 +183,27 @@ its quoted text and artifact names matched). The table now mirrors the tickets.
 Neither resolution substitutes for a human verdict: the live Steam release proof
 still waits on Luca's App ID in [Steamworks
 prerequisites](tickets/steamworks-prerequisites.md).
+
+**Status reconciliation, 2026-09-17 (tick 22):** the returned S14 tickets are
+marked `resolved` in their headers and in the table above, each with evidence:
+[Shot logic parity](tickets/shot-logic-parity.md)
+([evidence](evidence/shot-logic-parity.md): `PASS 675/675`, comparator
+`IDENTICAL 35/35, 657 fields, tol=0`), [Timing logic
+parity](tickets/timing-logic-parity.md)
+([evidence](evidence/timing-logic-parity.md): `PASS 100/100`, 17/17 fields ×
+3,601 ticks IDENTICAL), [Timing presentation in
+3D](tickets/timing-presentation-3d.md)
+([evidence](evidence/timing-presentation-3d.md): `_timing_presentation` section,
+37 checks), and [Court width](tickets/court-width-render.md)
+([evidence](evidence/court-width-render.md): 1,111 checks, three candidates
+10.5 / 11.0 / 12.0 m, parity digest unchanged). [Timing labels are too
+big](tickets/timing-label-scale.md) is `resolved` as **superseded** by
+[Timing presentation in 3D](tickets/timing-presentation-3d.md): its
+window-independent-text demand was measured and rejected in favour of
+reference-proportional sizing (recorded in `timing-presentation-3d.md` §"The
+label-scale ticket"). [The stands](tickets/arena-bleachers.md) stays `open`: its
+evidence file does not exist yet (another lane is producing it), so the
+close-rule is not met.
 
 ## Planning exit gates
 

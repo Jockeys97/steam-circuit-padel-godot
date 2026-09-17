@@ -23,6 +23,13 @@
 ## placed over the playable trapezoid — the court, the cage and the athletes are
 ## all nearer the camera than the backdrop.
 ##
+## ONE EXCEPTION, and it is the owner's call (2026-09-17): the tribunes
+## (`game/arenas/bleachers.gd`) stand along the TWO SIDE LINES, outside the side
+## glass, seats facing the court — not in this band. They sit on the open floor
+## the side glass does not hide (it is 3 m tall and the camera looks down at 36
+## deg, so the panes cover about a metre of floor and the stands stand just past
+## it), because the empty strip beside the court is exactly where their place is.
+##
 ## WHY THERE IS SOMETHING TO SEE AT ALL. A glass wall only reads as glass when
 ## there is something behind it. The ground plane (`COURT`-sized surround) is
 ## 80 x 80 m and covers the whole upper frame with dark floor, so before this
@@ -42,6 +49,7 @@ extends RefCounted
 const Court := preload("res://game/court.gd")
 const CourtBuilder := preload("res://game/arenas/court_builder.gd")
 const ArenaStyle := preload("res://game/arenas/arena_style.gd")
+const Bleachers := preload("res://game/arenas/bleachers.gd")
 
 ## The backdrop wall's world z. Behind `COURT`'s rear line (-6.35 m at this
 ## scale) and in front of the point where the ground plane leaves the frame, so
@@ -122,6 +130,11 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 		container.set_meta("kind", kind)
 		root.add_child(container)
 		_build_prop(container, prop, ctx)
+
+	# 5. The owner's tribunes, along the two side lines (the exception above). Built
+	#    last so the stands are the arena's own geometry, not a scenery prop: they
+	#    are placed from the court's width, not from this band.
+	Bleachers.build(root)
 	return root
 
 

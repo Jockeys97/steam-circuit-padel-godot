@@ -812,3 +812,9 @@ except for a divergence proven by the ticket's own reproduction.
 
 Open after S14: the owner's feel verdict; `run.sh`'s capture list and the `out/*.png`
 gitignore question; co-op/PvP and other tiers outside all three gates.
+## Ticket reconciliation — wayfinder map and mission cabinet (2026-09-17 11:25 CEST)
+
+Five ticket Status headers flipped to `resolved` (map table matching): shot-logic-parity,
+timing-logic-parity, timing-presentation-3d, court-width-render, and timing-label-scale
+(resolved as superseded by timing-presentation-3d). The stands (arena-bleachers) stays
+open — its evidence file is not on disk yet. Map validator PASS 0 errors / 0 warnings.

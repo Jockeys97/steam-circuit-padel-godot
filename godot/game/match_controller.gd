@@ -155,17 +155,34 @@ const TIMING_ADVICE_HEIGHT := 2.95
 ## `TIMING_ENERGY_HEIGHT`, it lands under the athlete in the frame.
 const TIMING_FOOT_FORWARD := 0.5
 
-# THE ONE CONVERSION BETWEEN THE REFERENCE'S CANVAS AND THIS FRAME.
-# The reference draws on a 960x620 canvas the captures render at 1280x720, so its
-# pixel values are read at `1280/960`; and on this frame the default camera maps one
-# metre at the athlete's feet to ~36 px vertically, measured on a rendered frame —
-# the 2.45 m pin floats 89 px above the athlete's feet, the 0.18 m energy track
-# prints 7 px tall. Every size below is therefore expressed through
-# `TIMING_M_PER_PX`, which is what makes a faithful size faithful ON THE FRAME
-# rather than in the arithmetic.
+# TWO CONVERSIONS, AND WHICH ONE EACH THING IS IN.
+#
+# THE FRAME'S OWN: on a 1280x720 capture the default camera maps one metre at the
+# athlete's feet to ~36 px vertically, measured on a rendered frame — the 2.45 m pin
+# floats 89 px above the athlete's feet, the 0.18 m energy track prints 7 px tall.
+# It is the number the delivered sizes are *read* against (`TIMING_PX_PER_M`), and it
+# grows with the window: the camera's vertical FOV is fixed, so a 1568x881 frame
+# prints the same metre at ~44 px. A world-anchored mark therefore scales with the
+# window exactly as the court does.
 const TIMING_PX_PER_M := 36.0
 const TIMING_M_PER_PX := 1.0 / TIMING_PX_PER_M
-const TIMING_FRAME_SCALE := 1280.0 / 960.0
+#
+# THE REFERENCE'S OWN, which is what its TEXTS are sized in. The reference draws on a
+# 960x620 canvas (`js/render.js:1627`) whose ring floats `96*scale` px above the feet
+# (`js/render.js:1657`); this port maps that offset to `TIMING_RING_HEIGHT` metres, so
+# the reference's canvas reads 60 px/m and ONE REFERENCE PIXEL IS 1/60 m.
+#
+# The lane that delivered the first sizes read the reference's fonts at `1280/960`
+# and then at 36 px/m — the frame's canvas scale applied on top of a world conversion
+# — which printed 11 px as 0.417 m instead of 0.183 m, twice the reference's
+# proportion (measured: 16 px glyphs where the reference's proportion is 6.6 px). That
+# size is what the owner rejected with *"le scritte qui sono troppo grandi"*. The
+# reference's own canvas is itself scaled to the window
+# (`ctx.scale(canvas.width / 960, canvas.height / 620)`; `.canvas-wrap canvas
+# { object-fit: contain }`, `styles.css:2836-2843`), so the proportion — 11 of the
+# ring's 96 px — is what is held at every window size, not a fixed pixel count.
+const TIMING_REF_PX_PER_M := 60.0
+const TIMING_REF_M_PER_PX := 1.0 / TIMING_REF_PX_PER_M
 
 ## The reference's `20*scale` radius and `3.4*scale` stroke (`js/render.js:1658`,
 ## `:1675`) are 26.7 px of radius on this frame; the faithful 0.44 m printed a
@@ -203,22 +220,26 @@ const TIMING_ENERGY_H := 0.13
 const TIMING_ADVICE_FONT_PX := 11.0
 const TIMING_ADVICE_BOX_LINES := 20.0 / 11.0
 const TIMING_ADVICE_PAD_LINES := 22.0 / 11.0
-## The three font sizes as integers: the reference's own pixel values read at this
-## frame's scale (11/14/9 * 1280/960 = 14.7 / 18.7 / 12), so `font_size *
-## TIMING_M_PER_PX` is the line height in metres and the word prints at that height
-## in pixels. The rounding is written out because a `const` in this file cannot call
-## `round()`.
-const TIMING_ADVICE_PX := 15
-const TIMING_VERDICT_PX := 19
-const TIMING_VERDICT_MODE_PX := 12
+## The three font sizes are THE REFERENCE'S OWN pixel values — `800 ${11 * scale}px`
+## (`js/render.js:1734`), `700 14px` and `600 9px` (`js/render.js:1060`, `:1068`) —
+## printed at `TIMING_REF_M_PER_PX`: `font_size * pixel_size` is the word's height in
+## metres, so 11 / 14 / 9 px are 0.183 / 0.233 / 0.150 m and read 6.6 / 8.4 / 5.4 px
+## on a 1280x720 frame's 36 px/m. They are WORLD sizes: they hold the reference's
+## proportion to the ring (11 of its 96 px) at any window size, and grow with the
+## window exactly as the ring and the court beside them do, which is what the
+## reference's own window-scaled canvas does.
+const TIMING_ADVICE_PX := 11
+const TIMING_VERDICT_PX := 14
+const TIMING_VERDICT_MODE_PX := 9
 ## The verdict over the athlete who hit (`js/render.js:1041-1069`): the grade word
 ## at `700 14px` with a 5 px `rgba(4, 14, 32, 0.9)` stroke, the mode line at
 ## `600 9px` fifteen pixels below it, and the whole thing rising `(0.78 - life) * 18`
 ## px while it fades with `alpha = clamp(life / 0.28, 0, 1)`.
 const TIMING_VERDICT_FONT_PX := 14.0
 const TIMING_VERDICT_MODE_FONT_PX := 9.0
-## `p.fillText(feedback.mode, p.x, y + 15)` (`js/render.js:1068`), in metres.
-const TIMING_VERDICT_MODE_DROP := 15.0 * (1280.0 / 960.0) / 36.0
+## `p.fillText(feedback.mode, p.x, y + 15)` (`js/render.js:1068`), in metres: the
+## reference's own 15 px, at the reference's own 60 px/m.
+const TIMING_VERDICT_MODE_DROP := 15.0 * TIMING_REF_M_PER_PX
 const TIMING_VERDICT_OUTLINE := Color(0.016, 0.055, 0.125, 0.9)
 ## The 18 px of upward drift over the feedback's 0.78 s life (`js/render.js:1062`),
 ## in metres at the reference's own sprite scale.
@@ -1577,14 +1598,15 @@ func _build_timing_marks() -> void:
 		_timing_material(HudScript.FIELD_ENERGY_TEAL, true, 2))
 
 	# The advice word and its panel (`js/render.js:1730-1750`). The font size is the
-	# reference's own 11 px read at this frame's scale, and `pixel_size` is metres per
-	# screen pixel: font_size * pixel_size is therefore the word's height in metres,
-	# and it prints at 11 * 1280/960 = 15 px on the frame.
+	# reference's own 11 px and `pixel_size` is metres per REFERENCE pixel (1/60 m):
+	# `font_size * pixel_size` is therefore the word's height in metres, 0.183 m, which
+	# this frame's 36 px/m prints at 6.6 px — the reference's own proportion to the
+	# ring's 96 px, held at any window size.
 	_timing_advice = Label3D.new()
 	_timing_advice.name = "TimingAdvice"
 	_timing_advice.font = ThemeDB.fallback_font
 	_timing_advice.font_size = TIMING_ADVICE_PX
-	_timing_advice.pixel_size = TIMING_M_PER_PX
+	_timing_advice.pixel_size = TIMING_REF_M_PER_PX
 	_timing_advice.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	_timing_advice.no_depth_test = true
 	_timing_advice.render_priority = 3
@@ -1594,19 +1616,20 @@ func _build_timing_marks() -> void:
 		_timing_material(Color(0.016, 0.055, 0.125, 0.82), true, 2))
 
 	# The verdict over the athlete who hit (`js/render.js:1041-1069`): the grade word
-	# with the reference's dark stroke, and the mode line under it.
-	_timing_verdict = _timing_verdict_label("TimingVerdict", TIMING_VERDICT_PX, 7)
+	# with the reference's own 5 px dark stroke, and the mode line under it.
+	_timing_verdict = _timing_verdict_label("TimingVerdict", TIMING_VERDICT_PX, 5)
 	_timing_verdict_mode = _timing_verdict_label("TimingVerdictMode", TIMING_VERDICT_MODE_PX, 0)
 
 
 ## One of the two lines of the verdict: a camera-facing, depth-test-free label with
-## the reference's dark stroke (`js/render.js:1060-1061`) at metres-per-screen-pixel.
+## the reference's dark stroke (`js/render.js:1060-1061`) at metres per REFERENCE
+## pixel, so `font_size` is the reference's own px and the word is 14/60 m tall.
 func _timing_verdict_label(node_name: String, font_size: int, outline: int) -> Label3D:
 	var l := Label3D.new()
 	l.name = node_name
 	l.font = ThemeDB.fallback_font
 	l.font_size = font_size
-	l.pixel_size = TIMING_M_PER_PX
+	l.pixel_size = TIMING_REF_M_PER_PX
 	l.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	l.no_depth_test = true
 	l.render_priority = 4
@@ -1813,16 +1836,20 @@ func _sync_timing() -> void:
 		_timing_advice.modulate = color
 		# The panel is the reference's `measureText(label).width + 22` by 20 px box
 		# (`js/render.js:1735-1742`) measured with the same font the label draws with,
-		# in the reference's own ratios to its font: one line of padding either side
-		# (22/11) in a box 20/11 lines tall. Placed just behind the text.
-		var line_m: float = float(TIMING_ADVICE_PX) * TIMING_M_PER_PX
+		# in the reference's own px at the reference's own 1/60 m per px: one line of
+		# padding either side (22/11) in a box 20/11 lines tall. Placed just behind
+		# the text.
+		var line_m: float = float(TIMING_ADVICE_PX) * TIMING_REF_M_PER_PX
 		var text_px: float = 0.0
 		if _timing_advice.font != null:
 			text_px = _timing_advice.font.get_string_size(
 				word, HORIZONTAL_ALIGNMENT_LEFT, -1, TIMING_ADVICE_PX).x
 		_timing_advice_panel.position = Vector3(at.x, at.y, at.z - 0.01)
+		# Never narrower than one box line tall (the previous floor was a fixed 0.30 m,
+		# which is a size at the DELIVERED scale, not a proportion).
 		_timing_advice_panel.scale = Vector3(
-			maxf(0.30, text_px * TIMING_M_PER_PX + line_m * TIMING_ADVICE_PAD_LINES),
+			maxf(line_m * TIMING_ADVICE_BOX_LINES,
+				text_px * TIMING_REF_M_PER_PX + line_m * TIMING_ADVICE_PAD_LINES),
 			line_m * TIMING_ADVICE_BOX_LINES, 1.0)
 
 	# --- the energy bar: every frame, under the active athlete ----------------
@@ -1850,6 +1877,9 @@ func _sync_timing() -> void:
 		"ring_visible": ring_on,
 		"fill_segments": _timing_fill_segments if ring_on else 0,
 		"fill_radius": TIMING_RING_RADIUS,
+		# The ring's own anchor height: `p.y - 96*scale` in the reference
+		# (`js/render.js:1657`), i.e. the 96 px the advice's 11 px is a proportion of.
+		"ring_height": TIMING_RING_HEIGHT,
 		"prec_visible": prec_on,
 		"precision": precision,
 		"tight": tight,
@@ -1858,6 +1888,8 @@ func _sync_timing() -> void:
 		"advice": _timing_advice.text if advice_on else "",
 		"advice_color": _timing_advice.modulate.to_html(false) if advice_on else "",
 		"advice_panel_w": _timing_advice_panel.scale.x if advice_on else 0.0,
+		"advice_h_m": TIMING_ADVICE_PX * TIMING_REF_M_PER_PX if advice_on else 0.0,
+		"labels_px": _timing_labels_px(),
 		"energy_visible": live,
 		"energy": energy,
 		"energy_width": TIMING_ENERGY_W * energy if live else 0.0,
@@ -1924,6 +1956,33 @@ func _sync_verdict(live: bool, _ground: Vector3) -> Dictionary:
 ## rather than re-deriving the reference's arithmetic.
 func timing_report() -> Dictionary:
 	return _timing_state.duplicate()
+
+
+## The three texts' on-screen height in the LIVE frame's own pixels: each word's world
+## height (`font_size * pixel_size`) unprojected through the current camera at its own
+## position — a measurement, not the arithmetic restated. This is the number the slice
+## test's proportion check and the capture's marker line print, and the PNG
+## measurements in the evidence are taken again from the written frame.
+func _timing_labels_px() -> Dictionary:
+	var out := {"advice": 0.0, "verdict": 0.0, "mode": 0.0}
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return out
+	var pairs := {
+		"advice": _timing_advice,
+		"verdict": _timing_verdict,
+		"mode": _timing_verdict_mode,
+	}
+	for key in pairs.keys():
+		var l: Label3D = pairs[key]
+		if l == null or not l.visible or l.text == "":
+			continue
+		var h: float = float(l.font_size) * l.pixel_size
+		var at: Vector3 = l.global_position
+		var top: Vector2 = cam.unproject_position(at + Vector3(0.0, h, 0.0))
+		var base: Vector2 = cam.unproject_position(at)
+		out[key] = absf(top.y - base.y)
+	return out
 
 
 # ---------------------------------------------------------------------------
@@ -2138,13 +2197,16 @@ func _save_frame(path: String) -> void:
 		var advice_at := _screen_px(tcam, _timing_advice.global_position)
 		var verdict_at := _screen_px(tcam, _timing_verdict.global_position)
 		var energy_at := _screen_px(tcam, _timing_energy.global_position)
-		print("CAPTURE_TIMING ring=(%.0f,%.0f) advice=(%.0f,%.0f) verdict=(%.0f,%.0f) energy=(%.0f,%.0f) ring_visible=%s advice_visible=%s verdict_visible=%s fill=%.3f segments=%d radius_m=%.3f energy=%.3f advice_w_m=%.3f" % [
+		var labels: Dictionary = _timing_state.get("labels_px", {})
+		print("CAPTURE_TIMING ring=(%.0f,%.0f) advice=(%.0f,%.0f) verdict=(%.0f,%.0f) energy=(%.0f,%.0f) ring_visible=%s advice_visible=%s verdict_visible=%s fill=%.3f segments=%d radius_m=%.3f energy=%.3f advice_w_m=%.3f advice_h_m=%.3f labels_px=advice:%.1f,verdict:%.1f,mode:%.1f" % [
 			ring_at.x, ring_at.y, advice_at.x, advice_at.y, verdict_at.x, verdict_at.y,
 			energy_at.x, energy_at.y,
 			str(_timing_ring.visible), str(_timing_advice.visible), str(_timing_verdict.visible),
 			float(_timing_state.get("fraction", 0.0)), int(_timing_state.get("fill_segments", 0)),
 			TIMING_RING_RADIUS, float(_timing_state.get("energy", 0.0)),
-			float(_timing_state.get("advice_panel_w", 0.0))])
+			float(_timing_state.get("advice_panel_w", 0.0)),
+			float(_timing_state.get("advice_h_m", 0.0)),
+			float(labels.get("advice", 0.0)), float(labels.get("verdict", 0.0)), float(labels.get("mode", 0.0))])
 		print("CAPTURE_VERDICT word=%s mode=%s grade=%s paddle=%s alpha=%.3f charge=%.3f eta=%.3f in_window=%s precision=%.3f" % [
 			String(_timing_state.get("verdict", "")), String(_timing_state.get("verdict_mode", "")),
 			String(_timing_state.get("verdict_grade", "")), String(_timing_state.get("verdict_paddle", "")),

@@ -298,3 +298,62 @@ stays the owner's decision.
   handoff authorization the mission-only paths were staged explicitly (no `git add -A`) and pushed
   to `origin/main`; remote read-back verified; no force push; unrelated dirt (`.hermes/`, `art/**`,
   `meshy/**`, generated sidecars, probe files) left untouched. Spend $0.
+## 2026-09-17 11:25 CEST — ticket reconciliation: wayfinder map and mission cabinet brought in line with the returns
+
+- The four verified-and-returned tickets are `resolved` in their ticket headers and in
+  the map table: shot-logic-parity (evidence `shot-logic-parity.md`: PASS 675/675,
+  comparator IDENTICAL 35/35 @ 657 fields, tol=0), timing-logic-parity (evidence
+  `timing-logic-parity.md`: PASS 100/100, 17/17 fields × 3,601 ticks IDENTICAL),
+  timing-presentation-3d (evidence `timing-presentation-3d.md`: `_timing_presentation`
+  section, 37 checks), court-width-render (evidence `court-width-render.md`: 1,111
+  checks, three candidates 10.5 / 11.0 / 12.0 m, parity digest unchanged).
+- `timing-label-scale` resolved as superseded by `timing-presentation-3d`: its
+  window-independent-text demand was measured and rejected in favour of
+  reference-proportional sizing.
+- `arena-bleachers` left open: its evidence file does not exist yet (another lane is
+  producing it), so the close-rule is not met; the code is present
+  (`godot/game/arenas/bleachers.gd`).
+- Map validator re-run: `PASS: 0 errors, 0 warnings`. No commits; no `godot/**` edits.
+
+## 2026-09-17 11:42:09 CEST — the stands evidence written (arena-bleachers lane)
+
+- The stands are measured at the shipped config (`sides=2`, `copies_per_side=1`,
+  `scale=3.15`, `cast_shadow=false`, `material=imported`): 2 copies, 919,856
+  triangles, 86.1 % of the scene. Evidence:
+  `docs/wayfinder/evidence/arena-bleachers.md`.
+- Marginal cost (interleaved arms, one session, 8 alternating windows): +5.87 ms
+  engine p50 (+52.6 %), +2.81 ms wall p50 (+42.0 %), −58.2 fps (−37 %). The two
+  `--interleave=0` runs were re-run after the probe's `PROBE_FRAME` label fix and are
+  quoted only as a caveated cross-check (single ~2-second samples on a busy machine).
+- Gates re-run: `court_dimensions_test.gd` 1111 checks / 0 failures, exit 0;
+  `game_slice_test.gd` 325/326 (only red `padel.pck`, by design); parity digest
+  unchanged (`a7136682…`, exit 0). Zero `SCRIPT ERROR`; `glb_loads=1` per boot.
+- Outstanding (ticket stays open): the owner's look verdict, and the missing
+  `godot/assets/bleachers/bleachers.meshy-task.json` — its `taskId`/`consumedCredits`
+  are not known, so it is not created and no Meshy taskId was invented.
+- Map validator re-run: PASS 0 errors / 0 warnings. No commits; no
+  `godot/src/sim/**` edits.
+- 2026-09-17 11:44 CEST — **Owner gates closed on all three presentation changes.** The
+  stands are ratified as shipped (two copies, one per side line, scale 3.15), the court
+  width is ratified at **11.0 m**, and the timing label sizes are approved as they are.
+  Measurement, frames and cost table: `docs/wayfinder/evidence/arena-bleachers.md`.
+  `court-width-render.md` named 10.5 m as the resting value while the code already read
+  11.0 — corrected in three places so the evidence and the code agree.
+- `tools/bleachers_probe.gd`'s `PROBE_FRAME` line assigned two labels to the wrong
+  arguments (`engine_trim80_ms` printed the wall-derived fps, `engine_fps` printed the
+  engine trimmed mean). Labels only, no value changed; the two `--interleave=0` runs were
+  re-measured after the fix and are quoted only as a caveated cross-check.
+- Delegation repaired: `delegation.provider` pointed at `openai-codex`, which was
+  rate-limited and had no fallback chain, so both lanes of the 11:15 dispatch died in ~20 s
+  with zero tree changes. Repointed to the live lane (`opencode-go` / `deepseek-v4-pro`);
+  the three lanes then ran and returned.
+- Push reality, recorded because the handoff's target has moved: `origin/codex/gameplay-and-map`
+  is now `287e499` — this lineage re-committed onto `origin/main` plus one integration commit
+  written while this session ran. It carries `WIDTH_M := 10.0`, `TIMING_ADVICE_PX := 15` and
+  no `bleachers.gd`, so this session's three changes are not on it. Nothing was forced and
+  nothing was merged: the work is committed on `codex/input-bridge-and-slice-s14`, whose
+  lineage diverges from the published one by 14 remote-only commits (mostly re-created SHAs
+  of the same work) and 132 files of content. Integrating the two is a reconciliation job
+  with a full gate re-run, not a push.
+
+- 2026-09-17 17:17 CEST | reconcile | Astra | done | merged 918bfa9 (S14 lineage) into origin/main bcecd9b: 21 conflicts resolved by hand — ratified values win (11 m court, reference-sized timing labels), both sides' logic kept (music seam, arena art, maestro companion clips, play_stroke_at); resolution checks folded from 287e499; the gate sweep is the next lane. | godot/tests/game_slice_test.gd

@@ -1,6 +1,6 @@
 # Timing logic parity — the numbers behind "PERFETTO"
 
-- Status: open
+- Status: resolved
 - Type: task
 - Mode: AFK
 - Owner: crew-timinglogic

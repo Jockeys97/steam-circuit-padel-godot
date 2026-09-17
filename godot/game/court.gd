@@ -31,7 +31,17 @@ const Frozen := preload("res://src/sim/frozen.gd")
 
 ## Vertical/legacy effect scale only; ground positions use world_pos().
 const PX_TO_M := 0.025
-const WIDTH_M := 10.0
+## The court's HORIZONTAL measure, in metres. This is the single knob of
+## `docs/wayfinder/tickets/court-width-render.md`: 10.0 m is the real padel width
+## and the owner accepts the measurement — what he rejects is the RENDER of it
+## ("allarghiamo leggermente le misure dell'arena orizzontalmente ... non mi piace
+## la resa grafica"). The candidates 10.5 / 11.0 / 12.0 m were each rendered in
+## turn and are delivered as `godot/game/out/width-<value>.png`; the choice is the
+## owner's, not this lane's. Widening moves the metres-per-pixel of x and nothing
+## else (`world_pos` divides by the pixel span of `COURT`, not by WIDTH_M), so the
+## frozen pixel simulation is untouched and the parity digest cannot move.
+## `LENGTH_M` and the depth curve below are NOT this knob.
+const WIDTH_M := 11.0
 const LENGTH_M := 20.0
 const SERVICE_M := 6.95
 const SERVICE_PX := 126.0

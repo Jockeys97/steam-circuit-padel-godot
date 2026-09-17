@@ -66,6 +66,13 @@ from a lane's return — and two of the returns' numbers did not survive that.
 The second push (`codex/gameplay-and-map`) carries this to GitHub for Luca; then the
 owner's verdict on the timing feel, and the human gates that were never self-approved.
 
+## Wayfinder ticket state
+
+The wayfinder map and tickets now match the returns: shot-logic-parity,
+timing-logic-parity, timing-presentation-3d, court-width-render and timing-label-scale
+are `resolved` (timing-label-scale as superseded by timing-presentation-3d);
+arena-bleachers stays open until its evidence file lands. Map validator PASS 0/0.
+
 ---
 
 # Board report — tick 17, 2026-09-16

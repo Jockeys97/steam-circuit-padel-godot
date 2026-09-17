@@ -1,6 +1,6 @@
 # Shot logic parity — every intent, anchor to anchor
 
-- Status: open
+- Status: resolved
 - Type: task
 - Mode: AFK
 - Owner: crew-shotlogic
