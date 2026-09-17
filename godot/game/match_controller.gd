@@ -283,6 +283,17 @@ var _frame_input2: Dictionary = {}
 var _pending_input: Dictionary = {}
 var _pending_input2: Dictionary = {}
 var _hud
+## Ball-cue thresholds and colours, copied value for value from `js/render.js` so
+## the port shows a cut ball at exactly the moments the browser does.
+const TRAIL_MAX_POINTS := 10                        # sim.gd:2990, ball.trail cap
+const TRAIL_FAST_SPEED := 620.0                     # js/render.js:1367
+const SPIN_VISIBLE := 0.5                           # js/render.js:1369
+const SPIN_RING_VISIBLE := 0.08                     # js/render.js:1546
+const TRAIL_BASE := Color(198.0 / 255.0, 240.0 / 255.0, 106.0 / 255.0)
+const TRAIL_SPIN := Color(94.0 / 255.0, 233.0 / 255.0, 255.0 / 255.0)
+const TRAIL_FAST_SPIN := Color(255.0 / 255.0, 224.0 / 255.0, 102.0 / 255.0)
+const SPIN_RING_TINT := Color(69.0 / 255.0, 224.0 / 255.0, 255.0 / 255.0)
+
 var _mode_hud
 var _audio
 var _cam: Camera3D
@@ -292,6 +303,19 @@ var _cam: Camera3D
 var _arena_root: Node3D
 var _ball_view: MeshInstance3D
 var _land_ring: MeshInstance3D
+## The two cues the browser draws for a spinning ball, and which this port was
+## missing: the ball came out of a slice with the right physics (`sim.gd:1662`
+## sets backspin exactly as `js/game.js:1671` does, and the bounce bites at
+## `sim.gd:2102`) and no way to see it. Both are presentation only — every number
+## below is read from the simulation state, none is computed here.
+##   - the trail (`js/render.js:1413-1440`): `ball.trail`, already carried by the
+##     ported state (`sim.gd:2987-2991`, capped at 10 points), turns cyan on spin;
+##   - the spin ring (`js/render.js:1546-1553`): a ring around the ball whenever
+##     `backspin > 0.08`. The browser draws it screen-facing, so this one is turned
+##     towards the camera every frame rather than pinned to an axis: at the match
+##     preset's -65 degrees a floor-plane ring would read as a flat line.
+var _trail_views: Array[MeshInstance3D] = []
+var _spin_ring: MeshInstance3D
 ## Fixed-size floor halo identifying the controlled athlete.
 var _active_ring: MeshInstance3D
 ## Camera-facing downward triangle above the controlled athlete.
@@ -655,6 +679,41 @@ func _build_scene() -> void:
 	_land_ring.material_override = Court.material(Color(0.98, 0.90, 0.16))
 	_land_ring.visible = false
 	add_child(_land_ring)
+
+	# The trail: one small sphere per simulation trail point. Additive and unshaded,
+	# which is what the browser's "lighter" composite does (`js/render.js:1434`).
+	for i in TRAIL_MAX_POINTS:
+		var dot := MeshInstance3D.new()
+		dot.name = "TrailDot%d" % i
+		dot.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var dm := SphereMesh.new()
+		dm.radius = Court.BALL_R
+		dm.height = Court.BALL_R * 2.0
+		dot.mesh = dm
+		var dmat := StandardMaterial3D.new()
+		dmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		dmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		dmat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		dmat.albedo_color = Color(TRAIL_BASE.r, TRAIL_BASE.g, TRAIL_BASE.b, 0.0)
+		dot.material_override = dmat
+		dot.visible = false
+		add_child(dot)
+		_trail_views.append(dot)
+
+	_spin_ring = MeshInstance3D.new()
+	_spin_ring.name = "SpinRing"
+	_spin_ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var sr := TorusMesh.new()
+	sr.inner_radius = Court.BALL_R * 1.45
+	sr.outer_radius = Court.BALL_R * 1.75
+	_spin_ring.mesh = sr
+	var srm := StandardMaterial3D.new()
+	srm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	srm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	srm.albedo_color = Color(SPIN_RING_TINT.r, SPIN_RING_TINT.g, SPIN_RING_TINT.b, 0.9)
+	_spin_ring.material_override = srm
+	_spin_ring.visible = false
+	add_child(_spin_ring)
 
 	# A compact selection halo. Its visual size is independent of the hitbox.
 	_active_ring = MeshInstance3D.new()
@@ -1135,6 +1194,55 @@ func _page_finished() -> bool:
 # View sync: every position comes from the live state, never a cached copy
 # ---------------------------------------------------------------------------
 
+## The cut ball, made visible. Every threshold, colour and radius here is the
+## browser's (`js/render.js:1360-1440` for the trail, `:1546-1553` for the ring);
+## every input is simulation state (`ball.trail`, `ball.spin`, `ball.backspin`,
+## `ball.vx/vy`), so this cannot change what the match does — only what it shows.
+func _sync_ball_cues(ball) -> void:
+	var speed: float = sqrt(float(ball.vx) * float(ball.vx) + float(ball.vy) * float(ball.vy))
+	var fast: bool = speed > TRAIL_FAST_SPEED
+	var spinning: bool = float(ball.topspin) > SPIN_VISIBLE or float(ball.backspin) > SPIN_VISIBLE
+	var tint := TRAIL_BASE
+	if spinning:
+		tint = TRAIL_SPIN
+	if fast and spinning:
+		tint = TRAIL_FAST_SPIN
+
+	var points: Array = ball.trail
+	var shown: int = mini(points.size(), _trail_views.size())
+	for i in _trail_views.size():
+		var dot: MeshInstance3D = _trail_views[i]
+		if i >= shown:
+			dot.visible = false
+			continue
+		var p: Dictionary = points[i]
+		dot.visible = true
+		dot.position = Court.world_pos(
+			float(p.get("x", 0.0)), float(p.get("y", 0.0)), float(p.get("z", 0.0)))
+		# Oldest point is the smallest and faintest, exactly as `idx` does in the browser.
+		var idx: float = 0.0 if shown <= 1 else float(i) / float(shown - 1)
+		var life: float = clampf(float(p.get("life", 0.0)) / 0.3, 0.0, 1.0)
+		var r: float = (0.32 + 0.42 * idx) * (1.22 if fast else 1.0)
+		dot.scale = Vector3(r, r, r)
+		var mat: StandardMaterial3D = dot.material_override
+		mat.albedo_color = Color(tint.r, tint.g, tint.b, life * (0.5 if fast else 0.32))
+
+	var ring_on: bool = float(ball.backspin) > SPIN_RING_VISIBLE
+	_spin_ring.visible = ring_on
+	if ring_on:
+		_spin_ring.position = _ball_view.position
+		if _cam != null:
+			var towards: Vector3 = _cam.global_position - _spin_ring.global_position
+			# look_at breaks when the direction is parallel to its up vector; at the
+			# match preset it never is, but a camera straight overhead would make it so.
+			if towards.length() > 0.001 and absf(towards.normalized().dot(Vector3.UP)) < 0.999:
+				_spin_ring.look_at(_cam.global_position, Vector3.UP)
+				# A torus lies in its own XZ plane, so its axis is local Y: after look_at
+				# that axis is sideways. This quarter turn puts it down the view direction,
+				# which is what makes the ring read as a circle rather than an edge.
+				_spin_ring.rotate_object_local(Vector3.RIGHT, PI * 0.5)
+
+
 func _sync_views() -> void:
 	if state == null:
 		return
@@ -1142,6 +1250,7 @@ func _sync_views() -> void:
 	_ball_view.position = Court.world_pos(ball.x, ball.y, ball.z)
 	var pulse: float = 1.0 + clampf(float(ball.bouncePulse), 0.0, 1.0) * 0.9
 	_ball_view.scale = Vector3(pulse, pulse, pulse)
+	_sync_ball_cues(ball)
 	var ring: float = float(ball.landRing)
 	_land_ring.visible = ring > 0.0
 	if _land_ring.visible:
