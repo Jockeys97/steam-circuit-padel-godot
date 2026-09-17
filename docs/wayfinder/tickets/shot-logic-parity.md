@@ -1,6 +1,6 @@
 # Shot logic parity — every intent, anchor to anchor
 
-- Status: open
+- Status: resolved
 - Type: task
 - Mode: AFK
 - Owner: crew-shotlogic
@@ -84,3 +84,19 @@ Two attempts per failing gate, then record a blocker with the exact reproduction
 A divergence found at the reference's own printed precision is a finding, not a
 regression: report it, do not tune the port to hide it, and leave the reference tree
 untouched.
+
+## Corrections accepted from the lane (2026-09-17)
+
+The lane returned the ticket with its own errors named. Recorded here rather than
+quietly fixed, because the next reader would otherwise trust them:
+
+- **`teamTactic` is not an intent modifier.** It writes `state.playerTeamTactic` and
+  no shot branch reads it, in either engine — so "the four modifiers that upgrade an
+  intent" was wrong; it is three, and `teamTactic` is state observation only.
+- **Three port anchors pointed at call sites or the wrong function**: `sim.gd:697` is
+  inside `perform_serve`, `:1156` is the risk formula (the function spans 1097-1178),
+  and `:2504` is the AI's *call* to `hit_ball` (the function is at `:1527`). `:1330`
+  for the x3 chance was correct.
+- **`game_slice_test.gd` moved 288 → 287 for a reason outside this lane**: an export
+  check scans `game/**` and `src/**` and a timing lane's probe file sat under
+  `game/out/` at that moment. No file of this lane's is in that scan.

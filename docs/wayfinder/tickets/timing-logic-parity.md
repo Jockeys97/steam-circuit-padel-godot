@@ -1,6 +1,6 @@
 # Timing logic parity — the numbers behind "PERFETTO"
 
-- Status: open
+- Status: resolved
 - Type: task
 - Mode: AFK
 - Owner: crew-timinglogic
@@ -76,3 +76,24 @@ sampled only while charging, the human path unexercised).
 Two attempts, then a blocker with the reproduction. Never tune the reference and
 never widen a tolerance to make a comparison pass: a widened tolerance is the
 finding.
+
+## Corrections accepted from the lane (2026-09-17)
+
+- **The anchors were call sites, not definitions.** Real definitions: reference
+  `js/game.js:841`, `:826`, `:866`, `:883`; port `sim.gd:1007`, `:111`, `:1028`,
+  `:1048`. `:1330` for the x3 was correct.
+- **The comparator is Python.** This ticket prescribed `node tools/sim-port/<name>.mjs`;
+  the house comparator on this path is `trace-compare.py`, so the lane delivered
+  `timing-compare.py` and reused its loader. The ticket's command was wrong, not the
+  lane.
+- **The single-precision warning does not apply here.** GDScript `float` is 64-bit and
+  the timing path never touches `Vector2`; that is why 17 fields × 3,601 ticks × 2
+  scenarios can be identical at six decimals without a single edge case.
+- **"A released charge carries the last charging `eta`" was a wrong promise.** `eta` is
+  a property of the ball; what a release carries is the *charge*, in
+  `queuedShotCharge`. The lane covered the real behaviour (the field is compared, and
+  the release rules are counted: 15 resets in scenario A, 9 of them with `eta` still
+  readable).
+- **The audit count quoted in the return (241) does not reproduce**: re-run on the
+  integrated tree it is `checks=221 failures=0 not-ported=0 expected-checks=221
+  mismatched=[]`. The gate pins its own expected count, so 221 is the authority.
