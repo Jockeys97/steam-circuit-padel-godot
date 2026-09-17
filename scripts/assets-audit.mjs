@@ -11,6 +11,9 @@ const sources = [
   "index.html", "styles.css",
   "js/main.js", "js/ui.js", "js/data.js", "js/render.js",
   "js/game.js", "js/audio.js", "js/fx.js", "js/i18n.js", "js/drill.js", "js/build.js",
+  // The Godot port keeps its frozen roster alongside the browser roster.
+  // Assets referenced there are still used by that reference and must exist.
+  "godot/src/sim/frozen/data.json",
 ];
 
 let text = "";

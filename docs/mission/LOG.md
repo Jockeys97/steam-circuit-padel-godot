@@ -135,6 +135,76 @@
 - Hygiene finding, not fixed: the first `--import` on a clean clone leaves 59 untracked generated files (seven `*.gd.uid` for port scripts, ~fifty `*.import` sidecars under `godot/game/out/` and the camera-study output), while 104 `.uid` files are tracked elsewhere.
 - Play: the window runs on this Mac in a real Metal context with the documented seed and tier. No frame evidence was obtainable (`cua-driver` accessibility walk timed out, `screencapture -l` refused) and no feel claim is made — that verdict stays the owner's. No file was edited to make a suite pass; no commit was made on the Linux side's behalf beyond this log line and the evidence file.
 
-## 2026-09-16 23:16 CEST — local macOS session (owner's Mac): Il Maestro inserted as the second real athlete
+## 2026-09-17 01:05 CEST — tick 20 claim (interactive session on the owner's Mac, CEO)
 
-- Il Maestro wired as the second real Meshy athlete: the four pack GLBs copied into `godot/assets/athletes/` and hash-verified against `hashes.json`; companion-clip adoption added (`idle`/`walk`/`run` from the single-clip files, ahead of the first-clip fallback so the 0.30 s bind hold can never become the idle); emission off added to the shared material override with the per-athlete ripple measured before/after (Volpe flips on→off, Colosso was already off, Maestro ends off); root scale kept at 0.01 with the height measured in engine (1.761 m, feet 0.039 m, front +Z) — the notes' 1.59 m/158 m figures do not reproduce (independent pack report agrees). Gates, re-run after rebasing onto the moved `origin/main`: import exit 0; new `maestro_asset_test.gd` PASS 34/34; colosso 19/19 (upstream's grown test); harness 8/8; full slice PASS 292/292 — all exit 0, zero SCRIPT ERROR (the pack checks read "absent (source checkout) — not scored" at this HEAD, not the 278/280 red the earlier sweep recorded). Evidence: `docs/wayfinder/evidence/maestro-insertion.md` plus the independent `maestro-pack-verify.md`; no visual or feel verdict is claimed — that stays Luca's.
+- Mission re-scoped by the owner: slice S14 — shot logic parity + the 2D's timing
+  presentation ("PERFETTO"). Budget: no cap, the owner's existing subscription; the
+  mission's own two-attempts-per-gate rule stays in force.
+- Overlap check: no scheduler on this Mac. `~/.hermes/cron/` and
+  `profiles/dev-work/cron/` hold no `jobs.json` at all, and the mission's job id
+  `f796600cf451` appears nowhere under this home, so nothing here can start a second
+  driver. One live driver: this session. The Godot window alive at claim time is the
+  play-test this session started for the owner.
+- Skills installed into the ACTIVE profile, byte-identical copies from
+  `profiles/dev-work/skills/**` (`diff -rq` clean): `org-simulation` (+ shim note for
+  the 60-character description limit) and its three dependencies `delegate-hermes`,
+  `wayfinder`, `critic-council-loop`. The `default` and `dev-work` skill trees are
+  separate: 63 vs 304 skills, no inheritance (verified against
+  `profiles/dev-work/.skills_prompt_snapshot.json`).
+- Three lanes claimed in STATE before dispatch, disjoint allowlists, `tools/sim-port/`
+  split into two NEW subdirectories so the two trace lanes cannot collide:
+  crew-shotlogic (S14a), crew-timinglogic (S14b), crew-timinghud (S14c). No integrator
+  captain this tick: native children cannot redelegate in this environment (charter,
+  Operating model), so the CEO holds integration and certification.
+- Tickets written: `docs/wayfinder/tickets/shot-logic-parity.md`,
+  `timing-logic-parity.md`, `timing-presentation-3d.md` — all eight required sections.
+- Verified before claim on this tree: slice 288/289 (only red `padel.pck`, a clone
+  artifact), input 5/5 392 checks, rules audits 10/10, harness 8/8.
+- Spend: $0, 0 Meshy credits. No human gate self-approved.
+
+- 2026-09-17 01:12 CEST — Owner decision recorded (tick 20). Asked which of the two
+  readings he meant by *"le scritte e le logiche del timing con Perfetto"*, the owner
+  chose **both**: the charging guide (ring that fills toward the perfect window, the
+  advice word with the profile colour, the precision bar) **and** the verdict on the
+  field (the timing grade in words — `shotPerfect` = "PERFETTO" plus good/early/late —
+  written above the athlete who struck, in the grade's colour, fading over 0.28 s,
+  `js/render.js:1041-1065`). The verdict was NOT in crew-timinghud's original brief, so
+  that lane was steered mid-flight and its ticket
+  (`docs/wayfinder/tickets/timing-presentation-3d.md`) carries the added scope: the
+  data already exists in the port (`state.shotFeedback`, `godot/src/sim/sim.gd:1244`,
+  `:2590`, `life` decaying at `:2743-2746`) and only the on-field drawing is missing.
+- 2026-09-17 01:12 CEST — CEO catch, recorded rather than smoothed over: the map and
+  `validate.py` both claimed **27 audit scripts** in the reference while `scripts/`
+  holds **28** `*-audit.mjs` files and the runner GLOBS the directory
+  (`run-audits.mjs:21-23`), so all 28 are wired. The expected VALUE was stale in both
+  (the newest audit file predates this mission by six days), so the expected value was
+  corrected — never the check — and the consequence recorded: on the owner's Mac the
+  reference audit suite cannot run at all until `node_modules/` exists (`sharp` does
+  not resolve), so its 28 outcomes are unknown here. Validator re-run: PASS, 0 errors,
+  0 warnings.
+
+## 2026-09-17 02:15 CEST — tick 21: the three S14 lanes returned; verified by the CEO, not accepted on report
+
+- Independently re-run by me on this tree, with my own mutations: `shot_logic_parity_test.gd`
+  PASS 675/675; `timing_feedback_test.gd` PASS 100/100 and, with `--inject-failure`,
+  FAIL 96/100 **exit 1**; slice 324/325 (23/23 sections, only `padel.pck`); input 5/5
+  392 checks; audits 10/10 221 checks `mismatched=[]`; harness 8/8; validator PASS 0/0.
+- Cross-engine: `shot-intent-compare.mjs` `IDENTICAL 35/35, 657 field comparisons, tol=0`
+  with the reference trace regenerated by me and byte-identical to the deposited one;
+  `timing-compare.py` `RESULT=IDENTICAL` on both scenarios (17 fields × 3,601 ticks).
+  `godot/src/sim/**` untouched — `git status` on it is empty.
+- The gates are not stamps: a window shifted by `1e-6` turns the timing comparator red
+  (1 field of 17, exit 1), and my own `x3`→`x9` mutation of the port's trace gives
+  `DIVERGED`, exit 1.
+- Two returns' numbers did not survive: a lane quoted 241 audit checks (it is 221, and
+  the gate pins it) and the presentation lane's first faithful pass was illegible
+  (48×36 px ring, 7 px glyphs) until enlarged and re-measured.
+- Three of my own tickets carried wrong anchors or wrong promises; each lane named them
+  and the corrections are recorded **in the tickets** (sections "Corrections accepted
+  from the lane"), not in chat. Recorded: `teamTactic` is not an intent modifier; the
+  `sim.gd`/`js/game.js` line numbers I gave were call sites; the advice word was drawn
+  nowhere in the port; the panel's energy bar is not a port of the 2D's
+  `drawActiveIndicator`; the precision bar is the sprint input and cannot appear in any
+  `--capture=match` frame.
+- Spend: $0, 0 Meshy credits. No human gate self-approved. Board report refreshed
+  (`docs/mission/BOARD.md`, tick-21 section at the top).

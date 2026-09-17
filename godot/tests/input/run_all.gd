@@ -21,6 +21,7 @@ const AuditBase := preload("res://src/audits/audit_base.gd")
 const AUDITS := [
 	["reachability", "res://tests/input/reachability_audit.gd"],
 	["input_coverage", "res://tests/input/input_coverage_audit.gd"],
+	["switch_mode", "res://tests/input/switch_mode_audit.gd"],
 	["gamepad_nav", "res://tests/input/gamepad_nav_audit.gd"],
 	["input_remap_a11y", "res://tests/input/input_remap_a11y_audit.gd"],
 ]

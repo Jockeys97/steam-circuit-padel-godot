@@ -82,6 +82,27 @@ static func save_store() -> RefCounted:
 	return Store.new(save_dir)
 
 
+## The three player-switching modes the reference accepts, by its own names.
+const CONTROL_MODES := ["assisted", "semi", "manual"]
+
+
+## The switching mode the save holds, validated. An absent or unknown value is
+## `semi`, which is the simulation's own default too.
+##
+## The reference validates exactly these three when it loads its preferences
+## (`js/main.js:2273`) and copies the saved value onto the match before its loop
+## starts (`js/main.js:1184`: `matchState.controlMode = ui.controlMode`). Until
+## this function existed the preference was written into the save, defaulted and
+## shown — and never reached `SimState.controlMode`, so every match ran `semi`.
+static func control_mode() -> String:
+	var read: Dictionary = save_store().read_group("prefs")
+	var payload: Variant = read.get("payload", null)
+	if typeof(payload) != TYPE_DICTIONARY:
+		return "semi"
+	var value := String((payload as Dictionary).get("controlMode", "semi"))
+	return value if CONTROL_MODES.has(value) else "semi"
+
+
 ## The options a mode session needs, from the state this config already carries.
 ## One place, so a screen and a test hand `ModeSession.start` the same dictionary.
 static func mode_options() -> Dictionary:
