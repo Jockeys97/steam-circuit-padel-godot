@@ -286,6 +286,11 @@ var _hud
 ## Ball-cue thresholds and colours, copied value for value from `js/render.js` so
 ## the port shows a cut ball at exactly the moments the browser does.
 const TRAIL_MAX_POINTS := 10                        # sim.gd:2990, ball.trail cap
+## Whether the ball draws its trail at all. A `static var` so the probe can price it
+## and the owner can change his mind without a rebuild; see the note at the build
+## site. The render loop walks `_trail_views`, so an empty array means the per-frame
+## cost is zero rather than invisible work.
+static var show_trail := false
 const TRAIL_FAST_SPEED := 620.0                     # js/render.js:1367
 const SPIN_VISIBLE := 0.5                           # js/render.js:1369
 const SPIN_RING_VISIBLE := 0.08                     # js/render.js:1546
@@ -296,6 +301,9 @@ const SPIN_RING_TINT := Color(69.0 / 255.0, 224.0 / 255.0, 255.0 / 255.0)
 
 var _mode_hud
 var _audio
+## The stands' crowd, found in the arena after the scenery is built. Presentation
+## only; null in any build whose arena has no stands.
+var _crowd: Node = null
 var _cam: Camera3D
 ## The arena environment currently in the scene, built by
 ## `game/arenas/arena_library.gd`. Rebuilt in place when the arena changes (the
@@ -627,6 +635,10 @@ func _swap_arena(id: String) -> bool:
 	_arena_root = Arena.build_into(self, id, Config.camera_preset)
 	if _arena_root == null:
 		return false
+	# The crowd belongs to the arena, so it is found again on every arena change
+	# rather than cached once: a rebuilt arena carries a new crowd, and holding the
+	# old one would tick a freed node.
+	_crowd = _arena_root.find_child("Crowd", true, false)
 	meta["arena"] = id
 	return true
 
@@ -682,7 +694,12 @@ func _build_scene() -> void:
 
 	# The trail: one small sphere per simulation trail point. Additive and unshaded,
 	# which is what the browser's "lighter" composite does (`js/render.js:1434`).
-	for i in TRAIL_MAX_POINTS:
+	# OFF by the owner's call (2026-09-17): ten additive transparent spheres are ten
+	# draws that cannot be batched and that the depth prepass cannot help, and he read
+	# the cost in the frame rate before the measurement was in. Kept rather than
+	# deleted because it is the browser's own cue and the parity checks still describe
+	# it — flip `show_trail` to bring it back and `--trail=1` on the probe to price it.
+	for i in (TRAIL_MAX_POINTS if show_trail else 0):
 		var dot := MeshInstance3D.new()
 		dot.name = "TrailDot%d" % i
 		dot.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -1128,6 +1145,11 @@ func tick_fixed(dt: float, input: Dictionary, input2: Dictionary) -> Variant:
 	# build and the headless harness hear the same match.
 	if _audio != null:
 		_audio.observe(state, ticks)
+	# The crowd reads the same state on the same tick, and for the same reason: the
+	# sim stores no "cheer now" flag, so the reaction is derived from the totals it
+	# does keep. Presentation only — nothing it does is read back here.
+	if _crowd != null:
+		_crowd.observe(state, ticks)
 	return result
 
 

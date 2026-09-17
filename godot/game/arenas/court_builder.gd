@@ -222,13 +222,29 @@ static func build_court(parent: Node3D, arena: Dictionary, wall_bounce := 0.89) 
 	var accent := Court.palette_color(arena, "accent", Color(0.0, 0.898, 1.0))
 	var gear := Court.palette_color(arena, "gear", Color(0.784, 0.565, 0.0))
 
+	# The ground outside the cage is the reference's `exteriorFloor`, a table of its
+	# own (`js/render.js:760-767`) — NOT the court's `palette.floor` darkened. The 2D
+	# picks a warm tone per arena (the default family's is `#e78c68`) precisely so the
+	# blue court reads as the bright focal plane against it; deriving it from
+	# `palette.floor` instead produced a dead slate grey (measured `#323946`) and lost
+	# that contrast. `arena["apron"]` carries the ported table (`arena_style.gd`'s
+	# `apron`, set in `arena_library.gd:95`), already used for the strip at the foot of
+	# the backdrop wall — this is the same colour, on the floor it belongs to.
+	# Callers that pass a raw `ARENAS` row (no `apron`) keep the old derivation.
+	var surround_color: Color = floor_color.darkened(0.35)
+	var apron_value: Variant = arena.get("apron")
+	if apron_value is Color:
+		surround_color = apron_value
+	elif apron_value is String and String(apron_value) != "":
+		surround_color = Color(String(apron_value))
+
 	var floor_mi := MeshInstance3D.new()
 	floor_mi.name = "Surround"
 	var pm := PlaneMesh.new()
 	pm.size = Vector2(80.0, 80.0)
 	floor_mi.mesh = pm
 	floor_mi.position = Vector3(0.0, -0.02, 0.0)
-	floor_mi.material_override = Court.material(floor_color.darkened(0.35))
+	floor_mi.material_override = Court.material(surround_color)
 	parent.add_child(floor_mi)
 
 	var bed := MeshInstance3D.new()

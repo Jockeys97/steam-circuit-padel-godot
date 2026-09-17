@@ -50,6 +50,9 @@ const Court := preload("res://game/court.gd")
 const CourtBuilder := preload("res://game/arenas/court_builder.gd")
 const ArenaStyle := preload("res://game/arenas/arena_style.gd")
 const Bleachers := preload("res://game/arenas/bleachers.gd")
+const Trees := preload("res://game/arenas/trees.gd")
+const ArenaProps := preload("res://game/arenas/arena_props.gd")
+const Crowd := preload("res://game/arenas/crowd.gd")
 
 ## The backdrop wall's world z. Behind `COURT`'s rear line (-6.35 m at this
 ## scale) and in front of the point where the ground plane leaves the frame, so
@@ -135,6 +138,20 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 	#    last so the stands are the arena's own geometry, not a scenery prop: they
 	#    are placed from the court's width, not from this band.
 	Bleachers.build(root)
+
+	# 6. The furniture that shares the stands' corridor and the rear band: the
+	#    players' shelters beside the stands, the sponsor boards behind the rear
+	#    glass. After the stands because the shelters place themselves from
+	#    `Bleachers.span_z()`.
+	ArenaProps.build(root)
+
+	# 7. The people on the stands, placed from `Bleachers.span_z()` and the stands'
+	#    own raked box, so they sit on the seating rather than beside it.
+	Crowd.build(root)
+
+	# The trees' shared scene is cached across the prop loop (one read, N draws);
+	# drop it now so no Resource outlives this arena in a `static var`.
+	Trees.release()
 	return root
 
 
@@ -277,10 +294,16 @@ static func _build_prop(parent: Node3D, prop: Dictionary, ctx: Dictionary) -> vo
 			_part(parent, name_of(kind, 2), CourtBuilder.ball_mesh(r * 0.72), Vector3(x - r * 0.9, y + r * 0.18, 0.0), Color(0.96, 0.98, 1.0), 0.88)
 			_part(parent, name_of(kind, 3), CourtBuilder.ball_mesh(r * 0.6), Vector3(x + r, y - r * 0.1, 0.0), Color(0.96, 0.98, 1.0), 0.88)
 		"tree":
-			# js/render.js:719-722.
-			_part(parent, "Trunk", CourtBuilder.cyl_mesh(0.055, h * 0.5), Vector3(x, h * 0.25, 0.0), Color(0.35, 0.26, 0.18))
-			_part(parent, "Crown", CourtBuilder.ball_mesh(h * 0.3), Vector3(x, h * 0.72, 0.0), Color(0.42, 0.68, 0.33))
-			_part(parent, "Crown2", CourtBuilder.ball_mesh(h * 0.22), Vector3(x + h * 0.18, h * 0.62, 0.0), Color(0.52, 0.74, 0.31))
+			# js/render.js:719-722 drew the tree as a cylinder trunk plus two balls;
+			# the owner replaced it with a generated model. `trees.gd` carries the
+			# measurements and the reason (his downloads were 4.5M and 10M triangles
+			# and would not simplify; this one is 9,164 by generation). The flat
+			# fallback stays: an unreadable GLB must leave the arena dressed, not
+			# empty, and the slice asserts one node per prop.
+			if not Trees.place_one(parent, h):
+				_part(parent, "Trunk", CourtBuilder.cyl_mesh(0.055, h * 0.5), Vector3(x, h * 0.25, 0.0), Color(0.35, 0.26, 0.18))
+				_part(parent, "Crown", CourtBuilder.ball_mesh(h * 0.3), Vector3(x, h * 0.72, 0.0), Color(0.42, 0.68, 0.33))
+				_part(parent, "Crown2", CourtBuilder.ball_mesh(h * 0.22), Vector3(x + h * 0.18, h * 0.62, 0.0), Color(0.52, 0.74, 0.31))
 		"gearring":
 			_gear(parent, kind, Vector3(x, y, 0.0), r, tint)
 		"gear":

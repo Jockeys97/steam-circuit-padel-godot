@@ -2,19 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://yj7124ylpgnu"
-path="res://.godot/imported/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_0.jpg-4f84841889a3ba3547735b3ba5250aa7.ctex"
+uid="uid://bou3xyxw5nuxl"
+path="res://.godot/imported/slice-cue-pitch55.png-7d65973bd5616d2abe4752260698bda3.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "6433d2872739f96de6b7bb6178d04b74"
 }
 
 [deps]
 
-source_file="res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_0.jpg"
-dest_files=["res://.godot/imported/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_0.jpg-4f84841889a3ba3547735b3ba5250aa7.ctex"]
+source_file="res://game/tools/out/slice-cue-pitch55.png"
+dest_files=["res://.godot/imported/slice-cue-pitch55.png-7d65973bd5616d2abe4752260698bda3.ctex"]
 
 [params]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

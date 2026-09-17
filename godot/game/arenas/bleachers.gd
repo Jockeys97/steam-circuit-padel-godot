@@ -44,6 +44,16 @@ const GLB_PATH := "res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000
 const TRIANGLES := 459928
 const VERTICES := 271287
 
+## The unit's own width along its local X, in metres, as authored (the box the
+## loaded mesh reports; `span_z()` multiplies it by the scale and the copy count so
+## the neighbours can place themselves without a second GLB read).
+const UNIT_WIDTH_M := 1.903
+## The unit's own height and depth along its local Y and Z, same source and same
+## reason: whatever sits ON the stands (`arena_props.gd` beside them, `crowd.gd` on
+## their seating) needs the raked box without loading the GLB a second time.
+const UNIT_HEIGHT_M := 0.957
+const UNIT_DEPTH_M := 0.961
+
 ## Uniform scale of one copy. The unit is 1.9 m wide as authored — a bench, not a
 ## tribune — and the camera reads the stands from ~30 m away at ~36 px/m, where a
 ## 2048-4096 px texture is already two decades past what the frame can resolve:
@@ -68,10 +78,23 @@ static var sides := 2
 ## corridor has to exist to walk the outside of the cage; 1.2 m also puts the
 ## stand's foot just past the metre of floor the side glass hides.
 const CORRIDOR_M := 1.2
-## The stands are ~30 m from the default camera and their shadow would fall on the
-## dark ground beyond the cage, where it cannot be seen — so they do not pay for a
-## second draw (shadow pass) per copy. Measured in the evidence; flip to true to
-## see the cost.
+## Shadow casting: OFF by measurement, after the owner said the frame rate felt
+## worse and was right.
+##
+## A contact shadow is what makes a prop look grounded, so this was switched ON once
+## on the strength of a 1.4 fps reading. That reading was noise: it came from
+## separate processes on a loaded machine, where repeating the SAME configuration
+## swung between 35 and 64 fps. Re-measured by alternating the shadow pass inside one
+## process — both arms then meet the same background load, so the difference survives
+## a busy machine even when the absolute number does not — it costs 15.6 fps of 94.6,
+## just under 20%, consistent across three runs (-16.7, -13.2, -15.0).
+##
+## Twenty percent of the frame rate is not what a contact shadow is worth. The
+## grounding problem is real and wants a cheaper answer (a blob decal under each
+## footprint costs one quad, not a shadow pass over 919,856 triangles).
+##
+## Re-price it with `--ab=shadow` on `game/tools/bleachers_probe.gd`, which is the
+## only form of this measurement that can be trusted on a machine doing other work.
 static var cast_shadow := false
 ## The material every copy draws with. `"imported"` is the model's own glTF PBR
 ## material (base colour + metallic-roughness + normal, the textures the owner
@@ -155,6 +178,14 @@ static func build(parent: Node3D) -> Node3D:
 		box.position.x, box.position.y, box.position.z, box.size.x, box.size.y, box.size.z,
 	])
 	return group
+
+
+## How far the stands reach along the side line, in metres. Whatever stands NEXT to
+## them (`arena_props.gd` puts the shelters there) needs this to know where their
+## span ends, and reading it from the loaded box every time would mean a second GLB
+## read for a number the scale and the unit width already decide.
+static func span_z() -> float:
+	return float(copies_per_side) * UNIT_WIDTH_M * scale
 
 
 ## The unit's own box, in the scene root's local space, measured off the loaded

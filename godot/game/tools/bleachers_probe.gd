@@ -25,6 +25,9 @@
 extends SceneTree
 
 const Bleachers := preload("res://game/arenas/bleachers.gd")
+const ArenaProps := preload("res://game/arenas/arena_props.gd")
+const Crowd := preload("res://game/arenas/crowd.gd")
+const MatchController := preload("res://game/match_controller.gd")
 const Sim := preload("res://src/sim/sim.gd")
 
 var _use_bleachers := true
@@ -53,6 +56,9 @@ var _window_log := []
 var _windows_left := 0
 var _window_i := 0
 var _in_window := 0
+## Which quantity the interleaved windows A/B. "" (default) hides and shows the
+## stands; "shadow" keeps them in frame and flips their shadow casting instead.
+var _ab := ""
 var _group: Node3D = null
 ## Per-arm throughput: frames delivered and microseconds spent, over windows of a
 ## FIXED wall-clock length. The frame-to-frame interval is capped by the present
@@ -96,6 +102,16 @@ func _initialize() -> void:
 			_window = int(a.substr("--window=".length()))
 		elif a.begins_with("--seconds="):
 			_seconds = float(a.substr("--seconds=".length()))
+		elif a.begins_with("--props="):
+			ArenaProps.enabled = a.substr("--props=".length()) != "0"
+		elif a.begins_with("--crowd="):
+			Crowd.enabled = a.substr("--crowd=".length()) != "0"
+		elif a.begins_with("--prop-shadow="):
+			ArenaProps.cast_shadow = a.substr("--prop-shadow=".length()) != "0"
+		elif a.begins_with("--trail="):
+			MatchController.show_trail = a.substr("--trail=".length()) != "0"
+		elif a.begins_with("--ab="):
+			_ab = a.substr("--ab=".length())
 	root.size = Vector2i(1280, 720)
 	Engine.max_fps = 0
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if _vsync else DisplayServer.VSYNC_DISABLED)
@@ -148,8 +164,24 @@ func _process(_delta: float) -> bool:
 				quit(0)
 				return true
 			if _group != null:
-				_group.visible = (_window_i % 2) == 0
+				if _ab == "shadow":
+					# A/B the SHADOW PASS instead of the geometry: the stands stay
+					# in frame and only their shadow casting flips. Alternating
+					# inside one process is what makes the answer survive a busy
+					# machine — both arms meet the same background load, so the
+					# DIFFERENCE stays honest even when the absolute fps does not.
+					_set_shadow_casting(_group, (_window_i % 2) == 0)
+				else:
+					_group.visible = (_window_i % 2) == 0
 	return false
+
+
+## Flips shadow casting on every mesh under a node, for the `--ab=shadow` arm.
+func _set_shadow_casting(node: Node, on: bool) -> void:
+	var mode := (GeometryInstance3D.SHADOW_CASTING_SETTING_ON if on
+		else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF)
+	for mi in node.find_children("*", "MeshInstance3D", true, false):
+		(mi as MeshInstance3D).cast_shadow = mode
 
 
 ## The scene is up after a couple of frames (the match's `_ready` builds the arena,
@@ -188,7 +220,12 @@ func _boot() -> void:
 	_window_usec = 0
 	_windows_left = _interleave
 	if _group != null:
-		_group.visible = _use_bleachers
+		if _ab == "shadow":
+			# The stands stay in frame for every window; the arm is their shadow.
+			_group.visible = true
+			_set_shadow_casting(_group, true)
+		else:
+			_group.visible = _use_bleachers
 	_measuring = true
 	_last_usec = Time.get_ticks_usec()
 

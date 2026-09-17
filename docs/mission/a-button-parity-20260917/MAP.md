@@ -18,3 +18,9 @@ Hardware polling and visual latency are not proven by a scripted replay. Exact p
 
 ## Out of scope
 Gameplay fixes, feel approval, arena/camera changes, export, git publication.
+
+## Latest evidence
+Input/queue divergence reproduced by CEO in integration/summary.json. Final shot and feel unproven. Certification blocked on comparator false-green paths; independent review active.
+
+## Final disposition
+Reference and Port replay artifacts delivered; queue divergence independently reproduced and reviewed. Full harness certification and final-contact/feel gates remain open. Comparator nested-field completeness residual is recorded in board-20260917.md. Launch budget exhausted; stop here without gameplay changes.
