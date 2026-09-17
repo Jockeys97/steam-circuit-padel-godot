@@ -39,6 +39,18 @@
 ## a key queue it does not have, and the substep size is the same `1/120` in both,
 ## which is the property that matters for determinism.
 ##
+## UIR-27, the recorded point played back (`js/main.js:138-140`, `:1243-1245`,
+## `:1308-1395`). The record is the simulation's (`src/sim/sim.gd`: one frame per
+## tick, bounded at `state.replayMax`); this file owns the playback. `r` in play
+## toggles `start_replay()`/`stop_replay()`, ESC stops a replay before it can pause
+## (`js/main.js:2606-2626`), and a replay frame runs `_replay_frame()` instead of the
+## accumulator: the cursor advances one stored frame per `1/60` s of rendered-frame
+## delta, clamped at the last frame, `replay_finished` fires once on the step that
+## reaches it, and the frame is applied to the live state, drawn through the same
+## `_sync_views()` a live frame uses, and restored (`js/main.js:1319-1360`) — the
+## simulation is byte-identical after a playback. DIVERGENCE, per UIR-27 line 61:
+## `stop_replay()` RESTORES the pause the entry recorded, where the reference's
+## `toggleReplay` clears it on both edges.
 ## Headless: the same scene and the same controller run without a display. The
 ## athletes are real rigs (`game/athletes_view.gd`); when their GLBs cannot be read
 ## the controller falls back to capsule bodies and says so in its own log line, and
@@ -46,8 +58,15 @@
 ## the public `tick_fixed()` — one code path, two clocks.
 extends Node3D
 
+## UIR-27: once, on the step that first reaches the last stored frame
+## (`js/main.js:1313-1319`).
+signal replay_finished
+
 const Sim := preload("res://src/sim/sim.gd")
 const Frozen := preload("res://src/sim/frozen.gd")
+## The reference's three human modes (`js/main.js:1156`, prefs validated at
+## `js/main.js:830`-era load): `solo` is one human on court, `coop` and `pvp` are two.
+const HUMAN_MODES := ["solo", "coop", "pvp"]
 const Court := preload("res://game/court.gd")
 const Arena := preload("res://game/arenas/arena_library.gd")
 const InputSource := preload("res://game/input_map.gd")
@@ -63,6 +82,13 @@ const AthleteSpawn := preload("res://src/character/athlete_spawn.gd")
 const AthleteRig := preload("res://src/character/athlete_rig.gd")
 const ModeSession := preload("res://game/mode_session.gd")
 const ModeHudScript := preload("res://game/mode_hud.gd")
+## UIR-22: the card's range rows are read through the shared component's own accessors
+## (`focus_node`), never through a node-path guess.
+const SettingsRows := preload("res://src/ui/components/SettingsRows.gd")
+## UIR-22: the pause card's controls run on the same verified navigation model as
+## every menu screen (`game/menu_focus.gd` over `src/input/**`), not on Godot's
+## built-in `ui_*` walk.
+const MenuFocus := preload("res://game/menu_focus.gd")
 
 ## `js/main.js:1164-1165`.
 const FIXED_STEP := 1.0 / 120.0
@@ -214,6 +240,24 @@ const TIMING_GRADIENT := [
 ## step change is what rebuilds the arc's mesh.
 const TIMING_ARC_STEP := PI / 24.0
 
+# ---------------------------------------------------------------------------
+# UIR-27: the playback constants (`js/main.js:138-140`)
+# ---------------------------------------------------------------------------
+
+## One stored frame per `1/60` s of rendered-frame delta (`stepReplay`,
+## `js/main.js:1312-1319`).
+const REPLAY_STEP := 1.0 / 60.0
+## The reference's own snapshot field sets (`js/game.js:1304-1306`), read back here as
+## the names a frame is applied onto the live entities with: four paddles, the ball,
+## and the three state keys the draw reads.
+const REPLAY_PAD_KEYS := ["player", "playerMate", "opponent", "opponentMate"]
+const REPLAY_PAD_FIELDS := ["x", "y", "swing", "swingSide", "motion", "charge",
+	"runPhase", "actionPose", "actionIntent", "moveRatio"]
+const REPLAY_BALL_FIELDS := ["x", "y", "z", "vx", "vy", "vz", "spin", "topspin",
+	"backspin", "shotType", "serveInFlight", "serveTouchedNet", "bouncePulse",
+	"landRing", "hitFlash", "hitPulse", "trail"]
+const REPLAY_STATE_KEYS := ["serveSide", "serveCourt", "activePlayerKey"]
+
 var state
 var ticks: int = 0
 var crossings: int = 0
@@ -265,11 +309,24 @@ var _pending_input: Dictionary = {}
 var _pending_input2: Dictionary = {}
 var _hud
 var _mode_hud
-## The prototype HUD (UIR-09), null in a legacy run. `--ui=new` shows it and hides the
-## two ported overlays; they are still built and refreshed, so both constructions stay
-## verifiable in one build until UIR-22 owns the removal.
+## The recreated HUD (UIR-08), null in a legacy run. `--ui=new` — the default since
+## UIR-22 — shows it and hides the two ported overlays; the ported ones are still
+## built and refreshed, so both constructions stay verifiable in one build and
+## `--ui=legacy` is a real fallback rather than a broken one.
 var _ui_hud: Control = null
 var _ui_new := false
+## UIR-22's overlay stack, mounted with the recreated HUD: the pause card and its
+## nested smash tutorial (UIR-20) and the coarse-pointer touch layer (UIR-26). Null
+## in a legacy run and in a harness run (`engine_driven` off — a headless harness
+## has no player and the slice counts live objects), which is exactly the set of
+## runs in which nothing can open them.
+var _pause_overlay: Control = null
+var _touch_layer: Control = null
+## The pause card's controls in the port's verified navigation model
+## (`game/menu_focus.gd`): built on every open and rebuilt on every tab change,
+## because the tab decides which rows exist. Null until the card has been opened.
+var _pause_focus = null
+var _pause_pad_seen := false
 var _audio
 var _cam: Camera3D
 ## The arena environment currently in the scene, built by
@@ -324,6 +381,22 @@ var _capture_ticks: int = 0
 var _paused: bool = false
 var _points_total_prev: int = 0
 
+# ---------------------------------------------------------------------------
+# UIR-27: the playback state (`js/main.js:138-140`)
+# ---------------------------------------------------------------------------
+
+## The `REPLAY_*` constants and the `replay_finished` signal live up with the file's
+## own (consts and signals sit before the state, this file's order).
+var _replay_active: bool = false
+var _replay_index: int = 0
+var _replay_accum: float = 0.0
+var _replay_done: bool = false
+## The pause the entry recorded, put back by `stop_replay()` — the ticket's one
+## divergence from the reference's letter (§3.4 of `evidence/uir-27-replay.log`).
+var _replay_was_paused: bool = false
+## UIR-27's chrome over the court, mounted in `_build_scene` behind the new UI.
+var _replay_overlay: Control = null
+
 
 # ---------------------------------------------------------------------------
 # Setup
@@ -332,7 +405,12 @@ var _points_total_prev: int = 0
 func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	var capture := _arg(args, "--capture=", "")
-	_ui_new = _arg(args, "--ui=", "legacy") == "new"
+	# UIR-22: the recreated HUD and the overlay stack are the playable path now, so
+	# the default flipped — `--ui=legacy` keeps the ported HUD reachable for the
+	# diagnostic side-by-side the captures and the slice's visual-contract section
+	# read. Both constructions are built in this scene either way (see
+	# `_build_hud_layer`), so a legacy run and a new run share one tick path.
+	_ui_new = _arg(args, "--ui=", "new") != "legacy"
 	var camera := _arg(args, "--camera=", Config.camera_preset)
 	var tier := _arg(args, "--tier=", "")
 	var athlete := _arg(args, "--athlete=", "")
@@ -482,6 +560,7 @@ func _adopt_session() -> void:
 	_scripted.reset()
 	if _audio != null:
 		_audio.reset()
+	_apply_stored_audio_prefs()
 	_points_total_prev = _points_total()
 	meta = {
 		"seed": Config.seed_value,
@@ -715,13 +794,22 @@ func _build_scene() -> void:
 	layer.add_child(_mode_hud)
 	if session != null:
 		_mode_hud.bind_session(session)
-	if _ui_new:
-		# UIR-09's prototype mount. Same layer, same state+meta (`_refresh_ui`), same
-		# names, and the pause button the ported HUD also carries — a drill's ESC still
-		# flips `_paused` in one place (`_unhandled_input`), which both overlays read.
-		# Loaded, not preloaded: the prototype overlay is opt-in, so a legacy run
-		# (the slice gate included) does not pull its scene and theme into the
-		# engine's object count.
+	if _ui_new and engine_driven:
+		# UIR-09's prototype mount, now the playable one. Same layer, same state+meta
+		# (`_refresh_ui`), same names, and the pause button the ported HUD also
+		# carries — a drill's ESC still flips `_paused` in one place, which both
+		# overlays read. Loaded, not preloaded: a legacy or harness run does not pull
+		# these scenes and their theme into the engine's object count.
+		# UIR-27's replay chrome: the reference draws it on the game canvas UNDER the
+		# HTML HUD (`.game-hud` z-index 5, `styles.css:536-544`), so it is a sibling of
+		# the HUDs with a negative z_index rather than a child of either. It paints
+		# only what the controller's seam answers (`replay_active`/`replay_progress`)
+		# and carries no focus row of its own.
+		_replay_overlay = (load("res://src/ui/screens/ReplayOverlay.tscn") as PackedScene).instantiate()
+		_replay_overlay.name = "ReplayOverlay"
+		layer.add_child(_replay_overlay)
+		_replay_overlay.z_index = -1
+		_replay_overlay.bind_seam(self)
 		_ui_hud = (load("res://src/ui/Hud.tscn") as PackedScene).instantiate()
 		_ui_hud.name = "UiHud"
 		layer.add_child(_ui_hud)
@@ -732,6 +820,32 @@ func _build_scene() -> void:
 			ai_color
 		)
 		_ui_hud.pause_requested.connect(_on_ui_pause)
+		# UIR-20's pause card, above the HUD: its own recipe's steps 1-6 (instantiate
+		# over the match, one store, one seam, the echo, the stick feed, the pad flag).
+		# EXACTLY ONE pause route is live — the seam bound here — and the overlay's
+		# signals are used only for what the seam does not cover (the focus rebuild
+		# on a tab change, the tutorial's own opens), never to toggle the flag a
+		# second time.
+		_pause_overlay = (load("res://src/ui/screens/PauseOverlay.tscn") as PackedScene).instantiate()
+		_pause_overlay.name = "PauseOverlay"
+		layer.add_child(_pause_overlay)
+		_pause_overlay.bind_seam(self)
+		_pause_overlay.set_store(Config.save_store())
+		_pause_overlay.set_pad_connected(not Input.get_connected_joypads().is_empty())
+		_pause_overlay.set_osk_open(false)
+		_pause_overlay.set_match_paused(false)
+		_pause_overlay.tab_changed.connect(_on_pause_tab_changed)
+		# UIR-27's entry from the card (`js/main.js:2238-2241`): the reference hides the
+		# card and toggles the replay. The card hides through the pause echo the entry
+		# performs, and the toggle is the same seam the `r` key calls.
+		_pause_overlay.replay_requested.connect(_on_replay_requested)
+		# UIR-26's touch layer: the reference's coarse-pointer deck/pad (its own
+		# visibility rules decide whether anything shows at this frame width).
+		_touch_layer = (load("res://src/ui/screens/TouchControls.tscn") as PackedScene).instantiate()
+		_touch_layer.name = "TouchControls"
+		layer.add_child(_touch_layer)
+		_touch_layer.set_frame_width(float(ProjectSettings.get_setting("display/window/size/viewport_width", 1280)))
+		_touch_layer.apply_visibility()
 		_hud.visible = false
 		_mode_hud.visible = false
 
@@ -739,12 +853,135 @@ func _build_scene() -> void:
 ## The prototype overlay's pause button asks the same question the key does: it emits,
 ## this file owns `_paused` (the HUD never sets it), and both overlays are told.
 func _on_ui_pause() -> void:
-	_paused = not _paused
+	set_match_paused(not _paused)
+
+
+## UIR-27: the card's replay entry (`replay_requested`). The reference's card entry
+## hides the card and then toggles the playback (`js/main.js:2238-2241`):
+## `start_replay()` is that path here — it records the card's pause, so stopping
+## reopens the card. A press while a playback is up stops it instead.
+func _on_replay_requested() -> void:
+	if _replay_active:
+		stop_replay()
+		return
+	start_replay()
+
+
+## THE PAUSE SEAM (UIR-20's one-line request, UIR-22's implementation). An EXPLICIT
+## state, not a toggle: the overlay calls it with `false` on CONTINUE and ESC step 4
+## and with `true` on ESC step 5 and on RIPRENDI E PROVA. `_reset_transient_input()`
+## runs on BOTH edges, because the reference calls `resetTransientInput()` in
+## `pauseGame` AND `resumeGame` (`js/main.js:1532,1543`) — a one-shot sampled while
+## paused must not land on the first sub-step after the resume (review-2 F-4).
+## The echo back into the overlay is the last line: the card shows exactly while the
+## match is paused, and a second identical echo is a no-op inside the overlay.
+func set_match_paused(paused: bool) -> bool:
+	_paused = paused
 	_reset_transient_input()
 	if _hud != null:
 		_hud.set_paused(_paused)
 	if _ui_hud != null:
 		_ui_hud.set_paused(_paused)
+	if _pause_overlay != null:
+		_pause_overlay.set_match_paused(_paused)
+		_tell_pause_card()
+		if _paused:
+			_rebuild_pause_focus()
+		else:
+			_pause_pad_seen = false
+	return _paused
+
+
+## The card's rows depend on its active tab, so the model is rebuilt when the tab
+## changes, not only when the card opens.
+func _on_pause_tab_changed(_tab_id: String) -> void:
+	if _paused:
+		_rebuild_pause_focus()
+
+
+## The pause card's controls, in the port's verified navigation model
+## (`game/menu_focus.gd`). The overlay hands its rows over (`focus_controls()`); the
+## model decides the geometric moves, and the activation stays the focused Button's
+## own press — the same split every menu screen uses, so the pad and the arrow keys
+## behave the same here as everywhere else.
+func _rebuild_pause_focus() -> void:
+	if _pause_overlay == null:
+		return
+	if _pause_focus == null:
+		_pause_focus = MenuFocus.new()
+	else:
+		_pause_focus.clear()
+	for row in _pause_overlay.focus_controls():
+		if typeof(row) != TYPE_DICTIONARY:
+			continue
+		var entry: Dictionary = row
+		var node: Control = entry.get("node", null)
+		if node == null:
+			continue
+		_pause_focus.add(String(entry.get("id", "")), node, String(entry.get("action", "")), entry.get("opts", {}))
+	_pause_focus.refresh()
+	_pause_focus.ensure_focus()
+
+
+## The pause card's own key navigation, while it is open: the model's four
+## directions, consumed before the engine's built-in `ui_*` walk can move the same
+## focus twice. Buttons are deliberately left to the engine — the focused Button
+## answers `ui_accept` itself, and swallowing it here would make the card dead.
+func _pause_nav(event: InputEvent) -> bool:
+	if _pause_focus == null:
+		return false
+	if event is InputEventKey:
+		var verdict: Dictionary = _pause_focus.handle_key(event as InputEventKey)
+		if bool(verdict.get("handled", false)):
+			_pause_focus.apply_focus()
+			_apply_pause_range()
+			return true
+	return false
+
+
+## The card's ranges, on the same hand-off the menu's bridge does with
+## `range_changed`: the model steps the value in place (`focus_nav._adjust_range`) and
+## never touches a node, so the mount hands the new value back to the card, whose own
+## handler persists it (`PauseOverlay.set_row_value`). The step is clamped to the
+## ROW's own bounds first: in this path the model is driven directly (no bridge to
+## merge the carried `min`/`max`/`step`, see `UiFocusBridge.CARRIED_KEYS`), so the
+## model's step can name a value outside the row's range — the row is the authority.
+func _apply_pause_range() -> void:
+	if _pause_focus == null or _pause_overlay == null:
+		return
+	var nav = _pause_focus.menu.nav
+	var target: Dictionary = nav.focus()
+	if String(target.get("kind", "")) != "range":
+		return
+	var id := String(target.get("id", ""))
+	if id == "":
+		return
+	var row_name := id.get_slice("/", 1)
+	var value := float(target.get("value", 0.0))
+	var row: Control = _pause_overlay.rows().get(row_name, null)
+	if row is SettingsRows.RangeRow:
+		var slider := SettingsRows.focus_node(row) as Range
+		if slider != null:
+			value = clampf(value, slider.min_value, slider.max_value)
+	_pause_overlay.set_row_value(row_name, value)
+	# The stored value is also the live value: the audio module and the pad reader take
+	# it here, so a change made on the pause card is in force for the rest of the match
+	# (review F6). The overlay owns the persist; this is the application.
+	if row_name == "VolumeRow" and _audio != null and _audio.port != null:
+		_audio.port.set_master_gain(value)
+	elif row_name == "DeadzoneRow":
+		InputSource.set_deadzone(value)
+
+
+## The stored mixer/input prefs, applied at match boot the way the reference applies
+## them at load (`js/main.js:2276-2278`): `volume` to the audio module's own master
+## gain (the bus derivation stays in the module) and `gamepadDeadzone` to the pad
+## reader, clamped to the reference's band inside `set_deadzone`.
+func _apply_stored_audio_prefs() -> void:
+	var prefs: Dictionary = Config.stored_prefs()
+	if _audio != null and _audio.port != null:
+		_audio.port.set_master_gain(float(prefs.get("volume", 0.5)))
+	InputSource.set_deadzone(float(prefs.get("gamepadDeadzone", 0.15)))
 
 
 ## The one call site that feeds the prototype HUD: it is refreshed wherever the ported
@@ -841,7 +1078,13 @@ func athlete_cost() -> Dictionary:
 ## (`js/main.js:1144-1148`, mirrored from `scripts/parity-digest.mjs:242-243`):
 ## the seed is injected and the match is switched on.
 func start_match() -> void:
-	state = Sim.create_match_state("quick", Config.athlete(), Config.arena(), Config.tier(), 0, {})
+	# The human mode: the arena screen's stored choice on a quick match, `"solo"`
+	# everywhere else (`js/main.js:1156`), validated against the reference's three
+	# values the way `Config.control_mode()` validates the control mode.
+	var human_mode := "solo"
+	if Config.pending_mode == "quick" and HUMAN_MODES.has(Config.pending_player_mode):
+		human_mode = Config.pending_player_mode
+	state = Sim.create_match_state("quick", Config.athlete(), Config.arena(), Config.tier(), 0, {"humanMode": human_mode})
 	state.rng_state = Config.seed_value
 	state.running = true
 	# The saved switching mode (`js/main.js:1184`,
@@ -869,6 +1112,7 @@ func start_match() -> void:
 	_scripted.reset()
 	if _audio != null:
 		_audio.reset()
+	_apply_stored_audio_prefs()
 	_points_total_prev = _points_total()
 	meta = {
 		"seed": Config.seed_value,
@@ -946,6 +1190,11 @@ func advance_frame(delta: float) -> Dictionary:
 func apply_frame(sample: Dictionary, delta: float) -> Dictionary:
 	if state == null:
 		return {"steps": 0, "accumulator": sim_accumulator, "ticks": ticks}
+	if _replay_active:
+		# A playback frame never touches the accumulator (`js/main.js:1243-1245`): the
+		# match stays frozen under the replay whatever the pause flag says, and the
+		# cursor is the only thing that moves.
+		return _replay_frame(delta)
 	if _paused:
 		# A paused frame arms nothing and keeps nothing armed: the reference clears
 		# its queued one-shots on both edges of a pause (`js/main.js:1532,1543` ->
@@ -992,6 +1241,21 @@ func _process(delta: float) -> void:
 	# macOS keeps already-connected controllers in the list, so the pad in the
 	# player's hands is the one somebody touches (`js/main.js:780-784`).
 	_refresh_pads()
+	# The pause card's navigation, while it is open: the model is polled once per
+	# frame (the reference polls its pad in the render loop), and the match itself
+	# ticked nothing this frame — a paused frame arms nothing (`apply_frame`).
+	if _pause_overlay != null and _pause_overlay.is_open():
+		if _pause_focus != null:
+			var pause_move: Dictionary = _pause_focus.poll_pad()
+			if bool(pause_move.get("focus_moved", false)):
+				_pause_focus.apply_focus()
+			_apply_pause_range()
+		# The pad's connectedness is re-read here as well: the reference greys the
+		# controller copy the moment the last pad goes away.
+		var pad_now := not Input.get_connected_joypads().is_empty()
+		if pad_now != _pause_pad_seen:
+			_pause_pad_seen = pad_now
+			_pause_overlay.set_pad_connected(pad_now)
 	# Sample once per rendered frame. `use_scripted_input` is the harness path;
 	# the default path reads the keyboard and the pad through the InputMap.
 	if use_scripted_input:
@@ -1144,6 +1408,13 @@ func _observe(prev_y: float) -> void:
 			_hud.refresh(state, meta)
 			_hud.show_result(state)
 		_refresh_ui(state, meta)
+		# UIR-22: the end of a match is the result screen. The payload is built from
+		# the live state and the session's own facts (UIR-21's builder) and left in
+		# `Config.pending_result`; the router host consumes it. A harness run (no
+		# engine clock, no display) is left exactly as it was: it reads `summary()`
+		# and never navigates.
+		if engine_driven and load_models:
+			finish_route()
 	# The engine-driven build refreshes the HUD once per rendered frame in
 	# `_process`. A harness that owns the tick loop has no rendered frames, so the
 	# tick path also refreshes it — at 4 Hz during play, and always on the last
@@ -1170,7 +1441,17 @@ func _page_finished() -> bool:
 func _sync_views() -> void:
 	if state == null:
 		return
+	# UIR-22: the views only exist when the models were loaded — `harness_mode()` and
+	# the headless lanes run without them (`load_models == false`), and every line below
+	# writes through `_ball_view`/`_land_ring`. Without this guard the harness path,
+	# which still calls `start_match()` and `rematch()`, raised "Invalid assignment of
+	# property or key 'position' ... on a base object of type 'Nil'" on every start.
+	if _ball_view == null:
+		return
 	var ball = state.ball
+	# Every position comes from the live state (this section's own header) — and during
+	# a playback the live state IS the frame at the cursor (`_replay_apply`), which is
+	# what draws the recorded ball (`js/main.js:1347-1356`).
 	_ball_view.position = Court.world_pos(ball.x, ball.y, ball.z)
 	var pulse: float = 1.0 + clampf(float(ball.bouncePulse), 0.0, 1.0) * 0.9
 	_ball_view.scale = Vector3(pulse, pulse, pulse)
@@ -1881,26 +2162,38 @@ func _save_frame(path: String) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if state == null:
 		return
+	# The pause card's stick monitor, while it is open: the overlay's own handler
+	# takes the four stick axes and the mount consumes them, so the same motion
+	# cannot also drive the match (`overlay.handle_joypad_motion`, UIR-20 recipe).
+	if _pause_overlay != null and _pause_overlay.is_open() and event is InputEventJoypadMotion:
+		if _pause_overlay.handle_joypad_motion(event as InputEventJoypadMotion):
+			get_viewport().set_input_as_handled()
+			return
 	if event.is_action_pressed("padel_pause"):
+		# UIR-27's step 0 (`js/main.js:2606-2609`): while a replay is up, ESC stops the
+		# replay instead of pausing. The rung is FIRST and outside the `_pause_overlay`
+		# arm below, so the harness construction (no overlay) walks the same hierarchy
+		# the playable one does.
+		if _replay_active:
+			stop_replay()
 		# A live drill ends here, exactly as the browser's drill screen leaves
 		# through a key: `end_drill` closes the session with the reference's own
 		# grading and persists the record (improvement only).
-		if session != null and session.mode == "drill" and not finished:
+		elif session != null and session.mode == "drill" and not finished:
 			end_drill()
 		# Finished: escape leaves the match. In play: escape pauses.
 		elif finished:
 			_leave_match()
+		elif _pause_overlay != null:
+			# UIR-22: the playable path's ESC is the overlay's own five-step
+			# hierarchy (`js/main.js:2607-2614`) — step 4 resumes, step 5 pauses,
+			# steps 0-3 close what is open — and every rung that flips the flag does
+			# it through the seam above, so `_reset_transient_input` runs once.
+			_pause_overlay.back()
 		else:
-			_paused = not _paused
-			# `pauseGame` AND `resumeGame` both call `resetTransientInput()`
-			# (`js/main.js:1532,1543`) — a one-shot sampled while the game is
-			# paused must not land on the first sub-step after the resume
-			# (review-2 F-4). Both edges, as the reference does.
-			_reset_transient_input()
-			if _hud != null:
-				_hud.set_paused(_paused)
-			if _ui_hud != null:
-				_ui_hud.set_paused(_paused)
+			# The ported path, unchanged: ESC toggles the flag in one place and both
+			# ported overlays read it.
+			set_match_paused(not _paused)
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("menu_quit"):
@@ -1908,9 +2201,23 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if event is InputEventKey and (event as InputEventKey).physical_keycode == KEY_R and (event as InputEventKey).pressed:
-		# `r` is the browser's replay key (`js/main.js:2532`); there is no replay in
-		# this slice, so it restarts the match instead.
-		rematch()
+		# `r` is the browser's replay key (`js/main.js:2532`, `:2616-2626`): in play it
+		# toggles the replay, and `toggle_replay()` refuses it while the card is up or
+		# the match is over. It no longer restarts the match — that interim behaviour is
+		# retired; `rematch()` keeps its own callers (the card's rematch row, the result
+		# route).
+		get_viewport().set_input_as_handled()
+		toggle_replay()
+
+
+## The pause card's key navigation, on the frame path: consumed here (before the
+## engine's `ui_*` walk) while the card is open, and nowhere else. A key the model
+## does not handle falls through to the engine, so the focused Button still answers
+## confirm and the OS keeps its own bindings.
+func _input(event: InputEvent) -> void:
+	if _pause_overlay == null or not _pause_overlay.is_open():
+		return
+	if _pause_nav(event):
 		get_viewport().set_input_as_handled()
 
 
@@ -1947,15 +2254,205 @@ func is_paused() -> bool:
 	return _paused
 
 
-## A reset is not a pause. `rematch()` — the `r` key (`_unhandled_input`) — rebuilds
-## the match through `start_match()`/`_adopt_session()`, and neither of those used
+# ---------------------------------------------------------------------------
+# UIR-27: the replay seam — the recorded point, played back over a frozen match.
+# The contract is `evidence/uir-27-replay.log` §Seam; `tests/ui/replay_audit.gd`
+# is its consumer.
+# ---------------------------------------------------------------------------
+
+## Whether a playback is running. The overlay's whole visibility reads it, together
+## with `replay_progress()`, through `bind_seam(self)`.
+func replay_active() -> bool:
+	return _replay_active
+
+
+## The cursor, 0-based into `state.replayFrames`.
+func replay_index() -> int:
+	return _replay_index
+
+
+## How many frames the record holds right now (0 before the first capture).
+func replay_frame_count() -> int:
+	return state.replayFrames.size() if state != null else 0
+
+
+## `(replayIndex + 1) / replayFrames.length` (`js/main.js:1365`), clamped to `[0, 1]`;
+## `0.0` with nothing recorded.
+func replay_progress() -> float:
+	var total := replay_frame_count()
+	if total <= 0:
+		return 0.0
+	return clampf((float(_replay_index) + 1.0) / float(total), 0.0, 1.0)
+
+
+## The pause the entry recorded — what `stop_replay()` puts back.
+func replay_was_paused() -> bool:
+	return _replay_was_paused
+
+
+## Enter the playback. Refused — `false`, nothing touched — unless the match is
+## running and the record holds at least two frames (`js/main.js:1390`). Entering
+## clears the pause like the reference (`js/main.js:1394-1395`) and REMEMBERS it:
+## UIR-27 line 61 keeps the pause for the way out.
+func start_replay() -> bool:
+	if state == null or finished or _replay_active:
+		return false
+	if replay_frame_count() < 2:
+		return false
+	_replay_was_paused = _paused
+	if _paused:
+		set_match_paused(false)
+	_replay_active = true
+	_replay_index = 0
+	_replay_accum = 0.0
+	_replay_done = false
+	_tell_pause_card()
+	return true
+
+
+## Idempotent. Restores the pause the entry recorded, so a replay entered from live
+## play returns to live play and one entered from the card reopens it (UIR-20's
+## `open()` lands on the MATCH tab), then tells the card.
+func stop_replay() -> void:
+	if not _replay_active:
+		return
+	_replay_active = false
+	_replay_accum = 0.0
+	set_match_paused(_replay_was_paused)
+	_tell_pause_card()
+
+
+## The `r` key (`js/main.js:2616-2626`): stop a running replay; refuse while the card
+## is open or the match is over; otherwise enter. Returns whether a replay is up
+## after the call.
+func toggle_replay() -> bool:
+	if _replay_active:
+		stop_replay()
+		return false
+	if _paused or finished:
+		return false
+	return start_replay()
+
+
+## The card's two readings, told apart (UIR-20's flag split, §3.4 of
+## `evidence/uir-27-replay.log`): the PLAYBACK reading feeds `set_replay_active`, so
+## ESC's step 0 (`back()`) can never be stale, and the AVAILABILITY reading feeds
+## `set_replay_available`, so the card's entry is reachable exactly while a playback
+## can start (`start_replay()`'s own gates — `js/main.js:1389-1390`). Called on every
+## pause edge and on every entry/exit.
+func _tell_pause_card() -> void:
+	if _pause_overlay != null:
+		_pause_overlay.set_replay_active(_replay_active)
+		_pause_overlay.set_replay_available(_replay_can_start())
+
+
+## The card entry's availability: the gates `start_replay()` itself enforces — a live
+## match with at least two recorded frames.
+func _replay_can_start() -> bool:
+	return state != null and not finished and replay_frame_count() >= 2
+
+
+## One rendered frame of the playback (`js/main.js:1243-1245`, `:1282`, `:1308-1319`):
+## the cursor advances one stored frame per `REPLAY_STEP` of the frame's own delta,
+## clamped at the last frame, and `replay_finished` fires once, on the step that first
+## reaches it. The frame at the cursor is then applied to the live state, drawn, and
+## restored — the simulation never advances, and the HUDs are not refreshed (the
+## reference's `syncHud` lives in `drawScene`, which a replay frame never reaches).
+func _replay_frame(delta: float) -> Dictionary:
+	var total := replay_frame_count()
+	if total <= 0:
+		stop_replay()
+		return {"steps": 0, "accumulator": sim_accumulator, "ticks": ticks}
+	_replay_accum += minf(delta, MAX_FRAME_DELTA)
+	while _replay_accum >= REPLAY_STEP:
+		_replay_accum -= REPLAY_STEP
+		if _replay_index < total - 1:
+			_replay_index += 1
+		if _replay_index >= total - 1 and not _replay_done:
+			_replay_done = true
+			replay_finished.emit()
+	_replay_index = mini(_replay_index, total - 1)
+	var saved := _replay_apply(state.replayFrames[_replay_index])
+	_sync_views()
+	_replay_restore(saved)
+	return {"steps": 0, "accumulator": sim_accumulator, "ticks": ticks}
+
+
+## `applyReplayFrame` (`js/main.js:1319-1330`): the frame's own field sets are written
+## onto the live entities so the draw reads ONE state, and every value that was
+## overwritten comes back in the returned dict for `_replay_restore`. Exactly the
+## reference's set is written — nothing else in the state is touched, which is why the
+## parity digest is byte-identical after a playback.
+func _replay_apply(frame: Dictionary) -> Dictionary:
+	var saved_pads: Array = []
+	var pads: Array = frame.get("pads", [])
+	for i in REPLAY_PAD_KEYS.size():
+		var pad = state.paddle(String(REPLAY_PAD_KEYS[i]))
+		var entry: Dictionary = pads[i] if i < pads.size() else {}
+		var keep := {}
+		for field in REPLAY_PAD_FIELDS:
+			if not entry.has(field):
+				continue
+			keep[field] = pad.get(field)
+			pad.set(field, entry[field])
+		saved_pads.append([pad, keep])
+	var ball = state.ball
+	var recorded: Dictionary = frame.get("ball", {})
+	var keep_ball := {}
+	for field in REPLAY_BALL_FIELDS:
+		if not recorded.has(field):
+			continue
+		keep_ball[field] = ball.get(field)
+		ball.set(field, recorded[field])
+	var keep_keys := {}
+	for key in REPLAY_STATE_KEYS:
+		if not frame.has(key):
+			continue
+		keep_keys[key] = state.get(key)
+		state.set(key, frame[key])
+	return {"pads": saved_pads, "ball": [ball, keep_ball], "keys": keep_keys}
+
+
+## `restoreReplayFrame` (`js/main.js:1347-1360`): every saved value back, so the live
+## match is exactly what it was before the playback started.
+func _replay_restore(saved: Dictionary) -> void:
+	var saved_pads: Array = saved.get("pads", [])
+	for entry in saved_pads:
+		var pad = entry[0]
+		var keep: Dictionary = entry[1]
+		for field in keep:
+			pad.set(field, keep[field])
+	var ball_entry: Array = saved.get("ball", [])
+	if ball_entry.size() == 2:
+		var ball = ball_entry[0]
+		var keep_ball: Dictionary = ball_entry[1]
+		for field in keep_ball:
+			ball.set(field, keep_ball[field])
+	var keep_keys: Dictionary = saved.get("keys", {})
+	for key in keep_keys:
+		state.set(key, keep_keys[key])
+
+
+## A reset is not a pause. `rematch()` — the card's rematch row and the result route
+## (no longer the `r` key, which toggles the replay since UIR-27) — rebuilds the match
+## through `start_match()`/`_adopt_session()`, and neither of those used
 ## to touch `_paused`: ESC then R left `_paused == true` with the HUD hint switched
 ## back to the unpaused text, so the match was frozen for good while the screen said
-## it was running (review-2 F-3). Every reset path comes through here.
+## it was running (review-2 F-3). Every reset path comes through here. UIR-22: the
+## pause card is told as well, because it is the third reader of the same flag.
 func _clear_pause() -> void:
 	_paused = false
+	# `js/main.js:1201-1204`: a new match clears the playback with the pause — a reset
+	# is not a replay either.
+	_replay_active = false
+	_replay_index = 0
+	_replay_accum = 0.0
+	_replay_done = false
 	if _hud != null:
 		_hud.set_paused(false)
+	if _pause_overlay != null:
+		_pause_overlay.set_match_paused(false)
+	_pause_pad_seen = false
 
 
 ## `resetTransientInput` (`js/main.js:333-339`): drop every queued one-shot without
@@ -1982,6 +2479,71 @@ func _leave_match() -> void:
 		to_mode_screen()
 	else:
 		to_menu()
+
+
+## The route out, under the name UIR-20's overlay looks for (`seam.leave_match()`;
+## the overlay's quit flow calls the seam when the method exists and otherwise
+## defers to the host — this is that method). The private `_leave_match()` keeps its
+## two destinations: a mode match returns to its mode screen, a quick match to the
+## menu.
+func leave_match() -> void:
+	_leave_match()
+
+
+## The payload `ResultScreen.enter()` takes, built from the live state and the mode
+## session's own facts through UIR-21's builder (`payload_from_state`): the score,
+## the four stat rows and the foot figures come from `state`'s own fields — nothing
+## is recomputed here and nothing is invented — and the mode facts come from
+## `session.report()`, never from a guess about the mode.
+func result_payload() -> Dictionary:
+	if state == null:
+		return {}
+	var won := state.result != null and String(state.result.get("winner", "")) == "player"
+	var facts := {
+		"mode": session.mode if session != null else "quick",
+		"arena_id": Config.arena_id(),
+		"won": won,
+	}
+	if session != null:
+		var report: Dictionary = session.report()
+		var mode := String(report.get("mode", ""))
+		if mode != "":
+			facts["mode"] = mode
+		var arena_id := String(report.get("arena", ""))
+		if arena_id != "":
+			facts["arena_id"] = arena_id
+		facts["season"] = int(report.get("season", 0))
+		facts["match"] = int(report.get("match_index", 0))
+		facts["awarded"] = report.get("awarded", {})
+		if String(report.get("winner", "")) != "":
+			facts["won"] = String(report.get("winner", "")) == "player"
+		# The rematch button's label follows this flag (UIR-21: `rematch` vs
+		# `nextMatch`): a tournament or career match that was WON has a next fixture
+		# or the rest of the season waiting, which is what the session has already
+		# advanced its bracket/calendar to. A quick match never continues.
+		facts["continue_pending"] = bool(facts["won"]) and mode in ["tournament", "career"]
+	var builder := load("res://src/ui/screens/ResultScreen.gd") as GDScript
+	return builder.payload_from_state(state, facts)
+
+
+## The route a finished match takes when the playable UI is up: record the payload
+## for the router host (`Config.pending_result`) and hand the player to the result
+## screen, which the host mounts under the `result` id. `dry_run` stops before the
+## engine call so an audit can assert the payload in-process — the same shape the
+## drill and mode screens use for their own start routes.
+func finish_route(dry_run := false) -> Dictionary:
+	var payload := result_payload()
+	var route := {
+		"action": "result",
+		"scene": "res://game/Main.tscn",
+		"payload_ready": not payload.is_empty(),
+	}
+	if payload.is_empty():
+		return route
+	Config.pending_result = payload
+	if not dry_run and is_inside_tree():
+		get_tree().change_scene_to_file(String(route["scene"]))
+	return route
 
 
 ## A compact, machine-readable summary of everything the harness asserts on.

@@ -38,6 +38,11 @@ const Locale := preload("res://src/locale/locale.gd")
 const Gate := preload("res://game/content_gate.gd")
 const InputStrings := preload("res://src/input/strings.gd")
 const MenuFocus := preload("res://game/menu_focus.gd")
+const ModesSave := preload("res://src/modes/modes_save.gd")
+const InputSource := preload("res://game/input_map.gd")
+## The verified audio module, for the one job the host has in it: applying the stored
+## master volume at boot (`js/main.js:2278`). The bus derivation stays in the module.
+const AudioPortScript := preload("res://src/audio/audio_port.gd")
 
 const TIER_NAMES := ["Rivale del Circuito", "Ingegnere del Vapore", "Campione Steampunk", "Leggenda del Circuito"]
 ## The three mode entries: the keyboard/pad action id, the locale id of the label,
@@ -59,14 +64,37 @@ var _outfit_button: Button
 var _play: Button
 var _focus: MenuFocus
 var _capture := false
-## UIR-09's switch. `--ui=new` mounts the UIR-03 router with the recreated `menu`
-## screen (and registers the still-current `modes` scene, because the play button's
-## action is `to-modes`); `--ui=legacy` — the default, and what every suite in the tree
-## exercises — is the ported menu column this file has always built. UIR-24's harness
-## sets this property before `_ready()` instead of passing the flag, so its walk mounts
-## the same host the game does.
+## UIR-22's switch, and the playable host. `--ui=new` (the default) mounts the
+## recreated screens — all twelve Control screens the router's table has a scene for —
+## and drives them through the port's verified input model (`game/menu_focus.gd` +
+## `src/ui/focus/UiFocusBridge.gd`). `--ui=legacy` keeps the ported menu column below,
+## byte for byte, as the diagnostic fallback the suite and the demo-vs-full captures
+## read. UIR-24's harnesses set this property before `_ready()` instead of passing the
+## flag, so they mount the same host the game does.
 var ui_prototype := false
+## The explicit opt-out. `tests/game_slice_test.gd` asserts the PORTED column's own
+## contract (its rows, its play button, its `screen_report`), so it sets this before
+## `_ready()` — the same way the UIR-24 harnesses set `ui_prototype` — and gets the
+## legacy construction, whatever the command line says. Nothing in the game sets it.
+var ui_legacy := false
 var _router: Control = null
+## True once the playable host is mounted (the recreated path). Every branch below
+## that has two shapes asks this flag once.
+var _playable := false
+## UIR-05's bridge over the same `_focus` model the ported column uses: the screens
+## declare their controls, the model decides, and the bridge turns a verdict into a
+## `ScreenRouter.go_to` or one of its two signals.
+var _bridge: RefCounted = null
+## UIR-26's on-screen keyboard, mounted over everything (the recipe in
+## `src/ui/screens/OskPanel.gd`): the panel renders the input lane's own OSK model.
+var _osk_panel: Control = null
+## The audio module instance the host applies the stored master volume through. Built
+## once, lazily, by `_apply_stored_audio_prefs()`.
+var _audio_port: Node = null
+## Frames to wait before re-measuring the model after a screen swap: a container
+## sorts at the end of the frame that mounted it, so the first rectangles are wrong
+## by construction.
+var _refresh_pending := 0
 var _out_name := "menu"
 var _pad_seen := false
 ## The column the focus model measures, and the laid-out size it was last refreshed
@@ -80,11 +108,11 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_capture = "--capture=menu" in OS.get_cmdline_user_args()
 	_out_name = _arg("--out=", "menu")
-	ui_prototype = ui_prototype or _arg("--ui=", "legacy") == "new"
+	ui_prototype = (not ui_legacy) and (ui_prototype or _arg("--ui=", "new") != "legacy")
 	if ui_prototype:
-		# The prototype path builds the recreated menu instead of the ported column:
-		# one screen at a time, owned by the router, and the ported construction is
-		# not built at all (so nothing of it can show through).
+		# The playable path builds the recreated screens instead of the ported column:
+		# one at a time, owned by the router, and the ported construction is not built
+		# at all (so nothing of it can show through).
 		_mount_ui_prototype()
 		if _capture:
 			_run_capture()
@@ -355,27 +383,226 @@ func _arg(prefix: String, fallback: String) -> String:
 	return fallback
 
 
-## UIR-09's prototype mount: the router owns which screen is up and the recreated menu
-## screen is registered under the reference's own id (`menu`). The still-current mode
-## screen is registered too (`modes`), because `to-modes` is the play button: the press
-## has to reach today's mode flow rather than a blank page. Ids with no registered scene
-## keep the router's own behaviour — it warns and stays where it is.
+## UIR-22's playable host: the router owns which screen is up and every recreated
+## Control screen is registered under the router's own id. The ported column below is
+## not built at all in this path (so nothing of it can show through), and the same
+## `game/menu_focus.gd` model drives the screens through UIR-05's bridge — the one
+## construction every screen audit already proved.
+##
+## `game` — the thirteenth id — has no scene here on purpose: the match is
+## `Match.tscn`, a 3D scene the router cannot own as a Control. It is reached the way
+## the screens' own start routes reach it (`ArenaScreen.start_match`,
+## `DrillScreen.start`, `ModesScreen` -> `characters` -> `arena`), through
+## `Config.pending_mode`, and the result comes back through `Config.pending_result`.
+const SCREEN_SCENES := {
+	"menu": "res://src/ui/screens/MenuScreen.tscn",
+	"characters": "res://src/ui/screens/CharactersScreen.tscn",
+	"modes": "res://src/ui/screens/ModesScreen.tscn",
+	"arena": "res://src/ui/screens/ArenaScreen.tscn",
+	"help": "res://src/ui/screens/HelpScreen.tscn",
+	"history": "res://src/ui/screens/HistoryScreen.tscn",
+	"challenges": "res://src/ui/screens/ChallengesScreen.tscn",
+	"profile": "res://src/ui/screens/ProfileScreen.tscn",
+	"feedback": "res://src/ui/screens/FeedbackScreen.tscn",
+	"drill": "res://src/ui/screens/DrillScreen.tscn",
+	"settings": "res://src/ui/screens/SettingsScreen.tscn",
+	"result": "res://src/ui/screens/ResultScreen.tscn",
+}
+
+
+## UIR-22's playable host: the router owns which screen is up and every recreated
+## Control screen is registered under the router's own id. The ported column below is
+## not built at all in this path (so nothing of it can show through), and the same
+## `game/menu_focus.gd` model drives the screens through UIR-05's bridge — the one
+## construction every screen audit already proved.
+##
+## `game` — the thirteenth id — has no scene here on purpose: the match is
+## `Match.tscn`, a 3D scene the router cannot own as a Control. It is reached the way
+## the screens' own start routes reach it (`ArenaScreen.start_match`,
+## `DrillScreen.start`, `ModesScreen` -> `characters` -> `arena`), through
+## `Config.pending_mode`, and the result comes back through `Config.pending_result`.
+## Loaded in `_mount_ui_prototype`, not preloaded: a `--ui=legacy` run must not pull
+## twelve screens and their theme in behind its back.
 func _mount_ui_prototype() -> void:
+	_playable = true
 	var bg := ColorRect.new()
 	bg.name = "PrototypeBackground"
 	bg.color = Color(0.043, 0.063, 0.11)
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg)
-	# Loaded, not preloaded: the prototype path is opt-in, and the slice gate counts
-	# every object the engine holds at the end of a run.
+	# Loaded, not preloaded: the slice gate counts every object the engine holds at
+	# the end of a run, and a `--ui=legacy` run must not pull twelve screens + theme
+	# in behind its back.
 	_router = (load("res://src/ui/ScreenRouter.gd") as GDScript).new()
 	_router.name = "UiRouter"
 	add_child(_router)
-	_router.register("menu", load("res://src/ui/screens/MenuScreen.tscn"))
-	_router.register("modes", load("res://game/ModeScreen.tscn") as PackedScene)
-	if not _router.go_to("menu"):
-		push_error("main_menu: the prototype router refused to mount the menu screen")
+	for id in SCREEN_SCENES:
+		if not _router.register(String(id), load(String(SCREEN_SCENES[id])) as PackedScene):
+			push_error("main_menu: the router refused the '%s' scene" % id)
+	# The ported mode scene is NOT registered: it is not a UIR-03 screen and mounting
+	# it would fire its own `--capture` lane under the harness's feet (the measured
+	# 01:24 run `tests/ui/capture_ui.gd` documents). `modes` above is the recreation.
+	_focus = MenuFocus.new()
+	set_process_input(true)
+	_bridge = (load("res://src/ui/focus/UiFocusBridge.gd") as GDScript).new()
+	_bridge.range_changed.connect(_on_range_changed)
+	_router.screen_changed.connect(_on_screen_changed)
+	# UIR-26's keyboard, over everything (z 60 in the reference), bound to the input
+	# lane's own model — the one `menu_nav.confirm()` opens.
+	var panel_scene := load("res://src/ui/screens/OskPanel.tscn") as PackedScene
+	_osk_panel = panel_scene.instantiate()
+	_osk_panel.name = "OskPanel"
+	add_child(_osk_panel)
+	_osk_panel.bind_model(_focus.menu.osk)
+	_osk_panel.closed.connect(_on_osk_closed)
+	# One locale drives the menu and the match HUD (UIR-22): the player's stored
+	# choice is applied once, here, and nothing below switches language behind it.
+	_apply_stored_language()
+	# The stored mixer/input prefs go on at the same moment (`js/main.js:2276-2278`),
+	# so a value the settings screen wrote is already in force before any screen reads
+	# it — including the language above, which the reference applies in the same block.
+	_apply_stored_audio_prefs()
+	# A finished match left its payload behind; everything else starts at the menu.
+	if Config.pending_result.is_empty():
+		if not _router.go_to("menu"):
+			push_error("main_menu: the router refused to mount the menu screen")
+	else:
+		var payload := Config.take_pending_result()
+		if not _router.go_to("result", payload):
+			push_error("main_menu: the router refused to mount the result screen")
+	_on_screen_changed("", String(_router.active_id()))
+	_refresh_pending = 2
+
+
+## The stored language, applied at boot: `lang` from the same prefs group the
+## settings screen writes, over `Locale`'s own default. Nothing here invents a
+## language — `Locale.set_lang` refuses anything but the reference's two tables.
+func _apply_stored_language() -> void:
+	var prefs: Dictionary = ModesSave.profile(Config.save_store()).get("prefs", {})
+	var lang := String(prefs.get("lang", ""))
+	if lang != "":
+		Locale.set_lang(lang)
+
+
+## The stored mixer/input prefs, applied at boot the way the reference applies them at
+## load (`js/main.js:2276-2278`): `volume` to the audio module's own master gain (the
+## bus derivation stays in the module, never a second copy here) and
+## `gamepadDeadzone` to the pad reader, clamped inside the reference's band by
+## `set_deadzone`. This is the reader the review's F6 named missing.
+func _apply_stored_audio_prefs() -> void:
+	var prefs: Dictionary = Config.stored_prefs()
+	if _audio_port == null:
+		_audio_port = AudioPortScript.new()
+		_audio_port.name = "UiAudioPort"
+		add_child(_audio_port)
+	_audio_port.set_master_gain(float(prefs.get("volume", 0.5)))
+	InputSource.set_deadzone(float(prefs.get("gamepadDeadzone", 0.15)))
+
+
+## The live value follows the stored one: the settings screen persists through its own
+## `set_volume`/`set_deadzone` door, and the host applies the same value to the audio
+## module and the pad reader (review F6).
+func _apply_range_side_effects(row_name: String, value: float) -> void:
+	if row_name == "VolumeRow" and _audio_port != null:
+		_audio_port.set_master_gain(value)
+	elif row_name == "DeadzoneRow":
+		InputSource.set_deadzone(value)
+
+
+## The router swapped screens: bind the bridge to what is up now, hand the screen the
+## game's own store where it takes one, and ask for a re-measure once the new tree has
+## been sorted. `menu_nav.open_screen` is inside `attach()`, so the context and the
+## declared-back rule follow the swap in one step.
+func _on_screen_changed(_from_id: String, _to_id: String) -> void:
+	var screen: Node = _router.active_screen()
+	if screen == null:
+		return
+	if screen.has_method("set_store"):
+		screen.set_store(Config.save_store())
+	_bridge.attach(screen as Control, _focus, _router)
+	# The result screen's rematch is the host's decision: the screen reports the
+	# request and names its label, and the mount owns the mode.
+	if screen.has_signal("rematch_requested") and not screen.is_connected("rematch_requested", _on_rematch_requested):
+		screen.connect("rematch_requested", _on_rematch_requested)
+	_sync_osk()
+	# A freshly mounted screen's containers sort at the end of this frame; the model
+	# is re-measured two frames later, not on the rectangles `_ready()` saw.
+	_refresh_pending = 2
+
+
+## A range the model stepped in place (`UiFocusBridge.range_changed`): the screen owns
+## the write and the persist, so the host hands the value over through the screen's own
+## public door — `set_volume`/`set_deadzone` where the screen has them (they persist),
+## `set_row_value` otherwise. The id is `<screen>/<RowNode>`, the model's own spelling.
+func _on_range_changed(id: String, value: float) -> void:
+	var screen: Node = _router.active_screen()
+	if screen == null:
+		return
+	var row_name := id.get_slice("/", 1)
+	if row_name == "":
+		return
+	if row_name == "VolumeRow" and screen.has_method("set_volume"):
+		screen.call("set_volume", value)
+		_apply_range_side_effects(row_name, value)
+		return
+	if row_name == "DeadzoneRow" and screen.has_method("set_deadzone"):
+		screen.call("set_deadzone", value)
+		_apply_range_side_effects(row_name, value)
+		return
+	if screen.has_method("set_row_value"):
+		screen.call("set_row_value", row_name, value)
+
+
+## The OSK panel follows the input lane's own model: opened/closed/typed state comes
+## from `menu_nav.osk` (never from a second copy), and a screen that owns the field's
+## write takes the value back (`FeedbackScreen.apply_osk_value`).
+func _sync_osk() -> void:
+	if _focus == null:
+		return
+	var osk = _focus.menu.osk
+	if _osk_panel != null:
+		_osk_panel.refresh()
+	if osk == null:
+		return
+	if osk.is_open():
+		_focus.menu.set_osk_targets(_osk_panel.osk_key_targets() if _osk_panel != null else [])
+		var screen: Node = _router.active_screen()
+		if screen != null and screen.has_method("apply_osk_value"):
+			screen.apply_osk_value(String(osk.target_id()), String(osk.value()))
+	else:
+		_focus.menu.set_osk_targets([])
+
+
+## The panel's own `done` hand-off (`js/main.js:533-542`): the model closed, the key
+## targets go back to the screen's controls, and the field takes the focus back.
+func _on_osk_closed(target_id: String) -> void:
+	if _focus == null:
+		return
+	_focus.menu.set_osk_targets([])
+	if _osk_panel != null:
+		_osk_panel.refresh()
+	if target_id != "" and _bridge != null:
+		_bridge.set_focus(target_id)
+
+
+## The result screen's rematch, and the mode flow's continue: the same fixture when
+## the run is over, the next one when the session advanced its own bracket or season
+## (`Config.pending_mode` still names the run, and the mode session resolves its own
+## round). `dry_run` stops before the engine call so an audit can assert the route.
+func _on_rematch_requested() -> void:
+	rematch_route()
+
+
+func rematch_route(dry_run := false) -> Dictionary:
+	var route := {
+		"action": "rematch",
+		"mode": Config.pending_mode,
+		"scene": "res://game/Match.tscn",
+	}
+	if not dry_run:
+		get_tree().change_scene_to_file(String(route["scene"]))
+	return route
 
 
 ## The router UIR-24's capture harness walks. Null in a legacy run.
@@ -515,9 +742,27 @@ func _pad_connected() -> bool:
 
 
 ## Keys the model owns are consumed before the GUI sees them, so Godot's built-in
-## `ui_*` focus navigation cannot move the same focus a second time.
+## `ui_*` focus navigation cannot move the same focus a second time. The playable path
+## dispatches through UIR-05's bridge instead of the model directly: the verdict there
+## becomes a `ScreenRouter.go_to`, an OSK open/close against the same model, or one of
+## the bridge's report signals.
 func _input(event: InputEvent) -> void:
 	if _capture or _focus == null:
+		return
+	if _playable:
+		if event is InputEventKey:
+			if _bridge.dispatch(event):
+				get_viewport().set_input_as_handled()
+				_sync_osk()
+		elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
+			# Confirm/cancel are the bridge's; every other pad event is swallowed
+			# anyway, because the model is polled once per frame below (the
+			# reference polls its gamepad in the render loop, `js/main.js:1001-1004`)
+			# and a second, built-in navigation on the same stick would move the
+			# focus the model does not know about.
+			if _bridge.dispatch(event):
+				_sync_osk()
+			get_viewport().set_input_as_handled()
 		return
 	if event is InputEventKey:
 		var result: Dictionary = _focus.handle_key(event as InputEventKey)
@@ -533,6 +778,9 @@ func _input(event: InputEvent) -> void:
 
 func _process(_delta: float) -> void:
 	if _capture or _focus == null:
+		return
+	if _playable:
+		_playable_process()
 		return
 	# The layout settles one frame after the tree is built (and changes again on a
 	# window resize): re-measure the model's rectangles when it does, so navigation
@@ -553,6 +801,31 @@ func _process(_delta: float) -> void:
 		_apply_focus()
 	if String(result.get("kind", "")) != "":
 		_dispatch(result)
+
+
+## The playable path's frame: the same polling contract as the ported column, over
+## whichever screen the router has up. A swap asks for a re-measure (containers sort
+## at the end of the frame that built them), a confirm or a back the poll resolved is
+## applied through the bridge, and the presentation is refreshed when the model moved.
+func _playable_process() -> void:
+	if _refresh_pending > 0:
+		_refresh_pending -= 1
+		if _refresh_pending == 0:
+			_focus.refresh()
+			_apply_focus()
+	var connected := _pad_connected()
+	if connected != _pad_seen:
+		_pad_seen = connected
+		_focus.pad_connected(connected)
+	if not connected:
+		return
+	var result: Dictionary = _focus.poll_pad()
+	if bool(result.get("focus_moved", false)):
+		_apply_focus()
+	if String(result.get("kind", "")) != "":
+		if _bridge != null:
+			_bridge.act(result)
+		_sync_osk()
 
 
 ## What the model decided. `activate` runs the target's action; `none` on the root
@@ -622,11 +895,13 @@ func _run_capture() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	# The model needs the final rectangles, and the capture has to show the same
-	# focus the model holds. A prototype run has no model: the screen it captured is
-	# the router's.
+	# focus the model holds. In the playable path the model is the bridge's, over
+	# whichever screen the router mounted.
 	if _focus != null:
+		_refresh_pending = 0
 		_focus.refresh()
 		_focus.apply_focus()
+		_sync_osk()
 	await RenderingServer.frame_post_draw
 	var dir := "res://game/out"
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir))
@@ -640,13 +915,14 @@ func _run_capture() -> void:
 		push_error("menu capture: viewport image null")
 		get_tree().quit(4)
 		return
-	if _focus != null:
-		print("MENU_ON_SCREEN %s" % JSON.stringify(screen_report()))
-	else:
+	if _playable:
 		print("UI_PROTOTYPE_ON_SCREEN %s" % JSON.stringify({
 			"screen": String(_router.active_id()) if _router != null else "",
 			"router": "menu",
+			"playable": true,
 		}))
+	elif _focus != null:
+		print("MENU_ON_SCREEN %s" % JSON.stringify(screen_report()))
 	var err := img.save_png("%s/%s.png" % [dir, _out_name])
 	print("CAPTURE_SAVE err=%d path=%s/%s.png size=%dx%d" % [err, dir, _out_name, img.get_width(), img.get_height()])
 	get_tree().quit(0 if err == OK else 5)

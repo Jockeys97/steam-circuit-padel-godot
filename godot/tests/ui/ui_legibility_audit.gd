@@ -276,12 +276,23 @@ func _background_of(control: Control) -> Color:
 ## standing under the control, the reference's own page colour; white only if a screen
 ## paints nothing at all.
 func _screen_background(control: Control) -> Color:
+	# The rect that contains the control when one does, else the widest rect on the frame:
+	# a control scrolled out of view or hung off the frame's edge sits on the same page as
+	# the rest of the screen once it is back in view, and white is not a colour any screen
+	# here paints (`_background_of` reads the screen's own boxes on top of this).
+	var widest: ColorRect = null
 	if control.is_inside_tree():
 		var centre: Vector2 = control.get_global_rect().get_center()
 		for rect_node in control.get_tree().root.find_children("*", "ColorRect", true, false):
 			var background: ColorRect = rect_node
-			if background.is_visible_in_tree() and background.get_global_rect().has_point(centre) and background.size.x > 64.0:
+			if not background.is_visible_in_tree() or background.size.x <= 64.0:
+				continue
+			if background.get_global_rect().has_point(centre):
 				return background.color
+			if widest == null or background.size.x > widest.size.x:
+				widest = background
+	if widest != null:
+		return widest.color
 	return Color.WHITE
 
 

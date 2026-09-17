@@ -34,10 +34,45 @@ static var pending_mode: String = "quick"
 ## Which drill exercise a drill session starts on (`js/drill.js` `DRILL_EXERCISES`,
 ## the id the drill screen's rows carry). Unused by the other two modes.
 static var pending_exercise: String = "precision"
+## The human mode a QUICK match opens with (`ui.playerMode`, `js/main.js:1156`):
+## `"solo"`, `"coop"` or `"pvp"` — two humans on the same keyboard/pad when it is not
+## `solo`. Written by the arena screen's start, read once by `match_controller`'s
+## `start_match()`. Every other mode runs `"solo"`: the reference forces it
+## (`humanMode = ui.selectedMode === "quick" ? (ui.playerMode ?? "solo") : "solo"`),
+## and so does the arena screen's own write.
+static var pending_player_mode: String = "solo"
 ## Which tournament round a mode match plays. -1 means "whatever the save holds"
 ## (`ModesSave.tournament_round`), which is the normal path: the bracket is
 ## persisted, so the round is a fact about the save rather than about this call.
 static var pending_round: int = -1
+## UIR-22's result hand-off. `match_controller.gd` fills this with the payload
+## `ResultScreen.enter()` takes (`ResultScreen.payload_from_state`: the live state's
+## own score/stat fields plus the mode's facts) at the moment a match ends, and then
+## routes to `res://game/Main.tscn`; the router host there mounts `result` with this
+## payload and takes it (`take_pending_result()`), so a result is shown once and never
+## twice. Empty means "no result waiting" — the host then opens the menu.
+static var pending_result: Dictionary = {}
+
+
+## The recorded result, consumed exactly once (the store-then-take pair above).
+static func take_pending_result() -> Dictionary:
+	var held := pending_result
+	pending_result = {}
+	return held
+
+
+## The stored `prefs` group, the one the settings screen writes. Read through the
+## save's own group door (same shape as `control_mode()` above), never from a second
+## copy of the schema; `{}` when nothing is stored or the payload is malformed. This
+## is the reader the review's F6 named missing: the volume, deadzone and vibration
+## rows used to persist values that nothing read back.
+static func stored_prefs() -> Dictionary:
+	var read: Dictionary = save_store().read_group("prefs")
+	var payload: Variant = read.get("payload", null)
+	if typeof(payload) != TYPE_DICTIONARY:
+		return {}
+	return payload
+
 ## The save root the screens and the mode session read and write. `""` means the
 ## save module's own `user://save`; a test points it at its own directory so it
 ## never touches a real profile.

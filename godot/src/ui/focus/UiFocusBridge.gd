@@ -37,11 +37,25 @@
 ## WHICH SHELL IS CURRENT IS NOT THIS FILE'S QUESTION. The bridge binds one shell; the
 ## mount scene (UIR-09) re-attaches it on `ScreenRouter.screen_changed`. It does not
 ## follow the router itself, because the router owns which screen is mounted.
+##
+## CARRIED METADATA (the range/OSK seam, added 2026-09-17 by the wave-3 shared contract).
+## Two producers-of-record in the input lane read target fields the focus model does not
+## carry, and both files belong to that lane:
+##
+##   - `focus_nav.gd::_adjust_range` (:239-246) steps a `kind:"range"` target from
+##     `step`, `value`, `min` and `max` — the settings screen's volume/deadzone rows;
+##   - `menu_nav.gd::confirm()` (:223-229) opens the OSK from `value`, `max_length` and
+##     `field_label` — the feedback screen's message/contact fields.
+##
+## `game/menu_focus.gd::_target()` (:111-125) projects a fixed set of keys, so those
+## fields never reach the model. Rather than editing either lane, the bridge carries
+## them: a screen registers them with its control (through `ScreenShell.add_focus`'s
+## `opts`, read by `register()`), the bridge keeps the copy that matters and merges it
+## onto the focused live target immediately before the input lane consumes it
+## (`carry_metadata()`, called at the top of `dispatch()`). The keys are the input lane's
+## own documented descriptor fields (`focus_nav.gd:44-57`); nothing is invented here and
+## nothing is re-derived.
 extends RefCounted
-
-const MenuFocus := preload("res://game/menu_focus.gd")
-const MenuNav := preload("res://src/input/menu_nav.gd")
-const NavRoutes := preload("res://src/input/nav_routes.gd")
 
 ## Emitted instead of navigating when no router is attached: the caller routes. With a
 ## router attached the bridge performs the navigation, which is the path the audit
@@ -49,12 +63,28 @@ const NavRoutes := preload("res://src/input/nav_routes.gd")
 signal action_requested(action: String)
 signal back_requested(screen_id: String)
 
+## Emitted after a dispatch that stepped the focused range, with the model's own new
+## value (`focus_nav.gd:246` writes it into the live target). Applying it to the real
+## control — a Slider — and persisting it is the screen's job: the input lane never
+## touches nodes, and neither does the bridge.
+signal range_changed(id: String, value: float)
+
+const MenuFocus := preload("res://game/menu_focus.gd")
+const MenuNav := preload("res://src/input/menu_nav.gd")
+const NavRoutes := preload("res://src/input/nav_routes.gd")
+
 ## What an *event* means on the stick. The stored `gamepadDeadzone` pref's wiring into
 ## the UI layer belongs to the settings screen's ticket; this constant only decides when
 ## a motion event is a direction at all.
 const STICK_THRESHOLD := 0.5
 const CONFIRM_ACTION := "ui_accept"
 const CANCEL_ACTION := "ui_cancel"
+
+## The target-descriptor keys the input lane reads but the focus model does not carry
+## (see the header): the range keys `focus_nav.gd::_adjust_range` steps from, and the
+## OSK keys `menu_nav.gd::confirm()` opens with. A registration's own `opts` supply them
+## — the same dictionary that already supplies `kind` and `locked`.
+const CARRIED_KEYS := ["min", "max", "step", "value", "max_length", "field_label", "input_type"]
 
 var _focus: MenuFocus
 var _shell: Control
@@ -64,6 +94,9 @@ var _registry: Array = []              ## [{id, node, action, opts}] in registra
 var _locked: Dictionary = {}           ## id -> true, for screens that render the lock
 var _last: Dictionary = {}             ## the model's own last verdict
 var _last_dispatch: Dictionary = {}    ## what the bridge did with it
+var _last_range: Dictionary = {}       ## {id, value} of the last range step reported
+var _range_values: Dictionary = {}     ## id -> the value the bridge last noted for a range
+var _last_osk: Dictionary = {}         ## the OSK model's state after the last open/close
 
 
 ## Binds one screen shell to one focus model. `router` is optional: with one, a back or
@@ -111,6 +144,8 @@ func register(id: String, node: Control, action: String, opts: Dictionary = {}) 
 	if bool(copy.get("locked", false)):
 		_locked[id] = true
 	_sync()
+	# The model's live list is fresh from `_sync()`; the carried keys follow it.
+	carry_metadata()
 
 
 ## The registered ids, in registration order.
@@ -155,6 +190,60 @@ func last_dispatch() -> Dictionary:
 	return _last_dispatch.duplicate()
 
 
+## The carried keys (`CARRIED_KEYS`) one registered control supplies, in that order.
+## `{}` for an id the bridge never registered and for a control that supplies none.
+func metadata_of(id: String) -> Dictionary:
+	for entry in _registry:
+		if String(entry["id"]) == id:
+			return _carried(entry["opts"])
+	return {}
+
+
+## The carried keys the model's focused target holds — the merge is applied first, so the
+## answer is exactly what the input lane will read at the next consumption, `{}` when the
+## focused control carries none. (A context change made by the input lane itself — the OSK
+## open/close, an overlay — rebuilds the live list; this call re-merges it, which is why
+## it is asked of the bridge rather than of a stale target.)
+func focused_metadata() -> Dictionary:
+	if _nav == null:
+		return {}
+	carry_metadata()
+	return _carried(_nav.nav.focus())
+
+
+## The last range step the bridge reported: `{id, value}`. `{}` before any step.
+func last_range() -> Dictionary:
+	return _last_range.duplicate()
+
+
+## The OSK model's state after the last open or close —
+## `{id, open, value, max_length, label}`; `{}` before any. The screen reads it and
+## pushes the value onto its own text control: the input lane never touches nodes, and
+## neither does the bridge.
+func last_osk() -> Dictionary:
+	return _last_osk.duplicate()
+
+
+## Merges every registered control's carried keys onto the model's live targets and
+## returns how many targets took metadata. Called after every registry change (`_sync`)
+## and at the top of every `dispatch()`: a context change (`open_screen`, an overlay, the
+## OSK) rebuilds the model's live list, so the merge follows it instead of being a
+## one-off write. The model's own selectable targets are the only ones reached — a hidden
+## control cannot take the focus, so nothing is lost where it is consumed.
+func carry_metadata() -> int:
+	if _nav == null or _nav.nav == null:
+		return 0
+	var merged := 0
+	for target in _nav.nav.targets():
+		var meta := metadata_of(String(target["id"]))
+		if meta.is_empty():
+			continue
+		for key in meta:
+			target[key] = meta[key]
+		merged += 1
+	return merged
+
+
 func focus_id() -> String:
 	if _focus == null:
 		return ""
@@ -163,7 +252,7 @@ func focus_id() -> String:
 
 ## Puts the focus on a registered id and answers "is the focus on it now": `false` for an
 ## id the bridge never registered, and for one the model will not land on (locked, hidden
-## or disabled). The model's own selectable list is the authority, not the setter: 
+## or disabled). The model's own selectable list is the authority, not the setter:
 ## `focus_nav.set_focus()` accepts any id and reports whether the focus *changed*, so a
 ## locked target it was handed would still read as a success.
 func set_focus(id: String) -> bool:
@@ -173,6 +262,7 @@ func set_focus(id: String) -> bool:
 	if not _focus.focusable_ids().has(id):
 		return false
 	_focus.menu.nav.set_focus(id)
+	carry_metadata()
 	return _focus.menu.nav.focus_id() == id
 
 
@@ -181,12 +271,18 @@ func set_focus(id: String) -> bool:
 func dispatch(event: InputEvent) -> bool:
 	if _focus == null or event == null:
 		return false
+	# The input lane reads the carried keys off the focused target at the moment it is
+	# consumed (`menu_nav.gd:223-229`, `focus_nav.gd:239-246`); the merge is re-run here
+	# rather than once, because a context change rebuilds the live list.
+	carry_metadata()
 	if event is InputEventKey:
 		_last = _focus.handle_key(event as InputEventKey)
 		if not bool(_last.get("handled", false)):
 			_last_dispatch = {"kind": "unhandled", "activated": false}
 			return false
-		return _act(_last)
+		var handled := _act(_last)
+		_note_range_step()
+		return handled
 	if event is InputEventJoypadButton:
 		var button := event as InputEventJoypadButton
 		if not button.pressed:
@@ -200,8 +296,24 @@ func dispatch(event: InputEvent) -> bool:
 		var direction := _stick_direction(event as InputEventJoypadMotion)
 		if direction == "":
 			return false
-		return _act(_nav.keyboard_direction(direction))
+		var moved := _act(_nav.keyboard_direction(direction))
+		_note_range_step()
+		return moved
 	return false
+
+
+## One already-resolved verdict from the pad poll (`MenuFocus.poll_pad()`), applied
+## exactly the way an event's verdict is. The mount polls the pad once per frame —
+## the reference polls its gamepad in the render loop (`js/main.js:1001-1004`) — and a
+## polled confirm/back is the same decision as the event's, so it must not go through
+## a second translation.
+func act(verdict: Dictionary) -> bool:
+	if _focus == null or verdict.is_empty():
+		return false
+	_last = verdict
+	carry_metadata()
+	_note_range_step()
+	return _act(verdict)
 
 
 # ---------------------------------------------------------------------------
@@ -228,10 +340,12 @@ func _act(verdict: Dictionary) -> bool:
 		"back", "osk_close":
 			if kind == "osk_close":
 				_last_dispatch = {"kind": kind, "target": target, "activated": false}
+				_note_osk_state(target)
 				return true
 			return _back(verdict)
 		"osk_open":
 			_last_dispatch = {"kind": "osk_open", "target": target, "activated": false}
+			_note_osk_state(target)
 			return true
 		"overlay":
 			# The overlay owns back while it is up (`menu_nav.gd:260-261`); the bridge
@@ -287,6 +401,62 @@ func _drop(id: String) -> void:
 			kept.append(entry)
 	_registry = kept
 	_locked.erase(id)
+
+
+# ---------------------------------------------------------------------------
+# The carried metadata
+# ---------------------------------------------------------------------------
+
+## One registration's carried keys, in `CARRIED_KEYS` order.
+func _carried(opts: Dictionary) -> Dictionary:
+	var out := {}
+	for key in CARRIED_KEYS:
+		if opts.has(key):
+			out[key] = opts[key]
+	return out
+
+
+## Writes one carried key back into the registry, so the next merge follows the value
+## the model last produced (a stepped range) instead of undoing it.
+func _set_carried(id: String, key: String, value: Variant) -> void:
+	for entry in _registry:
+		if String(entry["id"]) == id:
+			(entry["opts"] as Dictionary)[key] = value
+			return
+
+
+## The model stepped a range in place and wrote the new value into the live target
+## (`focus_nav.gd:239-246`). Reported once per change, and mirrored into the registry so
+## the next merge continues from it; applying it to the Slider and persisting it belongs
+## to the screen, which hears `range_changed`.
+func _note_range_step() -> void:
+	if _nav == null:
+		return
+	var target := _nav.nav.focus()
+	if String(target.get("kind", "")) != "range":
+		return
+	var id := String(target["id"])
+	var value := float(target.get("value", 0.0))
+	if _range_values.has(id) and is_equal_approx(value, float(_range_values[id])):
+		return
+	_range_values[id] = value
+	_last_range = {"id": id, "value": value}
+	_set_carried(id, "value", value)
+	range_changed.emit(id, value)
+
+
+## The OSK model's own state (`menu_nav.gd:69` exposes it), read after an open or a
+## close so the screen can push the seeded/typed value onto its text control.
+func _note_osk_state(field_id: String) -> void:
+	if _nav == null or _nav.osk == null:
+		return
+	_last_osk = {
+		"id": field_id,
+		"open": _nav.osk.is_open(),
+		"value": _nav.osk.value(),
+		"max_length": _nav.osk.max_length(),
+		"label": _nav.osk.label(),
+	}
 
 
 # ---------------------------------------------------------------------------

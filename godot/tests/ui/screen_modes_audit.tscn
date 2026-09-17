@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/ui/screen_modes_audit.gd" id="1_screen_modes_audit"]
+
+[node name="screen_modes_audit" type="Node"]
+script = ExtResource("1_screen_modes_audit")

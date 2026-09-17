@@ -1,0 +1,118 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Theme" path="res://src/ui/theme/padel_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://src/ui/screens/ArenaScreen.gd" id="2_arena"]
+
+[node name="ArenaScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_arena")
+
+[node name="Frame" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="HeaderArea" type="MarginContainer" parent="Frame"]
+layout_mode = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 0
+
+[node name="Header" type="HBoxContainer" parent="Frame/HeaderArea"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="BackButton" type="Button" parent="Frame/HeaderArea/Header"]
+layout_mode = 2
+theme_type_variation = &"ButtonGhost"
+text = "back"
+
+[node name="TitleBlock" type="VBoxContainer" parent="Frame/HeaderArea/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="TitleLabel" type="Label" parent="Frame/HeaderArea/Header/TitleBlock"]
+layout_mode = 2
+theme_type_variation = &"ScreenTitle"
+text = "arenaTitle"
+
+[node name="SubLabel" type="Label" parent="Frame/HeaderArea/Header/TitleBlock"]
+layout_mode = 2
+theme_type_variation = &"ScreenSubtitle"
+text = "arenaSub"
+
+[node name="Scroll" type="ScrollContainer" parent="Frame"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Body" type="VBoxContainer" parent="Frame/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="GridArea" type="MarginContainer" parent="Frame/Scroll/Body"]
+layout_mode = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 0
+
+[node name="ArenaGrid" type="GridContainer" parent="Frame/Scroll/Body/GridArea"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 3
+
+[node name="PlayerModeArea" type="MarginContainer" parent="Frame/Scroll/Body"]
+layout_mode = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 48
+
+[node name="PlayerModePanel" type="PanelContainer" parent="Frame/Scroll/Body/PlayerModeArea"]
+layout_mode = 2
+
+[node name="PlayerModeColumn" type="VBoxContainer" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PlayerModeLabel" type="Label" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn"]
+layout_mode = 2
+theme_type_variation = &"LabelSmall"
+text = "playerMode"
+
+[node name="PlayerModeRow" type="HBoxContainer" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PlayerModeButton_solo" type="Button" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeRow"]
+layout_mode = 2
+text = "pmSolo"
+
+[node name="PlayerModeButton_coop" type="Button" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeRow"]
+layout_mode = 2
+text = "pmCoop"
+
+[node name="PlayerModeButton_pvp" type="Button" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeRow"]
+layout_mode = 2
+text = "pmPvp"
+
+[node name="PlayerModeHint" type="Label" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn"]
+layout_mode = 2
+theme_type_variation = &"LabelSmall"
+autowrap_mode = 2
+text = "pmHint"

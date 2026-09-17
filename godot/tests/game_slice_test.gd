@@ -291,6 +291,11 @@ func _menu_reaches_match() -> void:
 	if packed == null:
 		return
 	var menu: Node = packed.instantiate()
+	# UIR-22: this section asserts the PORTED column's own contract (its choice rows,
+	# its play button, its `screen_report`), and the default is now the recreated
+	# menu. The opt-out is set before the tree, so `_ready()` builds the legacy column
+	# exactly as it always did — the fallback is exercised, not assumed.
+	menu.set("ui_legacy", true)
 	# A frame of a known size for the menu to lay itself out in. `--headless`
 	# installs the dummy display driver and the root window has no real size, so a
 	# Control anchored FULL_RECT would collapse to its minimum sizes with every
@@ -2949,6 +2954,10 @@ func _ui_text() -> void:
 	host.size = Vector2(1280.0, 720.0)
 	root.add_child(host)
 	var menu: Node = packed.instantiate()
+	# UIR-22: the ported column again — this frame scans the labels the REFERENCE's
+	# own table prints on the ported rows, so it asks for the legacy construction by
+	# the documented switch rather than through the command line.
+	menu.set("ui_legacy", true)
 	host.add_child(menu)
 	await process_frame
 	await process_frame

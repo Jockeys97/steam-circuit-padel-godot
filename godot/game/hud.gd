@@ -54,12 +54,14 @@ extends Control
 
 const Locale := preload("res://src/locale/locale.gd")
 
-## The language the slice renders in. This is the reference's own `setLang`
-## (`js/i18n.js:1400-1402`), called with the language the frozen browser build
-## renders for its player: Italian. `Locale.set_lang("en")` switches the whole HUD
-## (the locale layer has two tables, it and en) — nothing here removes that, and no
-## other language exists in the reference.
-const HUD_LANG := "it"
+## UIR-22: this HUD no longer picks a language. It used to force Italian here
+## (`const HUD_LANG := "it"` + `Locale.set_lang(HUD_LANG)` in `_ready()`), which
+## silently overrode the language the player chose in the settings screen the moment
+## a match built its HUD — two languages in one build, and the menu's own choice lost.
+## The match HUD now follows the same `Locale` current language the menus resolve
+## through (`Locale.current_lang()`, set once at boot from the stored `lang` pref and
+## by the settings screen on a change). The ported HUD's own literal labels stay
+## literal: they are its diagnostic surface's, not a second locale layer.
 
 ## Rendered when an id is neither resolvable nor in `EVENT_LABELS`. Deliberately not
 ## the id: a visible "??" is a defect report, an id on screen is a silent one.
@@ -110,7 +112,6 @@ const HINT_PAD_DETAILS := "RB+A chiquita · RB+X vibora · RB+Y lob difensivo\nD
 
 
 func _ready() -> void:
-	Locale.set_lang(HUD_LANG)
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_scoreboard()

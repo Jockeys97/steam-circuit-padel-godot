@@ -49,8 +49,25 @@ const Sim := preload("res://src/sim/sim.gd")
 
 ## No pad is selected (no controller connected, or none chosen yet).
 const NO_DEVICE := -1
-## `ui.gamepadDeadzone ?? 0.15` (`js/main.js:830`).
-const DEADZONE := 0.15
+## `ui.gamepadDeadzone ?? 0.15` (`js/main.js:830`), clamped to the reference's own
+## band when a stored value is applied (`Math.min(0.3, Math.max(0.08, ...))`,
+## `js/main.js:2276`). A static var, not a const: the settings screen's deadzone row
+## writes the stored value and `apply_stored_prefs()` hands it here, so the pads read
+## what the player chose rather than a constant.
+const DEADZONE_MIN := 0.08
+const DEADZONE_MAX := 0.30
+static var DEADZONE := 0.15
+
+
+## The stored `gamepadDeadzone` pref, applied inside the reference's own band
+## (`Math.min(0.3, Math.max(0.08, ...))`, `js/main.js:2276`). Returns the value
+## actually in force; a non-finite value falls back to the default.
+static func set_deadzone(value: float) -> float:
+	if is_nan(value) or is_inf(value):
+		DEADZONE = 0.15
+	else:
+		DEADZONE = clampf(value, DEADZONE_MIN, DEADZONE_MAX)
+	return DEADZONE
 ## An axis this far out counts as "somebody touched this pad" when choosing which
 ## one to read (`GAMEPAD_ACTIVATION_DEADZONE`, `js/main.js:151`).
 const ACTIVATION_DEADZONE := 0.45

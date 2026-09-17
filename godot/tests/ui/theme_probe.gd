@@ -79,6 +79,27 @@ var PALETTE := {
 	# combo >= 4 — `rgba(255,106,92,0.8)` — was computed by the view-model and painted
 	# nowhere until then. README §3.
 	"combo_glow": Color(1, 106 / 255.0, 92 / 255.0, 0.8),
+	# Added 2026-09-17 (wave 3) from UIR-13's recorded seam: the 15 palette rows the
+	# help/history/challenges/profile screens read but the theme did not carry, each
+	# transcribed from the reference line cited in the theme README §3, plus the two
+	# UIR-11 stat-strip inks (`styles.css:3026`/`:3030`) added with the strip itself.
+	"win_green": Color("3fd36f"),
+	"win_ink": Color("04210f"),
+	"loss_red": Color("ff5d7a"),
+	"loss_ink": Color("21040a"),
+	"trophy_yellow": Color("ffd23a"),
+	"stat_muted": Color("6f91ad"),
+	"item_ink": Color("e6f8ff"),
+	"help_muted": Color("8aa5bc"),
+	"kbd_border": Color("29c9dc"),
+	"white": Color(1, 1, 1),
+	"challenge_cyan": Color("78c8ff"),
+	"challenge_row_fill": Color(8 / 255.0, 16 / 255.0, 44 / 255.0, 0.5),
+	"challenge_done_border": Color(1, 210 / 255.0, 120 / 255.0, 0.4),
+	"challenge_done_fill": Color(60 / 255.0, 42 / 255.0, 8 / 255.0, 0.28),
+	"summary_fill": Color(8 / 255.0, 22 / 255.0, 48 / 255.0, 0.6),
+	"stat_bar": Color("7ee0ff"),
+	"stat_bar_rival": Color("ffb08c"),
 }
 
 ## variation -> [base type, font_size (0 = not asserted), font_color ("" = not asserted), stylebox name ("" = none)]

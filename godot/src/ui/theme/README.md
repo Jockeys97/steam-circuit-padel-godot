@@ -115,6 +115,23 @@ the declaration is dropped and `var(--mode-accent, var(--cyan))` at `styles.css:
 | `caption_shadow` | `#07152b` | `styles.css:215` `.hero-poster__title` `text-shadow: 0 3px 0 #07152b` — same addition; the caption's second (cyan glow) shadow is not expressible, see §6 |
 | `poster_fade` | `#030719` (82%) | `styles.css:194` `.hero-poster::after` `linear-gradient(180deg, transparent, rgba(3, 7, 25, 0.82))` — same addition; the gradient itself is rendered screen-side from this token (first stop) |
 | `combo_glow` | `#ff6a5c` (80%) | `js/ui.js:1315` — the combo's `textShadow: 0 0 10px rgba(255, 106, 92, 0.8)` at `combo >= 4`; added 2026-09-17 (pre-gate wave) because the flag was computed and never painted. Read by `Hud` through `_palette("combo_glow")` |
+| `win_green` | `#3fd36f` | `styles.css:2662,2697` (history stat box wins `b`, history item result) — added 2026-09-17 (wave 3) from UIR-13's recorded seam; read by history/profile |
+| `win_ink` | `#04210f` | `styles.css:2697` (history item result chip ink) — same addition |
+| `loss_red` | `#ff5d7a` | `styles.css:2663,2698` — same addition |
+| `loss_ink` | `#21040a` | `styles.css:2698` — same addition |
+| `trophy_yellow` | `#ffd23a` | `styles.css:2664` (history stat box trophies `b`) — same addition |
+| `stat_muted` | `#6f91ad` | `styles.css:2655,2704,2717,2722` (history stat box labels, profile boxes) — same addition |
+| `item_ink` | `#e6f8ff` | `styles.css:2702` (history item text) — same addition |
+| `help_muted` | `#8aa5bc` | `styles.css:2437,2623` (help card body, keyboard-guide rows) — same addition |
+| `kbd_border` | `#29c9dc` | `styles.css:1727` (help keyboard guide `kbd` border) — same addition |
+| `white` | `#ffffff` (base for the reference's `rgba(255,255,255,α)` hairlines/labels: α .03 `:1321`, .05 `:1234`, .55 `:1237`, .72 `:1263`) | profile's `white@α` reads; added with the same wave |
+| `challenge_cyan` | `#78c8ff` | `styles.css:3216,3267` (`rgba(120,200,255,α)` rules; hex base) — same addition |
+| `challenge_row_fill` | `rgba(8,16,44,0.5)` | `styles.css:3217` (challenge row background) — same addition |
+| `challenge_done_border` | `rgba(255,210,120,0.4)` | `styles.css:3222` (completed challenge row border) — same addition |
+| `challenge_done_fill` | `rgba(60,42,8,0.28)` | `styles.css:3223` (completed challenge row background) — same addition |
+| `summary_fill` | `rgba(8,22,48,0.6)` | `styles.css:3592` (profile career summary panel) — same addition |
+| `stat_bar` | `#7ee0ff` | `styles.css:3026` `.stat-bar` (UIR-11's stat strip) — added 2026-09-17 (wave 3) with the strip itself |
+| `stat_bar_rival` | `#ffb08c` | `styles.css:3030` `.team-slot--rival .stat-bar` — same addition |
 
 ## 4. Type variations (names fixed here; screens use these strings)
 

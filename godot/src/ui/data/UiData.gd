@@ -71,6 +71,19 @@ const FEEDBACK_TOPICS := [
 	{"id": "other", "label_key": "fbTopicOther"},
 ]
 
+## The three stats the reference's stat strip shows, in its own order
+## (`js/ui.js:824-826`), with the label each bar wears (`:824-826`).
+const STAT_KEYS := ["power", "control", "speed"]
+## The five ticks one bar carries; at least one of them is always filled
+## (`js/ui.js:820`: `"▮".repeat(pieni) + "▯".repeat(5 - pieni)`).
+const STAT_TICKS := 5
+const STAT_FILLED_STEPS := 4
+const STAT_LABEL_KEYS := {
+	"power": "statPower",
+	"control": "statControl",
+	"speed": "statSpeed",
+}
+
 ## `renderMatchStats` (`js/ui.js:1386-1406`): four compared rows plus two foot figures.
 ## `lower_is_better` is the reference's own fourth argument for the errors row.
 const RESULT_STAT_ROWS := [
@@ -368,6 +381,60 @@ static func _pick_saved(saved_id: String, pool: Array, used: Array) -> String:
 		if not used.has(id):
 			return _text(id)
 	return ""
+
+
+# ---------------------------------------------------------------------------
+# Athlete stat strip (`STAT_RANGE`/`statLine`, js/ui.js:805-828)
+# ---------------------------------------------------------------------------
+
+
+## `STAT_RANGE` (`js/ui.js:805-812`): each stat's min and max over the WHOLE frozen
+## roster — `ATHLETES.map((a) => a.stats[chiave])` there (`:808`), `Frozen.athletes()`
+## here, the same six rows (checked against `js/data.js` on 2026-09-17). The reference's
+## own words: "Le barrette servono a confrontare gli atleti fra loro, quindi la scala e'
+## quella reale del roster e non un intervallo scelto a mano" (`:799-801`). The scale is
+## the roster's, never a build's: a demo fields a subset and must still read the same
+## bars, which is why this reads `Frozen` and not `Gate.roster()`.
+static func stat_range() -> Dictionary:
+	var out := {}
+	for key in STAT_KEYS:
+		out[key] = {"min": INF, "max": -INF}
+	for athlete in Frozen.athletes():
+		var stats: Dictionary = (athlete as Dictionary).get("stats", {})
+		for key in STAT_KEYS:
+			if not stats.has(key):
+				continue
+			var value := float(stats[key])
+			var bounds: Dictionary = out[key]
+			bounds["min"] = minf(float(bounds["min"]), value)
+			bounds["max"] = maxf(float(bounds["max"]), value)
+	return out
+
+
+## One row per stat for one frozen athlete: `{key, label_key, value, filled, ticks}`.
+## `filled` is the reference's own formula (`js/ui.js:819`):
+## `1 + round(clampUnit((value - min) / (max - min || 1)) * 4)` — the weakest athlete of
+## the roster keeps one tick, because "una barretta vuota sembra un dato mancante, non una
+## statistica bassa" (`:817-818`). No number is written beside a bar; the bars compare
+## athletes with each other, so `value` is carried for a caller that wants it, not shown.
+static func stat_rows(athlete: Dictionary) -> Array[Dictionary]:
+	var ranges := stat_range()
+	var stats: Dictionary = athlete.get("stats", {})
+	var out: Array[Dictionary] = []
+	for key in STAT_KEYS:
+		var bounds: Dictionary = ranges.get(key, {})
+		var value := float(stats.get(key, 0.0))
+		var min_value := float(bounds.get("min", 0.0))
+		var span := float(bounds.get("max", 0.0)) - min_value
+		var unit := 0.0 if span == 0.0 else clampf((value - min_value) / span, 0.0, 1.0)
+		out.append({
+			"key": key,
+			"label_key": _text(STAT_LABEL_KEYS.get(key)),
+			"value": value,
+			"filled": 1 + int(round(unit * float(STAT_FILLED_STEPS))),
+			"ticks": STAT_TICKS,
+		})
+	return out
 
 
 # ---------------------------------------------------------------------------

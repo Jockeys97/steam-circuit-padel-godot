@@ -149,6 +149,18 @@ menu_quit={
 
 common/physics_ticks_per_second=120
 
+[display]
+
+; UIR-22: the reference draws its UI into a fixed 1280x720 stage and scales that box
+; to the window (`index.html`/`styles.css`'s stage), so the screens keep their
+; composition at any window size instead of re-flowing. `canvas_items` stretches the
+; Control tree, `keep` preserves the stage's aspect with letterbox bars rather than
+; distorting it. The 3D viewport still renders at the window's own size.
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

@@ -24,6 +24,12 @@
 ##   6. The keyboard model: with a pad connected, confirming a text field opens `osk.gd`
 ##      for that field and back closes it. The field is this audit's own probe, not a
 ##      real screen's.
+##   7. The carried metadata (added 2026-09-17, wave 3): the range keys
+##      (`min`/`max`/`step`/`value`) and the OSK keys (`value`/`max_length`/`field_label`)
+##      that `focus_nav.gd::_adjust_range` and `menu_nav.gd::confirm()` read but the
+##      focus model cannot hold are carried by `UiFocusBridge` from a registration to the
+##      live target the input lane consumes — proved by stepping a probe range with both
+##      a key and a pad motion, and by opening the OSK on a seeded probe field.
 ##
 ## WHAT IT DOES NOT DO: it does not re-assert geometry or key repeat — those are
 ## `godot/tests/input/**` (4/4, 308 checks) and this audit is not a second suite for
@@ -244,6 +250,7 @@ func _frame(audit: AuditBase) -> void:
 	await _back(audit, bridge, focus, router, transitions)
 	await _root(audit, bridge, focus, router, transitions)
 	await _keyboard(audit, bridge, focus, router)
+	await _metadata(audit, bridge, focus, router)
 	root.remove_child(frame)
 	frame.free()
 	audit.report("transitions observed by the routers own signal: %d" % int(observed[0]))
@@ -441,6 +448,86 @@ func _keyboard(audit: AuditBase, bridge: RefCounted, focus: MenuFocus, router: C
 	released.button_index = JOY_BUTTON_A
 	released.pressed = false
 	audit.check_eq(bridge.dispatch(released), false, "a11y/a_button_release_is_not_a_confirm")
+
+
+# ---------------------------------------------------------------------------
+# 7. The carried metadata: the range keys and the OSK keys the model cannot hold
+# ---------------------------------------------------------------------------
+
+## The seam the settings screen's range rows and the feedback screen's text fields need.
+## `game/menu_focus.gd::_target()` projects a fixed key set, so the keys the input lane
+## itself reads never reach the model: `focus_nav.gd::_adjust_range` (:239-246) steps a
+## range from `step`/`value`/`min`/`max`, and `menu_nav.gd::confirm()` (:223-229) opens
+## the OSK from `value`/`max_length`/`field_label`. The bridge carries them from the
+## registration to the live target the input lane consumes. Both probes below are this
+## audit's own constructed state, labeled as such like the section above. The shell is the
+## one the router has mounted *now*, read the same way `_keyboard` reads it.
+func _metadata(audit: AuditBase, bridge: RefCounted, focus: MenuFocus, router: Control) -> void:
+	var shell: Control = router.active_screen().get("shell")
+	var nav: MenuNav = focus.menu
+	# The settings screen's shape: a range row registered with the range keys.
+	var range := VSlider.new()
+	range.name = "ProbeRange"
+	range.custom_minimum_size = Vector2(48.0, 160.0)
+	shell.content().add_child(range)
+	var range_keys := {"min": 0.0, "max": 1.0, "step": 0.25, "value": 0.5}
+	bridge.register("settings/probe_range", range, "", {
+		"kind": "range", "min": 0.0, "max": 1.0, "step": 0.25, "value": 0.5,
+	})
+	await process_frame
+	audit.check_eq(bridge.metadata_of("settings/probe_range"), range_keys, "a11y/the_registered_range_keys_are_reported_back")
+	audit.check_eq(bridge.metadata_of("modes/first"), {}, "a11y/a_plain_control_carries_no_metadata")
+	audit.check_eq(bridge.last_range(), {}, "a11y/no_range_step_is_reported_before_one_happens")
+	audit.check_true(bridge.set_focus("settings/probe_range"), "a11y/the_range_takes_the_focus")
+	audit.check_eq(bridge.focused_metadata(), range_keys, "a11y/the_carried_keys_reach_the_live_target_the_input_lane_reads")
+	var steps: Array = []
+	bridge.connect("range_changed", func(id: String, value: float) -> void:
+		steps.append([id, value]))
+	audit.check_eq(bridge.dispatch(_key_event(KEY_RIGHT)), true, "a11y/a_direction_on_the_range_is_handled")
+	audit.check_eq(bridge.last_range(), {"id": "settings/probe_range", "value": 0.75}, "a11y/right_steps_the_range_from_the_registered_value")
+	audit.check_eq(float(_target_of(nav, "settings/probe_range")["value"]), 0.75, "a11y/the_stepped_value_is_the_live_targets_own")
+	audit.check_eq(float(bridge.metadata_of("settings/probe_range")["value"]), 0.75, "a11y/the_step_is_mirrored_into_the_registration")
+	audit.check_eq(bridge.dispatch(_key_event(KEY_RIGHT)), true, "a11y/the_range_steps_again")
+	audit.check_eq(float(bridge.last_range()["value"]), 1.0, "a11y/the_second_step_reaches_the_maximum")
+	audit.check_eq(bridge.dispatch(_key_event(KEY_RIGHT)), true, "a11y/a_direction_at_the_maximum_is_still_handled")
+	audit.check_eq(float(bridge.last_range()["value"]), 1.0, "a11y/the_maximum_clamps_the_value")
+	audit.check_eq(steps.size(), 2, "a11y/the_clamped_step_reported_no_change")
+	audit.check_eq(bridge.dispatch(_key_event(KEY_LEFT)), true, "a11y/the_range_steps_back")
+	audit.check_eq(float(bridge.last_range()["value"]), 0.75, "a11y/the_mirrored_value_is_where_the_next_step_starts")
+	var motion := InputEventJoypadMotion.new()
+	motion.axis = JOY_AXIS_LEFT_X
+	motion.axis_value = 0.9
+	audit.check_eq(bridge.dispatch(motion), true, "a11y/a_pad_motion_on_the_range_is_handled")
+	audit.check_eq(float(bridge.last_range()["value"]), 1.0, "a11y/the_pad_motion_steps_the_same_range")
+	audit.check_eq(steps.size(), 4, "a11y/every_step_reported_once")
+
+	# The feedback screen's shape: a text field registered with the OSK keys.
+	var message := LineEdit.new()
+	message.name = "ProbeMessage"
+	message.custom_minimum_size = Vector2(320.0, 32.0)
+	shell.content().add_child(message)
+	var osk_keys := {"value": "seed", "max_length": 12, "field_label": "Messaggio"}
+	bridge.register("feedback/probe_message", message, "", {
+		"kind": "text_field", "value": "seed", "max_length": 12, "field_label": "Messaggio",
+	})
+	await process_frame
+	audit.check_eq(bridge.metadata_of("feedback/probe_message"), osk_keys, "a11y/the_registered_osk_keys_are_reported_back")
+	audit.check_true(bridge.set_focus("feedback/probe_message"), "a11y/the_message_field_takes_the_focus")
+	audit.check_eq(bridge.focused_metadata(), osk_keys, "a11y/the_osk_keys_reach_the_live_target_too")
+	audit.check_eq(nav.osk.is_open(), false, "a11y/the_keyboard_is_closed_before_the_field_is_confirmed")
+	audit.check_eq(bridge.dispatch(_key_event(KEY_ENTER)), true, "a11y/confirm_on_the_seeded_field_is_handled")
+	audit.check_eq(nav.osk.is_open(), true, "a11y/the_seeded_field_opens_the_keyboard")
+	audit.check_eq(nav.osk.value(), "seed", "a11y/the_keyboard_opens_with_the_registered_seed")
+	audit.check_eq(nav.osk.max_length(), 12, "a11y/the_keyboard_opens_with_the_registered_length_cap")
+	audit.check_true(nav.osk.label().contains("Messaggio"), "a11y/the_keyboard_labels_the_field_the_screen_named")
+	audit.check_eq(String(bridge.last_osk().get("id", "")), "feedback/probe_message", "a11y/the_bridge_reports_the_field_the_keyboard_opened_for")
+	audit.check_eq(bool(bridge.last_osk().get("open", false)), true, "a11y/the_report_says_the_keyboard_is_open")
+	audit.check_eq(nav.osk.press_char("x"), true, "a11y/a_key_press_lands_while_the_keyboard_is_open")
+	audit.check_eq(bridge.dispatch(_key_event(KEY_ESCAPE)), true, "a11y/back_with_the_seeded_keyboard_open_is_handled")
+	audit.check_eq(nav.osk.is_open(), false, "a11y/the_seeded_keyboard_closes")
+	audit.check_eq(String(bridge.last_osk().get("value", "")), "seedx", "a11y/the_screen_can_read_back_what_was_typed")
+	audit.check_eq(bridge.focus_id(), "feedback/probe_message", "a11y/the_field_gets_the_focus_back")
+	audit.check_eq(bridge.focused_metadata(), osk_keys, "a11y/the_carried_keys_survive_the_context_change_the_keyboard_made")
 
 
 # ---------------------------------------------------------------------------
