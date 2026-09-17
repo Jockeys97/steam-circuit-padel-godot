@@ -2,19 +2,19 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ch0rqk8j6lxri"
-path="res://.godot/imported/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_2.jpg-016127ca0d623245c03f48b4e6cab31c.ctex"
+uid="uid://g1qi3a3j4guo"
+path="res://.godot/imported/sideline-shelter_0.jpg-06e78c115ce9609fb8e6b19ad3aa51aa.ctex"
 metadata={
 "vram_texture": false
 }
 generator_parameters={
-"md5": "e41da03ddd0cb237ee0ade0be8fda1c6"
+"md5": "924e41401896a348de609d77995c0f9d"
 }
 
 [deps]
 
-source_file="res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_2.jpg"
-dest_files=["res://.godot/imported/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_2.jpg-016127ca0d623245c03f48b4e6cab31c.ctex"]
+source_file="res://assets/arena/sideline-shelter_0.jpg"
+dest_files=["res://.godot/imported/sideline-shelter_0.jpg-06e78c115ce9609fb8e6b19ad3aa51aa.ctex"]
 
 [params]
 

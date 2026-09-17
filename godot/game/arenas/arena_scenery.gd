@@ -50,6 +50,7 @@ const Court := preload("res://game/court.gd")
 const CourtBuilder := preload("res://game/arenas/court_builder.gd")
 const ArenaStyle := preload("res://game/arenas/arena_style.gd")
 const Bleachers := preload("res://game/arenas/bleachers.gd")
+const ArenaProps := preload("res://game/arenas/arena_props.gd")
 
 ## The backdrop wall's world z. Behind `COURT`'s rear line (-6.35 m at this
 ## scale) and in front of the point where the ground plane leaves the frame, so
@@ -135,6 +136,12 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 	#    last so the stands are the arena's own geometry, not a scenery prop: they
 	#    are placed from the court's width, not from this band.
 	Bleachers.build(root)
+
+	# 6. The furniture that shares the stands' corridor and the rear band: the
+	#    players' shelters beside the stands, the sponsor boards behind the rear
+	#    glass. After the stands because the shelters place themselves from
+	#    `Bleachers.span_z()`.
+	ArenaProps.build(root)
 	return root
 
 

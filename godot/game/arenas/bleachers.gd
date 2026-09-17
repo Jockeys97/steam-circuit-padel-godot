@@ -44,6 +44,11 @@ const GLB_PATH := "res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000
 const TRIANGLES := 459928
 const VERTICES := 271287
 
+## The unit's own width along its local X, in metres, as authored (the box the
+## loaded mesh reports; `span_z()` multiplies it by the scale and the copy count so
+## the neighbours can place themselves without a second GLB read).
+const UNIT_WIDTH_M := 1.903
+
 ## Uniform scale of one copy. The unit is 1.9 m wide as authored — a bench, not a
 ## tribune — and the camera reads the stands from ~30 m away at ~36 px/m, where a
 ## 2048-4096 px texture is already two decades past what the frame can resolve:
@@ -155,6 +160,14 @@ static func build(parent: Node3D) -> Node3D:
 		box.position.x, box.position.y, box.position.z, box.size.x, box.size.y, box.size.z,
 	])
 	return group
+
+
+## How far the stands reach along the side line, in metres. Whatever stands NEXT to
+## them (`arena_props.gd` puts the shelters there) needs this to know where their
+## span ends, and reading it from the loaded box every time would mean a second GLB
+## read for a number the scale and the unit width already decide.
+static func span_z() -> float:
+	return float(copies_per_side) * UNIT_WIDTH_M * scale
 
 
 ## The unit's own box, in the scene root's local space, measured off the loaded

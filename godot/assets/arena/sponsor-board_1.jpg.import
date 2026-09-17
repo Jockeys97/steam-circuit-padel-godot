@@ -2,19 +2,19 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ch0rqk8j6lxri"
-path="res://.godot/imported/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_2.jpg-016127ca0d623245c03f48b4e6cab31c.ctex"
+uid="uid://cw2axol2wr1i7"
+path="res://.godot/imported/sponsor-board_1.jpg-b0b757e1048ea3a65995e2113c9eabf6.ctex"
 metadata={
 "vram_texture": false
 }
 generator_parameters={
-"md5": "e41da03ddd0cb237ee0ade0be8fda1c6"
+"md5": "a465ab2d7918c4f87ced269a927702fb"
 }
 
 [deps]
 
-source_file="res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_2.jpg"
-dest_files=["res://.godot/imported/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_2.jpg-016127ca0d623245c03f48b4e6cab31c.ctex"]
+source_file="res://assets/arena/sponsor-board_1.jpg"
+dest_files=["res://.godot/imported/sponsor-board_1.jpg-b0b757e1048ea3a65995e2113c9eabf6.ctex"]
 
 [params]
 

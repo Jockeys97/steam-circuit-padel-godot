@@ -2,19 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ch0rqk8j6lxri"
-path="res://.godot/imported/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_2.jpg-016127ca0d623245c03f48b4e6cab31c.ctex"
+uid="uid://cdbtp0i178blv"
+path="res://.godot/imported/bleachers-after-opt.png-e00e22907cc0996afacb89b34d0d6a7b.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "e41da03ddd0cb237ee0ade0be8fda1c6"
 }
 
 [deps]
 
-source_file="res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_2.jpg"
-dest_files=["res://.godot/imported/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture_2.jpg-016127ca0d623245c03f48b4e6cab31c.ctex"]
+source_file="res://game/out/bleachers-after-opt.png"
+dest_files=["res://.godot/imported/bleachers-after-opt.png-e00e22907cc0996afacb89b34d0d6a7b.ctex"]
 
 [params]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

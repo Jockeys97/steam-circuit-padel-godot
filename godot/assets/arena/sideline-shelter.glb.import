@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://chwgsxuijgktp"
-path="res://.godot/imported/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb-bc07939e5eb460a5efe17a7b608ab772.scn"
+uid="uid://d28awx4oc11mk"
+path="res://.godot/imported/sideline-shelter.glb-5beeef6ae3a4e448bb6ec6fa8dbfd8f2.scn"
 
 [deps]
 
-source_file="res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb"
-dest_files=["res://.godot/imported/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb-bc07939e5eb460a5efe17a7b608ab772.scn"]
+source_file="res://assets/arena/sideline-shelter.glb"
+dest_files=["res://.godot/imported/sideline-shelter.glb-5beeef6ae3a4e448bb6ec6fa8dbfd8f2.scn"]
 
 [params]
 
@@ -24,7 +24,7 @@ nodes/import_as_skeleton_bones=false
 nodes/use_name_suffixes=true
 nodes/use_node_type_suffixes=true
 meshes/ensure_tangents=true
-meshes/generate_lods=false
+meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
