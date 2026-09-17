@@ -16,7 +16,9 @@
 ##   3. the MATCH mounts the overlay stack with the recreated HUD (UIR-08 + UIR-20 +
 ##      UIR-26), and the pause seam is an explicit state: `set_match_paused(true/false)`
 ##      opens and closes the card, a repeated echo is a no-op, ESC drives the card's own
-##      five-step hierarchy, and a reset (`rematch()`) leaves the match unpaused;
+##      five-step hierarchy, and a reset (`rematch()`) leaves the match unpaused. Since
+##      architecture-deepening gate 4 the mount does NOT depend on the clock: the
+##      harness-driven match of section 4 mounts the same stack (and no ported column);
 ##   4. an END-TO-END run with real data: a quick match is played out by the scripted
 ##      player to a real result (`state.result`), `result_payload()` carries the state's
 ##      own figures, `finish_route(true)` leaves them in `Config.pending_result`, and a
@@ -243,6 +245,16 @@ func _match_mounts_the_overlay_stack(audit: AuditBase) -> void:
 
 func _end_to_end_with_real_data(audit: AuditBase) -> void:
 	var node := _new_match(false)
+	# The clock and the mount are two separate questions (gate 4): this node is
+	# harness-driven and still mounts the shipping UI, and it never builds the
+	# retired ported column.
+	audit.check_eq(bool(node.get("engine_driven")), false, "harness/the_node_owns_the_clock")
+	audit.check_true(node.get_node_or_null("HudLayer/UiHud") != null,
+		"harness/the_recreated_hud_mounts_without_the_engine_clock (UIR-08)")
+	audit.check_true(node.get_node_or_null("HudLayer/PauseOverlay") != null,
+		"harness/the_pause_card_mounts_without_the_engine_clock (UIR-20)")
+	audit.check_true(node.get_node_or_null("HudLayer/Hud") == null,
+		"harness/no_retired_ported_column_is_built")
 	var bot := ScriptedPlayer.new()
 	while node.state.result == null and int(node.ticks) < TICK_BUDGET:
 		node.tick_fixed(TICK, bot.decide(node.state), Sim.empty_input())

@@ -1,0 +1,21 @@
+# CONTEXT — the words this project uses
+
+A glossary only: what each term means in this repository, and where its definition
+lives. No implementation detail, no decisions, no plans. Where a term's definition
+lives in a ticket or a record, that document is the authority.
+
+| Term | What it means here | Defined by |
+|---|---|---|
+| The reference | The frozen web build of Steam Circuit Padel Pro — `js/**` (the game, the renderer, the locale tables, `data.js`'s constants) and the audit suite under `scripts/`. It is the executable statement of "the same game", frozen at commit `2979588` for the duration of the port. | `docs/wayfinder/map.md`; `docs/wayfinder/parity-harness.md` |
+| The port | The Godot desktop 3D build in `godot/`: it must play the same game as the reference, in real 3D, with no current feature dropped. | `docs/wayfinder/map.md` (Destination) |
+| Frozen roster | The reference's own arena list — the nine arenas — serialized verbatim from `js/data.js` into `godot/src/sim/frozen/data.json` and read through `godot/src/sim/frozen.gd`. It is asserted at nine and must stay nine; the world arenas are additions outside it. | `godot/src/sim/frozen.gd`; `docs/mission/world-arenas/integrator.md` §2.1 |
+| World arena | A port addition outside the frozen roster (torii, medina, carioca, aurora, egeo). It has no row in the reference's tables, so it can never appear in the frozen order, and it does not exist in a demo build; it is exposed through the arena library only. | `docs/mission/world-arenas/integrator.md` §2; `godot/game/arenas/arena_library.gd` |
+| Match feedback | The reaction a shot draws: its grade, mode, advice word and colours, and the event log's sentences — the language the simulation stores as ids (`shot:<grade>`, `shotMode:<mode>`) and every UI resolves before painting. | `godot/game/feedback_vocabulary.gd`; `docs/mission/architecture-deepening/tickets/feedback-vocabulary.md` |
+| Court timing marks | The presentation drawn on the court around the active athlete (the charge ring and its window, the precision bar, the advice word, the energy bar) and over the athlete who hit (the verdict). | `godot/game/court_timing_marks.gd`; `docs/wayfinder/evidence/timing-presentation-3d.md` |
+| Recreated UI | The shipping UI: the scenes under `godot/src/ui/**` that a match mounts (`HudLayer/UiHud`, `PauseOverlay`, `TouchControls`, `ReplayOverlay`). | `docs/implementation/ui-recreation/**`; `godot/game/match_controller.gd` (the mount policy) |
+| Legacy UI | The ported column (`godot/game/hud.gd`, `godot/game/main_menu.gd`): the original 2D-style UI, kept only where the frozen harness and the diagnostic side-by-side still require it. | `docs/mission/architecture-deepening/tickets/ui-mount-policy.md` |
+| Engine-driven match | A match whose clock is the engine's own frame loop. A harness run turns `engine_driven` off and steps ticks itself through `tick_fixed()` — one code path, two clocks, and the clock never decides which UI is mounted. | `godot/game/match_controller.gd` (`engine_driven`) |
+| Mixer contract | The vendored audio contract (`godot/src/audio/event_map.json`, a byte-identical copy of `tools/audio-port/event-map.json`) and its one reader: the master and music-bus gains, the mute default, the gain range and the bus facts both audio adapters obey. | `godot/src/audio/mixer_contract.gd`; `docs/mission/architecture-deepening/tickets/mixer-contract.md` |
+| Parity | Playing the same game as the reference: the same seeded simulation producing the same discrete state and the same ordered outcomes, proven by cross-engine digests at the digest's six printed decimals — not bit-identical float64. | `docs/mission/STATE.md` (tick 19); `docs/wayfinder/tickets/simulation-port-boundary.md` |
+| Frozen harness | The Node-side parity harness (`scripts/parity-digest.mjs` and the audit runners under `scripts/`), which generates the traces and digests the port must match. It stays byte-identical for the duration of the port. | `docs/mission/STATE.md`; `docs/wayfinder/map.md` |
+| Owner gate | A decision or verdict reserved to the owner (Luca) — camera and feel, UI approach, the parity gate, roster order, arena direction. Agents leave it untouched rather than decide it. | `docs/wayfinder/map.md` (Planning exit gates); `docs/mission/STATE.md` ("Camera composition stays untouched (owner gate)") |

@@ -119,6 +119,15 @@ static func selectable_world_arenas() -> Array:
 	return Gate.world_arenas()
 
 
+## THE ONE ARENA CATALOG for this build (`content_gate.gd::arena_catalog()`,
+## `game/arenas/arena_catalog.gd`): the frozen index, the world set and the seat rule
+## all come from it, so this file no longer decides frozen-vs-world by itself — the
+## ported column and the recreated arena screen ask the same catalog. Typed Variant
+## because the module is a `RefCounted` class and only its public interface is called.
+static func arena_catalog() -> Variant:
+	return Gate.arena_catalog()
+
+
 ## Is the current selection a world arena (the world seat is occupied)?
 static func is_world_selected() -> bool:
 	return world_arena_id != ""
@@ -303,11 +312,15 @@ static func apply_cli_selection(athlete_arg: String, arena_arg: String, tier_arg
 		else:
 			refused["athlete"] = requested
 	if arena_arg != "":
-		var index := arena_index_of(arena_arg)
-		if index >= 0 and grants_arena(index):
-			arena_index = index
+		# The catalog's own seat answer, the same one `set_arena_id` lands on: a
+		# frozen id this build grants keeps its roster index, a world id this build
+		# offers takes the world seat, and a demo refuses both by name.
+		var seat: Dictionary = arena_catalog().seat(arena_arg)
+		var frozen_index := int(seat["index"])
+		if frozen_index >= 0 and grants_arena(frozen_index):
+			arena_index = frozen_index
 			world_arena_id = ""
-		elif Arena.is_world(arena_arg) and not Gate.is_demo():
+		elif bool(seat["world"]) and bool(seat["offered"]):
 			# A world arena this build offers: the seat is the id itself. A demo
 			# refuses it below, with everything else it does not grant.
 			world_arena_id = arena_arg
@@ -334,19 +347,12 @@ static func apply_cli_selection(athlete_arg: String, arena_arg: String, tier_arg
 
 
 static func arena_ids() -> PackedStringArray:
-	var out := PackedStringArray()
-	for row in arenas():
-		out.append(String(row["id"]))
-	return out
+	return arena_catalog().ids()
 
 
 ## Roster index of an arena id, or -1. The frozen table's order is the menu's order.
 static func arena_index_of(id: String) -> int:
-	var list := arenas()
-	for i in list.size():
-		if String((list[i] as Dictionary)["id"]) == id:
-			return i
-	return -1
+	return arena_catalog().index_of(id)
 
 
 ## The selected arena's id. `arena_index` stays the single piece of FROZEN state
@@ -361,13 +367,16 @@ static func arena_id() -> String:
 ## Selects an arena by id. Returns false for an unknown id — and for a WORLD id
 ## in a demo build, which does not offer the world set at all: the caller decides
 ## what to do about it rather than the config silently picking something else.
+## Which seat the id lands in is the catalog's answer (`seat()`), not a second rule
+## here: a frozen id keeps its roster index and clears the world seat, a world id
+## this build offers takes the world seat.
 static func set_arena_id(id: String) -> bool:
-	var index := arena_index_of(id)
-	if index >= 0:
-		arena_index = index
+	var seat: Dictionary = arena_catalog().seat(id)
+	if int(seat["index"]) >= 0:
+		arena_index = int(seat["index"])
 		world_arena_id = ""
 		return true
-	if Arena.is_world(id) and not Gate.is_demo():
+	if bool(seat["world"]) and bool(seat["offered"]):
 		world_arena_id = id
 		return true
 	return false

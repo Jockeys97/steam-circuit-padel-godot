@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
  * hud-coverage.mjs — read-only coverage of the port's emitted message ids by the
- * in-match HUD's hand-written label table.
+ * one owner of the match's feedback vocabulary.
  *
- * `godot/game/hud.gd` (slice S4, another writer's file) carries its own
- * Italian-only `EVENT_LABELS` map plus a `describe_event()` that pattern-matches
- * the composite encodings. That is a second string table beside the generated one —
- * legitimate while S4 is landing, but nothing currently checks it against the ids
- * the simulation actually emits, and its fallback is `return id`, which is exactly
- * how "AI_LEGGENDA_NAME" reached the screen.
+ * `godot/game/feedback_vocabulary.gd` (architecture-deepening gate 1) carries the
+ * event log's `EVENT_LABELS` map — GENERATED there by
+ * `godot/game/tools/gen_hud_labels.py` — beside the `describe_event()` that
+ * resolves a message id through the verified locale layer first and this table
+ * second. The legacy HUD used to hold the table; it now paints the log and asks
+ * the module for the line, and this probe reads the table from that owner.
  *
  * This tool measures the gap and changes nothing. It exits 0 unless `--fail-on-leak`
  * is passed, in which case it exits 1 when an id the sim can emit would be printed
@@ -26,7 +26,7 @@ import { REPO } from "./extract-i18n.mjs";
 import { SIM_FILES, loadPortContext, collectEmitSites, deriveEmittedIds, classifyId } from "./emit-analysis.mjs";
 import { extractTables } from "./extract-i18n.mjs";
 
-const HUD_REL = "godot/game/hud.gd";
+const LABELS_REL = "godot/game/feedback_vocabulary.gd";
 
 /** The constant block of a GDScript `const NAME := { … }` map, as key -> value strings. */
 export function constMap(text, name) {
@@ -45,7 +45,7 @@ export function constMap(text, name) {
   return out;
 }
 
-/** Mirrors `describe_event()` + `reason_label()` of godot/game/hud.gd, branch for branch. */
+/** Mirrors the table lookup of `describe_event()` in godot/game/feedback_vocabulary.gd. */
 export function hudDescribe(id, eventLabels, reasonMap) {
   if (Object.prototype.hasOwnProperty.call(eventLabels, id)) return eventLabels[id];
   const reason = (r) => (Object.prototype.hasOwnProperty.call(reasonMap, r) ? reasonMap[r] : r);
@@ -59,13 +59,13 @@ export function hudDescribe(id, eventLabels, reasonMap) {
 
 function main() {
   const failOnLeak = process.argv.includes("--fail-on-leak");
-  const hudPath = join(REPO, HUD_REL);
-  if (!existsSync(hudPath)) {
-    console.log(`${HUD_REL} is not in this working tree — nothing to measure (the HUD slice has not landed).`);
+  const labelsPath = join(REPO, LABELS_REL);
+  if (!existsSync(labelsPath)) {
+    console.log(`${LABELS_REL} is not in this working tree — nothing to measure (the vocabulary module has not landed).`);
     return;
   }
-  const hudText = readFileSync(hudPath, "utf8");
-  const eventLabels = constMap(hudText, "EVENT_LABELS") ?? {};
+  const labelsText = readFileSync(labelsPath, "utf8");
+  const eventLabels = constMap(labelsText, "EVENT_LABELS") ?? {};
   const reasonMap = {
     msgOut: "palla fuori",
     msgDoubleBounce: "secondo rimbalzo",
@@ -96,7 +96,7 @@ function main() {
   const reachable = new Set(ids);
   const unreachableLabels = Object.keys(eventLabels).filter((k) => !reachable.has(k) && k.includes(":"));
 
-  console.log(`# ${HUD_REL} — ${Object.keys(eventLabels).length} hand-written event labels, sha256 ${createHash("sha256").update(hudText, "utf8").digest("hex").slice(0, 12)}`);
+  console.log(`# ${LABELS_REL} — ${Object.keys(eventLabels).length} generated event labels, sha256 ${createHash("sha256").update(labelsText, "utf8").digest("hex").slice(0, 12)}`);
   console.log(`# ids the sim can emit: ${ids.length} — ${covered.length} get a readable line, ${leaks.length} print the id (or contain it)`);
   for (const row of leaks) console.log(`  RAW ID   ${row.id.padEnd(34)} -> ${JSON.stringify(row.out)}${row.category !== "ok" ? `  (contract category: ${row.category})` : ""}`);
   if (unreachableLabels.length) {

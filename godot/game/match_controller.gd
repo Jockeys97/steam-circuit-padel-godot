@@ -70,9 +70,23 @@ const HUMAN_MODES := ["solo", "coop", "pvp"]
 const Court := preload("res://game/court.gd")
 const Arena := preload("res://game/arenas/arena_library.gd")
 const InputSource := preload("res://game/input_map.gd")
+## The ported column is built ONLY when a run asks for it explicitly — `ui_legacy`
+## set before the tree, or `--ui=legacy` (architecture-deepening gate 4: the mount
+## is a UI-mode question, never a clock question, so a harness-driven match mounts
+## the shipping recreated UI too). It is NOT the vocabulary any more (gate 1): the
+## words and colours the court marks draw with are
+## `godot/game/feedback_vocabulary.gd`'s, read by the court timing module below,
+## which is this shell's only vocabulary consumer (gate 3).
 const HudScript := preload("res://game/hud.gd")
+## The one owner of the court timing presentation (architecture-deepening gate 3): the
+## ring the charge fills, the perfect-window circle, the advice word and its panel, the
+## two bars, the verdict over the athlete who hit — and their report. The shell creates
+## it, mounts it on itself and calls it once a frame.
+const CourtTiming := preload("res://game/court_timing_marks.gd")
 ## UIR-09's prototype overlay: the recreated HUD (`godot/src/ui/Hud.tscn`), mounted in
-## the same layer as the ported one and fed the same state+meta behind `--ui=new`.
+## the same layer the ported column uses and fed the same state+meta. The default
+## since UIR-22, and since gate 4 the only mount whose construction does not depend
+## on the clock.
 const Config := preload("res://game/match_config.gd")
 const ScriptedPlayer := preload("res://game/scripted_player.gd")
 const MatchAudioScript := preload("res://game/match_audio.gd")
@@ -114,131 +128,17 @@ const ACTIVE_RING_LIFT := 0.03
 const ACTIVE_PIN_HEIGHT := 2.45
 
 # ---------------------------------------------------------------------------
-# The timing presentation (`js/render.js:1646-1750`, `js/render.js:1031-1037`)
+# The timing presentation is its own module (architecture-deepening gate 3)
 # ---------------------------------------------------------------------------
-# The reference draws four things around `state[state.activePlayerKey]`, three of
-# them only while a shot is charging:
-#
-#   ring       at `p.y - 96*scale`: a `1.85*PI` track in `rgba(255,255,255,0.22)`
-#              with radius `20*scale` and stroke `3.4*scale`, a coloured arc up to
-#              `1.6*PI * clamp(1 - eta/0.55, 0, 1)` over it, and a green blinking
-#              circle when `|eta| <= perfectWindow`   (`js/render.js:1655-1690`)
-#   precision  at `p.y - 64*scale`, `46*scale x 5*scale`, cyan below the armed
-#              threshold and amber/pulsing above     (`js/render.js:1695-1726`)
-#   advice     at `p.y - 132*scale`, `t("shotAdvice_<advice>")` in the profile
-#              colour                                  (`js/render.js:1730-1750`)
-#   energy     at `p.y + 54*scale`, `52*scale` long, a 2 px fill over a 4 px track,
-#              drawn EVERY frame for the active athlete with the player side's
-#              energy                                  (`js/render.js:1031-1037`)
-#
-# THOSE OFFSETS ARE CANVAS PIXELS OF A HAND-DRAWN PROJECTION, NOT METRES. The
-# reference's own `point()` (`js/render.js:740-750`) returns
-# `scale = 0.58 + depth * 0.62` for a 960x620 canvas in which the athlete sprite is
-# ~139 px tall. The port's court is 10 x 20 m, so every offset is re-expressed as a
-# HEIGHT IN METRES above the athlete's feet and every size in metres, and then
-# MEASURED on a rendered frame: `evidence/active-player-marker.md` is the record of
-# what happens when a ring that is faithful to the 2D numbers is believed instead
-# of measured (98 x 25 px, invisible).
-#
-# The heights follow the reference's own order from the feet up — precision below
-# the ring, the verdict inside it, the advice above — re-spaced for the sizes the
-# measurements forced (`TIMING_RING_RADIUS` below): at these sizes the advice has to
-# clear the pin at 2.45 m, and it does.
-const TIMING_ENERGY_HEIGHT := 0.30
-const TIMING_PRECISION_HEIGHT := 0.75
-const TIMING_RING_HEIGHT := 1.60
-const TIMING_VERDICT_HEIGHT := 1.44
-const TIMING_ADVICE_HEIGHT := 2.95
-## How far towards the camera the bar under the athlete's feet is pulled. The
-## reference draws it BELOW the feet in screen space (`p.y + 54*scale`), which in
-## three dimensions is under the floor: drawn in front of the feet instead, at
-## `TIMING_ENERGY_HEIGHT`, it lands under the athlete in the frame.
-const TIMING_FOOT_FORWARD := 0.5
-
-# THE ONE CONVERSION BETWEEN THE REFERENCE'S CANVAS AND THIS FRAME.
-# The reference draws on a 960x620 canvas the captures render at 1280x720, so its
-# pixel values are read at `1280/960`; and on this frame the default camera maps one
-# metre at the athlete's feet to ~36 px vertically, measured on a rendered frame —
-# the 2.45 m pin floats 89 px above the athlete's feet, the 0.18 m energy track
-# prints 7 px tall. Every size below is therefore expressed through
-# `TIMING_M_PER_PX`, which is what makes a faithful size faithful ON THE FRAME
-# rather than in the arithmetic.
-const TIMING_PX_PER_M := 36.0
-const TIMING_M_PER_PX := 1.0 / TIMING_PX_PER_M
-const TIMING_FRAME_SCALE := 1280.0 / 960.0
-
-## The reference's `20*scale` radius and `3.4*scale` stroke (`js/render.js:1658`,
-## `:1675`) are 26.7 px of radius on this frame; the faithful 0.44 m printed a
-## 48 x 36 px ellipse whose stroke did not read, so the radius is enlarged to ~37 px
-## of horizontal extent (the ring's vertical extent is foreshortened by the camera,
-## which is why the measured mark is an ellipse). The before/after is in
-## `docs/wayfinder/evidence/timing-presentation-3d.md`.
-const TIMING_RING_RADIUS := 0.62
-const TIMING_RING_WIDTH := 0.11
-## The green circle of a met perfect window (`js/render.js:1679-1688`): radius
-## `r + 5*scale`, stroke `2*scale`, alpha `0.55 + 0.4*blink`.
-const TIMING_FLASH_GAP := 0.20
-const TIMING_FLASH_WIDTH := 0.07
-## `ctx.arc(0, 0, r, 0, Math.PI * 1.85)` and `... * 1.6 * frac` (`js/render.js:1667`,
-## `:1677`), and the fill `1 - read.eta / 0.55` (`js/render.js:1659`).
-const TIMING_ARC_TRACK := PI * 1.85
-const TIMING_ARC_FILL := PI * 1.6
-const TIMING_ETA_SPAN := 0.55
-## `if ((state.shotCharge ?? 0) > 0.05 && read?.active)` — the reference's gate, used
-## for the ring and for the precision bar (`js/render.js:1656`, `:1695`).
-const TIMING_CHARGE_FLOOR := 0.05
-## `precision > 0.04` (`js/render.js:1695`). `state.shotPrecision` is the SPRINT
-## input (`sim.gd:2643`), so this bar is drawn exactly while a human holds RT.
-const TIMING_PRECISION_FLOOR := 0.04
-## `46*scale x 5*scale` and `52*scale` with a 2 px fill over a 4 px track
-## (`js/render.js:1697-1700`, `:1031-1037`), enlarged: 43 x 7 px and 49 x 2.7 px are
-## marks whose thickness the ticket's ~20 px rule catches.
-const TIMING_PRECISION_W := 0.80
-const TIMING_PRECISION_H := 0.14
-const TIMING_ENERGY_W := 0.80
-const TIMING_ENERGY_H := 0.13
-## The advice panel: `800 ${11 * scale}px` in a `tw + 22` by 20 px rounded rect
-## (`js/render.js:1734-1742`). `TIMING_ADVICE_FONT_PX` is the reference's 11 px, and
-## the box and the padding are its own ratios to that font: 20/11 and 22/11.
-const TIMING_ADVICE_FONT_PX := 11.0
-const TIMING_ADVICE_BOX_LINES := 20.0 / 11.0
-const TIMING_ADVICE_PAD_LINES := 22.0 / 11.0
-## The three font sizes as integers: the reference's own pixel values read at this
-## frame's scale (11/14/9 * 1280/960 = 14.7 / 18.7 / 12), so `font_size *
-## TIMING_M_PER_PX` is the line height in metres and the word prints at that height
-## in pixels. The rounding is written out because a `const` in this file cannot call
-## `round()`.
-const TIMING_ADVICE_PX := 15
-const TIMING_VERDICT_PX := 19
-const TIMING_VERDICT_MODE_PX := 12
-## The verdict over the athlete who hit (`js/render.js:1041-1069`): the grade word
-## at `700 14px` with a 5 px `rgba(4, 14, 32, 0.9)` stroke, the mode line at
-## `600 9px` fifteen pixels below it, and the whole thing rising `(0.78 - life) * 18`
-## px while it fades with `alpha = clamp(life / 0.28, 0, 1)`.
-const TIMING_VERDICT_FONT_PX := 14.0
-const TIMING_VERDICT_MODE_FONT_PX := 9.0
-## `p.fillText(feedback.mode, p.x, y + 15)` (`js/render.js:1068`), in metres.
-const TIMING_VERDICT_MODE_DROP := 15.0 * (1280.0 / 960.0) / 36.0
-const TIMING_VERDICT_OUTLINE := Color(0.016, 0.055, 0.125, 0.9)
-## The 18 px of upward drift over the feedback's 0.78 s life (`js/render.js:1062`),
-## in metres at the reference's own sprite scale.
-const TIMING_VERDICT_DRIFT := 0.25
-const TIMING_VERDICT_LIFE := 0.78
-const TIMING_VERDICT_FADE := 0.28
-## The reference's four gradient stops (`js/render.js:1670-1673`), sampled by each
-## vertex's own local x projection: `createLinearGradient(0, 0, r, 0)` inside the
-## `rotate(-PI/2)` frame, so the point at the top of the ring takes the last stop
-## (orange) and the one at the bottom the first (cyan), and a canvas gradient clamps
-## past its ends.
-const TIMING_GRADIENT := [
-	[0.0, Color(0.157, 0.843, 0.910)],   # #28d7e8
-	[0.72, Color(0.620, 0.941, 0.357)],  # #9ef05b
-	[0.86, Color(1.0, 0.953, 0.416)],    # #fff36a
-	[1.0, Color(1.0, 0.439, 0.282)],     # #ff7048
-]
-## One ribbon segment every 7.5 degrees: the fill is quantised to this step, and a
-## step change is what rebuilds the arc's mesh.
-const TIMING_ARC_STEP := PI / 24.0
+# The ring the charge fills, the green circle of a met perfect window, the advice
+# word and its panel, the RT precision bar, the energy bar under the active athlete
+# and the verdict over the athlete who hit -- with every constant, the reference
+# anchors and the frame measurements that forced them -- are
+# `godot/game/court_timing_marks.gd`'s (`js/render.js:1646-1750`, `:1031-1037`,
+# `:1041-1069`). This shell creates that module in `_build_scene`, mounts it on
+# itself, calls its one `update` from `_sync_views`, forwards its report
+# (`timing_report`) and prints its capture lines. No mark, no geometry and no
+# verdict arithmetic lives here any more.
 
 # ---------------------------------------------------------------------------
 # UIR-27: the playback constants (`js/main.js:138-140`)
@@ -276,8 +176,17 @@ var finished: bool = false
 ## which is what keeps the frame-clock and parity checks their own subject.
 var session = null
 
-## Off for the headless harness, which calls `tick_fixed()` itself.
+## Off for the headless harness, which calls `tick_fixed()` itself. THE CLOCK ONLY:
+## whether this scene steps its own frames. It has no say in which UI is mounted —
+## that is `_ui_new`'s question (architecture-deepening gate 4), so a harness that
+## owns the clock still gets the shipping recreated UI.
 var engine_driven: bool = true
+## The explicit ported-column request, set before `_ready()` — the match's half of
+## the switch `main_menu.gd:87` documents (`--ui=legacy` is the same request from
+## the command line). Nothing in the shipped game sets it: the recreated UI is the
+## shipping path, and the ported column is the diagnostic fallback the legacy
+## sections of `tests/game_slice_test.gd` still assert.
+var ui_legacy := false
 ## Off when there is no display (or when a harness asks): the rigs are not spawned.
 var load_models: bool = true
 var use_scripted_input: bool = false
@@ -309,17 +218,17 @@ var _pending_input: Dictionary = {}
 var _pending_input2: Dictionary = {}
 var _hud
 var _mode_hud
-## The recreated HUD (UIR-08), null in a legacy run. `--ui=new` — the default since
-## UIR-22 — shows it and hides the two ported overlays; the ported ones are still
-## built and refreshed, so both constructions stay verifiable in one build and
-## `--ui=legacy` is a real fallback rather than a broken one.
+## The recreated HUD (UIR-08), null ONLY in an explicitly legacy run — the ported
+## column and this one are never built together any more (gate 4). `--ui=new` — the
+## default since UIR-22, and the mount a harness gets too — shows it; `--ui=legacy`
+## / `ui_legacy` is a real fallback rather than a broken one, and the run that asks
+## for it is the only one that pays for `game/hud.gd`.
 var _ui_hud: Control = null
 var _ui_new := false
 ## UIR-22's overlay stack, mounted with the recreated HUD: the pause card and its
 ## nested smash tutorial (UIR-20) and the coarse-pointer touch layer (UIR-26). Null
-## in a legacy run and in a harness run (`engine_driven` off — a headless harness
-## has no player and the slice counts live objects), which is exactly the set of
-## runs in which nothing can open them.
+## only in a legacy run: since gate 4 a harness-driven match mounts this stack like
+## any other, so the harnesses exercise the overlays a player can open.
 var _pause_overlay: Control = null
 var _touch_layer: Control = null
 ## The pause card's controls in the port's verified navigation model
@@ -339,31 +248,11 @@ var _land_ring: MeshInstance3D
 var _active_ring: MeshInstance3D
 ## Camera-facing downward triangle above the controlled athlete.
 var _active_pin: MeshInstance3D
-## The timing presentation (`js/render.js:1646-1750`): the ring that fills with the
-## charge and its track, the green circle of a met perfect window, the advice word
-## and its panel, the RT precision bar and the energy bar under the athlete's feet.
-## Built by `_build_timing_marks`, placed every frame by `_sync_timing`.
-var _timing_ring: MeshInstance3D
-var _timing_ring_track: MeshInstance3D
-var _timing_window: MeshInstance3D
-var _timing_advice: Label3D
-var _timing_advice_panel: MeshInstance3D
-var _timing_precision: MeshInstance3D
-var _timing_precision_track: MeshInstance3D
-var _timing_energy: MeshInstance3D
-var _timing_energy_track: MeshInstance3D
-## The verdict over the athlete who hit (`js/render.js:1041-1069`). The mode line is
-## the reference's own second line (`js/render.js:1066-1068`).
-var _timing_verdict: Label3D
-var _timing_verdict_mode: Label3D
-## The last `_sync_timing`'s numbers, for the tests, the capture's marker line and
-## the evidence. Never read back into the drawing: `_sync_views` recomputes.
-var _timing_state: Dictionary = {}
-## Segments the fill arc was last built with: the mesh is rebuilt when the fill
-## changes, not on every frame.
-var _timing_fill_segments: int = 0
-## Set only by the capture's A/B frame: every timing mark off, for the same tick.
-var _timing_muted: bool = false
+## The court timing presentation (`godot/game/court_timing_marks.gd`, gate 3): the
+## ring, the window, the advice word and its panel, the two bars and the verdict. The
+## module builds every mark into this node with its own `mount` and places them with
+## its own `update`; this shell owns no mark of its own.
+var _timing_marks
 ## The drill's target, drawn where the drill session put it. Invisible in every
 ## other mode (and in quick match, where there is no session at all).
 var _target_ring: MeshInstance3D
@@ -408,9 +297,11 @@ func _ready() -> void:
 	# UIR-22: the recreated HUD and the overlay stack are the playable path now, so
 	# the default flipped — `--ui=legacy` keeps the ported HUD reachable for the
 	# diagnostic side-by-side the captures and the slice's visual-contract section
-	# read. Both constructions are built in this scene either way (see
-	# `_build_hud_layer`), so a legacy run and a new run share one tick path.
-	_ui_new = _arg(args, "--ui=", "new") != "legacy"
+	# read, and `ui_legacy` (set before the tree, the menu's own switch) is the
+	# in-process form of the same request. THIS IS THE WHOLE MOUNT POLICY: one
+	# question, asked once, and the clock (`engine_driven`) is not part of it
+	# (architecture-deepening gate 4).
+	_ui_new = (not ui_legacy) and _arg(args, "--ui=", "new") != "legacy"
 	var camera := _arg(args, "--camera=", Config.camera_preset)
 	var tier := _arg(args, "--tier=", "")
 	var athlete := _arg(args, "--athlete=", "")
@@ -762,7 +653,11 @@ func _build_scene() -> void:
 	_active_pin.visible = false
 	add_child(_active_pin)
 
-	_build_timing_marks()
+	# The court timing presentation: the module builds its eleven marks into this
+	# node (same names, same order, same parent as before gate 3) and places them
+	# every frame from `_sync_views`.
+	_timing_marks = CourtTiming.new()
+	_timing_marks.mount(self)
 
 	# The drill's target, drawn from the live session (invisible in every other
 	# mode: a quick match has no session and the two match modes have no target).
@@ -780,29 +675,37 @@ func _build_scene() -> void:
 	var layer := CanvasLayer.new()
 	layer.name = "HudLayer"
 	add_child(layer)
-	_hud = HudScript.new()
-	_hud.name = "Hud"
-	layer.add_child(_hud)
-	_hud.bind_names(
-		String(Config.athlete()["name"]),
-		String(Config.tier()["name"]),
-		player_color,
-		ai_color
-	)
+	# THE MOUNT POLICY (architecture-deepening gate 4). The recreated UI is the
+	# shipping path; the ported column below is built only when a run asked for it
+	# EXPLICITLY (`ui_legacy` / `--ui=legacy`). A recreated run builds no hidden
+	# copy of it and nothing refreshes it — which is also why the legacy request
+	# and the clock are two separate questions: `engine_driven` is off in every
+	# harness, and the harnesses still exercise what ships.
+	if not _ui_new:
+		_hud = HudScript.new()
+		_hud.name = "Hud"
+		layer.add_child(_hud)
+		_hud.bind_names(
+			String(Config.athlete()["name"]),
+			String(Config.tier()["name"]),
+			player_color,
+			ai_color
+		)
 	# The mode HUD rides in the same layer, behind the match's own panels: it is
 	# the overlay that tells a drill from a tournament round from a career match,
-	# and it stays invisible in a quick match (no session to bind).
+	# and it stays invisible in a quick match (no session to bind). It is NOT the
+	# ported column: a mode match carries it in both UI modes.
 	_mode_hud = ModeHudScript.new()
 	_mode_hud.name = "ModeHud"
 	layer.add_child(_mode_hud)
 	if session != null:
 		_mode_hud.bind_session(session)
-	if _ui_new and engine_driven:
+	if _ui_new:
 		# UIR-09's prototype mount, now the playable one. Same layer, same state+meta
 		# (`_refresh_ui`), same names, and the pause button the ported HUD also
 		# carries — a drill's ESC still flips `_paused` in one place, which both
-		# overlays read. Loaded, not preloaded: a legacy or harness run does not pull
-		# these scenes and their theme into the engine's object count.
+		# overlays read. Loaded, not preloaded: a legacy run does not pull these
+		# scenes and their theme into the engine's object count.
 		# UIR-27's replay chrome: the reference draws it on the game canvas UNDER the
 		# HTML HUD (`.game-hud` z-index 5, `styles.css:536-544`), so it is a sibling of
 		# the HUDs with a negative z_index rather than a child of either. It paints
@@ -849,7 +752,10 @@ func _build_scene() -> void:
 		layer.add_child(_touch_layer)
 		_touch_layer.set_frame_width(float(ProjectSettings.get_setting("display/window/size/viewport_width", 1280)))
 		_touch_layer.apply_visibility()
-		_hud.visible = false
+		# Only the mode HUD is hidden here: it is carried in both UI modes, and in
+		# this one its facts are the recreated strip's (the recreated HUD is what a
+		# player reads). The ported column is not built at all in this mode, so
+		# there is nothing to hide.
 		_mode_hud.visible = false
 
 
@@ -1495,10 +1401,11 @@ func _sync_views() -> void:
 			var metres: float = Court.PX_TO_M * float(target.get("r", 1.0))
 			_target_ring.scale = Vector3(metres, metres, 1.0)
 
-	# The timing presentation: the ring, the words and the two bars, from the same
-	# live state. Placed BEFORE the athletes' early return below, so a frame with
+	# The court timing presentation: the ring, the words and the two bars, from the
+	# same live state. Placed BEFORE the athletes' early return below, so a frame with
 	# rigs (the playable build) syncs it exactly as a frame without them does.
-	_sync_timing()
+	if _timing_marks != null:
+		_timing_marks.update(state, finished)
 
 	# The four athletes. The rigs own their own position, facing, gait, stroke and
 	# racket (`game/athletes_view.gd`); only the capsule fallback is moved here.
@@ -1540,393 +1447,20 @@ func _sync_views() -> void:
 
 
 # ---------------------------------------------------------------------------
-# Timing presentation: the ring, the words, the bars
-# (`js/render.js:1646-1750`, `js/render.js:1041-1069`, `js/render.js:1031-1037`)
+# Court timing marks: the module's own report and seam
 # ---------------------------------------------------------------------------
 
-## Every mark of the timing presentation. All of them are camera-facing, unshaded
-## and drawn with the depth test OFF, because the reference draws them AFTER the
-## court (`js/main.js:1919`): they lie over the athlete's own body, over the net and
-## over the glass, exactly as they do on the canvas.
-func _build_timing_marks() -> void:
-	var opaque := Color(1.0, 1.0, 1.0, 1.0)
-	# The track the coloured arc fills along: `ctx.arc(0, 0, r, 0, PI*1.85)` stroked
-	# in `rgba(255,255,255,0.22)` (`js/render.js:1664-1668`).
-	_timing_ring_track = _timing_mesh("TimingRingTrack",
-		_timing_arc_mesh(TIMING_RING_RADIUS, TIMING_RING_WIDTH, TIMING_ARC_TRACK,
-			Color(1.0, 1.0, 1.0, 0.22), false),
-		_timing_material(opaque, true, 1))
-	# The fill. Its mesh is rebuilt as the charge moves; it starts empty.
-	_timing_ring = _timing_mesh("TimingRing", null, _timing_material(opaque, true, 2))
-	# `if (inWindow)`: the green circle at `r + 5*scale`, `0.55 + 0.4*blink`
-	# (`js/render.js:1679-1688`).
-	_timing_window = _timing_mesh("TimingWindow",
-		_timing_arc_mesh(TIMING_RING_RADIUS + TIMING_FLASH_GAP, TIMING_FLASH_WIDTH, TAU,
-			Color(0.549, 1.0, 0.784, 1.0), false),
-		_timing_material(Color(0.549, 1.0, 0.784, 1.0), true, 3))
-
-	# The RT precision bar: a `46*scale x 5*scale` body at `rgba(4,14,32,0.78)` with
-	# a `rgba(126,243,255,0.35)` rim, and a fill that grows from its left edge
-	# (`js/render.js:1697-1717`).
-	_timing_precision_track = _timing_mesh("TimingPrecisionBar", _timing_bar_mesh(false),
-		_timing_material(Color(0.016, 0.055, 0.125, 0.78), true, 1))
-	_timing_precision = _timing_mesh("TimingPrecisionFill", _timing_bar_mesh(true),
-		_timing_material(HudScript.PRECISION_CYAN, true, 2))
-	# The energy bar under the athlete's feet, with the reference's own three bands
-	# (`js/render.js:1031-1037`).
-	_timing_energy_track = _timing_mesh("TimingEnergyBar", _timing_bar_mesh(false),
-		_timing_material(Color(0.016, 0.055, 0.125, 0.72), true, 1))
-	_timing_energy = _timing_mesh("TimingEnergyFill", _timing_bar_mesh(true),
-		_timing_material(HudScript.FIELD_ENERGY_TEAL, true, 2))
-
-	# The advice word and its panel (`js/render.js:1730-1750`). The font size is the
-	# reference's own 11 px read at this frame's scale, and `pixel_size` is metres per
-	# screen pixel: font_size * pixel_size is therefore the word's height in metres,
-	# and it prints at 11 * 1280/960 = 15 px on the frame.
-	_timing_advice = Label3D.new()
-	_timing_advice.name = "TimingAdvice"
-	_timing_advice.font = ThemeDB.fallback_font
-	_timing_advice.font_size = TIMING_ADVICE_PX
-	_timing_advice.pixel_size = TIMING_M_PER_PX
-	_timing_advice.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	_timing_advice.no_depth_test = true
-	_timing_advice.render_priority = 3
-	_timing_advice.visible = false
-	add_child(_timing_advice)
-	_timing_advice_panel = _timing_mesh("TimingAdvicePanel", _timing_bar_mesh(false),
-		_timing_material(Color(0.016, 0.055, 0.125, 0.82), true, 2))
-
-	# The verdict over the athlete who hit (`js/render.js:1041-1069`): the grade word
-	# with the reference's dark stroke, and the mode line under it.
-	_timing_verdict = _timing_verdict_label("TimingVerdict", TIMING_VERDICT_PX, 7)
-	_timing_verdict_mode = _timing_verdict_label("TimingVerdictMode", TIMING_VERDICT_MODE_PX, 0)
+## The court timing module this shell created and mounted (`_build_scene`), whose
+## `update` places the marks every frame. The tests and the capture cross this seam
+## rather than a private variable of this file.
+func court_timing_marks():
+	return _timing_marks
 
 
-## One of the two lines of the verdict: a camera-facing, depth-test-free label with
-## the reference's dark stroke (`js/render.js:1060-1061`) at metres-per-screen-pixel.
-func _timing_verdict_label(node_name: String, font_size: int, outline: int) -> Label3D:
-	var l := Label3D.new()
-	l.name = node_name
-	l.font = ThemeDB.fallback_font
-	l.font_size = font_size
-	l.pixel_size = TIMING_M_PER_PX
-	l.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	l.no_depth_test = true
-	l.render_priority = 4
-	l.outline_size = outline
-	l.outline_modulate = TIMING_VERDICT_OUTLINE
-	l.modulate = Color(1.0, 1.0, 1.0, 0.9)
-	l.visible = false
-	add_child(l)
-	return l
-
-
-## A mark of the timing presentation: invisible until `_sync_timing` says otherwise,
-## and never casting a shadow (a billboarded transparent quad would).
-func _timing_mesh(node_name: String, mesh: Mesh, mat: StandardMaterial3D) -> MeshInstance3D:
-	var mi := MeshInstance3D.new()
-	mi.name = node_name
-	mi.mesh = mesh
-	mi.material_override = mat
-	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	mi.visible = false
-	add_child(mi)
-	return mi
-
-
-## The material every timing mark shares. `render_priority` is the reference's paint
-## order made explicit (track under fill, body of a bar under its fill), since with
-## the depth test off nothing else separates two coplanar marks.
-##
-## `billboard_keep_scale` is what lets a bar be a unit quad sized by its node's
-## scale: without it, billboarding throws the scale away and every bar would be one
-## metre wide (`BaseMaterial3D.billboard_keep_scale`).
-func _timing_material(base: Color, use_vertex_color: bool, priority: int) -> StandardMaterial3D:
-	var m := StandardMaterial3D.new()
-	m.albedo_color = base
-	m.roughness = 0.6
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.vertex_color_use_as_albedo = use_vertex_color
-	m.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
-	m.billboard_keep_scale = true
-	m.no_depth_test = true
-	m.render_priority = priority
-	m.cull_mode = BaseMaterial3D.CULL_DISABLED
-	return m
-
-
-## One arc in the XY plane facing +Z, `sweep` radians CLOCKWISE FROM THE TOP: the
-## reference's `rotate(-PI/2)` followed by `ctx.arc(..., 0, sweep)` in a canvas
-## whose y axis points DOWN (`js/render.js:1663-1677`), so a point at angle `a` is
-## `(sin a, cos a)` here. The ribbon is centred on `radius`, the way a canvas stroke
-## of `width` is centred on its path.
-##
-## `gradient` colours each vertex from the reference's own four stops sampled at the
-## vertex's local x projection (`js/render.js:1669-1674`).
-func _timing_arc_mesh(radius: float, width: float, sweep: float, base: Color, gradient: bool) -> ArrayMesh:
-	var segments: int = _timing_arc_segments(sweep)
-	var inner := radius - width * 0.5
-	var outer := radius + width * 0.5
-	var verts := PackedVector3Array()
-	var cols := PackedColorArray()
-	for i in segments:
-		var a0 := sweep * float(i) / float(segments)
-		var a1 := sweep * float(i + 1) / float(segments)
-		var d0 := Vector2(sin(a0), cos(a0))
-		var d1 := Vector2(sin(a1), cos(a1))
-		var c0: Color = _timing_gradient(sin(a0)) if gradient else base
-		var c1: Color = _timing_gradient(sin(a1)) if gradient else base
-		verts.append(Vector3(d0.x * inner, d0.y * inner, 0.0))
-		verts.append(Vector3(d0.x * outer, d0.y * outer, 0.0))
-		verts.append(Vector3(d1.x * outer, d1.y * outer, 0.0))
-		verts.append(Vector3(d0.x * inner, d0.y * inner, 0.0))
-		verts.append(Vector3(d1.x * outer, d1.y * outer, 0.0))
-		verts.append(Vector3(d1.x * inner, d1.y * inner, 0.0))
-		cols.append(c0)
-		cols.append(c0)
-		cols.append(c1)
-		cols.append(c0)
-		cols.append(c1)
-		cols.append(c1)
-	var arrays := []
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX] = verts
-	arrays[Mesh.ARRAY_COLOR] = cols
-	var mesh := ArrayMesh.new()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	return mesh
-
-
-## How many ribbon segments a sweep is drawn with. Public to the frame report so a
-## test can assert the FILL moved without reading the mesh.
-func _timing_arc_segments(sweep: float) -> int:
-	return maxi(1, int(ceil(absf(sweep) / TIMING_ARC_STEP)))
-
-
-## A unit quad in the XY plane facing +Z. `anchored_left` keeps x in 0..1, so the
-## fill grows from the bar's left edge — `ctx.fillRect(x, y, w * value, h)`
-## (`js/render.js:1716`); otherwise x is -0.5..0.5 and the node's scale is the whole
-## extent, which is how the track is drawn.
-func _timing_bar_mesh(anchored_left: bool) -> ArrayMesh:
-	var x0 := 0.0 if anchored_left else -0.5
-	var x1 := 1.0 if anchored_left else 0.5
-	var corners := PackedVector3Array([
-		Vector3(x0, -0.5, 0.0), Vector3(x1, -0.5, 0.0), Vector3(x1, 0.5, 0.0),
-		Vector3(x0, -0.5, 0.0), Vector3(x1, 0.5, 0.0), Vector3(x0, 0.5, 0.0)])
-	var cols := PackedColorArray()
-	for _i in 6:
-		cols.append(Color(1.0, 1.0, 1.0, 1.0))
-	var arrays := []
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX] = corners
-	arrays[Mesh.ARRAY_COLOR] = cols
-	var mesh := ArrayMesh.new()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	return mesh
-
-
-## The reference's four stops, interpolated in sRGB between the two the value falls
-## between and clamped at both ends, which is what a canvas gradient does.
-static func _timing_gradient(t: float) -> Color:
-	var x := clampf(t, 0.0, 1.0)
-	for i in range(1, TIMING_GRADIENT.size()):
-		var lo: Array = TIMING_GRADIENT[i - 1]
-		var hi: Array = TIMING_GRADIENT[i]
-		if x <= float(hi[0]):
-			var span := maxf(0.0001, float(hi[0]) - float(lo[0]))
-			return (lo[1] as Color).lerp(hi[1] as Color, (x - float(lo[0])) / span)
-	return TIMING_GRADIENT[TIMING_GRADIENT.size() - 1][1]
-
-
-## The timing presentation, from the live state, once per frame. One place decides
-## what is drawn and where; the nodes only follow, and the frame's own numbers are
-## left in `_timing_state` for the tests, `_save_frame` and the evidence.
-func _sync_timing() -> void:
-	if _timing_ring == null:
-		return
-	var read: Dictionary = state.shotRead
-	var active = state.active_player()
-	var live: bool = bool(state.running) and not finished and active != null
-	# `js/render.js:1656`: `(state.shotCharge ?? 0) > 0.05 && read?.active`.
-	var charging: bool = float(state.shotCharge) > TIMING_CHARGE_FLOOR and bool(read.get("active", false))
-	if _timing_muted:
-		live = false
-		charging = false
-	# The reference's clock, for the two blinks (`js/render.js:1680`, `:1711`). The
-	# simulation's own elapsed time, not the wall clock: a frame the capture writes
-	# is then reproducible from its tick.
-	var clock: float = float(state.elapsed)
-	var ground: Vector3 = Court.world_pos(active.x, active.y, 0.0) if active != null else Vector3.ZERO
-	# `read.eta` is null whenever no ball is incoming (`state.gd:56-63`), and it is the
-	# only field of the read that can be: `float(null)` is a runtime error in GDScript,
-	# so it is unwrapped once, here.
-	var eta_raw: Variant = read.get("eta", null)
-	var eta: float = float(eta_raw) if eta_raw != null else 0.0
-	var precision: float = clampf(float(read.get("precision", 0.0)), 0.0, 1.0)
-	var tight: float = clampf(float(read.get("tight", 0.0)), 0.0, 1.0)
-	var energy: float = clampf(float(state.rallyEnergy.get("player", 1.0)), 0.0, 1.0)
-
-	# --- the ring: `1 - read.eta / 0.55`, drawn from the top clockwise ----------
-	var fraction: float = clampf(1.0 - eta / TIMING_ETA_SPAN, 0.0, 1.0)
-	var in_window: bool = absf(eta) <= float(read.get("perfectWindow", 0.055))
-	var ring_on: bool = live and charging
-	_timing_ring_track.visible = ring_on
-	_timing_ring.visible = ring_on
-	if ring_on:
-		var at := ground + Vector3(0.0, TIMING_RING_HEIGHT, 0.0)
-		_timing_ring.position = at
-		_timing_ring_track.position = at
-		var segments := _timing_arc_segments(TIMING_ARC_FILL * fraction)
-		if segments != _timing_fill_segments:
-			_timing_fill_segments = segments
-			_timing_ring.mesh = _timing_arc_mesh(TIMING_RING_RADIUS, TIMING_RING_WIDTH,
-				TIMING_ARC_FILL * fraction, Color(1.0, 1.0, 1.0, 1.0), true)
-	_timing_window.visible = ring_on and in_window
-	if _timing_window.visible:
-		_timing_window.position = ground + Vector3(0.0, TIMING_RING_HEIGHT, 0.0)
-		var blink: float = 0.5 + 0.5 * sin(clock * 18.0)
-		(_timing_window.material_override as StandardMaterial3D).albedo_color.a = 0.55 + 0.4 * blink
-
-	# --- the precision bar: `charge > 0.05 && precision > 0.04` ----------------
-	var prec_on: bool = live and charging and precision > TIMING_PRECISION_FLOOR
-	_timing_precision_track.visible = prec_on
-	_timing_precision.visible = prec_on
-	if prec_on:
-		var armed: bool = tight > 0.02
-		var pulse: float = (0.62 + 0.38 * sin(clock * 16.0)) if armed else 1.0
-		var at := ground + Vector3(0.0, TIMING_PRECISION_HEIGHT, 0.0)
-		_timing_precision_track.position = at
-		_timing_precision.position = at + Vector3(-TIMING_PRECISION_W * 0.5, 0.0, 0.0)
-		# The reference's rim: `roundRect(x - 1, y - 1, w + 2, h + 2)`.
-		_timing_precision_track.scale = Vector3(TIMING_PRECISION_W + 0.03, TIMING_PRECISION_H + 0.03, 1.0)
-		_timing_precision.scale = Vector3(maxf(0.02, TIMING_PRECISION_W * precision), TIMING_PRECISION_H, 1.0)
-		(_timing_precision.material_override as StandardMaterial3D).albedo_color = HudScript.precision_color(tight, pulse)
-
-	# --- the advice word: `!serving && !(pointPause > 0)` ----------------------
-	var advice_on: bool = live and not bool(state.serving) and float(state.pointPause) <= 0.0
-	_timing_advice.visible = advice_on
-	_timing_advice_panel.visible = advice_on
-	if advice_on:
-		var word: String = HudScript.advice_word(HudScript.advice_of(read))
-		var color: Color = HudScript.advice_color(String(read.get("profile", "control")))
-		var at := ground + Vector3(0.0, TIMING_ADVICE_HEIGHT, 0.0)
-		_timing_advice.position = at
-		_timing_advice.text = word
-		_timing_advice.modulate = color
-		# The panel is the reference's `measureText(label).width + 22` by 20 px box
-		# (`js/render.js:1735-1742`) measured with the same font the label draws with,
-		# in the reference's own ratios to its font: one line of padding either side
-		# (22/11) in a box 20/11 lines tall. Placed just behind the text.
-		var line_m: float = float(TIMING_ADVICE_PX) * TIMING_M_PER_PX
-		var text_px: float = 0.0
-		if _timing_advice.font != null:
-			text_px = _timing_advice.font.get_string_size(
-				word, HORIZONTAL_ALIGNMENT_LEFT, -1, TIMING_ADVICE_PX).x
-		_timing_advice_panel.position = Vector3(at.x, at.y, at.z - 0.01)
-		_timing_advice_panel.scale = Vector3(
-			maxf(0.30, text_px * TIMING_M_PER_PX + line_m * TIMING_ADVICE_PAD_LINES),
-			line_m * TIMING_ADVICE_BOX_LINES, 1.0)
-
-	# --- the energy bar: every frame, under the active athlete ----------------
-	_timing_energy_track.visible = live
-	_timing_energy.visible = live
-	if live:
-		var at := ground + Vector3(0.0, TIMING_ENERGY_HEIGHT, TIMING_FOOT_FORWARD)
-		_timing_energy_track.position = at
-		_timing_energy.position = at + Vector3(-TIMING_ENERGY_W * 0.5, 0.0, 0.0)
-		# `fillRect(energyX - scale, energyY - scale, energyWidth + 2*scale, 4*scale)`
-		# over a `2*scale` fill: the track is twice the fill's height.
-		_timing_energy_track.scale = Vector3(TIMING_ENERGY_W + 0.04, TIMING_ENERGY_H * 2.0, 1.0)
-		_timing_energy.scale = Vector3(maxf(0.02, TIMING_ENERGY_W * energy), TIMING_ENERGY_H, 1.0)
-		(_timing_energy.material_override as StandardMaterial3D).albedo_color = HudScript.field_energy_color(energy)
-
-	# --- the verdict over the athlete who hit ---------------------------------
-	var report_verdict := _sync_verdict(live, ground)
-
-	_timing_state = {
-		"charge": float(state.shotCharge),
-		"charging": charging,
-		"eta": eta,
-		"fraction": fraction,
-		"in_window": in_window,
-		"ring_visible": ring_on,
-		"fill_segments": _timing_fill_segments if ring_on else 0,
-		"fill_radius": TIMING_RING_RADIUS,
-		"prec_visible": prec_on,
-		"precision": precision,
-		"tight": tight,
-		"prec_width": TIMING_PRECISION_W * precision if prec_on else 0.0,
-		"advice_visible": advice_on,
-		"advice": _timing_advice.text if advice_on else "",
-		"advice_color": _timing_advice.modulate.to_html(false) if advice_on else "",
-		"advice_panel_w": _timing_advice_panel.scale.x if advice_on else 0.0,
-		"energy_visible": live,
-		"energy": energy,
-		"energy_width": TIMING_ENERGY_W * energy if live else 0.0,
-		"verdict_visible": report_verdict["visible"],
-		"verdict": report_verdict["word"],
-		"verdict_mode": report_verdict["mode"],
-		"verdict_grade": report_verdict["grade"],
-		"verdict_color": report_verdict["color"],
-		"verdict_alpha": report_verdict["alpha"],
-		"verdict_paddle": report_verdict["paddle"],
-		"verdict_at": report_verdict["at"],
-	}
-
-
-## The verdict over the athlete who hit (`js/render.js:1041-1069`): `PERFETTO`,
-## `BUONO`, `ANTICIPATO`, `RITARDATO` at the paddle the simulation says hit
-## (`state.shotFeedback.paddleKey`), in the reference's own four colours and fading
-## with `life / 0.28`. Returns what it drew.
-func _sync_verdict(live: bool, _ground: Vector3) -> Dictionary:
-	var out := {
-		"visible": false, "word": "", "mode": "", "grade": "", "color": "",
-		"alpha": 0.0, "paddle": "", "at": Vector3.ZERO,
-	}
-	var feedback: Variant = state.shotFeedback
-	_timing_verdict.visible = false
-	_timing_verdict_mode.visible = false
-	if not live or feedback == null:
-		return out
-	var life: float = float(feedback.get("life", 0.0))
-	if life <= 0.0:
-		return out
-	var key := String(feedback.get("paddleKey", ""))
-	var paddle = state.paddle(key) if key != "" else null
-	if paddle == null:
-		return out
-	var grade := String(feedback.get("grade", ""))
-	var word: String = HudScript.feedback_label(String(feedback.get("text", "")))
-	var mode: String = HudScript.mode_label(String(feedback.get("mode", "")))
-	var color: Color = HudScript.field_grade_color(grade)
-	# `alpha = clamp(feedback.life / 0.28, 0, 1)` (`js/render.js:1047`).
-	var alpha: float = clampf(life / TIMING_VERDICT_FADE, 0.0, 1.0)
-	# `y = p.y - 105*scale - (0.78 - life) * 18` (`js/render.js:1062`): the word rides
-	# up as it fades, and it is anchored to the athlete who HIT, not to the one under
-	# control.
-	var feet: Vector3 = Court.world_pos(paddle.x, paddle.y, 0.0)
-	var lift: float = (TIMING_VERDICT_LIFE - life) * (TIMING_VERDICT_DRIFT / TIMING_VERDICT_LIFE)
-	var at := feet + Vector3(0.0, TIMING_VERDICT_HEIGHT + lift, 0.0)
-	_timing_verdict.position = at
-	_timing_verdict.text = word
-	_timing_verdict.modulate = Color(color.r, color.g, color.b, alpha)
-	_timing_verdict.visible = true
-	_timing_verdict_mode.position = at + Vector3(0.0, -TIMING_VERDICT_MODE_DROP, 0.0)
-	_timing_verdict_mode.text = mode
-	_timing_verdict_mode.modulate = Color(1.0, 1.0, 1.0, 0.9 * alpha)
-	_timing_verdict_mode.visible = true
-	return {
-		"visible": true, "word": word, "mode": mode, "grade": grade,
-		"color": color.to_html(false), "alpha": alpha, "paddle": key, "at": at,
-	}
-
-
-## What the last sync drew: the ring's fill, the two bars' widths, the advice word
-## and the verdict, as the frame computed them. The tests and the evidence read this
-## rather than re-deriving the reference's arithmetic.
+## What the last frame drew -- the module's own report, forwarded for the tests, the
+## capture's marker lines and the evidence.
 func timing_report() -> Dictionary:
-	return _timing_state.duplicate()
+	return _timing_marks.report() if _timing_marks != null else {}
 
 
 # ---------------------------------------------------------------------------
@@ -1976,7 +1510,8 @@ func _run_capture() -> void:
 			tick_fixed(FIXED_STEP, input, Sim.empty_input())
 			var hit: bool = bool(shot["when"].call(state))
 			if hit or ticks >= _shot_deadline(_capture_index):
-				_hud.refresh(state, meta)
+				if _hud != null:
+					_hud.refresh(state, meta)
 				_refresh_ui(state, meta)
 				_sync_views()
 				await _save_frame("%s/%s" % [out_dir, String(shot["file"])])
@@ -1989,14 +1524,15 @@ func _run_capture() -> void:
 				# kept in the harness so the number can be reproduced.
 				var ab := String(shot.get("ab", ""))
 				if ab != "":
-					_timing_muted = true
-					_sync_timing()
+					_timing_marks.set_muted(true)
+					_timing_marks.update(state, finished)
 					await _save_frame("%s/%s" % [out_dir, ab])
-					_timing_muted = false
-					_sync_timing()
+					_timing_marks.set_muted(false)
+					_timing_marks.update(state, finished)
 					print("CAPTURE_AB file=%s timing_hidden=true tick=%d" % [ab, ticks])
 				_capture_index += 1
-		_hud.refresh(state, meta)
+		if _hud != null:
+			_hud.refresh(state, meta)
 		_refresh_ui(state, meta)
 		_sync_views()
 		await get_tree().process_frame
@@ -2063,12 +1599,6 @@ func _shot_deadline(index: int) -> int:
 	for i in index + 1:
 		total += int(_capture_shots[i]["max_ticks"])
 	return total
-
-
-## Where a world point lands in the frame, or (-1, -1) when there is no camera. Used
-## by `_save_frame`'s marker lines, which are what make a capture readable.
-func _screen_px(cam: Camera3D, at: Vector3) -> Vector2:
-	return cam.unproject_position(at) if cam != null else Vector2(-1.0, -1.0)
 
 
 ## One frame per mode, written to `res://game/out/mode-<mode>.png`.
@@ -2148,26 +1678,11 @@ func _save_frame(path: String) -> void:
 			str(_active_ring.visible), str(_active_pin.visible)])
 	# The timing marks' own coordinates, and what the frame drew of them: a reader who
 	# cannot find the ring in the PNG cannot tell "not drawn" from "drawn somewhere
-	# else", which is the mistake the marker line above exists to prevent.
-	if _timing_ring != null:
-		var tcam := get_viewport().get_camera_3d()
-		var ring_at := _screen_px(tcam, _timing_ring.global_position)
-		var advice_at := _screen_px(tcam, _timing_advice.global_position)
-		var verdict_at := _screen_px(tcam, _timing_verdict.global_position)
-		var energy_at := _screen_px(tcam, _timing_energy.global_position)
-		print("CAPTURE_TIMING ring=(%.0f,%.0f) advice=(%.0f,%.0f) verdict=(%.0f,%.0f) energy=(%.0f,%.0f) ring_visible=%s advice_visible=%s verdict_visible=%s fill=%.3f segments=%d radius_m=%.3f energy=%.3f advice_w_m=%.3f" % [
-			ring_at.x, ring_at.y, advice_at.x, advice_at.y, verdict_at.x, verdict_at.y,
-			energy_at.x, energy_at.y,
-			str(_timing_ring.visible), str(_timing_advice.visible), str(_timing_verdict.visible),
-			float(_timing_state.get("fraction", 0.0)), int(_timing_state.get("fill_segments", 0)),
-			TIMING_RING_RADIUS, float(_timing_state.get("energy", 0.0)),
-			float(_timing_state.get("advice_panel_w", 0.0))])
-		print("CAPTURE_VERDICT word=%s mode=%s grade=%s paddle=%s alpha=%.3f charge=%.3f eta=%.3f in_window=%s precision=%.3f" % [
-			String(_timing_state.get("verdict", "")), String(_timing_state.get("verdict_mode", "")),
-			String(_timing_state.get("verdict_grade", "")), String(_timing_state.get("verdict_paddle", "")),
-			float(_timing_state.get("verdict_alpha", 0.0)), float(_timing_state.get("charge", 0.0)),
-			float(_timing_state.get("eta", 0.0)), str(bool(_timing_state.get("in_window", false))),
-			float(_timing_state.get("precision", 0.0))])
+	# else", which is the mistake the marker line above exists to prevent. The lines
+	# are the court timing module's (`capture_lines`), which is where the marks are.
+	if _timing_marks != null:
+		for line in _timing_marks.capture_lines(get_viewport().get_camera_3d()):
+			print(line)
 	var err := img.save_png(path)
 	print("CAPTURE_SAVE err=%d path=%s size=%dx%d" % [err, path, img.get_width(), img.get_height()])
 

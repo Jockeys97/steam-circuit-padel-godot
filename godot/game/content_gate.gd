@@ -29,7 +29,7 @@ extends RefCounted
 const BuildFlag := preload("res://tests/build/BuildFlag.gd")
 const ContentFilter := preload("res://tests/build/ContentFilter.gd")
 const Frozen := preload("res://src/sim/frozen.gd")
-const Arena := preload("res://game/arenas/arena_library.gd")
+const ArenaCatalog := preload("res://game/arenas/arena_catalog.gd")
 
 ## The reference's four difficulty rungs ARE this port's four AI tiers
 ## (`js/ui.js:1531`: `{easy:0, medium:1, hard:2, legend:3}[difficulty]`), so the
@@ -56,6 +56,19 @@ static func arenas() -> Array:
 	return ContentFilter.arenas()
 
 
+## THE ONE ARENA CATALOG FOR THIS BUILD (`game/arenas/arena_catalog.gd`). The gate's
+## whole job here is to BIND it to the build's own answers — the flag and the exposed
+## frozen rows above, which stay the export lane's table — so both UI paths read one
+## catalog instead of each re-deriving the frozen index, the demo wall or the world
+## set. `arena_catalog.gd` never reads `tests/build/**` itself; this is still the only
+## file in `godot/game/**` that knows where those tables live.
+##
+## The frozen footprint (`selectable_arenas()`, `Arena.ids()`) and the demo's own
+## numbers are untouched by this: the catalog reports them, it does not widen them.
+static func arena_catalog() -> RefCounted:
+	return ArenaCatalog.new(is_demo(), arenas())
+
+
 ## The five world arenas (port additions, `arena_library.gd::world_rows()`): a
 ## FULL build offers them as a further choice; a DEMO build offers none of them.
 ## The demo's content rule is the reference's own table (`js/build.js`
@@ -65,9 +78,8 @@ static func arenas() -> Array:
 ## stays the frozen roster's list (the slice pins its counts), and
 ## `Config.selectable_world_arenas()` is where this answer reaches the selection.
 static func world_arenas() -> Array:
-	if is_demo():
-		return []
-	return Arena.world_rows()
+	var catalog: Variant = arena_catalog()
+	return catalog.world_rows()
 
 
 ## `demoLocked` (`js/build.js:73`): true only in the demo, and only for something

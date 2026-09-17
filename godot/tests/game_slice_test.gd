@@ -37,6 +37,9 @@ const CourtBuilder := preload("res://game/arenas/court_builder.gd")
 const ScriptedPlayer := preload("res://game/scripted_player.gd")
 const Locale := preload("res://src/locale/locale.gd")
 const Hud := preload("res://game/hud.gd")
+## Architecture-deepening gate 1: the feedback vocabulary (the words and colours the
+## court marks paint) is this module's, not the legacy HUD's any more.
+const Vocabulary := preload("res://game/feedback_vocabulary.gd")
 const MatchAudio := preload("res://game/match_audio.gd")
 const AudioPort := preload("res://src/audio/audio_port.gd")
 const Gate := preload("res://game/content_gate.gd")
@@ -165,13 +168,20 @@ func _run_all() -> void:
 		Performance.get_monitor(Performance.OBJECT_RESOURCE_COUNT)])
 	# CALIBRATED, and the number is printed every run. The engine itself creates live
 	# objects lazily as the run touches its caches (fonts, shaders, the resource cache
-	# the rigs fill), and that baseline measured 395 in both the full and the demo run,
-	# twice each — so the ceiling is that baseline plus slack, not zero. It catches a
-	# runaway accumulation of the test's own Nodes; a subtle one is caught by the
-	# engine's own exit-time report, which `game/check_log.sh` fails the suite on.
+	# the rigs fill, the recreated UI's caches); that baseline measured 395 when
+	# harness runs mounted nothing. Since gate 4 every harness match mounts the four
+	# recreated UI scenes (`HudLayer/UiHud`, `PauseOverlay`, `TouchControls`,
+	# `ReplayOverlay`) and frees them with its node — the residue is the engine's own
+	# resource cache, not nodes: `nodes=1 orphans=0` prints on every run. Measured
+	# after the F-01/F-02 repairs: full 518/520/518, demo 537/537 (five runs;
+	# 518-537, +-2). Ceiling 600 = the demo's 537 plus a bounded 63 of slack, the
+	# same order of margin the 395/450 pair carried. It catches a runaway
+	# accumulation of the test's own Nodes; a subtle one is caught by the engine's
+	# own exit-time report, which `game/check_log.sh` fails the suite on.
 	check("the run does not accumulate objects (count within the measured engine baseline)",
-		objects_delta <= 450,
-		"start=%d end=%d delta=%d (measured baseline 395)" % [objects_at_start, objects_at_end, objects_delta])
+		objects_delta <= 600,
+		("start=%d end=%d delta=%d (measured 518-537 after the recreated-UI mount,"
+		+ " ceiling 600)") % [objects_at_start, objects_at_end, objects_delta])
 
 	_state = 2
 	if _failures == 0:
@@ -594,7 +604,13 @@ func _menu_reaches_match() -> void:
 # 3. The controller, driven exactly as the playable build drives it
 # ---------------------------------------------------------------------------
 
-func _new_match_node(tier_index: int) -> Node:
+## `legacy_ui` asks for the PORTED column before `_ready()` — the switch
+## `main_menu.gd:87` documents, and the only thing that builds that column since
+## architecture-deepening gate 4: the shipping mount is the recreated UI, in a
+## harness run too. Sections that assert the ported column's own contract (its
+## panel names, its safe-area maths) pass `true`; everything else crosses the
+## shipping seam.
+func _new_match_node(tier_index: int, legacy_ui := false) -> Node:
 	# The quick-match helper, so it states the quick-match configuration itself: a
 	# mode left pending by an earlier section must not turn every later section's
 	# "quick match" into a mode match (one section that throws would otherwise look
@@ -604,6 +620,8 @@ func _new_match_node(tier_index: int) -> Node:
 	Config.tier_index = tier_index
 	var packed: PackedScene = load(MATCH_SCENE)
 	var node: Node = packed.instantiate()
+	if legacy_ui:
+		node.set("ui_legacy", true)
 	node.harness_mode()
 	root.add_child(node)
 	node.start_match()
@@ -889,28 +907,34 @@ func _timing_presentation() -> void:
 	check("the scene reaches a charging shot with a live read", charged >= 0,
 		"charge=%.3f read=%s" % [float(node.state.shotCharge), str(node.state.shotRead.get("active", false))])
 
-	var names := ["_timing_ring", "_timing_ring_track", "_timing_window", "_timing_advice",
-		"_timing_advice_panel", "_timing_precision", "_timing_precision_track",
-		"_timing_energy", "_timing_energy_track", "_timing_verdict", "_timing_verdict_mode"]
+	# The concern is the court timing module's (`godot/game/court_timing_marks.gd`,
+	# architecture-deepening gate 3): the marks it built are named by its own
+	# `mark_names()`, and everything this section observes is in its report — no
+	# private variable of the controller is read here any more.
+	var marks = node.court_timing_marks()
+	check("the match scene mounts the court timing module", marks != null, "court_timing_marks()")
 	var missing: Array[String] = []
-	for n in names:
-		if node.get(n) == null:
-			missing.append(n)
-	check("every timing mark exists in the match scene", missing.is_empty(), str(missing))
-	var ring: Node3D = node.get("_timing_ring")
-	if ring == null:
+	if marks != null:
+		for n in marks.mark_names():
+			if node.find_child(String(n), true, false) == null:
+				missing.append(String(n))
+	check("every timing mark named by the module exists in the match scene",
+		marks != null and marks.mark_names().size() == 11 and missing.is_empty(), str(missing))
+	var report: Dictionary = node.timing_report()
+	check("the module's report reaches the shell's own forwarder",
+		report.has("ring_visible"), str(report.keys()))
+	if not report.has("ring_visible"):
 		_drop(node)
 		_section_done("_timing_presentation")
 		return
-	var report: Dictionary = node.timing_report()
 
 	# --- the ring: the reference's `1 - eta/0.55`, from the top clockwise ---------
-	check("the ring is drawn while a shot is charging", ring.visible, str(report))
+	check("the ring is drawn while a shot is charging", bool(report["ring_visible"]), str(report))
 	check_eq("the fill is `1 - read.eta / 0.55`, the reference's own expression",
 		snappedf(float(report["fraction"]), 0.001),
 		snappedf(clampf(1.0 - float(node.state.shotRead["eta"]) / 0.55, 0.0, 1.0), 0.001))
 	var segments_mid: int = int(report["fill_segments"])
-	var mid_area: float = (ring.mesh as ArrayMesh).get_aabb().size.length() if ring.mesh != null else 0.0
+	var mid_extent: float = float(report["fill_extent"])
 	# eta at the perfect window: the fill is at its maximum, and so is the arc's mesh.
 	node.state.shotRead["eta"] = 0.0
 	node._sync_views()
@@ -918,11 +942,9 @@ func _timing_presentation() -> void:
 	check("an eta at the perfect window fills the ring to the top of the reference's arc",
 		is_equal_approx(float(full["fraction"]), 1.0), str(full["fraction"]))
 	check("the fill grows with the charge: the drawn arc is rebuilt and longer",
-		int(full["fill_segments"]) > segments_mid and ring.mesh != null
-			and (ring.mesh as ArrayMesh).get_aabb().size.length() > mid_area,
-		"segments %d -> %d, mesh extent %.3f -> %.3f" % [
-			segments_mid, int(full["fill_segments"]), mid_area,
-			(ring.mesh as ArrayMesh).get_aabb().size.length() if ring.mesh != null else 0.0])
+		int(full["fill_segments"]) > segments_mid and float(full["fill_extent"]) > mid_extent,
+		"segments %d -> %d, drawn extent %.3f -> %.3f" % [
+			segments_mid, int(full["fill_segments"]), mid_extent, float(full["fill_extent"])])
 	var over_eta: float = 0.55
 	node.state.shotRead["eta"] = over_eta
 	node._sync_views()
@@ -931,17 +953,20 @@ func _timing_presentation() -> void:
 		str(node.timing_report()["fraction"]))
 	check("the perfect window is the read's own `perfectWindow`",
 		bool(full["in_window"]), "eta=0 window=%s" % str(node.state.shotRead["perfectWindow"]))
+	check("the ring's own geometry is the module's, reported with every frame",
+		is_equal_approx(float(full["fill_radius"]), 0.62), str(full["fill_radius"]))
 
 	# --- the gate: no charge, no ring and no precision bar ------------------------
 	node.state.shotCharge = 0.0
 	node._sync_views()
+	report = node.timing_report()
 	check("no charge means no ring, as the reference's `shotCharge > 0.05` requires",
-		not ring.visible, "charge=%.3f read.active=%s" % [
+		not bool(report["ring_visible"]), "charge=%.3f read.active=%s" % [
 			float(node.state.shotCharge), str(node.state.shotRead.get("active", false))])
 	check("the precision bar is not drawn when nothing is charging",
-		not (node.get("_timing_precision") as Node3D).visible, "")
+		not bool(report["prec_visible"]), str(report))
 	check("the energy bar is drawn anyway: the reference draws it every frame",
-		(node.get("_timing_energy") as Node3D).visible, "")
+		bool(report["energy_visible"]), str(report))
 	node.state.shotCharge = 0.6
 	node.state.shotRead["eta"] = 0.3
 
@@ -949,23 +974,21 @@ func _timing_presentation() -> void:
 	node.state.shotRead["precision"] = 0.0
 	node._sync_views()
 	check("the precision bar is hidden under `precision > 0.04`",
-		not (node.get("_timing_precision") as Node3D).visible, "")
+		not bool(node.timing_report()["prec_visible"]), "")
 	node.state.shotRead["precision"] = 0.72
 	node.state.shotRead["tight"] = 0.5
 	node._sync_views()
-	var prec: Node3D = node.get("_timing_precision")
-	check("the precision bar is drawn while the charge carries precision", prec.visible, "")
+	report = node.timing_report()
+	check("the precision bar is drawn while the charge carries precision",
+		bool(report["prec_visible"]), str(report))
 	check("the precision fill is `precision` of the bar, from its left edge",
-		is_equal_approx(float(node.timing_report()["prec_width"]), 0.80 * 0.72),
-		str(node.timing_report()["prec_width"]))
+		is_equal_approx(float(report["prec_width"]), 0.80 * 0.72), str(report["prec_width"]))
 	check_eq("an armed angle takes the reference's amber, unarmed the cyan",
-		(node.get("_timing_precision").material_override as StandardMaterial3D).albedo_color.to_html(false),
-		Hud.precision_color(0.5, 1.0).to_html(false))
+		String(report["prec_color"]), Vocabulary.precision_color(0.5, 1.0).to_html(false))
 	node.state.shotRead["tight"] = 0.0
 	node._sync_views()
 	check_eq("tight at 0 is the cyan of `rgba(126,243,255,0.75)`",
-		(node.get("_timing_precision").material_override as StandardMaterial3D).albedo_color.to_html(false),
-		Hud.PRECISION_CYAN.to_html(false))
+		String(node.timing_report()["prec_color"]), Vocabulary.PRECISION_CYAN.to_html(false))
 
 	# --- the advice word, the profile colour and the locale -----------------------
 	node.state.serving = false
@@ -973,54 +996,56 @@ func _timing_presentation() -> void:
 	node.state.shotRead["advice"] = "lob"
 	node.state.shotRead["profile"] = "control"
 	node._sync_views()
-	var advice: Label3D = node.get("_timing_advice")
+	report = node.timing_report()
+	var expected_word := Locale.t("shotAdvice_lob").to_upper()
 	check("the advice word is the locale's `shotAdvice_<advice>`, uppercased as the reference does",
-		advice.visible and advice.text == Locale.t("shotAdvice_lob").to_upper(),
-		"text=%s locale=%s" % [advice.text, Locale.t("shotAdvice_lob")])
+		bool(report["advice_visible"]) and String(report["advice"]) == expected_word,
+		"advice=%s locale=%s" % [str(report["advice"]), expected_word])
 	check("no id ever reaches the field: the word is the resolved sentence",
-		not advice.text.begins_with("shotAdvice"), advice.text)
-	check_eq("a control profile is the reference's #8fffd0", advice.modulate.to_html(false), "8fffd0")
+		not String(report["advice"]).begins_with("shotAdvice"), str(report["advice"]))
+	check_eq("a control profile is the reference's #8fffd0", String(report["advice_color"]), "8fffd0")
 	node.state.shotRead["profile"] = "aggressive"
 	node._sync_views()
 	check_eq("an aggressive profile is the reference's #ffd46a",
-		node.get("_timing_advice").modulate.to_html(false), "ffd46a")
+		String(node.timing_report()["advice_color"]), "ffd46a")
 	check("the word's panel is a box around the measured text, not a fixed width",
 		float(node.timing_report()["advice_panel_w"]) > 0.5,
 		str(node.timing_report()["advice_panel_w"]))
 
 	# --- the energy bar: under the active athlete, the player's energy ------------
 	node.state.shotRead["profile"] = "control"
-	var energy: Node3D = node.get("_timing_energy")
 	node.state.rallyEnergy = {"player": 0.2, "ai": 1.0}
 	node._sync_views()
 	var low: float = float(node.timing_report()["energy_width"])
 	node.state.rallyEnergy = {"player": 1.0, "ai": 1.0}
 	node._sync_views()
-	var high: float = float(node.timing_report()["energy_width"])
+	report = node.timing_report()
+	var high: float = float(report["energy_width"])
 	check("the energy fill is `rallyEnergy.player` of the bar",
 		is_equal_approx(low, 0.80 * 0.2) and high > low, "%f -> %f" % [low, high])
 	check_eq("the energy colour is the reference's three-band rule",
-		(node.get("_timing_energy").material_override as StandardMaterial3D).albedo_color.to_html(false),
-		Hud.field_energy_color(1.0).to_html(false))
+		String(report["energy_color"]), Vocabulary.field_energy_color(1.0).to_html(false))
 	node.state.rallyEnergy = {"player": 0.2, "ai": 1.0}
 	node._sync_views()
 	check_eq("low energy is the reference's #ff6b64",
-		(node.get("_timing_energy").material_override as StandardMaterial3D).albedo_color.to_html(false),
-		"ff6b64")
+		String(node.timing_report()["energy_color"]), "ff6b64")
 	node.state.rallyEnergy = {"player": 1.0, "ai": 1.0}
 	node._sync_views()
 	var active = node.state.active_player()
 	var under: Vector3 = Court.world_pos(active.x, active.y, 0.0)
 	# The TRACK is the bar's own body and is centred on the athlete; the FILL hangs off
 	# its left edge (`ctx.fillRect(x, y, w * value, h)`) and is therefore half a bar to
-	# the left, which is why the two are not compared to the same x.
-	var energy_track: Node3D = node.get("_timing_energy_track")
+	# the left, which is why the two are not compared to the same x. Both positions are
+	# the module's own report of what it placed.
+	report = node.timing_report()
+	var energy_at: Vector3 = report["energy_at"]
+	var energy_fill_at: Vector3 = report["energy_fill_at"]
 	check("the energy bar sits under the athlete the simulation is controlling",
-		absf(energy_track.position.x - under.x) < 0.001 and absf(energy_track.position.z - under.z) < 1.0
-			and energy_track.position.y > 0.0 and energy_track.position.y < ring.position.y
-			and absf(energy.position.x - (energy_track.position.x - 0.4)) < 0.001,
-		"track=%s energy=%s athlete=%s ring=%s" % [str(energy_track.position), str(energy.position),
-			str(under), str(ring.position)])
+		absf(energy_at.x - under.x) < 0.001 and absf(energy_at.z - under.z) < 1.0
+			and energy_at.y > 0.0 and energy_at.y < 1.60,
+		"track=%s athlete=%s" % [str(energy_at), str(under)])
+	check("the energy fill hangs off the bar's left edge, half a bar to the left",
+		absf(energy_fill_at.x - (energy_at.x - 0.4)) < 0.001, str(energy_fill_at))
 
 	# --- both follow a switch, like the zone and the pin --------------------------
 	var other: String = "playerMate" if String(node.state.activePlayerKey) == "player" else "player"
@@ -1028,50 +1053,63 @@ func _timing_presentation() -> void:
 	node._sync_views()
 	var mate = node.state.paddle(other)
 	var mate_ground: Vector3 = Court.world_pos(mate.x, mate.y, 0.0)
+	report = node.timing_report()
 	check("the energy bar follows a switch to the partner",
-		absf(energy_track.position.x - mate_ground.x) < 0.001 and energy_track.position.z > mate_ground.z,
-		"track=%s partner=%s" % [str(energy_track.position), str(mate_ground)])
+		absf((report["energy_at"] as Vector3).x - mate_ground.x) < 0.001
+			and (report["energy_at"] as Vector3).z > mate_ground.z,
+		"track=%s partner=%s" % [str(report["energy_at"]), str(mate_ground)])
 	node.state.shotCharge = 0.6
 	node.state.shotRead["eta"] = 0.3
 	node.state.shotRead["active"] = true
 	node._sync_views()
+	report = node.timing_report()
 	check("the ring follows the same switch as the energy bar",
-		absf(ring.position.x - mate_ground.x) < 0.001 and absf(ring.position.z - mate_ground.z) < 0.001,
-		"ring=%s partner=%s" % [str(ring.position), str(mate_ground)])
+		absf((report["ring_at"] as Vector3).x - mate_ground.x) < 0.001
+			and absf((report["ring_at"] as Vector3).z - mate_ground.z) < 0.001,
+		"ring=%s partner=%s" % [str(report["ring_at"]), str(mate_ground)])
 
 	# --- the verdict, over the athlete who HIT (`drawShotFeedback`) ---------------
-	var verdict: Label3D = node.get("_timing_verdict")
 	node.state.shotFeedback = null
 	node._sync_views()
-	check("no feedback means no verdict on the field", not verdict.visible, "")
+	report = node.timing_report()
+	check("no feedback means no verdict on the field",
+		not bool(report["verdict_visible"]), str(report))
 	node.state.shotFeedback = {
 		"text": "shot:perfect", "mode": "shotMode:control", "grade": "perfect",
 		"quality": 1.0, "life": 0.14, "paddleKey": other,
 	}
 	node._sync_views()
-	var vreport: Dictionary = node.timing_report()
-	check("the verdict is drawn while the feedback lives", verdict.visible, str(vreport))
+	report = node.timing_report()
+	check("the verdict is drawn while the feedback lives",
+		bool(report["verdict_visible"]), str(report))
 	check_eq("the verdict word is the locale's grade word, not the id",
-		verdict.text, Locale.t("shotPerfect"))
+		String(report["verdict"]), Locale.t("shotPerfect"))
 	check_eq("the mode line is the locale's mode word",
-		(node.get("_timing_verdict_mode") as Label3D).text, Locale.t("shotModeControl"))
-	check_eq("a perfect grade takes the reference's #74ffba", vreport["verdict_color"], "74ffba")
+		String(report["verdict_mode"]), Locale.t("shotModeControl"))
+	check_eq("a perfect grade takes the reference's #74ffba",
+		String(report["verdict_color"]), "74ffba")
 	check("it fades with `life / 0.28`, as the reference does",
-		is_equal_approx(float(vreport["verdict_alpha"]), 0.5), str(vreport["verdict_alpha"]))
+		is_equal_approx(float(report["verdict_alpha"]), 0.5), str(report["verdict_alpha"]))
 	check("it is anchored to the athlete who HIT, not to the one under control",
-		String(vreport["verdict_paddle"]) == other
-			and absf(verdict.position.x - mate_ground.x) < 0.001,
-		"paddle=%s verdict=%s hitter=%s" % [other, str(verdict.position), str(mate_ground)])
+		String(report["verdict_paddle"]) == other
+			and absf((report["verdict_at"] as Vector3).x - mate_ground.x) < 0.001,
+		"paddle=%s verdict=%s hitter=%s" % [other, str(report["verdict_at"]), str(mate_ground)])
 	# The word rides up as it fades (`js/render.js:1062`): a settled word is a word
 	# nobody measured, so the drift is checked rather than assumed.
-	var settled: float = verdict.position.y
+	var settled: float = (report["verdict_at"] as Vector3).y
 	node.state.shotFeedback["life"] = 0.05
 	node._sync_views()
 	check("the verdict drifts upwards as it fades",
-		verdict.position.y > settled, "%f -> %f" % [settled, verdict.position.y])
+		float((node.timing_report()["verdict_at"] as Vector3).y) > settled,
+		"%f -> %f" % [settled, float((node.timing_report()["verdict_at"] as Vector3).y)])
 	node.state.shotFeedback = null
 	node._sync_views()
-	check("and it disappears when the simulation drops the feedback", not verdict.visible, "")
+	check("and it disappears when the simulation drops the feedback",
+		not bool(node.timing_report()["verdict_visible"]), "")
+	# The normal end of the section, like every other section's: the node is dropped
+	# and the completion registered. The early return above (no report) is the only
+	# other exit; without this registration the section always read as thrown
+	# (independent review F-02).
 	_drop(node)
 	_section_done("_timing_presentation")
 
@@ -1529,48 +1567,56 @@ func _score_sequence(s: Dictionary) -> void:
 	check("a game is never longer than tennis allows (4 points, margin 2 -> at most 5)", max_points <= 5, str(max_points))
 
 
+## The HUD the real match mounts is the RECREATED one — architecture-deepening
+## gate 4: the shipping UI is the recreated UI, and the mount no longer depends on
+## which clock drives the ticks (`harness_mode()` is on for this whole run). It is
+## read through its own public `report()`, the surface the UI audits read, instead
+## of the ported column's private labels: a mount-policy change cannot make this
+## pass by building the retired HUD, because that HUD's path is asserted ABSENT.
 func _hud_reflects_state(node: Node) -> void:
-	var hud: Node = node.get_node_or_null("HudLayer/Hud")
-	check("the HUD exists in the match scene", hud != null, "HudLayer/Hud")
+	var hud: Node = node.get_node_or_null("HudLayer/UiHud")
+	check("the recreated HUD is mounted on the real match scene", hud != null, "HudLayer/UiHud")
+	check("the run built no hidden ported column behind it",
+		node.get_node_or_null("HudLayer/Hud") == null, "HudLayer/Hud")
 	if hud == null:
 		return
-	var player_score: Label = hud.get("_player_score")
-	var ai_score: Label = hud.get("_ai_score")
-	var games_line: Label = hud.get("_games_line")
-	check("HUD shows the sim's player score", player_score != null and player_score.text == String(node.state.playerScore),
-		"%s vs %s" % [player_score.text if player_score != null else "?", String(node.state.playerScore)])
-	check("HUD shows the sim's ai score", ai_score != null and ai_score.text == String(node.state.aiScore),
-		"%s vs %s" % [ai_score.text if ai_score != null else "?", String(node.state.aiScore)])
-	check("HUD shows the game count", games_line != null and games_line.text.contains(str(int(node.state.games["player"]))),
-		games_line.text if games_line != null else "?")
-	var log_lines: Array = hud.get("_log_lines")
-	var log_text := ""
-	for line in log_lines:
-		log_text += (line as Label).text
-	check("HUD log renders the sim's events", log_text.length() > 0, log_text)
-	var result_panel: Control = hud.get("_result_panel")
-	check("HUD shows the match result", result_panel != null and result_panel.visible, "result panel")
-	# Legibility guard: no scoreboard text may be empty on a finished match.
-	var debug: Label = hud.get("_debug")
-	check("HUD debug line names the seed and the tier",
-		debug != null and debug.text.contains(str(Config.seed_value)) and debug.text.contains("TIER"),
-		debug.text if debug != null else "?")
-	# No raw message id may reach the screen: the log lines are the only place the
-	# simulation's ids are displayed, and every one of them is resolved through the
-	# locale layer (`godot/src/locale/locale.gd`).
+	var report: Dictionary = hud.report()
+	var texts: Dictionary = report.get("texts", {})
+	check_eq("the mounted HUD shows the sim's player score",
+		String(texts.get("player_score", "")), String(node.state.playerScore))
+	check_eq("the mounted HUD shows the sim's ai score",
+		String(texts.get("ai_score", "")), String(node.state.aiScore))
+	var view: Dictionary = report.get("view", {})
+	var log_lines: Array = view.get("log_lines", [])
+	check("the mounted HUD renders the sim's events", not log_lines.is_empty(), str(log_lines))
+	# No raw message id may reach the screen: every rendered string and every log
+	# line the view-model produced is scanned for the simulation's own ids. The
+	# resolution rule is the vocabulary's (gate 1); this only reads what it painted.
 	var leaked: Array[String] = []
-	var repeated := false
-	var previous := ""
+	# `str()`, not `String(...)`: report values include Array entries (`mode_cells`,
+	# `mode_lines`, `log` in `Hud.gd::_texts()`), and `String(<Array>)` is not a valid
+	# constructor — a runtime error here would abort this function and silently skip
+	# everything below it (independent review F-01). `str()` renders any value.
+	for key in texts:
+		for id in Vocabulary.EVENT_LABELS:
+			if str(texts[key]).contains(String(id)):
+				leaked.append("%s <- %s" % [key, String(id)])
 	for line in log_lines:
-		var text := (line as Label).text
-		for id in Hud.EVENT_LABELS:
-			if text.contains(String(id)):
-				leaked.append("%s <- %s" % [text, String(id)])
-		if text != "" and text == previous:
-			repeated = true
-		previous = text
-	check("no raw message id is on screen in the event log", leaked.is_empty(), str(leaked))
-	check("the event log does not repeat the same line twice in a row", not repeated, log_text)
+		for id in Vocabulary.EVENT_LABELS:
+			if str(line).contains(String(id)):
+				leaked.append("log <- %s" % String(id))
+	check("no raw message id is on screen in the recreated HUD", leaked.is_empty(), str(leaked))
+	# The finished match's result, on the surface that ships: the payload the result
+	# route mounts (the recreated path shows the result on its own screen, not as a
+	# panel over the court).
+	var payload: Dictionary = node.result_payload()
+	var result: Dictionary = payload.get("result", {})
+	var won := String(node.state.result.get("winner", "")) == "player"
+	check("the finished match's result payload is built from the live state",
+		not result.is_empty(), str(payload.keys()))
+	check("the payload's win flag is the sim's own winner",
+		bool(result.get("won", not won)) == won,
+		"won=%s winner=%s" % [str(result.get("won", "?")), String(node.state.result.get("winner", ""))])
 
 
 # ---------------------------------------------------------------------------
@@ -1580,9 +1626,10 @@ func _hud_reflects_state(node: Node) -> void:
 ## The HUD's text comes from `godot/src/locale/locale.gd` (the port of the frozen
 ## `js/i18n.js`). What this asserts:
 ##   - the resolver has the reference's two tables and the reference's size;
-##   - `describe_event()` never returns the id, for every id the HUD knows about;
-##   - every id the HUD resolves through the locale layer produces exactly the
-##     string the layer would — i.e. `EVENT_LABELS` is a projection of it, not a
+##   - the vocabulary module's `describe_event()` (architecture-deepening gate 1)
+##     never returns the id, for every id the event table knows about;
+##   - every id resolved through the locale layer produces exactly the string the
+##     layer would — i.e. the module's `EVENT_LABELS` is a projection of it, not a
 ##     second string table that could drift;
 ##   - the ten debt-ledger ids get a readable line and not a fake translation;
 ##   - the composite labels the old table carried could never match an emitted id
@@ -1597,12 +1644,12 @@ func _locale_layer() -> void:
 		Locale.table("it").size() == 688 and Locale.table("en").size() == 688,
 		"it=%d en=%d" % [Locale.table("it").size(), Locale.table("en").size()])
 
-	var labels: Dictionary = Hud.EVENT_LABELS
+	var labels: Dictionary = Vocabulary.EVENT_LABELS
 	var leaking: Array[String] = []
 	var drifting: Array[String] = []
 	for id in labels:
 		var key := String(id)
-		var line := Hud.describe_event(key)
+		var line := Vocabulary.describe_event(key)
 		if line.contains(key):
 			leaking.append(key)
 		if Locale.is_resolvable(key) and Locale.required_params(key).is_empty():
@@ -1615,9 +1662,9 @@ func _locale_layer() -> void:
 	# The composite ids the simulation actually stores go through the locale layer's
 	# declared rules (`js/game.js:2110` for pointYou/pointOpp, `:455-456` for controlMsg).
 	check_eq("score composites resolve through the locale layer",
-		Hud.describe_event("pointYou:msgOut"), "PUNTO TUO · Palla fuori dal campo.")
+		Vocabulary.describe_event("pointYou:msgOut"), "PUNTO TUO · Palla fuori dal campo.")
 	check_eq("control-message composites resolve through the locale layer",
-		Hud.describe_event("controlMsg:roleBackPos"), "Controlli il giocatore di fondo.")
+		Vocabulary.describe_event("controlMsg:roleBackPos"), "Controlli il giocatore di fondo.")
 	check("the composite labels no emitted id could ever match are gone",
 		not labels.has("controlMsg:deep") and not labels.has("controlMsg:mid") and not labels.has("controlMsg:net"),
 		"controlMsg:deep|mid|net")
@@ -1632,8 +1679,8 @@ func _locale_layer() -> void:
 	]
 	var unreadable: Array[String] = []
 	for id in ledger:
-		var line := Hud.describe_event(String(id))
-		if line == String(id) or line == Hud.UNREADABLE:
+		var line := Vocabulary.describe_event(String(id))
+		if line == String(id) or line == Vocabulary.UNREADABLE:
 			unreadable.append(String(id))
 	check("the ten debt-ledger ids get a readable fallback (never the id, never `??`)",
 		unreadable.is_empty(), str(unreadable))
@@ -1642,9 +1689,12 @@ func _locale_layer() -> void:
 
 	# Feedback: the sim stores `shot:<grade>` / `shotMode:<mode>` (sim.gd:1245-1246)
 	# and the reference derives `shot<Grade>` / `shotMode<Mode>` from the same values.
-	check_eq("shot grade resolves to the reference's own word", Hud.feedback_label("shot:perfect"), "PERFETTO")
-	check_eq("shot mode resolves to the reference's own word", Hud.mode_label("shotMode:balanced"), "BILANCIATO")
-	check_eq("a bare feedback id is resolved as itself", Hud.feedback_label("smashMissedContact"), "IMPATTO MANCATO")
+	# Those derivations and the words they resolve to are the vocabulary module's
+	# (architecture-deepening gate 1) — `godot/tests/feedback_vocabulary_test.gd` is
+	# that seam's own suite; these three checks pin the words on this path.
+	check_eq("shot grade resolves to the reference's own word", Vocabulary.feedback_label("shot:perfect"), "PERFETTO")
+	check_eq("shot mode resolves to the reference's own word", Vocabulary.mode_label("shotMode:balanced"), "BILANCIATO")
+	check_eq("a bare feedback id is resolved as itself", Vocabulary.feedback_label("smashMissedContact"), "IMPATTO MANCATO")
 	_section_done("_locale_layer")
 
 
@@ -1700,7 +1750,12 @@ func _audio_mapping() -> void:
 ## named are still the right objects. (The pictures are `godot/game/out/*.png`; the
 ## evidence file lists what each one shows.)
 func _visual_contract() -> void:
-	var node := _new_match_node(0)
+	# The ported column, asked for EXPLICITLY (gate 4): the panel names and the two
+	# frame-edge checks below are `game/hud.gd`'s own contract, and the shipping run
+	# no longer builds that column. `legacy_ui` is the documented switch, not a
+	# command-line flag, so this section reads the same construction the diagnostic
+	# `--ui=legacy` run builds.
+	var node := _new_match_node(0, true)
 	# The rigs are built even in a headless run: `harness_mode()` turns model loading
 	# off (no display, no texture upload) and the controller's public `build_athletes()`
 	# is documented as the way for a harness to put them on court afterwards. Without
@@ -1775,10 +1830,12 @@ func _visual_contract() -> void:
 	check("every racket is held: within a metre of its athlete at hand height",
 		hands_bad.is_empty(), str(hands_bad))
 
-	# The HUD's panels: the one collision the defect list named, plus the frame edges.
+	# The ported column's panels: the one collision the defect list named, plus the
+	# frame edges. Same nodes, same names, same section of the same suite.
 	var hud: Node = node.get_node_or_null("HudLayer/Hud")
 	if hud == null:
-		check("the HUD exists for the layout checks", false, "HudLayer/Hud")
+		check("the explicitly requested ported column exists for the layout checks",
+			false, "HudLayer/Hud")
 	else:
 		var debug_panel: Control = hud.get_node_or_null("DebugPanel")
 		var score_panel: Control = hud.get_node_or_null("ScorePanel")
@@ -2072,11 +2129,15 @@ func _arena_scenery_in_frame() -> void:
 ## `godot/game/out/*.png` shows. A control inside a container is bounded by its
 ## container's rectangle (containers place their children; their offsets are not the
 ## layout), so every control in the tree is still covered by the assertion.
+##
+## The ported column, asked for explicitly (gate 4): this section's whole subject is
+## `game/hud.gd`'s own layout contract, and the shipping run no longer builds it.
 func _hud_safe_area() -> void:
-	var node := _new_match_node(0)
+	var node := _new_match_node(0, true)
 	var hud: Control = node.get_node_or_null("HudLayer/Hud")
 	if hud == null:
-		check("the HUD exists for the safe-area checks", false, "HudLayer/Hud")
+		check("the explicitly requested ported column exists for the safe-area checks",
+			false, "HudLayer/Hud")
 		_drop(node)
 		return
 	var panels: Array = hud.panels()

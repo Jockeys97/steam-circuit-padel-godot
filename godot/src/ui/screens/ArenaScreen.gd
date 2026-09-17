@@ -19,10 +19,22 @@
 ## choice the game discarded". This port keeps that note in behaviour, not in a comment:
 ## a non-fixture card is disabled in career/tournament exactly as `fuoriGiornata` is.
 ##
+## THE WORLD FIVE (port additions, `arena_catalog.gd::world_rows()`). The recreated
+## path offers the same five the ported menu column does, from the same one catalog
+## (`UiData.world_arena_rows()`, i.e. `content_gate.gd::arena_catalog()`), and under
+## the same rules: in a FULL build they are a further choice, in a DEMO build the set
+## does not exist at all (no row, no card), and in career/tournament the calendar's
+## fixture is the only arena a start can use, so every world card is switched off
+## exactly like a non-fixture frozen card. Their grid (`WorldArenaGrid`, built here
+## because the scene carries the frozen grid alone) leaves the frozen nine's own grid
+## untouched: `arena_rows_now()` is still the nine-row catalog the arena audits pin.
+##
 ## WHAT IT NEVER DOES. No mode logic, no simulation: the start path is the contract that
 ## already exists (`game/main_menu.gd:497` quick → `res://game/Match.tscn`, `:502` modes →
 ## `res://game/ModeScreen.tscn`), reached through `Config.pending_mode` and
 ## `Config.arena_index` — the seams `game/match_config.gd:22-27` documents.
+## A world arena has no roster index, so its seat is the id itself
+## (`Config.set_arena_id`, the same call the ported column's world row makes).
 ##
 ## SPLIT FROM THE SCENES. Like the other screens in this lane: named nodes only, every
 ## string resolved from `UiStrings`, chrome read off `padel_theme.tres`.
@@ -61,6 +73,16 @@ const LINE_PREFIX := "ArenaLine_"
 const BADGE_PREFIX := "ArenaBadge_"
 const LOCK_PREFIX := "ArenaLock_"
 const MODE_PREFIX := "PlayerModeButton_"
+## The world five's own nodes: a second grid, so the frozen nine's nodes (which the
+## arena audits read by name) are never renamed or reshuffled.
+const WORLD_AREA := "WorldGridArea"
+const WORLD_GRID := "WorldArenaGrid"
+const WORLD_CARD_PREFIX := "WorldArenaCard_"
+const WORLD_ART_PREFIX := "WorldArenaArt_"
+const WORLD_NAME_PREFIX := "WorldArenaName_"
+const WORLD_LINE_PREFIX := "WorldArenaLine_"
+const BODY_NODE := "Body"
+const GRID_AREA_NODE := "GridArea"
 
 const WORDING_QUICK := "quick"
 const WORDING_CAREER := "career"
@@ -75,6 +97,8 @@ const MODE_KEYS := {
 }
 
 var _rows: Array = []
+## The world five this build offers, in the catalog's order (empty in a demo).
+var _world_rows: Array = []
 var _wording: String = WORDING_QUICK
 var _selected_id: String = ""
 var _locked_ids: Array = []
@@ -165,6 +189,7 @@ func route_to(screen_id: String) -> bool:
 func refresh_data() -> void:
 	_wording = _wording_now()
 	_rows = _rows_now()
+	_world_rows = _world_rows_now()
 	_locked_ids = []
 	for row in _rows:
 		if bool((row as Dictionary).get("locked", false)):
@@ -176,16 +201,51 @@ func refresh_data() -> void:
 		_in_program = ""
 	_out_of_matchday = []
 	if _in_program != "":
-		for row in _rows:
-			var id := String((row as Dictionary).get("id", ""))
-			if id != _in_program and not _locked_ids.has(id):
-				_out_of_matchday.append(id)
-	if _selected_id == "" or _row_of(_selected_id).is_empty() or arena_card_state(_selected_id) == "locked":
+		# In career and tournament EVERY other arena is switched off, the world five
+		# included: the start uses the fixture whatever was pressed.
+		for card in _card_ids():
+			if card != _in_program and not _locked_ids.has(card):
+				_out_of_matchday.append(card)
+	if _selected_id == "" or not _is_a_card(_selected_id) \
+			or arena_card_state(_selected_id) == "locked":
 		_selected_id = _first_selectable_id()
 	_build_grid()
+	_build_world_grid()
 	_build_player_mode()
 	_apply_layout()
 	refresh_strings()
+
+
+## Every arena this screen draws a card for: the frozen grid first, then the world
+## five (the order `arena_catalog.gd::rows()` keeps).
+func _card_ids() -> Array:
+	var out: Array = []
+	for row in _rows:
+		out.append(String((row as Dictionary).get("id", "")))
+	for row in _world_rows:
+		out.append(String((row as Dictionary).get("id", "")))
+	return out
+
+
+func _is_a_card(arena_id: String) -> bool:
+	return not _row_of(arena_id).is_empty() or not _world_row_of(arena_id).is_empty()
+
+
+## The world half of the catalog this build offers (`UiData.world_arena_rows()` —
+## `arena_catalog.gd::world_rows()`): the five in a full build, none in a demo, so a
+## demo builds no world grid at all. The rows are the deck's own records — the same
+## ones `Config.selectable_world_arenas()` hands the ported column — and the card
+## shows them as data: a port addition has no locale key for its name or description.
+func _world_rows_now() -> Array:
+	var out: Array = []
+	for row in UiData.world_arena_rows():
+		var entry: Dictionary = (row as Dictionary).duplicate(true)
+		entry["world"] = true
+		var raw: Variant = entry.get("palette")
+		var palette: Dictionary = raw if raw is Dictionary else {}
+		entry["accent"] = String(palette.get("accent", ""))
+		out.append(entry)
+	return out
 
 
 func _wording_now() -> String:
@@ -263,6 +323,12 @@ func arena_rows_now() -> Array:
 	return _rows.duplicate(true)
 
 
+## The world five this build draws cards for — the frozen grid's twin accessor. A
+## demo answers `[]`: the set does not exist there.
+func world_arena_rows_now() -> Array:
+	return _world_rows.duplicate(true)
+
+
 func wording_mode() -> String:
 	return _wording
 
@@ -332,13 +398,10 @@ func arena_line_key(arena_id: String) -> String:
 ## `ui.selectedArena = arena; onSelect?.(arena)` (`js/ui.js:1264-1265`) — the choice is the
 ## session's, and the port's seat for it is `Config.arena_index` (`match_config.gd:22-27`).
 func select_arena(arena_id: String) -> bool:
-	if _row_of(arena_id).is_empty():
+	if not _is_a_card(arena_id):
 		return false
 	var state := arena_card_state(arena_id)
 	if state == "locked" or state == "out_of_matchday":
-		return false
-	var index := _arena_index_of(arena_id)
-	if index < 0:
 		return false
 	_selected_id = arena_id
 	return true
@@ -355,19 +418,28 @@ func start_arena_id() -> String:
 
 func can_start() -> bool:
 	var id := start_arena_id()
-	return id != "" and _arena_index_of(id) >= 0
+	if id == "":
+		return false
+	var seat := _seat_of(id)
+	if int(seat["index"]) >= 0:
+		return true
+	return bool(seat["world"]) and bool(seat["offered"])
 
 
 ## The payload the router (UIR-22) reads. Keys named and returned, never written into a
 ## mode rule: `mode` is `Config.pending_mode`'s own value, `arena_index` is
 ## `Config.arena_index`'s own seat, `scene` is the scene today's call sites change to.
+## `index` is -1 and `world` is true for a world arena: its seat is the id itself, the
+## same answer `Config.set_arena_id` lands on.
 func start_payload() -> Dictionary:
 	var id := start_arena_id()
 	var mode := _wording
+	var seat := _seat_of(id)
 	return {
 		"mode": mode,
 		"arena_id": id,
-		"arena_index": _arena_index_of(id),
+		"arena_index": int(seat["index"]),
+		"world": bool(seat["world"]),
 		"player_mode": player_mode(),
 		"scene": MODE_SCENE if mode != WORDING_QUICK else MATCH_SCENE,
 	}
@@ -377,10 +449,11 @@ func start_match(apply_scene: bool = true) -> bool:
 	if not can_start():
 		return false
 	var payload := start_payload()
-	var index := int(payload["arena_index"])
-	if index < 0:
+	# One seat call for both kinds (`match_config.gd::set_arena_id`): a frozen arena
+	# lands on its roster index and clears the world seat, a world arena takes the
+	# world seat and leaves the frozen index where it was.
+	if not Config.set_arena_id(String(payload["arena_id"])):
 		return false
-	Config.arena_index = index
 	Config.pending_mode = String(payload["mode"])
 	# The reference's own rule (`js/main.js:1156`): the human mode rides only on a
 	# quick match; tournament, career and drill are forced back to `"solo"`.
@@ -553,6 +626,134 @@ func _build_grid() -> void:
 			card.gui_input.connect(_on_card_input.bind(id))
 
 
+## The world five's own grid, in the frozen grid's own idiom: one card per arena the
+## catalog offers, in table order, each card named and described by the row both UI
+## paths read. A build that offers none builds no grid (a demo), and a build that
+## lost them (a capture state, a failed read) hides the area instead of leaving an
+## empty container in the scroll. The frozen grid's own children are never touched
+## here, and the global binding lists are cleared once per refresh by `_build_grid`.
+func _build_world_grid() -> void:
+	var area := _control(WORLD_AREA)
+	var grid := _control(WORLD_GRID) as GridContainer
+	if _world_rows.is_empty():
+		if grid != null:
+			_clear_children(grid)
+		if area != null:
+			area.visible = false
+		return
+	if grid == null:
+		grid = _make_world_grid()
+	if grid == null:
+		return
+	if area != null:
+		area.visible = true
+	_clear_children(grid)
+	for row in _world_rows:
+		_build_world_card(grid, row)
+
+
+## Builds the world area and its grid into the screen's own body, right below the
+## frozen grid: the scene carries the frozen grid alone, so the world half is added
+## where the layout already put its sibling, with the same margins and separation.
+func _make_world_grid() -> GridContainer:
+	var body := _control(BODY_NODE)
+	if body == null:
+		return null
+	var area := MarginContainer.new()
+	area.name = WORLD_AREA
+	area.add_theme_constant_override("margin_left", 64)
+	area.add_theme_constant_override("margin_right", 64)
+	area.add_theme_constant_override("margin_top", 20)
+	area.add_theme_constant_override("margin_bottom", 0)
+	body.add_child(area)
+	var grid := GridContainer.new()
+	grid.name = WORLD_GRID
+	grid.add_theme_constant_override("h_separation", 20)
+	grid.add_theme_constant_override("v_separation", 20)
+	grid.columns = _column_count()
+	area.add_child(grid)
+	var frozen_area := _control(GRID_AREA_NODE)
+	if frozen_area != null:
+		body.move_child(area, frozen_area.get_index() + 1)
+	return grid
+
+
+func _build_world_card(grid: GridContainer, row: Dictionary) -> void:
+	var id := String(row.get("id", ""))
+	var state := arena_card_state(id)
+	var card := PanelContainer.new()
+	card.name = WORLD_CARD_PREFIX + id
+	card.mouse_filter = Control.MOUSE_FILTER_STOP
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.theme_type_variation = &""
+	card.add_theme_stylebox_override("panel", _card_box())
+	grid.add_child(card)
+	var column := VBoxContainer.new()
+	column.name = card.name + "Column"
+	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_theme_constant_override("separation", 0)
+	card.add_child(column)
+
+	# A world deck ships no UI art (`UiArtPaths.gd` names the frozen nine's only), so
+	# the preview is the panel with the deck's own accent: the screen's empty state,
+	# never a broken texture.
+	var preview := PanelContainer.new()
+	preview.name = WORLD_ART_PREFIX + id
+	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	preview.add_theme_stylebox_override("panel", _preview_box(String(row.get("accent", ""))))
+	column.add_child(preview)
+
+	var body := MarginContainer.new()
+	body.name = card.name + "Body"
+	body.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var pad := int(CARD_PADDING)
+	body.add_theme_constant_override("margin_left", pad)
+	body.add_theme_constant_override("margin_right", pad)
+	body.add_theme_constant_override("margin_top", pad)
+	body.add_theme_constant_override("margin_bottom", pad)
+	column.add_child(body)
+	var stack := VBoxContainer.new()
+	stack.name = card.name + "Stack"
+	stack.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stack.add_theme_constant_override("separation", 4)
+	body.add_child(stack)
+
+	var name_label := Label.new()
+	name_label.name = WORLD_NAME_PREFIX + id
+	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	name_label.theme_type_variation = &"CardTitle"
+	name_label.text = String(row.get("name", ""))
+	_register_text_node(name_label)
+	stack.add_child(name_label)
+
+	var line := Label.new()
+	line.name = WORLD_LINE_PREFIX + id
+	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	line.theme_type_variation = &"CardBody"
+	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_register_text_node(line)
+	stack.add_child(line)
+	if state == "out_of_matchday":
+		_bind(line, "arenaOtherRound" if _wording == WORDING_TOURNAMENT else "arenaOtherMatchday")
+	else:
+		# The deck's own description, the string `main_menu.gd`'s world tooltip
+		# carries too: a port addition has no locale key to resolve.
+		line.text = String(row.get("desc", ""))
+
+	card.modulate = Color(1, 1, 1, 0.55) if state == "out_of_matchday" else Color(1, 1, 1, 1)
+	if state != "out_of_matchday":
+		card.gui_input.connect(_on_card_input.bind(id))
+
+
+## Removes a container's children WITHOUT the global binding reset `_clear` does: the
+## frozen grid's bindings are registered for the whole screen (`text_bindings`), and
+## the world grid must not wipe them.
+func _clear_children(container: Node) -> void:
+	for child in container.get_children():
+		container.remove_child(child)
+		child.queue_free()
+
+
 func _on_card_input(event: InputEvent, arena_id: String) -> void:
 	var click := event as InputEventMouseButton
 	if click != null and click.pressed and click.button_index == MOUSE_BUTTON_LEFT:
@@ -583,13 +784,21 @@ func _update_preview_heights() -> void:
 	# collapse the preview.
 	var column_width := (width - float(columns - 1) * float(_grid_separation())) / float(columns)
 	for row in _rows:
-		var id := String((row as Dictionary).get("id", ""))
-		var preview := _control(ART_PREFIX + id) as Control
-		if preview == null:
-			continue
-		var card := _control(CARD_PREFIX + id) as Control
-		var basis := card.size.x if card != null and card.size.x > 1.0 else column_width
-		preview.custom_minimum_size.y = maxf(PREVIEW_MIN_HEIGHT, basis / PREVIEW_RATIO)
+		_fit_preview(ART_PREFIX, CARD_PREFIX, String((row as Dictionary).get("id", "")), column_width)
+	# The world cards' previews keep the same ratio: same card, same art frame, no
+	# texture (a world deck ships none).
+	for row in _world_rows:
+		_fit_preview(WORLD_ART_PREFIX, WORLD_CARD_PREFIX,
+			String((row as Dictionary).get("id", "")), column_width)
+
+
+func _fit_preview(art_prefix: String, card_prefix: String, id: String, column_width: float) -> void:
+	var preview := _control(art_prefix + id) as Control
+	if preview == null:
+		return
+	var card := _control(card_prefix + id) as Control
+	var basis := card.size.x if card != null and card.size.x > 1.0 else column_width
+	preview.custom_minimum_size.y = maxf(PREVIEW_MIN_HEIGHT, basis / PREVIEW_RATIO)
 
 
 # ---------------------------------------------------------------------------
@@ -736,6 +945,9 @@ func _apply_layout() -> void:
 	var grid := _control("ArenaGrid") as GridContainer
 	if grid != null:
 		grid.columns = _column_count()
+	var world := _control(WORLD_GRID) as GridContainer
+	if world != null:
+		world.columns = _column_count()
 	_update_preview_heights()
 
 
@@ -819,6 +1031,15 @@ func _apply_accessibility() -> void:
 		if card != null:
 			_focus_specs.append(_focus_spec(CARD_PREFIX + String((row as Dictionary).get("id", "")), card,
 				"activate:" + CARD_PREFIX + String((row as Dictionary).get("id", ""))))
+	# The world cards are reachable the same way: the ported column registers its
+	# world row in the focus model too (`main_menu.gd`), so a keyboard or pad can
+	# select a world arena on either path.
+	for row in _world_rows:
+		var world_id := String((row as Dictionary).get("id", ""))
+		var world_card := _control(WORLD_CARD_PREFIX + world_id)
+		if world_card != null:
+			_focus_specs.append(_focus_spec(WORLD_CARD_PREFIX + world_id, world_card,
+				"activate:" + WORLD_CARD_PREFIX + world_id))
 	for key in MODE_KEYS:
 		var button := _control(MODE_PREFIX + key)
 		if button != null:
@@ -859,14 +1080,19 @@ func _row_of(arena_id: String) -> Dictionary:
 	return {}
 
 
-func _arena_index_of(arena_id: String) -> int:
-	var index := 0
-	for arena in Frozen.arenas():
-		var entry: Dictionary = arena
-		if String(entry.get("id", "")) == arena_id:
-			return index
-		index += 1
-	return -1
+func _world_row_of(arena_id: String) -> Dictionary:
+	for row in _world_rows:
+		if String((row as Dictionary).get("id", "")) == arena_id:
+			return row
+	return {}
+
+
+## The seat an arena id takes, from the one catalog both paths read
+## (`content_gate.gd::arena_catalog()`, `match_config.gd`'s own seat rule):
+## `{index, world, offered}`.
+func _seat_of(arena_id: String) -> Dictionary:
+	var catalog: Variant = Gate.arena_catalog()
+	return catalog.seat(arena_id)
 
 
 func _clear(container: Node) -> void:

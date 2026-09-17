@@ -20,12 +20,22 @@
 ##   godot/game/match_config.gd               the selection and `save_store()`
 ##   godot/src/sim/frozen.gd                  the frozen roster and arena tables
 ##
+## ARENAS COME FROM THE ONE CATALOG. `arena_rows` / `world_arena_rows` are
+## pass-throughs to `game/arenas/arena_catalog.gd` (bound to this build by
+## `content_gate.gd::arena_catalog()`), so the frozen index, the demo wall, the
+## career wall and the world set are answered once for both UI paths. Nothing here
+## re-derives an arena rule.
+##
 ## RULES THIS FILE KEEPS, so a reviewer can check them mechanically
 ## (`godot/tests/ui/data_audit.gd` scans this directory for both):
 ##
 ##   - **Ids, never prose.** Every dictionary carries ids and locale *keys*
 ##     (`athlete_maestro_name`, `quickMode`, `obj_winners`), never resolved text. No
 ##     function here calls the locale seam; the screen resolves what it shows.
+##     ONE RECORDED EXCEPTION: a world arena is a port addition with no locale key
+##     (`arena_style.gd` carries the deck's own name and description), so its row
+##     carries the deck's text for the card to show. It is the catalog's row, not
+##     prose written here.
 ##   - **Read-only.** Nothing here writes through the save contract: no
 ##     `ModesSave.save_*`, no `write_group`, no adapter that caches mutable state. The
 ##     write side belongs to the action tickets and goes through the same public API.
@@ -289,21 +299,24 @@ static func athlete_rows(store: RefCounted = null) -> Array[Dictionary]:
 
 static func arena_rows(store: RefCounted = null) -> Array[Dictionary]:
 	var career := ModesSave.load_career(_store(store))
-	var selectable := Gate.arenas()
+	var catalog: Variant = Gate.arena_catalog()
 	var out: Array[Dictionary] = []
-	for arena in Frozen.arenas():
-		var row: Dictionary = arena
-		var id := _text(row.get("id"))
-		var demo_locked := Gate.is_locked(row, "arena")
-		out.append({
-			"id": id,
-			"name_key": "arena_%s_name" % id,
-			"desc_key": "arena_%s_desc" % id,
-			"art_path": Art.path_for("arenas", id),
-			"demo_locked": demo_locked,
-			"locked": demo_locked or not CareerRules.is_unlocked(row, career),
-			"selectable": _id_in(selectable, id),
-		})
+	for row in catalog.frozen_rows(career):
+		out.append(row as Dictionary)
+	return out
+
+
+## The WORLD arenas this build offers as a further choice: the five port additions
+## in a full build, none in a demo — `arena_catalog.gd::world_rows()`, the same list
+## `Config.selectable_world_arenas()` (the ported column's seam) hands the menu. A
+## world row is a deck record, not a frozen row: its `name`/`desc` are the deck's own
+## text and its physics are the library's PROVISIONAL neutrals (`world: true`,
+## `provisional: true`) — see `arena_library.gd`'s `WORLD_WALL_BOUNCE` block.
+static func world_arena_rows() -> Array[Dictionary]:
+	var catalog: Variant = Gate.arena_catalog()
+	var out: Array[Dictionary] = []
+	for row in catalog.world_rows():
+		out.append((row as Dictionary).duplicate(true))
 	return out
 
 

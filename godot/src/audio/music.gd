@@ -36,7 +36,9 @@ extends Node
 ##
 ## MIXER SEMANTICS — the same ones `audio_port.gd` established:
 ##   - the music bus sits at the reference's own gain 0.55 (`js/audio.js:149`), read
-##     from the vendored event contract (`mixer.musicBusGain`), not restated;
+##     from the vendored event contract (`mixer.musicBusGain`) by the shared reader
+##     `res://src/audio/mixer_contract.gd` — the one `audio_port.gd` also consumes
+##     — not restated here;
 ##   - `set_muted(true)` sets one flag. It gates the scheduler and the voices it would
 ##     create (`js/audio.js:262,157,184,202`) and does NOT mute a bus or cut a sounding
 ##     voice. While muted the walk is *frozen*, so the score resumes where it stopped
@@ -66,13 +68,11 @@ extends Node
 ## must own the master level — the reference has a single `audio._master` gain, so the
 ## SFX module is the natural owner and music.gd only needs its own bus.
 
-const CONTRACT_PATH := "res://src/audio/event_map.json"
-const CONTRACT_SCHEMA := "steam-circuit-padel-pro.audio-event-map"
+const MixerContract := preload("res://src/audio/mixer_contract.gd")
 
-const MASTER_BUS := "Master"
-const MUSIC_BUS := "Music"
-## Godot's minimum bus volume; stands in for a gain of 0.
-const SILENCE_DB := -80.0
+## The canonical bus names live in the shared reader; these alias them.
+const MASTER_BUS := MixerContract.MASTER_BUS
+const MUSIC_BUS := MixerContract.MUSIC_BUS
 ## The reference builds fresh oscillators per call, so the same voice can overlap itself.
 const MAX_POLYPHONY := 16
 ## Upper bound on the pooled per-signature players (54 distinct signatures exist:
@@ -110,7 +110,11 @@ const PROG: Array = [
 const CONTEXT_MENU := "menu"
 const CONTEXT_MATCH := "match"
 
-## Parsed contract copy (read-only for consumers); same file `audio_port.gd` reads.
+## The shared mixer-contract reader — the same implementation `audio_port.gd`
+## consumes. Assigned before the node enters the tree; the shared-reader test
+## (`godot/tests/mixer_contract_test.gd`) injects a doctored reader through it.
+var mixer_contract: MixerContract = MixerContract.new()
+## Parsed contract copy (read-only for consumers), as loaded by `mixer_contract`.
 var contract: Dictionary = {}
 var contract_sha256: String = ""
 var loaded: bool = false
@@ -137,7 +141,7 @@ func _ready() -> void:
 	_hat_rng.seed = 1
 	_load_contract()
 	_build_buses()
-	_apply_master_gain()
+	mixer_contract.apply_master_gain(_master_gain)
 
 
 func _process(delta: float) -> void:
@@ -169,66 +173,59 @@ func reset() -> void:
 	_hat_rng.seed = 1
 	_load_contract()
 	_build_buses()
-	_apply_master_gain()
+	mixer_contract.apply_master_gain(_master_gain)
 
 
 # ---------------------------------------------------------------------------
-# contract (mixer numbers come from the same vendored file the SFX module reads)
+# contract — the parse, the validation, the hash and the facts are the reader's
 # ---------------------------------------------------------------------------
 
+## `res://src/audio/mixer_contract.gd` reads and validates the contract (the same
+## file the SFX module reads, through the same implementation); this node only
+## takes the result. The reader's `contract_path` is the file read, so a test that
+## swaps the reader also swaps the file — see `mixer_contract`.
 func _load_contract() -> void:
 	loaded = false
 	contract = {}
 	contract_sha256 = ""
-	if not FileAccess.file_exists(CONTRACT_PATH):
-		push_error("music: contract copy missing at %s — run `node tools/audio-port/sync-godot-audio.mjs`" % CONTRACT_PATH)
+	mixer_contract.load_contract()
+	if not mixer_contract.loaded:
 		return
-	contract_sha256 = sha256_of(CONTRACT_PATH)
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(CONTRACT_PATH))
-	if typeof(parsed) != TYPE_DICTIONARY:
-		push_error("music: %s is not a JSON object" % CONTRACT_PATH)
-		return
-	contract = parsed
-	if str(contract.get("schema", "")) != CONTRACT_SCHEMA:
-		push_error("music: %s declares schema '%s', expected '%s'" % [CONTRACT_PATH, contract.get("schema", ""), CONTRACT_SCHEMA])
-		return
+	contract = mixer_contract.contract
+	contract_sha256 = mixer_contract.contract_sha256
 	loaded = true
 	_muted = muted_default()
 	_master_gain = reference_master_gain()
 
 
 ## sha256 of a file, res:// or absolute. "" when the file is not readable.
+## One owner: the shared reader's static (the tests and the sync check call it).
 static func sha256_of(path: String) -> String:
-	if not FileAccess.file_exists(path):
-		return ""
-	var ctx := HashingContext.new()
-	ctx.start(HashingContext.HASH_SHA256)
-	ctx.update(FileAccess.get_file_as_bytes(path))
-	return ctx.finish().hex_encode()
+	return MixerContract.sha256_of(path)
 
 
+## The parsed `mixer` object of the contract this node loaded.
 func _mixer() -> Dictionary:
-	var m: Variant = contract.get("mixer", {})
-	return m if typeof(m) == TYPE_DICTIONARY else {}
+	return mixer_contract.mixer()
 
 
-## `js/audio.js:149` — `music._gain.gain.value = 0.55`.
+## `js/audio.js:149` — `music._gain.gain.value = 0.55`. The value is the shared
+## reader's; this getter keeps the module's public name for it.
 func reference_music_bus_gain() -> float:
-	return float(_mixer().get("musicBusGain", {}).get("value", 0.55))
+	return mixer_contract.reference_music_bus_gain()
 
 
 ## `js/audio.js:4-5, :15` — the level the score is written against.
 func reference_master_gain() -> float:
-	return float(_mixer().get("masterGainDefault", {}).get("value", 0.5))
+	return mixer_contract.reference_master_gain()
 
 
 func muted_default() -> bool:
-	return bool(_mixer().get("mute", {}).get("default", false))
+	return mixer_contract.muted_default()
 
 
 func master_gain_range() -> Dictionary:
-	var r: Dictionary = _mixer().get("masterGainRange", {})
-	return {"min": float(r.get("min", 0.0)), "max": float(r.get("max", 1.0)), "step": float(r.get("step", 0.01))}
+	return mixer_contract.master_gain_range()
 
 
 # ---------------------------------------------------------------------------
@@ -236,19 +233,10 @@ func master_gain_range() -> Dictionary:
 # ---------------------------------------------------------------------------
 
 func _build_buses() -> void:
-	_ensure_bus(MASTER_BUS, "", 0.0)
-	_ensure_bus(MUSIC_BUS, MASTER_BUS, linear_to_db(reference_music_bus_gain()))
-
-
-func _ensure_bus(bus_name: String, send: String, volume_db: float) -> int:
-	var idx := AudioServer.get_bus_index(bus_name)
-	if idx < 0:
-		idx = AudioServer.bus_count
-		AudioServer.add_bus(idx)
-		AudioServer.set_bus_name(idx, bus_name)
-	AudioServer.set_bus_send(idx, send)
-	AudioServer.set_bus_volume_db(idx, volume_db)
-	return idx
+	# The names, the send graph and the levels are the reader's facts; which buses
+	# this module builds is this module's decision.
+	for bus_name in [MASTER_BUS, MUSIC_BUS]:
+		mixer_contract.ensure_bus(bus_name)
 
 
 # ---------------------------------------------------------------------------
@@ -603,13 +591,11 @@ static func _exp_ramp(from: float, to: float, frac: float) -> float:
 
 ## `js/audio.js:286-289` — clamp to the contract's range, then apply relative to the
 ## reference's own default gain, which is the level the score is written against.
+## The clamp and the conversion are the shared reader's law; this setter keeps the
+## module's own stored value and returns the value actually stored.
 func set_master_gain(value: float) -> float:
-	var rng := master_gain_range()
-	var v := value
-	if is_nan(v):
-		v = 0.0
-	_master_gain = clampf(v, rng["min"], rng["max"])
-	_apply_master_gain()
+	_master_gain = mixer_contract.clamp_gain(value)
+	mixer_contract.apply_master_gain(_master_gain)
 	return _master_gain
 
 
@@ -624,20 +610,6 @@ func set_muted(flag: bool) -> void:
 
 func is_muted() -> bool:
 	return _muted
-
-
-func _apply_master_gain() -> void:
-	var idx := AudioServer.get_bus_index(MASTER_BUS)
-	if idx < 0:
-		return
-	var reference := reference_master_gain()
-	var relative := (_master_gain / reference) if reference > 0.0 else 0.0
-	if relative <= 0.0:
-		AudioServer.set_bus_volume_db(idx, SILENCE_DB)
-		AudioServer.set_bus_mute(idx, true)
-	else:
-		AudioServer.set_bus_volume_db(idx, linear_to_db(relative))
-		AudioServer.set_bus_mute(idx, false)
 
 
 func music_bus_gain_db() -> float:
@@ -677,7 +649,7 @@ func describe() -> Dictionary:
 		})
 	return {
 		"schema": str(contract.get("schema", "")),
-		"contract_path": CONTRACT_PATH,
+		"contract_path": mixer_contract.contract_path,
 		"contract_sha256": contract_sha256,
 		"loaded": loaded,
 		"buses": buses,

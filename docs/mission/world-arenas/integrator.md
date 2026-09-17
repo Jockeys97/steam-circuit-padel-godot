@@ -158,6 +158,14 @@ cover the extensions without weakening existing tests; no camera-preset edits.
   recreated lane's screens are NOT edited this phase; the world set is wired
   through the ported menu column (`--ui=legacy`), the Config/CLI selection seam
   and the capture enumeration. Recorded as an honest gap, not hidden.
+  **Reconciled 2026-09-18 (architecture-deepening integration):** this gap is closed —
+  the architecture-deepening mission's arena catalog put the world five into the
+  recreated `ArenaScreen` under the same rules as the legacy path (a `WorldArenaGrid`
+  beside the frozen grid, the seat carried in `start_payload()`), and
+  `tests/arena_catalog_test.gd` proves it (`PASS 15/15` full, `PASS 11/11` demo) with
+  the frozen nine, the demo's one arena and `Arena.ids()` unchanged. The frozen roster
+  is still exactly nine; the ui audits (`screen_arena_audit`, `demo_matrix_audit`,
+  `uir22`, `replay_audit`) were re-run green in that mission's integrated proof.
 - `Sim.update_match` reads exactly one arena field (`state.arena["wallBounce"]`,
   `sim.gd:2158`); `floorGrip` reaches only the menu's own tooltips
   (`main_menu.gd:309-311,677-681`); `js/` itself never reads `floorGrip`.

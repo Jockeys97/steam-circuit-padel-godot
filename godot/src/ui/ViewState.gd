@@ -31,6 +31,9 @@ extends RefCounted
 
 const UiStrings := preload("res://src/ui/UiStrings.gd")
 const Frozen := preload("res://src/sim/frozen.gd")
+## The one owner of the feedback vocabulary, for the marker this file renders when a
+## message id cannot be resolved (architecture-deepening gate 1).
+const Vocabulary := preload("res://game/feedback_vocabulary.gd")
 
 ## Every key `from_state()` and `capture_view()` return. The HUD reads nothing else.
 const FIELDS := [
@@ -138,11 +141,10 @@ const FAULT_KEYS := {
 	"serveoutbox": "serveOutBox",
 	"servewallfault": "serveWallFault",
 }
-## `godot/game/hud.gd:66` — a deliberate, visibly wrong marker instead of an id.
-## It is the one user-facing string in this file that the reference does not have,
-## and it exists because the port's own fallback table lives in the integration-owned
-## `godot/game/hud.gd` (see the hand-back's seam request).
-const UNREADABLE := "??"
+## A deliberate, visibly wrong marker instead of an id. It is the one user-facing
+## string in this file that the reference does not have; its owner is the vocabulary
+## module (`godot/game/feedback_vocabulary.gd::UNREADABLE`), shared with the match
+## HUD, so the recreated path keeps no second copy of the marker.
 
 
 # ---------------------------------------------------------------------------
@@ -437,8 +439,8 @@ static func log_lines(state) -> Array:
 ## and that composition is what this branch performs.
 ##
 ## Anything left unresolved — the id itself, or a template still carrying `{ordinal}`
-## (`serveHint`, the locale debt ledger's own case) — renders `UNREADABLE` instead of an
-## id. Never an id on screen.
+## (`serveHint`, the locale debt ledger's own case) — renders the vocabulary module's
+## `UNREADABLE` instead of an id. Never an id on screen.
 static func resolve_message(message_id: String) -> String:
 	if message_id == "":
 		return ""
@@ -453,10 +455,10 @@ static func resolve_message(message_id: String) -> String:
 		var let_key := "evLet" if message_id == "LET" else ""
 		if let_key != "":
 			return UiStrings.t(let_key)
-		return UNREADABLE
+		return Vocabulary.UNREADABLE
 	var text := UiStrings.t(message_id)
 	if text.contains("{"):
-		return UNREADABLE
+		return Vocabulary.UNREADABLE
 	return text
 
 

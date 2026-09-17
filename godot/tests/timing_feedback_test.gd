@@ -54,6 +54,10 @@ const State := preload("res://src/sim/state.gd")
 const Frozen := preload("res://src/sim/frozen.gd")
 const Digest := preload("res://src/sim/digest.gd")
 const Locale := preload("res://src/locale/locale.gd")
+## Architecture-deepening gate 1: the feedback vocabulary — the `shotMode:<mode>` /
+## `shot:<grade>` derivations and the words they resolve to — is owned by this module
+## (moved out of `godot/game/hud.gd`); this suite reads it instead of re-deriving it.
+const Vocabulary := preload("res://game/feedback_vocabulary.gd")
 
 ## `FIXED_STEP = 1 / 120` (`js/main.js:1164`).
 const FIXED_STEP := 1.0 / 120.0
@@ -284,7 +288,7 @@ func _check_eta_semantics() -> void:
 
 ## `js/game.js:1003-1009` — the grade ids, the thresholds as constants, and the
 ## mapping from the sim's grade to the message id the shell resolves
-## (`js/game.js:1062-1069`, `godot/game/hud.gd:521-531`).
+## (`js/game.js:1062-1069`, `godot/game/feedback_vocabulary.gd`).
 func _check_grade_ids() -> void:
 	var state := _scratch_state()
 	var paddle := state.player
@@ -328,8 +332,8 @@ func _check_grade_ids() -> void:
 	ball.y = paddle.y
 
 	# The sim stores `shot:<grade>`; the reference renders `t("shot" + Grade)`
-	# (`js/game.js:1062-1069`), which is the key `godot/game/hud.gd:513-531`
-	# reconstructs. Each derivation must land on a resolvable message id, for every
+	# (`js/game.js:1062-1069`), which is the key `godot/game/feedback_vocabulary.gd`
+	# derives. Each derivation must land on a resolvable message id, for every
 	# grade the model can return.
 	for grade in GRADE_IDS:
 		var key := "shot" + String(grade).capitalize()
@@ -674,22 +678,13 @@ func _timing_line(state: State, tick: int) -> String:
 		parts.append("fbGrade=%s" % String(feedback["grade"]))
 		parts.append("fbQuality=%s" % Digest.fixed(float(feedback["quality"])))
 		parts.append("fbProfile=%s" % String(feedback.get("profile", "none")))
-		parts.append("fbMode=%s" % _feedback_mode_id(String(feedback["mode"])))
+		parts.append("fbMode=%s" % Vocabulary.mode_key(String(feedback["mode"])))
 	parts.append("shotType=%s" % String(state.ball.shotType))
 	parts.append("queuedCharge=%s" % Digest.fixed(float(state.queuedShotCharge)))
 	parts.append("queuedPower=%s" % Digest.fixed(float(state.queuedShotPower)))
 	parts.append("x3ai=%s" % Digest.fixed(state.aiX3Recovery))
 	parts.append("x3player=%s" % Digest.fixed(state.playerX3Recovery))
 	return "# tm tick=%06d %s" % [tick, " ".join(parts)]
-
-
-## The port stores the mode as an id (`shotMode:<mode>`); the reference stores
-## `t("shotMode" + Capitalized)`. The value compared is the id
-## (`godot/game/hud.gd:526-531` does this derivation for the HUD).
-func _feedback_mode_id(text_id: String) -> String:
-	if text_id.begins_with("shotMode:"):
-		return "shotMode" + text_id.substr(9).capitalize()
-	return text_id
 
 
 func _constants_lines() -> Array:

@@ -15,26 +15,25 @@
 ##       t(key) = <requested locale> ?? it ?? <the id itself>   (js/i18n.js:1408)
 ##
 ##   That last step is the bug class this file must not reproduce: an id on screen
-##   is what "AI_LEGGENDA_NAME" looked like for a whole match (git 1652240). So:
+##   is what "AI_LEGGENDA_NAME" looked like for a whole match (git 1652240). So the
+##   one owner of that rule is `godot/game/feedback_vocabulary.gd` (architecture-
+##   deepening gate 1): its `describe_event()` asks `Locale.t()` first and returns
+##   the sentence, falls back to the readable line in the module's generated event
+##   table — never to the id — and renders `UNREADABLE` when neither knows the id:
+##   visibly wrong on purpose rather than silently an id.
+##   `tools/i18n-port/verify-i18n-port.mjs` fails before a new emit site can
+##   surprise a screen; `tools/i18n-port/hud-coverage.mjs` reads the module's table
+##   statically to measure the same property.
 ##
-##     - `describe_event()` calls `Locale.t()` first and returns the sentence;
-##     - an id the locale layer cannot resolve, or one whose template still needs
-##       parameters the simulation does not carry (`serveHint`), falls back to the
-##       readable line in `EVENT_LABELS` — never to the id;
-##     - an id in neither place renders `UNREADABLE`, which is visibly wrong on
-##       purpose rather than silently an id. `tools/i18n-port/verify-i18n-port.mjs`
-##       fails before that can happen: a new emit site nobody wrote down is a red
-##       drift test, not a surprise on screen.
-##
-##   `EVENT_LABELS` is GENERATED below from `godot/src/locale/locale_data.gd` by
-##   `godot/game/tools/gen_hud_labels.py` — it is a projection of the locale layer,
-##   not a second string table — plus one hand-written readable fallback per
-##   debt-ledger id (`tools/i18n-port/unresolved-baseline.json`, ten entries, three
-##   documented root causes). It is generated because `tools/i18n-port/hud-coverage.mjs`
-##   reads this table statically to decide whether an id can reach the screen, so the
-##   table has to be complete for every id the ported simulation can emit. The slice
-##   test asserts each generated entry is byte-equal to `Locale.t(id)`, so the table
-##   cannot drift from the resolver.
+##   The module's event-log table is GENERATED there from
+##   `godot/src/locale/locale_data.gd` by `godot/game/tools/gen_hud_labels.py` — it
+##   is a projection of the locale layer, not a second string table — plus one
+##   hand-written readable fallback per debt-ledger id
+##   (`tools/i18n-port/unresolved-baseline.json`, ten entries, three documented root
+##   causes). It is generated because `hud-coverage.mjs` reads it statically to
+##   decide whether an id can reach the screen, so the table has to be complete for
+##   every id the ported simulation can emit. The tests assert each generated entry
+##   is byte-equal to `Locale.t(id)`, so the table cannot drift from the resolver.
 ##
 ##   Labels that are NOT message ids stay in this file and are marked as such: the
 ##   score words, the energy bar's caption, the control legend. Where the reference
@@ -50,9 +49,20 @@
 ##     `t("shotMode" + Mode)` (`js/game.js:1062-1069`);
 ##   - energy: `state.rallyEnergy["player"]` (`GAMEPLAY_RULES.md:150`);
 ##   - log: `state.events`, the newest-first message-id ring `add_event` fills.
+##
+## THE FEEDBACK VOCABULARY IS NOT HERE ANY MORE. The grade/mode id encodings, the
+## words they resolve to, every colour the shot feedback is drawn with AND the event
+## log's knowledge (the table and the id -> line resolver) are owned by
+## `godot/game/feedback_vocabulary.gd` (architecture-deepening gate 1) — the same
+## owner the shipping match shell reads for its court marks, so the hidden legacy HUD
+## is no longer the only place the vocabulary can be asked for. This file consumes it
+## and keeps painting: the panels, the score, the energy bar's own bands, the log's
+## lines.
 extends Control
 
 const Locale := preload("res://src/locale/locale.gd")
+## The one owner of the feedback vocabulary, consumed here (never re-declared).
+const Vocabulary := preload("res://game/feedback_vocabulary.gd")
 
 ## UIR-22: this HUD no longer picks a language. It used to force Italian here
 ## (`const HUD_LANG := "it"` + `Locale.set_lang(HUD_LANG)` in `_ready()`), which
@@ -63,9 +73,11 @@ const Locale := preload("res://src/locale/locale.gd")
 ## by the settings screen on a change). The ported HUD's own literal labels stay
 ## literal: they are its diagnostic surface's, not a second locale layer.
 
-## Rendered when an id is neither resolvable nor in `EVENT_LABELS`. Deliberately not
-## the id: a visible "??" is a defect report, an id on screen is a silent one.
-const UNREADABLE := "??"
+## Rendered when an id is neither resolvable nor in the module's generated event
+## table: the marker is the vocabulary module's own
+## (`feedback_vocabulary.gd::UNREADABLE`, shared with the recreated UI's view-model)
+## and is deliberately not the id — a visible "??" is a defect report, an id on
+## screen is a silent one. No second copy.
 
 ## The safe area: no HUD element may come closer than this to the frame's edge.
 ## The defect this answers: a yellow arc read as a clipped gauge at the left edge
@@ -424,12 +436,12 @@ func _update_feedback(state) -> void:
 		return
 	var text_id := String(fb.get("text", ""))
 	var mode_id := String(fb.get("mode", ""))
-	var grade := grade_of(text_id)
-	var mode := mode_of(mode_id)
-	_feedback.text = feedback_label(text_id)
-	_feedback_mode.text = mode_label(mode_id)
-	var color: Color = GRADE_COLORS.get(grade, Color(0.93, 0.95, 0.98))
-	_feedback.add_theme_color_override("font_color", color)
+	# The word and the colour are the vocabulary module's (`feedback_vocabulary.gd`);
+	# this panel only paints them.
+	var grade := Vocabulary.grade_of(text_id)
+	_feedback.text = Vocabulary.feedback_label(text_id)
+	_feedback_mode.text = Vocabulary.mode_label(mode_id)
+	_feedback.add_theme_color_override("font_color", Vocabulary.grade_color(grade))
 
 
 func _update_energy(state) -> void:
@@ -448,40 +460,10 @@ func _update_energy(state) -> void:
 	_energy_fill.color = c
 
 
-## The three bands and the three colours of the energy bar the REFERENCE draws: it
-## has no energy bar in its HUD at all. `js/main.js:1916` hands
-## `state.rallyEnergy.player` to `drawActiveIndicator`, which draws the bar on the
-## court, under the active athlete (`js/render.js:1031-1037`), and the ported match
-## controller draws that one from these values. The panel bar above keeps its own
-## (opaque) bands: it is the port's addition, and changing its colours would change
-## a screenshot the review has already read.
-const FIELD_ENERGY_TEAL := Color(0.337, 0.910, 0.847)   # #56e8d8, energy > 0.55
-const FIELD_ENERGY_AMBER := Color(1.0, 0.831, 0.361)    # #ffd45c, energy > 0.3
-const FIELD_ENERGY_RED := Color(1.0, 0.420, 0.392)      # #ff6b64, below
-
-
-## `energy > 0.55 ? "#56e8d8" : energy > 0.3 ? "#ffd45c" : "#ff6b64"`
-## (`js/render.js:1036`).
-static func field_energy_color(energy: float) -> Color:
-	if energy > 0.55:
-		return FIELD_ENERGY_TEAL
-	if energy > 0.3:
-		return FIELD_ENERGY_AMBER
-	return FIELD_ENERGY_RED
-
-
-## The precision bar's fill (`js/render.js:1709-1717`): cyan while the angle is not
-## armed, amber — reddening with `tight` — and pulsing once it is. `armed` is
-## `tight > 0.02`, the reference's own threshold; `pulse` is the caller's clock
-## (the reference blinks it at `time * 16`, `js/render.js:1711`).
-const PRECISION_CYAN := Color(0.494, 0.953, 1.0, 0.75)  # rgba(126,243,255,0.75)
-
-
-static func precision_color(tight: float, pulse: float) -> Color:
-	if tight > 0.02:
-		var level := clampf(tight, 0.0, 1.0)
-		return Color(1.0, (190.0 - level * 120.0) / 255.0, 70.0 / 255.0, clampf(pulse, 0.0, 1.0))
-	return PRECISION_CYAN
+## The panel bar above keeps its own (opaque) bands: it is the port's addition, and
+## changing its colours would change a screenshot the review has already read. The
+## COURT marks' colours — the reference's three energy bands, the precision fill and
+## the advice tone — are the vocabulary module's (`feedback_vocabulary.gd`).
 
 
 ## The five most recent events, newest first, resolved to sentences.
@@ -499,7 +481,7 @@ func _update_log(state) -> void:
 	for i in events.size():
 		if shown >= _log_lines.size():
 			break
-		var line := describe_event(String(events[i]))
+		var line := Vocabulary.describe_event(String(events[i]))
 		if line == previous:
 			continue
 		_log_lines[shown].text = "· " + line
@@ -544,216 +526,8 @@ func set_paused(paused: bool) -> void:
 # Message ids -> readable lines
 # ---------------------------------------------------------------------------
 
-## Shot grades the simulation stores as `shot:<grade>` (sim.gd:1245), plus the two
-## bare ids it stores instead of a grade (`smashMissedContact`, sim.gd:2590). The
-## colour of the feedback line is keyed by the grade, not by the resolved sentence.
-const GRADE_COLORS := {
-	"perfect": Color(0.42, 0.98, 0.55),
-	"good": Color(0.62, 0.88, 1.0),
-	"early": Color(1.0, 0.821, 0.4),
-	"late": Color(1.0, 0.294, 0.431),
-	"smashMissedContact": Color(1.0, 0.294, 0.431),
-}
-
-
-## `shot:perfect` -> `perfect`, anything else keeps its last segment. Used for the
-## colour and for nothing else.
-static func grade_of(text_id: String) -> String:
-	var parts := text_id.split(":")
-	return String(parts[parts.size() - 1]) if parts.size() > 1 else text_id
-
-
-static func mode_of(mode_id: String) -> String:
-	var parts := mode_id.split(":")
-	var value := String(parts[parts.size() - 1]) if parts.size() > 1 else mode_id
-	return value.to_upper()
-
-
-## `js/game.js:1062-1069`: the reference renders the grade as `t("shot" + Grade)`,
-## with `Grade` the capitalized assessment grade, and stores the *rendered* string.
-## The port stores `shot:<grade>`, so the same key is derived here — the reference's
-## derivation, not a new one. A bare id (`smashMissedContact`, `shotSmashX2`) is
-## already a key and is resolved as it is.
-static func feedback_label(text_id: String) -> String:
-	var key := text_id
-	if text_id.begins_with("shot:"):
-		key = "shot" + text_id.substr(5).capitalize()
-	return resolve_or(key, grade_of(text_id).to_upper())
-
-
-## `js/game.js:1069` — `t("shotMode" + CapitalizedMode)`.
-static func mode_label(mode_id: String) -> String:
-	var key := mode_id
-	if mode_id.begins_with("shotMode:"):
-		key = "shotMode" + mode_id.substr(9).capitalize()
-	return resolve_or(key, mode_of(mode_id))
-
-
-## The four colours of the verdict drawn ON THE COURT (`js/render.js:1048-1053`).
-## The reference keeps two palettes: these bright ones for the word over the athlete
-## who hit, and the panel's (`GRADE_COLORS` above) for the corner line. An unknown
-## grade is white, which is the reference's own `?? "#ffffff"`.
-const FIELD_GRADE_COLORS := {
-	"perfect": Color(0.455, 1.0, 0.729),   # #74ffba
-	"good": Color(0.467, 0.906, 1.0),      # #77e7ff
-	"early": Color(1.0, 0.831, 0.361),     # #ffd45c
-	"late": Color(1.0, 0.545, 0.439),      # #ff8b70
-}
-
-
-static func field_grade_color(grade: String) -> Color:
-	return FIELD_GRADE_COLORS.get(grade, Color(1.0, 1.0, 1.0))
-
-
-## The tactical advice word the reference draws over the active athlete,
-## `t("shotAdvice_" + state.shotRead.advice).toUpperCase()` (`js/render.js:1730`).
-## Resolved here, where the locale layer is, and never as the id: an id on screen is
-## the defect class this file exists to prevent. The upper case is the reference's
-## own (`js/render.js:1730`).
-static func advice_word(advice: String) -> String:
-	return resolve_or("shotAdvice_%s" % advice, advice.to_upper()).to_upper()
-
-
-## The word's colour, by shot profile: `#ffd46a` aggressive, `#8fffd0` otherwise
-## (`js/render.js:1745`) — the reference's exact two-value rule, aggressive checked
-## first, everything else (including "control") on the second.
-const ADVICE_AGGRESSIVE := Color(1.0, 0.831, 0.416)  # #ffd46a
-const ADVICE_CONTROL := Color(0.561, 1.0, 0.816)     # #8fffd0
-
-
-static func advice_color(profile: String) -> Color:
-	return ADVICE_AGGRESSIVE if profile == "aggressive" else ADVICE_CONTROL
-
-
-## The word drawn when the simulation carries no advice at all: the reference's
-## `state.shotRead?.advice ?? "read"` (`js/render.js:1730`).
-static func advice_of(read: Dictionary) -> String:
-	return String(read.get("advice", "read"))
-
-
-## The resolver first; the readable fallback only when the resolver would hand back
-## the id itself. Never the id.
-static func resolve_or(message_id: String, fallback: String) -> String:
-	if Locale.is_resolvable(message_id):
-		return Locale.t(message_id)
-	if fallback != "" and fallback != message_id:
-		return fallback
-	return UNREADABLE
-
-
-## A message id -> the line the player reads.
-##
-## Order matters and is the reverse of the old hand table: the verified locale layer
-## is asked first, and `EVENT_LABELS` is the readable floor. An id whose locale
-## template still carries unbound placeholders (`serveHint`) also goes to the floor:
-## the reference fills those two parameters at the call site (`js/game.js:2629-2632`)
-## and the ported simulation does not carry them, so resolving it would put
-## `{ordinal}` on screen.
-static func describe_event(id: String) -> String:
-	if Locale.is_resolvable(id) and Locale.required_params(id).is_empty():
-		return Locale.t(id)
-	return EVENT_LABELS.get(id, UNREADABLE)
-
-
-static func reason_label(reason: String) -> String:
-	return describe_event(reason)
-
-
-# >>> EVENT_LABELS (generated by godot/game/tools/gen_hud_labels.py) >>>
-const EVENT_LABELS := {
-	"evReceiverLock": "Ricevitore bloccato sul diagonale fino alla risposta.",
-	"serveHint": "Servizio dal basso: cerca il diagonale.",
-	"evOppServe": "Servizio avversario: attendi il rimbalzo o gioca la volée.",
-	"evCounter": "Avversari presi in contropiede: campo aperto!",
-	"evAiForced": "L'IA forza il colpo: profondità fuori controllo!",
-	"evOppOutOfPos": "Avversario fuori posizione: palla da attaccare!",
-	"evOppLob": "Lob avversario: recupera il fondo!",
-	"evCoverCenter": "Volée avversaria: copri il centro!",
-	"evOppVibora": "Víbora avversaria: preparati al taglio sul vetro!",
-	"evOppSmashX2": "SMASH x2 avversario: difendi dopo il vetro!",
-	"evOppSmashX3": "SMASH x3 avversario: chiudi l'uscita laterale!",
-	"evChiquita": "Chiquita bassa sui piedi degli avversari!",
-	"evLobOver": "Lob sovraccarico: grande profondità, ma il vetro è vicino!",
-	"evLobShort": "Lob corto: la coppia avversaria può attaccarlo.",
-	"evDefensiveLob": "Lob difensivo: tempo per recuperare la posizione.",
-	"evLobHigh": "Lob: traiettoria alta verso il vetro di fondo.",
-	"evSmashX3": "SMASH x3: cerca fondo e uscita laterale!",
-	"evSmashX3Downgrade": "X3 non perfetto: trasformato in uno smash X2.",
-	"evSmashX2Deep": "SMASH x2: palla profonda per farla tornare!",
-	"evSmashCenter": "Smash piatto: potenza al centro del campo!",
-	"evSmashFlatFallback": "Smash non pulito: colpo piatto ancora aggressivo.",
-	"evBandejaConverted": "Palla non ideale: smash convertito in bandeja.",
-	"evBandeja": "Bandeja: controllo e posizione a rete.",
-	"evAngleWall": "Angolo cercato: il vetro laterale entra in gioco!",
-	"evGlobo": "Globo altissimo: la coppia avversaria deve indietreggiare!",
-	"evGloboShort": "Globo corto: palla alta e attaccabile.",
-	"evCutVolley": "Volée tagliata: taglio pesante verso il fondo.",
-	"evVibora": "Víbora: taglio laterale aggressivo!",
-	"evSlice": "Slice: traiettoria bassa e rimbalzo tagliato.",
-	"evSmashIntercepted": "Smash letto in anticipo: l'avversario lo taglia al volo!",
-	"evPrecision": "Colpo di Precisione: angolo chirurgico!",
-	"evLightningDash": "Scatto Fulmineo: volée letale!",
-	"evSteamSmash": "Smash a Vapore: palla alta e profonda!",
-	"evSteamShield": "Scudo di Vapore: difesa e controattacco!",
-	"evPerfectVision": "Visione Perfetta: angolo impossibile, lettura in ritardo!",
-	"evSteamHammer": "Martello a Vapore: l'officina trema sotto l'impatto!",
-	"evSteamShieldAbsorb": "Scudo di Vapore: pressione assorbita!",
-	"setToYou": "Set a te!",
-	"setToCircuit": "Set a Circuito!",
-	"tieBreak": "Tie-break a 7: due punti di scarto.",
-	"pointYou": "PUNTO TUO",
-	"pointOpp": "PUNTO AVVERSARIO",
-	"LET": "Let: nastro e rimbalzo nel riquadro corretto. Servizio da ripetere.",
-	"evLet": "Let: nastro e rimbalzo nel riquadro corretto. Servizio da ripetere.",
-	"evServeValid": "Servizio valido: rimbalzo nel riquadro opposto.",
-	"evSmashValid": "Smash valido: primo rimbalzo, ora lavora il vetro!",
-	"evOwnWallOut": "Uscita dal proprio vetro: palla ancora in gioco.",
-	"evX3Recovered": "Uscita X3 letta: difesa sul vetro!",
-	"evSideWallCenter": "Vetro laterale: traiettoria riaperta al centro!",
-	"evCutVolleyKill": "La palla muore sul vetro: nessun rimbalzo utile!",
-	"evCutVolleyRead": "Effetto letto: la palla si rialza dal vetro.",
-	"evSmashX3Grid": "SMASH x3: il rimbalzo sale verso la griglia laterale!",
-	"evSmashX2Read": "Uscita letta: la palla e' stata rincorsa sul vetro!",
-	"evSmashX2": "SMASH x2: la palla torna verso la tua metà!",
-	"evWallValid": "Vetro valido dopo il rimbalzo!",
-	"evTape": "Nastro: la palla rallenta e ricade oltre la rete.",
-	"evNetRebound": "Rete piena: la palla viene respinta e perde velocità.",
-	"evSmashTapConfirmed": "Secondo tap riconosciuto: smash attivato!",
-	"evSmashPrimed": "Smash preparato: premi di nuovo A al momento dell'impatto.",
-	"evSmashTapExpired": "Secondo tap mancato: resta un colpo normale.",
-	"evCutVolleyPrimed": "Volée tagliata pronta: premi di nuovo X all'impatto.",
-	"evGloboPrimed": "Globo pronto: premi di nuovo Y all'impatto.",
-	"evGloboConfirmed": "Globo confermato!",
-	"evCutVolleyConfirmed": "Volée tagliata confermata!",
-	"controlMsg:roleBackPos": "Controlli il giocatore di fondo.",
-	"controlMsg:roleNetPos": "Controlli il giocatore a rete.",
-	"evShotLong": "Contatto in ritardo: il colpo si allunga oltre il fondo.",
-	"evShotWide": "Angolo strappato: la palla se ne va sul vetro laterale.",
-	"evShotNet": "Colpo affossato: contatto sporco, la palla non passa.",
-	"eventLine0": "Rimbalzo sul vetro: angolo perfetto!",
-	"eventLine1": "Combo attiva: pressione sul fondo!",
-	"eventLine2": "Lettura steampunk: palla letta al millimetro.",
-	"eventLine3": "Volée fulminea sul circuito!",
-	"eventLine4": "Smash a vapore: difesa sfondata!",
-	"eventLine5": "Wall shot: il vetro lavora per te.",
-	"msgNetFault": "Rete: la palla è ricaduta nel campo di chi ha colpito.",
-	"msgOut": "Palla fuori dal campo.",
-	"msgNetShort": "Palla corta: non ha superato la rete.",
-	"msgDoubleBounce": "Secondo rimbalzo: punto perso.",
-	"msgWallNoBounce": "Parete avversaria colpita senza rimbalzo.",
-	"msgSmashX3Wall": "SMASH x3: palla fuori dalla parete laterale!",
-	"msgSmashReturned": "SMASH x2: la palla è tornata oltre la rete!",
-	"doubleFault:serveoutbox": "Doppio fallo: servizio fuori dal riquadro.",
-	"doubleFault:servewallfault": "Doppio fallo: la palla ha colpito il vetro prima del rimbalzo",
-	"serveOutBox secondServe": "Servizio fuori dal riquadro. Seconda di servizio.",
-	"serveWallFault secondServe": "La palla ha colpito il vetro prima del rimbalzo Seconda di servizio.",
-	"tactic_attack": "Tattica di coppia: conquista la rete.",
-	"tactic_defend": "Tattica di coppia: difesa sul vetro.",
-	"tactic_staggered": "Tattica di coppia: disposizione sfalsata.",
-	"tactic_balanced": "Tattica di coppia: equilibrio.",
-	"pointYou:doubleFault:serveoutbox": "PUNTO TUO · Doppio fallo: servizio fuori dal riquadro.",
-	"pointYou:doubleFault:servewallfault": "PUNTO TUO · Doppio fallo: la palla ha colpito il vetro prima del rimbalzo",
-	"pointOpp:doubleFault:serveoutbox": "PUNTO AVVERSARIO · Doppio fallo: servizio fuori dal riquadro.",
-	"pointOpp:doubleFault:servewallfault": "PUNTO AVVERSARIO · Doppio fallo: la palla ha colpito il vetro prima del rimbalzo",
-}
-# <<< EVENT_LABELS (generated by godot/game/tools/gen_hud_labels.py) <<<
+## Every id -> line decision is `godot/game/feedback_vocabulary.gd`'s
+## (architecture-deepening gate 1): the module owns the locale-first rule, the
+## generated event table that is its readable floor, and the `UNREADABLE` last
+## resort. This file paints the log and asks the module for each line — it
+## declares no table and no resolver of its own.
