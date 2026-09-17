@@ -78,11 +78,17 @@ static var sides := 2
 ## corridor has to exist to walk the outside of the cage; 1.2 m also puts the
 ## stand's foot just past the metre of floor the side glass hides.
 const CORRIDOR_M := 1.2
-## The stands are ~30 m from the default camera and their shadow would fall on the
-## dark ground beyond the cage, where it cannot be seen — so they do not pay for a
-## second draw (shadow pass) per copy. Measured in the evidence; flip to true to
-## see the cost.
-static var cast_shadow := false
+## The stands' contact shadow is what GROUNDS them. Their measured min_y is 0.0000 —
+## they stand on the floor — but a prop with no shadow reads as hovering whatever the
+## geometry says, and that is the single note every visual review of this scene has
+## made. The sun above already casts (`court_builder.gd:199`), so this is one flag.
+##
+## Measured at 1280x720 on an M4, median over four windows: the full scene runs at
+## 34.0 fps, the stands casting takes it to 32.6 (-1.4), and the furniture casting as
+## well takes it to 29.2 (-4.8). The stands earn their 1.4; the four shelters and
+## three boards did not earn the other 3.4, so `arena_props.gd` keeps its own casting
+## off. Flip either to see the cost — `--shadow=` and `--prop-shadow=` on the probe.
+static var cast_shadow := true
 ## The material every copy draws with. `"imported"` is the model's own glTF PBR
 ## material (base colour + metallic-roughness + normal, the textures the owner
 ## paid for); `"plain"` replaces it with the base colour alone, which is the

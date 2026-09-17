@@ -26,9 +26,9 @@ extends RefCounted
 ## court's width moves the furniture with it — the 10 m to 11 m change is exactly
 ## the kind of edit that would otherwise leave a prop floating inside the glass.
 ##
-## COST. Both units are read once and duplicated per copy (one GLB read, N draws),
-## shadows off for the same reason the stands have them off: they stand ~30 m out on
-## dark ground where their shadow cannot be seen.
+## COST. Both units are read once and duplicated per copy (one GLB read, N draws).
+## Shadows are off here and on for the stands, and the split is measured, not
+## assumed: see the note on `cast_shadow` below.
 
 const Court := preload("res://game/court.gd")
 const Bleachers := preload("res://game/arenas/bleachers.gd")
@@ -58,7 +58,11 @@ const REAR_CLEARANCE_M := 0.6
 ## A/B switch for the cost measurement, exactly as the stands have one. The game
 ## never writes it.
 static var enabled := true
-## Shadows: see the note at the top. Flip to true to pay for the second pass.
+## Shadows: OFF, and measured rather than assumed. The stands cast (their shadow is
+## what grounds the whole side line, for 1.4 fps of the scene's 34.0); adding these
+## seven copies to the shadow pass costs another 3.4 and grounds far less, because a
+## shelter tucked against the stands already sits inside the stands' own shadow.
+## Flip with `--prop-shadow=1` on `game/tools/bleachers_probe.gd` to see it.
 static var cast_shadow := false
 ## What the last `build()` loaded and placed, for the boot log and the evidence.
 ## Plain values only — a Resource or a Node in a `static var` would outlive the

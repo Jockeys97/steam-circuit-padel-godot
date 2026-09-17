@@ -25,6 +25,8 @@
 extends SceneTree
 
 const Bleachers := preload("res://game/arenas/bleachers.gd")
+const ArenaProps := preload("res://game/arenas/arena_props.gd")
+const Crowd := preload("res://game/arenas/crowd.gd")
 const Sim := preload("res://src/sim/sim.gd")
 
 var _use_bleachers := true
@@ -96,6 +98,12 @@ func _initialize() -> void:
 			_window = int(a.substr("--window=".length()))
 		elif a.begins_with("--seconds="):
 			_seconds = float(a.substr("--seconds=".length()))
+		elif a.begins_with("--props="):
+			ArenaProps.enabled = a.substr("--props=".length()) != "0"
+		elif a.begins_with("--crowd="):
+			Crowd.enabled = a.substr("--crowd=".length()) != "0"
+		elif a.begins_with("--prop-shadow="):
+			ArenaProps.cast_shadow = a.substr("--prop-shadow=".length()) != "0"
 	root.size = Vector2i(1280, 720)
 	Engine.max_fps = 0
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if _vsync else DisplayServer.VSYNC_DISABLED)
