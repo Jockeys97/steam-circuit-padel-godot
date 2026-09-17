@@ -8,8 +8,10 @@
 ##   1. the HOST mounts the playable UI: `game/Main.tscn` builds the router with all
 ##      twelve recreated Control screens registered (the thirteenth id, `game`, is the
 ##      3D match scene and is reached through `Config.pending_mode`, not through the
-##      router), mounts `menu` first, keeps exactly one screen mounted, and carries the
-##      OSK panel bound to the input lane's own model;
+##      router), mounts `menu` first, keeps exactly one screen mounted, and mounts NO
+##      keyboard: the lane's OSK model is still the menu's own (`menu.menu.osk`), but
+##      the panel is not up and a confirm never raises one — not on a row, and not on
+##      a real text field, which instead keeps the focus (user decision, 2026-09-17);
 ##   2. navigation is real, through the host's own bridge: a confirm on the menu's play
 ##      button lands on `modes` (`MenuScreen.ACTION_TARGETS`), and every registered
 ##      screen mounts and unmounts cleanly through `go_to`;
@@ -95,6 +97,65 @@ func _mount_host() -> Array:
 	return [frame, host]
 
 
+## The keyboard that came up over the MENU, and the two confirms this mount has to get
+## right now that it renders none. The pad flag is set on the model because a headless
+## run has no joypad to report (`main_menu._pad_connected`), and that flag is exactly
+## the third term of the lane's own OSK branch (`src/input/menu_nav.gd:223`).
+func _confirm_never_raises_a_keyboard(audit: AuditBase, host: Control, model, router: Control) -> void:
+	model.menu.set_pad_connected(true)
+	# 1. An ordinary row, which the lane misreads as a text field: the mount must close
+	#    the model at once and finish the confirm as the row's own action.
+	var play_id := ""
+	for id in model.ids():
+		if String(id).ends_with("/PlayButton"):
+			play_id = String(id)
+	audit.check_ne(play_id, "", "osk/the_menu_registers_its_play_button")
+	var bridge = host.get("_bridge")
+	if play_id != "" and bridge != null:
+		audit.check_true(bool(bridge.call("set_focus", play_id)), "osk/the_row_takes_the_focus_before_the_confirm")
+		# Through the host's own door: it is the path the engine drives for a real pad
+		# event, and the only one that reaches `_sync_osk()`.
+		host.call("_input", _key_event(KEY_ENTER))
+		audit.check_eq(bool(host.get("_bridge") != null), true, "osk/the_rows_confirm_is_handled")
+		audit.check_eq(bool(model.menu.osk.is_open()), false, "osk/the_lane_model_does_not_stay_open_on_a_row")
+		audit.check_eq(host.find_child("OskPanel", true, false), null, "osk/no_keyboard_is_mounted_after_the_confirm")
+		audit.check_eq(String(router.call("active_id")), "modes", "osk/the_row_runs_instead_of_the_keyboard (%s)" % router.call("active_id"))
+		router.call("go_to", "menu")
+		for _i in SETTLE_FRAMES:
+			await process_frame
+	# 2. A real text field: no keyboard, the field takes the focus, and the player can
+	#    leave it and keep navigating (the dead end the keyboard's context used to be).
+	router.call("go_to", "feedback")
+	for _i in SETTLE_FRAMES:
+		await process_frame
+	var field_id := ""
+	for id in model.ids():
+		if model.call("node_of", String(id)) is LineEdit:
+			field_id = String(id)
+			break
+	audit.check_ne(field_id, "", "osk/the_feedback_screen_registers_a_real_text_field")
+	if field_id != "" and bridge != null:
+		audit.check_true(bool(bridge.call("set_focus", field_id)), "osk/the_field_takes_the_focus")
+		host.call("_input", _key_event(KEY_ENTER))
+		audit.check_eq(bool(model.menu.osk.is_open()), false, "osk/confirming_a_text_field_raises_no_keyboard")
+		audit.check_eq(String(model.menu.context_kind()), "screen", "osk/the_focus_context_stays_the_screens")
+		audit.check_true(model.menu.nav.targets().size() > 0, "osk/the_player_has_somewhere_else_to_go")
+		audit.check_eq(String(bridge.call("focus_id")), field_id, "osk/the_field_keeps_the_focus")
+		var other_id := ""
+		for id in model.focusable_ids():
+			if String(id) != field_id:
+				other_id = String(id)
+				break
+		audit.check_true(other_id != "" and bool(bridge.call("set_focus", other_id)), "osk/another_control_is_reachable_from_the_field")
+		audit.check_eq(bool(bridge.call("set_focus", field_id)), true, "osk/the_field_takes_the_focus_back")
+		host.call("_input", _key_event(KEY_ESCAPE))
+		audit.check_ne(String(router.call("active_id")), "feedback", "osk/the_player_leaves_the_field_and_navigates_on (%s)" % router.call("active_id"))
+	model.menu.set_pad_connected(false)
+	router.call("go_to", "menu")
+	for _i in SETTLE_FRAMES:
+		await process_frame
+
+
 func _host_mounts_the_playable_ui(audit: AuditBase) -> void:
 	var pair: Array = await _mount_host()
 	var host: Control = pair[1]
@@ -114,31 +175,17 @@ func _host_mounts_the_playable_ui(audit: AuditBase) -> void:
 	audit.check_true(screen != null and screen.has_method("screen_id"), "host/the_mounted_screen_is_a_uir03_screen")
 	audit.check_eq(String(screen.call("screen_id")) if screen != null else "", "menu", "host/it_is_the_menu_screen")
 
-	# The focus model over the live screen, and the OSK panel bound to its own model.
+	# The focus model over the live screen, and NO keyboard over the router: the panel
+	# is not mounted any more (user decision, 2026-09-17 — it came up over the menu,
+	# where the reference has no text field). The lane's OSK model is still the
+	# menu's own, and the panel's own contract — its rows, its key targets — is
+	# asserted by `tests/ui/osk_touch_audit.gd`, which mounts it on its own.
 	var model = host.call("focus_model") if host.has_method("focus_model") else null
 	audit.check_true(model != null, "host/the_focus_model_is_up")
-	var panel := host.find_child("OskPanel", true, false)
-	audit.check_true(panel != null, "osk/the_panel_is_mounted_over_the_router")
-	if panel != null:
-		# The grid is bound to the input lane's model and carries the reference's own
-		# rows — read with the model OPEN: under the UIR-26 contract the panel offers
-		# no targets while closed (`OskPanel.osk_key_targets`), and the MOUNT is what
-		# registers them when the model opens (`main_menu._sync_osk`), which the loop
-		# above proves indirectly: no osk id was ever navigable while closed.
-		var expected_targets := 0
-		for row in OSK.ROWS:
-			expected_targets += String(row).length()
-		expected_targets += OSK.ACTION_KEYS.size()
-		var osk_model = panel.call("model")
-		var targets_open := 0
-		if osk_model != null:
-			osk_model.call("open_for", "uir22/targets-probe", "", 0, "")
-			panel.call("refresh")
-			targets_open = int(panel.call("osk_key_targets").size())
-			osk_model.call("close")
-			panel.call("refresh")
-		audit.check_eq(targets_open, expected_targets, "osk/the_panel_carries_the_reference_rows")
-		audit.check_true(osk_model != null, "osk/the_panel_is_bound_to_the_input_lanes_model")
+	audit.check_eq(host.find_child("OskPanel", true, false), null, "osk/no_keyboard_is_mounted_over_the_router")
+	audit.check_true(load("res://src/ui/screens/OskPanel.tscn") != null, "osk/the_panels_own_scene_still_ships")
+	audit.check_true(model != null and model.menu.osk != null, "osk/the_input_lanes_own_model_is_still_up")
+	await _confirm_never_raises_a_keyboard(audit, host, model, router)
 
 	# A real confirm on the play button: the bridge's verdict is a router move.
 	var play_id := ""

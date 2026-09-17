@@ -89,6 +89,8 @@ var _unlock_summary: Dictionary = {}
 var _pin_empty_objectives: bool = false
 var _progress_pin: Dictionary = {}
 var _palette_misses: Array = []
+## The two section headings (`Title_<key>`), kept so a language flip can re-resolve them.
+var _section_titles: Dictionary = {}
 
 
 func _ready() -> void:
@@ -152,6 +154,7 @@ func refresh() -> void:
 		return
 	_shell.set_title(TITLE_KEY)
 	_shell.set_subtitle(SUBTITLE_KEY)
+	_refresh_section_titles()
 	if _store == null:
 		_store = Config.save_store()
 	_summary = UiData.profile_summary(_store)
@@ -305,6 +308,7 @@ func _build() -> void:
 	for child in get_children():
 		remove_child(child)
 		child.queue_free()
+	_section_titles = {}
 	_shell = ShellScene.instantiate()
 	_shell.setup(SCREEN_ID)
 	_shell.set_back_target(BACK_TARGET_ID)
@@ -349,7 +353,20 @@ func _section_title(key: String) -> Label:
 	title.text = UiStrings.t(key)
 	title.add_theme_color_override("font_color", _palette("muted"))
 	title.add_theme_font_size_override("font_size", 13)
+	_section_titles[key] = title
 	return title
+
+
+## The section headings are the screen's only text resolved at build time and not by a
+## fill, so a language flip with the page already mounted left them in the old language
+## while the shell, the stat labels and the rows moved. Re-resolving them here puts them
+## back on the same path as everything else (`refresh()` is what `enter()` and
+## `set_store()` call).
+func _refresh_section_titles() -> void:
+	for key in _section_titles:
+		var label := _section_titles[key] as Label
+		if label != null:
+			label.text = UiStrings.t(String(key))
 
 
 ## `.profile-objectives` / `.profile-unlocks` (`styles.css:1319-1325`): a `--line` box

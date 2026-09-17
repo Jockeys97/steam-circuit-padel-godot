@@ -494,11 +494,21 @@ func _metadata(audit: AuditBase, bridge: RefCounted, focus: MenuFocus, router: C
 	audit.check_eq(steps.size(), 2, "a11y/the_clamped_step_reported_no_change")
 	audit.check_eq(bridge.dispatch(_key_event(KEY_LEFT)), true, "a11y/the_range_steps_back")
 	audit.check_eq(float(bridge.last_range()["value"]), 0.75, "a11y/the_mirrored_value_is_where_the_next_step_starts")
+	# The stick's direction belongs to the frame's poll, which is the mount's own per-frame
+	# path (`focus.poll_pad()` -> `bridge.act()`), and NOT to a motion event: the event is
+	# swallowed so one push cannot be consumed twice, and the frame steps the range it is
+	# focused on. (The keyboard's own branch is the three dispatches above.)
 	var motion := InputEventJoypadMotion.new()
 	motion.axis = JOY_AXIS_LEFT_X
 	motion.axis_value = 0.9
-	audit.check_eq(bridge.dispatch(motion), true, "a11y/a_pad_motion_on_the_range_is_handled")
-	audit.check_eq(float(bridge.last_range()["value"]), 1.0, "a11y/the_pad_motion_steps_the_same_range")
+	audit.check_eq(bridge.dispatch(motion), true, "a11y/a_pad_motion_is_handled_and_swallowed")
+	audit.check_eq(bool(bridge.last_dispatch().get("activated", true)), false, "a11y/a_swallowed_motion_activates_nothing")
+	audit.check_eq(float(bridge.last_range()["value"]), 0.75, "a11y/a_motion_event_does_not_step_the_range_itself")
+	audit.check_eq(steps.size(), 3, "a11y/the_swallowed_motion_reported_no_step")
+	var polled: Dictionary = focus.poll_pad({"lx": 0.9, "now_ms": 1000.0})
+	audit.check_true(bool(polled.get("focus_moved", false)), "a11y/the_frames_poll_steps_the_range_it_is_focused_on")
+	audit.check_eq(bridge.act(polled), true, "a11y/the_frames_poll_is_acted_on")
+	audit.check_eq(float(bridge.last_range()["value"]), 1.0, "a11y/the_frames_poll_steps_the_same_range")
 	audit.check_eq(steps.size(), 4, "a11y/every_step_reported_once")
 
 	# The feedback screen's shape: a text field registered with the OSK keys.

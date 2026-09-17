@@ -263,7 +263,9 @@ func press_target(target_id: String) -> bool:
 ## own, so the geometric navigation moves across the grid the player sees.
 ##
 ## Empty while the keyboard is closed: the grid is not navigable then, and the mount
-## registers targets only on open (`main_menu._sync_osk` sets `[]` back on close).
+## registers targets only on open. No mount does that any more (the keyboard is gone
+## from `game/main_menu.gd`, user decision 2026-09-17): the grid is what
+## `tests/ui/osk_touch_audit.gd` drives, on a panel it mounts itself.
 func osk_key_targets() -> Array:
 	_ensure()
 	if not is_open():

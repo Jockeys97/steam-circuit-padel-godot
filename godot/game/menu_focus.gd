@@ -20,6 +20,15 @@
 ##   - `menu.poll_pad({…})` (`pollGamepadMenu`, `js/main.js:931-999`) handles the
 ##     direction, the repeat timings, the right-stick scroll and the confirm/back
 ##     edges;
+##
+## THE STICK HAS ONE CONSUMER. `poll_pad()` is the only place the pad's stick becomes a
+## direction: it reads the pad once per frame (`read_pad_values()`), puts that frame through
+## the reference's menu deadzone and its button numbering (`pad_frame()`), and hands it to the
+## model. A stick EVENT must not move the focus: a real push arrives as a burst of axis events
+## and moving on each of them stepped the focus several times per push, past the model's
+## repeat timings and with the keyboard's 90 px edge scroll. `UiFocusBridge.dispatch()`
+## swallows the event and the frame decides. The keyboard's own branch (`handle_key` below) is
+## untouched: a discrete key moves at once, which is what the reference does.
 ##   - `menu.back()` (`menuBack`, `js/main.js:708-733`) is the declared-back rule:
 ##     the active screen's own return, and on the root it leads NOWHERE — the
 ##     reference's own defect (`scripts/gamepad-nav-audit.mjs:67-82`) that the model
@@ -193,24 +202,95 @@ func _nothing() -> Dictionary:
 # Gamepad
 # ---------------------------------------------------------------------------
 
-## One frame of pad navigation, exactly `pollGamepadMenu` (`js/main.js:931-999`):
-## read the stick and the buttons, hand them to the model, get back what happened.
-## `{dir, focus_moved, scrolled, confirm, back}` plus the model's own verdicts,
-## already resolved into `{kind, action, target}` where a confirm/back happened.
-func poll_pad() -> Dictionary:
-	_ensure()
-	var state := {
-		"stick_x": Input.get_joy_axis(0, JOY_AXIS_LEFT_X),
-		"stick_y": Input.get_joy_axis(0, JOY_AXIS_LEFT_Y),
-		"right_stick_y": Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y),
-		"buttons": {
-			"0": Input.is_joy_button_pressed(0, JOY_BUTTON_A),
-			"1": Input.is_joy_button_pressed(0, JOY_BUTTON_B),
-			"2": Input.is_joy_button_pressed(0, JOY_BUTTON_X),
-		},
+## `GAMEPAD_MENU_DEADZONE` (`js/main.js:146`): a menu stick under this reads as neutral,
+## BEFORE the direction test (`gamepadAxis`, `js/main.js:243-246`). It is not the gameplay
+## deadzone (`input_map.gd`'s `DEADZONE`, 0.15): that one shapes a shot, this one decides
+## whether the menu walks at all.
+const MENU_DEADZONE := 0.28
+
+
+## The pad the menu listens to, resolved from the pads the system actually enumerates the way
+## the reference resolves its primary pad (`selectPrimaryGamepad`, `js/main.js:775-783`): a pad
+## the system numbers 3 must drive the menu exactly like the one it numbers 0, because
+## `_pad_connected()` (`game/main_menu.gd`) already accepts any pad. `-1` = no pad.
+static func resolve_pad_index(connected: Array) -> int:
+	if connected.is_empty():
+		return -1
+	return int(connected[0])
+
+
+## Godot's D-pad numbers in the model's up/down/left/right order — the legend is
+## `project.godot:19-23`, and in Godot the D-pad is 11..14, not the browser's 12..15.
+static func dpad_order() -> Array:
+	return [JOY_BUTTON_DPAD_UP, JOY_BUTTON_DPAD_DOWN, JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_RIGHT]
+
+
+## Godot's face-button numbers in the order the model reads them (`project.godot:14-18`):
+## the reference's keys `"0"`/`"1"`/`"2"` are A/B/X.
+static func letter_order() -> Array:
+	return [JOY_BUTTON_A, JOY_BUTTON_B, JOY_BUTTON_X]
+
+
+## The pad's own values for one frame — the ONLY read of `Input`'s pad in this file, so the
+## frame the model sees has one producer. With no pad the frame is neutral, which also
+## releases the model's confirm/back edges instead of leaving one held.
+func read_pad_values() -> Dictionary:
+	var pad := resolve_pad_index(Input.get_connected_joypads())
+	var letters: Array = []
+	var dpad: Array = []
+	for button in letter_order():
+		letters.append(pad >= 0 and Input.is_joy_button_pressed(pad, button))
+	for button in dpad_order():
+		dpad.append(pad >= 0 and Input.is_joy_button_pressed(pad, button))
+	if pad < 0:
+		return {"pad": -1, "lx": 0.0, "ly": 0.0, "ry": 0.0, "letters": letters, "dpad": dpad,
+			"now_ms": float(Time.get_ticks_msec())}
+	return {
+		"pad": pad,
+		"lx": Input.get_joy_axis(pad, JOY_AXIS_LEFT_X),
+		"ly": Input.get_joy_axis(pad, JOY_AXIS_LEFT_Y),
+		"ry": Input.get_joy_axis(pad, JOY_AXIS_RIGHT_Y),
+		"letters": letters,
+		"dpad": dpad,
 		"now_ms": float(Time.get_ticks_msec()),
 	}
-	return step_pad(state)
+
+
+## `gamepadAxis` (`js/main.js:243-246`): under `MENU_DEADZONE` the axis IS zero.
+static func menu_deadzone(value: float) -> float:
+	return 0.0 if absf(value) < MENU_DEADZONE else value
+
+
+## One frame of the pad's own values -> the frame the model reads, in the reference's order:
+## the deadzone on every stick first, then the buttons under the numbers the model speaks
+## (`js/main.js:981-993` tests `b(12)`..`b(15)` for the D-pad, so Godot's 11..14 and the
+## class="menu-focus" buttons are translated here, once).
+static func pad_frame(values: Dictionary) -> Dictionary:
+	var letters: Array = values.get("letters", [])
+	var dpad: Array = values.get("dpad", [])
+	var letter := func(i: int) -> bool: return i < letters.size() and bool(letters[i])
+	var pad_button := func(i: int) -> bool: return i < dpad.size() and bool(dpad[i])
+	return {
+		"stick_x": menu_deadzone(float(values.get("lx", 0.0))),
+		"stick_y": menu_deadzone(float(values.get("ly", 0.0))),
+		"right_stick_y": menu_deadzone(float(values.get("ry", 0.0))),
+		"buttons": {
+			"0": letter.call(0), "1": letter.call(1), "2": letter.call(2),
+			"12": pad_button.call(0), "13": pad_button.call(1),
+			"14": pad_button.call(2), "15": pad_button.call(3),
+		},
+		"now_ms": float(values.get("now_ms", 0.0)),
+	}
+
+
+## One frame of pad navigation, exactly `pollGamepadMenu` (`js/main.js:931-999`): the pad's
+## values, the deadzone, the button legend, the model. `values` lets a caller that already
+## knows this frame's pad values (a test, a replay) drive the SAME seam without touching the
+## hardware — the frame the model sees is built in one place, `pad_frame()`, for both.
+func poll_pad(values: Dictionary = {}) -> Dictionary:
+	_ensure()
+	var source := read_pad_values() if values.is_empty() else values
+	return step_pad(pad_frame(source))
 
 
 ## The same, with a caller-supplied frame: the slice test drives the pad with

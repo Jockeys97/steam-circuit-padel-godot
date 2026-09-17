@@ -9,7 +9,7 @@
 ##   ScreenShell's controls  --register-->  MenuFocus  (id, node, action, locked)
 ##   InputEventKey           --dispatch-->  MenuFocus.handle_key   (arrows, Enter, Esc)
 ##   InputEventJoypadButton  --dispatch-->  MenuNav.confirm()/back()  (ui_accept/ui_cancel)
-##   InputEventJoypadMotion  --dispatch-->  MenuNav.keyboard_direction (the geometry move)
+##   InputEventJoypadMotion  --dispatch-->  swallowed: the frame's poll reads the stick (no second consumer)
 ##   the model's verdict     --act-->       ScreenRouter.go_to(...)
 ##
 ## A locked control is registered, shown, reported (`locked_ids()`) and inert: the
@@ -73,10 +73,6 @@ const MenuFocus := preload("res://game/menu_focus.gd")
 const MenuNav := preload("res://src/input/menu_nav.gd")
 const NavRoutes := preload("res://src/input/nav_routes.gd")
 
-## What an *event* means on the stick. The stored `gamepadDeadzone` pref's wiring into
-## the UI layer belongs to the settings screen's ticket; this constant only decides when
-## a motion event is a direction at all.
-const STICK_THRESHOLD := 0.5
 const CONFIRM_ACTION := "ui_accept"
 const CANCEL_ACTION := "ui_cancel"
 
@@ -293,12 +289,17 @@ func dispatch(event: InputEvent) -> bool:
 			return _act(_nav.back())
 		return false
 	if event is InputEventJoypadMotion:
-		var direction := _stick_direction(event as InputEventJoypadMotion)
-		if direction == "":
-			return false
-		var moved := _act(_nav.keyboard_direction(direction))
-		_note_range_step()
-		return moved
+		# ONE CONSUMER. The stick's direction belongs to `MenuFocus.poll_pad()`, the poll the
+		# mount runs once per frame (`game/main_menu.gd::_poll_pad`) — which is the single path
+		# the reference has (`pollGamepadMenu`, `js/main.js:931-999`). A motion EVENT must not
+		# move the focus: a real push arrives as a burst of axis events (five, measured) and
+		# moving on each of them stepped the focus several times per push, outside the model's
+		# repeat timings and with the keyboard's 90 px edge scroll, while the same frame's poll
+		# moved it again. The event is swallowed (handled = true) so the engine's own `ui_*`
+		# navigation cannot move the same focus either; the direction is applied by the next
+		# poll, under the menu deadzone (`MenuFocus.MENU_DEADZONE`).
+		_last_dispatch = {"kind": "stick_polled", "activated": false}
+		return true
 	return false
 
 
@@ -311,8 +312,14 @@ func act(verdict: Dictionary) -> bool:
 	if _focus == null or verdict.is_empty():
 		return false
 	_last = verdict
-	carry_metadata()
+	# The order matters, and it is the other way round from `dispatch()`: a polled verdict
+	# arrives AFTER the model already stepped the focused range in place
+	# (`focus_nav.gd::_adjust_range`), so the registry's pre-step value must not be carried
+	# back over it first — that would swallow the step and the screen would never hear
+	# `range_changed` from the stick. The step is read first, mirrored into the registry, and
+	# only then is the (now current) metadata carried.
 	_note_range_step()
+	carry_metadata()
 	return _act(verdict)
 
 
@@ -500,18 +507,6 @@ func _shell_back_target() -> String:
 		return ""
 	if _shell.has_method("back_target"):
 		return _text(_shell.back_target())
-	return ""
-
-
-func _stick_direction(event: InputEventJoypadMotion) -> String:
-	var value := event.axis_value
-	if absf(value) < STICK_THRESHOLD:
-		return ""
-	match event.axis:
-		JOY_AXIS_LEFT_X:
-			return "right" if value > 0.0 else "left"
-		JOY_AXIS_LEFT_Y:
-			return "down" if value > 0.0 else "up"
 	return ""
 
 
