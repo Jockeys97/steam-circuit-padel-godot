@@ -97,7 +97,7 @@ const SECTIONS := [
 	"_full_playthrough",
 	"_timing_presentation",
 ]
-const AWAITED_SECTIONS := ["_menu_reaches_match", "_mode_screens", "_modes_playable", "_ui_text"]
+const AWAITED_SECTIONS := ["_menu_reaches_match", "_mode_screens", "_modes_playable", "_ui_text", "_full_playthrough"]
 
 var _sections_done: Array[String] = []
 
@@ -1305,11 +1305,20 @@ func _input_differs(a: Dictionary, b: Dictionary) -> bool:
 func _tiers_playable() -> void:
 	var tiers: Array = Frozen.ai_opponents()
 	check_eq("the data layer offers four AI tiers", tiers.size(), 4)
+	var pinned := Gate.fixed_tier_index()
+	if pinned >= 0:
+		# A demo build declares one fixed difficulty (`js/build.js` DEMO_CONTENT), which
+		# the reference maps to tier 1 (medium). Every request must answer with the pinned
+		# tier: a demo that answered a freely chosen difficulty would be the F-1 bypass.
+		check_eq("the demo's pinned difficulty is the reference's own declared medium (tier 1)", pinned, 1)
 	for i in tiers.size():
 		var node := _new_match_node(i)
 		var tier: Dictionary = tiers[i]
-		check("tier %d (%s) constructs a match" % [i, String(tier["id"])],
-			node.state != null and String(node.state.ai["id"]) == String(tier["id"]),
+		var want: String = String(tiers[pinned]["id"]) if pinned >= 0 else String(tier["id"])
+		var label := "tier %d (%s) is listed but the demo pins the match to %s" % [i, String(tier["id"]), want] \
+			if pinned >= 0 else "tier %d (%s) constructs a match" % [i, String(tier["id"])]
+		check(label,
+			node.state != null and String(node.state.ai["id"]) == want,
 			str(node.state.ai) if node.state != null else "no state")
 		var bot := ScriptedPlayer.new()
 		var reached_rally := false
@@ -1330,9 +1339,67 @@ func _tiers_playable() -> void:
 
 func _full_playthrough() -> void:
 	var node := _new_match_node(Config.tier_index)
+	# THE SCORE, measured on this same node so the probe costs the run no extra scene.
+	# The reference starts the music with the match (`js/main.js:1211-1212`), re-drives
+	# its intensity from the rally and the scoreboard every frame (`:1273-1279`) and stops
+	# it when the match ends (`:1438`). Until this seam existed the module was tested and
+	# never heard — the one open item the hand-off named. (Restored in the pull wave: the
+	# branch's slice rewrite dropped the whole seam; the runtime is unchanged.)
+	var audio_node: Node = node.get_node_or_null("MatchAudio")
+	check("the match builds its audio seam", audio_node != null, "MatchAudio")
+	var music: Node = audio_node.get_node_or_null("Music") if audio_node != null else null
+	check("the match builds the music engine, not only the effect port", music != null, "Music")
+	var music_start: Dictionary = audio_node.music_summary() if audio_node != null else {}
+	if audio_node != null:
+		print("# MUSIC_WIRING start playing=%s intensity=%s context=%s bus_gain=%s" % [
+		str(music_start.get("playing")), str(music_start.get("intensity")),
+		str(music_start.get("context")), str(music_start.get("music_bus_gain")),
+		])
+		check("the score is running the moment a match starts (js/main.js:1211-1212)",
+		bool(music_start.get("playing", false)), str(music_start.get("playing")))
+		check("the match opens the score at the reference's own 0.12",
+		is_equal_approx(float(music_start.get("intensity", -1.0)), 0.12), str(music_start.get("intensity")))
+		check("the score runs in the reference's match context",
+		String(music_start.get("context", "")) == "match", str(music_start.get("context")))
+		check("the music bus sits at the reference's own gain (js/audio.js:149)",
+		is_equal_approx(float(music_start.get("music_bus_gain", -1.0)), 0.55), str(music_start.get("music_bus_gain")))
+		# The scheduler runs on the engine's frame clock, so let real frames pass before
+		# claiming it ran: a purely synchronous probe would prove the setters work and
+		# nothing else. This is why this section is in `AWAITED_SECTIONS`.
+		await process_frame
+		await process_frame
+		var after_frames: Dictionary = audio_node.music_summary()
+		check("the score's scheduler ran on the engine's own frames and started voices",
+		int(after_frames.get("voices_started", 0)) > 0,
+		"voices_started=%s" % str(after_frames.get("voices_started")))
+
 	var bot := ScriptedPlayer.new()
+	var music_mismatches: Array[String] = []
+	var music_stopped_mid_match := 0
+	var music_peak := float(music_start.get("intensity", 0.0))
+	var music_rally_peak := 0
 	while node.state.result == null and node.ticks < MATCH_TICK_BUDGET:
 		node.tick_fixed(TICK, bot.decide(node.state), Sim.empty_input())
+		if music == null or node.state.result != null:
+			continue
+		var want := reference_music_intensity(node.state)
+		var now := float(music.intensity)
+		if absf(now - want) > 0.0001 and music_mismatches.size() < 5:
+			music_mismatches.append("tick %d: %.6f != %.6f (rallyHits=%d)" % [
+				node.ticks, now, want, node.state.rallyHits])
+		if not bool(music.playing):
+			music_stopped_mid_match += 1
+		music_peak = maxf(music_peak, now)
+		music_rally_peak = maxi(music_rally_peak, int(node.state.rallyHits))
+	if music != null:
+		check("the score follows the reference's own intensity formula every tick (js/main.js:1273-1279)",
+		music_mismatches.is_empty(), str(music_mismatches))
+		check("the intensity actually moved off its start value (the drive is not a constant)",
+		music_peak > 0.12, "peak=%.4f" % music_peak)
+		check("the score keeps playing through the rally (a point does not stop it)",
+		music_stopped_mid_match == 0, "stopped on %d ticks" % music_stopped_mid_match)
+		check("a rally long enough to move the tension was actually played",
+		music_rally_peak >= 3, "max rallyHits=%d" % music_rally_peak)
 
 	var s: Dictionary = node.summary()
 	print("# PLAYTHROUGH ticks=%d crossings=%d points=%d max_rally=%d result=%s score=%s-%s games=%s sets=%s" % [
@@ -1372,8 +1439,32 @@ func _full_playthrough() -> void:
 
 	_hud_reflects_state(node)
 	_audio_wiring(s)
+	var music_end: Dictionary = audio_node.music_summary() if audio_node != null else {}
+	if audio_node != null:
+		print("# MUSIC_WIRING end playing=%s stops=%s voices_started=%s intensity=%s" % [
+		str(music_end.get("playing")), str(music_end.get("stops")),
+		str(music_end.get("voices_started")), str(music_end.get("intensity")),
+		])
+		check("the score stops when the match ends (js/main.js:1438)",
+		not bool(music_end.get("playing", true)), "playing=%s" % str(music_end.get("playing")))
+		check("the stop was the score's own and happened", int(music_end.get("stops", 0)) >= 1,
+		"stops=%s" % str(music_end.get("stops")))
+		check("the score sounded voices during the match (the scheduler ran, not just the setters)",
+		int(music_end.get("voices_started", 0)) > 0,
+		"voices_started=%s" % str(music_end.get("voices_started")))
 	_drop(node)
 	_section_done("_full_playthrough")
+
+
+## The reference's own intensity drive (`js/main.js:1273-1279`), in one place:
+##
+##     min(1, 0.12 + min(1, rallyHits / 12) * 0.55 + min(0.35, sets*0.15 + games*0.02))
+static func reference_music_intensity(state) -> float:
+	var rally_tension: float = minf(1.0, float(state.rallyHits) / 12.0)
+	var stakes: float = minf(0.35,
+		float(int(state.sets["player"]) + int(state.sets["ai"])) * 0.15
+		+ float(int(state.games["player"]) + int(state.games["ai"])) * 0.02)
+	return minf(1.0, 0.12 + rally_tension * 0.55 + stakes)
 
 
 ## The tennis score must advance legally: one point at a time, a game only at
@@ -1812,14 +1903,20 @@ func _arena_library() -> void:
 	check_eq("the fantasy arenas carry the reference's own gradient stops",
 		[String((storm["sky"] as Array)[0][1]), String((sky[sky.size() - 1])[1])], ["#07142f", "#287eb0"])
 	check_eq("the fantasy arenas carry the reference's own glow colour", String(storm["glow"]), "#79eeff")
-	# Artwork: the four arenas whose `image` field is their own file, copied from the
-	# reference, are the four the reference itself composites.
+	# Artwork: the reference gives EVERY arena an `image` field (`js/data.js` ARENAS),
+	# reusing two files where it wants the same scene on screen. The port must carry the
+	# same nine mappings — a subset is a gap, not a stylistic choice. (Restored in the
+	# pull wave: the branch rewrite asserted four here; the frozen reference and this
+	# tree's `arena_style.gd` carry nine since 74195c4 — see uir-branch-pull-journal.md.)
 	var with_art: Array[String] = []
 	for r in rows:
 		if String(ArenaStyle.artwork_path(String(r["id"]))) != "":
 			with_art.append(String(r["id"]))
-	check_eq("the four arenas with their own reference artwork are the four that load it",
-		with_art, ["tempesta", "abissale", "caldera", "orrery"])
+	check_eq("every arena the reference paints is painted here", with_art, Array(want))
+	check_eq("the two arenas that reuse another arena's backdrop reuse it here too",
+		[String(ArenaStyle.artwork_path("cattedrale")).get_file(),
+			String(ArenaStyle.artwork_path("forgia")).get_file()],
+		["deposito-locomotive.webp", "clockwork-factory.webp"])
 	var missing_art: Array[String] = []
 	var using_art: Array[String] = []
 	for id in with_art:
@@ -1832,25 +1929,42 @@ func _arena_library() -> void:
 				using_art.append(id)
 			built.free()
 	check("every copied arena artwork file is on disk", missing_art.is_empty(), str(missing_art))
-	check("the artwork actually decodes at runtime and reaches the backdrop", using_art.size() == 4, str(using_art))
+	check("the artwork actually decodes at runtime and reaches the backdrop for every painted arena",
+		using_art.size() == rows.size(), "%d of %d: %s" % [using_art.size(), rows.size(), str(using_art)])
 
 	# And the whole path: an arena chosen in the config is the arena the real match
 	# scene builds AND the arena the simulation runs on (`Sim.update_match` reads
 	# `state.arena["wallBounce"]`). Two different ids, so a silent fallback to the
 	# default arena cannot pass this.
+	# A demo build grants exactly one arena, so a request for another one must land on the
+	# granted arena in BOTH the environment and the simulation; a full build must follow
+	# the choice. Two different ids are probed in the full case, so a silent fallback to
+	# the default arena cannot pass either way.
+	var demo := Gate.is_demo()
+	var granted: Array[String] = []
+	for a in Config.selectable_arenas():
+		granted.append(String((a as Dictionary)["id"]))
+	if demo:
+		check_eq("a DEMO build grants exactly one arena, so the pin has something to land on", granted.size(), 1)
+	var granted_row: Dictionary = {}
+	for r in rows:
+		if String(r["id"]) == granted[0]:
+			granted_row = r
 	var wired: Array[String] = []
-	for index in [3, 7]:
+	for index in ([3, 7] if not demo else [3, 7, 0]):
 		var chosen := String(rows[index]["id"])
+		var expect_id: String = granted[0] if demo else chosen
+		var expect_row: Dictionary = granted_row if demo else rows[index]
 		Config.set_arena_id(chosen)
 		var node := _new_match_node(0)
 		var built: Node = node.get_node_or_null("Arena")
 		var got_id := String(built.get_meta("arena_id")) if built != null else "<none>"
 		var meshes: int = node.arena_mesh_count()
 		var sim_arena: Dictionary = node.state.arena
-		if got_id != chosen or meshes < 60 or String(sim_arena["id"]) != chosen \
-			or float(sim_arena["wallBounce"]) != float(rows[index]["wallBounce"]):
-			wired.append("%s: env=%s meshes=%d sim=%s bounce=%s" % [
-				chosen, got_id, meshes, String(sim_arena["id"]), str(sim_arena.get("wallBounce"))])
+		if got_id != expect_id or meshes < 60 or String(sim_arena["id"]) != expect_id \
+			or float(sim_arena["wallBounce"]) != float(expect_row["wallBounce"]):
+			wired.append("%s: asked-for=%s env=%s meshes=%d sim=%s bounce=%s" % [
+				chosen, expect_id, got_id, meshes, String(sim_arena["id"]), str(sim_arena.get("wallBounce"))])
 		_drop(node)
 	Config.set_arena_id(String(rows[0]["id"]))
 	check("the selected arena reaches both the environment and the simulation", wired.is_empty(), str(wired))

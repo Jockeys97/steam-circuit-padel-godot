@@ -1,0 +1,29 @@
+sweep start 2026-09-17T00:16:25Z engine: 4.7.2.stable.official.ed1daf0bf
+pgrep-before: 
+import-pass                exit=0   NO-TALLY                   script_errors=0   error_lines=0   warnings=1   14s
+base-harness               exit=0   PASS 8/8                   script_errors=0   error_lines=0   warnings=0   0s
+base-slice                 exit=1   FAIL the artwork actually decodes at runtime and reaches the backdrop: expected true, got ["officina", "locomotive", "clockwork", "cattedrale", "forgia", "tempesta", "abissale", "caldera", "orrery"] script_errors=0   error_lines=2   warnings=1   11s
+base-slice-demo            exit=1   FAIL tier 3 (leggenda) constructs a match: expected true, got { "id": "ingegnere", "name": "Ingegnere del Vapore", "skill": 0.6, "speed": 341.0, "power": 0.96 } script_errors=0   error_lines=2   warnings=1   7s
+base-input                 exit=0   PASS 5/5                   script_errors=0   error_lines=0   warnings=0   1s
+base-rules                 exit=0   PASS 10/10                 script_errors=0   error_lines=0   warnings=0   117s
+base-modes                 exit=0   PASS 6/6                   script_errors=0   error_lines=0   warnings=0   1s
+base-save                  exit=0   PASS 137/137               script_errors=0   error_lines=0   warnings=0   1s
+base-music                 exit=0   PASS 32/32                 script_errors=0   error_lines=0   warnings=1   32s
+s14-court                  exit=0   PASS court dimensions: 1111 checks, 0 failures script_errors=0   error_lines=0   warnings=0   0s
+s14-shot-parity            exit=0   PASS 675/675               script_errors=0   error_lines=0   warnings=0   0s
+s14-timing                 exit=0   PASS 100/100               script_errors=0   error_lines=0   warnings=0   2s
+s14-timing-inject          exit=1   FAIL 88/92                 script_errors=0   error_lines=0   warnings=0   0s
+s14-switch                 exit=0   PASS 85/85                 script_errors=0   error_lines=0   warnings=0   2s
+ui-menu-audit              exit=0   PASS 97/97                 script_errors=0   error_lines=1   warnings=0   1s
+ui-menu-audit-demo         exit=0   PASS 98/98                 script_errors=0   error_lines=1   warnings=0   1s
+ui-hud-audit               exit=0   PASS 172/172               script_errors=0   error_lines=0   warnings=0   2s
+ui-legibility              exit=0   PASS 76/76                 script_errors=0   error_lines=0   warnings=0   2s
+ui-router-audit            exit=0   PASS 86/86                 script_errors=0   error_lines=2   warnings=3   0s
+ui-theme-probe             exit=0   PASS 271/271               script_errors=0   error_lines=0   warnings=0   1s
+ui-fonts-probe             exit=0   PASS 75/75                 script_errors=0   error_lines=0   warnings=0   1s
+ui-data-audit              exit=0   PASS 131/131               script_errors=0   error_lines=0   warnings=0   1s
+ui-data-audit-demo         exit=0   PASS 134/134               script_errors=0   error_lines=0   warnings=0   0s
+ui-input-a11y              exit=0   PASS 117/117               script_errors=0   error_lines=0   warnings=0   1s
+ui-reachability            exit=0   PASS 21/21                 script_errors=0   error_lines=0   warnings=0   0s
+slice-ui-new               exit=1   FAIL the run does not accumulate objects (count within the measured engine baseline): expected true, got start=1564 end=2039 delta=475 (measured baseline 395) script_errors=1   error_lines=2   warnings=1   18s
+sweep end   2026-09-17T00:20:02Z

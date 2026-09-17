@@ -1,0 +1,26 @@
+[import-pass] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --import
+[base-harness] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/
+[base-slice] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/game_slice_test.gd
+[base-slice-demo] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/game_slice_test.gd -- --demo
+[base-input] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/input/run_all.gd
+[base-rules] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/audits/run_all.gd
+[base-modes] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/modes/run_all.gd
+[base-save] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/save_steam_test.gd
+[base-music] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/music_port_test.gd
+[s14-court] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/court_dimensions_test.gd
+[s14-shot-parity] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/shot_logic_parity_test.gd
+[s14-timing] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/timing_feedback_test.gd
+[s14-timing-inject] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/timing_feedback_test.gd -- --ticks=200 --inject-failure
+[s14-switch] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/input/switch_mode_audit.gd
+[ui-menu-audit] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/screen_menu_audit.gd
+[ui-menu-audit-demo] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/screen_menu_audit.gd -- --demo
+[ui-hud-audit] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/hud_audit.gd
+[ui-legibility] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/ui_legibility_audit.gd
+[ui-router-audit] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/router_audit.gd
+[ui-theme-probe] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/theme_probe.gd
+[ui-fonts-probe] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/fonts_assets_probe.gd
+[ui-data-audit] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/data_audit.gd
+[ui-data-audit-demo] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/data_audit.gd -- --demo
+[ui-input-a11y] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/input_a11y_audit.gd
+[ui-reachability] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/input/reachability_audit.gd
+[slice-ui-new] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/game_slice_test.gd -- --ui=new

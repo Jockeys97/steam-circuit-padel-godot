@@ -1,0 +1,48 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4
+
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"leggenda","tier_index":3}
+MATCH_START tier=leggenda athlete=maestro arena=officina seed=20260916 camera=default models=true headless=false switch=semi
+ATHLETES rigs=4 source=res://assets/athletes/volpe-rigged.glb glb_loads=12 spawn_ms=1069 lineup={"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"}
+MODELS rigged_glb=res://assets/athletes/volpe-rigged.glb mesh_instances=170 copies=4 rigs=4
+CAPTURE_MARKER zone=(462,522) pin=(456,442) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(576,324) advice=(455,425) verdict=(576,324) energy=(442,529) ring_visible=false advice_visible=true verdict_visible=false fill=1.000 segments=0 radius_m=0.620 energy=1.000 advice_w_m=4.028
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.000 eta=0.000 in_window=true precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/quickmatch-serve.png size=1152x648
+CAPTURE_SHOT name=quickmatch-serve.png tick=143 points=0 crossings=1 rally=0
+CAPTURE_MARKER zone=(479,529) pin=(474,450) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(774,497) advice=(473,432) verdict=(770,473) energy=(459,537) ring_visible=false advice_visible=true verdict_visible=true fill=1.000 segments=0 radius_m=0.620 energy=0.951 advice_w_m=4.028
+CAPTURE_VERDICT word=PERFETTO mode=BILANCIATO grade=perfect paddle=playerMate alpha=0.256 charge=0.000 eta=0.000 in_window=true precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/rally.png size=1152x648
+CAPTURE_SHOT name=rally.png tick=420 points=0 crossings=3 rally=3
+CAPTURE_MARKER zone=(386,546) pin=(375,467) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(379,496) advice=(373,449) verdict=(770,473) energy=(363,555) ring_visible=true advice_visible=true verdict_visible=false fill=0.509 segments=20 radius_m=0.620 energy=0.974 advice_w_m=3.667
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.508 eta=0.270 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/timing.png size=1152x648
+CAPTURE_SHOT name=timing.png tick=512 points=0 crossings=4 rally=3
+CAPTURE_MARKER zone=(386,546) pin=(375,467) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(379,496) advice=(373,449) verdict=(770,473) energy=(363,555) ring_visible=false advice_visible=false verdict_visible=false fill=0.509 segments=0 radius_m=0.620 energy=0.974 advice_w_m=0.000
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.508 eta=0.270 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/timing-off.png size=1152x648
+CAPTURE_AB file=timing-off.png timing_hidden=true tick=512
+CAPTURE_MARKER zone=(385,548) pin=(374,468) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(379,496) advice=(372,450) verdict=(379,502) energy=(363,556) ring_visible=false advice_visible=true verdict_visible=true fill=0.853 segments=0 radius_m=0.620 energy=0.900 advice_w_m=4.472
+CAPTURE_VERDICT word=PERFETTO mode=BILANCIATO grade=perfect paddle=player alpha=1.000 charge=0.000 eta=0.081 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/hud.png size=1152x648
+CAPTURE_SHOT name=hud.png tick=536 points=0 crossings=4 rally=4
+CAPTURE_MARKER zone=(385,548) pin=(374,468) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(379,496) advice=(372,450) verdict=(379,502) energy=(363,556) ring_visible=false advice_visible=false verdict_visible=false fill=0.853 segments=0 radius_m=0.620 energy=0.900 advice_w_m=0.000
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.000 eta=0.081 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/hud-off.png size=1152x648
+CAPTURE_AB file=hud-off.png timing_hidden=true tick=536
+CAPTURE_MARKER zone=(674,543) pin=(679,463) zone_visible=false pin_visible=false
+CAPTURE_TIMING ring=(387,495) advice=(568,431) verdict=(568,479) energy=(658,551) ring_visible=false advice_visible=false verdict_visible=false fill=0.000 segments=0 radius_m=0.620 energy=1.000 advice_w_m=0.000
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.175 eta=5.085 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/result.png size=1152x648
+CAPTURE_SHOT name=result.png tick=25962 points=24 crossings=174 rally=16
+CAPTURE_DONE shots=5 ticks=25962 result={ "winner": "ai" } score=0-0 points=24
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4
+
+UI_PROTOTYPE_ON_SCREEN {"router":"menu","screen":"menu"}
+CAPTURE_SAVE err=0 path=res://game/out/ui-prototype-menu.png size=1280x720

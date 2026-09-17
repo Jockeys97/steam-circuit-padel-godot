@@ -80,6 +80,22 @@ UIR-08/09/24 wait for the coordinator's next dispatch (that wave also reconciles
 branch's `match_controller`/HUD timing cues and runs the combined gates); GATE-A has not run —
 no look/feel verdict exists anywhere in this wave.
 
+Pull wave (2026-09-17; integration lane, single writer, **nothing pushed**): the UI-recreation
+wave is checkpointed at `249d55a` (246 files, explicit pathspecs) and the brother branch
+(`codex/gameplay-and-map` tip `a1e10f04f9896de6ebbaff3e29f6d2c0dba77590`) is merged at
+`c6837b2` — normal merge, 0 conflicts, `match_controller.gd` byte-identical to the frozen
+probe. Combined sweep on an isolated copy: 17 runs green (brother's court 1111 / shot-parity
+675/675 / timing 100/100 / switch 85/85; UI audits menu 97/97 + 98/98, HUD 172/172,
+legibility 76/76, router, theme, fonts, data, input-a11y, reachability all green; the timing
+negative control fails by design). The branch's slice rewrite had silently dropped main-line
+assertions — the nine-arena artwork set, the demo guards and the whole music seam — and is
+reconciled in the pull wave's final commit (see `evidence/uir-branch-pull-journal.md` §7);
+one deliberate red remains, the branch's own `padel.pck` pack check, which needs an exported
+pack on the gate host. Real-GPU captures (Metal) of the merged tree re-ran in the isolated
+copy including the branch's new `timing`/`timing-off` shots. Evidence:
+`evidence/uir-pull-wave/`. Rows are the coordinator's to flip; GATE-A remains Luca's and
+unstarted.
+
 ## Tickets
 
 | Ticket | Title | State | Readiness | Blocked by | Gates | Owner role | Evidence |
