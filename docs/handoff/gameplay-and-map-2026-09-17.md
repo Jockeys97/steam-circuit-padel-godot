@@ -11,7 +11,27 @@ git fetch origin
 git switch -c codex/gameplay-and-map origin/codex/gameplay-and-map
 ```
 
-## The three commits (safe to build on)
+## Integration update — 2026-09-17
+
+The shared branch includes all commits from main through `252ff60` (Luca's
+Maestro integration and handoff), plus six commits through `a1e10f0`.
+The input fixes, shot/timing logic and presentation, active-player marker,
+10 x 20 m court projection, 36-degree camera and controller HUD are included.
+The earlier "not on this branch yet" section below is historical, not current.
+
+After this PR is merged, **main is the shared integration baseline**. Both
+contributors should fetch it and create a separate `codex/<activity>` branch.
+Use PRs into main and agree on ownership before editing `match_controller.gd`,
+`hud.gd` or the same arena files concurrently. Do not merge the older divergent
+local main: it contains duplicate historical commits.
+
+Local follow-ups still outside this integration: visual court width 11 m,
+smaller timing labels, side bleachers and their assets/probes. These are separate
+work, not missing dependencies of this PR. The owner's working checkout is kept
+intact while this integration is verified in `/private/tmp/padel-integrate`.
+No broad staging or replacement of the owner's working tree is required.
+
+## Original three commits
 
 | commit | what changed |
 |---|---|
@@ -19,7 +39,7 @@ git switch -c codex/gameplay-and-map origin/codex/gameplay-and-map
 | `a52bbb2` | **Map charting for slice S14** + two corrections: the reference has **28** audit scripts, not 27 (`run-audits.mjs:21-23` globs the directory, so all 28 are wired — the *expected value* in `validate.py` was stale, the check is unchanged); and the reference audit suite cannot run on the owner's Mac at all while `node_modules/` is absent (`sharp` does not resolve). |
 | `cc88a14` | **Two instruments** — `godot/game/tools/pad_probe.gd` (prints, live, which button you press and which `padel_*` action it fires) and `godot/game/tools/yellow_map.py` (ASCII map of one colour class in a PNG; screen capture is refused on this host, so this is how a rendered frame gets measured). Plus `docs/wayfinder/evidence/active-player-marker.md`. |
 
-## What is NOT on this branch yet, and why
+## Historical snapshot before the last two feature commits
 
 - **The active-athlete marker.** It lives in `godot/game/match_controller.gd` and
   `godot/tests/game_slice_test.gd`, which a lane is writing **right now** (the timing
