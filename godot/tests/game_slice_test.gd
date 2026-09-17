@@ -291,6 +291,11 @@ func _menu_reaches_match() -> void:
 	if packed == null:
 		return
 	var menu: Node = packed.instantiate()
+	# UIR-22: this section asserts the PORTED column's own contract (its choice rows,
+	# its play button, its `screen_report`), and the default is now the recreated
+	# menu. The opt-out is set before the tree, so `_ready()` builds the legacy column
+	# exactly as it always did — the fallback is exercised, not assumed.
+	menu.set("ui_legacy", true)
 	# A frame of a known size for the menu to lay itself out in. `--headless`
 	# installs the dummy display driver and the root window has no real size, so a
 	# Control anchored FULL_RECT would collapse to its minimum sizes with every
@@ -1955,14 +1960,19 @@ func _arena_library() -> void:
 	check_eq("the fantasy arenas carry the reference's own gradient stops",
 		[String((storm["sky"] as Array)[0][1]), String((sky[sky.size() - 1])[1])], ["#07142f", "#287eb0"])
 	check_eq("the fantasy arenas carry the reference's own glow colour", String(storm["glow"]), "#79eeff")
-	# Artwork: the four arenas whose `image` field is their own file, copied from the
-	# reference, are the four the reference itself composites.
+	# Artwork: every arena the reference paints is painted here too. (The reference's
+	# own tree carries nine since the arena-art wave — two of them reuse another
+	# arena's backdrop rather than shipping their own file.)
 	var with_art: Array[String] = []
 	for r in rows:
 		if String(ArenaStyle.artwork_path(String(r["id"]))) != "":
 			with_art.append(String(r["id"]))
-	check_eq("the four arenas with their own reference artwork are the four that load it",
-		with_art, ["tempesta", "abissale", "caldera", "orrery"])
+	check_eq("every arena the reference paints is painted here", with_art,
+		["officina", "locomotive", "clockwork", "cattedrale", "forgia", "tempesta", "abissale", "caldera", "orrery"])
+	check_eq("the two arenas that reuse another arena's backdrop reuse it here too",
+		[String(ArenaStyle.artwork_path("cattedrale")).get_file(),
+			String(ArenaStyle.artwork_path("forgia")).get_file()],
+		["deposito-locomotive.webp", "clockwork-factory.webp"])
 	var missing_art: Array[String] = []
 	var using_art: Array[String] = []
 	for id in with_art:
@@ -1975,25 +1985,42 @@ func _arena_library() -> void:
 				using_art.append(id)
 			built.free()
 	check("every copied arena artwork file is on disk", missing_art.is_empty(), str(missing_art))
-	check("the artwork actually decodes at runtime and reaches the backdrop", using_art.size() == 4, str(using_art))
+	check("the artwork actually decodes at runtime and reaches the backdrop for every painted arena",
+		using_art.size() == rows.size(), "%d of %d: %s" % [using_art.size(), rows.size(), str(using_art)])
 
 	# And the whole path: an arena chosen in the config is the arena the real match
 	# scene builds AND the arena the simulation runs on (`Sim.update_match` reads
 	# `state.arena["wallBounce"]`). Two different ids, so a silent fallback to the
 	# default arena cannot pass this.
+	# A demo build grants exactly one arena, so a request for another one must land on the
+	# granted arena in BOTH the environment and the simulation; a full build must follow
+	# the choice. Two different ids are probed in the full case, so a silent fallback to
+	# the default arena cannot pass either way.
+	var demo := Gate.is_demo()
+	var granted: Array[String] = []
+	for a in Config.selectable_arenas():
+		granted.append(String((a as Dictionary)["id"]))
+	if demo:
+		check_eq("a DEMO build grants exactly one arena, so the pin has something to land on", granted.size(), 1)
+	var granted_row: Dictionary = {}
+	for r in rows:
+		if String(r["id"]) == granted[0]:
+			granted_row = r
 	var wired: Array[String] = []
-	for index in [3, 7]:
+	for index in ([3, 7] if not demo else [3, 7, 0]):
 		var chosen := String(rows[index]["id"])
+		var expect_id: String = granted[0] if demo else chosen
+		var expect_row: Dictionary = granted_row if demo else rows[index]
 		Config.set_arena_id(chosen)
 		var node := _new_match_node(0)
 		var built: Node = node.get_node_or_null("Arena")
 		var got_id := String(built.get_meta("arena_id")) if built != null else "<none>"
 		var meshes: int = node.arena_mesh_count()
 		var sim_arena: Dictionary = node.state.arena
-		if got_id != chosen or meshes < 60 or String(sim_arena["id"]) != chosen \
-			or float(sim_arena["wallBounce"]) != float(rows[index]["wallBounce"]):
-			wired.append("%s: env=%s meshes=%d sim=%s bounce=%s" % [
-				chosen, got_id, meshes, String(sim_arena["id"]), str(sim_arena.get("wallBounce"))])
+		if got_id != expect_id or meshes < 60 or String(sim_arena["id"]) != expect_id \
+			or float(sim_arena["wallBounce"]) != float(expect_row["wallBounce"]):
+			wired.append("%s: asked-for=%s env=%s meshes=%d sim=%s bounce=%s" % [
+				chosen, expect_id, got_id, meshes, String(sim_arena["id"]), str(sim_arena.get("wallBounce"))])
 		_drop(node)
 	Config.set_arena_id(String(rows[0]["id"]))
 	check("the selected arena reaches both the environment and the simulation", wired.is_empty(), str(wired))
@@ -2978,6 +3005,10 @@ func _ui_text() -> void:
 	host.size = Vector2(1280.0, 720.0)
 	root.add_child(host)
 	var menu: Node = packed.instantiate()
+	# UIR-22: the ported column again — this frame scans the labels the REFERENCE's
+	# own table prints on the ported rows, so it asks for the legacy construction by
+	# the documented switch rather than through the command line.
+	menu.set("ui_legacy", true)
 	host.add_child(menu)
 	await process_frame
 	await process_frame
