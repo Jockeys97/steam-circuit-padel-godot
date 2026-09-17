@@ -785,3 +785,30 @@ with `tools/parity/parity-compare.mjs`, and record the coverage evidence. In
 parallel, close the open `Character pipeline economics` map ticket now that the
 recolour path has real PROVENANCE and diff numbers. The arena-spike motion pass
 stays frozen until Luca rules on camera/feel.
+
+## Slice S14 — shot logic parity + timing presentation (claimed 2026-09-17 01:05 CEST)
+
+Owner's words: *"se i colpi corrispondono come logica a quelle della versione 2d,
+inoltre vorrei mettere anche qui le scritte e le logiche del timing con Perfetto...
+che c'erano nel 2d"*. Budget: no cap. Two attempts per gate, then a blocker.
+
+| Lane | Realm | Allowed writes |
+|---|---|---|
+| crew-shotlogic | S14a — every shot intent, anchor to anchor | `docs/wayfinder/evidence/shot-logic-parity.md`, `godot/tests/shot_logic_parity_test.gd`, `tools/sim-port/intent-trace/**` |
+| crew-timinglogic | S14b — the numbers behind PERFETTO | `docs/wayfinder/evidence/timing-logic-parity.md`, `godot/tests/timing_feedback_test.gd`, `tools/sim-port/timing-trace/**` |
+| crew-timinghud | S14c — the ring, the words, the bars on the field | `godot/game/hud.gd`, `godot/game/match_controller.gd`, one new section `_timing_presentation` in `godot/tests/game_slice_test.gd`, `docs/wayfinder/evidence/timing-presentation-3d.md`, `godot/game/out/*.png` |
+
+No allowlist overlaps; no lane may edit `STATE.md`, `LOG.md`, `BOARD.md`, `map.md` or
+any tracked file outside its allowlist (CEO-owned). `godot/src/sim/**` is frozen
+except for a divergence proven by the ticket's own reproduction.
+
+## Slice S14 — returned, verified, certified (2026-09-17 02:15 CEST)
+
+| Lane | Delivered | Verified by the CEO |
+|---|---|---|
+| crew-shotlogic (S14a) | `docs/wayfinder/evidence/shot-logic-parity.md`, `godot/tests/shot_logic_parity_test.gd`, `tools/sim-port/{shot-intent-probe,shot-intent-compare}.mjs` | PASS 675/675; comparator IDENTICAL 35/35 (657 fields, tol=0) with my own regenerated reference trace; my mutation → DIVERGED, exit 1 |
+| crew-timinglogic (S14b) | `docs/wayfinder/evidence/timing-logic-parity.md`, `godot/tests/timing_feedback_test.gd`, `tools/sim-port/{timing-trace.mjs,timing-compare.py}` | PASS 100/100; injected failure FAIL 96/100 exit 1; IDENTICAL on both scenarios; 1e-6 mutant → exit 1; `godot/src/sim/**` untouched |
+| crew-timinghud (S14c) | `godot/game/{match_controller,hud}.gd`, one `_timing_presentation` section in `godot/tests/game_slice_test.gd` (36 checks), `docs/wayfinder/evidence/timing-presentation-3d.md`, frames | slice 324/325 with the new section, 23/23 sections; A/B frame measurements reproduced in the evidence; steer delivered mid-flight (the verdict over the striker) |
+
+Open after S14: the owner's feel verdict; `run.sh`'s capture list and the `out/*.png`
+gitignore question; co-op/PvP and other tiers outside all three gates.
