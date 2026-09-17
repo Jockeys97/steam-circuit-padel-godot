@@ -1,0 +1,27 @@
+{
+  "set": "burattino-r1",
+  "cap": 6,
+  "cap_source": "user request 2026-09-17: 'Let's create a new special playable character ... I just need the image gens I'll do the Meshy via GUI'; theme picked 2026-09-17: IL BURATTINO. Plan stated to user: 4 views plus up to 2 refines.",
+  "provider": "openai",
+  "model": "gpt-image-2.5-flare",
+  "provider_config": "~/.hermes/profiles/dev-work/config.yaml (image_gen)",
+  "aspect_ratio": "portrait",
+  "output_dir": "meshy/views/",
+  "checklist": "meshy/burattino-brief.md (G1-G5 gating + B1-B3 binary)",
+  "calls": [
+    {"n": 1, "view": "front", "attempt": 1, "register": "photoreal marionette", "result": "moderation_blocked (output, 'other')", "request_id": "req_5f5adbfd6da64a0b95b7e32b9bc053f5"},
+    {"n": 2, "view": "front", "attempt": 2, "register": "toy-like stylized", "result": "moderation_blocked", "request_id": "req_a6faa4dfd675497caba55e141fedfa3a"},
+    {"n": 3, "view": "front", "attempt": 3, "register": "cartoon mascot", "result": "moderation_blocked", "request_id": "req_e5c0ea330c904a51b3593e5a53d4186d"},
+    {"n": 4, "view": "front", "attempt": 4, "register": "family-friendly, adult proportions", "result": "ok", "file": "views/burattino-front.png", "cache": "openai_gpt-image-2.5-flare_20260917_012726_dd04c2a8.png"},
+    {"n": 5, "view": "side", "attempt": 1, "result": "moderation_blocked", "request_id": "req_63a148972dec40169a744ff9c78624e4"},
+    {"n": 6, "view": "back", "attempt": 1, "result": "ok", "file": "views/burattino-back.png", "cache": "openai_gpt-image-2.5-flare_20260917_012920_25987da6.png"},
+    {"n": 7, "view": "45", "attempt": 1, "result": "ok", "file": "views/burattino-45-r1.png", "cache": "openai_gpt-image-2.5-flare_20260917_012921_1fe097c5.png", "note": "arms hanging, refined"},
+    {"n": 8, "view": "side", "attempt": 2, "result": "ok", "file": "views/burattino-side-r1.png", "cache": "openai_gpt-image-2.5-flare_20260917_012943_7eed321f.png", "note": "arms hanging, refined"},
+    {"n": 9, "view": "side", "attempt": 3, "result": "ok", "file": "views/burattino-side.png", "cache": "openai_gpt-image-2.5-flare_20260917_013212_30ae8c38.png", "note": "r2 A-pose fix, delivered"},
+    {"n": 10, "view": "45", "attempt": 2, "result": "ok", "file": "views/burattino-45.png", "cache": "openai_gpt-image-2.5-flare_20260917_013212_acb38d31.png", "note": "r2 A-pose fix, delivered"}
+  ],
+  "total_attempts": 10,
+  "delivered_images": 6,
+  "blocked_attempts": 4,
+  "cost_telemetry": "tool returns no per-call cost; 10 API attempts at portrait 1024x1536 on gpt-image-2.5-flare (4 rejected by moderation, 6 delivered images). Meshy credits are owner-side (GUI), about 40 per athlete for image-to-3D, remesh and rig."
+}

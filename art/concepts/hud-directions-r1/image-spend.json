@@ -1,0 +1,66 @@
+{
+  "set": "hud-directions-r1",
+  "cap": 5,
+  "reroll_allowance": 2,
+  "rerolls_used": 0,
+  "cap_source": "user request 2026-09-17: 'could you give me some different game UIs for us to try to achieve? Simple is good' + explicit go on the 5-direction plan via clarify (5 single-screen stills)",
+  "provider": "openai",
+  "model": "gpt-image-2.5-flare",
+  "provider_config": "~/.hermes/profiles/dev-work/config.yaml (image_gen)",
+  "aspect_ratio_requested": "landscape",
+  "aspect_ratio_actual": "1536x1024 (3:2; provider does not return exact 16:9)",
+  "output_dir": "art/concepts/hud-directions-r1/",
+  "base_image": "docs/implementation/ui-recreation/gate-a-review/pairs/hud-after-prototype-serve-1280x720.png",
+  "base_image_sha256": "93799b94ced8ca32801c51681720a7afa9a32bfeca1679b5948422ec88dfb9e1",
+  "checklist": "BRIEF.md (C1-C3 gating, C4-C8 binary)",
+  "calls": [
+    {
+      "n": 1,
+      "variant": "01-editoriale",
+      "file": "01-editoriale.png",
+      "sha256": "5cee2633eb44ca63b3e7405c9b3cffd9ea533ac07990ceeaa709af123e2bf995",
+      "cache": "openai_gpt-image-2.5-flare_20260917_104430_227a00fa.png",
+      "size": "1536x1024",
+      "role": "set"
+    },
+    {
+      "n": 2,
+      "variant": "02-vetro",
+      "file": "02-vetro.png",
+      "sha256": "7aba0e89f3680278a5b3c2c77d99d12b2e1a58ae040b79211d34ef7de44ab094",
+      "cache": "openai_gpt-image-2.5-flare_20260917_104430_05a2207d.png",
+      "size": "1536x1024",
+      "role": "set"
+    },
+    {
+      "n": 3,
+      "variant": "03-broadcast",
+      "file": "03-broadcast.png",
+      "sha256": "b53296ef791c9fc57e306f6c7c011c0b086e6e181bf9552928b244353df04a2f",
+      "cache": "openai_gpt-image-2.5-flare_20260917_104428_0a5bcb8b.png",
+      "size": "1536x1024",
+      "role": "set"
+    },
+    {
+      "n": 4,
+      "variant": "04-arcade",
+      "file": "04-arcade.png",
+      "sha256": "4080420f69dad486b767ce5e37dc24d28cfae023532348096c38541e39e01a82",
+      "cache": "openai_gpt-image-2.5-flare_20260917_104430_135e1f84.png",
+      "size": "1536x1024",
+      "role": "set"
+    },
+    {
+      "n": 5,
+      "variant": "05-zen",
+      "file": "05-zen.png",
+      "sha256": "88f844d782099fad9678aee244f520f5e698b94cd4615c5d1acfb7816f57a0cf",
+      "cache": "openai_gpt-image-2.5-flare_20260917_104422_3c9afee2.png",
+      "size": "1536x1024",
+      "role": "set"
+    }
+  ],
+  "total_calls": 5,
+  "verification": "parent: shasum re-match 5/5 vs worker-reported hashes; dims re-measured (sips); base capture re-hashed unchanged after the run; parent vision spot-checks on 01 + 04 passed (single screen / scene preserved / old HUD gone / style match / legible); workers ran the vision checklist on all five.",
+  "cost_telemetry": "tool returns no per-call cost; 5 calls at 1536x1024, gpt-image-2.5-flare, landscape. Reroll allowance (2) unused."
+}

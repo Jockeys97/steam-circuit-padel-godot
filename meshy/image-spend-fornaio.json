@@ -1,0 +1,26 @@
+{
+  "set": "fornaio-r1",
+  "cap": 7,
+  "cap_extended_to": 8,
+  "cap_source": "user request 2026-09-17: 'Now make 1 that is a croissant baker, he already has a racket which is a croissant shaped racket. Give me Front/back/45-left/45-right.' Plan: 4 character views + 1 racket front + up to 2 refines. Extended by 1 because two chained views came back off-spec and were regenerated.",
+  "provider": "openai",
+  "model": "gpt-image-2.5-flare",
+  "provider_config": "~/.hermes/profiles/dev-work/config.yaml (image_gen)",
+  "aspect_ratio": "portrait",
+  "output_dir": "meshy/views/",
+  "checklist": "meshy/fornaio-brief.md (G1-G5 character gating, R1-R5 racket gating)",
+  "calls": [
+    {"n": 1, "item": "fornaio-front r1", "mode": "text-to-image", "result": "ok", "file": "views/fornaio-front-r1.png", "cache": "openai_gpt-image-2.5-flare_20260917_020905_7f315953.png", "verdict": "arms about 30 degrees, refined"},
+    {"n": 2, "item": "cornetto-front", "mode": "text-to-image", "result": "ok", "file": "views/cornetto-front.png", "cache": "openai_gpt-image-2.5-flare_20260917_020858_2538c16c.png", "verdict": "pass; mild gloss on ferrule and crust accepted for bake"},
+    {"n": 3, "item": "fornaio-front r2", "mode": "edit off front r1", "result": "ok", "file": "views/fornaio-front.png", "cache": "openai_gpt-image-2.5-flare_20260917_021053_a9495679.png", "verdict": "A-pose 45 degrees with wide gap, pass"},
+    {"n": 4, "item": "fornaio-back r1", "mode": "edit off front", "result": "ok", "file": "views/fornaio-back-r1.png", "cache": "openai_gpt-image-2.5-flare_20260917_021214_c3e3feff.png", "verdict": "arms narrow (20-30 degrees), refined"},
+    {"n": 5, "item": "fornaio-45-left r1", "mode": "edit off front", "result": "ok", "file": "views/fornaio-45-left-r1.png", "cache": "openai_gpt-image-2.5-flare_20260917_021214_db2a8d44.png", "verdict": "came back frontal (duplicate angle), refined"},
+    {"n": 6, "item": "fornaio-45-right", "mode": "edit off front", "result": "ok", "file": "views/fornaio-45-right.png", "cache": "openai_gpt-image-2.5-flare_20260917_021212_af01f4fd.png", "verdict": "pass"},
+    {"n": 7, "item": "fornaio-45-left r2", "mode": "edit off front", "result": "ok", "file": "views/fornaio-45-left.png", "cache": "openai_gpt-image-2.5-flare_20260917_021525_ebbb0699.png", "verdict": "true three-quarter turn, pass"},
+    {"n": 8, "item": "fornaio-back r2", "mode": "edit off front", "result": "ok", "file": "views/fornaio-back.png", "cache": "openai_gpt-image-2.5-flare_20260917_021524_0d76c4f6.png", "verdict": "arms 45 degrees with wide gap, pass"}
+  ],
+  "total_attempts": 8,
+  "moderation_blocks": 0,
+  "refines_used": 3,
+  "cost_telemetry": "tool returns no per-call cost; 8 generations at portrait 1024x1536 on gpt-image-2.5-flare, zero moderation blocks. Meshy credits are owner-side (GUI)."
+}

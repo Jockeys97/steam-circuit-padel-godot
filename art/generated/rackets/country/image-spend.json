@@ -1,0 +1,149 @@
+{
+  "set": "country-r1",
+  "provider": "openai",
+  "model": "gpt-image-2.5-flare",
+  "use_gateway": false,
+  "aspect": "portrait (1024x1536)",
+  "cap": 5,
+  "authorization": "Luca 2026-09-17: 'Cool steampunk set, now make me a Country based one' \u2014 one generation per racket, same intake lane as the steampunk set.",
+  "mode": "text-to-image (no reference images), matte white-bg intake spec",
+  "purpose": "Meshy Image-to-3D intake front views, saved to meshy/rackets/country/views/<id>-front.png",
+  "checklist": "meshy/rackets/country/brief.md",
+  "design": "art/generated/rackets/country/DESIGN.md",
+  "calls": [
+    {
+      "id": "capezza",
+      "file": "meshy/rackets/country/views/capezza-front.png",
+      "sha256": "dd6d2cdb66a1c14cbebee9eb1fca72c3629faa42f183410657e4ffd078cace29",
+      "bytes": 1872550,
+      "dims": "1024x1536",
+      "border_ink_px": 0,
+      "border_min": 253,
+      "corner_means": [
+        254.0,
+        254.1,
+        254.0,
+        254.1
+      ],
+      "fill_w_pct": 63.0,
+      "fill_h_pct": 96.8,
+      "margins_px": {
+        "left": 188,
+        "right": 191,
+        "top": 24,
+        "bottom": 25
+      },
+      "shadow_grey_below_bbox": 0,
+      "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_105303_168b5e0e.png",
+      "vision_note": "clean on all checks"
+    },
+    {
+      "id": "bottone",
+      "file": "meshy/rackets/country/views/bottone-front.png",
+      "sha256": "ce568483e6623737eab3c32cbd0b0da3166bcdf1081d7597fbed04c7d0807002",
+      "bytes": 2065502,
+      "dims": "1024x1536",
+      "border_ink_px": 0,
+      "border_min": 253,
+      "corner_means": [
+        254.0,
+        254.1,
+        254.1,
+        254.2
+      ],
+      "fill_w_pct": 69.4,
+      "fill_h_pct": 95.9,
+      "margins_px": {
+        "left": 156,
+        "right": 157,
+        "top": 26,
+        "bottom": 37
+      },
+      "shadow_grey_below_bbox": 0,
+      "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_105258_a8e4440e.png",
+      "vision_note": "soft contact shadow at handle base; pearl snaps show specular highlights; snaps laid in a grid, not the designed arc"
+    },
+    {
+      "id": "marchio",
+      "file": "meshy/rackets/country/views/marchio-front.png",
+      "sha256": "f3b12305210e9522be5b1dede6c25abc7def62580f1863ee65fb657e930dafc5",
+      "bytes": 1517170,
+      "dims": "1024x1536",
+      "border_ink_px": 0,
+      "border_min": 253,
+      "corner_means": [
+        254.1,
+        254.0,
+        254.0,
+        254.2
+      ],
+      "fill_w_pct": 62.4,
+      "fill_h_pct": 95.1,
+      "margins_px": {
+        "left": 192,
+        "right": 193,
+        "top": 42,
+        "bottom": 33
+      },
+      "shadow_grey_below_bbox": 0,
+      "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_105300_01ece228.png",
+      "vision_note": "clean; throat reads as Y/zigzag rather than the face glyph; wrist loop sits close to the lower edge (border still clean)"
+    },
+    {
+      "id": "alambicco",
+      "file": "meshy/rackets/country/views/alambicco-front.png",
+      "sha256": "be328f41d3644bc228b48d0107f473179198eb7ba331d608caab2e147903324d",
+      "bytes": 1575640,
+      "dims": "1024x1536",
+      "border_ink_px": 0,
+      "border_min": 253,
+      "corner_means": [
+        254.0,
+        254.0,
+        254.0,
+        254.1
+      ],
+      "fill_w_pct": 65.1,
+      "fill_h_pct": 96.0,
+      "margins_px": {
+        "left": 178,
+        "right": 179,
+        "top": 30,
+        "bottom": 31
+      },
+      "shadow_grey_below_bbox": 0,
+      "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_105300_4e130a76.png",
+      "vision_note": "soft contact shadow under lower handle; copper reads semi-gloss with highlights (no chrome/glow)"
+    },
+    {
+      "id": "bisonte",
+      "file": "meshy/rackets/country/views/bisonte-front.png",
+      "sha256": "46707dcc87e899bab1df09567fbd66c44635140e72bed3a5c719f088b106040f",
+      "bytes": 1634196,
+      "dims": "1024x1536",
+      "border_ink_px": 0,
+      "border_min": 253,
+      "corner_means": [
+        254.1,
+        254.1,
+        254.0,
+        254.1
+      ],
+      "fill_w_pct": 72.0,
+      "fill_h_pct": 97.3,
+      "margins_px": {
+        "left": 136,
+        "right": 151,
+        "top": 20,
+        "bottom": 21
+      },
+      "shadow_grey_below_bbox": 0,
+      "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_105301_ea3199f4.png",
+      "vision_note": "clean; an extra dark strap at the grip end (reads as the single dark band from the design)"
+    }
+  ],
+  "totals": {
+    "calls": 5,
+    "technical_retries": 0
+  }
+}

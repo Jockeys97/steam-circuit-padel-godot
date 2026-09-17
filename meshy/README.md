@@ -122,3 +122,124 @@ white soles `#e66b18`.
 triangular ears with pink inner ear `#f0b8b8`, black nose and toe beans `#1a1a1a`, amber-brown
 eyes `#8a5524`, fluffy curled tail, brass goggle strap pushed up on the forehead `#c9a227`.
 Ivory tee `#f2ece1` with gold trim `#ffc94a`, navy shorts `#22304a`, brass-gold wristbands.
+
+## IL BURATTINO image set (2026-09-17)
+
+Special athlete, beyond the frozen six. The owner runs the Meshy steps in the GUI; this set is
+the input. Brief, checklist and upload recipe: `burattino-brief.md`. Spend log:
+`image-spend.json`. Lane: `openai` / `gpt-image-2.5-flare`, portrait 1024x1536, each view
+chained off the front so identity and scale stay locked.
+
+| File | View | sha256 (first 16) |
+|---|---|---|
+| `views/burattino-front.png` | front | `d862b29822a6f86f` |
+| `views/burattino-side.png` | true 90 side | `2d02a9e9b0f590a9` |
+| `views/burattino-back.png` | back | `0feed90638fc8bd8` |
+| `views/burattino-45.png` | 45 three-quarter | `b64b12a79f36349c` |
+
+`burattino-turnaround.png` (sha256 `fc32789e60e180ff`) is a local Pillow composite of the four
+view files, made by `make_turnaround_sheet.py`. It is not a generation; the four view files are
+the upload set.
+
+All four views pass the gating checklist (full body, white background, A-pose with a visible arm
+gap, no props or logos, DNA match, key visible in back and side). The first side and 45 renders
+came back with arms hanging instead of the A-pose gap and were regenerated; the r1 files stay
+alongside as `*-r1.png`.
+
+Moderation note for regenerations: four attempts (three front, one side) were rejected by OpenAI
+output moderation ("other") on photoreal doll registers. The register that passes is
+"family-friendly video game character, adult grown-up proportions, stylized, wholesome".
+Keep it if this character is ever re-generated.
+
+DNA used: jointed wooden athlete mascot with adult proportions; warm pine wood with subtle
+grain; rounded articulated joints at shoulders, elbows, wrists, hips, knees, ankles; friendly
+cartoon face; cream short-sleeve shirt, emerald vest with gold buttons, navy shorts with emerald
+piping, emerald wristbands; brass clockwork wind-up key on the upper back. Colors: pine
+`#d9a066`, walnut `#6b4326`, shirt `#f2ece1`, vest `#19b26b`, gold `#d5a62a`, shorts `#22304a`,
+brass `#c9a227`. Roster UI color proposal: emerald `#19b26b`. Rig height: 1.66 m.
+
+## The Five Specials — racket front views (2026-09-17)
+
+Meshy intake set for the five special rackets of the tier ladder (design sheet:
+`art/generated/rackets/steampunk/DESIGN.md`). One clean **front view per racket**, text-to-image so no
+scene colour bleeds into the bake. Lane: `openai` / `gpt-image-2.5-flare`, portrait
+1024x1536, one generation each; ledger `art/generated/rackets/steampunk/image-spend.json`
+(`round_2_meshy_front`); brief + GUI recipe: `rackets/steampunk/brief.md`.
+
+| Tier | id | Name | File | sha256 (first 16) |
+|---|---|---|---|---|
+| 1 | sfiato | Lo Sfiato | `rackets/steampunk/views/sfiato-front.png` | `72b281cad2a0297d` |
+| 2 | scatto | Lo Scatto | `rackets/steampunk/views/scatto-front.png` | `9b5f2cb50ad216ce` |
+| 3 | campanone | Il Campanone | `rackets/steampunk/views/campanone-front.png` | `74b9d819f583e9b4` |
+| 4 | novilunio | Il Novilunio | `rackets/steampunk/views/novilunio-front.png` | `c70f4e3afe003dfd` |
+| 5 | orsa-maggiore | L'Orsa Maggiore | `rackets/steampunk/views/orsa-maggiore-front.png` | `c13409b41ee7ba57` |
+
+All five: pure flat white background, matte materials (no chrome / glass / emission), full
+racket with margin (0 ink pixels in the outer 3 px; fills 94–96 percent of the height),
+verified by hash + border/corner measurement plus one external vision pass per file.
+Known partial: Novilunio's cyan edge ring reads painted rather than metallic — accepted
+for bake, noted in the brief. Upload recipe in `rackets/steampunk/brief.md`. Both racket sets
+are indexed, with the folder conventions, in `rackets/README.md`.
+
+## The Five Country Specials — racket front views (2026-09-17)
+
+Second themed racket line (design sheet: `art/generated/rackets/country/DESIGN.md`):
+La Capezza → Il Bottone → Il Marchio → L'Alambicco → Il Bisonte Bianco — an arc from the ranch
+to a plains legend. Same intake lane and spec as the steampunk set — one clean **front view per
+racket**, text-to-image, portrait 1024x1536, one generation each; ledger
+`art/generated/rackets/country/image-spend.json`; brief + GUI recipe: `rackets/country/brief.md`.
+
+| Tier | id | Name | File | sha256 (first 16) |
+|---|---|---|---|---|
+| 1 | capezza | La Capezza | `rackets/country/views/capezza-front.png` | `dd6d2cdb66a1c14c` |
+| 2 | bottone | Il Bottone | `rackets/country/views/bottone-front.png` | `ce568483e6623737` |
+| 3 | marchio | Il Marchio | `rackets/country/views/marchio-front.png` | `f3b12305210e9522` |
+| 4 | alambicco | L'Alambicco | `rackets/country/views/alambicco-front.png` | `be328f41d3644bc2` |
+| 5 | bisonte | Il Bisonte Bianco | `rackets/country/views/bisonte-front.png` | `46707dcc87e899ba` |
+
+All five: pure flat white background, matte materials (no chrome / glass / emission), full
+racket with margin (0 ink pixels in the outer 3 px; fills 95–97 percent of the height),
+verified by hash + border/corner measurement plus one external vision pass per file. Noted
+deviations (accepted for bake): Bottone's pearl snaps land in a grid rather than the designed
+arc and catch small highlights; Marchio's throat reads Y-shaped rather than the face glyph;
+Alambicco's copper is semi-gloss. Upload recipe in `rackets/country/brief.md`.
+
+## IL FORNAIO image set (2026-09-17)
+
+Special athlete, beyond the frozen six, plus his prop racket. Brief, checklist and GUI recipe:
+`fornaio-brief.md`. Spend log: `image-spend-fornaio.json`. Lane: `openai` /
+`gpt-image-2.5-flare`, portrait 1024x1536; the character views chain off the front, the racket
+is text-to-image in the five-specials intake style. Athlete sheets keep hands empty on purpose:
+the racket mounts at the hand anchor in engine, never inside the mesh.
+
+| File | View | sha256 (first 16) |
+|---|---|---|
+| `views/fornaio-front.png` | front | `78c9f22a9c73f7e8` |
+| `views/fornaio-back.png` | back | `2276754bf27dbd2f` |
+| `views/fornaio-45-left.png` | 45 left | `f6f8b8ae9c864089` |
+| `views/fornaio-45-right.png` | 45 right | `619ab4660c61ea31` |
+| `views/cornetto-front.png` | croissant racket front | `a7ea2ade51e78c96` |
+
+`fornaio-turnaround.png` (sha256 `76aa3b47de3042e0`) is a local Pillow composite of the four
+character views, made with `python3 make_turnaround_sheet.py fornaio front back 45-left
+45-right`; not a generation.
+
+All four character views pass the gating checklist (full body, white background, A-pose with a
+wide arm gap, empty hands, DNA match). Three renders were regenerated once each and their r1
+files stay alongside: front (arms ~30 degrees), back (arms narrow), 45 left (came back frontal,
+a duplicate of the front angle). The racket passes its checklist except a mild gloss note: the
+brass ferrule and crust bake slightly shiny (accepted for bake, engine material can set matte,
+same precedent as Novilunio's painted ring).
+
+Character DNA: sturdy broad-shouldered baker, big dark curled mustache, white snug baker's cap,
+white short-sleeve double-breasted jacket with amber buttons and rolled sleeves, flour dusting
+on shoulders and forearms, navy shorts with amber piping, amber wristbands, white sneakers with
+navy accents. Colors: jacket `#f7f4ee`, amber `#d98e2b`, navy `#22304a`, skin `#c08552`.
+Roster UI color proposal: amber `#d98e2b`. Rig height: 1.82 m. Racket working id `cornetto`
+(Il Cornetto): croissant head with flaky ridges, beech handle, twine grip, no strings. Placement
+note: `art/generated/rackets/steampunk/DESIGN.md` parks comedy kitchen rackets (La Caffettiera) as
+celebration/seasonal material, so Cornetto reads as a character signature rather than a sixth
+ladder rung.
+
+Zero moderation blocks this run: the family-friendly register from the Burattino section was
+reused from the first attempt.

@@ -1,0 +1,212 @@
+{
+  "run": "racket-ladder-2026-09-17",
+  "provider": "openai",
+  "model": "gpt-image-2.5-flare",
+  "use_gateway": false,
+  "aspect": "portrait (1024x1536)",
+  "cap": 5,
+  "authorization": "Luca's request: 'I need 1 image gen per padel racket' - exactly 5 calls, 1 per racket; no aesthetic retries used.",
+  "references": [
+    "godot/assets/ui/steam-circuit-key-art.webp",
+    "assets/athletes/colosso.webp"
+  ],
+  "calls": [
+    {
+      "id": "sfiato",
+      "path": "/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/art/generated/rackets/steampunk/sfiato/sfiato-concept.png",
+      "sha256": "fb36038812b8bc45270648bc05cb72fa73a345dfc0bc1875a2c33e2b272f4028",
+      "expected_match": true,
+      "bytes": 2443134,
+      "dims": "1024x1536",
+      "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_015149_1e6fa934.png",
+      "vision_mismatch": "brass valve sits on the striking face (reads unusable); fix: move valve to throat/bridge"
+    },
+    {
+      "id": "scatto",
+      "path": "/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/art/generated/rackets/steampunk/scatto/scatto-concept.png",
+      "sha256": "b9f4a821818610d6921cb99622e4127a25216789ae6c271f7e5bbd3228193cbd",
+      "expected_match": true,
+      "bytes": 2200626,
+      "dims": "1024x1536",
+      "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_015148_0dff193d.png",
+      "vision_mismatch": "brass slightly cleaner than the forge setting; fix: add patina/scuffs"
+    },
+    {
+      "id": "campanone",
+      "path": "/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/art/generated/rackets/steampunk/campanone/campanone-concept.png",
+      "sha256": "1430ed4cb40c30025a90c34308ef3bf366ce03e3b987b6e9c75390331a49f4df",
+      "expected_match": true,
+      "bytes": 2330114,
+      "dims": "1024x1536",
+      "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_015200_af931ca4.png",
+      "vision_mismatch": "head reads slightly round/oval vs teardrop; fix: reshape perforated face"
+    },
+    {
+      "id": "novilunio",
+      "path": "/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/art/generated/rackets/steampunk/novilunio/novilunio-concept.png",
+      "sha256": "932ec1db510ea9338fd52c802cb2a7fa40a546a1c9ddd88edd81a9b2ac0611b0",
+      "expected_match": true,
+      "bytes": 2171640,
+      "dims": "1024x1536",
+      "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_015146_2b92884c.png",
+      "vision_mismatch": "decorative clock faces dilute the black-moon theme; fix: remove clocks, keep sunburst + gears"
+    },
+    {
+      "id": "orsa-maggiore",
+      "path": "/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/art/generated/rackets/steampunk/orsa-maggiore/orsa-maggiore-concept.png",
+      "sha256": "4ffd0f07e4ae33f3843df2ce22fb108510e30fa2ad1c16a753da9dfb15c336bb",
+      "expected_match": true,
+      "bytes": 2599285,
+      "dims": "1024x1536",
+      "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_015150_7290b202.png",
+      "vision_mismatch": "nine orbiting star ornaments rendered instead of seven"
+    }
+  ],
+  "totals": {
+    "calls": 5,
+    "aesthetic_retries": 0,
+    "technical_failures": 0
+  },
+  "rename_note": "novilunio generated pre-rename as eclissi-concept.png; renamed byte-identical (same sha256) to novilunio-concept.png after the naming pass (avoids echo with L'Oracolo's 'Eclissi Quantica').",
+  "round_2_meshy_front": {
+    "requested_by": "Luca 2026-09-17: \"It's for meshy brother, so just the racket please, front view\"",
+    "mode": "text-to-image (no reference images), portrait 1024x1536",
+    "purpose": "Meshy Image-to-3D intake: one clean front view per racket, saved to meshy/rackets/steampunk/views/<id>-front.png",
+    "calls": [
+      {
+        "id": "sfiato",
+        "file": "meshy/rackets/steampunk/views/sfiato-front.png",
+        "sha256": "72b281cad2a0297d577eb1010ed115b25bbb85f8fc4384a01eb5f4d6e4766755",
+        "bytes": 1785047,
+        "dims": "1024x1536",
+        "border_ink_px": 0,
+        "border_min": 253,
+        "corner_means": [
+          254.0,
+          254.0,
+          254.0,
+          254.0
+        ],
+        "fill_h_pct": 95.9,
+        "fill_w_pct": 67.5,
+        "margins_px": {
+          "left": 166,
+          "right": 167,
+          "top": 28,
+          "bottom": 35
+        },
+        "softgrey_samples": 372,
+        "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_020221_3d99fdb2.png"
+      },
+      {
+        "id": "scatto",
+        "file": "meshy/rackets/steampunk/views/scatto-front.png",
+        "sha256": "9b5f2cb50ad216ce7a408480b1d573e2c3d1504d9ee7102e338feab00670ed1c",
+        "bytes": 1615545,
+        "dims": "1024x1536",
+        "border_ink_px": 0,
+        "border_min": 253,
+        "corner_means": [
+          254.1,
+          254.1,
+          254.1,
+          254.1
+        ],
+        "fill_h_pct": 93.9,
+        "fill_w_pct": 68.1,
+        "margins_px": {
+          "left": 164,
+          "right": 163,
+          "top": 44,
+          "bottom": 49
+        },
+        "softgrey_samples": 813,
+        "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_020213_ea9d2177.png"
+      },
+      {
+        "id": "campanone",
+        "file": "meshy/rackets/steampunk/views/campanone-front.png",
+        "sha256": "74b9d819f583e9b424c3d7fc38d4ed0e468477668208979bbb8311b1c56afccb",
+        "bytes": 1716847,
+        "dims": "1024x1536",
+        "border_ink_px": 0,
+        "border_min": 253,
+        "corner_means": [
+          254.0,
+          254.1,
+          254.0,
+          254.1
+        ],
+        "fill_h_pct": 94.5,
+        "fill_w_pct": 70.4,
+        "margins_px": {
+          "left": 152,
+          "right": 151,
+          "top": 40,
+          "bottom": 45
+        },
+        "softgrey_samples": 667,
+        "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_020214_808bbcbc.png"
+      },
+      {
+        "id": "novilunio",
+        "file": "meshy/rackets/steampunk/views/novilunio-front.png",
+        "sha256": "c70f4e3afe003dfd3e2dfbfa9e79569c6881a6d668bda3eefc04a7e80a7133d0",
+        "bytes": 1451178,
+        "dims": "1024x1536",
+        "border_ink_px": 0,
+        "border_min": 253,
+        "corner_means": [
+          254.2,
+          254.0,
+          254.1,
+          254.2
+        ],
+        "fill_h_pct": 93.9,
+        "fill_w_pct": 67.3,
+        "margins_px": {
+          "left": 168,
+          "right": 167,
+          "top": 54,
+          "bottom": 39
+        },
+        "softgrey_samples": 681,
+        "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_020213_53352168.png"
+      },
+      {
+        "id": "orsa-maggiore",
+        "file": "meshy/rackets/steampunk/views/orsa-maggiore-front.png",
+        "sha256": "c13409b41ee7ba57ee4b53013804f54be94f2fa283a39d65454af298e733dd5b",
+        "bytes": 1634697,
+        "dims": "1024x1536",
+        "border_ink_px": 0,
+        "border_min": 253,
+        "corner_means": [
+          254.1,
+          254.1,
+          254.1,
+          254.2
+        ],
+        "fill_h_pct": 96.0,
+        "fill_w_pct": 84.5,
+        "margins_px": {
+          "left": 78,
+          "right": 81,
+          "top": 28,
+          "bottom": 33
+        },
+        "softgrey_samples": 428,
+        "source_cache": "/Users/lucafantini/.hermes/profiles/dev-work/cache/images/openai_gpt-image-2.5-flare_20260917_020215_461170e0.png"
+      }
+    ],
+    "totals": {
+      "calls": 5,
+      "technical_retries": 0
+    }
+  },
+  "totals_all_rounds": {
+    "calls": 10,
+    "r1_direction_stills": 5,
+    "r2_meshy_front": 5
+  }
+}
