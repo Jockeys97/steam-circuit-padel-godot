@@ -1,0 +1,333 @@
+diff --git a/godot/game/main_menu.gd b/godot/game/main_menu.gd
+index 3015154..cadae06 100644
+--- a/godot/game/main_menu.gd
++++ b/godot/game/main_menu.gd
+@@ -59,6 +59,14 @@ var _outfit_button: Button
+ var _play: Button
+ var _focus: MenuFocus
+ var _capture := false
++## UIR-09's switch. `--ui=new` mounts the UIR-03 router with the recreated `menu`
++## screen (and registers the still-current `modes` scene, because the play button's
++## action is `to-modes`); `--ui=legacy` — the default, and what every suite in the tree
++## exercises — is the ported menu column this file has always built. UIR-24's harness
++## sets this property before `_ready()` instead of passing the flag, so its walk mounts
++## the same host the game does.
++var ui_prototype := false
++var _router: Control = null
+ var _out_name := "menu"
+ var _pad_seen := false
+ ## The column the focus model measures, and the laid-out size it was last refreshed
+@@ -72,6 +80,15 @@ func _ready() -> void:
+ 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+ 	_capture = "--capture=menu" in OS.get_cmdline_user_args()
+ 	_out_name = _arg("--out=", "menu")
++	ui_prototype = ui_prototype or _arg("--ui=", "legacy") == "new"
++	if ui_prototype:
++		# The prototype path builds the recreated menu instead of the ported column:
++		# one screen at a time, owned by the router, and the ported construction is
++		# not built at all (so nothing of it can show through).
++		_mount_ui_prototype()
++		if _capture:
++			_run_capture()
++		return
+ 	# `applyDemoLimits` (`js/ui.js:736-756`) before anything is built: the demo pins
+ 	# the difficulty, the athlete and the arena, so the screen never has to render a
+ 	# selection the build does not grant.
+@@ -338,6 +355,34 @@ func _arg(prefix: String, fallback: String) -> String:
+ 	return fallback
+ 
+ 
++## UIR-09's prototype mount: the router owns which screen is up and the recreated menu
++## screen is registered under the reference's own id (`menu`). The still-current mode
++## screen is registered too (`modes`), because `to-modes` is the play button: the press
++## has to reach today's mode flow rather than a blank page. Ids with no registered scene
++## keep the router's own behaviour — it warns and stays where it is.
++func _mount_ui_prototype() -> void:
++	var bg := ColorRect.new()
++	bg.name = "PrototypeBackground"
++	bg.color = Color(0.043, 0.063, 0.11)
++	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
++	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
++	add_child(bg)
++	# Loaded, not preloaded: the prototype path is opt-in, and the slice gate counts
++	# every object the engine holds at the end of a run.
++	_router = (load("res://src/ui/ScreenRouter.gd") as GDScript).new()
++	_router.name = "UiRouter"
++	add_child(_router)
++	_router.register("menu", load("res://src/ui/screens/MenuScreen.tscn"))
++	_router.register("modes", load("res://game/ModeScreen.tscn") as PackedScene)
++	if not _router.go_to("menu"):
++		push_error("main_menu: the prototype router refused to mount the menu screen")
++
++
++## The router UIR-24's capture harness walks. Null in a legacy run.
++func ui_router() -> Control:
++	return _router
++
++
+ func _register(id: String, node: Control, action: String, locked := false) -> void:
+ 	_focus.add(id, node, action, {"locked": locked})
+ 
+@@ -577,9 +622,11 @@ func _run_capture() -> void:
+ 	await get_tree().process_frame
+ 	await get_tree().process_frame
+ 	# The model needs the final rectangles, and the capture has to show the same
+-	# focus the model holds.
+-	_focus.refresh()
+-	_focus.apply_focus()
++	# focus the model holds. A prototype run has no model: the screen it captured is
++	# the router's.
++	if _focus != null:
++		_focus.refresh()
++		_focus.apply_focus()
+ 	await RenderingServer.frame_post_draw
+ 	var dir := "res://game/out"
+ 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir))
+@@ -593,7 +640,13 @@ func _run_capture() -> void:
+ 		push_error("menu capture: viewport image null")
+ 		get_tree().quit(4)
+ 		return
+-	print("MENU_ON_SCREEN %s" % JSON.stringify(screen_report()))
++	if _focus != null:
++		print("MENU_ON_SCREEN %s" % JSON.stringify(screen_report()))
++	else:
++		print("UI_PROTOTYPE_ON_SCREEN %s" % JSON.stringify({
++			"screen": String(_router.active_id()) if _router != null else "",
++			"router": "menu",
++		}))
+ 	var err := img.save_png("%s/%s.png" % [dir, _out_name])
+ 	print("CAPTURE_SAVE err=%d path=%s/%s.png size=%dx%d" % [err, dir, _out_name, img.get_width(), img.get_height()])
+ 	get_tree().quit(0 if err == OK else 5)
+diff --git a/godot/game/match_controller.gd b/godot/game/match_controller.gd
+index 750d4a1..d91363c 100644
+--- a/godot/game/match_controller.gd
++++ b/godot/game/match_controller.gd
+@@ -52,6 +52,8 @@ const Court := preload("res://game/court.gd")
+ const Arena := preload("res://game/arenas/arena_library.gd")
+ const InputSource := preload("res://game/input_map.gd")
+ const HudScript := preload("res://game/hud.gd")
++## UIR-09's prototype overlay: the recreated HUD (`godot/src/ui/Hud.tscn`), mounted in
++## the same layer as the ported one and fed the same state+meta behind `--ui=new`.
+ const Config := preload("res://game/match_config.gd")
+ const ScriptedPlayer := preload("res://game/scripted_player.gd")
+ const MatchAudioScript := preload("res://game/match_audio.gd")
+@@ -121,6 +123,11 @@ var _pending_input: Dictionary = {}
+ var _pending_input2: Dictionary = {}
+ var _hud
+ var _mode_hud
++## The prototype HUD (UIR-09), null in a legacy run. `--ui=new` shows it and hides the
++## two ported overlays; they are still built and refreshed, so both constructions stay
++## verifiable in one build until UIR-22 owns the removal.
++var _ui_hud: Control = null
++var _ui_new := false
+ var _audio
+ var _cam: Camera3D
+ ## The arena environment currently in the scene, built by
+@@ -154,6 +161,7 @@ var _points_total_prev: int = 0
+ func _ready() -> void:
+ 	var args := OS.get_cmdline_user_args()
+ 	var capture := _arg(args, "--capture=", "")
++	_ui_new = _arg(args, "--ui=", "legacy") == "new"
+ 	var camera := _arg(args, "--camera=", Config.camera_preset)
+ 	var tier := _arg(args, "--tier=", "")
+ 	var athlete := _arg(args, "--athlete=", "")
+@@ -309,6 +317,7 @@ func _adopt_session() -> void:
+ 	_sync_views()
+ 	if _hud != null:
+ 		_hud.refresh(state, meta)
++	_refresh_ui(state, meta)
+ 	print("MODE_START %s" % JSON.stringify(session.report()))
+ 
+ 
+@@ -323,6 +332,7 @@ func _finish_mode() -> Dictionary:
+ 		_mode_hud.refresh()
+ 	if _hud != null:
+ 		_hud.refresh(state, meta)
++	_refresh_ui(state, meta)
+ 	print("MODE_FINISH %s" % JSON.stringify(awarded))
+ 	return awarded
+ 
+@@ -489,6 +499,43 @@ func _build_scene() -> void:
+ 	layer.add_child(_mode_hud)
+ 	if session != null:
+ 		_mode_hud.bind_session(session)
++	if _ui_new:
++		# UIR-09's prototype mount. Same layer, same state+meta (`_refresh_ui`), same
++		# names, and the pause button the ported HUD also carries — a drill's ESC still
++		# flips `_paused` in one place (`_unhandled_input`), which both overlays read.
++		# Loaded, not preloaded: the prototype overlay is opt-in, so a legacy run
++		# (the slice gate included) does not pull its scene and theme into the
++		# engine's object count.
++		_ui_hud = (load("res://src/ui/Hud.tscn") as PackedScene).instantiate()
++		_ui_hud.name = "UiHud"
++		layer.add_child(_ui_hud)
++		_ui_hud.bind_names(
++			String(Config.athlete()["name"]),
++			String(Config.tier()["name"]),
++			player_color,
++			ai_color
++		)
++		_ui_hud.pause_requested.connect(_on_ui_pause)
++		_hud.visible = false
++		_mode_hud.visible = false
++
++
++## The prototype overlay's pause button asks the same question the key does: it emits,
++## this file owns `_paused` (the HUD never sets it), and both overlays are told.
++func _on_ui_pause() -> void:
++	_paused = not _paused
++	_reset_transient_input()
++	if _hud != null:
++		_hud.set_paused(_paused)
++	if _ui_hud != null:
++		_ui_hud.set_paused(_paused)
++
++
++## The one call site that feeds the prototype HUD: it is refreshed wherever the ported
++## HUD is, with the same state and meta, so the two cannot drift before UIR-22.
++func _refresh_ui(state_ref, meta_ref: Dictionary) -> void:
++	if _ui_hud != null:
++		_ui_hud.refresh(state_ref, meta_ref)
+ 
+ 
+ ## The four athletes on court, as real rigs from `src/character/athlete_spawn.gd`.
+@@ -611,6 +658,7 @@ func start_match() -> void:
+ 	_sync_views()
+ 	if _hud != null:
+ 		_hud.refresh(state, meta)
++	_refresh_ui(state, meta)
+ 
+ 
+ # ---------------------------------------------------------------------------
+@@ -698,6 +746,8 @@ func apply_frame(sample: Dictionary, delta: float) -> Dictionary:
+ 		result = advance_frame(delta)
+ 	if _hud != null and not finished:
+ 		_hud.refresh(state, meta)
++	if _ui_hud != null and not finished:
++		_ui_hud.refresh(state, meta)
+ 	if _mode_hud != null and session != null and not finished:
+ 		_mode_hud.refresh()
+ 	_sync_views()
+@@ -819,6 +869,7 @@ func _observe(prev_y: float) -> void:
+ 		if _hud != null:
+ 			_hud.refresh(state, meta)
+ 			_hud.show_result(state)
++		_refresh_ui(state, meta)
+ 	# The engine-driven build refreshes the HUD once per rendered frame in
+ 	# `_process`. A harness that owns the tick loop has no rendered frames, so the
+ 	# tick path also refreshes it — at 4 Hz during play, and always on the last
+@@ -829,6 +880,8 @@ func _observe(prev_y: float) -> void:
+ 		# reads the same panel a rendered frame would show.
+ 		if _mode_hud != null and session != null and not finished and not _page_finished():
+ 			_mode_hud.refresh()
++	if _ui_hud != null and not engine_driven and (finished or ticks % 30 == 0):
++		_ui_hud.refresh(state, meta)
+ 
+ 
+ ## True when the mode's own end has been reached — a drill that the player left.
+@@ -947,6 +1000,7 @@ func _run_capture() -> void:
+ 			var hit: bool = bool(shot["when"].call(state))
+ 			if hit or ticks >= _shot_deadline(_capture_index):
+ 				_hud.refresh(state, meta)
++				_refresh_ui(state, meta)
+ 				_sync_views()
+ 				await _save_frame("%s/%s" % [out_dir, String(shot["file"])])
+ 				print("CAPTURE_SHOT name=%s tick=%d points=%d crossings=%d rally=%d" % [
+@@ -954,6 +1008,7 @@ func _run_capture() -> void:
+ 				])
+ 				_capture_index += 1
+ 		_hud.refresh(state, meta)
++		_refresh_ui(state, meta)
+ 		_sync_views()
+ 		await get_tree().process_frame
+ 	print("CAPTURE_DONE shots=%d ticks=%d result=%s score=%s-%s points=%d" % [
+@@ -983,6 +1038,7 @@ func _run_arena_capture() -> void:
+ 		_sync_views()
+ 		if _hud != null:
+ 			_hud.refresh(state, meta)
++		_refresh_ui(state, meta)
+ 		await _save_frame("%s/arena-%s.png" % [out_dir, id])
+ 		var scenery: Node = _arena_root.get_node_or_null("Scenery") if _arena_root != null else null
+ 		print("ARENA_CAPTURE id=%s family=%s wallBounce=%.2f rear_alpha=%.3f meshes=%d scenery=%d artwork=%s" % [
+@@ -1046,6 +1102,7 @@ func _run_mode_capture() -> void:
+ 				break
+ 		if _hud != null:
+ 			_hud.refresh(state, meta)
++		_refresh_ui(state, meta)
+ 		if _mode_hud != null:
+ 			_mode_hud.refresh()
+ 		_sync_views()
+@@ -1098,6 +1155,8 @@ func _unhandled_input(event: InputEvent) -> void:
+ 			_reset_transient_input()
+ 			if _hud != null:
+ 				_hud.set_paused(_paused)
++			if _ui_hud != null:
++				_ui_hud.set_paused(_paused)
+ 		get_viewport().set_input_as_handled()
+ 		return
+ 	if event.is_action_pressed("menu_quit"):
+diff --git a/meshy/README.md b/meshy/README.md
+index 23241ea..5b1bc20 100644
+--- a/meshy/README.md
++++ b/meshy/README.md
+@@ -122,3 +122,60 @@ white soles `#e66b18`.
+ triangular ears with pink inner ear `#f0b8b8`, black nose and toe beans `#1a1a1a`, amber-brown
+ eyes `#8a5524`, fluffy curled tail, brass goggle strap pushed up on the forehead `#c9a227`.
+ Ivory tee `#f2ece1` with gold trim `#ffc94a`, navy shorts `#22304a`, brass-gold wristbands.
++
++## IL BURATTINO image set (2026-09-17)
++
++Special athlete, beyond the frozen six. The owner runs the Meshy steps in the GUI; this set is
++the input. Brief, checklist and upload recipe: `burattino-brief.md`. Spend log:
++`image-spend.json`. Lane: `openai` / `gpt-image-2.5-flare`, portrait 1024x1536, each view
++chained off the front so identity and scale stay locked.
++
++| File | View | sha256 (first 16) |
++|---|---|---|
++| `views/burattino-front.png` | front | `d862b29822a6f86f` |
++| `views/burattino-side.png` | true 90 side | `2d02a9e9b0f590a9` |
++| `views/burattino-back.png` | back | `0feed90638fc8bd8` |
++| `views/burattino-45.png` | 45 three-quarter | `b64b12a79f36349c` |
++
++`burattino-turnaround.png` (sha256 `fc32789e60e180ff`) is a local Pillow composite of the four
++view files, made by `make_turnaround_sheet.py`. It is not a generation; the four view files are
++the upload set.
++
++All four views pass the gating checklist (full body, white background, A-pose with a visible arm
++gap, no props or logos, DNA match, key visible in back and side). The first side and 45 renders
++came back with arms hanging instead of the A-pose gap and were regenerated; the r1 files stay
++alongside as `*-r1.png`.
++
++Moderation note for regenerations: four attempts (three front, one side) were rejected by OpenAI
++output moderation ("other") on photoreal doll registers. The register that passes is
++"family-friendly video game character, adult grown-up proportions, stylized, wholesome".
++Keep it if this character is ever re-generated.
++
++DNA used: jointed wooden athlete mascot with adult proportions; warm pine wood with subtle
++grain; rounded articulated joints at shoulders, elbows, wrists, hips, knees, ankles; friendly
++cartoon face; cream short-sleeve shirt, emerald vest with gold buttons, navy shorts with emerald
++piping, emerald wristbands; brass clockwork wind-up key on the upper back. Colors: pine
++`#d9a066`, walnut `#6b4326`, shirt `#f2ece1`, vest `#19b26b`, gold `#d5a62a`, shorts `#22304a`,
++brass `#c9a227`. Roster UI color proposal: emerald `#19b26b`. Rig height: 1.66 m.
++
++## The Five Specials — racket front views (2026-09-17)
++
++Meshy intake set for the five special rackets of the tier ladder (design sheet:
++`art/generated/rackets/DESIGN.md`). One clean **front view per racket**, text-to-image so no
++scene colour bleeds into the bake. Lane: `openai` / `gpt-image-2.5-flare`, portrait
++1024x1536, one generation each; ledger `art/generated/rackets/image-spend.json`
++(`round_2_meshy_front`); brief + GUI recipe: `rackets-brief.md`.
++
++| Tier | id | Name | File | sha256 (first 16) |
++|---|---|---|---|---|
++| 1 | sfiato | Lo Sfiato | `views/sfiato-front.png` | `72b281cad2a0297d` |
++| 2 | scatto | Lo Scatto | `views/scatto-front.png` | `9b5f2cb50ad216ce` |
++| 3 | campanone | Il Campanone | `views/campanone-front.png` | `74b9d819f583e9b4` |
++| 4 | novilunio | Il Novilunio | `views/novilunio-front.png` | `c70f4e3afe003dfd` |
++| 5 | orsa-maggiore | L'Orsa Maggiore | `views/orsa-maggiore-front.png` | `c13409b41ee7ba57` |
++
++All five: pure flat white background, matte materials (no chrome / glass / emission), full
++racket with margin (0 ink pixels in the outer 3 px; fills 94–96 percent of the height),
++verified by hash + border/corner measurement plus one external vision pass per file.
++Known partial: Novilunio's cyan edge ring reads painted rather than metallic — accepted
++for bake, noted in the brief. Upload recipe in `rackets-brief.md`.

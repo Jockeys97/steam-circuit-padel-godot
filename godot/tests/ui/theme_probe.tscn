@@ -1,0 +1,419 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Theme" path="res://src/ui/theme/padel_theme.tres" id="1_theme"]
+
+[node name="ThemeProbe" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="Rows" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ScreenTitle" type="Label" parent="Margin/Rows"]
+layout_mode = 2
+theme_type_variation = &"ScreenTitle"
+text = "CAMPI STEAMPUNK"
+
+[node name="ScreenSubtitle" type="Label" parent="Margin/Rows"]
+layout_mode = 2
+theme_type_variation = &"ScreenSubtitle"
+text = "Scegli l'arena del circuito"
+
+[node name="ReferenceRow" type="HBoxContainer" parent="Margin/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ButtonPrimary" type="Button" parent="Margin/Rows/ReferenceRow"]
+layout_mode = 2
+theme_type_variation = &"ButtonPrimary"
+text = "PARTITA RAPIDA"
+
+[node name="ButtonSecondary" type="Button" parent="Margin/Rows/ReferenceRow"]
+layout_mode = 2
+theme_type_variation = &"ButtonSecondary"
+text = "TORNEO"
+
+[node name="ButtonGhost" type="Button" parent="Margin/Rows/ReferenceRow"]
+layout_mode = 2
+theme_type_variation = &"ButtonGhost"
+text = "Indietro"
+
+[node name="Grid" type="HBoxContainer" parent="Margin/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Col0" type="VBoxContainer" parent="Margin/Rows/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Col1" type="VBoxContainer" parent="Margin/Rows/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Col2" type="VBoxContainer" parent="Margin/Rows/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Row_ScreenTitle" type="VBoxContainer" parent="Margin/Rows/Grid/Col0"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_ScreenTitle" type="Label" parent="Margin/Rows/Grid/Col0/Row_ScreenTitle"]
+layout_mode = 2
+text = "ScreenTitle"
+
+[node name="ScreenTitle" type="Label" parent="Margin/Rows/Grid/Col0/Row_ScreenTitle"]
+layout_mode = 2
+theme_type_variation = &"ScreenTitle"
+
+[node name="Row_ScreenSubtitle" type="VBoxContainer" parent="Margin/Rows/Grid/Col1"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_ScreenSubtitle" type="Label" parent="Margin/Rows/Grid/Col1/Row_ScreenSubtitle"]
+layout_mode = 2
+text = "ScreenSubtitle"
+
+[node name="ScreenSubtitle" type="Label" parent="Margin/Rows/Grid/Col1/Row_ScreenSubtitle"]
+layout_mode = 2
+theme_type_variation = &"ScreenSubtitle"
+
+[node name="Row_HeroTitle" type="VBoxContainer" parent="Margin/Rows/Grid/Col2"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_HeroTitle" type="Label" parent="Margin/Rows/Grid/Col2/Row_HeroTitle"]
+layout_mode = 2
+text = "HeroTitle"
+
+[node name="HeroTitle" type="Label" parent="Margin/Rows/Grid/Col2/Row_HeroTitle"]
+layout_mode = 2
+theme_type_variation = &"HeroTitle"
+
+[node name="Row_CardTitle" type="VBoxContainer" parent="Margin/Rows/Grid/Col0"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_CardTitle" type="Label" parent="Margin/Rows/Grid/Col0/Row_CardTitle"]
+layout_mode = 2
+text = "CardTitle"
+
+[node name="CardTitle" type="Label" parent="Margin/Rows/Grid/Col0/Row_CardTitle"]
+layout_mode = 2
+theme_type_variation = &"CardTitle"
+
+[node name="Row_CardTitleActive" type="VBoxContainer" parent="Margin/Rows/Grid/Col1"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_CardTitleActive" type="Label" parent="Margin/Rows/Grid/Col1/Row_CardTitleActive"]
+layout_mode = 2
+text = "CardTitleActive"
+
+[node name="CardTitleActive" type="Label" parent="Margin/Rows/Grid/Col1/Row_CardTitleActive"]
+layout_mode = 2
+theme_type_variation = &"CardTitleActive"
+
+[node name="Row_CardBody" type="VBoxContainer" parent="Margin/Rows/Grid/Col2"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_CardBody" type="Label" parent="Margin/Rows/Grid/Col2/Row_CardBody"]
+layout_mode = 2
+text = "CardBody"
+
+[node name="CardBody" type="Label" parent="Margin/Rows/Grid/Col2/Row_CardBody"]
+layout_mode = 2
+theme_type_variation = &"CardBody"
+
+[node name="Row_LabelSmall" type="VBoxContainer" parent="Margin/Rows/Grid/Col0"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_LabelSmall" type="Label" parent="Margin/Rows/Grid/Col0/Row_LabelSmall"]
+layout_mode = 2
+text = "LabelSmall"
+
+[node name="LabelSmall" type="Label" parent="Margin/Rows/Grid/Col0/Row_LabelSmall"]
+layout_mode = 2
+theme_type_variation = &"LabelSmall"
+
+[node name="Row_Badge" type="VBoxContainer" parent="Margin/Rows/Grid/Col1"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_Badge" type="Label" parent="Margin/Rows/Grid/Col1/Row_Badge"]
+layout_mode = 2
+text = "Badge"
+
+[node name="Badge" type="Label" parent="Margin/Rows/Grid/Col1/Row_Badge"]
+layout_mode = 2
+theme_type_variation = &"Badge"
+
+[node name="Row_Tag" type="VBoxContainer" parent="Margin/Rows/Grid/Col2"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_Tag" type="Label" parent="Margin/Rows/Grid/Col2/Row_Tag"]
+layout_mode = 2
+text = "Tag"
+
+[node name="Tag" type="Label" parent="Margin/Rows/Grid/Col2/Row_Tag"]
+layout_mode = 2
+theme_type_variation = &"Tag"
+
+[node name="Row_TagReady" type="VBoxContainer" parent="Margin/Rows/Grid/Col0"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_TagReady" type="Label" parent="Margin/Rows/Grid/Col0/Row_TagReady"]
+layout_mode = 2
+text = "TagReady"
+
+[node name="TagReady" type="Label" parent="Margin/Rows/Grid/Col0/Row_TagReady"]
+layout_mode = 2
+theme_type_variation = &"TagReady"
+
+[node name="Row_HudLabel" type="VBoxContainer" parent="Margin/Rows/Grid/Col1"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_HudLabel" type="Label" parent="Margin/Rows/Grid/Col1/Row_HudLabel"]
+layout_mode = 2
+text = "HudLabel"
+
+[node name="HudLabel" type="Label" parent="Margin/Rows/Grid/Col1/Row_HudLabel"]
+layout_mode = 2
+theme_type_variation = &"HudLabel"
+
+[node name="Row_HudTitle" type="VBoxContainer" parent="Margin/Rows/Grid/Col2"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_HudTitle" type="Label" parent="Margin/Rows/Grid/Col2/Row_HudTitle"]
+layout_mode = 2
+text = "HudTitle"
+
+[node name="HudTitle" type="Label" parent="Margin/Rows/Grid/Col2/Row_HudTitle"]
+layout_mode = 2
+theme_type_variation = &"HudTitle"
+
+[node name="Row_Mono" type="VBoxContainer" parent="Margin/Rows/Grid/Col0"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_Mono" type="Label" parent="Margin/Rows/Grid/Col0/Row_Mono"]
+layout_mode = 2
+text = "Mono"
+
+[node name="Mono" type="Label" parent="Margin/Rows/Grid/Col0/Row_Mono"]
+layout_mode = 2
+theme_type_variation = &"Mono"
+
+[node name="Row_ButtonPrimary" type="VBoxContainer" parent="Margin/Rows/Grid/Col1"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_ButtonPrimary" type="Label" parent="Margin/Rows/Grid/Col1/Row_ButtonPrimary"]
+layout_mode = 2
+text = "ButtonPrimary"
+
+[node name="ButtonPrimary" type="Button" parent="Margin/Rows/Grid/Col1/Row_ButtonPrimary"]
+layout_mode = 2
+theme_type_variation = &"ButtonPrimary"
+text = "ButtonPrimary"
+
+[node name="Row_ButtonSecondary" type="VBoxContainer" parent="Margin/Rows/Grid/Col2"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_ButtonSecondary" type="Label" parent="Margin/Rows/Grid/Col2/Row_ButtonSecondary"]
+layout_mode = 2
+text = "ButtonSecondary"
+
+[node name="ButtonSecondary" type="Button" parent="Margin/Rows/Grid/Col2/Row_ButtonSecondary"]
+layout_mode = 2
+theme_type_variation = &"ButtonSecondary"
+text = "ButtonSecondary"
+
+[node name="Row_ButtonGhost" type="VBoxContainer" parent="Margin/Rows/Grid/Col0"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_ButtonGhost" type="Label" parent="Margin/Rows/Grid/Col0/Row_ButtonGhost"]
+layout_mode = 2
+text = "ButtonGhost"
+
+[node name="ButtonGhost" type="Button" parent="Margin/Rows/Grid/Col0/Row_ButtonGhost"]
+layout_mode = 2
+theme_type_variation = &"ButtonGhost"
+text = "ButtonGhost"
+
+[node name="Row_SegmentedInactive" type="VBoxContainer" parent="Margin/Rows/Grid/Col1"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_SegmentedInactive" type="Label" parent="Margin/Rows/Grid/Col1/Row_SegmentedInactive"]
+layout_mode = 2
+text = "SegmentedInactive"
+
+[node name="SegmentedInactive" type="Button" parent="Margin/Rows/Grid/Col1/Row_SegmentedInactive"]
+layout_mode = 2
+theme_type_variation = &"SegmentedInactive"
+text = "SegmentedInactive"
+
+[node name="Row_SegmentedActive" type="VBoxContainer" parent="Margin/Rows/Grid/Col2"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_SegmentedActive" type="Label" parent="Margin/Rows/Grid/Col2/Row_SegmentedActive"]
+layout_mode = 2
+text = "SegmentedActive"
+
+[node name="SegmentedActive" type="Button" parent="Margin/Rows/Grid/Col2/Row_SegmentedActive"]
+layout_mode = 2
+theme_type_variation = &"SegmentedActive"
+text = "SegmentedActive"
+
+[node name="Row_HudButton" type="VBoxContainer" parent="Margin/Rows/Grid/Col0"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_HudButton" type="Label" parent="Margin/Rows/Grid/Col0/Row_HudButton"]
+layout_mode = 2
+text = "HudButton"
+
+[node name="HudButton" type="Button" parent="Margin/Rows/Grid/Col0/Row_HudButton"]
+layout_mode = 2
+theme_type_variation = &"HudButton"
+text = "HudButton"
+
+[node name="Row_HudButtonActive" type="VBoxContainer" parent="Margin/Rows/Grid/Col1"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_HudButtonActive" type="Label" parent="Margin/Rows/Grid/Col1/Row_HudButtonActive"]
+layout_mode = 2
+text = "HudButtonActive"
+
+[node name="HudButtonActive" type="Button" parent="Margin/Rows/Grid/Col1/Row_HudButtonActive"]
+layout_mode = 2
+theme_type_variation = &"HudButtonActive"
+text = "HudButtonActive"
+
+[node name="Row_PanelDark" type="VBoxContainer" parent="Margin/Rows/Grid/Col2"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_PanelDark" type="Label" parent="Margin/Rows/Grid/Col2/Row_PanelDark"]
+layout_mode = 2
+text = "PanelDark"
+
+[node name="PanelDark" type="PanelContainer" parent="Margin/Rows/Grid/Col2/Row_PanelDark"]
+layout_mode = 2
+theme_type_variation = &"PanelDark"
+
+[node name="Content" type="Label" parent="Margin/Rows/Grid/Col2/Row_PanelDark/PanelDark"]
+layout_mode = 2
+text = "PanelDark content"
+
+[node name="Row_PanelCardHover" type="VBoxContainer" parent="Margin/Rows/Grid/Col0"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_PanelCardHover" type="Label" parent="Margin/Rows/Grid/Col0/Row_PanelCardHover"]
+layout_mode = 2
+text = "PanelCardHover"
+
+[node name="PanelCardHover" type="PanelContainer" parent="Margin/Rows/Grid/Col0/Row_PanelCardHover"]
+layout_mode = 2
+theme_type_variation = &"PanelCardHover"
+
+[node name="Content" type="Label" parent="Margin/Rows/Grid/Col0/Row_PanelCardHover/PanelCardHover"]
+layout_mode = 2
+text = "PanelCardHover content"
+
+[node name="Row_PanelCardSelected" type="VBoxContainer" parent="Margin/Rows/Grid/Col1"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_PanelCardSelected" type="Label" parent="Margin/Rows/Grid/Col1/Row_PanelCardSelected"]
+layout_mode = 2
+text = "PanelCardSelected"
+
+[node name="PanelCardSelected" type="PanelContainer" parent="Margin/Rows/Grid/Col1/Row_PanelCardSelected"]
+layout_mode = 2
+theme_type_variation = &"PanelCardSelected"
+
+[node name="Content" type="Label" parent="Margin/Rows/Grid/Col1/Row_PanelCardSelected/PanelCardSelected"]
+layout_mode = 2
+text = "PanelCardSelected content"
+
+[node name="Row_HudPanel" type="VBoxContainer" parent="Margin/Rows/Grid/Col2"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_HudPanel" type="Label" parent="Margin/Rows/Grid/Col2/Row_HudPanel"]
+layout_mode = 2
+text = "HudPanel"
+
+[node name="HudPanel" type="PanelContainer" parent="Margin/Rows/Grid/Col2/Row_HudPanel"]
+layout_mode = 2
+theme_type_variation = &"HudPanel"
+
+[node name="Content" type="Label" parent="Margin/Rows/Grid/Col2/Row_HudPanel/HudPanel"]
+layout_mode = 2
+text = "HudPanel content"
+
+[node name="Row_HudPauseCard" type="VBoxContainer" parent="Margin/Rows/Grid/Col0"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_HudPauseCard" type="Label" parent="Margin/Rows/Grid/Col0/Row_HudPauseCard"]
+layout_mode = 2
+text = "HudPauseCard"
+
+[node name="HudPauseCard" type="PanelContainer" parent="Margin/Rows/Grid/Col0/Row_HudPauseCard"]
+layout_mode = 2
+theme_type_variation = &"HudPauseCard"
+
+[node name="Content" type="Label" parent="Margin/Rows/Grid/Col0/Row_HudPauseCard/HudPauseCard"]
+layout_mode = 2
+text = "HudPauseCard content"
+
+[node name="Row_SegmentedContainer" type="VBoxContainer" parent="Margin/Rows/Grid/Col1"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Tag_SegmentedContainer" type="Label" parent="Margin/Rows/Grid/Col1/Row_SegmentedContainer"]
+layout_mode = 2
+text = "SegmentedContainer"
+
+[node name="SegmentedContainer" type="PanelContainer" parent="Margin/Rows/Grid/Col1/Row_SegmentedContainer"]
+layout_mode = 2
+theme_type_variation = &"SegmentedContainer"
+
+[node name="Content" type="Label" parent="Margin/Rows/Grid/Col1/Row_SegmentedContainer/SegmentedContainer"]
+layout_mode = 2
+text = "SegmentedContainer content"

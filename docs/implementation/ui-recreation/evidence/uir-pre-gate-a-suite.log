@@ -1,0 +1,54 @@
+# UIR pre-gate-a — full sweep on the frozen tree (19 runs, serial, one engine at a time)
+#
+# Runner refuses to start while any Godot process is alive (pgrep -x Godot guard) and
+# never kills one. GODOT=/Applications/Godot.app/Contents/MacOS/Godot, from the repo root.
+# Columns: label | exit code | tally | SCRIPT ERROR lines (must be 0 — a PASS line next to
+# a SCRIPT ERROR is a failure, so both are read, never the tally alone).
+#
+
+ui-menu-audit          exit=0   PASS 97/97     script_errors=0
+ui-menu-audit-demo     exit=0   PASS 98/98     script_errors=0
+ui-hud-audit           exit=0   PASS 172/172   script_errors=0
+ui-legibility          exit=0   PASS 76/76     script_errors=0
+ui-router-audit        exit=0   PASS 86/86     script_errors=0
+ui-theme-probe         exit=0   PASS 271/271   script_errors=0
+ui-fonts-probe         exit=0   PASS 75/75     script_errors=0
+ui-data-audit          exit=0   PASS 131/131   script_errors=0
+ui-data-audit-demo     exit=0   PASS 134/134   script_errors=0
+ui-input-a11y          exit=0   PASS 117/117   script_errors=0
+ui-reachability        exit=0   PASS 21/21     script_errors=0
+base-harness           exit=0   PASS 8/8       script_errors=0
+base-slice             exit=0   PASS 292/292   script_errors=0
+base-slice-demo        exit=0   PASS 243/243   script_errors=0
+base-input             exit=0   PASS 4/4       script_errors=0
+base-rules             exit=0   PASS 10/10     script_errors=0
+base-modes             exit=0   PASS 6/6       script_errors=0
+base-save              exit=0   PASS 137/137   script_errors=0
+base-music             exit=0   PASS 32/32     script_errors=0
+
+# Commands (exact):
+#   ui-menu-audit       $GODOT --headless --path godot/ --script res://tests/ui/screen_menu_audit.gd
+#   ui-menu-audit-demo  (same) -- --demo
+#   ui-hud-audit        $GODOT --headless --path godot/ --script res://tests/ui/hud_audit.gd
+#   ui-legibility       $GODOT --headless --path godot/ --script res://tests/ui/ui_legibility_audit.gd
+#   ui-router-audit     $GODOT --headless --path godot/ --script res://tests/ui/router_audit.gd
+#   ui-theme-probe      $GODOT --headless --path godot/ --script res://tests/ui/theme_probe.gd
+#   ui-fonts-probe      $GODOT --headless --path godot/ --script res://tests/ui/fonts_assets_probe.gd
+#   ui-data-audit       $GODOT --headless --path godot/ --script res://tests/ui/data_audit.gd
+#   ui-data-audit-demo  (same) -- --demo
+#   ui-input-a11y       $GODOT --headless --path godot/ --script res://tests/ui/input_a11y_audit.gd
+#   ui-reachability     $GODOT --headless --path godot/ --script res://tests/input/reachability_audit.gd
+#   base-*              $GODOT --headless --path godot/ [--script res://tests/<suite>.gd]
+#                       (the eight commands of uir-00-baseline-gates.log, unchanged)
+
+# Before this wave (wave-3 records, for comparison):
+#   hud_audit had never been run (uir-08-hud-audit.log: 'AWAITING EXECUTION');
+#   ui_legibility_audit FAIL 73/76 (3 menu caption containment failures at 1024x600);
+#   router 86/86 was stale — the check 'ui_strings_owns_no_table' matched a function-local
+#     dict added to UiStrings.gd at 01:03 and read FAIL 85/86 until the scan was made
+#     top-level-only (see the closeout).
+
+# Same command set re-run before the wave for the baseline suites matched UIR-00 exactly
+# (harness 8/8, slice 292/292, demo 243/243, input 4/4, rules 10/10, modes 6/6,
+#  save+Steam 137/137, music 32/32). UI tallies before: menu 95/95+96/96, theme 254/254,
+# fonts 75/75, data 131/131+134/134, input/a11y 117/117, reachability 21/21.

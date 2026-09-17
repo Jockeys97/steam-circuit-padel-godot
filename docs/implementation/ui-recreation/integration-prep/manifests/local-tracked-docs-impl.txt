@@ -1,0 +1,14 @@
+docs/implementation/PLAN.md
+docs/implementation/tickets/accessibility-locales-performance.md
+docs/implementation/tickets/athlete-models.md
+docs/implementation/tickets/audio-port.md
+docs/implementation/tickets/camera-feel-integration.md
+docs/implementation/tickets/demo-export-presets.md
+docs/implementation/tickets/drill-3d.md
+docs/implementation/tickets/hud-and-menu.md
+docs/implementation/tickets/nine-arenas.md
+docs/implementation/tickets/quick-match-slice.md
+docs/implementation/tickets/saves-steam-cloud.md
+docs/implementation/tickets/sim-core-parity.md
+docs/implementation/tickets/sim-rules-audits.md
+docs/implementation/tickets/tournament-career.md

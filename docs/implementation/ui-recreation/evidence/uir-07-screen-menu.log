@@ -1,0 +1,246 @@
+# UIR-07 — MenuScreen 1:1 (`screen-menu`): acceptance
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-07-screen-menu.md`
+Date: 2026-09-17 · Integrator (foundation + menu wave 2), sole engine-run owner
+Engine: `4.7.2.stable.official.ed1daf0bf` (`--version`; the foundation wave's log records the same build)
+
+## Where this ran, and why not in the checkout
+
+The repo's own Godot process (PID 94690, `res://game/Main.tscn -- --seed=20260916
+--tier=3 --camera=default`) has been up since 2026-09-16 and was never touched. Every
+engine run of this wave happened in an isolated copy of the working tree, so the
+checkout cannot collect engine-generated files while that process holds the project:
+
+    source  /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
+            (rsync -a, excluding /.git and /godot/.godot; untracked UI sources included)
+    copy    /tmp/padel-uir-wave2-20260917/repo
+    check   tree manifest (relative path + sha256 per file): diff empty before the runs
+    logs    /tmp/padel-uir-wave2-20260917/logs/
+
+The commands below are the ticket's acceptance commands, run inside the copy; the verdict
+is the audit's own `PASS n/n` line and exit code. The repo carries no `.godot/`,
+`*.import` or `*.uid` artifact produced by this wave.
+
+## Commands and results
+
+```
+$ export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+$ cd /tmp/padel-uir-wave2-20260917/repo
+
+$ "$GODOT" --headless --path godot/ --script res://tests/ui/screen_menu_audit.gd
+PASS 95/95
+exit=0                                    SCRIPT ERROR lines: 0
+
+$ "$GODOT" --headless --path godot/ --script res://tests/ui/screen_menu_audit.gd -- --demo
+PASS 96/96
+exit=0                                    SCRIPT ERROR lines: 0
+```
+
+The two runs share one audit; the only difference is the badge branch, which is the one
+thing a build changes. Diff of the two `ok` lists, complete:
+
+```
+35c35,36
+< ok menu/a_full_build_shows_no_badge_text
+---
+> ok menu/a_limited_build_shows_its_badge_text
+> ok menu/the_badge_text_is_a_sentence_not_an_id
+```
+
+Engine lines that are not `ok`/`FAIL`, verbatim (all deliberate, named by the audit's own
+note line, and the script-error count stays zero in both runs):
+
+```
+    ERROR: ScreenRouter.register: 'nope' is not one of the thirteen reference screens
+```
+
+## The full run's checks, verbatim (95)
+
+```
+ok menu/the_router_still_carries_thirteen_ids
+ok menu/the_menu_id_is_one_of_them
+ok menu/the_reference_lists_the_profile_action
+ok menu/the_reference_lists_the_settings_action
+ok menu/all_thirteen_slots_register
+ok menu/the_menu_scene_registers_under_the_menu_id
+ok menu/register_refuses_an_id_outside_the_table
+ok menu/go_to_mounts_the_menu
+ok menu/the_menu_is_the_active_screen
+ok menu/one_screen_is_mounted
+ok menu/the_mounted_screen_exists
+ok menu/the_mounted_scene_carries_MenuScreen_gd
+ok menu/the_scene_mounts_the_theme
+ok menu/the_screen_reports_its_own_id
+ok menu/the_menu_declares_no_return
+ok menu/the_screen_kept_the_router_fact
+ok menu/the_screen_declares_the_three_capture_states
+ok menu/the_run_starts_in_the_default_language
+ok menu/every_visible_key_resolves_in_both_locales
+ok menu/every_slot_shows_the_current_locale_text
+ok menu/the_brand_resolves_through_the_seam
+ok menu/the_toggle_offers_the_other_language_by_default
+ok menu/the_toggle_switches_the_session_language
+ok menu/the_toggle_now_offers_the_language_it_left
+ok menu/the_flip_moves_every_slot_whose_two_translations_differ
+ok menu/the_flip_moved_strings
+ok menu/the_aria_names_follow_the_language
+ok menu/the_profile_tooltip_is_the_reference_title
+ok menu/the_four_aria_names_are_declared
+ok menu/the_screen_has_a_screen_reader_name
+ok menu/the_second_press_returns_to_the_run_language
+ok menu/the_toggle_label_returns_with_it
+ok menu/the_badge_follows_the_build_gate
+ok menu/the_badge_row_hides_with_it
+ok menu/a_full_build_shows_no_badge_text
+ok menu/the_badge_key_is_the_adapters_answer
+ok menu/every_declared_capture_state_applies
+ok menu/an_undeclared_capture_state_is_refused
+ok menu/the_demo_state_shows_the_badge_row
+ok menu/the_demo_state_pins_the_demo_key
+ok menu/the_demo_state_shows_the_demo_text
+ok menu/the_beta_state_shows_the_badge_row
+ok menu/the_beta_state_pins_the_beta_key
+ok menu/the_beta_state_shows_what_that_key_resolves_to
+ok menu/the_default_state_returns_to_the_gate
+ok menu/the_default_state_returns_the_key
+ok menu/modes_routes_to_modes
+ok menu/modes_mounts_exactly_one_screen
+ok menu/drill_routes_to_drill
+ok menu/drill_mounts_exactly_one_screen
+ok menu/help_routes_to_help
+ok menu/help_mounts_exactly_one_screen
+ok menu/history_routes_to_history
+ok menu/history_mounts_exactly_one_screen
+ok menu/challenges_routes_to_challenges
+ok menu/challenges_mounts_exactly_one_screen
+ok menu/feedback_routes_to_feedback
+ok menu/feedback_mounts_exactly_one_screen
+ok menu/profile_routes_to_profile
+ok menu/profile_mounts_exactly_one_screen
+ok menu/settings_routes_to_settings
+ok menu/settings_mounts_exactly_one_screen
+ok menu/profile_is_a_separate_destination
+ok menu/profile_lands_on_profile
+ok menu/settings_is_a_separate_destination
+ok menu/settings_lands_on_settings
+ok menu/the_menu_has_no_declared_back_edge
+ok menu/the_screen_fills_the_frame
+ok menu/nothing_is_wider_than_the_frame
+ok menu/the_poster_keeps_the_reference_aspect
+ok menu/the_title_is_the_theme_size_at_1280
+ok menu/at_1280x720_the_hero_fits_without_scrolling
+ok menu/at_1280x720_the_hero_sits_at_the_top
+ok menu/the_theme_carries_the_chrome_tokens
+ok menu/the_top_bar_carries_a_composed_box
+ok menu/the_top_bar_box_reads_the_palette_token
+ok menu/nothing_is_wider_than_the_small_frame
+ok menu/the_title_clamp_speaks_below_1280
+ok menu/the_smallest_frame_overflows_by_a_scrollable_sliver_at_most
+ok menu/the_scroll_offset_round_trips
+ok menu/and_that_sliver_is_all_that_is_hidden
+ok menu/the_literal_scan_flags_prose_and_ignores_developer_text
+ok menu/the_screen_source_is_readable
+ok menu/MenuScreen_gd_carries_no_prose_literal
+ok menu/the_scene_carries_exactly_the_documented_literals
+ok menu/the_screen_registers_nine_focusables
+ok menu/the_primary_button_is_registered
+ok menu/the_language_toggle_is_registered
+ok menu/the_menu_registers_no_back_control
+ok menu/the_bridge_reads_the_nine_controls
+ok menu/the_bridge_can_focus_the_primary_button
+ok menu/a_confirm_dispatch_is_handled
+ok menu/the_confirm_dispatch_on_play_lands_on_modes
+ok menu/the_toggle_reaches_the_focus_model
+ok menu/a_second_mount_is_told_its_own_id
+```
+
+## Reports and notes
+
+Full build:
+
+```
+    # note expected engine lines in this audit's log, all deliberate: one `ERROR: ScreenRouter.register: 'nope' is not one of the thirteen reference screens` from the refusal check above; the engine's script-error count for this run must still read zero
+    # report language flip: moved=10 identical_in_both_locales=3 slots=13
+    # report aria path: engine exposes accessibility_name=true
+    # report build=full limited=false
+    # note the beta badge key is pinned through the adapter; the port's frozen locale table has no `betaBadge`, so the label shows the id — the reference's own visible-fallback behaviour, recorded here for the locale lane
+    # report 1280x720: content=445.0 viewport=542.0 poster=1.78 scroll=0 widest=564.0
+    # report 1024x600: content=431.0 viewport=422.0 poster=1.78 scroll=0 widest=449.0 title=51
+    # report 1024x600 scroll range: 0..9 px
+    # note scene literals: ["Alpha 0.2", "PADEL PRO", "STEAM CIRCUIT", "⚙️", "🎮", "👤"] — the caption (index.html:72-73, aria-hidden, no data-i18n), the reference's own Alpha 0.2 tag (index.html:83) and the three emoji glyphs (index.html:41-42, :58)
+```
+
+Demo build (`-- --demo`):
+
+```
+    # note expected engine lines in this audit's log, all deliberate: one `ERROR: ScreenRouter.register: 'nope' is not one of the thirteen reference screens` from the refusal check above; the engine's script-error count for this run must still read zero
+    # report language flip: moved=10 identical_in_both_locales=3 slots=13
+    # report aria path: engine exposes accessibility_name=true
+    # report build=demo limited=true
+    # note the beta badge key is pinned through the adapter; the port's frozen locale table has no `betaBadge`, so the label shows the id — the reference's own visible-fallback behaviour, recorded here for the locale lane
+    # report 1280x720: content=471.0 viewport=542.0 poster=1.78 scroll=0 widest=564.0
+    # report 1024x600: content=457.0 viewport=422.0 poster=1.78 scroll=0 widest=449.0 title=51
+    # report 1024x600 scroll range: 0..35 px
+    # note scene literals: ["Alpha 0.2", "PADEL PRO", "STEAM CIRCUIT", "⚙️", "🎮", "👤"] — the caption (index.html:72-73, aria-hidden, no data-i18n), the reference's own Alpha 0.2 tag (index.html:83) and the three emoji glyphs (index.html:41-42, :58)
+```
+
+The numbers behind the layout checks: at 1280x720 (the capture size) the hero's own
+content is 445 px inside a 542 px viewport — it fits with 97 px to spare, nothing scrolls,
+the poster holds 1.78 (16:9) and the title is the theme's 64 px. At 1024x600 the clamp
+yields 51 px and the content exceeds its viewport by 9 px in a full build and 35 px in a
+demo build — a scrollable sliver, reachable to the last control, never clipped away — the
+behaviour the browser has there too (`body` scrolls; the reference's hero is content-height
+there). The `ui-menu.png` capture itself is pending: UIR-24's harness does not exist yet,
+so the ticket's "otherwise note pending" branch applies.
+
+## Definition of Done
+
+- [x] **Screen renders in the router; all 8 actions route correctly.** `menu/modes_routes_to_modes`
+      … `menu/settings_routes_to_settings`, each mounting exactly one screen; profile and
+      settings are additionally asserted as their own destinations, exactly as the reference
+      guards them.
+- [x] **Zero user-facing literals, proven by the audit scan.** `menu/MenuScreen_gd_carries_no_prose_literal`,
+      with the scan's synthetic proof that it can still see prose; the scene carries exactly
+      the six documented literals (the caption pair, `Alpha 0.2`, the three emoji glyphs).
+      `router_audit.gd`'s own UI-lane scan now reads 12 files, 0 offenders, no whitelist entry.
+- [x] **Language toggle changes every visible string** — titles, sub, hint, the six buttons,
+      the two tags, the four aria names, the two tooltips and the toggle's own label:
+      `moved=10 identical_in_both_locales=3`. The three that do not move are the ones whose
+      `it` and `en` text is identical in the reference tables; a slot that *should* have moved
+      and did not would have been listed by name (`menu/the_flip_moves_every_slot_whose_two_translations_differ`).
+- [x] **Badge visibility correct per build.** Full: hidden, no text. Demo: `DEMO` shown. The
+      three capture states pin the key through `DemoGateAdapter`, never by faking strings.
+- [x] **Nothing rendered outside the ticket's own files that belongs to another ticket** — with
+      five recorded deviations, all integrator-owned, listed below.
+
+## Deviations recorded (integrator, this wave)
+
+1. **Theme (UIR-02's scope).** The menu needed three reference colours the theme had no token
+   for, each read off its own line: `nav_bg` (`styles.css:90`), `caption_shadow`
+   (`styles.css:215`), `poster_fade` (`styles.css:194`). Added to `padel_theme.tres` and to
+   the README's §3 table, so the screen carries no literal colour of its own. The theme's own
+   probe now asserts them (`PASS 254/254`) and the static validator still reads `PASS 25/25`.
+2. **Theme (UIR-02's scope), gap named not filled.** The menu chrome the theme still has no
+   *variation* for (top bar, its two icon buttons, the language toggle, the badge dot, the
+   hint pill, the tag chips, the poster frame, the caption) is composed at run time from
+   `Palette` reads in `MenuScreen.gd::_style_chrome()`. `godot/src/ui/theme/README.md` §7
+   carries the follow-up for the theme owner; the theme file was not forked.
+3. **Adapter (UIR-04's scope).** `DemoGateAdapter.badge_text_key_for(build_id)` added:
+   `js/ui.js:744` picks `betaBadge`/`demoBadge` by the build's name, which `badge_text_key()`
+   could not express. `badge_text_key()` itself is unchanged; `data_audit.gd` still reads
+   `PASS 131/131` / `134/134`.
+4. **Probe fix (UIR-02's scope).** `theme_probe.gd` measured an unthemed grid; see
+   `uir-02-theme-probe.log` for the three fixes and the before/after numbers.
+5. **Two geometry rules live in the screen** because a `Theme` holds absolute sizes and no
+   viewport rules (theme README §6.5, §6.9): `.hero h1`'s `clamp(2.4rem, 5vw, 4rem)` and
+   `.hero-poster`'s width-driven `aspect-ratio: 16 / 9`. Both are re-derived from the frame in
+   `MenuScreen.gd` and asserted at both ticket sizes by the audit.
+
+## Still open
+
+- `ui-menu.png` at 1280x720 — UIR-24's capture harness (pending that ticket).
+- The `beta` badge renders the key itself (`betaBadge`), because the port's frozen locale
+  table has no such entry — the reference's own visible-fallback behaviour, recorded for the
+  locale lane (UIR-23 owns the beta build label).
+- GATE-A (Luca's prototype verdict), the platform/touch decision and `luca-final` remain
+  untouched, as the charter requires.

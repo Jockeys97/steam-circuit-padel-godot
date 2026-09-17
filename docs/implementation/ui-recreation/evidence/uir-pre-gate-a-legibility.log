@@ -1,0 +1,84 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok legibility/1280x720/the_host_mounted_a_router
+ok legibility/1280x720/menu/default/containment
+ok legibility/1280x720/menu/default/disjoint_blocks
+ok legibility/1280x720/menu/default/contrast
+ok legibility/1280x720/menu/demo/containment
+ok legibility/1280x720/menu/demo/disjoint_blocks
+ok legibility/1280x720/menu/demo/contrast
+ok legibility/1280x720/menu/beta/containment
+ok legibility/1280x720/menu/beta/disjoint_blocks
+ok legibility/1280x720/menu/beta/contrast
+# not-ported legibility/1280x720/modes: 'modes' is still the ported scene (no UIR-03 hooks)
+ok legibility/1152x648/the_host_mounted_a_router
+ok legibility/1152x648/menu/default/containment
+ok legibility/1152x648/menu/default/disjoint_blocks
+ok legibility/1152x648/menu/default/contrast
+ok legibility/1152x648/menu/demo/containment
+ok legibility/1152x648/menu/demo/disjoint_blocks
+ok legibility/1152x648/menu/demo/contrast
+ok legibility/1152x648/menu/beta/containment
+ok legibility/1152x648/menu/beta/disjoint_blocks
+ok legibility/1152x648/menu/beta/contrast
+# not-ported legibility/1152x648/modes: 'modes' is still the ported scene (no UIR-03 hooks)
+ok legibility/1920x1080/the_host_mounted_a_router
+ok legibility/1920x1080/menu/default/containment
+ok legibility/1920x1080/menu/default/disjoint_blocks
+ok legibility/1920x1080/menu/default/contrast
+ok legibility/1920x1080/menu/demo/containment
+ok legibility/1920x1080/menu/demo/disjoint_blocks
+ok legibility/1920x1080/menu/demo/contrast
+ok legibility/1920x1080/menu/beta/containment
+ok legibility/1920x1080/menu/beta/disjoint_blocks
+ok legibility/1920x1080/menu/beta/contrast
+# not-ported legibility/1920x1080/modes: 'modes' is still the ported scene (no UIR-03 hooks)
+ok legibility/1024x600/the_host_mounted_a_router
+ok legibility/1024x600/menu/default/containment
+ok legibility/1024x600/menu/default/disjoint_blocks
+ok legibility/1024x600/menu/default/contrast
+ok legibility/1024x600/menu/demo/containment
+ok legibility/1024x600/menu/demo/disjoint_blocks
+ok legibility/1024x600/menu/demo/contrast
+ok legibility/1024x600/menu/beta/containment
+ok legibility/1024x600/menu/beta/disjoint_blocks
+ok legibility/1024x600/menu/beta/contrast
+# not-ported legibility/1024x600/modes: 'modes' is still the ported scene (no UIR-03 hooks)
+ok legibility/1280x720/hud/default/containment
+ok legibility/1280x720/hud/default/regions_disjoint
+ok legibility/1280x720/hud/serving/containment
+ok legibility/1280x720/hud/serving/regions_disjoint
+ok legibility/1280x720/hud/rally/containment
+ok legibility/1280x720/hud/rally/regions_disjoint
+ok legibility/1280x720/hud/point-pause/containment
+ok legibility/1280x720/hud/point-pause/regions_disjoint
+ok legibility/1280x720/hud/set-tennis/containment
+ok legibility/1280x720/hud/set-tennis/regions_disjoint
+ok legibility/1280x720/hud/drill/containment
+ok legibility/1280x720/hud/drill/regions_disjoint
+ok legibility/1280x720/hud/tournament/containment
+ok legibility/1280x720/hud/tournament/regions_disjoint
+ok legibility/1280x720/hud/career/containment
+ok legibility/1280x720/hud/career/regions_disjoint
+ok legibility/1280x720/hud/panel-open/containment
+ok legibility/1280x720/hud/panel-open/regions_disjoint
+ok legibility/1152x648/hud/default/containment
+ok legibility/1152x648/hud/default/regions_disjoint
+ok legibility/1152x648/hud/serving/containment
+ok legibility/1152x648/hud/serving/regions_disjoint
+ok legibility/1152x648/hud/rally/containment
+ok legibility/1152x648/hud/rally/regions_disjoint
+ok legibility/1152x648/hud/point-pause/containment
+ok legibility/1152x648/hud/point-pause/regions_disjoint
+ok legibility/1152x648/hud/set-tennis/containment
+ok legibility/1152x648/hud/set-tennis/regions_disjoint
+ok legibility/1152x648/hud/drill/containment
+ok legibility/1152x648/hud/drill/regions_disjoint
+ok legibility/1152x648/hud/tournament/containment
+ok legibility/1152x648/hud/tournament/regions_disjoint
+ok legibility/1152x648/hud/career/containment
+ok legibility/1152x648/hud/career/regions_disjoint
+ok legibility/1152x648/hud/panel-open/containment
+ok legibility/1152x648/hud/panel-open/regions_disjoint
+# report sizes=4 screens=4 hud_states=18
+PASS 76/76

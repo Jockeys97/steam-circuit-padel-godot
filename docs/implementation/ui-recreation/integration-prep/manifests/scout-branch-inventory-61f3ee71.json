@@ -1,0 +1,348 @@
+{
+  "artifact": "brother-branch scouting inventory (codex/gameplay-and-map)",
+  "generated_by": "dev-work subagent (read-only scouting; no writes to active checkout)",
+  "verified_at": "2026-09-17 01:21:59 +0200 (fresh ls-remote + gh pr list re-checked)",
+  "remote_url": "https://github.com/Jockeys97/steam-circuit-padel-godot.git",
+  "branch": "codex/gameplay-and-map",
+  "remote_branch_sha": "61f3ee718dda7aaf304447384480695a29e0efac",
+  "remote_main_sha": "252ff6074039372ebbf8ec682f9adda0e9c80d03",
+  "active_repo": {
+    "path": "/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot",
+    "branch": "main",
+    "head_sha": "252ff6074039372ebbf8ec682f9adda0e9c80d03",
+    "upstream": "origin/main",
+    "ahead_behind": "+0 -0",
+    "dirty_tracked_modified": [
+      "godot/game/main_menu.gd",
+      "godot/game/match_controller.gd"
+    ],
+    "dirty_untracked_notable": [
+      ".hermes/",
+      "art/concepts/",
+      "docs/implementation/ui-recreation/",
+      "godot/assets/ui/",
+      "godot/game/out/*.png (UI captures)",
+      "godot/game/arenas/art/*.webp.import"
+    ]
+  },
+  "pull_request": {
+    "exists": false,
+    "evidence": "gh pr list --repo Jockeys97/steam-circuit-padel-godot --state all -> []; pulls?head=Jockeys97:codex/gameplay-and-map -> count 0",
+    "given_url_meaning": "https://github.com/Jockeys97/steam-circuit-padel-godot/pull/new/codex/gameplay-and-map is a PR-creation (compare) URL, not an existing PR"
+  },
+  "merge_analysis": {
+    "merge_base_sha": "252ff6074039372ebbf8ec682f9adda0e9c80d03",
+    "commits_ahead": 4,
+    "commits_behind": 0,
+    "ff_only_possible_from_current_main": true,
+    "branch_tree_sha": "60fe07819fd3b34a405718902caee5914da12dec",
+    "main_tree_sha": "e602fdf5b327d5727c6a231a97a97289b3e3cb8a",
+    "diff_shortstat": {
+      "files_changed": 21,
+      "insertions": 1607,
+      "deletions": 195
+    },
+    "no_file_overlap_with_current_dirty_files": true,
+    "what_is_not_in_the_branch": [
+      "no arena/layout assets changed anywhere (nothing under godot/game/arenas/, no .tscn)",
+      "godot/src/sim/** untouched (parity core frozen)",
+      "godot/game/hud.gd untouched (another hand's pad-hint work)",
+      "godot/game/match_controller.gd NOT committed (held back; 'follows in a second push')",
+      "godot/tests/game_slice_test.gd NOT committed (same second push)",
+      "js/, index.html, styles.css untouched (frozen parity reference)"
+    ]
+  },
+  "map_meaning_note": "The 'map' in the branch name is docs/wayfinder/map.md \u2014 the project WORK map (slice S14 charting: shot logic parity, timing logic parity, timing presentation). It is NOT a game-arena/map-layout change. The court/arena scene files are untouched by this branch. The only layout-adjacent artifact is godot/game/tools/yellow_map.py, a frame-diagnostic tool (ASCII map of a colour class in a captured PNG).",
+  "commits": [
+    {
+      "sha": "61f3ee718dda7aaf304447384480695a29e0efac",
+      "author": "Alessio Fantini",
+      "email": "alessiofantini@Host-002.lan",
+      "committed": "2026-09-17T01:16:08+02:00",
+      "subject": "docs: hand the gameplay and map state to Luca"
+    },
+    {
+      "sha": "cc88a14d1e8dad8aa569002f6becaf216fca07aa",
+      "author": "Alessio Fantini",
+      "email": "alessiofantini@Host-002.lan",
+      "committed": "2026-09-17T01:13:19+02:00",
+      "subject": "tools: probe what the pad hears, measure what the frames show"
+    },
+    {
+      "sha": "a52bbb25986e434bf4853e3137552b2e04999fae",
+      "author": "Alessio Fantini",
+      "email": "alessiofantini@Host-002.lan",
+      "committed": "2026-09-17T01:13:19+02:00",
+      "subject": "docs: chart slice S14 (shot logic, timing logic, timing presentation)"
+    },
+    {
+      "sha": "d5bb0f85e116fe74a846bef8b3cf38e856c88f5e",
+      "author": "Alessio Fantini",
+      "email": "alessiofantini@Host-002.lan",
+      "committed": "2026-09-17T01:12:50+02:00",
+      "subject": "fix: read the pad in the player's hands and number its buttons the way Godot does"
+    }
+  ],
+  "changed_files": [
+    {
+      "status": "A",
+      "path": "docs/handoff/gameplay-and-map-2026-09-17.md",
+      "category": "docs-handoff",
+      "insertions": 85,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "M",
+      "path": "docs/mission/LOG.md",
+      "category": "docs-mission-log",
+      "insertions": 48,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "M",
+      "path": "docs/mission/STATE.md",
+      "category": "docs-mission-log",
+      "insertions": 16,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "A",
+      "path": "docs/wayfinder/evidence/active-player-marker.md",
+      "category": "docs-wayfinder-evidence",
+      "insertions": 85,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "A",
+      "path": "docs/wayfinder/evidence/player-switch-parity.md",
+      "category": "docs-wayfinder-evidence",
+      "insertions": 129,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "M",
+      "path": "docs/wayfinder/map.md",
+      "category": "docs-wayfinder",
+      "insertions": 16,
+      "deletions": 1,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "A",
+      "path": "docs/wayfinder/tickets/shot-logic-parity.md",
+      "category": "docs-wayfinder-ticket",
+      "insertions": 86,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "A",
+      "path": "docs/wayfinder/tickets/timing-logic-parity.md",
+      "category": "docs-wayfinder-ticket",
+      "insertions": 78,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "A",
+      "path": "docs/wayfinder/tickets/timing-presentation-3d.md",
+      "category": "docs-wayfinder-ticket",
+      "insertions": 100,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "M",
+      "path": "docs/wayfinder/validate.py",
+      "category": "docs-wayfinder",
+      "insertions": 6,
+      "deletions": 3,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "M",
+      "path": "docs/wayfinder/validation.md",
+      "category": "docs-wayfinder",
+      "insertions": 8,
+      "deletions": 5,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "M",
+      "path": "godot/game/input_map.gd",
+      "category": "gameplay-input",
+      "insertions": 368,
+      "deletions": 110,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "M",
+      "path": "godot/game/match_config.gd",
+      "category": "gameplay-input",
+      "insertions": 21,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "A",
+      "path": "godot/game/tools/pad_probe.gd",
+      "category": "tooling-probe",
+      "insertions": 113,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "A",
+      "path": "godot/game/tools/pad_probe.gd.uid",
+      "category": "tooling-probe",
+      "insertions": 1,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "A",
+      "path": "godot/game/tools/yellow_map.py",
+      "category": "tooling-probe",
+      "insertions": 73,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "M",
+      "path": "godot/project.godot",
+      "category": "gameplay-input",
+      "insertions": 47,
+      "deletions": 74,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "M",
+      "path": "godot/tests/input/input_remap_a11y_audit.gd",
+      "category": "tests-input",
+      "insertions": 5,
+      "deletions": 2,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "M",
+      "path": "godot/tests/input/run_all.gd",
+      "category": "tests-input",
+      "insertions": 1,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "A",
+      "path": "godot/tests/input/switch_mode_audit.gd",
+      "category": "tests-input",
+      "insertions": 320,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    },
+    {
+      "status": "A",
+      "path": "godot/tests/input/switch_mode_audit.gd.uid",
+      "category": "tests-input",
+      "insertions": 1,
+      "deletions": 0,
+      "touches_frozen_ui_reference": false
+    }
+  ],
+  "frozen_reference_check": {
+    "js_index_styles_untouched": true,
+    "also_untouched": [
+      "godot/game/arenas/",
+      "godot/src/",
+      "godot/game/hud.gd",
+      "godot/game/main_menu.gd",
+      "godot/game/match_controller.gd",
+      "godot/tests/game_slice_test.gd",
+      "GAMEPLAY_RULES.md"
+    ]
+  },
+  "blockers_and_risks": [
+    {
+      "id": "R1",
+      "severity": "high",
+      "title": "Branch tip is a deliberately partial input bridge \u2014 pad input is dead at the tip without the follow-up push",
+      "evidence": "d5bb0f8 rewrote godot/game/input_map.gd around a per-instance 'device' (NO_DEVICE default, _button/_axis return neutral unless device != NO_DEVICE) with set_device/select_device/assign_devices; no committed game-code caller: godot/game/match_controller.gd is NOT in the branch, its main version does `_input_source = InputSource.new()` (match_controller.gd:200) and `apply_frame(_input_source.sample(state), delta)` (:717) only; grep set_device|assign_devices on that file -> none. Handoff: match_controller.gd + game_slice_test.gd 'follow in a second push'.",
+      "consequence": "Merging as-is: keyboard OK, pad silently dead (worse than main where the pad worked despite wrong post-Y numbering/aim). Wait for the second push before integrating."
+    },
+    {
+      "id": "R2",
+      "severity": "medium",
+      "title": "Upcoming second push will touch godot/game/match_controller.gd = a file dirty in the active UI checkout",
+      "evidence": "handoff: active-athlete marker lives in match_controller.gd + game_slice_test.gd ('code follows in a second push'); active checkout has match_controller.gd AND main_menu.gd modified (uncommitted UI integration).",
+      "consequence": "Integrate only after the UI lane commits; never merge/pull while those files carry another lane's uncommitted edits."
+    },
+    {
+      "id": "R3",
+      "severity": "medium",
+      "title": "Green-gate claims were produced on brother's integrated WORKING tree, not on the pushed tip",
+      "evidence": "handoff 'Verified on the integrated tree' (input 5/5 393 checks; audits 10/10; harness 8/8; slice red only at the gitignored padel.pck) while match_controller.gd is uncommitted there (player-switch-parity.md: 'Not committed. Working tree only').",
+      "consequence": "Re-run all gates on the merged tree; mission rule: a gate counts only with its evidence file + commands re-run by someone other than the implementer."
+    },
+    {
+      "id": "R4",
+      "severity": "low",
+      "title": "project.godot [input] block rewritten (bindings corrected; ui_accept/ui_cancel re-serialized) \u2014 semantic seam for later project.godot edits",
+      "evidence": "project.godot diff -47/+74: LB=9, Start=6, RB=10, D-pad=11-14, split-step=LT axis 4, sprint=RT axis 5 (bogus button dropped); ui_accept/ui_cancel carry the same events, moved to the top of [input].",
+      "consequence": "Any later lane editing project.godot (UI autoloads/scenes) rebases on the merged version; conflicts are semantic, not textual."
+    },
+    {
+      "id": "R5",
+      "severity": "low",
+      "title": "Reference JS audit suite cannot run on owner's Mac (node_modules absent, sharp unresolved) \u2014 recorded as environment, not drift",
+      "evidence": "handoff + LOG.md 2026-09-17 01:12 entry; validate.py expectation corrected 27->28 audits (expected VALUE fixed, check unchanged); validator re-run PASS 0/0.",
+      "consequence": "No effect on the merge; note for any future 'run the reference audits' attempt."
+    },
+    {
+      "id": "R6",
+      "severity": "info",
+      "title": "Commit author identity is machine-local (alessiofantini@Host-002.lan), not a GitHub-linked email",
+      "evidence": "git log of the 4 commits: 'Alessio Fantini <alessiofantini@Host-002.lan>'.",
+      "consequence": "Commit/PR attribution may show unlinked on GitHub; not a blocker."
+    },
+    {
+      "id": "R7",
+      "severity": "info",
+      "title": "Handoff notes divergent local histories on brother's machine; local-only commit a877d19 (athlete strokes <-> gameplay contact) is NOT in this branch, and its objects are unknown to the active repo",
+      "evidence": "handoff 'Two histories': 8037c6b==8fed1da and 0458c23==2f7b538 patch-identical duplicates, 'must not be merged into origin/main'. Read-only check in active repo: git cat-file -t a877d19/8037c6b/0458c23 -> 'Not a valid object name'.",
+      "consequence": "Ask brother whether a877d19's content is wanted upstream; do not fetch his local main blindly."
+    }
+  ],
+  "ownership": {
+    "input/gameplay code": "Alessio Fantini (brother) \u2014 commits d5bb0f8 + follow-up push; slice S14 lanes per docs/mission/STATE.md: crew-shotlogic (S14a), crew-timinglogic (S14b), crew-timinghud (S14c, allowlist: godot/game/hud.gd, godot/game/match_controller.gd, one game_slice_test.gd section, docs evidence, godot/game/out/*.png)",
+    "wayfinder docs (map.md, tickets/, evidence/, validate.py)": "brother's CEO-led session claims/stewards; DOC map updates are CEO-owned",
+    "frozen parity reference (js/, index.html, styles.css)": "read-only for everyone; verified untouched by this branch",
+    "UI integration in active checkout (main_menu.gd, match_controller.gd, godot/assets/ui/, docs/implementation/ui-recreation/)": "Luca's UI lane (local, uncommitted at scout time)"
+  },
+  "integration_plan": {
+    "preconditions": [
+      "UI integration work in main_menu.gd + match_controller.gd is committed (or otherwise resolved) by its owner",
+      "Brother's second push has landed OR explicit go-ahead that the branch tip is final (otherwise pad regresses to dead \u2014 R1)",
+      "Re-verify SHAs at integration time: branch still 0 behind main, then the merge stays conflict-free"
+    ],
+    "steps": [
+      "git fetch origin  (in active repo, when its owner allows network state changes)",
+      "git rev-parse origin/main origin/codex/gameplay-and-map  (expect 252ff60.. and 61f3ee7.. or newer)",
+      "git merge-base --is-ancestor origin/main origin/codex/gameplay-and-map  (true => fast-forward possible)",
+      "git merge --ff-only origin/codex/gameplay-and-map  (no textual conflicts possible at current SHAs)",
+      "Re-run gates on the merged tree, ONE Godot process at a time (macOS): import; tests/input/run_all.gd; tests/audits/run_all.gd; harness (main scene); tests/game_slice_test.gd; python3 docs/wayfinder/validate.py",
+      "Independent re-run by someone other than the implementer before 'done' (mission rule)",
+      "Push main (owner account); only if PR traceability is wanted, have the branch owner use the given /pull/new/ URL to open the PR (repo currently has zero PRs)"
+    ],
+    "do_not": [
+      "Do not pull/checkout/stash/reset/merge/rebase/edit git config/fetch in the active checkout during this scouting phase (done here: read-only only)",
+      "Do not git add -A in this repo (art/generated ~265 MB, tools/meshy, captures; handoff rule 4)",
+      "Do not merge brother's duplicate commits (8037c6b/0458c23) or his local main",
+      "Do not treat the PR-creation URL as an existing PR",
+      "No nested workers / paid APIs in scouting (budget $0)"
+    ]
+  }
+}

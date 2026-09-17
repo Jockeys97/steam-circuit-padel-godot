@@ -1,0 +1,125 @@
+# UIR-05 — input, focus and accessibility contract: acceptance
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-05-input-a11y-contract.md`
+
+## Commands and results
+
+```
+$ export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+$ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
+
+$ "$GODOT" --headless --path godot/ --script res://tests/ui/input_a11y_audit.gd
+# totals checks=117 failures=0 not-ported=4
+PASS 117/117                                   exit 0
+SCRIPT ERROR count: 0
+
+# the input lane must stay untouched and green
+$ "$GODOT" --headless --path godot/ --script res://tests/input/run_all.gd
+# totals checks=308 failures=0 not-ported=7
+PASS 4/4                                       exit 0
+
+# nothing else moved
+$ "$GODOT" --headless --path godot/ --script res://tests/ui/router_audit.gd
+PASS 86/86                                     exit 0
+$ "$GODOT" --headless --path godot/ --script res://tests/ui/data_audit.gd
+PASS 131/131                                   exit 0
+```
+
+Evidence lines worth keeping (`input_a11y_audit.gd` output):
+
+```
+# report graph: 13 screens, 11 reachable by declared edges, 19 forward edges, 10 returns, flow-entered=["game", "result"]
+# report transitions observed by the routers own signal: 4
+# report not-ported=4
+```
+
+## What the audit proves
+
+- **Graph reachability.** Breadth-first over the router's own table, both edge kinds:
+  the forward `to-*` actions a screen declares (`Router.to_actions_of` → the reference's
+  `data-action` table, 19 edges) and the declared returns (`Router.back_target_of`, 10
+  edges, walked in reverse). Eleven screens are reachable from the root; the two that no
+  declared edge reaches are named, not glossed: `game` and `result` are entered by the
+  match flow, and the audit asserts *both* that they declare no return and that nothing
+  in the table points at them.
+- **Registration.** The shell's controls reach `MenuFocus` under the shell's own ids
+  (`<screen_id>/back`), with its own action (`back`); re-registering an id replaces it and
+  never duplicates a target in the model (four registrations, four targets).
+- **Locked controls are registered, visible, reported (`locked_ids()`), and inert**:
+  `focus.focusable_ids()` excludes them (the model's own filter, `focus_nav.gd::_selectable`
+  — this bridge does not restate it), `set_focus()` on one is `false`, and a control that
+  *takes the focus first and is locked afterwards* still cannot activate: no transition,
+  the router does not move.
+- **Back.** On a non-root screen, a back dispatch navigates once to the shell's declared
+  target, proved through `ScreenRouter.screen_changed`; on the root it navigates nowhere
+  (the reference audit's own rule, `scripts/gamepad-nav-audit.mjs:67-82`).
+- **The handled contract** (the "no double activation" DoD): `dispatch()` returns true
+  exactly for the events the model owns (Enter, Escape, directions, pad A/B), false for a
+  key it does not own and for a pointer event — so the caller stops Godot's built-in
+  `ui_*` navigation from moving the same focus again.
+- **Motion policy.** `UiMotionPolicy` mirrors `AccessibilitySettings` through one object:
+  default full motion, `duration()` → 0 under reduced motion, shake capped at the
+  reference's own 0.5, particles scaled to its floor/factor, toggling both ways, and
+  prefs applied through the policy reaching the same settings object.
+- **The keyboard model.** With a pad connected, confirming a probe text field opens
+  `osk.gd` for that field (context `osk`, a character lands in the field), back closes it
+  and gives the field the focus back; a pad A opens it, a pad B closes it, and a button
+  release is not a confirm.
+
+## Text-entry limitations, named (not implied)
+
+1. **No visual keyboard grid.** The model opens, shifts, types and closes, but nothing
+   draws it: the drawn grid is the postponed platform decision (UIR-26). A pad-only
+   player can open the keyboard and not see it.
+2. **No touch input.** No touch bindings exist in `scheme.gd`; the reference's touch paths
+   (`js/main.js:430-542`) have no port side.
+3. **No IME / composition.** Typing goes through the OSK model or the engine's own text
+   controls; composing input for the languages the locale seam carries is not wired in.
+4. **Key repeat is not asserted stepwise.** The bridge hands one event to
+   `MenuFocus.handle_key`; repeat lives in `menu_nav.gd::repeat_state` (pad) and in the
+   engine (keys), so the audit asserts the final focused id, per the ticket's instruction.
+
+These four are also emitted as `# not-ported` lines by the audit itself
+(`# report not-ported=4`), so a later run cannot quietly drop one.
+
+## Findings the run produced (fixed here, recorded for the pack)
+
+1. **`focus_nav.set_focus()` is permissive and answers a different question.** It accepts
+   any id and returns whether the focus *changed* (`focus_nav.gd:140-144`) — so it
+   reported success for a *locked* target. The bridge now asks the model's own filtered
+   list (`MenuFocus.focusable_ids()`) before moving, and answers "is the focus on this id
+   now". Any other caller that trusted `set_focus`'s return value has the same trap.
+2. **`screen-modes` declares no forward navigation of its own**: its row's `to` is exactly
+   its `back` (`nav_routes.gd`: `{"id": "screen-modes", "back": "to-menu", "to":
+   ["to-menu"]}`). The audit asserts this rather than assuming a forward action exists,
+   and takes its forward-navigation test from the root's eight actions.
+3. **A shell exposes `screen_id` as a property, a screen as a method.** The bridge reads
+   whichever the node in front of it has (`_shell_screen_id`); it does not assume both.
+4. **`ScreenShell` gained one getter**: `back_target()` (UIR-03's file, extended under
+   UIR-05's microstep 3) so the declared return is readable without touching the property
+   directly. No other change to the shell; the shell already named its back control
+   `<screen_id>/back` with the action `back`, so microstep 3's "if needed" resolved to a
+   one-line getter.
+
+## Constructed state, labeled
+
+The audit builds its own frame (1280x720), router, shell, four probe controls and one
+probe text field, mounts the real `PlaceholderScreen` scenes through the real router, and
+frees the frame at the end. No real screen, no `user://` state, no game scene is touched.
+
+
+---
+
+# Integration wave 2 verification (2026-09-17, integrator)
+
+Re-run, unmodified, in the isolated copy (engine `4.7.2.stable.official.ed1daf0bf`):
+
+    $ "$GODOT" --headless --path godot/ --script res://tests/ui/input_a11y_audit.gd
+    PASS 117/117
+    exit=0                                    SCRIPT ERROR lines: 0
+
+One downstream consumer now exercises this contract for real: `screen_menu_audit.gd`
+attaches `UiFocusBridge` to the mounted `MenuScreen` and asserts that the screen's nine
+`focus_controls()` reach the bridge, that `set_focus("menu/PlayButton")` lands, and that a
+confirm `InputEventKey` dispatch routes to `modes`. That is a smoke use, not new audit
+coverage of UIR-05; the API itself is unchanged.

@@ -1,0 +1,93 @@
+# UIR pre-gate-a — capture wave (genuine frames, regenerated)
+#
+# Runner: one Godot at a time (pgrep -x Godot guard, never kills a running one).
+# Commands (from the repo root; GODOT=/Applications/Godot.app/Contents/MacOS/Godot):
+#   menu, per size S:  $GODOT --rendering-driver opengl3 --path godot --resolution S \
+#       res://tests/ui/capture_ui.tscn -- --capture=all --seed=20260916 --tier=3
+#   prototype menu:    $GODOT --rendering-driver opengl3 --path godot --resolution 1280x720 \
+#       res://game/Main.tscn -- --ui=new --capture=menu --out=ui-prototype-menu
+#   HUD/match, per S:  $GODOT --rendering-driver opengl3 --path godot --resolution S \
+#       res://game/Match.tscn -- --ui=new --capture=match --tier=3 --seed=20260916
+#
+# All 11 capture runs: exit 0, 0 SCRIPT ERROR lines, harness checks PASS 5/5 (menu runs).
+# The menu harness re-checks every PNG non-vacuous on read-back (sampled colour count).
+
+## Menu — read-back lines from the harness (cap-menu-<size>.log)
+ok ui-menu path=res://game/out/ui-menu.png size=1152x648 colours=73
+ok ui-menu-demo path=res://game/out/ui-menu-demo.png size=1152x648 colours=72
+ok ui-menu-beta path=res://game/out/ui-menu-beta.png size=1152x648 colours=72
+ok ui-menu path=res://game/out/ui-menu.png size=1024x600 colours=66
+ok ui-menu-demo path=res://game/out/ui-menu-demo.png size=1024x600 colours=56
+ok ui-menu-beta path=res://game/out/ui-menu-beta.png size=1024x600 colours=56
+ok ui-menu path=res://game/out/ui-menu.png size=1280x720 colours=62
+ok ui-menu-demo path=res://game/out/ui-menu-demo.png size=1280x720 colours=68
+ok ui-menu-beta path=res://game/out/ui-menu-beta.png size=1280x720 colours=68
+
+## Prototype lane
+CAPTURE_SAVE err=0 path=res://game/out/ui-prototype-menu.png size=1280x720
+
+## HUD/match — plan shots (quickmatch-serve / rally / hud / result), per size
+CAPTURE_SHOT name=quickmatch-serve.png tick=143 points=0 crossings=1 rally=0
+CAPTURE_SHOT name=rally.png tick=420 points=0 crossings=3 rally=3
+CAPTURE_SHOT name=hud.png tick=421 points=0 crossings=3 rally=3
+CAPTURE_SHOT name=result.png tick=25962 points=24 crossings=174 rally=16
+CAPTURE_DONE shots=4 ticks=25962 result={ "winner": "ai" } score=0-0 points=24
+CAPTURE_SHOT name=quickmatch-serve.png tick=143 points=0 crossings=1 rally=0
+CAPTURE_SHOT name=rally.png tick=420 points=0 crossings=3 rally=3
+CAPTURE_SHOT name=hud.png tick=421 points=0 crossings=3 rally=3
+CAPTURE_SHOT name=result.png tick=25962 points=24 crossings=174 rally=16
+CAPTURE_DONE shots=4 ticks=25962 result={ "winner": "ai" } score=0-0 points=24
+CAPTURE_SHOT name=quickmatch-serve.png tick=143 points=0 crossings=1 rally=0
+CAPTURE_SHOT name=rally.png tick=420 points=0 crossings=3 rally=3
+CAPTURE_SHOT name=hud.png tick=421 points=0 crossings=3 rally=3
+CAPTURE_SHOT name=result.png tick=25962 points=24 crossings=174 rally=16
+CAPTURE_DONE shots=4 ticks=25962 result={ "winner": "ai" } score=0-0 points=24
+
+## Files on disk after the wave (godot/game/out/)
+ui-menu.png                     437950 1280x720 b99f1cc784702f5bdbc1d6ec9068a4fe
+ui-menu-demo.png                439957 1280x720 7994c597a1b68f134754af94b3bb08b0
+ui-menu-beta.png                440505 1280x720 1de829b4d96d44571ae980ac7eac95a6
+ui-menu-1152x648.png            348416 1152x648 01cf5be1d494588e03c349657f5a9a59
+ui-menu-demo-1152x648.png       341652 1152x648 1efeb40fc3ad50ae40954acd2694a298
+ui-menu-beta-1152x648.png       342529 1152x648 f86799148d20da8c9431af8238cb126c
+ui-menu-1024x600.png            268004 1024x600 220514d484520a394024ea1977de26b9
+ui-menu-demo-1024x600.png       265820 1024x600 3bfe926b10a9a8e9e5181d4649887923
+ui-menu-beta-1024x600.png       266626 1024x600 56fce5755a9712d27a494b3fa902712b
+ui-prototype-menu.png           437950 1280x720 b99f1cc784702f5bdbc1d6ec9068a4fe
+ui-prototype-hud-serve.png      185448 1280x720 9967720bae2d49e373981600261dfe48
+ui-prototype-hud-rally.png      188084 1280x720 778790cba42eb9697b59b451167faf36
+ui-hud-feedback.png             188704 1280x720 9538f63695f59bc3dc05f43c64cb9a16
+ui-hud-result.png               188086 1280x720 01391e0dc09015b23ca34299d81d87c5
+ui-hud-serve-1152x648.png       154778 1152x648 5f689e6102135da967f5e90a223e348c
+ui-hud-rally-1152x648.png       157900 1152x648 f3f9257017b3058a7dd104e2be68cd48
+ui-hud-serve-1024x600.png       138380 1024x600 4d0d10246bcbbd2cad6f5591f93179d1
+ui-hud-rally-1024x600.png       141989 1024x600 16475715faacbab5b91b6a50f69b6259
+
+## Before-set (preserved at /tmp/uir-pregate/prior/, unchanged by this wave)
+# Recorded hashes of the wave-3 set as they stood before this wave (all were regenerated):
+81f309ce0cdf97d8ba52ab87507099d6 hud.png
+df869c4e5bad68a924859b0d8f95d2f5 menu.png
+619a421737c04bc47232cd1a15de8884 quickmatch-serve.png
+8a3181d0ac28cc2d57d8234b679be4ed rally.png
+0dab0631939076e56cc898d1ef80d625 result.png
+cd3f654da3d0869124ddec2c6bda0e99 ui-hud-feedback.png
+9b74255e7f1ca10c84beca88151a7f1a ui-hud-rally-1152x648.png
+8131c7e9185bd87470a71a00e8e719b1 ui-hud-result.png
+28d8c244280eb555302d105704742876 ui-hud-serve-1152x648.png
+6692fcdd536e5c909eac896cf6dfc7f7 ui-menu-beta.png
+e37d4fc28b0044f4c209c9fff5fa6f4c ui-menu-demo.png
+1f0e32d3df5d26bbdf12fccb6a3f6407 ui-menu.png
+b014551dda1caa62bbe6a3c3aa6c8a26 ui-prototype-hud-rally.png
+40bbb74a54e1e15cad391fd3e32ba73e ui-prototype-hud-serve.png
+1f0e32d3df5d26bbdf12fccb6a3f6407 ui-prototype-menu.png
+
+## Note
+# - ui-menu.png and ui-prototype-menu.png are byte-identical (two lanes, same frame).
+# - The four tracked plan-lane names (hud.png, quickmatch-serve.png, rally.png, result.png) are
+#   part of UIR-00's frozen before-set (`uir-00-before-set.md`, "read-only from here on"). The
+#   match lane rewrote them to produce the ui-* frames above; they were then restored
+#   byte-identical from the pre-wave copies and re-verified against the register's full
+#   sha256: menu.png bb2d929c…, hud.png babafd27…, rally.png 63942951…,
+#   quickmatch-serve.png 0a2696dd…, result.png a1cce659… — all MATCH the register.
+# - 1024x600 is the legibility audit's small frame: the menu caption overflow proof is the
+#   audit PASS (uir-pre-gate-a-legibility.log) plus the ui-menu-1024x600.png frame.

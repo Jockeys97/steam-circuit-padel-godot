@@ -1,0 +1,137 @@
+# UIR-00 — baseline gate sweep, native macOS, measured
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-00-baseline-freeze.md`
+Runner: `/tmp/uir00-run.sh` (outside the repo — UIR-00's write allowlist is the two
+evidence files only). Raw per-suite stdout/stderr for every line below:
+`/tmp/uir00-out/<suite>.out`, driver transcript `/tmp/uir00-out/progress.txt`,
+commands `/tmp/uir00-out/commands.txt`, results `/tmp/uir00-out/results.txt`.
+
+## Context
+
+```
+date (UTC)                   2026-09-16T21:57:06Z   (local 2026-09-16T23:57:06+0200)
+git log --oneline -1         252ff60 docs: record the Il Maestro hand-off handles and final gate tallies
+git rev-parse HEAD           252ff6074039372ebbf8ec682f9adda0e9c80d03
+engine                       /Applications/Godot.app/Contents/MacOS/Godot --version
+                             -> 4.7.2.stable.official.ed1daf0bf      (expected pin: PASS)
+```
+
+`git status --short` at sweep time (recorded, not repaired — the DoR's "clean tree"
+is not true of this checkout and was not made true):
+
+```
+?? .hermes/
+?? art/concepts/
+?? docs/implementation/ui-recreation/
+?? godot/game/arenas/art/clockwork-factory.webp.import
+?? godot/game/arenas/art/deposito-locomotive.webp.import
+?? godot/game/arenas/art/officina-vapore-standard.webp.import
+```
+
+The pack directory is untracked because nothing in this effort commits; the three
+`.webp.import` sidecars are another lane's generated files (`godot/game/arenas/art/`)
+and were left exactly as found.
+
+Serialization: suites ran one engine process at a time from one driver, each under a
+420 s watchdog (`timeout`/`gtimeout`/`flock`/`xvfb-run` are all absent on this Mac).
+A pre-existing, unrelated engine process was already running for the owner and was
+NOT touched (it stayed up for the whole sweep):
+
+```
+94690 Godot --path godot res://game/Main.tscn -- --seed=20260916 --tier=3 --camera=default
+```
+
+All eight suites below ran green with that window process alive — recorded because
+the pack's engine rule is "one engine process at a time", and this sweep is the
+measured evidence of what "green with the owner's window up" looks like on this host.
+
+## Tally table (all eight suites, serial, one engine process at a time)
+
+| # | Suite | Command (from repo root) | exit | tally line | SCRIPT ERROR | other ERROR lines | WARNING lines |
+|---|---|---|---|---|---|---|---|
+| 1 | harness | `$GODOT --headless --path godot/` | 0 | `PASS 8/8` | 0 | 0 | 0 |
+| 2 | slice, full | `$GODOT --headless --path godot/ --script res://tests/game_slice_test.gd` | 0 | `PASS 292/292` | 0 | 2 (both allow-listed, below) | 1 |
+| 3 | slice, demo | `$GODOT --headless --path godot/ --script res://tests/game_slice_test.gd -- --demo` | 0 | `PASS 243/243` | 0 | 2 (both allow-listed, below) | 1 |
+| 4 | input + a11y | `$GODOT --headless --path godot/ --script res://tests/input/run_all.gd` | 0 | `PASS 4/4` | 0 | 0 | 0 |
+| 5 | rules audits | `$GODOT --headless --path godot/ --script res://tests/audits/run_all.gd` | 0 | `PASS 10/10` | 0 | 0 | 0 |
+| 6 | modes | `$GODOT --headless --path godot/ --script res://tests/modes/run_all.gd` | 0 | `PASS 6/6` | 0 | 0 | 0 |
+| 7 | saves + Steam seam | `$GODOT --headless --path godot/ --script res://tests/save_steam_test.gd` | 0 | `PASS 137/137` | 0 | 0 | 0 |
+| 8 | music port | `$GODOT --headless --path godot/ --script res://tests/music_port_test.gd` | 0 | `PASS 32/32` | 0 | 0 | 1 |
+
+`$GODOT=/Applications/Godot.app/Contents/MacOS/Godot`; every command was run as
+`"$GODOT" --headless --path godot/ …` from
+`/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot`, stderr and
+stdout captured together, exit code taken from `wait` (no shell pipeline to mask it).
+
+Suite detail (verbatim lines from the captured output):
+
+```
+1  harness         PASS 8/8
+2  slice-full      # PACK_MODE full=res://build/linux-x86_64/padel.pck absent (source checkout) — pack-content checks not run, not scored
+                   # PACK_MODE demo=res://build/linux-x86_64-demo/padel-demo.pck absent (source checkout) — pack-content check not run, not scored
+                   PASS 292/292
+3  slice-demo      (same two PACK_MODE lines, demo build)
+                   PASS 243/243
+4  input           # totals checks=308 failures=0 not-ported=7
+                   # report screens=13 declared_returns=10 openers=17 markup_reachable=9/13
+                   PASS 4/4
+5  audits          # totals checks=221 failures=0 not-ported=0 expected-checks=221 mismatched=[] audits_failed=0
+                   # verdict audits passed=10/10 harness checks=20/20
+                   PASS 10/10
+6  modes           # totals checks=3603 failures=0 not-ported=1 elapsed_ms=574
+                   PASS 6/6
+7  saves           PASS 137/137
+8  music           # injected drift: 15/15 cases caught, each with its own named failure
+                   PASS 32/32
+```
+
+Elapsed: 23:57:06 → 23:59:16 (2 m 10 s wall clock for all eight).
+
+## The two `ERROR:` lines in the slice runs, named
+
+Both are already allow-listed by the port's own strict log gate
+(`godot/game/check_log.sh:15-23`, `ALLOW_ARENA`, `ALLOW_SHUTDOWN`), and both appear
+identically in the full and the demo run:
+
+```
+ERROR: arena_library: unknown arena id 'nope' (have: officina, locomotive, clockwork, cattedrale, forgia, tempesta, abissale, caldera, orrery)
+ERROR: 7 resources still in use at exit (run with --verbose for details).        [8 in the demo run]
+```
+
+1. The first is the deliberate unknown-id probe inside the suite:
+   `godot/tests/game_slice_test.gd:1615` — `check("an unknown arena id does not
+   build", Arena.build("nope", "default") == null and not Arena.has("nope"))`. The
+   probe passes and the engine's own module logs the refusal.
+2. The second is the engine's shutdown report, not a test failure.
+
+`SCRIPT ERROR` count is **0 in all eight suites** — the tally lines above are not
+sitting next to a script error anywhere.
+
+`WARNING:` lines, recorded as measured: slice-full leaks 113 ObjectDB instances at
+exit, slice-demo 92, music 31 (`WARNING: <n> ObjectDB instances were leaked at exit`);
+one `WARNING:` per slice run is the engine's pack-absence note above. No `WARNING`
+was produced by harness, input, audits, modes or saves.
+
+## Historical numbers vs measured (differences recorded, not repaired)
+
+| Suite | Historical (README baseline table) | Measured now | Disposition |
+|---|---|---|---|
+| harness | PASS 8/8 | PASS 8/8 | reproduces |
+| slice, full | 280 checks (post-fix handoff); 278 on a fresh clone without the pack | **292** | wider than either historical figure, and green. The pack checks now print `not scored` instead of skipping (the `42aafa5` change); the log above carries the two `PACK_MODE … not scored` lines that account for it. No check was removed to reach this number — the tally line is `PASS 292/292` with 0 failures. |
+| slice, demo | 229 (post-fix handoff); 227 fresh clone | **243** | same shape as above: green, wider than the historical figure, demo guards active in the run (the demo gate's own checks are inside the 243). |
+| input | PASS 4/4, 308 checks, 7 not-ported | PASS 4/4, checks=308, not-ported=7 | reproduces exactly |
+| rules audits | PASS 10/10, 221 checks | PASS 10/10, checks=221 | reproduces exactly |
+| saves + Steam | PASS 137/137 | PASS 137/137 | reproduces exactly |
+| music port | 32/32 claimed; FAIL 30/32 measured before `42aafa5` | **PASS 32/32**, drift injection 15/15 | the provenance repair holds at this commit |
+| modes | not in the README table | PASS 6/6, checks=3603, not-ported=1 | measured here; the README table has no modes row to compare against |
+
+No suite is red. Nothing was edited to produce any number in this file.
+
+## What this baseline does not measure
+
+- Frame timing, legibility or any visual claim (no capture was taken; no window grab
+  is possible on this Mac — `docs/wayfinder/evidence/local-macos-gate-sweep.md`).
+- The two pack-content suites (`godot/build/**` is gitignored and absent); they are
+  reported `not scored`, which is the port's own documented behaviour.
+- Any macOS-window behaviour of the owner's running game window (PID 94690): it was
+  observed alive, never inspected or driven.

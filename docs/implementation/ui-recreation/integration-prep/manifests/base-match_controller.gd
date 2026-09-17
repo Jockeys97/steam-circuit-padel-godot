@@ -52,8 +52,6 @@ const Court := preload("res://game/court.gd")
 const Arena := preload("res://game/arenas/arena_library.gd")
 const InputSource := preload("res://game/input_map.gd")
 const HudScript := preload("res://game/hud.gd")
-## UIR-09's prototype overlay: the recreated HUD (`godot/src/ui/Hud.tscn`), mounted in
-## the same layer as the ported one and fed the same state+meta behind `--ui=new`.
 const Config := preload("res://game/match_config.gd")
 const ScriptedPlayer := preload("res://game/scripted_player.gd")
 const MatchAudioScript := preload("res://game/match_audio.gd")
@@ -123,11 +121,6 @@ var _pending_input: Dictionary = {}
 var _pending_input2: Dictionary = {}
 var _hud
 var _mode_hud
-## The prototype HUD (UIR-09), null in a legacy run. `--ui=new` shows it and hides the
-## two ported overlays; they are still built and refreshed, so both constructions stay
-## verifiable in one build until UIR-22 owns the removal.
-var _ui_hud: Control = null
-var _ui_new := false
 var _audio
 var _cam: Camera3D
 ## The arena environment currently in the scene, built by
@@ -161,7 +154,6 @@ var _points_total_prev: int = 0
 func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	var capture := _arg(args, "--capture=", "")
-	_ui_new = _arg(args, "--ui=", "legacy") == "new"
 	var camera := _arg(args, "--camera=", Config.camera_preset)
 	var tier := _arg(args, "--tier=", "")
 	var athlete := _arg(args, "--athlete=", "")
@@ -317,7 +309,6 @@ func _adopt_session() -> void:
 	_sync_views()
 	if _hud != null:
 		_hud.refresh(state, meta)
-	_refresh_ui(state, meta)
 	print("MODE_START %s" % JSON.stringify(session.report()))
 
 
@@ -332,7 +323,6 @@ func _finish_mode() -> Dictionary:
 		_mode_hud.refresh()
 	if _hud != null:
 		_hud.refresh(state, meta)
-	_refresh_ui(state, meta)
 	print("MODE_FINISH %s" % JSON.stringify(awarded))
 	return awarded
 
@@ -499,43 +489,6 @@ func _build_scene() -> void:
 	layer.add_child(_mode_hud)
 	if session != null:
 		_mode_hud.bind_session(session)
-	if _ui_new:
-		# UIR-09's prototype mount. Same layer, same state+meta (`_refresh_ui`), same
-		# names, and the pause button the ported HUD also carries — a drill's ESC still
-		# flips `_paused` in one place (`_unhandled_input`), which both overlays read.
-		# Loaded, not preloaded: the prototype overlay is opt-in, so a legacy run
-		# (the slice gate included) does not pull its scene and theme into the
-		# engine's object count.
-		_ui_hud = (load("res://src/ui/Hud.tscn") as PackedScene).instantiate()
-		_ui_hud.name = "UiHud"
-		layer.add_child(_ui_hud)
-		_ui_hud.bind_names(
-			String(Config.athlete()["name"]),
-			String(Config.tier()["name"]),
-			player_color,
-			ai_color
-		)
-		_ui_hud.pause_requested.connect(_on_ui_pause)
-		_hud.visible = false
-		_mode_hud.visible = false
-
-
-## The prototype overlay's pause button asks the same question the key does: it emits,
-## this file owns `_paused` (the HUD never sets it), and both overlays are told.
-func _on_ui_pause() -> void:
-	_paused = not _paused
-	_reset_transient_input()
-	if _hud != null:
-		_hud.set_paused(_paused)
-	if _ui_hud != null:
-		_ui_hud.set_paused(_paused)
-
-
-## The one call site that feeds the prototype HUD: it is refreshed wherever the ported
-## HUD is, with the same state and meta, so the two cannot drift before UIR-22.
-func _refresh_ui(state_ref, meta_ref: Dictionary) -> void:
-	if _ui_hud != null:
-		_ui_hud.refresh(state_ref, meta_ref)
 
 
 ## The four athletes on court, as real rigs from `src/character/athlete_spawn.gd`.
@@ -658,7 +611,6 @@ func start_match() -> void:
 	_sync_views()
 	if _hud != null:
 		_hud.refresh(state, meta)
-	_refresh_ui(state, meta)
 
 
 # ---------------------------------------------------------------------------
@@ -746,8 +698,6 @@ func apply_frame(sample: Dictionary, delta: float) -> Dictionary:
 		result = advance_frame(delta)
 	if _hud != null and not finished:
 		_hud.refresh(state, meta)
-	if _ui_hud != null and not finished:
-		_ui_hud.refresh(state, meta)
 	if _mode_hud != null and session != null and not finished:
 		_mode_hud.refresh()
 	_sync_views()
@@ -869,7 +819,6 @@ func _observe(prev_y: float) -> void:
 		if _hud != null:
 			_hud.refresh(state, meta)
 			_hud.show_result(state)
-		_refresh_ui(state, meta)
 	# The engine-driven build refreshes the HUD once per rendered frame in
 	# `_process`. A harness that owns the tick loop has no rendered frames, so the
 	# tick path also refreshes it — at 4 Hz during play, and always on the last
@@ -880,8 +829,6 @@ func _observe(prev_y: float) -> void:
 		# reads the same panel a rendered frame would show.
 		if _mode_hud != null and session != null and not finished and not _page_finished():
 			_mode_hud.refresh()
-	if _ui_hud != null and not engine_driven and (finished or ticks % 30 == 0):
-		_ui_hud.refresh(state, meta)
 
 
 ## True when the mode's own end has been reached — a drill that the player left.
@@ -1000,7 +947,6 @@ func _run_capture() -> void:
 			var hit: bool = bool(shot["when"].call(state))
 			if hit or ticks >= _shot_deadline(_capture_index):
 				_hud.refresh(state, meta)
-				_refresh_ui(state, meta)
 				_sync_views()
 				await _save_frame("%s/%s" % [out_dir, String(shot["file"])])
 				print("CAPTURE_SHOT name=%s tick=%d points=%d crossings=%d rally=%d" % [
@@ -1008,7 +954,6 @@ func _run_capture() -> void:
 				])
 				_capture_index += 1
 		_hud.refresh(state, meta)
-		_refresh_ui(state, meta)
 		_sync_views()
 		await get_tree().process_frame
 	print("CAPTURE_DONE shots=%d ticks=%d result=%s score=%s-%s points=%d" % [
@@ -1038,7 +983,6 @@ func _run_arena_capture() -> void:
 		_sync_views()
 		if _hud != null:
 			_hud.refresh(state, meta)
-		_refresh_ui(state, meta)
 		await _save_frame("%s/arena-%s.png" % [out_dir, id])
 		var scenery: Node = _arena_root.get_node_or_null("Scenery") if _arena_root != null else null
 		print("ARENA_CAPTURE id=%s family=%s wallBounce=%.2f rear_alpha=%.3f meshes=%d scenery=%d artwork=%s" % [
@@ -1102,7 +1046,6 @@ func _run_mode_capture() -> void:
 				break
 		if _hud != null:
 			_hud.refresh(state, meta)
-		_refresh_ui(state, meta)
 		if _mode_hud != null:
 			_mode_hud.refresh()
 		_sync_views()
@@ -1155,8 +1098,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			_reset_transient_input()
 			if _hud != null:
 				_hud.set_paused(_paused)
-			if _ui_hud != null:
-				_ui_hud.set_paused(_paused)
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("menu_quit"):

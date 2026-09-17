@@ -1,0 +1,162 @@
+diff --git a/godot/game/hud.gd b/godot/game/hud.gd
+index aad5b0b..5b4bace 100644
+--- a/godot/game/hud.gd
++++ b/godot/game/hud.gd
+@@ -91,6 +91,7 @@ var _result_panel: PanelContainer
+ var _result_title: Label
+ var _result_detail: Label
+ var _hint: Label
++var _hint_paused := false
+ ## Every panel this HUD built. The safe-area pass walks exactly these.
+ var _panels: Array[PanelContainer] = []
+ 
+@@ -104,6 +105,8 @@ const POSITION_LABELS := {
+ 	"playerMate": "COMPAGNO",
+ }
+ const HINT_PLAY := "WASD/frecce muoviti · SPAZIO carica e rilascia (drive) · META slice · ALT speciale · TAB/Z cambia · ESC pausa"
++const HINT_PAD := "A drive · X slice · Y lob\nB speciale · RB tecnico\nLS muovi / mira · RS/LB cambia\nLT split-step · RT sprint\nD-pad tattica · START pausa"
++const HINT_PAD_DETAILS := "RB+A chiquita · RB+X vibora · RB+Y lob difensivo\nDoppio A/X/Y: smash / volée / globo quando pronti"
+ 
+ 
+ func _ready() -> void:
+@@ -267,7 +270,7 @@ func _build_feedback() -> void:
+ 	# left, and the two overlapped at 1152 px (the assertion in
+ 	# `tests/game_slice_test.gd` is what caught it). The energy label now sits above
+ 	# its bar instead of beside it, which is where the width went.
+-	var panel := _panel(Vector2(0.5, 1.0), Vector2(-134.0, -190.0), Vector2(268.0, 0.0), "FeedbackPanel")
++	var panel := _panel(Vector2(1.0, 1.0), Vector2(-280.0, -190.0), Vector2(268.0, 0.0), "FeedbackPanel")
+ 	var col := VBoxContainer.new()
+ 	col.add_theme_constant_override("separation", 4)
+ 	panel.add_child(col)
+@@ -312,15 +315,15 @@ func _build_feedback() -> void:
+ 
+ 
+ func _build_log() -> void:
+-	var panel := _panel(Vector2(0.0, 1.0), Vector2(12.0, -182.0), Vector2(420.0, 170.0), "LogPanel")
++	var panel := _panel(Vector2(0.0, 1.0), Vector2(12.0, -182.0), Vector2(250.0, 170.0), "LogPanel")
+ 	var col := VBoxContainer.new()
+ 	col.add_theme_constant_override("separation", 2)
+ 	panel.add_child(col)
+ 	var title := _label(Locale.t("chronicle"), 18, Color(1.0, 0.821, 0.4), HORIZONTAL_ALIGNMENT_LEFT, false)
+ 	col.add_child(title)
+ 	for i in 5:
+-		var l := _label("", 17, Color(0.86, 0.90, 0.95))
+-		l.custom_minimum_size = Vector2(384.0, 0.0)
++		var l := _label("", 14, Color(0.86, 0.90, 0.95))
++		l.custom_minimum_size = Vector2(226.0, 0.0)
+ 		col.add_child(l)
+ 		_log_lines.append(l)
+ 
+@@ -377,6 +380,7 @@ func bind_names(player_name: String, ai_name: String, player_color: Color, ai_co
+ 
+ 
+ func refresh(state, meta: Dictionary) -> void:
++	set_paused(_hint_paused)
+ 	_player_score.text = String(state.playerScore)
+ 	_ai_score.text = String(state.aiScore)
+ 	var set_scores: Array = state.setScores
+@@ -443,6 +447,42 @@ func _update_energy(state) -> void:
+ 	_energy_fill.color = c
+ 
+ 
++## The three bands and the three colours of the energy bar the REFERENCE draws: it
++## has no energy bar in its HUD at all. `js/main.js:1916` hands
++## `state.rallyEnergy.player` to `drawActiveIndicator`, which draws the bar on the
++## court, under the active athlete (`js/render.js:1031-1037`), and the ported match
++## controller draws that one from these values. The panel bar above keeps its own
++## (opaque) bands: it is the port's addition, and changing its colours would change
++## a screenshot the review has already read.
++const FIELD_ENERGY_TEAL := Color(0.337, 0.910, 0.847)   # #56e8d8, energy > 0.55
++const FIELD_ENERGY_AMBER := Color(1.0, 0.831, 0.361)    # #ffd45c, energy > 0.3
++const FIELD_ENERGY_RED := Color(1.0, 0.420, 0.392)      # #ff6b64, below
++
++
++## `energy > 0.55 ? "#56e8d8" : energy > 0.3 ? "#ffd45c" : "#ff6b64"`
++## (`js/render.js:1036`).
++static func field_energy_color(energy: float) -> Color:
++	if energy > 0.55:
++		return FIELD_ENERGY_TEAL
++	if energy > 0.3:
++		return FIELD_ENERGY_AMBER
++	return FIELD_ENERGY_RED
++
++
++## The precision bar's fill (`js/render.js:1709-1717`): cyan while the angle is not
++## armed, amber — reddening with `tight` — and pulsing once it is. `armed` is
++## `tight > 0.02`, the reference's own threshold; `pulse` is the caller's clock
++## (the reference blinks it at `time * 16`, `js/render.js:1711`).
++const PRECISION_CYAN := Color(0.494, 0.953, 1.0, 0.75)  # rgba(126,243,255,0.75)
++
++
++static func precision_color(tight: float, pulse: float) -> Color:
++	if tight > 0.02:
++		var level := clampf(tight, 0.0, 1.0)
++		return Color(1.0, (190.0 - level * 120.0) / 255.0, 70.0 / 255.0, clampf(pulse, 0.0, 1.0))
++	return PRECISION_CYAN
++
++
+ ## The five most recent events, newest first, resolved to sentences.
+ ##
+ ## One rendering rule: an event whose line is identical to the line above it is
+@@ -492,7 +532,11 @@ func show_result(state) -> void:
+ 
+ 
+ func set_paused(paused: bool) -> void:
+-	_hint.text = "%s — ESC" % Locale.t("pause") if paused else HINT_PLAY
++	_hint_paused = paused
++	var has_pad := not Input.get_connected_joypads().is_empty()
++	_hint.text = (HINT_PAD if has_pad else HINT_PLAY)
++	if paused:
++		_hint.text = "%s — ESC / START\n%s\n%s" % [Locale.t("pause"), _hint.text, HINT_PAD_DETAILS if has_pad else ""]
+ 
+ 
+ # ---------------------------------------------------------------------------
+@@ -544,6 +588,48 @@ static func mode_label(mode_id: String) -> String:
+ 	return resolve_or(key, mode_of(mode_id))
+ 
+ 
++## The four colours of the verdict drawn ON THE COURT (`js/render.js:1048-1053`).
++## The reference keeps two palettes: these bright ones for the word over the athlete
++## who hit, and the panel's (`GRADE_COLORS` above) for the corner line. An unknown
++## grade is white, which is the reference's own `?? "#ffffff"`.
++const FIELD_GRADE_COLORS := {
++	"perfect": Color(0.455, 1.0, 0.729),   # #74ffba
++	"good": Color(0.467, 0.906, 1.0),      # #77e7ff
++	"early": Color(1.0, 0.831, 0.361),     # #ffd45c
++	"late": Color(1.0, 0.545, 0.439),      # #ff8b70
++}
++
++
++static func field_grade_color(grade: String) -> Color:
++	return FIELD_GRADE_COLORS.get(grade, Color(1.0, 1.0, 1.0))
++
++
++## The tactical advice word the reference draws over the active athlete,
++## `t("shotAdvice_" + state.shotRead.advice).toUpperCase()` (`js/render.js:1730`).
++## Resolved here, where the locale layer is, and never as the id: an id on screen is
++## the defect class this file exists to prevent. The upper case is the reference's
++## own (`js/render.js:1730`).
++static func advice_word(advice: String) -> String:
++	return resolve_or("shotAdvice_%s" % advice, advice.to_upper()).to_upper()
++
++
++## The word's colour, by shot profile: `#ffd46a` aggressive, `#8fffd0` otherwise
++## (`js/render.js:1745`) — the reference's exact two-value rule, aggressive checked
++## first, everything else (including "control") on the second.
++const ADVICE_AGGRESSIVE := Color(1.0, 0.831, 0.416)  # #ffd46a
++const ADVICE_CONTROL := Color(0.561, 1.0, 0.816)     # #8fffd0
++
++
++static func advice_color(profile: String) -> Color:
++	return ADVICE_AGGRESSIVE if profile == "aggressive" else ADVICE_CONTROL
++
++
++## The word drawn when the simulation carries no advice at all: the reference's
++## `state.shotRead?.advice ?? "read"` (`js/render.js:1730`).
++static func advice_of(read: Dictionary) -> String:
++	return String(read.get("advice", "read"))
++
++
+ ## The resolver first; the readable fallback only when the resolver would hand back
+ ## the id itself. Never the id.
+ static func resolve_or(message_id: String, fallback: String) -> String:

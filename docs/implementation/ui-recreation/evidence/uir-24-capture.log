@@ -1,0 +1,51 @@
+# UIR-24 — capture harness transcript
+#
+# Ticket: docs/implementation/ui-recreation/tickets/UIR-24-capture-harness.md
+# Harness: godot/tests/ui/capture_ui.gd + capture_ui.tscn (renders one PNG per
+#          registered screen and per declared capture state).
+# Runner:  /Applications/Godot.app/Contents/MacOS/Godot 4.7.2.stable.official.ed1daf0bf
+# Repo:    /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
+# HEAD:    252ff6074039372ebbf8ec682f9adda0e9c80d03   (working tree, no commit made)
+# Date:    2026-09-16T23:30:19Z (UTC)
+#
+# Command (the ticket's acceptance line):
+#   $GODOT --rendering-driver opengl3 --path godot --resolution 1280x720 \
+#     res://tests/ui/capture_ui.tscn -- --capture=all --seed=20260916 --tier=3 ; echo "capture exit=$?"
+#
+# Result: exit 0, PASS 5/5, SCRIPT ERROR lines 0. Real GPU frames: "OpenGL API 4.1
+# Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4".
+# Non-vacuous frames: each saved PNG is read back and its colour count sampled
+# (colours=64..70 on the three menu states; a single-colour frame would be recorded in
+# # blank=[] and fail). Attached file hash: md5 9422717bf711629f69c116abc54372d4 (stdout SHA-free copy).
+# Screens: covered menu (default/demo/beta) at 1280x720 into godot/game/out/ui-menu*.png;
+# "modes" is REGISTERED but still the ported scene: it owns its own capture lane and
+# reads the same `--capture=` argument, so the harness checks the UIR-03 contract on the
+# scene off-tree and reports it pending instead of mounting it (a measured earlier run
+# mounted it, its lane fired under the harness and it quit the run from below).
+# Pending (registered later / not yet recreated): characters, arena, help, history,
+# challenges, profile, feedback, drill, settings, game, result.
+#
+# The secondary viewport (1152x648) is covered by the match capture pair
+# (ui-hud-serve-1152x648.png / ui-hud-rally-1152x648.png) and by the legibility audit's
+# four sizes; this harness itself was run at the ticket's 1280x720.
+# ---------------------------------------------------------------------------
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4
+
+CAPTURE_UI_START which=all seed=20260916 tier=3 frame=(1280.0, 720.0)
+ok harness/the_host_mounted_a_router
+SCREENS registered=["menu","modes"] pending=["characters","arena","help","history","challenges","profile","feedback","drill","settings","game","result"]
+ok screen/menu/mounted
+STATES screen=menu states=["default","demo","beta"]
+ok capture/ui-menu
+ok ui-menu path=res://game/out/ui-menu.png size=1280x720 colours=64
+ok capture/ui-menu-demo
+ok ui-menu-demo path=res://game/out/ui-menu-demo.png size=1280x720 colours=70
+ok capture/ui-menu-beta
+ok ui-menu-beta path=res://game/out/ui-menu-beta.png size=1280x720 colours=70
+note screen/modes pending: the recreation has not landed; it keeps its own capture lane
+# refused=[]
+# blank=[]
+# saved=["res://game/out/ui-menu.png","res://game/out/ui-menu-demo.png","res://game/out/ui-menu-beta.png"]
+PASS 5/5

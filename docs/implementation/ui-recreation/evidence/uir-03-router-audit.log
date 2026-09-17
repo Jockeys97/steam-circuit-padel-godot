@@ -1,0 +1,191 @@
+# UIR-03 — screen router and shared UI contracts: acceptance
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-03-router-and-shared-contracts.md`
+
+## Commands and results
+
+```
+$ export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+$ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
+
+$ "$GODOT" --headless --path godot/ --script res://tests/ui/router_audit.gd
+PASS 86/86
+exit=0                                    SCRIPT ERROR lines: 0
+
+$ "$GODOT" --headless --path godot/ --script res://tests/input/reachability_audit.gd
+PASS 21/21
+exit=0                                    SCRIPT ERROR lines: 0
+     # report screens=13 declared_returns=10 openers=17 markup_reachable=9/13
+```
+
+Raw log of that exact pair: `/tmp/uir03-acceptance.out` (full stdout+stderr, both
+commands, each followed by its `exit=` line). The audit was run three times while it
+was being brought up; the run above is the canonical one and the last two are
+identical in verdict.
+
+Engine: `4.7.2.stable.official.ed1daf0bf` (`--version`). Serialization: one engine
+process at a time; the owner's pre-existing window process (PID 94690,
+`res://game/Main.tscn -- --seed=20260916 --tier=3 --camera=default`) was alive and was
+not touched.
+
+## Expected engine lines in the router audit's log (deliberate, not faults)
+
+```
+WARNING: ScreenRouter.go_to: screen "menu" is not registered; staying on ""
+WARNING: ScreenRouter.go_to: screen "nope" is not registered; staying on "modes"
+WARNING: ScreenRouter.go_to: screen "screen-menu" is not registered; staying on "modes"
+ERROR: ScreenRouter.register: 'nope' is not one of the thirteen reference screens
+ERROR: ScreenRouter.register: 'menu' was handed a null scene
+```
+
+Those five lines are the audit exercising the refusal paths on purpose: `go_to` before
+any registration, `go_to` with an unknown id, `go_to` with a DOM id instead of a router
+id, `register` with an id outside the thirteen, and `register` with a null scene. Each
+one is also asserted (`go_to` returns false, the active screen does not change, no
+`screen_changed` is emitted, `register` returns false). There are no other `ERROR:`,
+`WARNING:` or script-error lines in either command's log.
+
+## What the 86 checks cover
+
+| Group | Checks | What is proven |
+|---|---|---|
+| table | 24 | exactly thirteen ids; equal to `nav_routes.gd`'s `ROUTE_SCREENS` ids (normalized over the `screen-` prefix) and to `ROUTE_REGISTRY`, both ways; the DOM anchors are the reference ids in document order; `dom_id_of`/`id_of_dom` round-trip and answer `""` for anything unknown; the declared back target of every screen matches the reference's `data-back`; exactly menu/game/result declare none; the `to-*` action lists match the reference's own; the result carries `to-menu`, the field carries none |
+| registration and mounting | 20 | a fresh router mounts nothing and refuses `go_to`; thirteen scenes register; `register` refuses an id outside the table and a null scene; `go_to` mounts exactly the screen it names, exactly one at a time; the outgoing screen leaves the tree before the next enters and is queued for deletion; the last transition stands; one `screen_changed` per transition with the right `from`/`to`; the payload hands the screen its `router_id` and `back_target` and keeps a caller's keys; an unknown id (and a DOM id) is refused with the active screen untouched and no signal |
+| shell, in a real 1280x720 frame | 19 | the shell scene loads; `screen_id`, title and subtitle resolve through the locale seam (the title is a sentence, not an id); the back control shows only where a return is declared, is named `<screen_id>/back`, carries the `back` action, and its registration is dropped when it is hidden and restored when re-declared; a content control registers under `<screen_id>/<suffix>`; re-registering a suffix replaces rather than stacks; the safe-area margin comes from the shell's own constant; every one of the thirteen screens lays out full-frame inside the frame it is mounted in, one at a time |
+| placeholder and contract | 8 | the placeholder reports the id it was handed, says what it is, builds its shell, declares `["default"]` as its capture state, and the base class refuses to apply a state it was not told about |
+| UiStrings | 5 | the fallback chain answers with the id itself for an unknown key, `has()` is false for the same id and true for `back`/`modesTitle` |
+| source rules | 7 | the router does not preload the reference inventory (its own copy is compared, never shared), names it for the reader, carries the freeze note; `UiStrings.gd` owns no table, does not re-declare the locale list and delegates to `res://src/locale/locale.gd`; the contract cites `js/ui.js:595-607` and the blank-page fix `js/ui.js:596-598` |
+| literal scan | 4 | see below |
+
+## The literal scan (the DoD's "no user-facing literal" rule, with its own proof)
+
+```
+# report literal scan scanned=4 files offenders=0 exemptions=1 whitelist=1
+# note the scan's rule: a string literal containing a space, outside a comment and not
+#      on a push_error/push_warning/printerr/assert line, is prose; the whitelist above
+#      is the only exception
+```
+
+- Files scanned (4): `res://src/ui/ScreenRouter.gd`, `res://src/ui/ScreenShell.gd`,
+  `res://src/ui/PlaceholderScreen.gd`, `res://src/ui/screens/ScreenContract.gd`.
+- Exempted (1, by path with its reason in the audit): `res://src/ui/UiStrings.gd` — it
+  is the seam itself and owns no table; its doc comment quotes ids to state the chain.
+- Whitelisted (1, by path **and** literal, never by file): `not built yet` in
+  `PlaceholderScreen.gd` — the ticket's own label for a screen whose ticket has not
+  landed; the screen asks `UiStrings.has("ui_placeholder_not_built")` first, so the day
+  a key exists the literal stops being used.
+- Offenders: **0**.
+- The scan is proved non-vacuous before it is trusted: against the synthetic source
+  `PROBE_SOURCE` (a comment quoting prose, a prose label, a `push_error("dev only")` and
+  a locale id) it returns exactly `["res://probe.gd:2 \"Play now\""]`
+  (`ok router/the_literal_scan_flags_prose_and_ignores_developer_text`).
+
+## Files this ticket wrote (its whole write allowlist, nothing else)
+
+```
+godot/src/ui/screens/ScreenContract.gd
+godot/src/ui/ScreenRouter.gd
+godot/src/ui/UiStrings.gd
+godot/src/ui/ScreenShell.gd
+godot/src/ui/ScreenShell.tscn
+godot/src/ui/PlaceholderScreen.gd
+godot/src/ui/PlaceholderScreen.tscn
+godot/tests/ui/router_audit.gd
+docs/implementation/ui-recreation/evidence/uir-03-router-audit.log
+```
+
+`git status --short` shows `godot/src/ui/` and `godot/tests/ui/` as new untracked
+directories (their contents are the list above) plus the other lanes' pre-existing
+untracked paths (`.hermes/`, `art/concepts/`, `docs/implementation/ui-recreation/`,
+`godot/assets/ui/` from UIR-01, three `*.webp.import` sidecars). No tracked file was
+modified; no frozen file was touched.
+
+## Two deviations from the ticket's file list, both deliberate
+
+1. **No `router_audit.tscn`.** The ticket's write allowlist pairs
+   `router_audit.gd` with a `.tscn`. Every audit in this port that is invoked as
+   `--script res://…` is a `SceneTree` script (`godot/tests/input/reachability_audit.gd`,
+   `godot/tests/audits/*`), and a `SceneTree` script cannot be attached to a node in a
+   scene — the scene would fail to load, which is worse than not shipping one. No
+   scene file was invented for it; the acceptance command is the `--script` form the
+   ticket itself specifies.
+2. **No `.uid` sidecars yet.** `.uid` files are generated by an editor/import scan,
+   not by a headless `--script` run (none appeared: `find godot/src/ui godot/tests/ui
+   -name "*.uid"` is empty). The import scan also writes `.import` sidecars into
+   `godot/assets/ui/**`, which UIR-01 owns this wave, so this ticket did not run it
+   rather than write into another ticket's area. The engine loads both scenes and all
+   scripts without the sidecars, as the runs above show; the first import pass that
+   runs generates them.
+
+## Interface handed to the next tickets (frozen from here)
+
+```
+ScreenRouter (extends Control, mounts its own ScreenHost Control child)
+  static ids() -> Array                    the thirteen router ids, document order
+  static row(id) / has_id(id)
+  static dom_id_of(id) / id_of_dom(dom)    the only bridge between `menu` and `screen-menu`
+  static back_target_of(id) -> String      "" for menu/game/result
+  static to_actions_of(id) -> Array
+  register(id, scene) -> bool              refuses an id outside the table, a null scene
+  registered_ids() -> Array
+  go_to(id, payload = {}) -> bool          refuses an unknown id (warns, stays)
+  active_id() / active_screen() / screen_count() / screen_host()
+  signal screen_changed(from_id, to_id)
+ScreenContract (extends Control)             base class for every screen
+  screen_id() / back_target() / enter(payload) / exit()
+  capture_states() -> Array[String]          ["default"] by default
+  apply_capture_state(state_id) -> bool      false by default
+ScreenShell                                  setup(id) / set_title(id) / set_subtitle(id)
+  / set_title_text(text) / set_back_target(id) / content() / add_focus(suffix, node, action, opts)
+  / drop_focus(suffix) / focus_id(suffix) / back_control_id() / focus_controls()
+  const SAFE_MARGIN := 8.0
+PlaceholderScreen (extends ScreenContract)    register it for any id a later ticket has not replaced
+UiStrings (extends RefCounted)               t(message_id, params) / has(message_id)
+```
+
+Freeze note as recorded in `ScreenRouter.gd`'s header: after UIR-03, screens register
+themselves through `register()` and do not edit the router; only the integration owner
+(UIR-22) or a coordinator-approved change does.
+
+## Re-verified after UIR-04 and UIR-05 landed (same session, later)
+
+The literal scan above covers the whole of `godot/src/ui/**`, so it grew with the two
+later tickets and the numbers above are the ones from the run that closed UIR-03. The
+same audit re-run against the current tree:
+
+```
+$ "$GODOT" --headless --path godot/ --script res://tests/ui/router_audit.gd
+# report literal scan scanned=9 files offenders=0 exemptions=1 whitelist=1
+PASS 86/86                                     exit 0
+```
+
+9 files under `godot/src/ui/**` (`ScreenRouter.gd`, `ScreenShell.gd`,
+`PlaceholderScreen.gd`, `screens/ScreenContract.gd`, `UiStrings.gd` (the exemption),
+`data/UiData.gd`, `data/DemoGateAdapter.gd`, `data/UiArtPaths.gd`,
+`focus/UiFocusBridge.gd`, `accessibility/UiMotionPolicy.gd` — the count is the file
+list after the exemption is removed), offenders still 0: the adapters and the bridge
+carry ids and keys, not prose.
+
+One addition to this ticket's own file after its acceptance: `ScreenShell.back_target()`,
+a one-line getter UIR-05's microstep 3 sanctioned ("extend the ScreenShell minimally if
+needed"). No other change; `router_audit.gd`'s counter audit stays 131/131 for UIR-04 and
+117/117 for UIR-05 on the same tree.
+
+
+---
+
+# Integration wave 2 verification (2026-09-17, integrator)
+
+Re-run, unmodified, in the isolated copy (engine `4.7.2.stable.official.ed1daf0bf`):
+
+    $ "$GODOT" --headless --path godot/ --script res://tests/ui/router_audit.gd
+    PASS 86/86
+    exit=0                                    SCRIPT ERROR lines: 0
+    # report literal scan scanned=12 files offenders=0 exemptions=1 whitelist=1
+
+The count moved 11 -> 12 because `godot/src/ui/screens/MenuScreen.gd` (UIR-07) is the first
+real screen in the lane and the scan reads it like every other file: **0 offenders**, no
+whitelist entry needed. The router itself mounted it through `register("menu", …)` +
+`go_to("menu")` in `screen_menu_audit.gd`, and the reachability audit is unchanged
+(`PASS 21/21`). The `screen_changed`, payload and one-screen-at-a-time invariants were not
+re-tested here beyond what UIR-07's audit asserts.

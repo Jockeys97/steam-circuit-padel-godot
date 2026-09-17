@@ -1,0 +1,117 @@
+# UIR-04 — UI data adapters: acceptance
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-04-data-adapters.md`
+
+## Commands and results
+
+```
+$ export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+
+# the full build
+$ "$GODOT" --headless --path godot/ --script res://tests/ui/data_audit.gd
+PASS 131/131                                    exit 0
+
+# the demo build (the same audit, the real build flag)
+$ "$GODOT" --headless --path godot/ --script res://tests/ui/data_audit.gd -- --demo
+PASS 134/134                                    exit 0
+
+# nothing else moved
+$ "$GODOT" --headless --path godot/ --script res://tests/ui/router_audit.gd
+PASS 86/86                                      exit 0
+$ "$GODOT" --headless --path godot/ --script res://tests/input/run_all.gd
+PASS 4/4 (checks=308 failures=0 not-ported=7)   exit 0
+$ "$GODOT" --headless --path godot/ --script res://tests/modes/run_all.gd
+PASS 6/6 (checks=3603 failures=0 not-ported=1)  exit 0
+```
+
+SCRIPT ERROR count: 0 in every run above (`grep -c 'SCRIPT ERROR'` per log).
+
+## What the audit proves, by evidence line
+
+| evidence | full | demo |
+| --- | --- | --- |
+| `# report unlocks done=4/28 (characters 2, arenas 6, outfits 20)` | same | same |
+| `# report athlete art present 6/6` | 6/6 | 6/6 |
+| `# report arena art present 7/9` | 7/9 | 7/9 |
+| `# report build=…` | `build=full athletes=6 arenas=9 modes=3` | `build=demo athletes=2 arenas=1 modes=1 difficulty_allowed=medium:true legend:false` |
+| `# report adapter source scan files=3 locale_hits=0 write_hits=0 markers=13` | same | same |
+
+The demo run's pinned answers (`athletes=2 arenas=1 modes=1`, `medium` only) are the
+ticket's own requirement (`demo run shows the pinned content — roster [maestro, steamer],
+single arena, tier fixed`); `godot/tests/build/demo_content.json` is the source of those
+ids and the audit compares the adapter against the gate that reads it.
+
+## Findings this ticket recorded rather than papered over
+
+1. **The save contract's defaults are `null`, and the first audit run died on it.**
+   `save_schema.gd:136-140` holds `lineup: {playerMate: null, opponent: null,
+   opponentMate: null}` (also `athleteId`, `arenaId`, `mode`), and `String(null)` is not a
+   valid constructor in Godot 4 — `SCRIPT ERROR: Invalid call. Nonexistent 'String'
+   constructor at UiData.gd:342`. Every stored read in `UiData.gd` now goes through the
+   `_text`/`_int`/`_bool`/`_float` coercers; the audit's `data/an_unknown_saved_id_…`
+   checks cover the fallback path. This is a real gap between "the schema documents
+   defaults" and "the schema's defaults are of the type the field name implies", and any
+   later screen reading `prefs.lineup` directly will hit it too.
+2. **The reference has a third build label the port does not.** `js/build.js:19-35` has
+   `BUILD` = full | demo | beta and `js/ui.js:745` picks `betaBadge` for the third;
+   `godot/tests/build/BuildFlag.gd` is one boolean, so `DemoGateAdapter.build()` answers
+   `demo` | `full` and `betaBadge` is unreachable. Recorded for UIR-23 (demo matrix), not
+   invented here.
+3. **Arena art names are the asset ticket's, and two are missing.** UIR-01's
+   `godot/assets/ui/arenas/` holds 7 of the 9 arenas at the time of writing; the slugs are
+   not the arena ids, so `UiArtPaths.ARENAS` is a declared id → stem table, and
+   `cattedrale`/`forgia` are absent from it rather than guessed. `path_for()` answers `""`
+   when the file is not on disk, so a screen renders its own empty state instead of a
+   broken texture; the audit asserts every non-empty path exists (6/6 athletes, 7/9
+   arenas today) and never asserts a missing file. When UIR-01 lands the last two, one
+   table entry each makes them appear — no code change.
+4. **`is_locked` folds an unknown kind into its arena branch.** `content_gate.gd::is_locked`
+   treats anything that is not `"athlete"` as arenas, so forwarding an unknown kind from
+   `DemoGateAdapter.locked()` would tell a screen that an unknown kind is locked. The
+   adapter declines instead (answers `false` for a kind it does not know) and the audit
+   pins that decision (`data/an_unknown_kind_locks_nothing`); an unknown *id* of a known
+   kind is still forwarded, which matches `demoLocked` (`js/build.js:73-75`).
+
+## Constructed state, labeled
+
+The audit writes a career, three history rows, a drill record, prefs and a lineup into a
+temp `SaveStore` under `user://uir04-data-audit` and `user://uir04-data-audit-empty`
+through the **real public seams** (`ModesSave.save_career`, `record_match`,
+`save_drill_score`, `save_pref`) and removes both directories at the end of the run. The
+real `user://save` profile is never written. Everything else the audit reads is the real
+thing: the frozen tables, the real gate, the real `ContentFilter`, the real locale seam.
+
+## Open items (owned elsewhere)
+
+- UIR-01: the last two arena art stems (`cattedrale`, `forgia`).
+- UIR-23: the `beta` build label, if beta distribution is still planned.
+- The result screen's own payload shape is provisional: `result_view()` documents that it
+  takes `{score, won, pointsToWin, stats}` with `stats` as `{player, ai}` pairs, which is
+  what `js/ui.js:1394-1402` reads. If UIR-21's match controller hands over a different
+  shape, the adapter — not the screen — is where it should be adjusted.
+
+
+---
+
+# Integration wave 2 verification (2026-09-17, integrator)
+
+Re-run, unmodified, in the isolated copy (engine `4.7.2.stable.official.ed1daf0bf`):
+
+    $ "$GODOT" --headless --path godot/ --script res://tests/ui/data_audit.gd
+    PASS 131/131
+    exit=0                                    SCRIPT ERROR lines: 0
+
+    $ "$GODOT" --headless --path godot/ --script res://tests/ui/data_audit.gd -- --demo
+    PASS 134/134
+    exit=0                                    SCRIPT ERROR lines: 0
+
+## One addition, this wave (integrator; inside UIR-04's write scope)
+
+`DemoGateAdapter.badge_text_key_for(build_id)` — `js/ui.js:744` selects the badge by the
+build's own name (`betaBadge` for a beta, `demoBadge` for a demo), a question
+`badge_text_key()` could not answer because the port reaches only `demo`/`full`
+(`BuildFlag.is_demo()`). The function is additive: `badge_text_key()` is byte-identical in
+behaviour, and the two new constants (`BADGE_DEMO_KEY`, `BADGE_BETA_KEY`) name the strings
+the reference itself uses. UIR-07's capture states call it; UIR-23 still owns the beta
+build label, and the port's frozen locale table has no `betaBadge` entry (recorded in
+`uir-07-screen-menu.log`).
