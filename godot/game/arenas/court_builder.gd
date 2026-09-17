@@ -247,7 +247,7 @@ static func build_court(parent: Node3D, arena: Dictionary, wall_bounce := 0.89) 
 	box(parent, "LineNear", Vector3(Court.court_len(), 0.012, lw), Vector3(0.0, 0.006, hd), line_col)
 	box(parent, "LineLeft", Vector3(lw, 0.012, Court.court_depth()), Vector3(-hl, 0.006, 0.0), line_col)
 	box(parent, "LineRight", Vector3(lw, 0.012, Court.court_depth()), Vector3(hl, 0.006, 0.0), line_col)
-	box(parent, "CenterLine", Vector3(lw, 0.012, Court.court_depth()), Vector3(0.0, 0.006, 0.0), line_col)
+	box(parent, "CenterLine", Vector3(lw, 0.012, 2.0 * (Court.service_z() + 0.2)), Vector3(0.0, 0.006, 0.0), line_col)
 	box(parent, "ServiceFar", Vector3(Court.court_len(), 0.012, lw), Vector3(0.0, 0.006, -Court.service_z()), line_col)
 	box(parent, "ServiceNear", Vector3(Court.court_len(), 0.012, lw), Vector3(0.0, 0.006, Court.service_z()), line_col)
 
@@ -304,13 +304,15 @@ static func build_glass_cage(parent: Node3D, tint: Color, wall_bounce: float) ->
 	build_rear_wall(parent, rear, float(params["rear_alpha"]), hl, hd)
 	glass_wall(parent, "GlassLeft", Vector3(0.04, GLASS_H, Court.court_depth()), Vector3(-hl, GLASS_H * 0.5, 0.0), side, float(params["side_alpha"]), false)
 	glass_wall(parent, "GlassRight", Vector3(0.04, GLASS_H, Court.court_depth()), Vector3(hl, GLASS_H * 0.5, 0.0), side, float(params["side_alpha"]), false)
-	glass_wall(parent, "GlassNear", Vector3(Court.court_len(), GLASS_H, 0.04), Vector3(0.0, GLASS_H * 0.5, hd), side, float(params["side_alpha"]) * 0.8, true)
+	glass_wall(parent, "GlassNear", Vector3(Court.court_len(), GLASS_H, 0.04), Vector3(0.0, GLASS_H * 0.5, hd), side, 0.055, true)
 	# The cage's four corner posts, so the enclosure closes.
 	var corner := FRAME_POST.darkened(0.25)
 	box(parent, "GlassPostFL", Vector3(0.07, GLASS_H, 0.07), Vector3(-hl, GLASS_H * 0.5, -hd), corner)
 	box(parent, "GlassPostFR", Vector3(0.07, GLASS_H, 0.07), Vector3(hl, GLASS_H * 0.5, -hd), corner)
-	box(parent, "GlassPostNL", Vector3(0.07, GLASS_H, 0.07), Vector3(-hl, GLASS_H * 0.5, hd), corner)
-	box(parent, "GlassPostNR", Vector3(0.07, GLASS_H, 0.07), Vector3(hl, GLASS_H * 0.5, hd), corner)
+	var near_left := box(parent, "GlassPostNL", Vector3(0.07, GLASS_H, 0.07), Vector3(-hl, GLASS_H * 0.5, hd), corner, 0.18)
+	var near_right := box(parent, "GlassPostNR", Vector3(0.07, GLASS_H, 0.07), Vector3(hl, GLASS_H * 0.5, hd), corner, 0.18)
+	near_left.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	near_right.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 ## The rear wall: six glass panes with the reference's frame between them, a
@@ -358,15 +360,22 @@ static func build_rear_wall(parent: Node3D, tint: Color, alpha: float, hl: float
 ## the wall runs across the court (the near wall) or along it (the two sides).
 static func glass_wall(parent: Node3D, name: String, size: Vector3, pos: Vector3, tint: Color, alpha: float, along_x: bool) -> void:
 	var pane := box(parent, name, size, pos, tint, alpha)
+	var near_camera := name == "GlassNear"
+	if near_camera:
+		pane.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var mat := pane.material_override as StandardMaterial3D
 	if mat != null:
 		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	var span := size.x if along_x else size.z
 	var rail_size := Vector3(span, 0.06, 0.06) if along_x else Vector3(0.06, 0.06, span)
-	box(parent, name + "Rail", rail_size, Vector3(pos.x, GLASS_H, pos.z), FRAME_RAIL)
+	var rail := box(parent, name + "Rail", rail_size, Vector3(pos.x, GLASS_H, pos.z), FRAME_RAIL, 0.12 if near_camera else 1.0)
+	if near_camera:
+		rail.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var posts := 5
 	for i in posts:
 		var t := -0.5 + (float(i) / float(posts - 1))
 		var post_pos := Vector3(pos.x + span * t, GLASS_H * 0.5, pos.z) if along_x \
 			else Vector3(pos.x, GLASS_H * 0.5, pos.z + span * t)
-		box(parent, name + "Post", Vector3(0.06, GLASS_H, 0.06), post_pos, FRAME_DIVIDER)
+		var post := box(parent, name + "Post", Vector3(0.06, GLASS_H, 0.06), post_pos, FRAME_DIVIDER, 0.12 if near_camera else 1.0)
+		if near_camera:
+			post.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

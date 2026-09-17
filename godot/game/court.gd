@@ -4,7 +4,7 @@
 ## Nothing here re-implements physics or tuning. It is presentation:
 ##
 ##   - the court, net, lines and glass all come from the frozen `COURT` table and
-##     from `SERVICE_LINE_OFFSET` (`js/game.js:30`), under ONE uniform scale;
+##     from `SERVICE_LINE_OFFSET` (`js/game.js:30`), mapped to a 10 x 20 m court;
 ##   - the geometry and the camera presets are the ones already rendered by
 ##     `godot/prototypes/arena_spike/` (see
 ##     `docs/wayfinder/evidence/character-material-render.md` and the spike's own
@@ -18,21 +18,33 @@
 ## athlete rig and the racket — the parts the match controller and the tests use
 ## by name — and forwards the two builders so the old call sites keep working.
 ##
-## Scale (recorded, not resolved): `PX_TO_M = 0.025` m/px is the value that turns
-## `COURT`'s 800 px span into the FIP 20.00 m length, and therefore its 508 px
-## depth into 12.70 m. `COURT`'s aspect (1.575) is not 20:10 and stays an open
-## question owned by Luca; this file only records the single scale it used.
+## X maps linearly to 10 m. Depth uses a monotone C1 curve through net,
+## service line (6.95 m) and back glass (10 m). The frozen simulation remains
+## in pixels; this projection preserves its inside/outside service decisions.
 ##
 ## Sim px -> world: X across the court, Y along the court (increasing towards the
 ## near/player half), Z up. The sim's `court.netY` is world z = 0 and the sim's
-## `court.left` is world x = -HALF_LEN, so the mapping is one translation plus
-## the single scale.
+## `court.left` is world x = -5 m. Heights retain their original visual scale.
 extends RefCounted
 
 const Frozen := preload("res://src/sim/frozen.gd")
 
-## One uniform scale for both court axes. `PLAN.md` "Court aspect" row.
+## Vertical/legacy effect scale only; ground positions use world_pos().
 const PX_TO_M := 0.025
+## The court's HORIZONTAL measure, in metres. This is the single knob of
+## `docs/wayfinder/tickets/court-width-render.md`: 10.0 m is the real padel width
+## and the owner accepts the measurement — what he rejects is the RENDER of it
+## ("allarghiamo leggermente le misure dell'arena orizzontalmente ... non mi piace
+## la resa grafica"). The candidates 10.5 / 11.0 / 12.0 m were each rendered in
+## turn and are delivered as `godot/game/out/width-<value>.png`; the choice is the
+## owner's, not this lane's. Widening moves the metres-per-pixel of x and nothing
+## else (`world_pos` divides by the pixel span of `COURT`, not by WIDTH_M), so the
+## frozen pixel simulation is untouched and the parity digest cannot move.
+## `LENGTH_M` and the depth curve below are NOT this knob.
+const WIDTH_M := 11.0
+const LENGTH_M := 20.0
+const SERVICE_M := 6.95
+const SERVICE_PX := 126.0
 ## Cage height. NOT in `COURT` and NOT in `BALANCE`; the spike's flagged default
 ## (FIP padel is ~3 m) is kept so the two renders stay comparable.
 const GLASS_H := 3.0
@@ -74,19 +86,19 @@ const HAND_SWING_LIFT := 0.22
 ## the behind-the-baseline variant the spike also rendered.
 const CAMERAS := {
 	"default": {
-		"pos": Vector3(0.0, 14.4552, 6.4000),
-		"pitch_deg": -65.2000,
-		"fov": 50.866,
+		"pos": Vector3(0.0, 20.0, 27.5),
+		"pitch_deg": -36.0274,
+		"fov": 30.0,
 		"look_at": Vector3.ZERO,
 	},
 	"wide": {
-		"pos": Vector3(0.0, 16.6235, 7.4000),
-		"pitch_deg": -68.0000,
+		"pos": Vector3(0.0, 22.0, 18.0),
+		"pitch_deg": -50.0,
 		"fov": 60.000,
 		"look_at": Vector3.ZERO,
 	},
 	"playable": {
-		"pos": Vector3(0.0, 3.2000, 5.8000),
+		"pos": Vector3(0.0, 8.0, 17.0),
 		"pitch_deg": 0.0,
 		"fov": 60.000,
 		"look_at": Vector3(0.0, 0.900, -1.000),
@@ -119,13 +131,11 @@ static func net_y() -> float:
 
 
 static func court_len() -> float:
-	var c := court()
-	return (float(c["right"]) - float(c["left"])) * PX_TO_M
+	return WIDTH_M
 
 
 static func court_depth() -> float:
-	var c := court()
-	return (float(c["bottom"]) - float(c["top"])) * PX_TO_M
+	return LENGTH_M
 
 
 static func half_len() -> float:
@@ -140,14 +150,41 @@ static func net_h() -> float:
 	return float(court()["netHeight"]) * PX_TO_M
 
 
-## `SERVICE_LINE_OFFSET` is 126 px in the sim (`js/game.js:30`) = 3.150 m here.
+## The simulation's service boundary is projected to 6.95 m from the net.
 static func service_z() -> float:
-	return 126.0 * PX_TO_M
+	return SERVICE_M
+
+
+## Smooth monotone presentation mapping: net, service boundary and back glass
+## remain aligned with the unchanged 2D simulation. No velocity discontinuity
+## at the service line; this is an arcade projection, not new physical metres.
+static func depth_m(px_y: float) -> float:
+	var signed_distance := px_y - net_y()
+	var distance := absf(signed_distance)
+	var c := court()
+	var end_px := float(c["bottom"]) - net_y() if signed_distance >= 0 else net_y() - float(c["top"])
+	var inner_slope := SERVICE_M / SERVICE_PX
+	var outer_slope := (LENGTH_M * 0.5 - SERVICE_M) / (end_px - SERVICE_PX)
+	var join_slope := 2.0 * inner_slope * outer_slope / (inner_slope + outer_slope)
+	var metres: float
+	if distance > end_px:
+		metres = LENGTH_M * 0.5 + (distance - end_px) * outer_slope
+	elif distance <= SERVICE_PX:
+		metres = _hermite(distance / SERVICE_PX, 0.0, SERVICE_M, inner_slope * SERVICE_PX, join_slope * SERVICE_PX)
+	else:
+		var span := end_px - SERVICE_PX
+		metres = _hermite((distance - SERVICE_PX) / span, SERVICE_M, LENGTH_M * 0.5, join_slope * span, outer_slope * span)
+	return signf(signed_distance) * metres
+
+
+static func _hermite(t: float, a: float, b: float, ma: float, mb: float) -> float:
+	return (2*t*t*t - 3*t*t + 1)*a + (t*t*t - 2*t*t + t)*ma + (-2*t*t*t + 3*t*t)*b + (t*t*t - t*t)*mb
 
 
 ## Sim (x, y, z) in px -> world position in metres.
 static func world_pos(px_x: float, px_y: float, px_z: float) -> Vector3:
-	return Vector3((px_x - center_x()) * PX_TO_M, px_z * PX_TO_M, (px_y - net_y()) * PX_TO_M)
+	var c := court()
+	return Vector3((px_x - center_x()) * WIDTH_M / (float(c["right"]) - float(c["left"])), px_z * PX_TO_M, depth_m(px_y))
 
 
 ## Sim (x, y) on the floor, at a given height in px.
