@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4
+
+MENU_ON_SCREEN {"arenas":["OFFICINA","LOCOMOTIVE","CLOCKWORK","CATTEDRALE","FORGIA","TEMPESTA","ABISSALE","CALDERA","ORRERY"],"athletes":["IL","LA","LO","LA","L'ORACOLO","IL"],"build":"full","focus":"tier:0","focusable":["arena:abissale","arena:caldera","arena:cattedrale","arena:clockwork","arena:forgia","arena:locomotive","arena:officina","arena:orrery","arena:tempesta","athlete:0","athlete:1","athlete:2","athlete:3","athlete:4","athlete:5","mode:career","mode:drill","mode:tournament","outfit","play","quit","tier:0","tier:1","tier:2","tier:3"],"modes":[{"disabled":false,"text":"TRAINING"},{"disabled":false,"text":"CHAMPIONSHIP TOURNAMENT"},{"disabled":false,"text":"CAREER"}],"outfit":"COMPLETO: Base Kit  (1/5)  »","tiers_enabled":[0,1,2,3],"tiers_shown":4}
+CAPTURE_SAVE err=0 path=res://game/out/ui-packverify-menu-legacy.png size=1152x648

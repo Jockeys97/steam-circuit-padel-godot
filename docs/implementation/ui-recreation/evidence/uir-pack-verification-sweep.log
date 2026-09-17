@@ -1,0 +1,148 @@
+# uir-pack-verification sweep journal
+# repo: /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
+# head: c9470e2306465aa2b34ffc9a17f9b2bcc2db0f97
+# engine: 4.7.2.stable.official.ed1daf0bf
+# host: macOS 27.0 arm64
+# started: 2026-09-17T00:32:00Z
+# pre-state: godot/build/ ABSENT ; pgrep Godot: 
+== phase import 2026-09-17T00:32:00Z head=c9470e2306465aa2b34ffc9a17f9b2bcc2db0f97
+[import] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=<none> log=/tmp/padel-pack-verify-20260917/logs/import.log
+== phase import done 2026-09-17T00:32:03Z
+== phase export 2026-09-17T00:32:08Z head=c9470e2306465aa2b34ffc9a17f9b2bcc2db0f97
+[export-full] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=<none> log=/tmp/padel-pack-verify-20260917/logs/export-full.log
+[export-demo] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=<none> log=/tmp/padel-pack-verify-20260917/logs/export-demo.log
+[export-selfcheck] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=<none> log=/tmp/padel-pack-verify-20260917/logs/export-selfcheck.log
+## artifact hashes 2026-09-17T00:32:15Z head=c9470e2306465aa2b34ffc9a17f9b2bcc2db0f97
+d9f79ab89b5ae369aeed11c6052d402e8218cd503bf85b4a235f9c30c46a7c63  godot/build/linux-x86_64/padel.x86_64
+7aefc19e0063829a85fda893e12246a9c57cab6af54b80dc7272003cf1c70071  godot/build/linux-x86_64/padel.pck
+ABSENT godot/build/linux-x86_64/override.cfg
+d9f79ab89b5ae369aeed11c6052d402e8218cd503bf85b4a235f9c30c46a7c63  godot/build/linux-x86_64-demo/padel-demo.x86_64
+849647825b8f324de939e34e4c7d3928fc46bd2c66c7a606ef08a025bcd1c22a  godot/build/linux-x86_64-demo/padel-demo.pck
+ABSENT godot/build/linux-x86_64-demo/override.cfg
+d9f79ab89b5ae369aeed11c6052d402e8218cd503bf85b4a235f9c30c46a7c63  godot/build/linux-x86_64-demo-selfcheck/padel-demo-selfcheck.x86_64
+849647825b8f324de939e34e4c7d3928fc46bd2c66c7a606ef08a025bcd1c22a  godot/build/linux-x86_64-demo-selfcheck/padel-demo-selfcheck.pck
+ABSENT godot/build/linux-x86_64-demo-selfcheck/override.cfg
+pack=godot/build/linux-x86_64/padel.pck  bytes=138142952
+  magic=GDPC pack_version=4 engine=4.7.2 file_base=112 directory_offset=138105152 entries=466
+    86 files   136346643 bytes  res://.godot
+    59 files       23047 bytes  res://assets
+    60 files      198071 bytes  res://game
+     1 files       13537 bytes  res://project.binary
+   138 files      748546 bytes  res://src
+   122 files      771884 bytes  res://tests
+  res://prototypes: 0
+  res://game: 60
+      res://game/Main.tscn.remap
+      res://game/Match.tscn.remap
+      res://game/ModeScreen.tscn.remap
+      res://game/arenas/arena_library.gd.remap
+  res://tests: 122
+      res://tests/SmokeTest.tscn.remap
+      res://tests/athlete_rig_test.gd.remap
+      res://tests/athlete_rig_test.gdc
+      res://tests/athlete_roster_test.gd.remap
+  res://src: 138
+      res://src/accessibility/accessibility_settings.gd.remap
+      res://src/accessibility/accessibility_settings.gdc
+      res://src/audio/audio_port.gd.remap
+      res://src/audio/audio_port.gdc
+  res://.godot: 86
+      res://.godot/exported/133200997/export-00df7d6066297e608a3070277f31aade-Match.scn
+      res://.godot/exported/133200997/export-0d601369c35a150d9392377d6120d0a7-MenuScreen.scn
+      res://.godot/exported/133200997/export-29d38b4ff2167f5cb8875f92195ce971-padel_theme.res
+      res://.godot/exported/133200997/export-33d87aab6adf878789cd224bd711160e-Hud.scn
+  full inventory -> /tmp/padel-pack-verify-20260917/pack-inventory-full.txt
+pack=godot/build/linux-x86_64-demo/padel-demo.pck  bytes=138142984
+  magic=GDPC pack_version=4 engine=4.7.2 file_base=112 directory_offset=138105184 entries=466
+    86 files   136346643 bytes  res://.godot
+    59 files       23047 bytes  res://assets
+    60 files      198071 bytes  res://game
+     1 files       13573 bytes  res://project.binary
+   138 files      748546 bytes  res://src
+   122 files      771884 bytes  res://tests
+  res://prototypes: 0
+  res://game: 60
+      res://game/Main.tscn.remap
+      res://game/Match.tscn.remap
+      res://game/ModeScreen.tscn.remap
+      res://game/arenas/arena_library.gd.remap
+  res://tests: 122
+      res://tests/SmokeTest.tscn.remap
+      res://tests/athlete_rig_test.gd.remap
+      res://tests/athlete_rig_test.gdc
+      res://tests/athlete_roster_test.gd.remap
+  res://src: 138
+      res://src/accessibility/accessibility_settings.gd.remap
+      res://src/accessibility/accessibility_settings.gdc
+      res://src/audio/audio_port.gd.remap
+      res://src/audio/audio_port.gdc
+  res://.godot: 86
+      res://.godot/exported/133200997/export-00df7d6066297e608a3070277f31aade-Match.scn
+      res://.godot/exported/133200997/export-0d601369c35a150d9392377d6120d0a7-MenuScreen.scn
+      res://.godot/exported/133200997/export-29d38b4ff2167f5cb8875f92195ce971-padel_theme.res
+      res://.godot/exported/133200997/export-33d87aab6adf878789cd224bd711160e-Hud.scn
+  full inventory -> /tmp/padel-pack-verify-20260917/pack-inventory-demo.txt
+OK  godot/build/linux-x86_64/padel.pck contains a path under res://assets/athletes
+OK  godot/build/linux-x86_64/padel.pck contains no res://prototypes/
+OK  godot/build/linux-x86_64-demo/padel-demo.pck contains a path under res://assets/athletes
+OK  godot/build/linux-x86_64-demo/padel-demo.pck contains no res://prototypes/
+== phase export done 2026-09-17T00:32:20Z
+== phase targeted 2026-09-17T00:33:07Z head=c9470e2306465aa2b34ffc9a17f9b2bcc2db0f97
+[slice-full] exit=0 SCRIPT_ERROR=0 ERROR=2 tally=PASS 342/342 log=/tmp/padel-pack-verify-20260917/logs/slice-full.log
+ok slice-full: PASS 342/342 exit=0 script-errors=0 errors=2(allowed=1+1) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/slice-full.log
+[slice-demo] exit=0 SCRIPT_ERROR=0 ERROR=2 tally=PASS 293/293 log=/tmp/padel-pack-verify-20260917/logs/slice-demo.log
+ok slice-demo: PASS 293/293 exit=0 script-errors=0 errors=2(allowed=1+1) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/slice-demo.log
+[court-dimensions] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=<none> log=/tmp/padel-pack-verify-20260917/logs/court-dimensions.log
+ok court-dimensions: PASS court dimensions: 1111 checks, 0 failures exit=0 script-errors=0 errors=0(allowed=0+0) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/court-dimensions.log
+== phase targeted done 2026-09-17T00:33:43Z
+== phase baseline 2026-09-17T00:33:51Z head=c9470e2306465aa2b34ffc9a17f9b2bcc2db0f97
+[harness] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 8/8 log=/tmp/padel-pack-verify-20260917/logs/harness.log
+ok harness: PASS 8/8 exit=0 script-errors=0 errors=0(allowed=0+0) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/harness.log
+[input] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 5/5 log=/tmp/padel-pack-verify-20260917/logs/input.log
+ok input: PASS 5/5 exit=0 script-errors=0 errors=0(allowed=0+0) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/input.log
+[audits] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 10/10 log=/tmp/padel-pack-verify-20260917/logs/audits.log
+ok audits: PASS 10/10 exit=0 script-errors=0 errors=0(allowed=0+0) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/audits.log
+[modes] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 6/6 log=/tmp/padel-pack-verify-20260917/logs/modes.log
+ok modes: PASS 6/6 exit=0 script-errors=0 errors=0(allowed=0+0) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/modes.log
+[save] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 137/137 log=/tmp/padel-pack-verify-20260917/logs/save.log
+ok save: PASS 137/137 exit=0 script-errors=0 errors=0(allowed=0+0) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/save.log
+[music] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 32/32 log=/tmp/padel-pack-verify-20260917/logs/music.log
+ok music: PASS 32/32 exit=0 script-errors=0 errors=0(allowed=0+0) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/music.log
+[shot-parity] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 675/675 log=/tmp/padel-pack-verify-20260917/logs/shot-parity.log
+ok shot-parity: PASS 675/675 exit=0 script-errors=0 errors=0(allowed=0+0) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/shot-parity.log
+[timing-parity] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 100/100 log=/tmp/padel-pack-verify-20260917/logs/timing-parity.log
+ok timing-parity: PASS 100/100 exit=0 script-errors=0 errors=0(allowed=0+0) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/timing-parity.log
+[switch-mode] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 85/85 log=/tmp/padel-pack-verify-20260917/logs/switch-mode.log
+ok switch-mode: PASS 85/85 exit=0 script-errors=0 errors=0(allowed=0+0) fails=0(allowed=0) /tmp/padel-pack-verify-20260917/logs/switch-mode.log
+== phase baseline done 2026-09-17T00:36:15Z
+== phase ui 2026-09-17T00:36:21Z head=c9470e2306465aa2b34ffc9a17f9b2bcc2db0f97
+[ui-theme] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 271/271 log=/tmp/padel-pack-verify-20260917/logs/ui-theme.log
+[ui-fonts] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 75/75 log=/tmp/padel-pack-verify-20260917/logs/ui-fonts.log
+[ui-router] exit=0 SCRIPT_ERROR=0 ERROR=2 tally=PASS 86/86 log=/tmp/padel-pack-verify-20260917/logs/ui-router.log
+[ui-data] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 131/131 log=/tmp/padel-pack-verify-20260917/logs/ui-data.log
+[ui-data-demo] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 134/134 log=/tmp/padel-pack-verify-20260917/logs/ui-data-demo.log
+[ui-input] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 117/117 log=/tmp/padel-pack-verify-20260917/logs/ui-input.log
+[ui-hud] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 172/172 log=/tmp/padel-pack-verify-20260917/logs/ui-hud.log
+[ui-menu] exit=0 SCRIPT_ERROR=0 ERROR=1 tally=PASS 97/97 log=/tmp/padel-pack-verify-20260917/logs/ui-menu.log
+[ui-menu-demo] exit=0 SCRIPT_ERROR=0 ERROR=1 tally=PASS 98/98 log=/tmp/padel-pack-verify-20260917/logs/ui-menu-demo.log
+[ui-legibility] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 76/76 log=/tmp/padel-pack-verify-20260917/logs/ui-legibility.log
+== phase ui done 2026-09-17T00:36:30Z
+== phase buildaudits 2026-09-17T00:36:42Z head=c9470e2306465aa2b34ffc9a17f9b2bcc2db0f97
+[demo-audit-full] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 46/46 log=/tmp/padel-pack-verify-20260917/logs/demo-audit-full.log
+[demo-audit-demo] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 47/47 log=/tmp/padel-pack-verify-20260917/logs/demo-audit-demo.log
+[cf-audit-full] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 20/20 log=/tmp/padel-pack-verify-20260917/logs/cf-audit-full.log
+[cf-audit-demo] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 16/16 log=/tmp/padel-pack-verify-20260917/logs/cf-audit-demo.log
+[preset-audit-full] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 54/54 log=/tmp/padel-pack-verify-20260917/logs/preset-audit-full.log
+[preset-audit-demo] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=PASS 54/54 log=/tmp/padel-pack-verify-20260917/logs/preset-audit-demo.log
+== phase buildaudits done 2026-09-17T00:36:44Z
+== phase python 2026-09-17T00:36:44Z head=c9470e2306465aa2b34ffc9a17f9b2bcc2db0f97
+PASS: 0 errors, 0 warnings; report -> validation.md
+== phase python done 2026-09-17T00:36:44Z
+== phase captures 2026-09-17T00:36:48Z head=c9470e2306465aa2b34ffc9a17f9b2bcc2db0f97
+[capture-menu-legacy] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=<none> log=/tmp/padel-pack-verify-20260917/logs/capture-menu-legacy.log
+[capture-menu-new] exit=0 SCRIPT_ERROR=0 ERROR=0 tally=<none> log=/tmp/padel-pack-verify-20260917/logs/capture-menu-new.log
+MENU_ON_SCREEN {"arenas":["OFFICINA","LOCOMOTIVE","CLOCKWORK","CATTEDRALE","FORGIA","TEMPESTA","ABISSALE","CALDERA","ORRERY"],"athletes":["IL","LA","LO","LA","L'ORACOLO","IL"],"build":"full","focus":"tier:0","focusable":["arena:abissale","arena:caldera","arena:cattedrale","arena:clockwork","arena:forgia","arena:locomotive","arena:officina","arena:orrery","arena:tempesta","athlete:0","athlete:1","athlete:2","athlete:3","athlete:4","athlete:5","mode:career","mode:drill","mode:tournament","outfit","play","quit","tier:0","tier:1","tier:2","tier:3"],"modes":[{"disabled":false,"text":"TRAINING"},{"disabled":false,"text":"CHAMPIONSHIP TOURNAMENT"},{"disabled":false,"text":"CAREER"}],"outfit":"COMPLETO: Base Kit  (1/5)  »","tiers_enabled":[0,1,2,3],"tiers_shown":4}
+CAPTURE_SAVE err=0 path=res://game/out/ui-packverify-menu-legacy.png size=1152x648
+UI_PROTOTYPE_ON_SCREEN {"router":"menu","screen":"menu"}
+CAPTURE_SAVE err=0 path=res://game/out/ui-packverify-menu-new.png size=1152x648
+== phase captures done 2026-09-17T00:36:51Z
