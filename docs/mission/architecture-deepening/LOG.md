@@ -97,3 +97,12 @@
 - Records: five tickets → done with verified tallies; `MAP.md` frontier → complete; `board-2026-09-18.md` written (shipped / gate status / $0 / inherited npm gap / commit-ready scope); root `CONTEXT.md` written as a glossary of the resolved terms (reference, port, frozen roster, world arena, match feedback, court timing marks, recreated UI, legacy UI, engine-driven match, mixer contract, parity, frozen harness, owner gate) — definitions taken from existing docs, no ADR.
 - Changed paths (staged): the four new modules, five new suites + their `.gd.uid` sidecars, the twelve modified mission files listed in the board, `tools/i18n-port/hud-coverage.mjs`, `CONTEXT.md`, `docs/mission/architecture-deepening/**`, this log. Restored (unstaged): the four F-06…F-09 files. Pre-existing untracked debris (`godot/=/**`, old probe/audit `.gd.uid`s) left byte-for-byte untouched and unstaged.
 - Gaps (honest): the `timing.png`/`timing-off.png` A/B frames and the `shots*` captures were **not** re-run (outside the proof contract; the engine-driven recreated path is unchanged except two removed no-op legacy refreshes); `world_arenas_selection_test` printed the intermittent shutdown resource line this run (allowed by name; absent in the review's run); the smash mode's stored-uppercase divergence stays recorded, not endorsed.
+
+## 2026-09-18 — push (owner instruction), CEO
+
+- Event: the owner instructed commit-and-push; the mission's single commit is now on `origin/main`.
+- Owner: CEO (parent session, no worker launch).
+- Status: **pushed.**
+- Decision: none — mechanical publication of the already-verified commit. No file content changed in this step.
+- Evidence: pre-push `git ls-remote origin -h refs/heads/main` = `e4a1aff2863c87086cccfe5bdd0bf5b19571fc12` (exactly the commit's parent, so a fast-forward, no rebase and no conflict resolution); `git push origin main` → `e4a1aff..3228c94  main -> main`; read-back `git ls-remote` = `3228c947f3e9821f20c1826be51dcf8d389c5763` = local `git rev-parse HEAD`; `git status --short --branch` shows `## main...origin/main` (in sync) with only the 16 pre-existing untracked debris paths, unstaged. Repo-local `commit.gpgsign=false` unchanged; the global git config was not touched.
+- Gap (honest): the proof in this log was run on the pre-push tree; the push itself re-ran no suite (it changes no tracked content). The board's "local only" wording was corrected in the follow-up doc commit.
