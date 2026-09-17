@@ -83,6 +83,7 @@ const SECTIONS := [
 	"_headless_driver",
 	"_frame_clock_contract",
 	"_athletes_on_court",
+	"_active_player_marker",
 	"_packed_asset_paths",
 	"_locale_layer",
 	"_audio_mapping",
@@ -94,6 +95,7 @@ const SECTIONS := [
 	"_parity_against_direct_sim",
 	"_tiers_playable",
 	"_full_playthrough",
+	"_timing_presentation",
 ]
 const AWAITED_SECTIONS := ["_menu_reaches_match", "_mode_screens", "_modes_playable", "_ui_text"]
 
@@ -221,8 +223,8 @@ func _config_defaults() -> void:
 	check_eq("COURT.left is frozen at 80", int(court["left"]), 80)
 	check_eq("COURT.bottom is frozen at 564", int(court["bottom"]), 564)
 	check_eq("SERVICE_LINE_OFFSET is frozen at 126", int(Sim.SERVICE_LINE_OFFSET), 126)
-	check("court scale is one uniform constant",
-		absf(Court.court_len() - 20.0) < 0.0001 and absf(Court.court_depth() - 12.7) < 0.0001,
+	check("court presentation follows the declared width and a 20 m depth",
+		absf(Court.court_len() - Court.WIDTH_M) < 0.0001 and absf(Court.court_depth() - 20.0) < 0.0001,
 		"%f x %f" % [Court.court_len(), Court.court_depth()])
 	_section_done("_config_defaults")
 
@@ -785,6 +787,334 @@ func _athletes_on_court() -> void:
 		static_rigs.is_empty(), str(static_rigs))
 	_drop(node)
 	_section_done("_athletes_on_court")
+
+
+## 3d. The mark that says who the human side is controlling.
+##
+## The reference draws it every frame around `state[state.activePlayerKey]`
+## (`js/main.js:1850` → `drawHitZone`, `js/render.js:913-924`). In the port the
+## simulation switches the control correctly and NOTHING on the field said where it
+## went, so a working switch was indistinguishable from a broken one — which is what
+## the owner reported after testing with a pad.
+func _active_player_marker() -> void:
+	var node := _new_match_node(0)
+	var bot := ScriptedPlayer.new()
+	for _t in 60:
+		node.tick_fixed(TICK, bot.decide(node.state), Sim.empty_input())
+	node._sync_views()
+	var zone: Node3D = node.get("_active_ring")
+	check("the active athlete's zone exists in the match scene", zone != null, str(zone))
+	if zone == null:
+		_drop(node)
+		_section_done("_active_player_marker")
+		return
+	check("the zone is drawn while the match is running", zone.visible,
+		"running=%s" % str(node.state.running))
+	var active = node.state.active_player()
+	# 3 cm above the floor, matching the athletes' tint rings (`court.gd:279`): lower
+	# than that and the floor's depth buffer hides the ring (measured — the first
+	# version sat at 1 mm and no ring was visible in `game/out/rally.png`).
+	var want: Vector3 = Court.world_pos(active.x, active.y, 0.0)
+	want.y = 0.03
+	check("the zone sits on the athlete the simulation is controlling",
+		zone.position.distance_to(want) < 0.001,
+		"zone=%s sim=%s" % [str(zone.position), str(want)])
+	# Selection visuals stay compact regardless of the simulation's contact reach.
+	var want_scale := Vector3.ONE
+	check("the marker has a fixed visual footprint independent of contact reach",
+		(zone.scale - want_scale).length() < 0.0001,
+		"scale=%s want=%s" % [str(zone.scale), str(want_scale)])
+	check("the ring lies on the floor", zone.rotation.is_zero_approx(), str(zone.rotation))
+	# The marker over the head. The zone alone is a ribbon on the floor: measured on
+	# a rendered frame it is 98 x 25 px at 1280x720, which the owner could not find.
+	# The pin is what answers "who am I playing".
+	var pin: Node3D = node.get("_active_pin")
+	check("the marker over the controlled athlete exists", pin != null, str(pin))
+	if pin != null:
+		check("the marker floats above the athlete the simulation is controlling",
+			absf(pin.position.x - want.x) < 0.001 and absf(pin.position.z - want.z) < 0.001
+				and pin.position.y > 2.0,
+			"pin=%s athlete at (%s, %s)" % [str(pin.position), str(want.x), str(want.z)])
+		check("the marker is drawn while the match is running", pin.visible,
+			"running=%s" % str(node.state.running))
+	# And it follows the control: the sim's own key moves, the mark must move with it.
+	var was: Vector3 = zone.position
+	var other: String = "playerMate" if String(node.state.activePlayerKey) == "player" else "player"
+	node.state.activePlayerKey = other
+	node._sync_views()
+	var mate = node.state.paddle(other)
+	var want_mate: Vector3 = Court.world_pos(mate.x, mate.y, 0.0)
+	want_mate.y = 0.03
+	check("the zone follows a switch to the partner",
+		zone.position.distance_to(want_mate) < 0.001
+			and zone.position.distance_to(was) > 0.001,
+		"%s -> %s" % [str(was), str(zone.position)])
+	if pin != null:
+		# It followed the zone already; this pins it to the same athlete, so a marker
+		# left over the old player is a failure rather than a thing nobody checks.
+		check("the marker follows the same switch as the zone",
+			absf(pin.position.x - want_mate.x) < 0.001 and absf(pin.position.z - want_mate.z) < 0.001,
+			"pin=%s partner at (%s, %s)" % [str(pin.position), str(want_mate.x), str(want_mate.z)])
+	_drop(node)
+	_section_done("_active_player_marker")
+
+
+## 3e. The timing presentation: the ring, the words, the two bars (slice S14c).
+##
+## The reference draws, around `state[state.activePlayerKey]`, a ring that fills with
+## the charge, the tactical advice word, the RT precision bar and the rally energy
+## bar (`js/render.js:1646-1750`, `:1031-1037`), and over the athlete who HIT the
+## grade it just earned (`js/render.js:1041-1069`, `drawShotFeedback`). The port drew
+## none of it: the words lived in the HUD's corner panel and the energy bar only
+## there. This section drives the real scene to a charging state and reads the real
+## nodes — geometry, tracking and text — the way `_active_player_marker` does.
+func _timing_presentation() -> void:
+	var node := _new_match_node(0)
+	var bot := ScriptedPlayer.new()
+	# The reference's own gate is `state.shotCharge > 0.05 && read.active`, and
+	# `read.active` needs a ball actually coming: the scripted player charges while it
+	# does, so this is reachable in a few hundred real ticks.
+	var charged := -1
+	for i in 6000:
+		node.tick_fixed(TICK, bot.decide(node.state), Sim.empty_input())
+		if float(node.state.shotCharge) > 0.2 and bool(node.state.shotRead.get("active", false)):
+			charged = i
+			break
+	node._sync_views()
+	check("the scene reaches a charging shot with a live read", charged >= 0,
+		"charge=%.3f read=%s" % [float(node.state.shotCharge), str(node.state.shotRead.get("active", false))])
+
+	var names := ["_timing_ring", "_timing_ring_track", "_timing_window", "_timing_advice",
+		"_timing_advice_panel", "_timing_precision", "_timing_precision_track",
+		"_timing_energy", "_timing_energy_track", "_timing_verdict", "_timing_verdict_mode"]
+	var missing: Array[String] = []
+	for n in names:
+		if node.get(n) == null:
+			missing.append(n)
+	check("every timing mark exists in the match scene", missing.is_empty(), str(missing))
+	var ring: Node3D = node.get("_timing_ring")
+	if ring == null:
+		_drop(node)
+		_section_done("_timing_presentation")
+		return
+	var report: Dictionary = node.timing_report()
+
+	# --- the ring: the reference's `1 - eta/0.55`, from the top clockwise ---------
+	check("the ring is drawn while a shot is charging", ring.visible, str(report))
+	check_eq("the fill is `1 - read.eta / 0.55`, the reference's own expression",
+		snappedf(float(report["fraction"]), 0.001),
+		snappedf(clampf(1.0 - float(node.state.shotRead["eta"]) / 0.55, 0.0, 1.0), 0.001))
+	var segments_mid: int = int(report["fill_segments"])
+	var mid_area: float = (ring.mesh as ArrayMesh).get_aabb().size.length() if ring.mesh != null else 0.0
+	# eta at the perfect window: the fill is at its maximum, and so is the arc's mesh.
+	node.state.shotRead["eta"] = 0.0
+	node._sync_views()
+	var full: Dictionary = node.timing_report()
+	check("an eta at the perfect window fills the ring to the top of the reference's arc",
+		is_equal_approx(float(full["fraction"]), 1.0), str(full["fraction"]))
+	check("the fill grows with the charge: the drawn arc is rebuilt and longer",
+		int(full["fill_segments"]) > segments_mid and ring.mesh != null
+			and (ring.mesh as ArrayMesh).get_aabb().size.length() > mid_area,
+		"segments %d -> %d, mesh extent %.3f -> %.3f" % [
+			segments_mid, int(full["fill_segments"]), mid_area,
+			(ring.mesh as ArrayMesh).get_aabb().size.length() if ring.mesh != null else 0.0])
+	var over_eta: float = 0.55
+	node.state.shotRead["eta"] = over_eta
+	node._sync_views()
+	check("an eta past 0.55 leaves the fill empty, as `clampf(..., 0, 1)` requires",
+		is_zero_approx(float(node.timing_report()["fraction"])),
+		str(node.timing_report()["fraction"]))
+	check("the perfect window is the read's own `perfectWindow`",
+		bool(full["in_window"]), "eta=0 window=%s" % str(node.state.shotRead["perfectWindow"]))
+
+	# --- the gate: no charge, no ring and no precision bar ------------------------
+	node.state.shotCharge = 0.0
+	node._sync_views()
+	check("no charge means no ring, as the reference's `shotCharge > 0.05` requires",
+		not ring.visible, "charge=%.3f read.active=%s" % [
+			float(node.state.shotCharge), str(node.state.shotRead.get("active", false))])
+	check("the precision bar is not drawn when nothing is charging",
+		not (node.get("_timing_precision") as Node3D).visible, "")
+	check("the energy bar is drawn anyway: the reference draws it every frame",
+		(node.get("_timing_energy") as Node3D).visible, "")
+	node.state.shotCharge = 0.6
+	node.state.shotRead["eta"] = 0.3
+
+	# --- the precision bar: the SPRINT input, above the 0.04 floor ----------------
+	node.state.shotRead["precision"] = 0.0
+	node._sync_views()
+	check("the precision bar is hidden under `precision > 0.04`",
+		not (node.get("_timing_precision") as Node3D).visible, "")
+	node.state.shotRead["precision"] = 0.72
+	node.state.shotRead["tight"] = 0.5
+	node._sync_views()
+	var prec: Node3D = node.get("_timing_precision")
+	check("the precision bar is drawn while the charge carries precision", prec.visible, "")
+	check("the precision fill is `precision` of the bar, from its left edge",
+		is_equal_approx(float(node.timing_report()["prec_width"]), 0.80 * 0.72),
+		str(node.timing_report()["prec_width"]))
+	check_eq("an armed angle takes the reference's amber, unarmed the cyan",
+		(node.get("_timing_precision").material_override as StandardMaterial3D).albedo_color.to_html(false),
+		Hud.precision_color(0.5, 1.0).to_html(false))
+	node.state.shotRead["tight"] = 0.0
+	node._sync_views()
+	check_eq("tight at 0 is the cyan of `rgba(126,243,255,0.75)`",
+		(node.get("_timing_precision").material_override as StandardMaterial3D).albedo_color.to_html(false),
+		Hud.PRECISION_CYAN.to_html(false))
+
+	# --- the advice word, the profile colour and the locale -----------------------
+	node.state.serving = false
+	node.state.pointPause = 0.0
+	node.state.shotRead["advice"] = "lob"
+	node.state.shotRead["profile"] = "control"
+	node._sync_views()
+	var advice: Label3D = node.get("_timing_advice")
+	check("the advice word is the locale's `shotAdvice_<advice>`, uppercased as the reference does",
+		advice.visible and advice.text == Locale.t("shotAdvice_lob").to_upper(),
+		"text=%s locale=%s" % [advice.text, Locale.t("shotAdvice_lob")])
+	check("no id ever reaches the field: the word is the resolved sentence",
+		not advice.text.begins_with("shotAdvice"), advice.text)
+	check_eq("a control profile is the reference's #8fffd0", advice.modulate.to_html(false), "8fffd0")
+	node.state.shotRead["profile"] = "aggressive"
+	node._sync_views()
+	check_eq("an aggressive profile is the reference's #ffd46a",
+		node.get("_timing_advice").modulate.to_html(false), "ffd46a")
+	check("the word's panel is a box around the measured text, not a fixed width",
+		float(node.timing_report()["advice_panel_w"]) > 0.5,
+		str(node.timing_report()["advice_panel_w"]))
+
+	# --- the energy bar: under the active athlete, the player's energy ------------
+	node.state.shotRead["profile"] = "control"
+	var energy: Node3D = node.get("_timing_energy")
+	node.state.rallyEnergy = {"player": 0.2, "ai": 1.0}
+	node._sync_views()
+	var low: float = float(node.timing_report()["energy_width"])
+	node.state.rallyEnergy = {"player": 1.0, "ai": 1.0}
+	node._sync_views()
+	var high: float = float(node.timing_report()["energy_width"])
+	check("the energy fill is `rallyEnergy.player` of the bar",
+		is_equal_approx(low, 0.80 * 0.2) and high > low, "%f -> %f" % [low, high])
+	check_eq("the energy colour is the reference's three-band rule",
+		(node.get("_timing_energy").material_override as StandardMaterial3D).albedo_color.to_html(false),
+		Hud.field_energy_color(1.0).to_html(false))
+	node.state.rallyEnergy = {"player": 0.2, "ai": 1.0}
+	node._sync_views()
+	check_eq("low energy is the reference's #ff6b64",
+		(node.get("_timing_energy").material_override as StandardMaterial3D).albedo_color.to_html(false),
+		"ff6b64")
+	node.state.rallyEnergy = {"player": 1.0, "ai": 1.0}
+	node._sync_views()
+	var active = node.state.active_player()
+	var under: Vector3 = Court.world_pos(active.x, active.y, 0.0)
+	# The TRACK is the bar's own body and is centred on the athlete; the FILL hangs off
+	# its left edge (`ctx.fillRect(x, y, w * value, h)`) and is therefore half a bar to
+	# the left, which is why the two are not compared to the same x.
+	var energy_track: Node3D = node.get("_timing_energy_track")
+	check("the energy bar sits under the athlete the simulation is controlling",
+		absf(energy_track.position.x - under.x) < 0.001 and absf(energy_track.position.z - under.z) < 1.0
+			and energy_track.position.y > 0.0 and energy_track.position.y < ring.position.y
+			and absf(energy.position.x - (energy_track.position.x - 0.4)) < 0.001,
+		"track=%s energy=%s athlete=%s ring=%s" % [str(energy_track.position), str(energy.position),
+			str(under), str(ring.position)])
+
+	# --- both follow a switch, like the zone and the pin --------------------------
+	var other: String = "playerMate" if String(node.state.activePlayerKey) == "player" else "player"
+	node.state.activePlayerKey = other
+	node._sync_views()
+	var mate = node.state.paddle(other)
+	var mate_ground: Vector3 = Court.world_pos(mate.x, mate.y, 0.0)
+	check("the energy bar follows a switch to the partner",
+		absf(energy_track.position.x - mate_ground.x) < 0.001 and energy_track.position.z > mate_ground.z,
+		"track=%s partner=%s" % [str(energy_track.position), str(mate_ground)])
+	node.state.shotCharge = 0.6
+	node.state.shotRead["eta"] = 0.3
+	node.state.shotRead["active"] = true
+	node._sync_views()
+	check("the ring follows the same switch as the energy bar",
+		absf(ring.position.x - mate_ground.x) < 0.001 and absf(ring.position.z - mate_ground.z) < 0.001,
+		"ring=%s partner=%s" % [str(ring.position), str(mate_ground)])
+
+	# --- the verdict, over the athlete who HIT (`drawShotFeedback`) ---------------
+	var verdict: Label3D = node.get("_timing_verdict")
+	node.state.shotFeedback = null
+	node._sync_views()
+	check("no feedback means no verdict on the field", not verdict.visible, "")
+	node.state.shotFeedback = {
+		"text": "shot:perfect", "mode": "shotMode:control", "grade": "perfect",
+		"quality": 1.0, "life": 0.14, "paddleKey": other,
+	}
+	node._sync_views()
+	var vreport: Dictionary = node.timing_report()
+	check("the verdict is drawn while the feedback lives", verdict.visible, str(vreport))
+	check_eq("the verdict word is the locale's grade word, not the id",
+		verdict.text, Locale.t("shotPerfect"))
+	check_eq("the mode line is the locale's mode word",
+		(node.get("_timing_verdict_mode") as Label3D).text, Locale.t("shotModeControl"))
+	check_eq("a perfect grade takes the reference's #74ffba", vreport["verdict_color"], "74ffba")
+	check("it fades with `life / 0.28`, as the reference does",
+		is_equal_approx(float(vreport["verdict_alpha"]), 0.5), str(vreport["verdict_alpha"]))
+	check("it is anchored to the athlete who HIT, not to the one under control",
+		String(vreport["verdict_paddle"]) == other
+			and absf(verdict.position.x - mate_ground.x) < 0.001,
+		"paddle=%s verdict=%s hitter=%s" % [other, str(verdict.position), str(mate_ground)])
+	# The word rides up as it fades (`js/render.js:1062`): a settled word is a word
+	# nobody measured, so the drift is checked rather than assumed.
+	var settled: float = verdict.position.y
+	node.state.shotFeedback["life"] = 0.05
+	node._sync_views()
+	check("the verdict drifts upwards as it fades",
+		verdict.position.y > settled, "%f -> %f" % [settled, verdict.position.y])
+	node.state.shotFeedback = null
+	node._sync_views()
+	check("and it disappears when the simulation drops the feedback", not verdict.visible, "")
+
+	# --- the reference's proportion, measured at the owner's window ---------------
+	# The ticket's own criterion: at a stated window size the advice's on-screen height
+	# is the reference's proportion. The reference draws the word at 11 px on a canvas
+	# whose ring floats 96 px above the feet (`js/render.js:1657`, `:1730-1750`), and
+	# this port anchors that offset at `ring_height` metres, so 11 px of the ring's 96
+	# is 11/96 of the ring's own height in world metres — a WORLD size, which prints as
+	# the same proportion of the frame at any window (the reference's canvas is scaled
+	# to the window too, `js/render.js:1627`). Measured, not restated: the word's world
+	# height and the ring's own span from the feet, both unprojected through the live
+	# camera, with the frame set to the owner's 1568x881 window.
+	var window := node.get_window()
+	var restore: Vector2i = window.size
+	window.size = Vector2i(1568, 881)
+	node._sync_views()
+	var frame: Vector2 = node.get_viewport().get_visible_rect().size
+	var cam: Camera3D = node.get_viewport().get_camera_3d()
+	var word_m: float = float(advice.font_size) * advice.pixel_size
+	var ring_m: float = float(node.timing_report()["ring_height"])
+	var want_m: float = ring_m * (11.0 / 96.0)
+	var word_px: float = 0.0
+	var ring_px: float = 0.0
+	if cam != null:
+		var feet: Vector3 = ring.global_position - Vector3(0.0, ring_m, 0.0)
+		word_px = absf(cam.unproject_position(advice.global_position + Vector3(0.0, word_m, 0.0)).y
+			- cam.unproject_position(advice.global_position).y)
+		ring_px = absf(cam.unproject_position(ring.global_position).y
+			- cam.unproject_position(feet).y)
+	print("# TIMING_LABELS frame=%s word_h=%.4f m reference_h=%.4f m word=%.2f px ring_span=%.2f px ratio=%.4f want=%.4f" % [
+		str(frame), word_m, want_m, word_px, ring_px, word_px / ring_px if ring_px > 0.0 else 0.0,
+		11.0 / 96.0])
+	check("the advice's measured height is the reference's 11 of the ring's 96 px at the owner's 1568x881 window",
+		# (a) the delivered metres against the reference's proportion: ±2% is the
+		# rounding of `font_size` in whole px, and it is what a window-compensated
+		# world size (or the delivered 0.417 m) fails at this window.
+		cam != null and absf(word_m - want_m) <= want_m * 0.02
+			# (b) the same relation MEASURED on the frame's own pixels. ±15%: the word
+			# is read at 2.95 m and the ring over 0-1.60 m from the feet, where this
+			# camera's px/m differs by ~10.6% (measured); a `fixed_size` label would
+			# leave that band at the far side of the court.
+			and ring_px > 0.0
+			and absf(word_px - want_m * (ring_px / ring_m)) <= want_m * (ring_px / ring_m) * 0.15,
+		"frame=%s word=%.4f m -> %.2f px, reference=%.4f m (11/96 of %.2f m), ring span -> %.2f px, ratio=%.4f want=%.4f" % [
+			str(frame), word_m, word_px, want_m, ring_m, ring_px,
+			word_px / ring_px if ring_px > 0.0 else 0.0, 11.0 / 96.0])
+	window.size = restore
+	_drop(node)
+	_section_done("_timing_presentation")
 
 
 ## `Lineup.ids(Lineup.resolve(...))` — the four ids on court, without the test
@@ -1353,7 +1683,12 @@ func _visual_contract() -> void:
 			missing_panes.append(pane_name)
 			continue
 		var mat := pane.material_override as StandardMaterial3D
-		if mat == null or mat.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED or mat.albedo_color.a < 0.2 \
+		var min_alpha := 0.02 if pane_name == "GlassNear" else 0.2
+		if pane_name == "GlassNear":
+			check("camera-side glass stays transparent enough to see the athlete",
+				mat != null and mat.albedo_color.a <= 0.08 and pane.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF,
+				"near glass should not obscure play or cast an opaque shadow")
+		if mat == null or mat.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED or mat.albedo_color.a < min_alpha \
 			or mat.shading_mode != BaseMaterial3D.SHADING_MODE_UNSHADED:
 			invisible.append(pane_name)
 		if _find(node, pane_name + "Rail") == null:
