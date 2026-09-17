@@ -152,3 +152,22 @@ Discrepancies recorded (open):
 The recreated menu answers; `Play now` routes through the router to the ported `modes`
 screen (its recreation is a later ticket); starting a match mounts the recreated HUD in
 `Match.tscn` under the same `--ui=new` switch.
+
+## Addendum (2026-09-17, post-pull closeout) — merged-tip 1280×720 re-capture
+
+The frames above were captured *before* the court merge. The post-merge 1280×720 re-capture
+(the pack's queued open item) ran the same documented command at `HEAD 3238a50`, sole engine
+owner (`pgrep -x Godot` empty):
+
+```
+$GODOT --rendering-driver opengl3 --path godot --resolution 1280x720 res://game/Match.tscn -- \
+    --ui=new --capture=match --tier=3 --seed=20260916
+```
+
+→ exit 0, 0 SCRIPT ERRORs, one named shutdown allowance, Metal on Apple M4,
+`CAPTURE_DONE shots=5 ticks=25962`, seven frames all `1280x720`. The plan-lane files were
+snapshotted before the run and restored byte-identical after it (tracked files unchanged vs
+`HEAD`; no deletion). Durable copies of the re-captured HUD frames live in the GATE-A pack:
+`gate-a-review/pairs/hud-after-prototype-{serve,hud,rally}-1280x720.png` and the composed sheet
+`gate-a-review/sheets/hud-before-after-1280x720.png`. Full transcript:
+`evidence/uir-gate-a-hud-1280x720-capture.log`.

@@ -2,7 +2,7 @@
 
 Live status board for the 28 tickets. The coordinator is the only writer of this file; workers never edit it. Claims happen through the coordinator (claim protocol below): the acknowledgement row is the lock. Status changes happen only with the evidence named in the ticket.
 
-Last updated: 2026-09-17 (pre-GATE-A closeout: UIR-07's recorded caption finding and a second caption defect closed, the wave-3 HUD review reconciled with `hud_audit` 172/172 and `ui_legibility_audit` 76/76, captures regenerated for real, the full 19-run sweep green; `gate-a`, the platform/touch decision and `luca-final` stay untouched and unclaimed)
+Last updated: 2026-09-17 (pre-GATE-A closeout: UIR-07's recorded caption finding and a second caption defect closed, the wave-3 HUD review reconciled with `hud_audit` 172/172 and `ui_legibility_audit` 76/76, captures regenerated for real, the full 19-run sweep green; `gate-a`, the platform/touch decision and `luca-final` stay untouched and unclaimed; **plus the post-pull correction pass** — merge provenance re-verified read-only, UIR-08/UIR-09 rows flipped to `done` on their landed evidence, UIR-24 recorded `in-progress`/partial, GATE-A handoff pack published at `board-gate-a.md` + `gate-a-review/`; **plus the post-pull closeout** — the merged-tip 1280×720 HUD recapture landed, ticket frontmatter and the README `approved` flag reconciled with this board, nothing pushed — see the "Post-pull correction" and "Post-pull closeout" notes below)
 
 ## State legend
 
@@ -15,7 +15,7 @@ Last updated: 2026-09-17 (pre-GATE-A closeout: UIR-07's recorded caption finding
 |  | `blocked-external` | waits on a human decision outside the pack (UIR-26 only) |
 | readiness | `potential` | becomes `ready` automatically when blockers/gates land |
 |  | `external` | needs a decision document updated first |
-| gates | `plan-approval` | Luca approves this pack (approved: false today) |
+|  | `plan-approval` | Luca approves this pack (recorded passed 2026-09-17 — implementation only; see Standings) |
 |  | `gate-a` | Luca's verdict on the menu+HUD prototype approach |
 |  | `product-scope-and-platforms` | Luca's touch/OSK decision |
 |  | `luca-final` | Luca's verdict on the finished recreation |
@@ -23,7 +23,7 @@ Last updated: 2026-09-17 (pre-GATE-A closeout: UIR-07's recorded caption finding
 
 ## Frontier
 
-Nothing is `ready` yet: the whole pack sits behind `plan-approval` (and every mass ticket additionally behind `gate-a`). When the plan is approved, the first wave becomes claimable; claims go through the coordinator. The waves follow the DAG exactly:
+Nothing is `ready` yet: every remaining ticket sits behind `gate-a` (`plan-approval` is recorded passed; see Standings). Once GATE-A has Luca's verdict, the post-gate waves become claimable; claims go through the coordinator. The waves follow the DAG exactly:
 
 - Wave 0 (parallel; `plan-approval` only): UIR-00 baseline, UIR-01 assets, UIR-03 router, UIR-06 computed styles.
 - Wave 1: UIR-02 theme (needs UIR-01 + UIR-06), UIR-04 adapters, UIR-05 input/a11y.
@@ -96,6 +96,39 @@ copy including the branch's new `timing`/`timing-off` shots. Evidence:
 `evidence/uir-pull-wave/`. Rows are the coordinator's to flip; GATE-A remains Luca's and
 unstarted.
 
+Post-pull correction and GATE-A preparation (2026-09-17, docs-only; read-only git, no engine, $0;
+delegated verification subagent): the merge's provenance was re-verified independently of the merge
+report — `c6837b2`'s parents are `249d55a` + `a1e10f04f9896de6ebbaff3e29f6d2c0dba77590`, `a1e10f04`
+is an ancestor of `HEAD c9470e2`, the court files at `HEAD` are byte-identical to `a1e10f04` (only
+three engine-generated `.import` sidecars differ), and every frozen pin re-hashes to its recorded
+value (`court.gd 844891ea…`, `hud.gd 883b8ff5…`, `match_controller.gd a0f56fec…` — the probe
+sample, `project.godot 3aef17de…`). Remote unchanged, nothing pushed. With the closeout's acceptance
+runs and the pull wave's combined sweep behind them, **UIR-08 and UIR-09 move to `done`**;
+**UIR-24 is recorded `in-progress` (partial)** — its harness and legibility audit have landed and
+re-run green (`PASS 76/76` at four sizes, harness `PASS 5/5`), but its coverage grows as screens
+register, so it is not `done` until the screen set lands (UIR-10–UIR-21). GATE-A itself stays
+unstarted and unclaimed: the handoff pack (before/after image pairs with hashes, the judgement list,
+the open items) is published at `board-gate-a.md` and `gate-a-review/` — the verdict is Luca's
+alone. The 2752-era review's "court/camera untouched" rows are historical (`2752d9a2` only) and are
+superseded by `a1e10f0`. Ticket frontmatter for the flipped rows is the coordinator's to update —
+this pass edited the board only. (Done in the closeout note below.)
+
+Post-pull closeout (2026-09-17, single engine owner; local only, **nothing pushed**): the open
+engine-lane item — a post-merge 1280×720 prototype-HUD capture — landed. The documented command
+(`Match.tscn -- --ui=new --capture=match --tier=3 --seed=20260916 --resolution 1280x720`) ran on the
+merged tip `3238a50` in the real checkout: exit 0, 0 SCRIPT ERRORs, one named shutdown allowance,
+seven frames at 1280×720; `godot/game/out/` was snapshotted first and restored byte-identical
+(104/104 files, git status unchanged — the merge's stale plan-lane renders were restored, not
+repaired). Durable copies: `gate-a-review/pairs/hud-after-prototype-{serve,hud,rally}-1280x720.png`
+and the composed sheet `gate-a-review/sheets/hud-before-after-1280x720.png`; transcript
+`evidence/uir-gate-a-hud-1280x720-capture.log`. With it, **the ticket frontmatter for UIR-08/UIR-09
+(`done`) and UIR-24 (`in-progress`, partial) is reconciled with this board, and the pack README's
+`approved` flag reads `true`** — implementation approval from Luca's request, as this board already
+records; GATE-A, the product-scope decision and `luca-final` stay open and unclaimed. The
+assessment re-run on the reconciled tree parses 28/28 tickets with zero board divergences
+(`gate-a-review/ticket-status-assessment.txt`). Still open for the coordinator: the UIR-09/UIR-22
+slice line anchors. The push decision remains Luca's; nothing is pushed.
+
 ## Tickets
 
 | Ticket | Title | State | Readiness | Blocked by | Gates | Owner role | Evidence |
@@ -108,8 +141,8 @@ unstarted.
 | UIR-05 | Input, focus and accessibility contract | done | potential | UIR-03 | plan-approval | input/a11y worker | `uir-05-input-a11y-audit.log` |
 | UIR-06 | Reference computed-style capture | done | potential | (plan-approval only) | plan-approval | web-evidence worker | `uir-06-computed-styles.md/.json` |
 | UIR-07 | MenuScreen 1:1 (GATE-A prototype) | done | potential | UIR-02, 03, 04, 05, 06 | plan-approval | screen worker | `uir-07-screen-menu.log` |
-| UIR-08 | In-match HUD 1:1 (GATE-A prototype) | blocked | potential | UIR-02, 03, 04, 05, 06 | plan-approval | screen worker | `uir-08-hud-audit.log` |
-| UIR-09 | Prototype mount | blocked | potential | UIR-07, UIR-08 | plan-approval | integration owner | `uir-09-prototype-mount.md` |
+| UIR-08 | In-match HUD 1:1 (GATE-A prototype) | done | potential | UIR-02, 03, 04, 05, 06 | plan-approval | screen worker | `uir-08-hud-audit.log` (implementation register) + `uir-pre-gate-a-hud-audit.log` (**PASS 172/172**, 0 SCRIPT ERRORs) + merged-tree re-run `ui-hud-audit PASS 172/172` in `uir-pull-wave/sweep-results.txt` |
+| UIR-09 | Prototype mount | done | potential | UIR-07, UIR-08 | plan-approval | integration owner | `uir-09-prototype-mount.md` + `uir-pre-gate-a-captures.log` (11 real capture runs) + `uir-pull-wave/captures.log` (merged-tip re-capture); GATE-A brief completed by `board-gate-a.md` |
 | GATE-A | Luca verdict on prototype approach | open | external | UIR-09 | luca | Luca | verdict recorded in `docs/wayfinder/tickets/ui-port-approach.md` |
 | UIR-10 | ModesScreen 1:1 | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-10-screen-modes.log` |
 | UIR-11 | CharactersScreen 1:1 | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-11-screen-characters.log` |
@@ -125,7 +158,7 @@ unstarted.
 | UIR-21 | ResultScreen 1:1 | blocked | potential | UIR-02..05, 07, 08 | + gate-a | screen worker | `uir-21-screen-result.log` |
 | UIR-22 | Full integration | blocked | potential | UIR-03, UIR-07, UIR-08, UIR-09, UIR-10-21 | + gate-a | integration owner | `uir-22-integration.md` |
 | UIR-23 | Demo and beta content matrix | blocked | potential | UIR-04, 10, 11, 12, 21 | + gate-a | verification worker | `uir-23-demo-matrix.md` |
-| UIR-24 | Capture harness + legibility audit | blocked | potential | UIR-03, UIR-09 | + gate-a | verification worker | `uir-24-capture.log` |
+| UIR-24 | Capture harness + legibility audit | in-progress | potential | UIR-03, UIR-09 | + gate-a | verification worker | `uir-24-capture.log` + `uir-24-legibility.log` + closeout re-runs (`PASS 76/76`, harness `PASS 5/5`); **partial — coverage grows as screens land (menu + HUD today); not `done` until UIR-10–UIR-21 exist** |
 | UIR-25 | Final regression and Luca acceptance | blocked | potential | UIR-22, 23, 24, 27 (+ UIR-26 conditional) | + gate-a; closes on luca-final | coordinator + Luca | `uir-25-final.md` |
 | UIR-26 | OSK visual grid and touch layer | blocked-external | external | product-scope decision | product-scope-and-platforms | screen worker (after decision) | `uir-26-osk-touch.md` |
 | UIR-27 | Replay point (buffer + overlay) | blocked | potential | UIR-20, 22 | + gate-a | integration + screen pair | `uir-27-replay.log` |
@@ -150,6 +183,8 @@ unstarted.
 
 ## Standings
 
-- Tickets done: 0 of 28.
-- Gates passed: none (plan-approval pending; GATE-A not reached; product-scope decision open; final acceptance open).
-- The pack's `approved` flag stays false until Luca approves. Nothing here self-certifies.
+- Tickets done: 10 of 28 (UIR-00–UIR-09) — recomputed programmatically from the ticket frontmatter and row evidence on 2026-09-17 (`gate-a-review/ticket-status-assessment.txt`; the earlier "0 of 28" standing was stale against the rows).
+- Partial: 1 — UIR-24 `in-progress` (harness + legibility green; capture coverage grows as screens register).
+- Blocked: 16 (UIR-10–UIR-23, UIR-25, UIR-27) + UIR-26 `blocked-external`.
+- Gates: plan-approval — implementation approved by Luca's request (`CHARTER.md`; `LOG.md:4`); the pack README's flag is now flipped (`approved: true`) and the UIR-08/09/24 frontmatter is reconciled (closeout note above). **GATE-A OPEN** (evidence prepared: `board-gate-a.md` + `gate-a-review/`; no verdict exists). product-scope-and-platforms OPEN. `luca-final` OPEN.
+- Nothing here self-certifies.

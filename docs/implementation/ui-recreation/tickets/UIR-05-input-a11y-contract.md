@@ -89,7 +89,7 @@ No other writes.
 export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
 cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
 "$GODOT" --headless --path godot/ --script res://tests/ui/input_a11y_audit.gd ; echo "exit=$?"
-"$GODOT" --headless --path godot/ --script res://tests/input/run_all.gd ; echo "exit=$?"   # must stay 4/4
+"$GODOT" --headless --path godot/ --script res://tests/input/run_all.gd ; echo "exit=$?"   # must stay 5/5
 ```
 
 ## Acceptance commands (Linux CI form, existing, host agents only)

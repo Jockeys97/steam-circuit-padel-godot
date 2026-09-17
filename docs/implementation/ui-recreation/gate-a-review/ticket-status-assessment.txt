@@ -1,0 +1,128 @@
+tickets parsed from frontmatter: 28
+rows parsed from BOARD.md:      28
+
+id      frontmatter    board          note
+UIR-00  done           done           
+UIR-01  done           done           
+UIR-02  done           done           
+UIR-03  done           done           
+UIR-04  done           done           
+UIR-05  done           done           
+UIR-06  done           done           
+UIR-07  done           done           
+UIR-08  blocked        blocked        
+UIR-09  blocked        blocked        
+UIR-10  blocked        blocked        
+UIR-11  blocked        blocked        
+UIR-12  blocked        blocked        
+UIR-13  blocked        blocked        
+UIR-14  blocked        blocked        
+UIR-15  blocked        blocked        
+UIR-16  blocked        blocked        
+UIR-17  blocked        blocked        
+UIR-18  blocked        blocked        
+UIR-19  blocked        blocked        
+UIR-20  blocked        blocked        
+UIR-21  blocked        blocked        
+UIR-22  blocked        blocked        
+UIR-23  blocked        blocked        
+UIR-24  blocked        blocked        
+UIR-25  blocked        blocked        
+UIR-26  blocked-external blocked-external 
+UIR-27  blocked        blocked        
+
+frontmatter counts: {'done': 8, 'blocked': 19, 'blocked-external': 1}
+board-row counts:   {'done': 8, 'blocked': 19, 'blocked-external': 1}
+
+gates referenced: {'plan-approval': 28, 'gate-a': 17, 'product-scope-and-platforms': 1}
+plan_approved flags: {'true': 8, 'false': 20}
+
+no divergences
+
+
+=== POST-CORRECTION RE-RUN (same script, after this pass's BOARD.md edits: UIR-08/09 -> done, UIR-24 -> in-progress/partial) ===
+tickets parsed from frontmatter: 28
+rows parsed from BOARD.md:      28
+
+id      frontmatter    board          note
+UIR-00  done           done           
+UIR-01  done           done           
+UIR-02  done           done           
+UIR-03  done           done           
+UIR-04  done           done           
+UIR-05  done           done           
+UIR-06  done           done           
+UIR-07  done           done           
+UIR-08  blocked        done           DIVERGES (frontmatter not updated by the docs-correction pass)
+UIR-09  blocked        done           DIVERGES (frontmatter not updated by the docs-correction pass)
+UIR-10  blocked        blocked        
+UIR-11  blocked        blocked        
+UIR-12  blocked        blocked        
+UIR-13  blocked        blocked        
+UIR-14  blocked        blocked        
+UIR-15  blocked        blocked        
+UIR-16  blocked        blocked        
+UIR-17  blocked        blocked        
+UIR-18  blocked        blocked        
+UIR-19  blocked        blocked        
+UIR-20  blocked        blocked        
+UIR-21  blocked        blocked        
+UIR-22  blocked        blocked        
+UIR-23  blocked        blocked        
+UIR-24  blocked        in-progress    DIVERGES (frontmatter not updated by the docs-correction pass)
+UIR-25  blocked        blocked        
+UIR-26  blocked-external blocked-external 
+UIR-27  blocked        blocked        
+
+frontmatter counts: {'done': 8, 'blocked': 19, 'blocked-external': 1}
+board-row counts:   {'done': 10, 'blocked': 16, 'in-progress': 1, 'blocked-external': 1}
+
+gates referenced: {'plan-approval': 28, 'gate-a': 17, 'product-scope-and-platforms': 1}
+plan_approved flags: {'true': 8, 'false': 20}
+
+divergences:
+  UIR-08: frontmatter=blocked board=done
+  UIR-09: frontmatter=blocked board=done
+  UIR-24: frontmatter=blocked board=in-progress
+
+=== POST-FRONTMATTER RECONCILIATION RE-RUN (closeout pass, 2026-09-17: UIR-08/09 frontmatter -> done, UIR-24 -> in-progress, all three plan_approved: true; README approved flip; no BOARD changes since the previous run) ===
+tickets parsed from frontmatter: 28
+rows parsed from BOARD.md:      28
+
+id      frontmatter    board          note
+UIR-00  done           done           
+UIR-01  done           done           
+UIR-02  done           done           
+UIR-03  done           done           
+UIR-04  done           done           
+UIR-05  done           done           
+UIR-06  done           done           
+UIR-07  done           done           
+UIR-08  done           done           
+UIR-09  done           done           
+UIR-10  blocked        blocked        
+UIR-11  blocked        blocked        
+UIR-12  blocked        blocked        
+UIR-13  blocked        blocked        
+UIR-14  blocked        blocked        
+UIR-15  blocked        blocked        
+UIR-16  blocked        blocked        
+UIR-17  blocked        blocked        
+UIR-18  blocked        blocked        
+UIR-19  blocked        blocked        
+UIR-20  blocked        blocked        
+UIR-21  blocked        blocked        
+UIR-22  blocked        blocked        
+UIR-23  blocked        blocked        
+UIR-24  in-progress    in-progress    
+UIR-25  blocked        blocked        
+UIR-26  blocked-external blocked-external 
+UIR-27  blocked        blocked        
+
+frontmatter counts: {'done': 10, 'blocked': 16, 'in-progress': 1, 'blocked-external': 1}
+board-row counts:   {'done': 10, 'blocked': 16, 'in-progress': 1, 'blocked-external': 1}
+
+gates referenced: {'plan-approval': 28, 'gate-a': 17, 'product-scope-and-platforms': 1}
+plan_approved flags: {'true': 11, 'false': 17}
+
+no divergences

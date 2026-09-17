@@ -208,3 +208,29 @@
   `--capture=match` frame.
 - Spend: $0, 0 Meshy credits. No human gate self-approved. Board report refreshed
   (`docs/mission/BOARD.md`, tick-21 section at the top).
+
+## 2026-09-17 02:56 CEST — UI-recreation post-pull closeout: merged-tip 1280×720 HUD recapture, trackers reconciled, nothing pushed
+
+The UI-recreation mission's pull wave and its GATE-A preparation are complete and **committed
+locally** (chain `249d55a` UI checkpoint → `c6837b2` merge of `codex/gameplay-and-map` @ `a1e10f04`,
+the court's real 10×20 m → `c9470e2` reconciliation → `3238a50` shipping-pack evidence → this
+closeout). `main` is 10 commits ahead of `origin/main` (`252ff60…`); **nothing pushed** — the push
+stays the owner's decision.
+
+- Merged-tip re-capture closed the pack's last evidence gap: the recreated HUD over the merged
+  10×20 m court at 1280×720 (`Match.tscn -- --ui=new --capture=match --tier=3 --seed=20260916`),
+  exit 0, 0 SCRIPT ERRORs, one named engine shutdown allowance, Metal on Apple M4; transcript
+  `docs/implementation/ui-recreation/evidence/uir-gate-a-hud-1280x720-capture.log`.
+  `godot/game/out/` was snapshotted first and restored byte-identical (104/104 files; `git status`
+  unchanged — the merge's stale plan-lane renders were restored, not repaired).
+- GATE-A pack final: `docs/implementation/ui-recreation/board-gate-a.md` + `gate-a-review/`
+  (before/after pairs with hashes — incl. the new `hud-after-prototype-{serve,hud,rally}-1280x720`
+  frames — contact sheets, provenance, whole-directory manifest). Ticket frontmatter UIR-08/09 →
+  done, UIR-24 → in-progress (partial); README `approved: true` on the owner's implement request;
+  GATE-A itself, the platform decision and `luca-final` stay OPEN — no verdict exists anywhere.
+- Re-computed, not inherited: 28/28 tickets parsed, zero board divergences (10 done / 1 in-progress
+  / 16 blocked / 1 blocked-external); pack validator 18/18.
+- Still open by design: UIR-09/UIR-22 slice line anchors (coordinator), S14 frame-relative
+  re-measurement under the new camera (engine lane), the push (owner). No post-gate screen work
+  started.
+- Spend: $0, 0 Meshy credits. No human gate self-approved.

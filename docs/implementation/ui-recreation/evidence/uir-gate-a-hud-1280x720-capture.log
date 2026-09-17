@@ -1,0 +1,136 @@
+# GATE-A closeout — merged-tip 1280×720 HUD re-capture (UIR-09 capture lane)
+
+Runner: sole engine owner this wave — `pgrep -x Godot` empty before and after; no other
+process was touched. Checkout: the real target checkout
+`/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot` at
+`HEAD 3238a501f8a7772ee736240a94a9681fb040c5b2` (local only, nothing pushed).
+Date: 2026-09-17 ~02:47 CEST. Engine: `/Applications/Godot.app/Contents/MacOS/Godot`
+`4.7.2.stable.official.ed1daf0bf` — real GPU context
+(`OpenGL API 4.1 Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4`),
+not the dummy driver.
+
+Why: the pack's open item — "no post-merge 1280×720 prototype-HUD capture exists; the
+merged-tip re-captures ran at 1152×648" (`board-gate-a.md`; `gate-a-review/REPORT.md`).
+This run closes it with the documented command shape from `uir-09-prototype-mount.md` and
+`evidence/uir-pull-wave/`, at the ticket's primary viewport.
+
+## Command
+
+    GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+    cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
+    "$GODOT" --rendering-driver opengl3 --path godot --resolution 1280x720 res://game/Match.tscn -- \
+        --ui=new --capture=match --tier=3 --seed=20260916
+
+Result: **exit 0**, **0 SCRIPT ERROR lines**, one named engine allowance
+(`ERROR: 7 resources still in use at exit` — `godot/game/check_log.sh`'s shutdown report;
+the `WARNING: 83 ObjectDB instances were leaked at exit` beside it is the same shutdown
+class). Seven frames were saved, all `size=1280x720`:
+`CAPTURE_DONE shots=5 ticks=25962 result={ "winner": "ai" } score=0-0 points=24`.
+
+## Transcript (full)
+
+```
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4
+
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"leggenda","tier_index":3}
+MATCH_START tier=leggenda athlete=maestro arena=officina seed=20260916 camera=default models=true headless=false switch=semi
+ATHLETES rigs=4 source=res://assets/athletes/volpe-rigged.glb glb_loads=12 spawn_ms=2105 lineup={"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"}
+MODELS rigged_glb=res://assets/athletes/volpe-rigged.glb mesh_instances=170 copies=4 rigs=4
+CAPTURE_MARKER zone=(514,580) pin=(507,491) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(640,360) advice=(505,472) verdict=(640,360) energy=(491,588) ring_visible=false advice_visible=true verdict_visible=false fill=1.000 segments=0 radius_m=0.620 energy=1.000 advice_w_m=4.028
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.000 eta=0.000 in_window=true precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/quickmatch-serve.png size=1280x720
+CAPTURE_SHOT name=quickmatch-serve.png tick=143 points=0 crossings=1 rally=0
+CAPTURE_MARKER zone=(533,588) pin=(527,500) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(860,552) advice=(525,480) verdict=(855,526) energy=(510,597) ring_visible=false advice_visible=true verdict_visible=true fill=1.000 segments=0 radius_m=0.620 energy=0.951 advice_w_m=4.028
+CAPTURE_VERDICT word=PERFETTO mode=BILANCIATO grade=perfect paddle=playerMate alpha=0.256 charge=0.000 eta=0.000 in_window=true precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/rally.png size=1280x720
+CAPTURE_SHOT name=rally.png tick=420 points=0 crossings=3 rally=3
+CAPTURE_MARKER zone=(429,607) pin=(417,518) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(421,551) advice=(414,499) verdict=(855,526) energy=(404,616) ring_visible=true advice_visible=true verdict_visible=false fill=0.509 segments=20 radius_m=0.620 energy=0.974 advice_w_m=3.667
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.508 eta=0.270 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/timing.png size=1280x720
+CAPTURE_SHOT name=timing.png tick=512 points=0 crossings=4 rally=3
+CAPTURE_MARKER zone=(429,607) pin=(417,518) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(421,551) advice=(414,499) verdict=(855,526) energy=(404,616) ring_visible=false advice_visible=false verdict_visible=false fill=0.509 segments=0 radius_m=0.620 energy=0.974 advice_w_m=0.000
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.508 eta=0.270 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/timing-off.png size=1280x720
+CAPTURE_AB file=timing-off.png timing_hidden=true tick=512
+CAPTURE_MARKER zone=(428,609) pin=(416,520) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(421,551) advice=(413,501) verdict=(421,558) energy=(403,618) ring_visible=false advice_visible=true verdict_visible=true fill=0.853 segments=0 radius_m=0.620 energy=0.900 advice_w_m=4.472
+CAPTURE_VERDICT word=PERFETTO mode=BILANCIATO grade=perfect paddle=player alpha=1.000 charge=0.000 eta=0.081 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/hud.png size=1280x720
+CAPTURE_SHOT name=hud.png tick=536 points=0 crossings=4 rally=4
+CAPTURE_MARKER zone=(428,609) pin=(416,520) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(421,551) advice=(413,501) verdict=(421,558) energy=(403,618) ring_visible=false advice_visible=false verdict_visible=false fill=0.853 segments=0 radius_m=0.620 energy=0.900 advice_w_m=0.000
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.000 eta=0.081 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/hud-off.png size=1280x720
+CAPTURE_AB file=hud-off.png timing_hidden=true tick=536
+CAPTURE_MARKER zone=(749,603) pin=(755,515) zone_visible=false pin_visible=false
+CAPTURE_TIMING ring=(430,550) advice=(631,479) verdict=(631,532) energy=(731,612) ring_visible=false advice_visible=false verdict_visible=false fill=0.000 segments=0 radius_m=0.620 energy=1.000 advice_w_m=0.000
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.175 eta=5.085 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/result.png size=1280x720
+CAPTURE_SHOT name=result.png tick=25962 points=24 crossings=174 rally=16
+CAPTURE_DONE shots=5 ticks=25962 result={ "winner": "ai" } score=0-0 points=24
+WARNING: 83 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 7 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
+exit=0
+```
+
+## `godot/game/out/` deltas and staging
+
+The capture rewrites the plan's own seven names. Before running, the whole `godot/game/out/`
+directory was snapshotted (`/tmp/padel-gatea-1280-20260917/out-before/`, 104 files, sha256 per
+file — the closeout rule: preserve the tracked bytes first; the tracked plan-lane PNGs at
+HEAD are the merge's stale renders and were **not** "fixed", they were put back).
+
+| file | pre-capture sha256 (restored to) | captured sha256 (staged) | bytes |
+|---|---|---|---|
+| quickmatch-serve.png | `3ab20a6df8551adee820c1dbad925a31675ad9967efa4df1ff15d48b95757641` | `93799b94ced8ca32801c51681720a7afa9a32bfeca1679b5948422ec88dfb9e1` | 157601 |
+| rally.png | `943213ee97cd3ab5b2d4bdd702c0aec879cfeeb7ba1cafc6ddfd276412ecec48` | `14a75224f6d9bfe47e59ebecc2993b5fdad1b46dfa6e5233b9817e01dd738e1e` | 164372 |
+| timing.png | `bd717c5203da1d176fc27df32bdd2b2e2d72af2ea16b6dd2d630243a3d071920` | `80661044a68a26a05e3f506a91b9092336f6dc7ca365a7a5a4d68c66faa3ebe3` | 157810 |
+| timing-off.png | `ac583db661029171c07afe4977068851805387629ee9ad6ab8b703c510a38490` | `07e63e051b9a95e4ea48bf45be591f2b5bf7580dca416d351196ff59a8b92d95` | 151917 |
+| hud.png | `9d1eef396679b76581667883133925d635389f97fe77a8e2d1bdf126a9bd7ce8` | `91e0a6d31b716e2374e16d99d998a2134ddbe111945e9c9c9a05e6fe3b439e7b` | 165428 |
+| hud-off.png | `8c37ad944ed47a98d1b8c2aa42da2bbd2e30d67246e74e0917270a721d54cac5` | `ed6259a2f8eb85e368dab12efdecc3a1156e59e90ab87c526ec17581899e35f7` | 152592 |
+| result.png | `84e218d3849d4f570091d92497ff134aff6225528c44d91bc771758cee313623` | `3cbf5db18d197bd3c4fa12a0a937d2f756c2702b3e0cea9ad886a049eed664d8` | 151450 |
+
+Staged raw outputs (byte-identical copies of the captured files):
+`/tmp/padel-gatea-1280-20260917/out-after/` — md5 `quickmatch-serve 03869b3c50258004c7df5d4c26fb2a23`,
+`rally 1bc264545252195c859c6b4db1704fb2`, `timing 437cc3666ebd2b353db43a601e13611c`,
+`timing-off edd5800a669ea49d35e73bf9b7ffb7af`, `hud 5edbea4a9e33f9b188a1bf31b303aeca`,
+`hud-off e7cb6174bf1dd4dfd16527d1ef5fbe38`, `result d6c01f5c5e8389b8ce09d9813b343a8d`.
+All seven are `PNG image data, 1280 x 720, 8-bit/color RGBA, non-interlaced`.
+
+## Restoration proof (preserve tracked bytes → capture → restore only my deltas, no deletion)
+
+- Name-level delta before vs after the run: **empty** — no file added or removed.
+- Byte-delta: **exactly the seven capture outputs** (the table above).
+- Restore: `rsync -a --checksum` of the before snapshot back onto `godot/game/out/`.
+- Post-restore sha256 list **byte-identical** to the snapshot (104/104 files).
+- `git status` for `godot/game/out/` **identical to the pre-capture baseline** (no tracked
+  modification, no new untracked files); the five plan-lane tracked PNGs (`quickmatch-serve`,
+  `menu`, `hud`, `rally`, `result`) compare equal to `HEAD` via `git cat-file`.
+- The UIR-00 register values (`quickmatch-serve 0a2696dd…`, `hud babafd27…`, `rally 63942951…`,
+  `result a1cce659…`, `menu bb2d929c…`) live at `integration-prep/before-set/`; re-hashed this
+  pass — all match. The working tree was restored, not repaired.
+
+## Durable copies (the mission's final frames)
+
+| artifact | sha256 |
+|---|---|
+| `gate-a-review/pairs/hud-after-prototype-serve-1280x720.png` | `93799b94ced8ca32801c51681720a7afa9a32bfeca1679b5948422ec88dfb9e1` |
+| `gate-a-review/pairs/hud-after-prototype-hud-1280x720.png` | `91e0a6d31b716e2374e16d99d998a2134ddbe111945e9c9c9a05e6fe3b439e7b` |
+| `gate-a-review/pairs/hud-after-prototype-rally-1280x720.png` | `14a75224f6d9bfe47e59ebecc2993b5fdad1b46dfa6e5233b9817e01dd738e1e` |
+| `gate-a-review/sheets/hud-before-after-1280x720.png` (composed) | `61ab1a5692846b57331e0ab8b0c658b309b9eaf2a76a7c7207c82d3be1d89ba5` |
+
+## Frame read-back (identification only — no taste verdict)
+
+Vision identification of the serve and rally frames: the recreated HUD family (`SCORE` card
+`MAESTRO` vs `Circuito`, `GAME TIME`, `MAPPA`, `COPPIA`/`CONTROLLO` chips, `LEGGI LA PALLA`
+prompt, `PERFETTO`/`BILANCIATO` verdict, timing ring) over the merged 10×20 m court; **no**
+`SEED/TIER/TICK/RNG` developer strip; the bottom-left `≡ CRONACA` affordance is the recreated
+HUD's own collapsed event-log toggle. GATE-A's look/feel verdict remains Luca's; nothing in
+this log claims it.

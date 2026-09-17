@@ -2,16 +2,19 @@
 id: UIR-09
 title: Prototype mount (menu + HUD running for GATE-A)
 slug: prototype-mount
-state: blocked
+state: done
 readiness: potential
 owner_role: integration owner
 blocked_by: [UIR-07, UIR-08]
 blocks: [GATE-A, UIR-22, UIR-24]
 gates: [plan-approval]
-plan_approved: false
+plan_approved: true
 triage: ready-for-agent
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-09-prototype-mount.md
+  - docs/implementation/ui-recreation/evidence/uir-pre-gate-a-captures.log
+  - docs/implementation/ui-recreation/evidence/uir-pull-wave/captures.log
+  - docs/implementation/ui-recreation/evidence/uir-gate-a-hud-1280x720-capture.log
 ---
 
 # UIR-09: Prototype mount (menu + HUD running for GATE-A)

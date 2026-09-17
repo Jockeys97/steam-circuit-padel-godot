@@ -2,16 +2,18 @@
 id: UIR-08
 title: In-match HUD 1:1 (screen-game HUD core)
 slug: screen-game-hud
-state: blocked
+state: done
 readiness: potential
 owner_role: screen worker
 blocked_by: [UIR-02, UIR-03, UIR-04, UIR-05, UIR-06]
 blocks: [UIR-09, UIR-20, UIR-21, UIR-22]
 gates: [plan-approval]
-plan_approved: false
+plan_approved: true
 triage: ready-for-agent
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-08-hud-audit.log
+  - docs/implementation/ui-recreation/evidence/uir-pre-gate-a-hud-audit.log
+  - docs/implementation/ui-recreation/evidence/uir-pull-wave/sweep-results.txt
 capture_states: [default, serving, rally, point-pause, set-tennis, drill, tournament, career, panel-open]
 ---
 

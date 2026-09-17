@@ -63,3 +63,13 @@ mtime with the 18:08 side holding six names rather than the three the prose impl
 - `.import` sidecars next to the PNGs (`godot/game/out/*.import`) are generated
   files, not part of this register; the three untracked `godot/game/arenas/art/
   *.webp.import` files belong to another lane and were left untouched.
+
+## Pointer (added 2026-09-17, post-pull closeout)
+
+The register's "before" set is preserved **copy-verified at `integration-prep/before-set/`**
+(`integration-prep/SHA256SUMS.txt` carries the same hashes; spot-checked again by the closeout
+pass: `quickmatch-serve.png 0a2696dd…`, `menu.png bb2d929c…`, `hud.png babafd27…`,
+`rally.png 63942951…`, `result.png a1cce659…` — all match). The GATE-A pack's BEFORE panels
+(`gate-a-review/pairs/*-before-ported-*.png`) are copied from there, not from the working tree:
+the working tree's tracked plan-lane PNGs at `HEAD` are the merge's stale renders, which is
+exactly why this register and its `before-set/` copy are the before-evidence.

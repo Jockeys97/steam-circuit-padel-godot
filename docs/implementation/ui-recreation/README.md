@@ -1,9 +1,9 @@
 ---
 pack: ui-recreation
 repo: steam-circuit-padel-godot
-status: awaiting-plan-approval
-approved: false
-approved_by: null
+status: plan-approved
+approved: true
+approved_by: Luca
 created: 2026-09-16
 created_by: hermes (dev-work profile), from handoff + two scout passes
 repo_head_at_authoring: 74195c4
@@ -80,11 +80,11 @@ Recorded for comparison only. UIR-00 re-measures them on this machine; differenc
 | music port | 32/32 claimed; measured FAIL 30/32 on the sweep commit | handoff vs sweep | provenance hash mismatch was fixed by `42aafa5` per its message; confirm in UIR-00 |
 | UI captures | `godot/game/out/*.png` (20 files) | `ls -lT` 2026-09-16 | menu/hud/rally/quickmatch-serve/result at 19:14, arena-* at 19:21, the rest 18:08 |
 
-## Gates (all open; nothing in this pack bypasses one)
+## Gates (nothing in this pack bypasses one; plan-approval recorded 2026-09-17, the other three open)
 
 | Gate | Owner | What it blocks | Where |
 |---|---|---|---|
-| plan-approval | Luca | mass implementation; every ticket carries `gates: [plan-approval]` and `plan_approved: false` | this file, frontmatter |
+| plan-approval | Luca | mass implementation — **recorded passed 2026-09-17**: Luca's request to implement the pack approves implementation of the plan (`CHARTER.md`; `LOG.md:4`). It does not approve the visual approach, the platform scope or final acceptance. | this file, frontmatter |
 | GATE-A: menu + HUD approach verdict | Luca (HITL) | all remaining screens (UIR-10 through UIR-21), described below; UIR-09 prepares the verdict, the verdict never blocks that preparation | `docs/wayfinder/tickets/ui-port-approach.md`, same question |
 | product-scope-and-platforms | Luca | UIR-26 (OSK visual + touch) and UIR-25's closing disposition for it (landed, or the decision quoted as a scope exception); everything else proceeds with desktop keyboard/pad | `docs/wayfinder/tickets/product-scope-and-platforms.md` |
 | luca-final | Luca | UIR-25's closing only (its `closing_gate`); UIR-25's execution and evidence preparation (phase A) runs under plan-approval + gate-a and never waits on this gate | UIR-25 |
@@ -246,7 +246,7 @@ The port does not have these today; each ticket's rules say how it proceeds with
 - It does not change simulation, locale, save or mode implementations, `project.godot`'s default scene, or the frozen web reference.
 - It does not re-tune anything, add content, or invent design. Where the reference is silent, the pack records the gap instead of filling it.
 - It does not claim any suite is green. The baseline numbers above are historical records from the mission logs, not measurements taken by this pack.
-- It does not approve itself: `approved: false` until Luca says otherwise.
+- It does not approve itself: the `approved` flag reads `true` only because Luca's request to implement the pack approves implementation (`CHARTER.md`; `LOG.md:4`) — implementation only; the visual approach (GATE-A), the platform scope and final acceptance stay open.
 
 ## How a worker starts
 

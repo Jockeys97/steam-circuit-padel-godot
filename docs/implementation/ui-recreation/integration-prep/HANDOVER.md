@@ -4,6 +4,31 @@
 UI-recreation mission continued. **Prep only**: no merge/pull/checkout/stash/reset/rebase/fetch,
 no commit/push, no engine run, no deletion; budget $0. The checkout was read, never mutated.
 
+## UPDATE 2026-09-17 ~02:45 CEST — post-merge state (supersedes the prep snapshot below)
+
+The prep was **executed and superseded**: the branch moved one commit past the reviewed `2752d9a2`
+(`a1e10f0`, the court's real 10×20 m projection), the integration landed as a non-destructive merge
+at `c6837b2` (parents `249d55a` + `a1e10f04f9896de6ebbaff3e29f6d2c0dba77590`), and the pull was
+reconciled at `c9470e2` (slice assertions restored; no runtime code touched). A docs-only
+verification pass re-verified the provenance read-only (merge parents, ancestry, court files
+byte-identical `a1e10f04`→`HEAD`, frozen pins re-hashed) — see `../gate-a-review/REPORT.md` §1.
+
+| Prep claim (below) | Current truth (2026-09-17) |
+|---|---|
+| HEAD / main `252ff60…` | local `main` = **`3238a50`** (the review's `c9470e2` + the shipping-pack evidence commit + the closeout), 10 ahead of remote `origin/main` (`252ff60…`) — **nothing pushed** |
+| Branch tip `2752d9a2…` | tip moved once more to **`a1e10f04…`** (the court commit `a1e10f0`); integrated as a merge, not a fast-forward (the UI checkpoint had diverged) |
+| Screenshot hazard (branch rewrites the 11 legacy PNGs) | materialized: the merge replaced them (stale renders by the branch's own note); fresh merged-tip captures exist in `/tmp/padel-uir-pull-20260917/repo/…/out/` and durably in `../gate-a-review/pairs/`; the registered baseline `before-set/` is intact and re-verified |
+| Court / camera "untouched" (the `branch-review-2752d9a2.md` §2 rows) | **superseded by `a1e10f0`** — court 10 m × 20 m, C1 depth curve, all `CAMERAS` presets re-aimed (`court.gd 844891ea…`, `court_dimensions_test.gd 581adcdc…` at `HEAD`); that review stays historical, valid for `2752d9a2` only |
+| Probe sample `manifests/merged2-match_controller.gd` | the merged file at `HEAD` byte-matches it (`a0f56fec…`, 90,953 B) |
+
+Remaining from the prep's next-actions: gates — DONE (`../evidence/uir-pull-wave/`, 19-run sweep;
+sole red = the branch's deliberate `padel.pck` export check); UIR-05's "4/4" text and the
+`uir-00-before-set.md` pointer note — **closed by the 2026-09-17 closeout**, stale anchors still
+OPEN (coordinator); GATE-A handoff — published and final (`../board-gate-a.md`, `../gate-a-review/`,
+incl. the merged-tip 1280×720 HUD frames); the verdict is Luca's and not started. The closeout also
+ran the merged-tip capture in the real checkout (restored byte-identical) and reconciled the
+trackers; nothing pushed.
+
 ## Verified state (as recorded by the review, re-anchor at use)
 
 | Fact | Value |

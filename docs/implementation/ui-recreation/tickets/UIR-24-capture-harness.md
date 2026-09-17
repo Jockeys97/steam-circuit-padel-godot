@@ -2,17 +2,19 @@
 id: UIR-24
 title: Capture harness and UI legibility audit
 slug: capture-harness
-state: blocked
+state: in-progress
 readiness: potential
 owner_role: verification worker
 blocked_by: [UIR-03, UIR-09]
 blocks: [UIR-25]
 gates: [plan-approval, gate-a]
-plan_approved: false
+plan_approved: true
 triage: ready-for-agent
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-24-capture.log
   - docs/implementation/ui-recreation/evidence/uir-24-legibility.log
+  - docs/implementation/ui-recreation/evidence/uir-pre-gate-a-legibility.log
+  - docs/implementation/ui-recreation/evidence/uir-pre-gate-a-captures.log
 ---
 
 # UIR-24: Capture harness and UI legibility audit

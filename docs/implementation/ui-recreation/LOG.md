@@ -218,3 +218,41 @@ untouched — no look/feel verdict is claimed anywhere, this wave's frame notes 
 measurements; the brother branch's `match_controller`/HUD timing cues are not merged here;
 `BOARD.md`'s ticket rows are again left to the coordinator (the wave paragraph records what
 each flip now has behind it).
+
+## Post-pull closeout — merged-tip 1280×720 HUD recapture, frontmatter reconciled, GATE-A pack final (2026-09-17, native macOS)
+
+Single engine owner (pgrep -x Godot empty before and after; nothing else killed). Context: the
+pull/merge wave (`c6837b2`, `c9470e2`), the shipping-pack export (`3238a50`) and the docs-only
+correction pass (`gate-a-review/`, uncommitted) had landed; this closeout closes the pack's
+remaining evidence gap, reconciles the trackers, and commits the mission docs only.
+
+- **The queued re-capture ran, on the merged tip.** `HEAD 3238a50`; documented command
+  (`Match.tscn -- --ui=new --capture=match --tier=3 --seed=20260916 --resolution 1280x720`):
+  exit 0, 0 SCRIPT ERRORs, one named shutdown allowance, Metal on Apple M4,
+  `CAPTURE_DONE shots=5 ticks=25962`, seven frames all 1280x720. Transcript:
+  `evidence/uir-gate-a-hud-1280x720-capture.log`.
+- **Tracked bytes preserved, then restored — proven.** `godot/game/out/` was snapshotted (104
+  files) before the run; the byte-delta was exactly the seven capture outputs; post-restore hashes
+  equal the snapshot and `git status` is unchanged (the merge's stale plan-lane renders were
+  restored, not repaired; the UIR-00 register values re-hash from `integration-prep/before-set/` —
+  all match).
+- **The GATE-A pack now carries the post-merge 1280×720 HUD frames.** Pairs
+  `gate-a-review/pairs/hud-after-prototype-{serve,hud,rally}-1280x720.png` (copy-verified; full
+  hashes in `pairs/SHA256SUMS.txt`), new composed sheet
+  `gate-a-review/sheets/hud-before-after-1280x720.png`; the 1152×648 sheet is retained unchanged
+  (the composer is deterministic — proven by a dry-run rerun reproducing both earlier sheets
+  byte-identically). `PROVENANCE.md` cross-checks 6–7 and `REPORT.md` §8 record it.
+- **Frontmatter reconciled with the board.** UIR-08/UIR-09 → `state: done`, UIR-24 →
+  `state: in-progress`, all three `plan_approved: true`; README → `approved: true`,
+  `approved_by: Luca`, `status: plan-approved` (implementation approval from the original
+  implement request only — GATE-A, the platform decision and `luca-final` stay open); UIR-05's
+  stale `# must stay 4/4` → `5/5`; `evidence/uir-00-before-set.md` gained the dated pointer to
+  `integration-prep/before-set/`; `BOARD.md` legend/standings updated to match.
+- **Recomputed, not assumed:** 10 done / 1 in-progress / 16 blocked / 1 blocked-external (28/28,
+  zero board divergences; `gate-a-review/ticket-status-assessment.txt` third section).
+
+**Not done, on purpose:** no push; GATE-A still has no verdict (the pack prepares it — Luca owns
+it); no post-gate screen work started; the S14 frame-relative re-measurement and the UIR-09/UIR-22
+slice line anchors remain open (named in `REPORT.md` §8 and on the board). This closeout commits
+the mission docs + capture evidence only — the unrelated working-tree changes (`.hermes/`,
+`art/`, `meshy/README.md`, stray imports) stay unstaged.
