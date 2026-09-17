@@ -1,0 +1,200 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok osk/the_grid_is_five_character_rows_and_the_action_row
+ok osk/the_first_five_rows_are_character_rows
+ok osk/the_grid_has_every_character_of_the_reference
+ok osk/the_characters_are_in_the_references_own_order
+ok osk/the_last_row_is_the_action_row
+ok osk/the_four_action_keys_are_the_references
+ok osk/every_action_key_label_resolves_through_the_strings_seam
+ok osk/open_for_opens
+ok osk/the_target_comes_back_on_close
+ok osk/open_for_takes_the_fields_value
+ok osk/the_label_starts_with_the_fields_own_label
+ok osk/the_label_carries_the_hint
+ok osk/the_aria_name_is_the_keyboards
+ok osk/a_character_press_is_taken
+ok osk/the_character_lands_in_the_value
+ok osk/an_upper_case_press_is_taken
+ok osk/the_upper_case_lands_as_written
+ok osk/insert_takes_a_character
+ok osk/the_inserted_character_lands_last
+ok osk/backspace_deletes
+ok osk/the_delete_removed_the_last_character
+ok osk/shift_starts_off
+ok osk/shift_toggles_on
+ok osk/a_shifted_key_shows_its_upper_face
+ok osk/the_shift_key_answers_shifts_name
+ok osk/the_second_shift_press_toggles_off
+ok osk/the_space_key_answers_spaces_name
+ok osk/the_space_lands_as_a_space
+ok osk/the_backspace_key_answers_its_name
+ok osk/an_unknown_key_answers_nothing
+ok osk/the_max_length_is_the_fields
+ok osk/a_character_past_the_clamp_is_refused
+ok osk/the_clamp_does_not_trim
+ok osk/the_max_length_reads_back
+ok osk/done_answers_closed
+ok osk/done_closes_the_keyboard
+ok osk/a_key_after_the_close_answers_nothing
+ok osk/close_returns_the_field_to_focus
+ok osk/close_keeps_the_value_for_the_caller
+ok osk/the_panel_is_hidden_while_the_keyboard_is_closed
+ok osk/the_panel_reports_the_model_closed
+FAIL osk/no_targets_while_closed: expected 0, got 51
+ok osk/the_default_capture_state_is_declared
+ok osk/an_unknown_capture_state_is_refused
+ok osk/the_panel_shows_while_the_keyboard_is_open
+ok osk/the_panel_reports_the_model_open
+ok osk/the_default_capture_state_applies_while_open
+ok osk/the_panel_carries_the_keyboards_aria_name
+ok osk/the_label_is_the_models_own
+ok osk/the_preview_shows_the_fields_value
+ok osk/the_report_carries_the_state
+FAIL osk/every_key_of_the_grid_is_a_target: expected 52, got 51
+ok osk/every_target_id_is_a_key_of_the_grid
+ok osk/the_target_order_is_the_grids_own
+ok osk/every_target_carries_the_laid_out_rect
+FAIL osk/the_first_row_sits_above_the_action_row: expected "< 0.000000", got 0.000000
+ok osk/the_target_id_reaches_key_1
+ok osk/the_target_id_reaches_key_2
+ok osk/the_target_id_reaches_key_3
+ok osk/the_target_id_reaches_key_4
+ok osk/the_target_id_reaches_key_5
+ok osk/the_target_id_reaches_key_6
+ok osk/the_target_id_reaches_key_7
+ok osk/key_1_has_a_laid_out_height
+ok osk/key_2_has_a_laid_out_height
+ok osk/key_3_has_a_laid_out_height
+ok osk/key_4_has_a_laid_out_height
+ok osk/key_5_has_a_laid_out_height
+ok osk/key_6_has_a_laid_out_height
+ok osk/key_7_has_a_laid_out_height
+ok osk/an_unshifted_key_shows_its_lower_face
+ok osk/the_shift_target_is_pressed
+ok osk/the_shift_target_moved_the_model
+ok osk/a_shifted_key_shows_its_upper_face_on_the_panel
+ok osk/the_shift_key_carries_its_label
+ok osk/the_shift_target_toggles_back
+ok osk/a_character_target_is_pressed
+ok osk/the_character_reached_the_model
+ok osk/the_preview_follows_the_value
+ok osk/an_unknown_target_is_refused
+ok osk/the_panel_forwards_a_bare_character
+ok osk/the_panel_forwards_an_action_key
+ok osk/done_through_the_panel_closes
+ok osk/the_panel_hides_after_done
+ok osk/the_closed_signal_fires_once
+FAIL osk/the_closed_signal_names_the_field: expected "pause/fb-message", got ""
+ok osk/a_wide_frame_keeps_the_44px_keys
+ok osk/a_560px_frame_shrinks_the_keys
+ok osk/the_field_holds_the_focus
+ok osk/confirming_a_field_opens_the_keyboard
+ok osk/the_opened_keyboard_names_the_field
+ok osk/the_lanes_own_model_is_open
+ok osk/the_lane_took_the_fields_value
+ok osk/the_focus_context_is_the_keyboard
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _lane_integration (res://tests/ui/osk_touch_audit.gd:291)
+         [1] _run (res://tests/ui/osk_touch_audit.gd:93)
+         [2] _panel_view (res://tests/ui/osk_touch_audit.gd:265)
+ok osk/the_panel_renders_the_lanes_model
+ok osk/the_first_key_takes_the_focus
+ok osk/a_panel_press_is_taken_over_the_lanes_model
+ok osk/the_press_landed_in_the_lanes_model
+ok osk/back_reports_the_keyboard_close
+ok osk/back_names_the_field_to_refocus
+ok osk/back_closed_the_lanes_model
+ok osk/the_focus_context_returns_to_the_screen
+ok touch/the_decks_shot_button_is_the_drive_action
+ok touch/the_decks_switch_button_is_the_switch_action
+ok touch/the_decks_special_button_is_the_special_action
+ok touch/the_pads_up_button_maps_to_an_action
+ok touch/the_pads_left_button_maps_to_an_action
+ok touch/the_pads_hit_button_maps_to_an_action
+ok touch/the_pads_right_button_maps_to_an_action
+ok touch/the_pads_down_button_maps_to_an_action
+ok touch/the_pads_up_is_the_up_action
+ok touch/the_pads_down_is_the_down_action
+ok touch/the_pads_left_is_the_left_action
+ok touch/the_pads_right_is_the_right_action
+ok touch/an_unknown_direction_maps_to_nothing
+ok touch/every_mapped_action_exists_in_the_project
+ok touch/the_deck_carries_three_buttons
+ok touch/the_pad_carries_seven_buttons
+ok touch/the_deck_buttons_are_the_references_three
+ok touch/the_pad_buttons_are_the_references_seven
+ok touch/the_decks_shot_carries_the_shot_aria
+ok touch/the_decks_switch_carries_the_switchBtn_aria
+ok touch/the_decks_special_carries_the_specialBtn_aria
+ok touch/the_pads_aria_names_are_the_references_own
+ok touch/the_pads_hit_resolves_to_the_shot_name
+ok touch/the_deck_glyphs_carry_no_space
+ok touch/the_deck_glyphs_carry_no_space
+ok touch/the_deck_glyphs_carry_no_space
+ok touch/a_fine_pointer_hides_the_deck_at_desktop_width
+ok touch/a_coarse_pointer_shows_the_deck_at_desktop_width
+ok touch/a_coarse_pointer_hides_the_pad_at_desktop_width
+ok touch/the_deck_survives_the_681px_frame
+ok touch/the_pad_stays_hidden_above_680px
+ok touch/the_deck_hides_at_600px
+ok touch/the_pad_shows_at_600px
+ok touch/the_pad_shows_at_the_680px_edge
+ok touch/the_deck_is_gone_at_the_680px_edge
+ok touch/the_frame_defaults_to_the_controls_own_width
+FAIL touch/the_default_instance_finds_its_palette: expected true, got false
+# note this machine reports touchscreen=false; the deck's default state follows the engine's own answer
+ok touch/the_deck_shot_button_is_reachable
+ok touch/a_button_down_presses_the_action
+ok touch/the_layer_remembers_what_it_holds
+ok touch/a_button_up_releases_the_action
+ok touch/the_held_list_drops_it_again
+ok touch/a_second_release_is_a_no_op
+ok touch/the_special_button_drives_its_action
+ok touch/hiding_the_deck_releases_its_held_action
+ok touch/nothing_stays_held_after_the_hide
+ok touch/an_unknown_action_is_refused
+ok touch/the_refused_action_is_recorded
+ok touch/a_known_action_is_taken_again
+ok touch/the_engine_emulates_mouse_from_touch
+ok touch/the_deck_button_sits_inside_the_frame
+FAIL touch/a_screen_touch_press_on_the_deck_drives_the_action: expected true, got false
+ok touch/lifting_the_finger_releases_the_action
+ok touch/the_touch_path_leaves_nothing_held
+ok touch/the_pad_is_shown_for_the_narrow_frame
+ok touch/the_pads_hit_button_is_reachable
+ok touch/the_pads_hit_drives_the_same_action
+ok touch/the_pads_hit_releases_it
+ok osk/every_key_this_ticket_shows_resolves_in_both_locales
+ok osk/there_is_a_second_locale_to_flip_to
+ok osk/the_panel_takes_the_other_language
+ok touch/the_layer_takes_the_other_language
+ok osk/the_shift_key_shows_the_other_tables_label
+ok osk/the_aria_name_follows_the_language
+ok touch/the_deck_aria_name_follows_the_language
+ok touch/the_pad_aria_name_follows_the_language
+ok osk/the_flip_moved_strings_that_differ
+# report language flip: 2 of 2 sampled strings differ between tables
+ok osk/the_first_language_comes_back
+ok touch/the_first_language_comes_back
+ok osk/the_flip_back_restores_the_label
+ok touch/the_flip_back_restores_the_aria
+ok osk/an_unknown_locale_is_refused
+ok touch/an_unknown_locale_is_refused
+ok osk/every_palette_miss_is_a_key_this_panel_declares
+ok touch/every_palette_miss_is_a_key_this_layer_declares
+# report palette keys this ticket declares — osk: ["osk_scrim", "cyan", "surface_0", "surface_1", "surface_2", "tab_border", "text_soft_2", "segmented_gradient_start", "ink", "muted"] | touch: ["deck_hit_border", "deck_hit_fill", "deck_hit_shadow", "deck_switch_fill", "deck_special_fill", "deck_special_border", "deck_special_shadow", "touch_button_bg", "line", "ink", "white"]
+# note palette keys the theme does not carry yet, requested in evidence/uir-26-osk-touch.md: osk ["osk_scrim"] | touch ["deck_hit_fill", "deck_hit_border", "deck_hit_shadow", "deck_switch_fill", "deck_special_fill", "deck_special_border", "deck_special_shadow", "touch_button_bg"]
+# note no touchscreen on this machine: DisplayServer.is_touchscreen_available() answered false during this audit
+# note the shared theme (godot/src/ui/theme/padel_theme.tres) does not parse as of this wave: thirteen palette rows use a three-argument Color() (lines 419-429, 434-435). Every palette read here falls back to the palette's own ink and the misses are listed; the fix belongs to the theme lane (append the missing alpha)
+# not-ported device/real_touch_hardware: no touchscreen on the audit host (macOS desktop); the touch path is exercised with InputEventScreenTouch and the engine's own emulation, not a finger
+# not-ported device/handheld_export: no iOS/Android/Deck export was run in this wave — the 560 px and 680 px rules are asserted on a resized Control, not on a device
+# not-ported device/steam_input_keyboard: the platform's own on-screen keyboard hook (Steam/Android) is not wired; this ticket's keyboard is the reference's DOM one, rebuilt
+# report osk: 51 targets over 6 rows; touch: { "deck": true, "pad": false, "coarse": true, "width": 1280.0 }
+FAIL 171/177
+FAIL 171/177
+# first failure FAIL osk/no_targets_while_closed: expected 0, got 51
+# first failure FAIL osk/no_targets_while_closed: expected 0, got 51

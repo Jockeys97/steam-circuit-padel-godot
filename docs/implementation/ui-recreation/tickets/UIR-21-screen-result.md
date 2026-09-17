@@ -2,16 +2,17 @@
 id: UIR-21
 title: ResultScreen 1:1 (screen-result)
 slug: screen-result
-state: blocked
+state: done
 readiness: potential
 owner_role: screen worker
 blocked_by: [UIR-02, UIR-03, UIR-04, UIR-05, UIR-07, UIR-08]
 blocks: [UIR-22, UIR-23]
 gates: [plan-approval, gate-a]
-plan_approved: false
+plan_approved: true
 triage: ready-for-agent
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-21-screen-result.log
+  - docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json
 capture_states: [win-points, loss-points, win-set, loss-set, multi-set, career-promotion, tournament-next, demo-cta, beta-cta]
 ---
 
@@ -93,3 +94,13 @@ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
 ## Traces
 
 `index.html:539-563`, `js/ui.js:1374-1545`, `js/main.js:2392-2420`, `styles.css:1099-1265`; scout T10 acceptance list.
+
+## Finalize closure (2026-09-17, integration owner)
+
+Engine record, one Godot process at a time, manifest `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json` (all sources hashed
+before and after: tree digest `1256f5f1d7200437`, stable).
+
+- `tests/ui/screen_result_audit.gd` — **PASS 176/176**, exit 0, 0 `SCRIPT ERROR` line(s) (0.7s); log `docs/implementation/ui-recreation/evidence/uir-finalize/runs/screen_result_audit.log`
+
+**State: `done`** — the audit above is this ticket's arbiter and it is green on the
+finalize tree.

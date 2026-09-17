@@ -1,0 +1,75 @@
+# UIR-19 SettingsScreen 1:1 — evidence log
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-19-screen-settings.md`
+Wave: UIR-17/18/19/21 completion wave — sole engine runner; $0; no commits/staging/push.
+Engine: **ran this wave** — `"/Applications/Godot.app/Contents/MacOS/Godot" --headless --path godot/ --script res://tests/ui/screen_settings_audit.gd`
+Result: **90/91 checks — FAIL 1: `settings/the_scene_mounts_the_theme`**, the shared theme's parse error (§5). Every other check green.
+Run logs: `/tmp/padel-uir19-run{1,2}.log`, final `/tmp/padel-uir-final-settings.log`.
+
+**Reading a run:** the exit code is not a pass signal — a script that fails to parse also
+exits 0. The tally line (`PASS n/n` / `FAIL n/n`) and the `SCRIPT ERROR` count are the
+evidence; this log's numbers come from those.
+
+## 1. What landed this wave
+
+| path | what |
+|---|---|
+| `godot/tests/ui/screen_settings_audit.gd` | the ticket's audit, exercised in-engine; three fixes (§3) |
+| `godot/tests/ui/screen_settings_audit.tscn` + `.gd.uid` | runner scene + `uid://qe5b7iz5zlmq` |
+| `godot/src/ui/screens/SettingsScreen.gd` | fixes this wave: the 10 `SettingsRows.` references now use the actual const name `Rows` (the preload const is `Rows`; both member calls and the one comment's path were corrected), the `resized` re-entrancy guard, segment pressed-state, language buttons `toggle_mode` |
+| `godot/src/ui/components/SettingsRows.gd` | the two members the screen and audit call through: static `kind_of(row)` (`"range"` / `"toggle"`) and top-level `PERCENT_SIGN` (the inner classes keep their own) |
+
+## 2. The engine's word, per area (all green)
+
+- the three group titles and five rows render from the stored prefs; language flip moves
+  every slot; capture states; literal scans of **both** `SettingsScreen.gd` and
+  `SettingsRows.gd` (the ticket's own scanner, probe-proven).
+- the value contract, both sides: `set_volume`/`set_deadzone` clamp to the reference
+  bounds and **persist immediately** (store == screen == shown text, asserted as a
+  triple); `set_row_value` is the widget-only read path (it does not re-persist what was
+  just read) — the audit drives the persisting API for the step/persist triple.
+- the bridge: 8 focusables; the model sees `VolumeRow` as a **range** and `VibrationRow`
+  as a **button**; focus lands; a right press on the range is handled; the step lands on
+  the grid and is persisted at once.
+
+## 3. What the run caught, and the fixes
+
+1. **`SettingsRows.` didn't resolve** — the screen's preload const is `Rows`; 10 call
+   sites renamed (parse error cleared).
+2. **The audit asked through members that didn't exist**: `RowsClass.kind_of(...)` and
+   `RowsClass.PERCENT_SIGN`. The component now exposes both (a static `kind_of` and the
+   top-level percent sign) — screen and audit share one door instead of a type check.
+3. **Toggle rows' labels are on the `CheckBox`**, not a `Label` (the two shapes of
+   `SettingsRows`); the audit's flip test read the wrong child and the three toggle slots
+   showed `<missing>`. Fixed to read either shape.
+4. **The step check drove the widget-only path**; reworked to the persisting API and the
+   store compared (see §2).
+5. **`Schema.prefs_defaults()` doesn't exist**; the schema's own frozen defaults are
+   `Schema.PREFS_DEFAULTS` — the dead-zone key check now reads that.
+
+## 4. Seams recorded precisely
+
+- **`menu_focus` range metadata (verbatim audit note, from this run):**
+  `menu_focus._target() drops min/max/step/value (and the OSK seed keys
+  value/max_length/field_label), so the focused range's copy in the model steps from the
+  model's own defaults — volume target seen by the model:
+  { "id": "settings/VolumeRow", "rect": [P: (349.0, 116.0), S: (220.0, 16.0)],
+  "kind": "range", "action": "VolumeRow", "locked": false, "disabled": false,
+  "hidden": false, "drawn": true, "contains_buttons": false }`.
+  Request to the input lane: carry `min/max/step/value` on the focus target so a range
+  stepped by the pad uses the row's own step.
+- **Consumers of this screen's objects (recorded):** `AccessibilitySettings` /
+  `motion_policy()` are read by `ArenaScreen.gd` today (effects); the pad preferences are
+  read by the input layer from the same prefs group; `Locale.set_lang` is global;
+  `FeedbackScreen` carries `drillDifficulty` into diagnostics from its own extras.
+- Persistence goes through `ModesSave.save_pref` on the screen's store; the audit uses
+  `user://uir19-settings-audit` (removed at the end) — the real profile is untouched.
+
+## 5. The one red check — a cross-lane blocker in the shared theme
+
+`settings/the_scene_mounts_the_theme` fails because
+`godot/src/ui/theme/padel_theme.tres` **does not parse**: `Parse Error: Expected 4
+arguments for constructor` at line 419 — thirteen palette rows use a 3-argument
+`Color(r, g, b)`. Exact lines: **419–429 and 434–435**; mechanical fix: append `, 1`.
+The theme file is the theme lane's — recorded, not edited. The theme mount is the only
+theme-dependent check in this audit.

@@ -234,3 +234,67 @@ stays the owner's decision.
   re-measurement under the new camera (engine lane), the push (owner). No post-gate screen work
   started.
 - Spend: $0, 0 Meshy credits. No human gate self-approved.
+
+- 2026-09-17 finalize wave — the owner asked for the UI recreation to be finalized (not expanded:
+  "finalize the existing UI recreation, not expand it", with the playable route and the serial audit
+  sweep as the acceptance), and the pack's own review (`/tmp/uir-final-integration-review.md`) had
+  named the integration blockers F1/F6/F8. Bounded role: one integration captain, sole code/doc
+  writer and sole Godot engine owner — no nested agents, no paid APIs ($0, 0 Meshy credits), native
+  configured identity, no model override claimed. The previous captain's delegation was still writing
+  until 12:24:26, so this lane stayed read-only until it stopped (verified by log-growth sampling and
+  `lsof`), then took over.
+- 2026-09-17 finalize wave — integration blockers closed in code: quick-match `player_mode` now
+  reaches `Sim.create_match_state` (`{"humanMode": …}`, quick only, the reference's rule at
+  `js/main.js:1156`); stored `volume`/`gamepadDeadzone` are applied through the audio module and the
+  pad reader at boot, on every range change and on both match-boot paths (`js/main.js:2276`);
+  `DrillScreen.start()` asks `ModeSession.can_start("drill")` before it writes anything, and shows the
+  lock when refused. F3 (router overlays with no caller) is recorded as a divergence of the landed
+  architecture, not a defect: the in-match card owns its own focus model. The F6 vibration pref stays
+  consumer-less and is recorded as such.
+- 2026-09-17 finalize wave — the pack was re-run serially on the merged tree, one engine process at a
+  time (`pgrep -x Godot` guard before each run), with all sources under `godot/game`, `godot/src`,
+  `godot/tests` and `project.godot` hashed before and after (tree digest `30820ee3dddaf826`, stable):
+  **32 runs, 24 green, 8 red; 2,869 checks passed in the green runs; 16 `SCRIPT ERROR` lines, all
+  inside the red runs.** Green includes the slice `PASS 342/342`, UIR-22's `PASS 71/71` and the new
+  route driver `PASS 44/44`. Machine-readable manifest:
+  `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json` (+ `README.md`, the
+  reds with their failing check names, and `playable-route.md`).
+- 2026-09-17 finalize wave — the playable route is verified in-engine end to end, not by mocks:
+  `menu → modes → characters → arena → drill → match → pause → result → rematch → settings`, driven
+  through the real focus bridge with real input events and a real played-out match
+  (`godot/tests/ui/uir_route_audit.gd`). The owner's own command for the play-test:
+  `/Applications/Godot.app/Contents/MacOS/Godot --path godot res://game/Main.tscn -- --seed=20260916
+  --tier=3 --camera=default` (the recreated UI is the default; `--ui=legacy` stays).
+- 2026-09-17 finalize wave — trackers reconciled to that engine record: ticket frontmatter 18 `done` /
+  8 `in-progress` (UIR-11, 13, 14, 15, 16 on red screen audits, UIR-24 legibility, UIR-26 OSK/touch,
+  UIR-27 replay) / 2 `blocked` (UIR-23, UIR-25); BOARD rows, GATE-A row (passed-by-owner — the feel
+  verdict remains the owner's play-test) and Standings updated; stale `SmashTutorial.gd` hash row in
+  `evidence/uir-20-overlays.log` corrected to 741 lines / 27528 B / `4c58da27403fe587` (re-verified
+  against the file) together with the drifted `PauseOverlay.gd` row. `replay_audit.gd`'s four parse
+  errors fixed so the audit loads; it still fails 95/103 on the absent controller replay seam, which is
+  the precise blocker recorded for UIR-27.
+- 2026-09-17 finalize wave — **nothing committed, nothing pushed** (explicitly held for the owner);
+  no deletions, no resets, no other process killed, one engine process at a time throughout. Spend
+  unchanged: $0, 0 Meshy credits.
+- 2026-09-17 finalize closure — every repair landed and the pack was re-run serially on the final
+  tree (one engine process at a time, `pgrep -x Godot` guard; sources hashed before and after, tree
+  digest `1256f5f1d7200437`, stable): **32 runs, 32 green, 4,318 checks, 0 `SCRIPT ERROR`**; the 11
+  engine `ERROR:` lines are classified (4 named `check_log.sh` allowances, 4 ok-flanked refusal
+  probes, 3 headless-clipboard). The replay seam was executed (`replay_audit PASS 166/166`, plus a
+  closure probe of the wired card entry on the mounted card, 18/18) and the
+  pause card's entry gate split (`set_replay_available`) so RIGUARDA PUNTO is reachable while ESC's
+  step 0 stays honest; route `PASS 44/44` (menu → modes → characters → arena → drill → match →
+  pause → result → rematch → settings), integration `71/71`, slice `342/342`, demo `293/293`.
+  Manifest `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json`; tickets
+  reconciled to 26 done / 1 ready (UIR-23, flipped from blocked) / 1 blocked (UIR-25, closes on
+  `luca-final`); hash registers re-fingerprinted; `board-gate-a.md`'s stale opt-in text corrected
+  to UIR-22's approved default-NEW. **Nothing committed, nothing pushed**; spend $0.
+- 2026-09-17 UIR-23 closure + scoped release (release captain) — `demo_matrix_audit.gd` written and
+  UIR-23's two acceptance commands executed serially (`pgrep -x Godot` empty before each): full
+  `PASS 133/133`, demo `PASS 178/178`, exit 0, 0 `SCRIPT ERROR`; the beta column is `not_ported`
+  (no beta build in the port today), never emulated; matrix + transcripts in
+  `evidence/uir-23-demo-matrix.{md,log}`. Tickets now 27 done / 0 ready / 1 blocked — UIR-25 stays
+  `blocked` on `luca-final`, the feel/framing verdict remains the owner's. Under the owner's
+  handoff authorization the mission-only paths were staged explicitly (no `git add -A`) and pushed
+  to `origin/main`; remote read-back verified; no force push; unrelated dirt (`.hermes/`, `art/**`,
+  `meshy/**`, generated sidecars, probe files) left untouched. Spend $0.

@@ -2,16 +2,17 @@
 id: UIR-13
 title: HelpScreen 1:1 (screen-help + shared ControlLegend component)
 slug: screen-help
-state: blocked
+state: done
 readiness: potential
 owner_role: screen worker
 blocked_by: [UIR-02, UIR-03, UIR-04, UIR-05, UIR-07]
 blocks: [UIR-20, UIR-22]
 gates: [plan-approval, gate-a]
-plan_approved: false
+plan_approved: true
 triage: ready-for-agent
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-13-screen-help.log
+  - docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json
 capture_states: [keyboard-tab, controller-tab]
 ---
 
@@ -98,3 +99,13 @@ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
 ## Traces
 
 `index.html:181-265`, `styles.css` help block + `:2775, :2785`, `godot/src/input/scheme.gd` header, `godot/src/input/strings.gd` header; scout T05 acceptance list.
+
+## Finalize closure (2026-09-17, integration owner)
+
+Engine record, one Godot process at a time, manifest `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json` (all sources hashed
+before and after: tree digest `1256f5f1d7200437`, stable).
+
+- `tests/ui/screen_help_audit.gd` — **PASS 91/91**, exit 0, 0 `SCRIPT ERROR` line(s) (0.5s); log `docs/implementation/ui-recreation/evidence/uir-finalize/runs/screen_help_audit.log`
+
+**State: `done`** — the audit above is this ticket's arbiter and it is green on the
+finalize tree.

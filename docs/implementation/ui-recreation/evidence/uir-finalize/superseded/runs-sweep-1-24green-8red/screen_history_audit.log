@@ -1,0 +1,92 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok history/the_router_still_carries_thirteen_ids
+ok history/all_thirteen_slots_register
+ok history/the_scene_registers_under_the_history_id
+ok history/go_to_mounts_the_screen
+ok history/the_mounted_scene_carries_HistoryScreen_gd
+ok history/the_scene_mounts_the_theme
+ok history/the_screen_reads_the_temp_store
+ok history/the_screen_reports_its_own_id
+ok history/the_declared_return_is_the_router_table_s
+ok history/the_screen_kept_the_router_fact
+ok history/the_two_declared_capture_states
+ok history/an_undeclared_capture_state_is_refused
+ok history/an_empty_store_shows_no_rows
+FAIL history/the_three_boxes_read_zero: expected ["0","0","0"], got ["","",""]
+FAIL history/the_boxes_carry_the_reference_s_own_labels: expected ["Wins","Losses","Trophies"], got ["","",""]
+ok history/the_empty_state_is_a_row_of_its_own
+ok history/and_it_is_the_reference_s_own_line
+ok history/three_recorded_matches_are_three_rows
+ok history/the_newest_entry_is_the_first_row
+FAIL history/the_boxes_are_the_adapter_s_own_counts: expected ["2","1","0"], got ["","",""]
+ok history/the_first_row_exists
+ok history/the_composed_separator_is_the_locale_lane_s_own
+ERROR: Node not found: "Main/Mode" (relative to "/root/ScreenHistoryAuditFrame/Router/ScreenHost/HistoryScreen/ScreenShell/Margin/Rows/Content/HistoryScroll/HistoryBody/HistoryList/Row0").
+   at: get_node (scene/main/node.cpp:1976)
+   GDScript backtrace (most recent call first):
+       [0] _populated (res://tests/ui/screen_history_audit.gd:176)
+       [1] _run (res://tests/ui/screen_history_audit.gd:91)
+       [2] _mount (res://tests/ui/screen_history_audit.gd:135)
+SCRIPT ERROR: Invalid access to property or key 'text' on a base object of type 'null instance'.
+          at: _populated (res://tests/ui/screen_history_audit.gd:176)
+          GDScript backtrace (most recent call first):
+              [0] _populated (res://tests/ui/screen_history_audit.gd:176)
+              [1] _run (res://tests/ui/screen_history_audit.gd:91)
+              [2] _mount (res://tests/ui/screen_history_audit.gd:135)
+ok history/the_store_keeps_the_reference_s_twenty
+ok history/the_cap_is_the_schema_s_own_constant
+ok history/and_the_screen_renders_every_entry_it_is_given
+# report cap: recorded 29, stored 20, rendered 20
+SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[Dictionary]".
+          at: refresh (res://src/ui/screens/HistoryScreen.gd:160)
+          GDScript backtrace (most recent call first):
+              [0] refresh (res://src/ui/screens/HistoryScreen.gd:160)
+              [1] apply_capture_state (res://src/ui/screens/HistoryScreen.gd:120)
+              [2] _read_only (res://tests/ui/screen_history_audit.gd:223)
+              [3] _run (res://tests/ui/screen_history_audit.gd:93)
+              [4] _mount (res://tests/ui/screen_history_audit.gd:135)
+ok history/refreshing_and_walking_the_states_rewrote_nothing
+ok history/the_screen_source_names_no_writer
+ERROR: Node not found: "Row0/Main/Mode" (relative to "/root/ScreenHistoryAuditFrame/Router/ScreenHost/HistoryScreen/ScreenShell/Margin/Rows/Content/HistoryScroll/HistoryBody/HistoryList").
+   at: get_node (scene/main/node.cpp:1976)
+   GDScript backtrace (most recent call first):
+       [0] _strings (res://tests/ui/screen_history_audit.gd:257)
+       [1] _run (res://tests/ui/screen_history_audit.gd:94)
+       [2] _mount (res://tests/ui/screen_history_audit.gd:135)
+SCRIPT ERROR: Invalid access to property or key 'text' on a base object of type 'null instance'.
+          at: _strings (res://tests/ui/screen_history_audit.gd:257)
+          GDScript backtrace (most recent call first):
+              [0] _strings (res://tests/ui/screen_history_audit.gd:257)
+              [1] _run (res://tests/ui/screen_history_audit.gd:94)
+              [2] _mount (res://tests/ui/screen_history_audit.gd:135)
+SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[Dictionary]".
+          at: refresh (res://src/ui/screens/HistoryScreen.gd:160)
+          GDScript backtrace (most recent call first):
+              [0] refresh (res://src/ui/screens/HistoryScreen.gd:160)
+              [1] apply_capture_state (res://src/ui/screens/HistoryScreen.gd:120)
+              [2] _captures (res://tests/ui/screen_history_audit.gd:276)
+              [3] _run (res://tests/ui/screen_history_audit.gd:95)
+              [4] _mount (res://tests/ui/screen_history_audit.gd:135)
+ok history/the_empty_state_applies
+FAIL history/and_hides_the_rows: expected 0, got 20
+FAIL history/and_shows_the_empty_line: expected true, got false
+ok history/the_populated_state_applies
+ok history/and_restores_the_store_s_own_rows
+# report 1280x720: widest=720.0 stats=720.0 list=720.0
+ok history/nothing_is_wider_than_the_frame
+ok history/the_boxes_stay_inside_the_reference_s_720px
+ok history/the_list_stays_inside_it_too
+# report 1024x600: widest=720.0 stats=720.0 list=720.0
+ok history/nothing_is_wider_than_the_small_frame
+ok history/the_literal_scan_flags_prose_and_ignores_developer_text
+ok history/the_screen_source_is_readable
+ok history/HistoryScreen_gd_carries_no_prose_literal
+ok history/the_scene_carries_no_literals
+ok history/the_theme_carries_every_palette_key_the_screen_names
+ok history/the_screen_recorded_no_missing_palette_key
+# report temp store: user://uir14-history-audit (20 entries) — the real user:// profile was never written
+FAIL 37/42
+FAIL 37/42
+# first failure FAIL history/the_three_boxes_read_zero: expected ["0","0","0"], got ["","",""]
+# first failure FAIL history/the_three_boxes_read_zero: expected ["0","0","0"], got ["","",""]

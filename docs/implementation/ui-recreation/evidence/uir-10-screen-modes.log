@@ -1,0 +1,153 @@
+# UIR-10 ModesScreen 1:1 — evidence log
+
+Wave: post-approval selection-screens wave (UIR-10 → UIR-11 → UIR-12), single screen worker.
+Repo: `/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot`
+Branch tip at wave start: `6343312` (HEAD includes brother `a1e10f04`; court/camera/input/timing preserved).
+Engine: `/Applications/Godot.app/Contents/MacOS/Godot` `4.7.2.stable.official.ed1daf0bf`.
+Budget: $0. One engine process at a time; `pgrep -x Godot` before every run; pre-existing
+processes are never killed (none were running at wave start).
+
+## Journal (newest last)
+
+1. Read the ticket pack (UIR-10/11/12), the CHARTER/BOARD, `godot/src/ui/**` (ScreenRouter,
+   ScreenContract, ScreenShell, UiData, DemoGateAdapter, UiArtPaths, MenuScreen) and the frozen
+   reference (`index.html:103-154`, `js/ui.js:737-770`, `js/main.js:1644-1657, 2198-2246, 2530-2568`,
+   `styles.css` rows above). Field table below written before coding (ticket microstep 1).
+2. Findings that shape this implementation (all recorded here, none patched into another lane's
+   files):
+   - **Length-format seam gap (real).** `Config` (`godot/game/match_config.gd`) carries
+     `athlete_index / arena_index / tier_index / pending_mode / pending_round / outfit_index`,
+     and nothing else. There is **no** match-format member and **no reader** of
+     `prefs.matchLength` anywhere between the save contract and `sim.state` (`sim.match_format`
+     derives the format from `state` fields; `frozen/data.json` carries the six `matchFormats`).
+     The reference's own carrier is the prefs path (`collectPrefs` → `prefs.matchLength`,
+     validated against `MATCH_FORMAT_IDS` at `js/main.js:2277`), so that is the carrier used
+     here, through the documented public API `ModesSave.save_pref(store, "matchLength", …)`.
+     **Request for the owning lane** (mode/match or integration): a `Config` match-format seam
+     (`pending_format` + the apply path into `SimState.scoring/gamesToWin/pointsToWin`), so the
+     persisted choice reaches the field. Not fixed here: adding a settings schema or a Config
+     member is outside this ticket's write allowlist.
+   - **Difficulty carrier** is `Config.tier_index` for the live session plus `prefs.aiDifficulty`
+     for persistence (the reference's `ui.aiDifficulty` + `collectPrefs`, `js/main.js:2276`),
+     mapped through the gate's own `DIFFICULTY_TIERS` (`godot/game/content_gate.gd:37`).
+   - **Setup visibility.** `syncMatchSetup()` (`js/main.js:1651-1657`) hides `#matchSetup` and
+     `#playerModeSetup` whenever the selected mode is not `quick`; it runs on the `to-modes`
+     action and on the mode-card select. So the reference's own screen shows the setup groups
+     only in quick mode, while the markup carries them unconditionally. The ticket's note
+     ("`#matchSetup` is always present … do not invent per-mode hiding") is about the *cards*
+     being the selectors and is obeyed: the three cards are never hidden, re-worded per mode,
+     or removed; the groups' visibility follows `syncMatchSetup`'s own rule, driven by the
+     port's pending-mode seam and asserted in both directions. Recorded for UIR-22, which owns
+     the mount that calls the reference's `syncMatchSetup` on navigation.
+   - **Capture presentation.** `demo-locked` must render in a full build too (the harness runs
+     it with `--capture=all` on the full checkout). `DemoGateAdapter` answers locks for the
+     **live** flag only (its `locked()`/`mode_locked()` ask `Gate`), so the capture path reads
+     the demo's own generated table (`tests/build/DemoContent.gd`) the gate itself reads.
+     **Request for the shared seam**: a build-parameterised lock question on
+     `DemoGateAdapter` (`locked_for(build_id, item_id, kind)`), mirroring the
+     `badge_text_key_for(build_id)` that already exists for UIR-07's capture states. No second
+     adapter was created.
+3. Field table (screen ← seam), written before coding:
+   | screen element | source |
+   |---|---|
+   | three cards (quick/tournament/career), order | `UiData.mode_rows()` ← `MODE_KEYS`, `index.html:112-156` |
+   | card title/desc keys | `quickMode…careerModeDesc` (`js/i18n.js:12-19`) |
+   | card art | `UiData` `art_path` ← `UiArtPaths` (`modes/quick-match\|tournament\|career.webp`) |
+   | card accent (art bottom border) | `theme Palette` `cyan` / `gold` / career = documented `--pink` fallback `cyan` (theme README §2) |
+   | tag | `available` (`TagReady`, green) / `demoLockedMode` (`Tag`) via `UiData.tag_key` |
+   | career tag | `careerTag` `{season, match, total}` ← `UiData.mode_rows().career`, `js/main.js:1549-1556` |
+   | career fixture line | `careerFixture` `{match+1,total,arena}` + ` · ` + `careerRivalLabel` `{rival}` ← same seam, `js/main.js:1560-1567` |
+   | difficulty rungs | `DIFFICULTY_TIERS` (gate) — values `easy/medium/hard/legend`, order from `index.html:136-139` |
+   | match lengths | `frozen/data.json` `matchFormats` order; keys `len11…lenMatch2` (`js/i18n.js:34-39`) |
+   | locks / demo pin | `DemoGateAdapter` (`locked`, `mode_locked`, `difficulty_allowed`) over `content_gate` |
+4. Implementation + audit written; runs below.
+
+## Implementation
+
+- `godot/src/ui/screens/ModesScreen.tscn` — named nodes only, no literals: header (BackButton,
+  TitleLabel, SubLabel), `ModeGrid` (3 columns, 20 px gap), `SetupArea/MatchSetup` with the two
+  `.setup-group`s (label + `SegmentedContainer` panel + grid; difficulty 4 columns, length 3).
+- `godot/src/ui/screens/ModesScreen.gd` — cards built in code from `UiData.mode_rows()`; art
+  `TextureRect` (STRETCH_KEEP_ASPECT_COVERED) in a `Panel` whose bottom border is the accent
+  (career = the documented cyan fallback); card frame = the theme's own `PanelDark` /
+  `PanelCardHover` boxes with the body padding moved into a `MarginContainer` (the reference's
+  `-18px` art bleed); tags/fixture as data-driven bindings re-made per refresh; difficulty and
+  length segmenteds built from the gate's keys; `Config.tier_index` + `prefs` for difficulty,
+  `ModesSave.save_pref(…, "matchLength", …)` for length; `select_mode()` = pending mode +
+  `prefs.mode` + tournament round reset + route to `characters` (`js/ui.js:1720-1729`); a locked
+  card has no activation path at all (nothing is wired), exactly like the reference's
+  `.mode-card:not(.mode-card--locked)` selector.
+- `godot/tests/ui/screen_modes_audit.gd` + `.tscn` — 118 checks full / 123 demo.
+- `.uid` sidecars for the two new `.gd` files (`uid://kuifuwjwon4ww`, `uid://pv8fql1rm29c9`).
+
+## Evidence — commands and outcomes (native macOS)
+
+```
+export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_modes_audit.gd
+  -> PASS 118/118   exit=0   SCRIPT ERROR lines: 0   engine ERROR lines: 0
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_modes_audit.gd -- --demo
+  -> PASS 123/123   exit=0   SCRIPT ERROR lines: 0   engine ERROR lines: 0
+```
+
+Audit reports (verbatim):
+- full: `build=full pinned_rung=` (no rung pinned) · `language flip: moved=19 bindings=20` ·
+  `1280x720: card=371.0 grid=1152.0` · `1024x600: card=888.0 grid=888.0` (one column).
+- demo: `build=demo pinned_rung=medium` · **disabled difficulty buttons: `["easy","hard","legend"]`**
+  (medium is the only enabled rung, all four still visible) · locked cards `["tournament","career"]`
+  · same flip and layout numbers.
+
+**Evidence to hand back (ticket)**
+- *Length-format storage already existed?* **No.** There is no `Config` match-format member and no
+  reader of `prefs.matchLength` (checked `src/`, `game/`, `tests/` for `matchLength|match_length|
+  matchFormats|MATCH_FORMATS`; the only hits are `UiData.settings_snapshot()` and the save schema's
+  default). The choice is bridged through the reference's own prefs carrier with the documented
+  public API `ModesSave.save_pref(store, "matchLength", key)`, and the audit reads it back through
+  `ModesSave.profile(store)["prefs"]["matchLength"]`. Gap recorded above with the requested seam.
+- *Exact list of disabled buttons in the demo run:* `easy`, `hard`, `legend`.
+- *Locked-mode presentation in the demo:* `tournament` and `career` stay visible with their art and
+  copy, tag text = `demoLockedMode`, `modulate.a = 0.55`, no activation path (a synthetic click on
+  the card leaves the router where it was — asserted).
+
+## Cross-lane checks (no writes outside this ticket's allowlist)
+
+- `tests/ui/router_audit.gd`'s lane scan (`res://src/ui/**`, prose-literal rule) **does not flag
+  `ModesScreen.gd`**: the one datum that would have been a prose literal (the fixture line's
+  separator ` · `, `js/main.js:1567`) is spelled from its code points in `fixture_joiner()`. The
+  audit's own allowlist for this screen is therefore **empty** (`SCREEN_LITERALS := []`).
+  *(Note for the parent: `router_audit` currently fails 85/86 in this shared checkout on
+  **other workers' in-flight files** — `src/ui/components/ControlLegend.gd:269 "%s · %s"`,
+  `src/ui/screens/ChallengesScreen.gd:364/367/376`, `src/ui/screens/HistoryScreen.gd:380`. None of
+  them is this ticket's; they are named here only so the parent does not read that failure as
+  UIR-10's.)*
+- `game/main_menu.gd` (the legacy mount that registers `ui_router` screens) was **not** touched:
+  registering `modes` there belongs to UIR-22's router wave. The ticket's anatomy and this screen
+  are complete without it, and the audit mounts through `ScreenRouter` directly.
+
+## Theme requests (recorded, not edited — the theme is another lane's file)
+
+1. `SegmentedContainer` is declared on **BaseType `Panel`** (theme README §4), which a
+   `PanelContainer` cannot carry. This screen reads the box out of the theme
+   (`_theme_box("SegmentedContainer")`) instead of re-creating values; a
+   `SegmentedCard`-style `PanelContainer` variation (or the theme owner blessing that idiom) would
+   remove the workaround.
+2. No variation exists for `.match-setup .setup-group` (fill `rgba(11,36,68,0.9)`, border
+   `rgba(0,229,255,0.22)`, radius 14, padding 15/17/17/17): composed here from `Palette`, requested
+   as `SetupGroup`.
+3. The card art's own background (`#09142e` in the reference's `.mode-card__art`) is **not** a theme
+   token. The art box is drawn with no fill (artwork covers it; a missing asset leaves the card's
+   panel fill visible) rather than inventing a colour. Requested as a token if GATE-A wants the
+   exact fill on a failed asset load.
+4. The fixture line takes `Palette.fixture` through a `font_color` override on the `LabelSmall`
+   variation (the variant table has no small/fixture combination); a `Fixture` variation would fold
+   it in.
+
+## Open items
+
+- `lockedModeNote`: the ticket's read list asks to locate the id for the locked note. **It does not
+  exist in the reference** — `grep -rn "lockedModeNote" js/ index.html` returns 0 hits, and
+  `index.html:103-154` has no note element; `applyDemoLimits` (`js/ui.js:737-770`) only switches the
+  tag text/class. Nothing was invented; the locked presentation is the tag + dimmed card.
+- `--pink`: unchanged from UIR-06's measurement (career accent = cyan fallback, theme README §2).
+

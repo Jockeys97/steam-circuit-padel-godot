@@ -1,0 +1,321 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# theme_probe · Godot 4.7.2-stable (official)
+ok theme loads from res://src/ui/theme/padel_theme.tres
+ok default font size is the measured 16 px root
+ok default font is assigned
+ok palette carries ink
+ok palette ink = f6f7fbff (reference f6f7fbff)
+ok palette carries muted
+ok palette muted = ffffff7a (reference ffffff7a)
+ok palette carries panel
+ok palette panel = 111540ff (reference 111540ff)
+ok palette carries line
+ok palette line = ffffff1f (reference ffffff1f)
+ok palette carries cyan
+ok palette cyan = 00e5ffff (reference 00e5ffff)
+ok palette carries gold
+ok palette gold = ffcc00ff (reference ffcc00ff)
+ok palette carries coral
+ok palette coral = ff4b6eff (reference ff4b6eff)
+ok palette carries green
+ok palette green = 1aff8aff (reference 1aff8aff)
+ok palette carries bg
+ok palette bg = 07072aff (reference 07072aff)
+ok palette carries shadow
+ok palette shadow = 00000073 (reference 00000073)
+ok palette carries surface_0
+ok palette surface_0 = 061426ff (reference 061426ff)
+ok palette carries surface_1
+ok palette surface_1 = 091d39ff (reference 091d39ff)
+ok palette carries surface_2
+ok palette surface_2 = 0b2444ff (reference 0b2444ff)
+ok palette carries surface_3
+ok palette surface_3 = 0b3152ff (reference 0b3152ff)
+ok palette carries surface_4
+ok palette surface_4 = 10365fff (reference 10365fff)
+ok palette carries surface_5
+ok palette surface_5 = 173b61ff (reference 173b61ff)
+ok palette carries text_soft
+ok palette text_soft = bdeeffff (reference bdeeffff)
+ok palette carries text_soft_2
+ok palette text_soft_2 = 9ef8ffff (reference 9ef8ffff)
+ok palette carries text_soft_3
+ok palette text_soft_3 = 7ef3ffff (reference 7ef3ffff)
+ok palette carries state_yellow
+ok palette state_yellow = fff36aff (reference fff36aff)
+ok palette carries state_yellow_soft
+ok palette state_yellow_soft = ffd98aff (reference ffd98aff)
+ok palette carries rival_soft
+ok palette rival_soft = ffc09aff (reference ffc09aff)
+ok palette carries rival
+ok palette rival = ff9a5cff (reference ff9a5cff)
+ok palette carries success
+ok palette success = b9ffe0ff (reference b9ffe0ff)
+ok palette carries success_cyan
+ok palette success_cyan = 8fffd0ff (reference 8fffd0ff)
+ok palette carries combo_1
+ok palette combo_1 = 7ef3ffff (reference 7ef3ffff)
+ok palette carries combo_2
+ok palette combo_2 = 8fffd0ff (reference 8fffd0ff)
+ok palette carries combo_3
+ok palette combo_3 = ffe066ff (reference ffe066ff)
+ok palette carries combo_4
+ok palette combo_4 = ff9a5cff (reference ff9a5cff)
+ok palette carries combo_default
+ok palette combo_default = ff6d70ff (reference ff6d70ff)
+ok palette carries tab_border
+ok palette tab_border = 28567dff (reference 28567dff)
+ok palette carries tab_text_idle
+ok palette tab_text_idle = 809bb6ff (reference 809bb6ff)
+ok palette carries secondary_button
+ok palette secondary_button = 1c6eb0ff (reference 1c6eb0ff)
+ok palette carries button_gradient_start
+ok palette button_gradient_start = 00d4f0ff (reference 00d4f0ff)
+ok palette carries segmented_gradient_start
+ok palette segmented_gradient_start = 22d5eeff (reference 22d5eeff)
+ok palette carries hud_panel_bg
+ok palette hud_panel_bg = 06182ed1 (reference 06182ed1)
+ok palette carries hud_panel_border
+ok palette hud_panel_border = 1c507eff (reference 1c507eff)
+ok palette carries hud_label
+ok palette hud_label = dcefffff (reference dcefffff)
+ok palette carries hint_bg
+ok palette hint_bg = 091d39b3 (reference 091d39b3)
+ok palette carries tag_idle
+ok palette tag_idle = ffffff59 (reference ffffff59)
+ok palette carries fixture
+ok palette fixture = ffffff6b (reference ffffff6b)
+ok palette carries ghost_text
+ok palette ghost_text = ffffffa6 (reference ffffffa6)
+ok palette carries tab_text_hover
+ok palette tab_text_hover = cfe9f7ff (reference cfe9f7ff)
+ok palette carries hud_button_hover
+ok palette hud_button_hover = 1a4a79ff (reference 1a4a79ff)
+ok palette carries hud_button_active_text
+ok palette hud_button_active_text = 04203aff (reference 04203aff)
+ok palette carries card_hover_border
+ok palette card_hover_border = 00e5ff59 (reference 00e5ff59)
+ok palette carries nav_bg
+ok palette nav_bg = 050516f7 (reference 050516f7)
+ok palette carries caption_shadow
+ok palette caption_shadow = 07152bff (reference 07152bff)
+ok palette carries poster_fade
+ok palette poster_fade = 030719d1 (reference 030719d1)
+ok palette carries combo_glow
+ok palette combo_glow = ff6a5ccc (reference ff6a5ccc)
+ok palette carries win_green
+ok palette win_green = 3fd36fff (reference 3fd36fff)
+ok palette carries win_ink
+ok palette win_ink = 04210fff (reference 04210fff)
+ok palette carries loss_red
+ok palette loss_red = ff5d7aff (reference ff5d7aff)
+ok palette carries loss_ink
+ok palette loss_ink = 21040aff (reference 21040aff)
+ok palette carries trophy_yellow
+ok palette trophy_yellow = ffd23aff (reference ffd23aff)
+ok palette carries stat_muted
+ok palette stat_muted = 6f91adff (reference 6f91adff)
+ok palette carries item_ink
+ok palette item_ink = e6f8ffff (reference e6f8ffff)
+ok palette carries help_muted
+ok palette help_muted = 8aa5bcff (reference 8aa5bcff)
+ok palette carries kbd_border
+ok palette kbd_border = 29c9dcff (reference 29c9dcff)
+ok palette carries white
+ok palette white = ffffffff (reference ffffffff)
+ok palette carries challenge_cyan
+ok palette challenge_cyan = 78c8ffff (reference 78c8ffff)
+ok palette carries challenge_row_fill
+ok palette challenge_row_fill = 08102c80 (reference 08102c80)
+ok palette carries challenge_done_border
+ok palette challenge_done_border = ffd27866 (reference ffd27866)
+ok palette carries challenge_done_fill
+ok palette challenge_done_fill = 3c2a0847 (reference 3c2a0847)
+ok palette carries summary_fill
+ok palette summary_fill = 08163099 (reference 08163099)
+ok palette carries stat_bar
+ok palette stat_bar = 7ee0ffff (reference 7ee0ffff)
+ok palette carries stat_bar_rival
+ok palette stat_bar_rival = ffb08cff (reference ffb08cff)
+ok ScreenTitle is a Label variation
+ok ScreenTitle font size is 38
+ok ScreenTitle assigns font_color
+ok ScreenTitle font_color = f6f7fbff
+ok ScreenTitle assigns a font role
+ok ScreenSubtitle is a Label variation
+ok ScreenSubtitle font size is 16
+ok ScreenSubtitle assigns font_color
+ok ScreenSubtitle font_color = ffffff7a
+ok ScreenSubtitle assigns a font role
+ok HeroTitle is a Label variation
+ok HeroTitle font size is 64
+ok HeroTitle assigns font_color
+ok HeroTitle font_color = f6f7fbff
+ok HeroTitle assigns a font role
+ok CardTitle is a Label variation
+ok CardTitle font size is 18
+ok CardTitle assigns font_color
+ok CardTitle font_color = f6f7fbff
+ok CardTitle assigns a font role
+ok CardTitleActive is a Label variation
+ok CardTitleActive font size is 18
+ok CardTitleActive assigns font_color
+ok CardTitleActive font_color = 00e5ffff
+ok CardTitleActive assigns a font role
+ok CardBody is a Label variation
+ok CardBody font size is 13
+ok CardBody assigns font_color
+ok CardBody font_color = ffffff7a
+ok CardBody assigns a font role
+ok LabelSmall is a Label variation
+ok LabelSmall font size is 11
+ok LabelSmall assigns font_color
+ok LabelSmall font_color = bdeeffff
+ok LabelSmall assigns a font role
+ok Badge is a Label variation
+ok Badge font size is 11
+ok Badge assigns font_color
+ok Badge font_color = f6f7fbff
+ok Badge carries stylebox 'normal'
+ok Badge assigns a font role
+ok Tag is a Label variation
+ok Tag font size is 11
+ok Tag assigns font_color
+ok Tag font_color = ffffff59
+ok Tag assigns a font role
+ok TagReady is a Label variation
+ok TagReady font size is 11
+ok TagReady assigns font_color
+ok TagReady font_color = 1aff8aff
+ok TagReady assigns a font role
+ok HudLabel is a Label variation
+ok HudLabel font size is 9
+ok HudLabel assigns font_color
+ok HudLabel font_color = dcefffff
+ok HudLabel assigns a font role
+ok HudTitle is a Label variation
+ok HudTitle font size is 24
+ok HudTitle assigns font_color
+ok HudTitle font_color = 00e5ffff
+ok HudTitle assigns a font role
+ok Mono is a Label variation
+ok Mono font size is 14
+ok Mono assigns font_color
+ok Mono font_color = bdeeffff
+ok Mono assigns a font role
+ok ButtonPrimary is a Button variation
+ok ButtonPrimary font size is 16
+ok ButtonPrimary assigns font_color
+ok ButtonPrimary font_color = 000000ff
+ok ButtonPrimary carries stylebox 'normal'
+ok ButtonPrimary assigns a font role
+ok ButtonSecondary is a Button variation
+ok ButtonSecondary font size is 14
+ok ButtonSecondary assigns font_color
+ok ButtonSecondary font_color = ffffffff
+ok ButtonSecondary carries stylebox 'normal'
+ok ButtonSecondary assigns a font role
+ok ButtonGhost is a Button variation
+ok ButtonGhost font size is 14
+ok ButtonGhost assigns font_color
+ok ButtonGhost font_color = ffffffa6
+ok ButtonGhost carries stylebox 'normal'
+ok ButtonGhost assigns a font role
+ok SegmentedInactive is a Button variation
+ok SegmentedInactive font size is 11
+ok SegmentedInactive assigns font_color
+ok SegmentedInactive font_color = 809bb6ff
+ok SegmentedInactive carries stylebox 'normal'
+ok SegmentedInactive assigns a font role
+ok SegmentedActive is a Button variation
+ok SegmentedActive font size is 11
+ok SegmentedActive assigns font_color
+ok SegmentedActive font_color = 061426ff
+ok SegmentedActive carries stylebox 'normal'
+ok SegmentedActive assigns a font role
+ok HudButton is a Button variation
+ok HudButton font size is 19
+ok HudButton assigns font_color
+ok HudButton font_color = fff36aff
+ok HudButton carries stylebox 'normal'
+ok HudButton assigns a font role
+ok HudButtonActive is a Button variation
+ok HudButtonActive font size is 19
+ok HudButtonActive assigns font_color
+ok HudButtonActive font_color = 04203aff
+ok HudButtonActive carries stylebox 'normal'
+ok HudButtonActive assigns a font role
+ok PanelDark is a Panel variation
+ok PanelDark carries stylebox 'panel'
+ok PanelCardHover is a Panel variation
+ok PanelCardHover carries stylebox 'panel'
+ok PanelCardSelected is a Panel variation
+ok PanelCardSelected carries stylebox 'panel'
+ok HudPanel is a Panel variation
+ok HudPanel carries stylebox 'panel'
+ok HudPauseCard is a Panel variation
+ok HudPauseCard carries stylebox 'panel'
+ok SegmentedContainer is a Panel variation
+ok SegmentedContainer carries stylebox 'panel'
+ok SegmentedFlash is a Button variation
+ok SegmentedFlash font size is 11
+ok SegmentedFlash carries stylebox 'normal'
+ok SegmentedFlash assigns a font role
+ok TimerBall is a Panel variation
+ok TimerBall carries stylebox 'panel'
+ok ButtonPrimary normal box is a StyleBoxFlat
+ok primary fill = measured gradient start 00d4f0ff
+ok primary corner radius = 10 px (measured)
+ok primary left padding = 28 px (measured)
+ok primary top padding = 16 px (measured)
+ok primary glow = cyan at 50% alpha (measured 00e5ff80)
+ok primary glow blur = 28 px (measured)
+ok panel fill = --panel
+ok panel border = --line
+ok panel radius = 12 px (measured)
+ok active chip fill = measured gradient start 22d5eeff
+ok active chip radius = 7 px (measured)
+ok hud panel fill = rgba(6,24,46,0.82) (measured)
+ok SegmentedFlash normal box is a StyleBoxFlat
+ok flash chip fill = #8fffd0 (styles.css:680, 8fffd0ff)
+ok flash chip radius = 7 px (the idle chip's own box)
+ok flash chip text = #071d34 (styles.css:679, 071d34ff)
+ok TimerBall panel box is a StyleBoxFlat
+ok timer ball fill = #d8ff5f (styles.css:754, d8ff5fff)
+ok timer ball border = 3 px (styles.css:752)
+ok timer ball border = #d9f8ff (styles.css:752, d9f8ffff)
+ok timer ball radius = 19 px (a 38 px circle)
+ok nothing overflows a 1280x720 frame (widest 1232.0, tallest 75.0)
+# frame 1280x720: widest control 1232.0 px, tallest 75.0 px
+# reference primary button: measured 51 px tall at 16 px/28 px padding; this theme's natural height is 52.0 px
+ok primary button height 52.0 px stays in the reference's band (40-62)
+# reference segmented chip: measured 42 px tall (its CSS height, declared here as custom_minimum_size); this theme with that rule is 42.0 px
+ok segmented chip height 42.0 px stays in the reference's band (34-52)
+ok nothing overflows a 1152x648 frame (widest 1104.0, tallest 75.0)
+# frame 1152x648: widest control 1104.0 px, tallest 75.0 px
+# reference primary button: measured 51 px tall at 16 px/28 px padding; this theme's natural height is 52.0 px
+ok primary button height 52.0 px stays in the reference's band (40-62)
+# reference segmented chip: measured 42 px tall (its CSS height, declared here as custom_minimum_size); this theme with that rule is 42.0 px
+ok segmented chip height 42.0 px stays in the reference's band (34-52)
+ok nothing overflows a 1920x1080 frame (widest 1872.0, tallest 75.0)
+# frame 1920x1080: widest control 1872.0 px, tallest 75.0 px
+# reference primary button: measured 51 px tall at 16 px/28 px padding; this theme's natural height is 52.0 px
+ok primary button height 52.0 px stays in the reference's band (40-62)
+# reference segmented chip: measured 42 px tall (its CSS height, declared here as custom_minimum_size); this theme with that rule is 42.0 px
+ok segmented chip height 42.0 px stays in the reference's band (34-52)
+ok nothing overflows a 1024x600 frame (widest 976.0, tallest 75.0)
+# frame 1024x600: widest control 976.0 px, tallest 75.0 px
+# reference primary button: measured 51 px tall at 16 px/28 px padding; this theme's natural height is 52.0 px
+ok primary button height 52.0 px stays in the reference's band (40-62)
+# reference segmented chip: measured 42 px tall (its CSS height, declared here as custom_minimum_size); this theme with that rule is 42.0 px
+ok segmented chip height 42.0 px stays in the reference's band (34-52)
+ok ink on --bg contrast 18.28:1 (floor 10.0:1)
+ok muted on --bg contrast 4.92:1 (floor 3.5:1)
+ok muted on --panel contrast 4.83:1 (floor 3.5:1)
+ok black on primary button contrast 11.68:1 (floor 10.0:1)
+ok idle chip text on segmented surface contrast 5.84:1 (floor 4.0:1)
+ok active chip text on active chip contrast 10.41:1 (floor 8.0:1)
+ok hud label on hud panel contrast 15.14:1 (floor 4.5:1)
+ok hint text on hint surface contrast 13.51:1 (floor 4.5:1)
+PASS 305/305

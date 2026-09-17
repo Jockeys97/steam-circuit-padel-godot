@@ -1,0 +1,98 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok osk/the_grid_is_five_character_rows_and_the_action_row
+ok osk/the_first_five_rows_are_character_rows
+ok osk/the_grid_has_every_character_of_the_reference
+ok osk/the_characters_are_in_the_references_own_order
+ok osk/the_last_row_is_the_action_row
+ok osk/the_four_action_keys_are_the_references
+ok osk/every_action_key_label_resolves_through_the_strings_seam
+ok osk/open_for_opens
+ok osk/the_target_comes_back_on_close
+ok osk/open_for_takes_the_fields_value
+ok osk/the_label_starts_with_the_fields_own_label
+ok osk/the_label_carries_the_hint
+ok osk/the_aria_name_is_the_keyboards
+ok osk/a_character_press_is_taken
+ok osk/the_character_lands_in_the_value
+ok osk/an_upper_case_press_is_taken
+ok osk/the_upper_case_lands_as_written
+ok osk/insert_takes_a_character
+ok osk/the_inserted_character_lands_last
+ok osk/backspace_deletes
+ok osk/the_delete_removed_the_last_character
+ok osk/shift_starts_off
+ok osk/shift_toggles_on
+ok osk/a_shifted_key_shows_its_upper_face
+ok osk/the_shift_key_answers_shifts_name
+ok osk/the_second_shift_press_toggles_off
+ok osk/the_space_key_answers_spaces_name
+ok osk/the_space_lands_as_a_space
+ok osk/the_backspace_key_answers_its_name
+ok osk/an_unknown_key_answers_nothing
+ok osk/the_max_length_is_the_fields
+ok osk/a_character_past_the_clamp_is_refused
+ok osk/the_clamp_does_not_trim
+ok osk/the_max_length_reads_back
+ok osk/done_answers_closed
+ok osk/done_closes_the_keyboard
+ok osk/a_key_after_the_close_answers_nothing
+ok osk/close_returns_the_field_to_focus
+ok osk/close_keeps_the_value_for_the_caller
+ok osk/the_panel_is_hidden_while_the_keyboard_is_closed
+ok osk/the_panel_reports_the_model_closed
+FAIL osk/no_targets_while_closed: expected 0, got 51
+ok osk/the_default_capture_state_is_declared
+ok osk/an_unknown_capture_state_is_refused
+ok osk/the_panel_shows_while_the_keyboard_is_open
+ok osk/the_panel_reports_the_model_open
+ok osk/the_default_capture_state_applies_while_open
+ok osk/the_panel_carries_the_keyboards_aria_name
+ok osk/the_label_is_the_models_own
+ok osk/the_preview_shows_the_fields_value
+ok osk/the_report_carries_the_state
+DIAG panel size=(1280.0, 720.0) visible=true global=[P: (0.0, 0.0), S: (1280.0, 720.0)]
+DIAG frame size=(1280.0, 720.0) root size=(64, 64)
+DIAG model rows=6 open=true
+DIAG target[0]=[P: (0.0, 0.0), S: (13.0, 44.0)]
+DIAG target[50]=[P: (0.0, 0.0), S: (38.0, 44.0)]
+DIAG grid=OskGrid:<VBoxContainer#34544289351> grid rect=[P: (0.0, 0.0), S: (200.0, 294.0)]
+DIAG grid visible_in_tree=true panel vis_in_tree=true
+DIAG after frame target[0]=[P: (278.0, 384.0), S: (67.0, 44.0)]
+DIAG after frame target[50]=[P: (871.0, 634.0), S: (131.0, 44.0)]
+DIAG root size after=(64, 64)
+FAIL osk/every_key_of_the_grid_is_a_target: expected 52, got 51
+ok osk/every_target_id_is_a_key_of_the_grid
+ok osk/the_target_order_is_the_grids_own
+ok osk/every_target_carries_the_laid_out_rect
+FAIL osk/the_first_row_sits_above_the_action_row: expected "< 0.000000", got 0.000000
+ok osk/the_target_id_reaches_key_1
+ok osk/the_target_id_reaches_key_2
+ok osk/the_target_id_reaches_key_3
+ok osk/the_target_id_reaches_key_4
+ok osk/the_target_id_reaches_key_5
+ok osk/the_target_id_reaches_key_6
+ok osk/the_target_id_reaches_key_7
+ok osk/key_1_has_a_laid_out_height
+ok osk/key_2_has_a_laid_out_height
+ok osk/key_3_has_a_laid_out_height
+ok osk/key_4_has_a_laid_out_height
+ok osk/key_5_has_a_laid_out_height
+ok osk/key_6_has_a_laid_out_height
+ok osk/key_7_has_a_laid_out_height
+ok osk/an_unshifted_key_shows_its_lower_face
+ok osk/the_shift_target_is_pressed
+ok osk/the_shift_target_moved_the_model
+ok osk/a_shifted_key_shows_its_upper_face_on_the_panel
+ok osk/the_shift_key_carries_its_label
+ok osk/the_shift_target_toggles_back
+ok osk/a_character_target_is_pressed
+ok osk/the_character_reached_the_model
+ok osk/the_preview_follows_the_value
+ok osk/an_unknown_target_is_refused
+ok osk/the_panel_forwards_a_bare_character
+ok osk/the_panel_forwards_an_action_key
+ok osk/done_through_the_panel_closes
+ok osk/the_panel_hides_after_done
+ok osk/the_closed_signal_fires_once
+FAIL osk/the_closed_signal_names_the_field: expected "pause/fb-message", got ""

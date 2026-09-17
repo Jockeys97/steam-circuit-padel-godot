@@ -2,7 +2,7 @@
 id: UIR-24
 title: Capture harness and UI legibility audit
 slug: capture-harness
-state: in-progress
+state: done
 readiness: potential
 owner_role: verification worker
 blocked_by: [UIR-03, UIR-09]
@@ -15,6 +15,7 @@ evidence:
   - docs/implementation/ui-recreation/evidence/uir-24-legibility.log
   - docs/implementation/ui-recreation/evidence/uir-pre-gate-a-legibility.log
   - docs/implementation/ui-recreation/evidence/uir-pre-gate-a-captures.log
+  - docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json
 ---
 
 # UIR-24: Capture harness and UI legibility audit
@@ -109,3 +110,13 @@ flock -w 900 /tmp/padel-godot.lock timeout 300 env -u DISPLAY GODOT_SILENCE_ROOT
 ## Traces
 
 S4 ticket capture sections (`docs/implementation/tickets/hud-and-menu.md:120-128`); `godot/game/run.sh` header (blank-capture warning); `docs/wayfinder/evidence/character-material-render.md`; scout UI-10; task pack requirement "capture-based acceptance at 1280x720".
+
+## Finalize closure (2026-09-17, integration owner)
+
+Engine record, one Godot process at a time, manifest `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json` (all sources hashed
+before and after: tree digest `1256f5f1d7200437`, stable).
+
+- `tests/ui/ui_legibility_audit.gd` — **PASS 664/664**, exit 0, 0 `SCRIPT ERROR` line(s) (8.2s); log `docs/implementation/ui-recreation/evidence/uir-finalize/runs/ui_legibility_audit.log`
+
+**State: `done`** — the audit above is this ticket's arbiter and it is green on the
+finalize tree.

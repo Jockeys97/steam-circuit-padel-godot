@@ -1,0 +1,34 @@
+harness                    exit=0    PASS 8/8     script_errors=0 engine_lines=0 0.2s
+game_slice_test            exit=0    PASS 342/342 script_errors=0 engine_lines=2 18.3s
+game_slice_test_demo       exit=0    PASS 293/293 script_errors=0 engine_lines=1 15.1s
+input_run_all              exit=0    PASS 5/5     script_errors=0 engine_lines=0 0.4s
+audits_run_all             exit=0    PASS 10/10   script_errors=0 engine_lines=0 79.6s
+modes_run_all              exit=0    PASS 6/6     script_errors=0 engine_lines=0 0.8s
+save_steam_test            exit=0    PASS 137/137 script_errors=0 engine_lines=0 0.2s
+music_port_test            exit=0    PASS 32/32   script_errors=0 engine_lines=0 15.5s
+theme_probe                exit=0    PASS 305/305 script_errors=0 engine_lines=0 0.3s
+router_audit               exit=0    PASS 86/86   script_errors=0 engine_lines=2 0.5s
+data_audit                 exit=0    PASS 131/131 script_errors=0 engine_lines=0 0.3s
+fonts_assets_probe         exit=0    PASS 75/75   script_errors=0 engine_lines=0 0.6s
+hud_audit                  exit=0    PASS 172/172 script_errors=0 engine_lines=0 1.3s
+pause_audit                exit=0    PASS 176/176 script_errors=0 engine_lines=0 0.6s
+input_a11y_audit           exit=0    PASS 153/153 script_errors=0 engine_lines=0 0.4s
+osk_touch_audit            exit=1    FAIL 171/177 script_errors=0 engine_lines=0 0.5s
+ui_legibility_audit        exit=1    FAIL 572/664 script_errors=4 engine_lines=4 8.1s
+uir22_integration_audit    exit=0    PASS 71/71   script_errors=0 engine_lines=0 3.5s
+replay_audit               exit=1    FAIL 95/103  script_errors=2 engine_lines=2 0.7s
+screen_menu_audit          exit=0    PASS 97/97   script_errors=0 engine_lines=1 0.8s
+screen_modes_audit         exit=0    PASS 118/118 script_errors=0 engine_lines=0 0.7s
+screen_characters_audit    exit=1    FAIL 147/148 script_errors=0 engine_lines=0 1.2s
+screen_arena_audit         exit=0    PASS 133/133 script_errors=0 engine_lines=0 0.8s
+screen_drill_audit         exit=0    PASS 89/89   script_errors=0 engine_lines=0 0.4s
+screen_result_audit        exit=0    PASS 176/176 script_errors=0 engine_lines=0 0.7s
+screen_settings_audit      exit=0    PASS 91/91   script_errors=0 engine_lines=0 0.4s
+screen_feedback_audit      exit=0    PASS 119/119 script_errors=0 engine_lines=3 0.5s
+screen_help_audit          exit=1    FAIL 73/75   script_errors=2 engine_lines=3 0.4s
+screen_history_audit       exit=1    FAIL 37/42   script_errors=4 engine_lines=6 0.5s
+screen_challenges_audit    exit=1    FAIL 64/68   script_errors=1 engine_lines=2 0.5s
+screen_profile_audit       exit=1    FAIL 44/60   script_errors=3 engine_lines=4 0.3s
+uir_route_audit            exit=0    PASS 44/44   script_errors=0 engine_lines=0 4.3s
+wrote docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json hash_stable=True
+final sweep exit=0

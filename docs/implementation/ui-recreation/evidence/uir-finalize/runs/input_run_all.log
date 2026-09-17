@@ -1,0 +1,467 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# input/accessibility audits ported from scripts/*.mjs — reference commit 2979588
+# audit reachability (res://tests/input/reachability_audit.gd)
+# not-ported reach/markup_actions_have_handlers: scripts/reachability-audit.mjs:27-48 pairs the markup's `data-action` strings with the keys of `bindNavigation({...})` in js/main.js; the port has neither markup nor event bindings — the same question is asserted in input_coverage_audit.gd over godot/src/input/scheme.gd and the live InputMap
+# not-ported reach/actions_generated_by_templates: scripts/reachability-audit.mjs:50-64 scans js/*.js for `data-action="…"` written in template strings, because the reference's buttons are built in code; the port has no template code, and the equivalent reverse check (an action nobody declares) is coverage/project_declared_actions_match_the_scheme
+ok reach/the_reference_inventory_is_thirteen_screens
+ok reach/the_eight_screen_floor_is_met
+ok reach/every_screen_has_a_row
+ok reach/every_screen_is_opened_by_some_showScreen
+ok reach/every_screen_has_at_least_one_opener
+ok reach/no_opener_names_a_screen_that_does_not_exist
+ok reach/the_registry_and_the_markup_list_the_same_screens
+ok reach/no_markup_screen_is_missing_from_the_registry
+ok reach/the_registry_lists_no_screen_that_does_not_exist
+ok reach/ten_screens_declare_their_return
+ok reach/only_the_root_the_field_and_the_result_declare_no_return
+ok reach/the_root_declares_no_return
+ok reach/every_return_is_an_action_the_screen_carries
+ok reach/every_return_leads_to_a_screen_that_exists
+ok reach/no_screen_returns_to_itself
+ok reach/back_walks_every_screen_to_the_root
+ok reach/the_walk_ends_on_the_root
+ok reach/the_field_returns_to_its_overlay
+ok reach/the_route_table_is_pinned_to_three_source_hashes
+ok reach/seventeen_showscreen_call_sites_are_recorded
+ok reach/the_markup_edges_reach_at_least_the_nine_screens_they_can
+# report screens=13 declared_returns=10 openers=17 markup_reachable=9/13
+# note markup-edge reachability is a lower bound, not an assertion: a `showScreen("x")` inside a callback carries no static origin screen, so arena, characters, game and result are opened from code only (js/main.js:2346, 2480, 1156; js/ui.js:1526)
+# note the scheme declares 24 actions; the binding half of the reference's action/handler pairing is asserted in input_coverage_audit.gd
+ok reachability (21 checks)
+# audit reachability not-ported=2
+# audit input_coverage (res://tests/input/input_coverage_audit.gd)
+ok coverage/every_declared_action_exists_in_the_input_map
+ok coverage/the_scheme_declares_twenty_four_actions
+ok coverage/seventeen_gameplay_actions
+ok coverage/seven_menu_actions
+ok coverage/the_project_declares_eighteen_actions
+ok coverage/project_declared_actions_match_the_scheme
+ok coverage/the_scheme_names_no_action_the_project_does_not_declare
+ok coverage/every_keyboard_action_has_a_key_in_the_live_map
+ok coverage/every_pad_action_has_a_button_or_axis_in_the_live_map
+ok coverage/twenty_three_actions_reach_the_pad
+ok coverage/sixteen_actions_reach_the_keyboard
+ok coverage/padel_left_is_bound_on_both_devices
+ok coverage/padel_right_is_bound_on_both_devices
+ok coverage/padel_up_is_bound_on_both_devices
+ok coverage/padel_down_is_bound_on_both_devices
+ok coverage/padel_drive_is_bound_on_both_devices
+ok coverage/padel_slice_is_bound_on_both_devices
+ok coverage/padel_special_is_bound_on_both_devices
+ok coverage/padel_switch_is_bound_on_both_devices
+ok coverage/padel_pause_is_bound_on_both_devices
+ok coverage/confirm_has_a_pad_button
+ok coverage/confirm_is_a_cross
+ok coverage/back_has_a_pad_button
+ok coverage/ui_up_binds_both_a_key_and_a_pad_input
+ok coverage/ui_down_binds_both_a_key_and_a_pad_input
+ok coverage/ui_left_binds_both_a_key_and_a_pad_input
+ok coverage/ui_right_binds_both_a_key_and_a_pad_input
+ok coverage/ui_accept_binds_both_a_key_and_a_pad_input
+ok coverage/ui_cancel_binds_both_a_key_and_a_pad_input
+ok coverage/dpad_up_reaches_ui_up
+ok coverage/dpad_down_reaches_ui_down
+ok coverage/dpad_left_reaches_ui_left
+ok coverage/dpad_right_reaches_ui_right
+ok coverage/the_pad_only_actions_are_the_references_eight
+ok coverage/every_other_action_has_a_keyboard_path
+ok coverage/every_gameplay_action_has_a_help_label
+ok coverage/every_help_label_resolves_through_the_locale
+ok coverage/the_inventory_covers_every_action
+ok coverage/no_action_is_bound_to_nothing
+ok coverage/every_action_carries_its_reference_anchor
+# report inventory: 24 actions, 26 printed lines between the `# input-inventory` markers
+# input-inventory begin
+# input-inventory menu_quit | context=menu | devices=keyboard | keyboard=Q | pad=none | remappable=yes | label=none | godot/project.godot:161 — a window has a close, a browser tab does not
+# input-inventory padel_down | context=gameplay | devices=keyboard,pad | keyboard=S, Down | pad=1:+1.0 | remappable=yes | label=moveLbl | js/main.js:1009-1010 · :789-800
+# input-inventory padel_drive | context=gameplay | devices=keyboard,pad | keyboard=Space | pad=0 | remappable=yes | label=driveLbl | js/main.js:1013 (space/meta charge) · :795 (pad A) · GAMEPLAY_RULES.md:157
+# input-inventory padel_left | context=gameplay | devices=keyboard,pad | keyboard=A, Left | pad=0:-1.0 | remappable=yes | label=moveLbl | js/main.js:1007-1010 (WASD/arrows) · :789-800 (left stick)
+# input-inventory padel_lob | context=gameplay | devices=pad | keyboard=none | pad=3 | remappable=yes | label=lobLbl | js/main.js:1079 (lob is pad Y only: no keyboard branch exists)
+# input-inventory padel_pause | context=gameplay | devices=keyboard,pad | keyboard=Escape | pad=6 | remappable=yes | label=pauseLbl | js/main.js:2511 (escape) · :799-800 (pad start)
+# input-inventory padel_right | context=gameplay | devices=keyboard,pad | keyboard=D, Right | pad=0:+1.0 | remappable=yes | label=moveLbl | js/main.js:1007-1010 · :789-800
+# input-inventory padel_slice | context=gameplay | devices=keyboard,pad | keyboard=Command | pad=2 | remappable=yes | label=sliceLbl | js/main.js:1013,2573-2585 (meta) · :796 (pad X) · GAMEPLAY_RULES.md:157
+# input-inventory padel_special | context=gameplay | devices=keyboard,pad | keyboard=Option | pad=1 | remappable=yes | label=specialLbl | js/main.js:2571 (alt) · :797 (pad B) · GAMEPLAY_RULES.md:157
+# input-inventory padel_split_step | context=gameplay | devices=pad | keyboard=none | pad=4:+1.0 | remappable=yes | label=splitStepLbl | js/main.js:792 (LT is analog: no keyboard branch) · GAMEPLAY_RULES.md:169
+# input-inventory padel_sprint | context=gameplay | devices=pad | keyboard=none | pad=5:+1.0 | remappable=yes | label=sprintLbl | js/main.js:793 (RT is analog) · GAMEPLAY_RULES.md:169-171 (analog sprint) — the legend labels the same key "Angolo"/"Angle" (index.html:252), which is the reference's own disagreement and is reported, not resolved
+# input-inventory padel_switch | context=gameplay | devices=keyboard,pad | keyboard=Tab, Z | pad=9 | remappable=yes | label=switchLbl | js/main.js:2572 (tab/z) · :798 (pad LB) · GAMEPLAY_RULES.md:157
+# input-inventory padel_tactic_attack | context=gameplay | devices=pad | keyboard=none | pad=11 | remappable=yes | label=tacticsLbl | GAMEPLAY_RULES.md:174-175 (D-pad sets the pair's tactic: up attacks the net)
+# input-inventory padel_tactic_balanced | context=gameplay | devices=pad | keyboard=none | pad=14 | remappable=yes | label=tacticsLbl | GAMEPLAY_RULES.md:174-175 (right restores the balance)
+# input-inventory padel_tactic_defend | context=gameplay | devices=pad | keyboard=none | pad=12 | remappable=yes | label=tacticsLbl | GAMEPLAY_RULES.md:174-175 (down defends the glass)
+# input-inventory padel_tactic_staggered | context=gameplay | devices=pad | keyboard=none | pad=13 | remappable=yes | label=tacticsLbl | GAMEPLAY_RULES.md:174-175 (left staggers the pair)
+# input-inventory padel_technical | context=gameplay | devices=pad | keyboard=none | pad=10 | remappable=yes | label=technicalLbl | js/main.js:794 (pad RB) · GAMEPLAY_RULES.md:172
+# input-inventory padel_up | context=gameplay | devices=keyboard,pad | keyboard=W, Up | pad=1:-1.0 | remappable=yes | label=moveLbl | js/main.js:1009-1010 · :789-800
+# input-inventory ui_accept | context=menu | devices=keyboard,pad | keyboard=Enter, Kp Enter, Space | pad=0, 6 | remappable=no | label=none | js/main.js:983-986 (pad button 0 confirms) · scripts/gamepad-nav-audit.mjs:92
+# input-inventory ui_cancel | context=menu | devices=keyboard,pad | keyboard=Escape | pad=1 | remappable=no | label=none | js/main.js:992 (buttons 1 and 2 both go back) · scripts/gamepad-nav-audit.mjs:88-91
+# input-inventory ui_down | context=menu | devices=keyboard,pad | keyboard=Down | pad=12 | remappable=no | label=none | js/main.js:944-952
+# input-inventory ui_left | context=menu | devices=keyboard,pad | keyboard=Left | pad=13 | remappable=no | label=none | js/main.js:944-952
+# input-inventory ui_right | context=menu | devices=keyboard,pad | keyboard=Right | pad=14 | remappable=no | label=none | js/main.js:944-952
+# input-inventory ui_up | context=menu | devices=keyboard,pad | keyboard=Up | pad=11 | remappable=no | label=none | js/main.js:944-952 (stick/D-pad up) · the engine's built-in ui_* action
+# input-inventory end
+# report actions=24 keyboard=16 pad=23 pad_only=8 project_declared=18
+# not-ported coverage/every_action_binds_both_a_pad_button_and_a_keyboard_key: the ticket asks for it (docs/implementation/tickets/accessibility-locales-performance.md:108) but the reference does not do it: 8 actions are pad-only by design (padel_lob, padel_split_step, padel_sprint, padel_tactic_attack, padel_tactic_balanced, padel_tactic_defend, padel_tactic_staggered, padel_technical), and the input map is another lane's file — asserted as a floor instead, and reported above
+# note the back button: the reference's menuBack fires on b(1) OR b(2) (js/main.js:992) and the port's ui_cancel carries button 1 only (measured in the live InputMap); the model accepts both (nav/button_2_goes_back_too) and the InputMap half is a note for whoever owns godot/project.godot, not a silent drop
+# note the RT disagreement is the reference's own: index.html:252 labels RT "Angolo" (padSprintDesc) while GAMEPLAY_RULES.md:169-171 calls it the analog sprint and godot/project.godot binds padel_sprint to it
+ok input_coverage (40 checks)
+# audit input_coverage not-ported=1
+# audit switch_mode (res://tests/input/switch_mode_audit.gd)
+ok switch/the flick threshold is the reference's 0.72 (`js/main.js:943`)
+ok switch/the latch re-arms at the reference's 0.30 (`js/main.js:948`)
+ok switch/the stick deadzone is the reference's 0.15 (`js/main.js:830`)
+ok switch/a flick at the 0.72 threshold asks for a switch
+ok switch/the flick arms the latch
+ok switch/the flick carries the stick's own direction, not a normalised one
+ok switch/a held flick does not fire again (tick 1 of 5)
+ok switch/the latch stays armed while the stick is held (tick 1 of 5)
+ok switch/a held flick does not fire again (tick 2 of 5)
+ok switch/the latch stays armed while the stick is held (tick 2 of 5)
+ok switch/a held flick does not fire again (tick 3 of 5)
+ok switch/the latch stays armed while the stick is held (tick 3 of 5)
+ok switch/a held flick does not fire again (tick 4 of 5)
+ok switch/the latch stays armed while the stick is held (tick 4 of 5)
+ok switch/a held flick does not fire again (tick 5 of 5)
+ok switch/the latch stays armed while the stick is held (tick 5 of 5)
+ok switch/0.5 is under the flick: no fire
+ok switch/0.5 is over the release: the latch stays armed
+ok switch/a stick back under 0.30 releases the latch
+ok switch/releasing the stick is not itself a switch
+ok switch/after the release the next flick fires
+ok switch/a stick past the flick while a charge is held is not a switch
+ok switch/holding a shot button re-arms the latch (`js/main.js:925`)
+ok sticks/the response is curved by the reference's 1.28 (`js/main.js:295`)
+ok sticks/the aim is curved by the reference's 0.72 (`js/main.js:301`)
+ok sticks/a stick well inside the deadzone is zero
+ok sticks/a centred stick is zero
+ok sticks/half stick is the curved value
+ok sticks/the curve makes the middle of the stick deader than a straight line
+ok sticks/a stick at full deflection still reaches 1
+ok sticks/more stick is still more movement
+ok aims/half aim is curved by 0.72
+ok aims/the aim keeps its sign
+ok aims/the sign survives the curve
+ok aims/full aim stays at 1
+ok aims/a centred aim is zero
+ok aims/an out-of-range aim is clamped before the curve
+ok switch/a match created without a mode keeps the simulation's default, `semi`
+ok switch/a flick away from the partner does not switch (alignment under 0.2, `js/game.js:657`)
+ok switch/a flick towards the partner switches to him
+ok switch/the switch flashes for the reference's 0.55 s (`js/game.js:664`)
+ok switch/while a service reception is locked a flick switches nobody (`js/game.js:645`)
+ok switch/the same lock refuses the button
+ok switch/the button switches once the reception lock clears
+ok switch/the saved `manual` reaches the match (`js/main.js:1184`)
+ok switch/the saved `assisted` reaches the match
+ok switch/an unknown mode falls back to `semi` (`js/main.js:2273`)
+ok switch/an absent mode falls back to `semi`
+ok pad/padel_drive is bound to A (Godot's 0, not the browser's number)
+ok pad/padel_slice is bound to X (Godot's 2, not the browser's number)
+ok pad/padel_lob is bound to Y (Godot's 3, not the browser's number)
+ok pad/padel_special is bound to B (Godot's 1, not the browser's number)
+ok pad/padel_switch is bound to LB (Godot's 9, not the browser's number)
+ok pad/padel_technical is bound to RB (Godot's 10, not the browser's number)
+ok pad/padel_pause is bound to Start (Godot's 6, not the browser's number)
+ok pad/padel_tactic_attack is bound to the D-pad's up (Godot's 11, not the browser's number)
+ok pad/padel_tactic_defend is bound to the D-pad's down (Godot's 12, not the browser's number)
+ok pad/padel_tactic_staggered is bound to the D-pad's left (Godot's 13, not the browser's number)
+ok pad/padel_tactic_balanced is bound to the D-pad's right (Godot's 14, not the browser's number)
+ok pad/padel_split_step carries LT as an analog axis (Godot's 4)
+ok pad/padel_sprint carries RT as an analog axis (Godot's 5)
+ok pad/padel_switch is not on Godot's `back` button (the browser's LB number)
+ok pad/padel_technical is not on Godot's `back` button (the browser's LB number)
+ok pad/padel_pause is not on Godot's `back` button (the browser's LB number)
+ok pad/padel_tactic_attack is not on Godot's `back` button (the browser's LB number)
+ok pads/the first sampler carries the keyboard
+ok pads/the second sampler is pad only (`getInput2()`, `js/main.js:1096`)
+ok pads/no pad is selected before a frame asks for one
+ok pads/set_device points the sampler at a pad
+ok pads/the first pad of the match does not swallow the first press (the browser picks its pad in the menu, `js/main.js:284`)
+ok pads/a pad that takes over mid-match holds its first press (`js/main.js:284`)
+ok pads/and it holds it again when it takes over back
+ok pads/while the pad takes possession no hit is queued
+ok pads/while the pad takes possession no charge starts
+ok pads/while the pad takes possession the stick switches nothing
+ok pads/with nothing held the possession ends on the next sample
+ok pads/a connected pad at rest samples as the empty input
+ok pads/a sampler pointed at no device produces the empty input, field for field
+ok pads/the second sampler fills the same 23 fields with no pad
+ok pads/the chosen device is one the OS reports (connected=[], chosen=-1)
+ok pads/the policy answers for both seats
+ok pads/the two seats never share one pad
+ok pads/keep_current keeps the pad it was given (`js/main.js:783`)
+ok pads/no device never counts as activity
+ok pads/with no controller connected no pad is selected
+# report flick=0.72 release=0.3 deadzone=0.15 curves=1.28/0.72 fields=23 devices=0,-1
+# note the saved mode reaches the match through `game/match_controller.gd::start_match` and `::_adopt_session`, both of which assign `state.controlMode = Config.control_mode()`; the pad policy runs once per frame in `::_refresh_pads` (`js/main.js:780-784`). This audit asserts the values and the validation — the assignments are the lines above them
+ok switch_mode (85 checks)
+# audit gamepad_nav (res://tests/input/gamepad_nav_audit.gd)
+# not-ported nav/focus_selector_is_read_from_the_sources: scripts/gamepad-nav-audit.mjs:24-30 reads `root.querySelectorAll("button, input, textarea, select, summary, .mode-card, …")` out of js/main.js; the port has no selector — the same inventory is the descriptor kinds focus_nav.gd accepts, asserted as nav/every_interactive_kind_is_focusable
+# not-ported nav/focus_skips_what_is_not_drawn_offsetParent: js/main.js:578 uses `el.offsetParent !== null`, a DOM layout fact with no headless equivalent; the model takes the caller's `drawn` flag, and nav/not_drawn_is_skipped asserts the filter, not a browser layout engine
+# not-ported nav/scroll_positions_come_from_getComputedStyle: js/main.js:605-613 resolves the scrolling ancestor from `getComputedStyle(el).overflowY` and `scrollHeight/clientHeight`; the model takes registered containers with content_height/view_height and asserts the same comparison in nav/a_container_that_does_not_overflow_is_not_the_scroller
+# not-ported nav/scrollIntoView_on_focus_move: js/main.js:588 calls `el.scrollIntoView({block: 'nearest'})` when the focus moves; a DOM scroll-into-view has no headless equivalent and belongs to the UI lane
+# note the eight-screen floor of scripts/gamepad-nav-audit.mjs:51 is measured in reachability_audit.gd against the reference's 13-screen inventory
+ok nav/collect_keeps_only_what_the_focus_may_land_on
+ok nav/filter_drops_exactly_the_five_unfocusable_kinds
+ok nav/button_is_focusable
+ok nav/text_field_is_focusable
+ok nav/card_that_is_its_own_button_is_focusable
+ok nav/locked_card_is_skipped
+ok nav/disabled_is_skipped
+ok nav/hidden_is_skipped
+ok nav/not_drawn_is_skipped
+ok nav/container_card_with_its_own_button_is_skipped
+ok nav/every_interactive_kind_is_focusable
+ok nav/first_target_is_the_first_inserted
+ok nav/direction_threshold_is_eight_pixels
+ok nav/a_candidate_under_the_threshold_does_not_take_the_focus
+ok nav/wide_target_wins_over_a_closer_aligned_one
+ok nav/wide_target_can_be_reached
+ok nav/wide_target_takes_the_focus
+ok nav/overlap_is_computed_from_the_rect_edges
+ok nav/move_reports_that_it_did_not_move
+ok nav/move_reports_no_move_on_every_axis
+ok nav/move_reports_that_it_moved
+ok nav/no_wrapping_at_the_bottom_edge
+ok nav/the_focus_stays_at_the_edge
+ok nav/range_keeps_the_focus_on_left_right
+ok nav/range_steps_its_value_up
+ok nav/range_steps_its_value_down
+ok nav/range_clamps_at_its_minimum
+ok nav/range_gives_its_focus_up_on_up_down
+ok nav/range_moves_off_on_the_other_axis
+ok nav/read_only_screen_has_a_target
+ok nav/scroll_finds_the_container
+ok nav/scroll_applies_to_the_container
+ok nav/a_container_that_does_not_overflow_is_not_the_scroller
+ok nav/the_page_scrolls_instead
+ok nav/an_inner_panel_wins_over_the_page
+ok nav/read_only_screen_has_nothing_below_to_focus
+ok nav/arrows_scroll_when_the_focus_cannot_move
+ok nav/the_arrow_scroll_lands_on_the_container
+ok nav/the_pad_finds_no_target_below
+ok nav/the_stick_scrolls_15_per_frame_when_there_is_no_target
+ok nav/the_right_stick_scrolls_24_per_unit
+ok nav/the_right_stick_scrolls_proportionally
+ok nav/the_source_screen_owns_the_focus
+ok nav/the_first_target_of_the_screen_takes_the_focus
+ok nav/a_running_match_has_no_menu_focus
+ok nav/no_target_is_offered_during_play
+ok nav/the_pad_moves_nothing_during_play
+ok nav/confirm_does_nothing_during_play
+ok nav/a_paused_match_gives_the_focus_back
+ok nav/the_overlay_owns_the_focus_while_it_is_up
+ok nav/the_overlay_targets_replace_the_screens
+ok nav/closing_the_overlay_gives_the_screen_back
+ok nav/the_new_screens_first_target_takes_the_focus
+ok nav/confirm_activates_the_focused_target
+ok nav/confirm_reports_the_targets_action
+ok nav/confirm_reports_the_target
+ok nav/a_text_field_activates_normally_without_a_pad
+ok nav/confirm_on_a_text_field_opens_the_keyboard_with_a_pad
+ok nav/the_keyboard_opens_for_the_focused_field
+ok nav/the_keyboard_is_open
+ok nav/the_open_keyboard_becomes_the_focus_context
+ok nav/the_keyboard_starts_from_the_fields_value
+ok nav/the_keyboard_label_names_the_field
+ok nav/the_keyboards_first_key_takes_the_focus
+ok nav/the_focus_moves_among_the_keys
+ok nav/the_second_key_has_the_focus
+ok nav/back_closes_the_keyboard
+ok nav/back_says_which_field_to_refocus
+ok nav/the_field_takes_the_focus_back
+ok nav/the_return_is_declared_data
+ok nav/back_fires_the_declared_return
+ok nav/the_declared_return_is_the_one_used
+ok nav/back_lands_on_the_declared_screen
+ok nav/the_screen_changed
+ok nav/the_declared_return_is_not_taken_from_the_positional_criterion
+ok nav/root_back_leads_nowhere
+ok nav/root_back_stays_on_the_root
+ok nav/the_positional_criterion_still_exists_as_data
+ok nav/no_shipped_screen_falls_back_to_the_positional_criterion
+ok nav/the_overlay_owns_back_while_it_is_up
+ok nav/back_does_nothing_during_play
+ok nav/dpad_up_is_up
+ok nav/dpad_down_is_down
+ok nav/dpad_left_is_left
+ok nav/dpad_right_is_right
+ok nav/stick_up_is_up
+ok nav/stick_right_is_right
+ok nav/vertical_is_checked_before_horizontal
+ok nav/vertical_up_wins_over_horizontal
+ok nav/a_neutral_stick_is_no_direction
+ok nav/the_dpad_wins_over_an_opposite_stick
+ok nav/the_pad_starts_on_the_first_target
+ok nav/the_first_push_moves_the_focus
+ok nav/the_first_push_changes_the_target
+ok nav/the_held_run_starts_on_the_first_target
+ok nav/the_push_moves_once
+ok nav/the_push_moved_one_target
+ok nav/the_first_repeat_is_scheduled_at_400ms
+ok nav/holding_does_not_repeat_before_400ms
+ok nav/the_hold_has_not_moved_the_focus
+ok nav/the_repeat_fires_at_400ms
+ok nav/the_repeat_moved_one_target
+ok nav/the_next_repeat_is_150ms_later
+ok nav/the_repeat_is_not_faster_than_150ms
+ok nav/releasing_the_stick_clears_the_direction
+ok nav/a_released_stick_moves_nothing
+ok nav/button_0_confirms
+ok nav/a_held_button_0_does_not_confirm_again
+ok nav/button_0_confirms_again_after_release
+ok nav/button_1_goes_back
+ok nav/button_2_goes_back_too
+ok nav/the_confirm_button_is_a_cross
+ok nav/back_is_mapped_on_both_b_and_x
+ok osk/the_grid_is_the_references
+ok osk/the_grid_has_five_rows
+ok osk/the_grid_lists_every_key
+ok osk/the_accented_and_address_keys_are_there
+ok osk/starts_closed
+ok osk/typing_while_closed_does_nothing
+ok osk/opens_for_a_field
+ok osk/remembers_the_field
+ok osk/a_character_is_typed
+ok osk/the_value_grew
+ok osk/a_shifted_character_is_typed
+ok osk/shift_uppercases
+ok osk/shift_stays_on_until_it_is_toggled_back
+ok osk/space_is_an_action_key
+ok osk/space_inserts_a_space
+ok osk/an_insertion_past_the_limit_is_refused
+ok osk/a_refused_insertion_changes_nothing
+ok osk/an_insertion_that_fits_is_accepted
+ok osk/the_max_length_is_honoured
+ok osk/an_insertion_past_exactly_the_limit_is_refused
+ok osk/backspace_is_an_action_key
+ok osk/backspace_removes_one_character
+ok osk/backspace_on_an_empty_field_is_a_no_op
+ok osk/an_empty_field_stays_empty
+ok osk/a_zero_max_length_means_unbounded
+ok osk/done_closes_the_keyboard
+ok osk/the_keyboard_is_closed
+ok osk/action_keys_are_labelled_it
+ok osk/four_action_keys_it
+ok osk/action_keys_are_labelled_en
+ok osk/four_action_keys_en
+ok osk/shift_can_be_toggled
+ok osk/closing_reports_the_field
+ok osk/closing_clears_shift
+ok osk/closing_twice_reports_nothing
+ok osk/the_grid_shows_the_shifted_character
+ok osk/the_action_row_is_last
+ok osk/the_action_row_is_resolved_through_the_locale
+ok osk/the_keyboard_announces_itself
+ok nav/three_pad_help_lines
+ok nav/the_menu_help_line_resolves
+ok nav/the_menu_help_lines_are_two_it
+ok nav/pad_help_promises_b_circle_for_back_it
+ok nav/pad_help_promises_a_confirm_it
+ok nav/the_menu_help_lines_are_two_en
+ok nav/pad_help_promises_b_circle_for_back_en
+ok nav/pad_help_promises_a_confirm_en
+ok nav/every_input_string_resolves_it
+ok nav/every_input_string_resolves_en
+ok nav/the_input_string_inventory_is_enumerable
+ok nav/eight_actions_are_pad_only_in_the_reference
+# note RT: legend label `sprintLbl` = "Angolo" (index.html:252, GAMEPLAY_RULES.md:169-171 calls it the analog sprint); the port binds padel_sprint to it and does not rename the string
+# note the reference's pad help strings are declared in both locales and resolved through godot/src/locale/** — no private string table in godot/src/input/**
+# report focus targets=8 hints=63 pad-only=8
+ok gamepad_nav (164 checks)
+# audit gamepad_nav not-ported=4
+# audit input_remap_a11y (res://tests/input/input_remap_a11y_audit.gd)
+ok remap/the_keyboard_binding_is_read_from_the_input_map
+ok remap/the_pad_binding_is_read_from_the_input_map
+ok remap/a_stick_binding_is_an_axis
+ok remap/the_input_map_starts_covered
+ok remap/no_override_before_any_change
+ok remap/a_second_key_is_kept
+ok remap/movement_keeps_its_second_key
+ok remap/the_confirm_key_set_is_complete
+ok remap/a_free_key_is_accepted
+ok remap/the_new_key_is_the_binding
+ok remap/the_previous_binding_is_reported
+ok remap/only_the_changed_slot_is_an_override
+ok remap/the_override_is_named_by_action_and_slot
+ok remap/a_key_already_used_in_the_context_is_refused
+ok remap/the_refusal_names_the_conflict
+ok remap/the_conflict_names_the_action_that_owns_it
+ok remap/a_refused_assignment_changes_nothing
+ok remap/a_key_used_in_another_context_is_accepted
+ok remap/the_gameplay_context_reports_no_conflict_for_a_freed_key
+ok remap/the_menu_context_detects_its_own_conflicts
+ok remap/a_key_in_the_pad_slot_is_refused
+ok remap/the_pad_slot_names_the_kinds_it_takes
+ok remap/a_pad_button_in_the_keyboard_slot_is_refused
+ok remap/an_empty_binding_is_refused
+ok remap/a_nameless_key_is_refused
+ok remap/an_unknown_action_is_refused
+ok remap/an_unknown_slot_is_refused
+ok remap/ui_accept_is_reserved_to_the_engine
+ok remap/ui_cancel_is_reserved_to_the_engine
+ok remap/ui_up_is_reserved_to_the_engine
+ok remap/ui_down_is_reserved_to_the_engine
+ok remap/ui_left_is_reserved_to_the_engine
+ok remap/ui_right_is_reserved_to_the_engine
+ok remap/clearing_a_reference_device_is_refused
+ok remap/can_clear_reports_the_floor
+ok remap/clearing_an_empty_slot_is_refused
+ok remap/a_pad_only_action_has_no_keyboard_binding_to_clear
+ok remap/padel_drive_accepts_a_pad_rebinding
+ok remap/padel_slice_accepts_a_pad_rebinding
+ok remap/padel_special_accepts_a_pad_rebinding
+ok remap/the_map_is_still_covered_after_rebinding
+ok remap/reset_restores_every_binding
+ok remap/reset_restores_the_keyboard_binding
+ok a11y/the_reference_has_exactly_two_toggles
+ok a11y/two_settings_are_declared
+ok a11y/reduced_motion_defaults_off
+ok a11y/colorblind_defaults_off
+ok a11y/reduce_motion_carries_its_reference_anchor
+ok a11y/colorblind_carries_its_reference_anchor
+ok a11y/particles_are_untouched_without_reduced_motion
+ok a11y/shake_is_untouched_without_reduced_motion
+ok a11y/reduced_motion_can_be_turned_on
+ok a11y/particles_are_35_percent_with_reduced_motion
+ok a11y/the_particle_count_is_rounded
+ok a11y/the_particle_floor_is_two
+ok a11y/the_floor_holds_for_a_tiny_burst
+ok a11y/shake_is_capped_at_a_half
+ok a11y/a_small_shake_is_left_alone
+ok a11y/an_unknown_setting_is_refused
+ok a11y/an_unknown_setting_stays_off
+ok a11y/both_toggles_are_labelled_it
+ok a11y/both_toggles_are_labelled_en
+ok a11y/every_named_control_has_a_name
+ok a11y/a_named_control_resolves_through_the_locale
+ok a11y/an_unknown_control_has_no_name
+ok a11y/two_prefs_are_persisted
+ok a11y/the_motion_pref_round_trips
+ok a11y/the_references_camel_case_keys_are_accepted
+ok a11y/the_colourblind_pref_round_trips
+ok a11y/a_non_boolean_value_is_ignored
+ok a11y/the_absent_settings_are_enumerated
+# note absent setting large_text / font_scale — index.html's settings screen has language, accessibility (two toggles), audio/controller and feedback sections only; no font-size, zoom or text-scale control exists anywhere in index.html, styles.css or js/
+# note absent setting high_contrast — colourblind mode is a colour filter (styles.css:2726-2728); there is no contrast or theme setting
+# note absent setting screen_reader_api — the reference's accessible names are DOM attributes (58 data-i18n-aria hooks, 81 aria-* attributes in index.html); Godot exposes no DOM, so the port keeps named controls and a keyboard path, and claims no screen-reader parity
+# note absent setting caption / subtitle_size — there are no captions in the reference to size
+# note absent setting hold_vs_toggle — no input-assist options (hold-to-charge, auto-aim, one-button) exist in the reference
+# note index.html:414 marks optReduceMotion `checked` while js/ui.js:471 defaults ui.reduceMotion to false and js/main.js:2376 assigns the state onto the checkbox when the settings screen syncs
+# report a11y settings=2 absent=5 particle(100)=35 shake(2.5)=0.5
+ok a11y/the_audio_layer_is_readable
+ok a11y/the_audio_layer_does_not_import_the_accessibility_module
+ok a11y/every_motion_mention_in_audio_is_a_false_diagnostic
+ok a11y/the_audio_mixers_motion_flag_is_false
+# note audio mentions a motion word at res://src/audio/audio_port.gd:425 — the port's mixer contract declares `reducedMotion.affectsAudio: false`; js/audio.js has no such field, so the port carries one extra diagnostic and no read (docs/implementation/tickets/accessibility-locales-performance.md:47,55)
+ok a11y/menu_navigation_is_always_available_on_the_keyboard
+ok a11y/the_pad_only_set_is_reported_not_hidden
+ok a11y/the_pad_only_count_matches_its_list
+ok a11y/the_touch_and_osk_decision_is_named_as_postponed
+ok a11y/every_input_string_resolves_it
+ok a11y/every_input_string_resolves_en
+ok a11y/the_locale_seam_still_has_two_locales
+ok a11y/no_input_string_leaks_as_a_raw_id
+# report audio files=2 input strings=63
+# note performance is not measured here and no frame-rate claim is made: this host renders through software GL with no GPU (docs/wayfinder/tickets/product-scope-and-platforms.md); the frame-time probe is a later tranche of this slice
+ok input_remap_a11y (83 checks)
+# totals checks=393 failures=0 not-ported=7
+PASS 5/5

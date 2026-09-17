@@ -1,0 +1,79 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# fonts_assets_probe · Godot 4.7.2-stable (official)
+ok res://assets/ui/fonts/LilitaOne-Regular.ttf loads
+ok res://assets/ui/fonts/LilitaOne-Regular.ttf imports as FontFile
+ok res://assets/ui/fonts/LilitaOne-Regular.ttf measures text (24 px 'Steam Circuit' = 138.0 px)
+ok res://assets/ui/fonts/Nunito-Regular.ttf loads
+ok res://assets/ui/fonts/Nunito-Regular.ttf imports as FontFile
+ok res://assets/ui/fonts/Nunito-Regular.ttf measures text (24 px 'Steam Circuit' = 144.0 px)
+ok res://assets/ui/fonts/Nunito-SemiBold.ttf loads
+ok res://assets/ui/fonts/Nunito-SemiBold.ttf imports as FontFile
+ok res://assets/ui/fonts/Nunito-SemiBold.ttf measures text (24 px 'Steam Circuit' = 147.0 px)
+ok res://assets/ui/fonts/Nunito-Bold.ttf loads
+ok res://assets/ui/fonts/Nunito-Bold.ttf imports as FontFile
+ok res://assets/ui/fonts/Nunito-Bold.ttf measures text (24 px 'Steam Circuit' = 150.0 px)
+ok res://assets/ui/fonts/Nunito-ExtraBold.ttf loads
+ok res://assets/ui/fonts/Nunito-ExtraBold.ttf imports as FontFile
+ok res://assets/ui/fonts/Nunito-ExtraBold.ttf measures text (24 px 'Steam Circuit' = 154.0 px)
+ok res://assets/ui/steam-circuit-key-art.webp loads
+ok res://assets/ui/steam-circuit-key-art.webp imports as Texture2D
+ok res://assets/ui/steam-circuit-key-art.webp has pixels (1672x941)
+ok res://assets/ui/xbox-controller-steam.webp loads
+ok res://assets/ui/xbox-controller-steam.webp imports as Texture2D
+ok res://assets/ui/xbox-controller-steam.webp has pixels (1536x1024)
+ok res://assets/ui/playstation-controller-steam.webp loads
+ok res://assets/ui/playstation-controller-steam.webp imports as Texture2D
+ok res://assets/ui/playstation-controller-steam.webp has pixels (1254x1254)
+ok res://assets/ui/generic-controller-steam.webp loads
+ok res://assets/ui/generic-controller-steam.webp imports as Texture2D
+ok res://assets/ui/generic-controller-steam.webp has pixels (1254x1254)
+ok res://assets/ui/modes/quick-match.webp loads
+ok res://assets/ui/modes/quick-match.webp imports as Texture2D
+ok res://assets/ui/modes/quick-match.webp has pixels (960x320)
+ok res://assets/ui/modes/tournament.webp loads
+ok res://assets/ui/modes/tournament.webp imports as Texture2D
+ok res://assets/ui/modes/tournament.webp has pixels (960x320)
+ok res://assets/ui/modes/career.webp loads
+ok res://assets/ui/modes/career.webp imports as Texture2D
+ok res://assets/ui/modes/career.webp has pixels (960x320)
+ok res://assets/ui/athletes/colosso.webp loads
+ok res://assets/ui/athletes/colosso.webp imports as Texture2D
+ok res://assets/ui/athletes/colosso.webp has pixels (1024x1536)
+ok res://assets/ui/athletes/fiamma.webp loads
+ok res://assets/ui/athletes/fiamma.webp imports as Texture2D
+ok res://assets/ui/athletes/fiamma.webp has pixels (1086x1448)
+ok res://assets/ui/athletes/maestro.webp loads
+ok res://assets/ui/athletes/maestro.webp imports as Texture2D
+ok res://assets/ui/athletes/maestro.webp has pixels (1086x1448)
+ok res://assets/ui/athletes/oracolo.webp loads
+ok res://assets/ui/athletes/oracolo.webp imports as Texture2D
+ok res://assets/ui/athletes/oracolo.webp has pixels (1024x1536)
+ok res://assets/ui/athletes/pantera.webp loads
+ok res://assets/ui/athletes/pantera.webp imports as Texture2D
+ok res://assets/ui/athletes/pantera.webp has pixels (1086x1448)
+ok res://assets/ui/athletes/steamer.webp loads
+ok res://assets/ui/athletes/steamer.webp imports as Texture2D
+ok res://assets/ui/athletes/steamer.webp has pixels (1086x1448)
+ok res://assets/ui/arenas/bastione-tempesta.webp loads
+ok res://assets/ui/arenas/bastione-tempesta.webp imports as Texture2D
+ok res://assets/ui/arenas/bastione-tempesta.webp has pixels (1672x941)
+ok res://assets/ui/arenas/caldera-titano.webp loads
+ok res://assets/ui/arenas/caldera-titano.webp imports as Texture2D
+ok res://assets/ui/arenas/caldera-titano.webp has pixels (1672x941)
+ok res://assets/ui/arenas/clockwork-factory.webp loads
+ok res://assets/ui/arenas/clockwork-factory.webp imports as Texture2D
+ok res://assets/ui/arenas/clockwork-factory.webp has pixels (1672x941)
+ok res://assets/ui/arenas/deposito-locomotive.webp loads
+ok res://assets/ui/arenas/deposito-locomotive.webp imports as Texture2D
+ok res://assets/ui/arenas/deposito-locomotive.webp has pixels (1672x941)
+ok res://assets/ui/arenas/officina-vapore-standard.webp loads
+ok res://assets/ui/arenas/officina-vapore-standard.webp imports as Texture2D
+ok res://assets/ui/arenas/officina-vapore-standard.webp has pixels (1672x941)
+ok res://assets/ui/arenas/orrery-celeste.webp loads
+ok res://assets/ui/arenas/orrery-celeste.webp imports as Texture2D
+ok res://assets/ui/arenas/orrery-celeste.webp has pixels (1672x941)
+ok res://assets/ui/arenas/santuario-abissale.webp loads
+ok res://assets/ui/arenas/santuario-abissale.webp imports as Texture2D
+ok res://assets/ui/arenas/santuario-abissale.webp has pixels (1672x941)
+PASS 75/75

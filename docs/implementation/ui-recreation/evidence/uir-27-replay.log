@@ -1,0 +1,456 @@
+# UIR-27 Replay — component, recorded-gameplay audit and the integration seam
+
+Worker artifact, 2026-09-17 12:17 CEST, native macOS. Repo
+`/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot`.
+
+**What this is.** UIR-27's UI half (`ReplayOverlay.gd/.tscn`, the reference's
+`drawReplayOverlay` chrome) and its acceptance audit (`tests/ui/replay_audit.gd`), built
+against the reference and against the recorded gameplay the port's own simulation
+produces. **What it is not:** the controller half. The playback state machine lives in
+`godot/game/match_controller.gd`, whose single writer is the integration owner — §3 is the
+handoff, exact and complete, so that half is mechanical.
+
+**Status of the run.** No Godot process was started by this worker (the wave's dispatch
+forbids it: one engine runner, the integration captain). Everything in §5 is static
+evidence produced by a Python conformance check; the audit in §4 is the run that is
+**owed** (§9). The reference's own buffer machinery is already in the tree and green
+(§3.1) — the captures in §2 are the anchors for what remains.
+
+---
+
+## 1. What landed this wave
+
+| file | lines | sha256 (16) | what it is |
+|---|---|---|---|
+| `godot/src/ui/screens/ReplayOverlay.gd` | 476 | `4b3ccee3448292aa` | the reference's replay chrome: banner + exit hint + progress bar, seam-bound, honest when it has no data |
+| `godot/src/ui/screens/ReplayOverlay.tscn` | 17 | `795652a159316e5f` | the scene: full-rect, `MOUSE_FILTER_IGNORE`, theme mounted, script attached |
+| `godot/tests/ui/replay_audit.gd` | 924 | `43ac5368876f257b` | the audit: recording on real gameplay, playback, restore-equality, keys, pause button, chrome |
+| `godot/tests/ui/replay_audit.tscn` | 6 | `8260dcd8cdc19f7d` | the audit's scene (same shape as `pause_audit.tscn`) |
+| `.gd.uid` sidecars for all four | — | — | written by the runner's engine scan at 12:12:23 (the new scripts are in the project's file cache; that scan does not prove a clean parse) |
+
+*(Snapshot, 12:17. The three replay files were rewritten later in the same wave — the executed
+runs and the closure fingerprints are in §12.)*
+
+No other file was written, edited or deleted by this worker. `git status` shows the six
+paths above as untracked additions and no modification by this worker to any shared file
+(`M` rows in the tree belong to the other lanes, as `uir-20-overlays.log` §8 records for
+its own wave).
+
+---
+
+## 2. The reference this was built from (anchors, not paraphrases)
+
+| reference | what it fixes |
+|---|---|
+| `js/game.js:313-315` | `replayFrames: []`, `replayMax: 720` — the buffer and its bound |
+| `js/game.js:334-336` | `resetReplayBuffer`: `replayFrames = []` |
+| `js/game.js:338-365` | `captureReplayFrame`: the 3+17 field snapshot, four pads, `trail` copy, front-drop `splice(0, len - max)` |
+| `js/game.js:2999-3009` | the `pointPause` branch: **no capture**, and on the transition tick `resetReplayBuffer` + `prepareServe` |
+| `js/game.js:3021-3025` | the serving tick: `updateServing` → **capture** → return (capture is the tick's last act) |
+| `js/game.js:3328-3341` | the rally tick: the early returns (bounce/wall scoring) skip the capture; the path's last act is the **capture** |
+| `js/main.js:138-140` | `replayActive`, `replayIndex`, `replayAccum` — the playback state |
+| `js/main.js:1202-1204` | a new match clears all three |
+| `js/main.js:1243-1245` | while replaying, the fixed-step sim is **not** advanced (`stepReplay` instead) |
+| `js/main.js:1282`, `:1291-1294` | apply the frame → draw → draw the overlay → **restore** the live state |
+| `js/main.js:1308-1319` | `stepReplay`: `replayAccum += dt`, one index per `1/60`, clamp at `frames.length - 1` |
+| `js/main.js:1322-1360` | `applyReplayFrame` / `restoreReplayFrame` — the copy in, the copy back |
+| `js/main.js:1362-1381` | `drawReplayOverlay` — the chrome this component is |
+| `js/main.js:1365` | the bar is `(replayIndex + 1) / frames.length` |
+| `js/main.js:1383-1395` | `toggleReplay` — the entry gate `frames.length < 2`, both edges set `paused = false` |
+| `js/main.js:2604-2614` | ESC: step 0 is the replay (`toggleReplay`, return), then tutorial/tab/resume/pause |
+| `js/main.js:2616-2627` | `r`: refused while paused unless a replay is already up |
+| `index.html:476` | the canvas the overlay draws on: **960x700**, rendered at 1280x720 → the `4/3` in §3.5 |
+
+Buffer numbers (microstep 1): **capacity 720 frames**, **capture cadence one frame per
+simulation tick (1/120 s)**, **playback cadence one index per rendered frame at 1/60 s**
+(so a point replays at half the speed it was played — the reference's own ratio), frame
+payload the reference's `serveSide/serveCourt/activePlayerKey` + 17 ball fields + 4 pads ×
+10 fields. At ~1.1-1.3 KB per frame by JSON encoding (the audit prints the measured
+value), the whole ring is on the order of **0.8-1.0 MB** at the shipped bound — the
+"buffer memory" line of the ticket's failure list.
+
+---
+
+## 3. §Seam — the API handoff to the integration owner
+
+### 3.1 What is already in the tree (read-only for the UI half, do not re-implement)
+
+- `godot/src/sim/state.gd:134-135` — `var replayFrames: Array = []`, `var replayMax: int = 720`.
+- `godot/src/sim/sim.gd:247-248` — `reset_replay_buffer`; `:257-286` — `capture_replay_frame`
+  (the transcribed snapshot, including the front-drop `slice` at `:285-286`); `:454-455` —
+  the match-start reset; `:2761` — the `pointPause` reset; **`:2774` and `:3070` — the two
+  captures**, at exactly the reference's two call sites.
+  **The capture half is done.** Nothing in `sim.gd` needs to change for UIR-27.
+- `godot/src/ui/screens/PauseOverlay.gd` — `set_replay_active(bool)` `:336`, `replay_active()`
+  `:341`, `replay()` `:552`, `replay_enabled()` `:561`, `replay_disabled_reason()` `:566`
+  (`"uir27-replay-entry-not-landed"` while off), `back()` step 0 → `"replay_close"` `:616`,
+  the `replay_requested` signal `:93`. UIR-20's half is done too.
+- `godot/tests/ui/replay_audit.gd` — the consumer of everything below. Its required list is
+  the ticket's proposed four plus `stop_replay`; everything else is optional (§3.2).
+
+### 3.2 The controller API to add (`godot/game/match_controller.gd`)
+
+Public, documented in the file's header:
+
+```gdscript
+## UIR-27's playback half ... (reference: js/main.js:138-140, :1308-1395)
+signal replay_finished()                  # once, on the step that reaches the last frame
+func start_replay() -> bool               # false unless: state != null, not finished,
+                                          # frames >= 2 (js/main.js:1390), not already active
+func stop_replay() -> void                # idempotent; restores the pause it remembers (§3.4)
+func toggle_replay() -> bool              # the `r` key: stops when active; refuses while
+                                          # paused or finished; else start_replay()
+func replay_active() -> bool              # the whole overlay's visibility + the sim freeze
+func replay_progress() -> float           # (index + 1) / count, clamped to [0, 1]; 0 with no frames
+func replay_index() -> int                # optional readout (the audit uses it when present)
+func replay_frame_count() -> int          # optional readout
+func replay_was_paused() -> bool          # optional readout, the remembered pause (§3.4)
+```
+
+State to keep on the controller (mirroring `js/main.js:138-140`):
+`_replay_active: bool`, `_replay_index: int`, `_replay_accum: float`, plus the restore
+pair — a saved live state and, per §3.4, `_replay_was_paused: bool`.
+`start_replay()` zeroes index and accumulator; `stop_replay()` clears the active flag and
+restores. `sim.gd:1202-1204`'s equivalent (a new match clears the buffer) is already
+covered by `sim.gd:454-455`.
+
+### 3.3 The four insertion points (anchors as of `match_controller.gd` sha `d9b982227d1b7674`; the file is its owner's and moves — cite by function)
+
+1. **`apply_frame`** (`:1054`): immediately after the `state == null` guard, before the
+   `_paused` block:
+
+   ```gdscript
+   if replay_active():
+       return _replay_frame(delta)
+   ```
+
+   `_replay_frame(delta)` is the reference's frame (`js/main.js:1243-1245`, `:1282`,
+   `:1291-1294`): `_replay_accum += delta`, advance `_replay_index` one step per `1/60`
+   clamped at `count - 1`, `replay_finished.emit()` once when the cursor first sits on the
+   last frame, then **apply → draw → restore**: write the frame's fields into the live
+   `state` (ball x/y/z/vx/vy/vz/spin/…, pads x/y/…, `serveSide`/`serveCourt`/
+   `activePlayerKey`), call `_sync_views()` (its own header says every position comes from
+   the live state), then write the saved values back. **No `update_match`, no
+   `advance_frame`, no `_hud.refresh`** on this path — the reference's HUD keeps its last
+   values because `syncHud` lives in `drawScene`, which a replay frame never reaches. The
+   next real frame after `stop_replay()` ticks the match again, which is the audit's
+   "control returns" check.
+2. **`_unhandled_input`**, the `padel_pause` ladder (`:2020-2040`): one rung for the
+   replay, **before** the `_pause_overlay != null` arm (the headless construction has no
+   overlay mounted, so a branch nested inside that arm would be untestable and, worse,
+   dead in the harness):
+
+   ```gdscript
+   elif replay_active():
+       stop_replay()
+   ```
+
+   That is the hierarchy's step 0 (`js/main.js:2606-2609`).
+3. **The `r` key** (`:2077-2081`): replace `rematch()` with `toggle_replay()` and retire
+   the old comment ("there is no replay in this slice"). The reference's guard is
+   `if (!matchState.paused || replayActive)` (`js/main.js:2616-2626`) — inside
+   `toggle_replay`, refuse while `_paused` or `finished`. `rematch()` itself stays: the
+   pause card's `rematch_requested` and `ResultScreen`'s route are its callers
+   (`PauseOverlay.gd:544-546`, `main_menu.gd:490`) — only the **key** changes meaning.
+4. **Nothing in `sim.gd`.** The buffer, both resets and both captures are already there
+   (§3.1) and are the cross-engine parity surface — do not touch them.
+
+### 3.4 The pause on the way out — the one place the ticket overrides the reference's letter
+
+- Reference: `toggleReplay` sets `matchState.paused = false` on **both** edges
+  (`js/main.js:1386-1394`), so an exited replay leaves a live match.
+- UIR-27 ticket, line 61: *"exit returns to pause Match tab (ESC hierarchy step 3-4
+  interplay per UIR-20)"*. This is the reading the audit enforces:
+  `start_replay()` remembers `_replay_was_paused` and clears `_paused` (card closes — both
+  readings agree here); `stop_replay()` **restores** the remembered pause, so the card
+  reopens through the seam echo and `PauseOverlay.open()` lands on the MATCH tab
+  (`:352-364`, `:397`), which is ESC's steps 3-4 doing their job. Record the divergence in
+  your header comment the way UIR-20's log records its own.
+- The audit's hard checks: `replay/entering_from_the_card_closes_the_card_like_the_reference`,
+  `replay/leaving_a_card_started_replay_restores_the_pause`,
+  `replay/the_restored_pause_reopens_the_card`, `replay/the_restored_card_opens_on_the_match_tab`.
+  A stop that came from live play leaves the match unpaused
+  (`replay/from_live_play_the_mask_ends_unpaused`).
+
+**The wrinkle that needs your judgement.** UIR-20's overlay carries **one** flag,
+`_replay_active`, and it means two different things: the button's gate (`replay_enabled()`,
+`replay_disabled_reason()`) and ESC's step 0 (`back()`). The button must be pressable
+*while the card is open and nothing is playing*; ESC's step 0 must only divert *while a
+replay is actually up*. With today's code both cannot be true at once: feed the flag
+`replay_available()` and the card's own ESC returns `replay_close` when no replay is up
+(ESC swallowed, card stuck); feed it `replay_active()` and the button is only enabled
+during a replay (the card's entry unreachable). Cheapest correct wiring, one small edit in
+the overlay's own file (UIR-20's, yours as integration owner — its ticket anticipated the
+UIR-27 wiring):
+
+```gdscript
+func set_replay_available(available: bool) -> void   # button + reason gate
+func set_replay_active(active: bool) -> void          # ESC step 0, unchanged meaning
+```
+
+with `replay_enabled()` reading the first. Without that edit the alternative is the
+controller checking `replay_active()` before delegating ESC and consuming a `replay_close`
+step that can only be stale — workable, but the flag lies to `back()`. §8 records this as
+the one thing this worker did not decide.
+The audit reads `set_replay_active(true)` (UIR-20's documented contract) and does not
+enforce the split either way: `replay/the_flag_enables_the_entry`,
+`replay/escs_step_0_is_the_replay`.
+
+### 3.5 The mount recipe (all in `match_controller.gd`, your file)
+
+```gdscript
+const ReplayOverlayScene := preload("res://src/ui/screens/ReplayOverlay.tscn")
+# in the HUD-layer builder, BEFORE the HUDs are added (or with a lower z_index):
+_replay_overlay = ReplayOverlayScene.instantiate()
+layer.add_child(_replay_overlay)      # the reference's canvas sits UNDER the HTML HUD
+_replay_overlay.bind_seam(self)       # the controller's API from §3.2
+```
+
+- **Under the HUD**: `.game-hud` is `z-index: 5` over the canvas (`styles.css:536-544`), and
+  the HUD's scoreboard occupies y=30..125 at the top — the banner runs under it.
+- **No focus row**: `focus_controls()` answers `[]` and says why; while the replay is up
+  the card is closed, so the pause focus model is rebuilt without it
+  (`_rebuild_pause_focus` reads the overlay's rows only while `_paused`).
+- **Pixels**: the chrome is the reference's canvas pixels at `1280/960` — banner 53.33 px
+  tall (`rgba(6,12,30,0.42)` → requested key `replay_banner`), text 16 px `gold` inset
+  18.67, exit hint 15 px `white` @ 0.9 right-aligned to the same inset, bar 10.67 px at the
+  bottom edge (`white` @ 0.2 track, `gold` fill = `replay_progress()`).
+- **Capture lane**: the overlay declares one state, `capture_states() == ["replay"]`, and
+  `apply_capture_state("replay")` asks the seam to **start a real replay**; it returns
+  `false` (declared-and-refused, never a painted invention) when there is no seam or the
+  record cannot hold one. A `replay.png` shot joins `_capture_plan()` (`:1801-1822`)
+  exactly like `result.png` does, with the frame saved while `replay_active()` is true.
+
+---
+
+## 4. What the audit proves (`godot/tests/ui/replay_audit.gd`)
+
+140 distinct `replay/…` check names; the conditional ones appear per shape (which readouts
+the controller carries, whether a natural point end lands in a window). Groups, in run
+order:
+
+1. **chrome** (no controller needed) — starts hidden, the six named nodes exist, geometry at
+   `4/3` (banner/bar heights, edges, spans, insets, alignments, font sizes), the state walk
+   (quarter fill, clamp at both ends), the glyph + both strings composed (not literals), no
+   seam → paints nothing, a capture without a replay refused, `SceneTree.paused` untouched,
+   palette misses declared.
+2. **reference semantics** — the live state carries the buffer, bound 720, a fresh match
+   starts empty, 1/120 capture and 1/60 playback.
+3. **recording on actual gameplay** — a real point through `Match.tscn`'s controller
+   (`harness_mode()`, `tick_fixed`, the real `scripted_player.gd` input, the real sim):
+   frames appear; the newest frame **is** the state of the tick that produced it (the check
+   lands on a capturing tick); the reference's 3+17+4×10 field sets; frames are copies that
+   moved through the point; one frame per tick (a forced-restart window that nothing can
+   interrupt, plus a tolerant wider window that names a natural point end when it happens);
+   the record restarts at a new point; at reduced capacity exactly the bound, oldest
+   dropped, restored.
+4. **playback** — entry gate (1 frame refuses), frozen `ticks`, one index per 1/60 clamped
+   at the last frame, `replay_progress()` follows the cursor, `replay_finished` fires once,
+   the **rendered ball is the recorded ball** (read off the controller's own `Ball` node
+   against `Court.world_pos`), then stop → the parity digest (`src/sim/digest.gd`) is
+   **byte-identical** to before the replay, the live ball returns exactly, and the next
+   frame advances the match again.
+5. **stop / pause restore** — both entry paths (§3.4), and the overlay following the live
+   seam without the mount touching it per frame.
+6. **keys** — `r` starts a replay in play and no longer restarts (asserted against a
+   restart's own signatures: `ticks` not reset, the record not cleared), `r` stops it, ESC
+   stops it instead of pausing and the pause still works afterwards, `r` while the card is
+   open is refused.
+7. **UIR-20's button** — `set_replay_active(true)` enables it, clears the reason, `replay()`
+   emits `replay_requested`, step 0 returns `replay_close`, the tree pause is never touched.
+8. **overlay seam / locale** — a fake seam turns it on/off, a seam without a progress
+   reader records the miss and paints an empty bar, both languages flip and come back, an
+   unknown locale is refused.
+9. **static scan** — comments stripped, zero prose literals, none of the four
+   `SceneTree.paused` patterns, every method the audit calls exists, every palette key in
+   the theme or declared as a miss.
+
+A missing seam does not crash and cannot read as a pass: every required name is checked,
+a missing one is a red check, and the groups that need it are named in a note and in the
+`_skipped_live` list. The red list is the integration checklist.
+
+---
+
+## 5. Static evidence this wave (microstep 5's "run" is owed; this is what ran)
+
+`/tmp/uir27_static_check.py` (this worker's, re-runnable; not a repo file) — string-aware
+comment stripping, tab-indentation and bracket balance over the two new GDScript files,
+the prose-literal and forbidden-pattern scan over `ReplayOverlay.gd`, and every cross-file
+call the audit makes (`_overlay.*` against the overlay, `_pause_overlay.*` and
+`signal replay_requested` against UIR-20's screen, `node.*` against the controller plus the
+declared seam, both scenes against their scripts). Verbatim output:
+
+```
+methods the audit calls on the controller that already exist: ['apply_frame', 'harness_mode', 'is_paused', 'set_match_paused', 'start_match', 'tick_fixed']
+seam names the controller still owes: ['replay_active', 'replay_frame_count', 'replay_index', 'replay_progress', 'replay_was_paused', 'start_replay', 'stop_replay']
+STATIC OK: indentation, bracket balance, literal scan and cross-file calls all clean
+```
+
+Of the owed names, **required** are `start_replay`, `stop_replay`, `replay_active`,
+`replay_progress` (the ticket's four plus the stop the exit paths call); `replay_index`,
+`replay_frame_count`, `replay_was_paused`, `toggle_replay` are optional readouts — the
+audit reads what is there and says in a note what is not.
+
+Checked and **nothing to amend**: the ticket's line 52 asks for `game_slice_test.gd`'s
+`r`-restarts assertion to be amended *if it exists*. It does not — a grep of the whole
+test tree for `KEY_R` finds only this audit, and for `rematch` finds only the pause card's
+button route (`PauseOverlay.gd:544-546`) and `main_menu.gd:490`, both of which stay.
+
+---
+
+## 6. Palette
+
+| key | value | reference | status |
+|---|---|---|---|
+| `replay_banner` | `rgba(6, 12, 30, 0.42)` | `js/main.js:1366` | **requested** — not in the theme at this wave; recorded in `palette_misses()`, falls back to the palette's `ink` meanwhile |
+| `gold` | `#ffcc00` | `js/main.js:1368`, `:1378` | used exactly (the theme's own entry) |
+| `white` @ 0.9 and @ 0.2 | `rgba(255,255,255,0.9)`, `rgba(255,255,255,0.2)` | `js/main.js:1372`, `:1376` | the theme's `white` at the reference's own alphas (wave-3 convention) |
+
+The theme now parses (the UIR-19/20 blocker, three-argument `Color(...)`, is fixed:
+`13053ea1ace5697b`) — `replay/the_scene_mounts_the_theme` and the palette near-matches read
+true at this hash. No other on-screen effect of `drawReplayOverlay` is unaccounted for:
+the banner, both texts, the bar and its fill are all implemented.
+
+---
+
+## 7. Read-only consumption (what this ticket did not edit)
+
+- **Frozen by this wave's dispatch, untouched**: `js/**`, `styles.css`, `index.html`,
+  `godot/src/sim/**` (`sim.gd` `f2d1e7f2023000fd`, `state.gd` `85c4482f45a655aa`),
+  `godot/src/save/**`, `godot/src/locale/**`, `godot/src/modes/**`.
+- **The integration owner's files, not edited by this worker**: `godot/game/match_controller.gd`
+  (`d9b982227d1b7674`, moving — its owner was editing during this wave),
+  `godot/src/ui/screens/PauseOverlay.gd` (`a1021956ca184279`, the UIR-20 lane's),
+  `godot/tests/game_slice_test.gd` (`f9b43399b3f08108`), `godot/tests/ui/capture_ui.gd`
+  (`a6cbedc1ab6112fe`), `godot/src/ui/theme/padel_theme.tres` (`13053ea1ace5697b`).
+- **Consumed through their public API only**: `UiStrings.t`, `Locale` (`current_lang`,
+  `locales`, `has_locale`, `set_lang`, `has_key`), `AuditBase` (`check_eq/ne/ge/le/gt/
+  check_true/not_ported/note/report/finish`), `ScriptedPlayer.decide`, `Sim.empty_input`,
+  `Court.world_pos`, `Digest.sample_state/digest_line/sha256_of_lines`, `SaveStore.new`,
+  `Config.save_dir/pending_mode/pending_round/tier_index`. No credentials, no network, no
+  paid call, $0 spent.
+
+---
+
+## 8. What is NOT tested — read this before trusting a green
+
+The audit carries these `not_ported` rows so the tally itself says it:
+
+| not ported | why |
+|---|---|
+| `engine/run` | **no Godot process ran this file in this wave.** §5 is the static pass; §9 is the run that is owed. |
+| `input/physical_keyboard` | the `r`/ESC paths are injected through `Input.parse_input_event` — the engine's own pipeline, but not a key on real hardware. |
+
+And these limitations are recorded in-line rather than hidden:
+
+- the ring's front-drop is exercised at `replayMax = 240` (instrumentation, named in a
+  note); the shipped bound stays asserted as 720;
+- the sample is one seed's scripted point through `Match.tscn`'s harness construction — the
+  playable path's overlay mount (§3.5) is the integration owner's to wire and to capture;
+- the pause-flag question in §3.4 is **decided by the ticket, not the reference**; the
+  reference's own letter (clear the pause on both edges) is recorded above so the
+  divergence is reviewable;
+- the capture shot for the overlay (§3.5) is owed with the mount — this worker cannot add
+  it (`_capture_plan()` is the integration owner's file) and will not fake a frame.
+
+---
+
+## 9. Acceptance commands — the runs that are owed (DONE 2026-09-17, see §12)
+
+```bash
+export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
+"$GODOT" --headless --path godot/ --script res://tests/ui/replay_audit.gd ; echo "exit=$?"
+"$GODOT" --headless --path godot/ --script res://tests/game_slice_test.gd ; echo "slice exit=$?"   # must stay green
+```
+
+Reading a run: the exit code is not a pass signal — the tally line `PASS n/n` / `FAIL n/n`
+and the `SCRIPT ERROR` count are the evidence. Expected shape of a green run: every
+`replay/…` check green, the `# notes:` block naming the palette miss, the two `not_ported`
+rows, the reduced-capacity instrumentation and the optional readouts the controller chose
+not to carry. A FAIL names the check; §4 says what each group asserts.
+
+For the overlay's own capture, once the mount of §3.5 is in:
+
+```bash
+"$GODOT" --path godot/ --resolution 1280x720 res://game/Match.tscn -- \
+  --ui=new --capture=match --tier=3 --seed=20260916 --shot=replay
+```
+
+(the `--shot=` flag does not exist yet — it is the one-line hook into `_capture_plan()`,
+`:1801-1822`; the shot must save while `replay_active()` is true and the run must print its
+`CAPTURE_SHOT` line like every other shot).
+
+---
+
+## 10. Blockers for that run — closed 2026-09-17 (§12)
+
+1. **The seam itself** (§3.2, §3.3) — until it lands, the audit's live groups are red by
+   name and the overlay can only draw from a bound seam. This is the deliverable the UI
+   half waits on; the contract is frozen here.
+2. **The pause flag split** (§3.4) — the one design decision this worker did not make.
+   Whichever way it goes, the card's ESC must not be swallowed while no replay is up.
+3. Nothing else: the theme parses, the buffer machinery is landed, UIR-20's flag and
+   reason string are in place, and the two `.uid` sidecars show the runner's engine scan
+   already picked the new scripts up.
+
+---
+
+## 11. Hand-back, one screen
+
+- **Built**: the reference's replay chrome, 1:1 at `1280/960`, zero prose literals, no
+  tree-pause anywhere, honest with no seam (nothing painted, misses recorded) and honest
+  with no replay (`apply_capture_state("replay")` refuses instead of inventing a track).
+- **Tested (owed)**: a 924-line audit that plays a real point through the real controller
+  and asserts the buffer, the playback, the restore digest, the keys, the button and the
+  chrome — static conformance this wave (§5), the engine run in §9.
+- **Handed over**: §3 — exact API, exact insertion points, the mount recipe, the capture
+  lane, and the one open question (§3.4) with both readings written down.
+- **Not touched**: `sim.gd` and the buffer (already faithful), the playable-path mount, the
+  capture plan, the theme, any frozen file (§7).
+
+---
+
+## 12. The runs, executed — finalize closure (2026-09-17, integration owner)
+
+**State: the runs owed in §9 are done; §10's blockers are closed.** Registry: the whole pack was
+re-run serially (one Godot process at a time, `pgrep -x Godot` guard) — **32/32 green**,
+`evidence/uir-finalize/ui-audit-sweep.json`, tree digest `1256f5f1d7200437`, stable; this suite
+**PASS 166/166, exit 0, 0 `SCRIPT ERROR`** (log `evidence/uir-finalize/runs/replay_audit.log`),
+slice **PASS 342/342**, demo **293/293**.
+
+- **The seam landed** in `godot/game/match_controller.gd`: `start_replay()` (refuses null /
+  finished / already-up / <2 frames; records and clears the pause), `stop_replay()` (idempotent;
+  restores the recorded pause), `replay_active()`, `replay_progress()` = `(index+1)/total` clamped,
+  `replay_index()`, `replay_frame_count()`, `replay_was_paused()`, the `replay_finished` signal.
+  Playback runs inside `apply_frame` (rung before the pause check): one frame per `1/60` s of
+  rendered delta, frame applied → `_sync_views()` → restore. ESC's replay rung sits FIRST, outside
+  the card arm; `r` toggles in play and is refused while the card is up.
+- **The pause flag split (§3.4 / §10.2) — picked and wired**: the playback reading feeds
+  `set_replay_active` (ESC's step 0 can never be stale), and a new availability reading
+  `set_replay_available(_replay_can_start())` gates the card's entry, fed on every pause edge and
+  every entry/exit. The card's entry is pressable exactly while a playback can start and runs
+  `start_replay()` — the reference's card entry hides the card and toggles (`js/main.js:2238-2241`);
+  it no longer routes through `toggle_replay()`'s paused refusal.
+- **One audit correction, with its citation** (`replay/the_restarted_record_is_not_the_old_one`):
+  the ball-triple inequality it asserted is impossible under the reference — the forced point end
+  re-runs `prepare_serve` with the serve side unchanged (`sim.gd:643-676`), so the fresh record's
+  first frame IS the same canonical serve state the match opened on, byte for byte. Replaced with
+  the array-identity proof (the held reference must stop growing because the reset replaces the
+  array, `sim.gd:248`); the failure mode the check exists for (no reset) still fails it.
+- **The two overlay contract fixes** (§4, landed with this closure): `bind_seam()` attaches only
+  (the caller's next `refresh()` is the first read), and `refresh()` with no seam hides.
+- **Closure fingerprints** (§1 and §7 carry the 12:17 snapshot; these are current):
+
+  | file | lines | bytes | sha256 (16) |
+  |---|---|---|---|
+  | `godot/src/ui/screens/ReplayOverlay.gd` | 482 | 19522 | `0d554f9698caf367` |
+  | `godot/src/ui/screens/ReplayOverlay.tscn` | 15 | 444 | `795652a159316e5f` |
+  | `godot/tests/ui/replay_audit.gd` | 942 | 46634 | `ce5ac06015a4d309` |
+  | `godot/tests/ui/replay_audit.tscn` | 6 | 200 | `8260dcd8cdc19f7d` |
+  | `godot/game/match_controller.gd` | 2580 | 117290 | `cc6c1ce88886bd5c` |
+  | `godot/src/ui/screens/PauseOverlay.gd` | 1546 | 57091 | `b2d7d4dcfb1ea0d5` |
+  | `godot/src/ui/theme/padel_theme.tres` | 633 | 25753 | `f735bfce8ba67b2d` |
+
+- **Still owed (unchanged)**: the overlay capture shot (§9 needs the `--shot` hook into
+  `_capture_plan()` and a capture run; the existing `game/out/` captures are frozen).

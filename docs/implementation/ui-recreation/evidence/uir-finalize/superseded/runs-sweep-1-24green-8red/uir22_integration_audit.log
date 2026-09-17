@@ -1,0 +1,84 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok host/the_default_ui_is_the_playable_host
+ok host/all_twelve_recreated_screens_are_registered
+WARNING: ScreenRouter.go_to: screen "game" is not registered; staying on "menu"
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] go_to (res://src/ui/ScreenRouter.gd:170)
+         [1] _host_mounts_the_playable_ui (res://tests/ui/uir22_integration_audit.gd:110)
+         [2] _mount_host (res://tests/ui/uir22_integration_audit.gd:95)
+ok host/the_match_id_is_not_a_router_screen
+ok host/the_menu_is_what_the_player_lands_on
+ok host/exactly_one_screen_is_mounted
+ok host/the_mounted_screen_is_a_uir03_screen
+ok host/it_is_the_menu_screen
+ok host/the_focus_model_is_up
+ok osk/the_panel_is_mounted_over_the_router
+ok osk/the_panel_carries_the_reference_rows
+ok osk/the_panel_is_bound_to_the_input_lanes_model
+ok bridge/the_menu_registers_its_play_button
+ok bridge/the_play_button_is_focusable
+ok bridge/the_host_owns_a_bridge
+ok bridge/the_play_button_takes_the_focus
+ok bridge/confirm_is_handled
+ok bridge/confirm_on_play_lands_on_modes (menu -> modes)
+ok bridge/the_old_screen_left_before_the_new_one_mounted
+ok host/every_registered_screen_mounts_and_unmounts
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+ok match/the_audit_match_uses_the_engine_clock
+ok match/the_hud_layer_exists
+ok match/the_recreated_hud_is_mounted (UIR-08)
+ok match/the_pause_card_is_mounted (UIR-20)
+ok match/the_touch_layer_is_mounted (UIR-26)
+ok pause/the_card_starts_closed
+ok pause/the_seam_takes_true
+ok pause/the_controller_holds_the_flag
+ok pause/true_opens_the_card
+ok pause/a_repeated_echo_keeps_the_state
+ok pause/a_repeated_echo_does_not_flip_the_card
+ok pause/the_overlays_own_echo_is_a_no_op_when_identical
+ok pause/the_seam_takes_false
+ok pause/false_closes_the_card
+ok pause/the_match_starts_running
+ok pause/escape_on_a_running_match_pauses
+ok pause/and_opens_the_card
+ok pause/escape_on_the_card_resumes
+ok pause/and_closes_it_again
+ok pause/paused_before_the_reset
+ok pause/a_rematch_leaves_the_match_running
+ok pause/and_the_card_knows_it
+ok pause/the_seam_exposes_leave_match
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+ok e2e/the_scripted_match_reaches_a_result (31322 ticks)
+ok e2e/the_result_payload_is_built
+ok e2e/the_payload_carries_the_states_own_player_line
+ok e2e/the_payload_carries_the_states_own_ai_line
+ok e2e/the_win_flag_is_the_sims_own_winner
+ok e2e/the_mode_is_the_runs_own
+ok e2e/the_arena_is_the_configured_one
+ok e2e/the_score_line_is_the_states_own
+ok e2e/the_stat_rows_come_from_the_state
+ok e2e/the_finish_route_is_the_result
+ok e2e/dry_run_stops_before_the_scene_change
+ok e2e/the_payload_is_left_for_the_host
+ok e2e/the_host_boots_straight_onto_the_result_screen
+ok e2e/the_result_screen_shows_the_matches_own_numbers
+ok e2e/the_payload_is_consumed_once
+ok e2e/rematch_goes_back_to_the_match_scene
+ok e2e/and_keeps_the_run_mode
+ok e2e/a_boot_without_a_payload_lands_on_the_menu
+ok settings/the_host_mounts_the_settings_screen
+ok settings/the_volume_row_takes_the_focus_through_the_bridge
+ok settings/a_right_press_on_the_range_is_handled
+ok settings/a_right_press_steps_the_volume_row
+ok settings/the_stepped_value_lands_in_the_save (0.5900 stored, 0.5900 on screen)
+ok locale/the_host_applies_the_stored_language
+ok locale/the_ported_hud_does_not_force_a_language
+ok locale/and_a_language_change_sticks
+ok fallback/ui_legacy_builds_no_router
+ok fallback/the_ported_column_is_built
+ok fallback/and_its_own_focus_model_is_up
+PASS 71/71

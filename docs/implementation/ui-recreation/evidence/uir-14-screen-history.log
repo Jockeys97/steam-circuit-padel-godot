@@ -1,0 +1,79 @@
+# UIR-14 HistoryScreen 1:1 — evidence log
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-14-screen-history.md`
+Wave: post-approval information/profile wave (UIR-13 → UIR-14 → UIR-15 → UIR-16).
+Branch tip at wave start: `6343312` (brother `a1e10f04` preserved; no commits/staging/push).
+Engine: **not started this wave** (dispatch: "No Godot this wave"). All checks static. $0.
+
+## 1. What landed
+
+| path | what |
+|---|---|
+| `godot/src/ui/screens/HistoryScreen.gd` | the screen: three stat boxes, the list, the empty state, `refresh()`, `entries()`, read-only by construction |
+| `godot/src/ui/screens/HistoryScreen.tscn` | theme + script |
+| `godot/tests/ui/screen_history_audit.gd` | 56 checks (`AuditBase`), temp store, no loop-dependent count |
+| `godot/tests/ui/screen_history_audit.tscn` | runner scene |
+
+## 2. Contract, element by element (screen ← reference)
+
+| element | reference | implementation |
+|---|---|---|
+| three boxes | `renderHistory` `js/ui.js:1576-1583`, `styles.css:2645-2665` | `histWins`/`histLosses`/`histTrophies`, values `#3fd36f`/`#ff5d7a`/`#ffd23a` |
+| box box | `:2645` border `#28567d`, gradient `#0b2444@.85 → #061426@.85`, radius 10 | border `tab_border`, fill `surface_2@0.85` (**gradient collapses to its first stop** — recorded), padding 10x18, centred |
+| block widths | `:2632-2640` `min(720px, 100%)`, centred | `custom_minimum_size.x` = `min(720, frame − 16)` at `resized` |
+| row | `js/ui.js:1596-1604`, `styles.css:2688-2714` | badge circle 36 px, `HistoryMain` (`Mode` + `Who`), `Meta` (`Score` + `Date`) |
+| badge | `:2696-2699` | `histWin` on `#3fd36f` + `#04210f`, `histLoss` on `#ff5d7a` + `#21040a`, radius 18 |
+| mode word | `js/ui.js:1593` | `tournamentMatch` / `careerMatch` / `quickMatch`, ` · ` + `hmCoop`/`hmPvp` when `human_mode != "ai"` |
+| opponent | `:1597` `opponent || "IA"` | id resolved through the frozen tables' two families (`ai_<id>_name`, then `athlete_<id>_name`); an empty id drops the `vs` clause. **Divergence recorded:** the reference's bare `"IA"` literal has no locale id in the port, so nothing is invented for it and an id in neither family answers with its key text (the locale lane's visible fallback) |
+| athlete · arena | `:1598` | `athlete_<id>_name` / `arena_<id>_name` |
+| score / date | `:1599-1600` | `#fff36a` score; date `dd/mm` from the entry's own `ts` (**divergence recorded:** the reference uses `toLocaleDateString`, which the port has no equivalent for; the audit pins `1700000000 → "14/11"` in UTC) |
+| empty state | `:1585-1588` | `histEmpty`, `stat_muted`, centred |
+| order | `:1590` newest first | `load_history()` order, asserted |
+| cap | `:1551`, `Schema.HISTORY_CAP` | 25 recorded → 20 stored → 20 rendered, asserted |
+| capture states | ticket | `["empty", "populated"]` |
+
+## 3. The read-only claim, proven two ways
+
+1. the audit sha256-fingerprints every file in the temp store before and after a `refresh()`
+   plus a walk of both capture states, and asserts the list is unchanged;
+2. it scans `HistoryScreen.gd` for the writers' own names
+   (`write_group(`, `write_history(`, `save_career`, `record_match(`, `save_pref(`, …) and
+   asserts none appears.
+
+## 4. Seams recorded, nothing edited outside this ticket
+
+- **Theme tokens**: shares the 15-row request in `uir-13-screen-help.log` §3 (this screen's own
+  new names: `win_green`, `win_ink`, `loss_red`, `loss_ink`, `trophy_yellow`, `stat_muted`,
+  `item_ink`, `white`). **Resolved 2026-09-17 (wave 3):** every one of these rows is in
+  `padel_theme.tres`, `theme/README.md` §3 and `theme_probe.gd` — see
+  `uir-wave3-shared-seams.log` §1.
+- **The middle-dot separator** is not written as a user-facing literal: the screen reads the one
+  the locale lane already declares for its composites
+  (`locale_rules.json` → `compositeRules[*].separator`), via `composed_separator()`. If that
+  lane ever changes its separator, both move together.
+- **The `"IA"` fallback** is the one reference string with no home in the port's locale tables —
+  recorded above rather than invented as a key.
+
+## 5. Checks actually run (static)
+
+```
+$ gdlint godot/src/ui/screens/HistoryScreen.gd godot/tests/ui/screen_history_audit.gd
+Success: no problems found          # after the round-1 fixes listed in uir-13 log §4
+```
+
+## 6. Pending engine work (exact commands)
+
+```sh
+export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+pgrep -x Godot                      # never kill a pre-existing process
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_history_audit.gd
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_history_audit.gd -- --demo
+```
+
+## 7. Honest status
+
+- **UNVERIFIED BY THE ENGINE.** The audit has never run; the store is built at
+  `user://uir14-history-audit` and removed by the audit itself.
+- Risks the first run settles: the `resized`-driven width rule, and whether
+  `ModesSave.record_match` returns the dict shape `entries()` reads (verified by reading
+  `modes_save.gd`, not by running it).

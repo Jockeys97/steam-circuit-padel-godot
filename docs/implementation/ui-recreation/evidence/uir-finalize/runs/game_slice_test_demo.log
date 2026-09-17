@@ -1,0 +1,400 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# Godot 4.7.2-stable (official) · physics 120 Hz · slice S2 headless playthrough
+ok default athlete is roster order 0
+ok default arena is roster order 0
+ok COURT.left is frozen at 80
+ok COURT.bottom is frozen at 564
+ok SERVICE_LINE_OFFSET is frozen at 126
+ok court presentation is 10 m wide and 20 m long
+ok resource resolves: res://game/Match.tscn
+ok resource resolves: res://game/Main.tscn
+ok resource resolves: res://game/main_menu.gd
+ok resource resolves: res://game/match_controller.gd
+ok resource resolves: res://game/hud.gd
+ok resource resolves: res://assets/athletes/volpe-rigged.glb
+ok every match control is a named input action
+ok every action has at least one event
+ok every match control is reachable from the gamepad too
+ok menu navigation (ui_accept) carries a pad button
+ok quit is a named action (keyboard Q)
+ok padel_left carries a key AND a stick axis
+ok menu scene loads
+MENU_BUILD_LIMITS {"arena_index":2,"tier_index":1}
+# MENU_FRAME root=(64, 64) host=(1280.0, 720.0) menu=[P: (0.0, 0.0), S: (1280.0, 720.0)]
+ok the menu is laid out in a real frame (not collapsed at the origin)
+ok menu instantiates with no missing node
+ok menu has the play button
+# MENU_ON_SCREEN build=demo tiers_shown=4 tiers_enabled=1 athletes=2 arenas=1 modes=[{"disabled":true,"text":"TRAINING — In the full game"},{"disabled":true,"text":"CHAMPIONSHIP TOURNAMENT — In the full game"},{"disabled":true,"text":"CAREER — In the full game"}]
+ok the menu dumps what it shows (screen_report)
+ok the screen's own report agrees with the gate on how many athletes it lists
+ok the screen's own report agrees with the gate on how many arenas it lists
+ok menu offers exactly one choice button per tier, athlete and arena this build exposes
+ok a DEMO build's menu lists exactly TWO athletes on screen (js/build.js DEMO_CONTENT)
+ok a DEMO build's menu lists exactly ONE arena on screen
+ok a DEMO build shows every tier and enables exactly one (the pinned difficulty)
+ok a DEMO build keeps the excluded modes visible and locked
+ok the menu's arena row has one button per arena this build exposes
+ok every arena button is labelled, distinctly
+ok every arena button selects its own arena
+ok the menu's arena selection survives being changed back
+ok play button is wired to start_match
+ok menu exposes the focus model it navigates with
+ok the focus check covers every choice row on the menu
+ok every tier, athlete and arena row is registered in the focus model
+ok every row this build grants can take the focus
+ok the rows this build locks are skipped by the focus model (visible, not focusable)
+ok the focus model REACHES every granted choice row (BFS over up/down/left/right)
+ok a locked row is not reachable either (locked means out of the navigation order)
+# MENU_FOCUS targets=13 reachable=7 rows=7 granted=4 locked=3 focus=outfit
+# MENU_FOCUS_ROW tier:1 rect=48,181 444x31
+# MENU_FOCUS_ROW athlete:0 rect=532,142 430x31
+# MENU_FOCUS_ROW athlete:2 rect=532,181 430x31
+# MENU_FOCUS_ROW arena:clockwork rect=172,383 1060x30
+# MENU_FOCUS_ROW play rect=48,417 330x46
+# MENU_FOCUS_ROW outfit rect=394,417 300x46
+# MENU_FOCUS_ROW quit rect=710,417 140x46
+ok the screen refreshed the model after the layout settled: every target has its own place
+ok the focus model always has a target on a built menu
+ok resetting the focus lands on the first FOCUSABLE target (a locked row is skipped)
+ok the model's focus is a real, visible Control that accepts the focus
+ok ... and it is one of the choice rows
+ok a key event through the model is handled and lands on another Control
+ok a pad direction frame moves the focus too (the same model, the pad path)
+# MENU_FIT 1280x720 needs 1010x565
+# MENU_FIT 1152x648 needs 1010x565
+ok the menu fits its frame at 1280x720 and 1152x648 (arena row included)
+ok match controller exposes the road back to the menu
+ok match controller exposes the single tick path
+ok the mode screen scene is packed and loads
+ok the drill screen is the reference's screen-modes and declares the reference's back
+ok the drill screen's lock state matches the reference's own demo rule (lasciato fuori: true)
+ok a locked drill screen shows the locked line instead of rows
+ok every drill row is focusable and reachable through the verified model
+# MODE_SCREEN drill locked=true rows=0 reachable=0 focus=back detail=
+ok the tournament screen is the reference's screen-modes and declares the reference's back
+ok the tournament screen's lock state matches the reference's own demo rule (lasciato fuori: true)
+ok a locked tournament screen shows the locked line instead of rows
+ok every tournament row is focusable and reachable through the verified model
+# MODE_SCREEN tournament locked=true rows=0 reachable=0 focus=back detail=
+ok the career screen is the reference's screen-modes and declares the reference's back
+ok the career screen's lock state matches the reference's own demo rule (lasciato fuori: true)
+ok a locked career screen shows the locked line instead of rows
+ok every career row is focusable and reachable through the verified model
+# MODE_SCREEN career locked=true rows=0 reachable=0 focus=back detail=
+ok a DEMO build grants exactly one mode (js/build.js DEMO_CONTENT.modes)
+ok a locked drill screen refuses to start and says why
+ok a locked tournament screen refuses to start and says why
+ok a locked career screen refuses to start and says why
+ok a DEMO build refuses all three modes at the seal (ModeSession.can_start)
+ok a DEMO build's mode screens refuse all three (ModeScreen.start_mode)
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+MODE_REFUSED mode=drill reason=drill is not in this DEMO build's granted modes ["quick"] (demo build) (build grants ["quick"])
+ok a DEMO build's match scene refuses a mode route and falls back to quick match
+ok the UI font carries the Italian accented glyphs (font coverage, not a fallback)
+ok the locale table's own title is the reference's, accents included
+ok the reference's Italian title has no ASCII apostrophe standing in for a vowel
+ok no string literal in godot/game/** spells an accented Italian word with an apostrophe
+ok the reference's Italian stat labels are the ones this UI prints
+ok the English table carries the reference's other spelling, not a third one
+ok no stat label on the menu speaks English while its neighbour speaks Italian
+ok the menu's mode-row title is the reference's own `modesTitle` string
+ok the mode-row title is laid out above the mode row, not below it
+ok every stat label on the menu is one of the reference's own ids
+ok every locked-mode row shows its whole sentence at 1280x720 and 1152x648
+# MODE_ROW_FIT 1280x720: "TRAINING — In the full game" needs 180 + 8 pad, has 390
+# MODE_ROW_FIT 1280x720: "CHAMPIONSHIP TOURNAMENT — In the full game" needs 313 + 8 pad, has 391
+# MODE_ROW_FIT 1280x720: "CAREER — In the full game" needs 166 + 8 pad, has 391
+# MODE_ROW_FIT 1152x648: "TRAINING — In the full game" needs 180 + 8 pad, has 348
+# MODE_ROW_FIT 1152x648: "CHAMPIONSHIP TOURNAMENT — In the full game" needs 313 + 8 pad, has 348
+# MODE_ROW_FIT 1152x648: "CAREER — In the full game" needs 166 + 8 pad, has 348
+# MENU_LABELS ["ESCI", "COMPLETO: Base Kit  (1/5)  »", "GIOCA PARTITA RAPIDA", "CLOCKWORK", "CAREER — In the full game", "CHAMPIONSHIP TOURNAMENT — In the full game", "TRAINING — In the full game", "LO STEAMER  ·  SPD 0.92 · PWR 1.24 · CTL 0.96", "IL MAESTRO  ·  SPD 0.96 · PWR 0.94 · CTL 1.28", "Leggenda del Circuito  ·  Ability 0.90 · SPD 398 · PWR 1.14", "Campione Steampunk  ·  Ability 0.76 · SPD 377 · PWR 1.05", "Ingegnere del Vapore  ·  Ability 0.60 · SPD 341 · PWR 0.96", "Rivale del Circuito  ·  Ability 0.46 · SPD 310 · PWR 0.88"]
+ok no mode screen row and no mode HUD line speaks a stat language of its own
+# MODE_HUD_LINES []
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok match scene instantiates and owns a real sim state
+ok state comes from Sim.create_match_state (quick mode)
+ok state is running (js/main.js:1144-1148)
+ok seed is injected before the first tick
+ok one tick_fixed call is one sim tick
+ok no engine clock is needed for a tick
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok the controller defines no `_physics_process` — the frame loop is the only clock
+ok the physics-tick loop is switched off on the live scene
+ok the frame entry point is public, so this test drives the real loop
+ok 60 fps: one wall second is the reference's 120 fixed ticks (not 60 frames)
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok 30 fps: the same wall second is the same 120 fixed ticks (not 30 frames)
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok 240 fps: the same wall second is the same 120 fixed ticks (not 240 frames)
+ok the tick count does not follow the render rate: 30/60/240 fps agree within one tick
+# FRAME_CLOCK 30fps=120 60fps=120 240fps=120 (one wall second each)
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok a two-second stall advances exactly MAX_SIM_STEPS ticks (8), not 240
+ok ... and the largest frame step is reported for the log
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok a half-step frame runs no sub-step
+ok the press is latched while no sub-step has spent it
+ok the frame that spends it runs exactly one sub-step
+ok the shot still fires: the tick sees the PRESS, not the release (H-3)
+ok ... and the special with it
+ok the one-shot is consumed once and not left armed
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok a full-step frame spends the press in that same frame
+ok ... and the tick saw it
+ok ... and it is not left armed for the next frame
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ATHLETES rigs=4 source=res://assets/athletes/volpe-rigged.glb glb_loads=12 spawn_ms=1015 lineup={"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"}
+MODELS rigged_glb=res://assets/athletes/volpe-rigged.glb mesh_instances=199 copies=4 rigs=4
+# ATHLETES rigs=4 load_errors=0 glb_loads=12 spawn_ms=1015.0 report={"opponent":{"athlete_asset":"steamer","athlete_id":"steamer","catalogue_outfit":{"athlete_id":"steamer","outfit_id":"base"},"facing_degrees":0.0,"gait":"idle","joints":24,"last_stroke":"","load_error":0,"locomotion":"idle","locomotion_states":["idle","walk","run"],"material":{"anchor_primary":"(0.133333, 0.188235, 0.290196)","anchor_trim":"(1.0, 0.788235, 0.290196)","material_class":"ShaderMaterial","metallic":0.0,"protect_sat":0.22,"resource_name":"Outfit_steamer:base","roughness":0.85,"shader_path":"res://src/character/outfit_recolour.gdshader","source_tex":"set","target_primary":"(0.956863, 0.466667, 0.07451)","target_trim":"(1.0, 0.603922, 0.207843)"},"name":"Rig_opponent","outfit_id":"base","position":"(0.0, 0.0, 0.0)","strokes":["drive","slice","lob","serve"],"surfaces":1,"triangles":31325},"opponentMate":{"athlete_asset":"fiamma","athlete_id":"fiamma","catalogue_outfit":{"athlete_id":"fiamma","outfit_id":"base"},"facing_degrees":0.0,"gait":"idle","joints":24,"last_stroke":"","load_error":0,"locomotion":"idle","locomotion_states":["idle","walk","run"],"material":{"anchor_primary":"(0.133333, 0.188235, 0.290196)","anchor_trim":"(1.0, 0.788235, 0.290196)","material_class":"ShaderMaterial","metallic":0.0,"protect_sat":0.22,"resource_name":"Outfit_fiamma:base","roughness":0.85,"shader_path":"res://src/character/outfit_recolour.gdshader","source_tex":"set","target_primary":"(0.662745, 0.905882, 0.113725)","target_trim":"(0.843137, 1.0, 0.294118)"},"name":"Rig_opponentMate","outfit_id":"base","position":"(0.0, 0.0, 0.0)","strokes":["drive","slice","lob","serve"],"surfaces":1,"triangles":31325},"player":{"athlete_asset":"maestro","athlete_id":"maestro","catalogue_outfit":{"athlete_id":"maestro","outfit_id":"base"},"facing_degrees":180.0,"gait":"idle","joints":24,"last_stroke":"","load_error":0,"locomotion":"idle","locomotion_states":["idle","walk","run"],"material":{"material_class":"none"},"name":"Rig_player","outfit_id":"base","position":"(0.0, 0.0, 0.0)","strokes":["drive","slice","lob","serve"],"surfaces":1,"triangles":30980},"playerMate":{"athlete_asset":"pantera","athlete_id":"pantera","catalogue_outfit":{"athlete_id":"pantera","outfit_id":"base"},"facing_degrees":180.0,"gait":"idle","joints":24,"last_stroke":"","load_error":0,"locomotion":"idle","locomotion_states":["idle","walk","run"],"material":{"anchor_primary":"(0.133333, 0.188235, 0.290196)","anchor_trim":"(1.0, 0.788235, 0.290196)","material_class":"ShaderMaterial","metallic":0.0,"protect_sat":0.22,"resource_name":"Outfit_pantera:base","roughness":0.85,"shader_path":"res://src/character/outfit_recolour.gdshader","source_tex":"set","target_primary":"(0.929412, 0.243137, 0.364706)","target_trim":"(1.0, 0.462745, 0.564706)"},"name":"Rig_playerMate","outfit_id":"base","position":"(0.0, 0.0, 0.0)","strokes":["drive","slice","lob","serve"],"surfaces":1,"triangles":31325}}
+ok all four slots get a rig from the rig factory (spawn errors would leave capsules)
+ok every role on court is a named athlete from the roster
+ok the lineup names four different athletes, the player being the menu's choice
+ok the player wears the menu's outfit and the other three their default
+ok every rig stands exactly where the simulation puts its paddle
+ok the rigs move with the simulation (two more seconds of play moved them)
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok the active athlete's zone exists in the match scene
+ok the zone is drawn while the match is running
+ok the zone sits on the athlete the simulation is controlling
+ok the marker has a fixed visual footprint independent of contact reach
+ok the ring lies on the floor
+ok the marker over the controlled athlete exists
+ok the marker floats above the athlete the simulation is controlling
+ok the marker is drawn while the match is running
+ok the zone follows a switch to the partner
+ok the marker follows the same switch as the zone
+ok the export presets declare their exclusion list
+ok the path scan had a real tree to scan (game/** + src/**)
+ok no `res://` path in game/** or src/** lives in a tree the exporters exclude
+ok the athlete scene the match loads is inside a packed tree
+ok the rig factory's GLB_BASE is the same path the court falls back to
+ok every GLB the rig loads is inside a packed tree
+ok the athlete scene is INSIDE res://build/linux-x86_64/padel.pck (the packaged build can draw the rigs)
+ok no excluded tree is inside res://build/linux-x86_64/padel.pck
+ok the demo pack carries the athlete scene too
+ok locale layer has the reference's two tables
+ok locale table sizes match the reference (688 keys each)
+ok no message id reaches the screen through the HUD's own table
+ok every resolved label equals what the locale layer produces (projection, not a copy)
+ok score composites resolve through the locale layer
+ok control-message composites resolve through the locale layer
+ok the composite labels no emitted id could ever match are gone
+ok the ten debt-ledger ids get a readable fallback (never the id, never `??`)
+ok the ledger is not shrunk: the offer-back fallback is still recorded as unresolvable
+ok shot grade resolves to the reference's own word
+ok shot mode resolves to the reference's own word
+ok a bare feedback id is resolved as itself
+ok walls carry the wall sound (contract anchor evWallValid)
+ok net contacts carry the net sound (evTape)
+ok net rebounds carry the net sound (evNetRebound)
+ok valid bounces carry the bounce sound (evServeValid)
+ok smash bounces carry the bounce sound (evSmashValid)
+ok every athlete special carries the special sound (6 ids, one per athlete)
+ok a point for the player is the win sound, prefix and all
+ok a point for the circuit is the loss sound
+ok an id with no sound is silent, not guessed
+ok every sound this game asks for is a contract event id
+ok the contract still offers exactly the ten sounds
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ATHLETES rigs=4 source=res://assets/athletes/volpe-rigged.glb glb_loads=12 spawn_ms=1013 lineup={"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"}
+MODELS rigged_glb=res://assets/athletes/volpe-rigged.glb mesh_instances=199 copies=4 rigs=4
+ok the match builds its four athletes as rigs (not capsules) from the roster
+ok the net is a lattice, not one bar
+ok camera-side glass stays transparent enough to see the athlete
+ok all four glass walls are built, rear and near included
+ok every glass wall is tinted and unshaded enough to be visible against the floor
+ok every racket is racket-sized (0.26 m face, not the sim's 2.80 m contact box)
+ok every racket is held: within a metre of its athlete at hand height
+ok the HUD panels are named for the layout checks
+ok the debug line cannot reach the scoreboard (the athlete name)
+ok no HUD panel leaves the frame
+ok the frozen table offers nine arenas
+ok the library's ids are the frozen table's, in the same order
+ok the default arena is roster order 0
+ok every one of the nine arenas builds a non-empty 3D environment
+ok every arena environment draws the court, net and cage, not an empty node
+ok every arena builds its own scenery behind the rear glass
+ok arena data comes from the frozen table, field for field
+ok every arena's ground is painted from its own palette
+ok the nine arenas are nine different environments, not nine copies
+ok the scenery vocabulary differs between arenas
+ok the rear glass's alpha rises with the arena's wallBounce (the data is wired, not restated)
+# REAR_GLASS_ALPHA forgia:0.83->0.300 abissale:0.84->0.313 clockwork:0.86->0.340 caldera:0.88->0.367 officina:0.89->0.380 locomotive:0.92->0.420 orrery:0.93->0.433 cattedrale:0.94->0.447 tempesta:0.95->0.460 
+ERROR: arena_library: unknown arena id 'nope' (have: officina, locomotive, clockwork, cattedrale, forgia, tempesta, abissale, caldera, orrery)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] build (res://game/arenas/arena_library.gd:133)
+       [1] _arena_library (res://tests/game_slice_test.gd:1903)
+       [2] _run_all (res://tests/game_slice_test.gd:142)
+       [3] _ui_text (res://tests/game_slice_test.gd:3080)
+ok an unknown arena id does not build
+ok the fantasy arenas carry the reference's own gradient stops
+ok the fantasy arenas carry the reference's own glow colour
+ok every arena the reference paints is painted here
+ok the two arenas that reuse another arena's backdrop reuse it here too
+ok every copied arena artwork file is on disk
+ok the artwork actually decodes at runtime and reaches the backdrop for every painted arena
+ok a DEMO build grants exactly one arena, so the pin has something to land on
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok the selected arena reaches both the environment and the simulation
+ok the reference's renderer is readable from the project directory
+ok the reference's fantasy themes are exactly the port's four fantasy arenas
+# ARENA_SPEC officina family=open port=#51c6f4>#e57958 glow=#7fd4ff ref=none deviation=n/a (the family backdrop reads no arena data, js/render.js:697-701)
+# ARENA_SPEC locomotive family=locomotive port=#071526>#37444d glow=#78c9da ref=none deviation=n/a (the family backdrop reads no arena data, js/render.js:697-701)
+# ARENA_SPEC clockwork family=clockwork port=#160f31>#33214b glow=#ecaa43 ref=none deviation=n/a (the family backdrop reads no arena data, js/render.js:697-701)
+# ARENA_SPEC cattedrale family=locomotive port=#071526>#37444d glow=#c98bff ref=none deviation=n/a (the family backdrop reads no arena data, js/render.js:697-701)
+# ARENA_SPEC forgia family=clockwork port=#160f31>#33214b glow=#ffd54a ref=none deviation=n/a (the family backdrop reads no arena data, js/render.js:697-701)
+# ARENA_SPEC tempesta family=fantasy port=#07142f>#287eb0 glow=#79eeff ref=#07142f>#287eb0 glow=#79eeff deviation=none
+# ARENA_SPEC abissale family=fantasy port=#020b1d>#086474 glow=#42fff2 ref=#020b1d>#086474 glow=#42fff2 deviation=none
+# ARENA_SPEC caldera family=fantasy port=#160b10>#7b2817 glow=#ff7138 ref=#160b10>#7b2817 glow=#ff7138 deviation=none
+# ARENA_SPEC orrery family=fantasy port=#080722>#30246a glow=#b595ff ref=#080722>#30246a glow=#b595ff deviation=none
+ok every fantasy arena's sky and glow is the reference's own, hex for hex (js/render.js:500-506)
+ok the other five arenas really have no themes entry in the reference
+ok every scenery object of every arena is fully inside the 1280x720 frame
+ok every arena's backdrop covers the frame above and behind the rear glass
+ok the rear wall is six panes with dividers, a lit rail and a foot band, in every arena
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok the HUD reports every panel it built
+ok no HUD panel leaves the frame at 1280x720 or 1152x648
+ok no two HUD panels overlap at 1280x720 or 1152x648
+ok the HUD's safe-area pass actually bounds panels in a cramped frame
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok no input divergence between the two runs
+ok controller state matches a direct Sim.update_match loop bit for bit
+ok the data layer offers four AI tiers
+ok the demo's pinned difficulty is the reference's own declared medium (tier 1)
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok tier 0 (rivale) is listed but the demo pins the match to ingegnere
+ok tier 0 (rivale) plays real points
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok tier 1 (ingegnere) is listed but the demo pins the match to ingegnere
+ok tier 1 (ingegnere) plays real points
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok tier 2 (campione) is listed but the demo pins the match to ingegnere
+ok tier 2 (campione) plays real points
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok tier 3 (leggenda) is listed but the demo pins the match to ingegnere
+ok tier 3 (leggenda) plays real points
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok the match builds its audio seam
+ok the match builds the music engine, not only the effect port
+# MUSIC_WIRING start playing=true intensity=0.12 context=match bus_gain=0.55
+ok the score is running the moment a match starts (js/main.js:1211-1212)
+ok the match opens the score at the reference's own 0.12
+ok the score runs in the reference's match context
+ok the music bus sits at the reference's own gain (js/audio.js:149)
+ok the score's scheduler ran on the engine's own frames and started voices
+ok the score follows the reference's own intensity formula every tick (js/main.js:1273-1279)
+ok the intensity actually moved off its start value (the drive is not a constant)
+ok the score keeps playing through the rally (a point does not stop it)
+ok a rally long enough to move the tension was actually played
+# PLAYTHROUGH ticks=31415 crossings=210 points=26 max_rally=17 result={ "winner": "ai" } score=0-0 games={ "player": 0, "ai": 0 } sets={ "player": 0, "ai": 1 }
+ok points are scored
+ok the match reaches a real result inside the tick budget
+ok the budget was not exhausted
+ok the result names a real side
+ok rallies occur (the ball crosses the net repeatedly)
+ok at least one rally is multi-hit on both sides
+ok the score display followed the match
+ok the score display advances in the tennis sequence
+ok a game is never longer than tennis allows (4 points, margin 2 -> at most 5)
+ok the event list contains a serve
+ok the event list contains a bounce
+ok the event list contains a point
+# EVENT_KINDS ["serveHint", "evServeValid", "controlMsg:roleBackPos", "evAngleWall", "evOppOutOfPos", "evCounter", "eventLine2", "evOppLob", "evCoverCenter", "eventLine5", "evOppVibora", "evWallValid", "msgDoubleBounce", "evSmashFlatFallback", "eventLine1", "evAiForced", "evShotNet", "evNetRebound", "msgNetFault", "evOppServe", "eventLine3", "evBandeja", "serveOutBox secondServe", "eventLine4", "evOppSmashX2", "evSmashValid", "evSmashX2Read", "eventLine0", "evShotWide", "msgWallNoBounce", "evSideWallCenter", "setToCircuit"]
+ok the HUD exists in the match scene
+ok HUD shows the sim's player score
+ok HUD shows the sim's ai score
+ok HUD shows the game count
+ok HUD log renders the sim's events
+ok HUD shows the match result
+ok HUD debug line names the seed and the tier
+ok no raw message id is on screen in the event log
+ok the event log does not repeat the same line twice in a row
+# AUDIO driver=Dummy requests=282 counts={ "serve": 27, "bounce": 29, "hit": 170, "wall": 29, "point-loss": 23, "net": 1, "point-win": 2, "defeat": 1 } by_source={ "ball.serveInFlight": 27, "evServeValid": 26, "ball.hitFlash": 170, "evWallValid": 29, "state.pointMessage:pointOpp:msgDoubleBounce": 22, "evNetRebound": 1, "state.pointMessage:pointOpp:msgNetFault": 1, "evSmashValid": 3, "state.pointMessage:pointYou:msgWallNoBounce": 2, "state.result:ai": 1 }
+ok the audio module accepted every request it was given
+ok the match asked for sounds at all
+ok a serve is heard (the sim stores no serve id: this is the strike signal)
+ok every paddle contact is heard
+ok floor bounces are heard
+ok wall or net contacts are heard
+ok special shots are routed, and the count heard matches the count emitted
+ok the end of the match is a match sound, exactly once
+ok every point but the last is a point sound (26 points)
+ok a voice was observed playing after a request (engine state, Dummy driver has no ear)
+ok no sound was requested that the contract does not declare
+# MUSIC_WIRING end playing=false stops=1 voices_started=4 intensity=0.58666666666667
+ok the score stops when the match ends (js/main.js:1438)
+ok the stop was the score's own and happened
+ok the score sounded voices during the match (the scheduler ran, not just the setters)
+MATCH_BUILD_GATE refused={} effective={"arena":"clockwork","arena_index":2,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=clockwork seed=20260916 camera=default models=false headless=true switch=semi
+ok the scene reaches a charging shot with a live read
+ok every timing mark exists in the match scene
+ok the ring is drawn while a shot is charging
+ok the fill is `1 - read.eta / 0.55`, the reference's own expression
+ok an eta at the perfect window fills the ring to the top of the reference's arc
+ok the fill grows with the charge: the drawn arc is rebuilt and longer
+ok an eta past 0.55 leaves the fill empty, as `clampf(..., 0, 1)` requires
+ok the perfect window is the read's own `perfectWindow`
+ok no charge means no ring, as the reference's `shotCharge > 0.05` requires
+ok the precision bar is not drawn when nothing is charging
+ok the energy bar is drawn anyway: the reference draws it every frame
+ok the precision bar is hidden under `precision > 0.04`
+ok the precision bar is drawn while the charge carries precision
+ok the precision fill is `precision` of the bar, from its left edge
+ok an armed angle takes the reference's amber, unarmed the cyan
+ok tight at 0 is the cyan of `rgba(126,243,255,0.75)`
+ok the advice word is the locale's `shotAdvice_<advice>`, uppercased as the reference does
+ok no id ever reaches the field: the word is the resolved sentence
+ok a control profile is the reference's #8fffd0
+ok an aggressive profile is the reference's #ffd46a
+ok the word's panel is a box around the measured text, not a fixed width
+ok the energy fill is `rallyEnergy.player` of the bar
+ok the energy colour is the reference's three-band rule
+ok low energy is the reference's #ff6b64
+ok the energy bar sits under the athlete the simulation is controlling
+ok the energy bar follows a switch to the partner
+ok the ring follows the same switch as the energy bar
+ok no feedback means no verdict on the field
+ok the verdict is drawn while the feedback lives
+ok the verdict word is the locale's grade word, not the id
+ok the mode line is the locale's mode word
+ok a perfect grade takes the reference's #74ffba
+ok it fades with `life / 0.28`, as the reference does
+ok it is anchored to the athlete who HIT, not to the one under control
+ok the verdict drifts upwards as it fades
+ok and it disappears when the simulation drops the feedback
+# sections ran 23/23
+ok every test section ran to completion (a section that threw is a failure)
+# OBJECTS start=1564 end=1989 delta=425 nodes=1 orphans=0 resources=64
+ok the run does not accumulate objects (count within the measured engine baseline)
+PASS 293/293
+WARNING: 6 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

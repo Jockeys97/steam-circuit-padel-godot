@@ -2,16 +2,17 @@
 id: UIR-27
 title: Replay point (buffer + overlay)
 slug: replay
-state: blocked
+state: done
 readiness: potential
 owner_role: integration owner + screen worker pair
 blocked_by: [UIR-20, UIR-22]
 blocks: [UIR-25]
 gates: [plan-approval, gate-a]
-plan_approved: false
+plan_approved: true
 triage: ready-for-agent
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-27-replay.log
+  - docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json
 ---
 
 # UIR-27: Replay point (buffer + overlay)
@@ -93,3 +94,13 @@ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
 ## Traces
 
 `js/main.js:4, :1243-1324, :1362, :1602-1628, :2532`; `godot/game/match_controller.gd:1105-1110` (the current `r` behavior and its comment); scout T09 (replay acceptance); handoff (overlays/replay traceability).
+
+## Finalize closure (2026-09-17, integration owner)
+
+Engine record, one Godot process at a time, manifest `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json` (all sources hashed
+before and after: tree digest `1256f5f1d7200437`, stable).
+
+- `tests/ui/replay_audit.gd` — **PASS 166/166**, exit 0, 0 `SCRIPT ERROR` line(s) (1.3s); log `docs/implementation/ui-recreation/evidence/uir-finalize/runs/replay_audit.log`
+
+**State: `done`** — the audit above is this ticket's arbiter and it is green on the
+finalize tree.

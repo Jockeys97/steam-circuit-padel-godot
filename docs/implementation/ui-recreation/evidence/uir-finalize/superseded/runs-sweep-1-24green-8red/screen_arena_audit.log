@@ -1,0 +1,241 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok arena/the_router_still_carries_thirteen_ids
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/screen_arena_audit.gd:110)
+         [1] _facts (res://tests/ui/screen_arena_audit.gd:126)
+         [2] _run (res://tests/ui/screen_arena_audit.gd:80)
+         [3] _initialize (res://tests/ui/screen_arena_audit.gd:64)
+ok arena/the_screen_mounts
+ok arena/the_screen_names_itself
+ok arena/the_screen_names_its_way_back
+ok arena/the_capture_states_are_the_declared_five
+ok arena/the_grid_is_in_the_scene
+ok arena/the_player_mode_panel_is_in_the_scene
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/screen_arena_audit.gd:110)
+         [1] _grid (res://tests/ui/screen_arena_audit.gd:139)
+         [2] _run (res://tests/ui/screen_arena_audit.gd:81)
+         [3] _facts (res://tests/ui/screen_arena_audit.gd:132)
+         [4] _mount (res://tests/ui/screen_arena_audit.gd:115)
+ok arena/the_frozen_catalog_has_nine_arenas
+ok arena/the_grid_lists_the_whole_catalog
+ok arena/the_grid_is_the_catalog_in_order
+ok arena/every_card_carries_its_own_nodes
+ok arena/a_card_is_named_by_its_key
+ok arena/an_open_card_carries_its_description
+ok arena/the_card_carries_its_art
+ok arena/the_frozen_table_carries_the_accent_and_the_art
+# report first arena officina accent #00e5ff art assets/arenas/officina-vapore.webp
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/screen_arena_audit.gd:110)
+         [1] _locks (res://tests/ui/screen_arena_audit.gd:191)
+         [2] _run (res://tests/ui/screen_arena_audit.gd:82)
+         [3] _grid (res://tests/ui/screen_arena_audit.gd:184)
+         [4] _mount (res://tests/ui/screen_arena_audit.gd:115)
+# report build=full withheld=8 of 9 arenas
+# report live walls: 6 of 9 (build=full, career-walled: 6)
+ok arena/the_live_walls_are_the_two_rules_added_up
+ok arena/the_demo_locked_state_applies
+ok arena/the_pinned_state_locks_what_the_table_withholds
+ok arena/the_pinned_wall_covers_the_table
+ok arena/the_pinned_card_says_it_is_locked
+ok arena/the_pinned_card_shows_the_badge
+ok arena/a_build_locked_card_says_so_with_the_builds_own_sentence
+ok arena/a_build_locked_card_refuses_the_press
+ok arena/the_locked_card_is_there_to_be_pressed
+ok arena/the_locked_card_refuses_through_its_own_card
+ok arena/the_live_state_returns
+# report arenas carrying an unlock wall in the frozen table: 6
+ok arena/the_build_exposes_at_least_one_arena_to_read
+ok arena/an_unlocked_arena_is_selectable
+# report career pool: 3 arenas, fixture officina
+ok arena/the_career_fixture_names_an_arena
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/screen_arena_audit.gd:110)
+         [1] _calendar (res://tests/ui/screen_arena_audit.gd:255)
+         [2] _run (res://tests/ui/screen_arena_audit.gd:83)
+         [3] _locks (res://tests/ui/screen_arena_audit.gd:229)
+         [4] _mount (res://tests/ui/screen_arena_audit.gd:115)
+ok arena/career_speaks_the_calendars_language
+ok arena/the_calendar_names_the_arena_in_program
+ok arena/the_fixture_card_is_in_program
+ok arena/the_fixture_card_carries_its_badge
+ok arena/the_badge_says_the_calendar_chose_it
+# report out of the matchday: 2 cards (["locomotive","clockwork"])
+ok arena/the_other_arenas_are_out_of_the_matchday
+ok arena/an_out_of_matchday_card_says_why
+ok arena/a_switched_off_card_refuses_the_press
+ok arena/a_switched_off_card_carries_no_handler
+ok arena/the_player_mode_panel_is_the_quick_matches
+ok arena/the_fixture_card_is_selectable
+ok arena/career_starts_on_the_calendars_arena
+ok arena/the_bracket_fixture_names_an_arena
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/screen_arena_audit.gd:110)
+         [1] _bracket (res://tests/ui/screen_arena_audit.gd:294)
+         [2] _run (res://tests/ui/screen_arena_audit.gd:84)
+         [3] _calendar (res://tests/ui/screen_arena_audit.gd:281)
+         [4] _mount (res://tests/ui/screen_arena_audit.gd:115)
+ok arena/a_tournament_speaks_the_brackets_language
+ok arena/the_bracket_names_the_arena_in_program
+ok arena/the_badge_says_the_bracket_chose_it
+ok arena/an_out_of_round_card_says_why
+ok arena/a_tournament_starts_on_the_brackets_arena
+ok arena/the_panel_is_hidden_in_a_tournament_too
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/screen_arena_audit.gd:110)
+         [1] _start (res://tests/ui/screen_arena_audit.gd:315)
+         [2] _run (res://tests/ui/screen_arena_audit.gd:85)
+         [3] _bracket (res://tests/ui/screen_arena_audit.gd:306)
+         [4] _mount (res://tests/ui/screen_arena_audit.gd:115)
+ok arena/the_build_exposes_at_least_one_arena
+ok arena/an_exposed_arena_is_selectable
+ok arena/the_press_moves_the_sessions_choice
+# report start payload: {"arena_id":"officina","arena_index":0,"mode":"quick","player_mode":"solo","scene":"res://game/Match.tscn"}
+ok arena/the_payload_carries_mode
+ok arena/the_payload_carries_arena_id
+ok arena/the_payload_carries_arena_index
+ok arena/the_payload_carries_player_mode
+ok arena/the_payload_carries_scene
+ok arena/a_quick_start_says_quick
+ok arena/a_quick_start_changes_to_the_match_scene
+ok arena/a_quick_start_carries_the_chosen_arena
+ok arena/the_payload_indexes_the_frozen_catalog
+ok arena/the_payload_carries_the_player_mode
+ok arena/the_existing_call_site_is_readable
+ok arena/the_match_scene_is_the_one_already_used
+ok arena/the_mode_scene_is_the_one_already_used
+ok arena/the_quick_start_runs_without_touching_the_tree
+ok arena/the_start_writes_the_session_index
+ok arena/the_start_preserves_the_pending_mode
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/screen_arena_audit.gd:110)
+         [1] _start (res://tests/ui/screen_arena_audit.gd:348)
+         [2] _mount (res://tests/ui/screen_arena_audit.gd:115)
+ok arena/a_career_start_runs
+ok arena/a_career_start_uses_the_calendars_arena
+ok arena/a_career_start_goes_through_the_mode_route
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/screen_arena_audit.gd:110)
+         [1] _player_mode (res://tests/ui/screen_arena_audit.gd:390)
+         [2] _run (res://tests/ui/screen_arena_audit.gd:86)
+         [3] _start (res://tests/ui/screen_arena_audit.gd:357)
+         [4] _mount (res://tests/ui/screen_arena_audit.gd:115)
+ok arena/the_session_defaults_to_one_player
+ok arena/the_panel_is_the_quick_matches
+ok arena/the_hint_is_the_references_own_key
+ok arena/the_hint_is_the_locales_sentence
+ok arena/the_panel_names_itself
+ok arena/the_option_solo_is_the_locales_word
+ok arena/the_option_coop_is_the_locales_word
+ok arena/the_option_pvp_is_the_locales_word
+ok arena/the_reference_keeps_the_player_mode_in_the_preferences
+ok arena/the_co_op_option_is_selectable
+ok arena/the_choice_moves_the_session
+ok arena/the_choice_is_persisted_through_the_save
+ok arena/the_active_segment_is_the_chosen_one
+ok arena/the_active_segment_carries_the_accent_token
+ok arena/the_local_versus_option_is_selectable
+ok arena/the_versus_choice_is_persisted
+ok arena/an_invented_player_mode_is_refused
+ok arena/a_refused_option_changes_nothing
+ok arena/the_choice_comes_back_to_one_player
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/screen_arena_audit.gd:110)
+         [1] _flip (res://tests/ui/screen_arena_audit.gd:427)
+         [2] _run (res://tests/ui/screen_arena_audit.gd:87)
+         [3] _player_mode (res://tests/ui/screen_arena_audit.gd:419)
+         [4] _mount (res://tests/ui/screen_arena_audit.gd:115)
+ok arena/every_bound_key_resolves_it
+ok arena/every_binding_shows_the_locales_text_it
+ok arena/every_bound_key_resolves_en
+ok arena/every_binding_shows_the_locales_text_en
+ok arena/the_flip_moved_strings
+ok arena/the_flip_moves_every_binding_whose_two_translations_differ
+# report flip moved 24 of 32 bindings
+ok arena/the_screen_source_is_readable
+ok arena/the_scan_catches_prose_and_spares_developers
+ok arena/arena_screen_gd_carries_no_prose_literal
+ok arena/arena_screen_tscn_carries_no_literal
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/screen_arena_audit.gd:110)
+         [1] _layout (res://tests/ui/screen_arena_audit.gd:537)
+         [2] _run (res://tests/ui/screen_arena_audit.gd:89)
+         [3] _flip (res://tests/ui/screen_arena_audit.gd:465)
+         [4] _mount (res://tests/ui/screen_arena_audit.gd:115)
+ok arena/the_grid_is_a_grid
+ok arena/the_grid_is_three_wide_at_1280
+# report 1280x720 card=(368.0, 288.0) preview=(368.0, 207.0) grid=(1144.0, 906.0)
+ok arena/the_preview_keeps_the_reference_aspect
+ok arena/a_card_fits_the_frame
+ok arena/the_grid_is_one_wide_at_1024
+# report 1024x600 card=(888.0, 725.0) preview=(888.0, 644.0) grid=(888.0, 6691.0)
+ok arena/a_card_still_fits_the_small_frame
+ok arena/the_focus_bridge_reads_the_screens_controls
+ok arena/the_bridge_reaches_the_back_control
+ok arena/the_bridge_reaches_the_cards
+ok arena/the_bridge_reaches_the_player_modes
+ok arena/the_back_control_takes_the_focus
+ok arena/the_back_control_can_be_pressed_through_the_bridge
+ok arena/the_back_control_lands_on_the_screen_it_names
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/screen_arena_audit.gd:110)
+         [1] _captures (res://tests/ui/screen_arena_audit.gd:576)
+         [2] _run (res://tests/ui/screen_arena_audit.gd:90)
+         [3] _layout (res://tests/ui/screen_arena_audit.gd:567)
+ok arena/the_default_state_applies
+ok arena/the_career-calendar_state_applies
+ok arena/the_tournament-bracket_state_applies
+ok arena/the_demo-locked_state_applies
+ok arena/the_player-mode-coop_state_applies
+ok arena/an_undeclared_state_is_refused
+ok arena/the_five_states_are_the_declared_five
+ok arena/the_calendar_state_applies_again
+ok arena/the_calendar_state_speaks_the_calendar
+ok arena/the_calendar_state_names_a_fixture
+ok arena/the_calendar_state_hides_the_panel
+ok arena/the_bracket_state_applies_again
+ok arena/the_bracket_state_speaks_the_bracket
+ok arena/the_demo_state_applies_again
+ok arena/the_demo_state_shows_the_builds_wall
+ok arena/the_co_op_state_applies_again
+ok arena/the_co_op_state_selects_co_op
+ok arena/the_default_state_applies_again
+ok arena/the_default_state_returns_to_quick
+ok arena/the_default_state_returns_to_the_live_walls
+ok arena/the_default_state_shows_the_panel
+PASS 133/133

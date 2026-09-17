@@ -1,0 +1,175 @@
+# UIR-22 integration — serial engine evidence
+
+Runner: `docs/implementation/ui-recreation/tickets/UIR-22-full-integration.md`.
+Engine: Godot 4.7.2 (`/Applications/Godot.app/Contents/MacOS/Godot`), macOS.
+Serial discipline: one engine at a time, `pgrep -x Godot` guard before every launch
+(`/tmp/padel-uir22/run-audits.sh` refuses to start while another instance is up).
+A red engine line is counted as a failure even when the audit exits 0; the per-audit
+`engine_errors` column below is that count.
+
+## 1. What the playable path now is
+
+`--ui=new` is the default (`main_menu.gd::_ready`): a `--ui=legacy` run keeps the
+ported column, a harness can also set `ui_legacy = true` before the tree. The playable
+host registers **all twelve recreated Control screens** on `ScreenRouter` under the
+router's own ids and drives them through UIR-05's bridge; `game` stays without a
+Control scene by design (the match is `Match.tscn`, launched through
+`Config.pending_mode`). `Main.tscn` mounts the **result screen** when
+`Config.pending_result` is set (consumed once), so the loop is
+menu → modes → characters → arena → match → result → rematch/menu.
+
+Seams landed (handles):
+
+| seam | where |
+| --- | --- |
+| result handoff | `match_config.gd::pending_result` / `take_pending_result()`; `match_controller.gd::result_payload()`, `finish_route(dry_run)` |
+| pause state | `match_controller.gd::set_match_paused(bool)` (explicit, idempotent), overlay echo `PauseOverlay.set_match_paused`; ESC walks the card's own steps; rematch/`start_match` clear the pause |
+| overlay/tutorial/touch mount | `match_controller.gd` layer build, gated on `engine_driven` so headless lanes stay light |
+| menu host | `main_menu.gd::_mount_ui_prototype` (bridge per screen change, OSK panel bound to the lane's own model, `range_changed` handed to the screen, stored language applied at boot) |
+| OSK | `OskPanel.bind_model` + `set_osk_targets` only while the model is open; dismissed → targets withdrawn |
+| ranges | `SettingsScreen` focus rows now carry the row's own min/max/step/value (the wave-3 carried-keys seam was unused before); `PauseOverlay.set_row_value` applies a model-stepped value through the row's own handler |
+| locale | `hud.gd` no longer forces Italian (`HUD_LANG` gone): one locale drives menu and match |
+| stage | `project.godot [display]` 1280x720, `canvas_items` + `keep` |
+
+## 2. End-to-end, with real data (uir22_integration_audit)
+
+`uir22_integration_audit.gd` — **PASS 71/71, 0 engine errors**, exit 0. Highlights, all
+against real state:
+
+- twelve screens registered, one mounted at a time; every id mounts and unmounts;
+- a real confirm on `menu/PlayButton` dispatches through the bridge and lands on `modes`;
+- a quick match, played out with `ScriptedPlayer` (18 144 ticks), produces
+  `{"winner": "ai"}`, `setScores=[{player:0, ai:6}]`, stats — `result_payload()` carries
+  that same line and the sim's own win flag, `finish_route(true)` reports
+  `payload_ready` and parks the payload in `Config.pending_result`;
+- a host booted with that payload mounts `result`, whose `score_numbers()` equals the
+  payload's, and whose `rematch_route()` is `Match.tscn`;
+- the pause seam: explicit true/false, idempotent echo, ESC hierarchy, and a rematch
+  that leaves the match running; `leave_match()` exposed;
+- the OSK panel is bound to the input lane's model and carries the reference's rows;
+- `ui_legacy = true` builds the ported column with no router (the diagnostic path).
+
+## 3. Engine failures found while running the flow, and repaired
+
+| failure (engine line) | file | repair |
+| --- | --- | --- |
+| `Parse Error: There is already a variable named "stack"` — the screen could not load at all | `CharactersScreen.gd` | the duplicate `var stack` dropped; the outer one is the same node |
+| `Cannot call method 'add_child' on a null value` on the tutorial row | `ControlLegend.gd` | the row's root is a `Button` there, not a `Container`; the child is added through the Control and laid over it (`MOUSE_FILTER_IGNORE`) — the link rendered nowhere before, while the screen reported the button as present |
+| `Invalid access to property or key 'cap_up'` on every tutorial build | `SmashTutorial.gd` | the bandeja row carries `cap_down` only — read through `get` |
+| `Can't change orientation of HBoxContainer` on every build and resize | `SmashTutorial.gd` | a BoxContainer's orientation is fixed at construction; the two column rules swap the container for the other class and re-parent |
+| `Invalid assignment of property or key 'position' ... on 'Nil'` on every start/rematch in harness/headless | `match_controller.gd::_sync_views` | the views only exist when the models were loaded — guard added |
+| the audits themselves could not load (`non-static palette_keys()` called on the class, untyped `var :=`) | `pause_audit.gd`, `osk_touch_audit.gd`, `screen_profile_audit.gd` | instance calls (every non-replay screen's `palette_keys()` is an instance method; only `ReplayOverlay`'s is static) and explicit types |
+
+## 4. Serial sweep (one engine at a time)
+
+| audit | exit | engine errors | checks |
+| --- | --- | --- | --- |
+| theme_probe | 0 | 0 | PASS 305/305 |
+| router_audit | 0 | 2 (its own negative cases: bad id, null scene) | PASS 86/86 |
+| data_audit | 0 | 0 | PASS 131/131 |
+| fonts_assets_probe | 0 | 0 | PASS 75/75 |
+| hud_audit | 0 | 0 | PASS 172/172 |
+| pause_audit | 0 | 0 | PASS 176/176 |
+| input_a11y_audit | 0 | 0 | PASS 153/153 |
+| **uir22_integration_audit** | 0 | 0 | **PASS 71/71** |
+| screen_menu_audit | 0 | 1 (see reds) | PASS 97/97 |
+| screen_modes_audit | 0 | 0 | PASS 118/118 |
+| screen_arena_audit | 0 | 0 | PASS 133/133 |
+| screen_drill_audit | 0 | 0 | PASS 89/89 |
+| screen_result_audit | 0 | 0 | PASS 176/176 |
+| screen_settings_audit | 0 | 0 | PASS 91/91 |
+| screen_feedback_audit | 0 | 3 (see reds) | PASS 119/119 |
+| osk_touch_audit | 1 | **0** | FAIL 171/177 |
+| screen_characters_audit | 1 | 0 | FAIL 147/148 |
+| screen_help_audit | 1 | 3 | FAIL 73/75 |
+| screen_history_audit | 1 | 6 | FAIL 37/42 |
+| screen_challenges_audit | 1 | 2 | FAIL 64/68 |
+| screen_profile_audit | 1 | 4 | FAIL 44/60 |
+| ui_legibility_audit | 1 | 4 | FAIL 572/664 |
+
+### The ported lane's own suite (run last, same guard)
+
+`game_slice_test.gd` — **PASS 342/342, exit 0**, one engine-counted line:
+
+```
+ERROR: arena_library: unknown arena id 'nope' (have: officina, locomotive, clockwork,
+cattedrale, forgia, tempesta, abissale, caldera, orrery)
+```
+
+That is the recorded, allow-listed line — the suite's own deliberate unknown-id probe
+(`game_slice_test.gd:1903`, `Arena.build("nope", …) == null`), which the port's strict
+log gate already allows (`godot/game/check_log.sh:15-23`, `ALLOW_ARENA`; the baseline
+records it verbatim in `uir-00-baseline-gates.log:90-105`). Beside it the run prints the
+known shutdown note as a `WARNING` (`2 ObjectDB instances were leaked at exit`), which is
+the same engine shutdown report the baseline allow-lists (`ALLOW_SHUTDOWN`) and is not
+counted as an error. No other engine line, and `SCRIPT ERROR` count 0.
+
+### The two audits the last steer named, re-run clean (separate counts)
+
+| audit | exit | `SCRIPT ERROR` | `Parse Error` | other `ERROR:` | checks |
+| --- | --- | --- | --- | --- | --- |
+| pause_audit | 0 | **0** | **0** | 0 | PASS 176/176 |
+| osk_touch_audit | 1 | **0** | **0** | 0 | FAIL 171/177 (6 real check failures, §5) |
+
+Root cause of the parse failures: the audits called `palette_keys()` statically on the
+class, and every non-replay screen's `palette_keys()` is an instance method
+(`PauseOverlay.gd:907`, `OskPanel.gd:209`, `TouchControls.gd:271`; only
+`ReplayOverlay.gd:331` is `static`). Repaired in the audits by calling through the
+instances the audits already hold, which is the repo's own convention; the replay audit's
+static calls are correct and were left alone.
+
+## 5. The reds, classified
+
+None of the red audits below mount through the new host: each mounts its own scene (or
+its own router) directly, and none of the screens involved were edited by this wave —
+except `CharactersScreen.gd`, whose parse error (above) was fixed here, which is why
+its remaining single check is new information rather than a regression. Their own
+tickets' evidence logs carry different tallies (`screen_characters_audit … PASS 130/130`,
+`FAIL 73/76` for help), i.e. these are lane drifts in the current dirty tree, not
+consequences of the integration seams.
+
+- `osk_touch_audit` (6): `osk/no_targets_while_closed` expects 0 while the panel's
+  accessor returns the built grid (the host itself only registers targets while the
+  model is open); one grid key is not a target (52 vs 51); a row-order geometry check;
+  the closed signal carries no field id; two touch checks (default instance palette,
+  a screen-touch press driving the action).
+- `screen_characters_audit` (1): unlocked picker cards do not carry the same strip set
+  (`["maestro"]` differs).
+- `screen_help_audit` (2 checks + 3 engine): the audit calls `HelpScreen.title_control()`
+  (missing) and finds no `Title` node; the cap swap shows the port's Godot letters
+  where the reference's glyphs are expected; one narrow-frame overflow.
+- `screen_history_audit` (5 + 6 engine): the three boxes read empty (`["","",""]`),
+  `Main/Mode` node path drift, `Array[Dictionary]` assignment error.
+- `screen_challenges_audit` (4 + 2 engine): arena rows do not carry the frozen ids,
+  done-row border, `SectionTitle` path drift, `four columns at 1280` inverted in the audit.
+- `screen_profile_audit` (18 + 4 engine): the stat boxes/labels read empty and two
+  node lookups fail (`Stat0/Value`, objectives row, unlock button) — the screen's
+  `_fill_stats` output is not reachable at audit time.
+- `ui_legibility_audit` (94): contrast and containment on the screens that now get
+  walked (`arena` player-mode buttons, `challenges` name/state labels, `help`
+  controller tab, `profile` progress rows, `feedback` diagnostics) plus two containment
+  failures on `feedback`. Backgrounds read as `#ffffff`/`#999999` where the theme has
+  no value for the node, which is what the ratios report.
+- `screen_menu_audit` / `screen_feedback_audit` pass with engine lines of their own
+  (1 and 3 respectively); they are logged in `/tmp/padel-uir22/audit-*.log`.
+
+## 5b. Fixes applied by this wave, by file
+
+`match_config.gd`, `match_controller.gd`, `main_menu.gd`, `hud.gd`, `project.godot`,
+`src/ui/focus/UiFocusBridge.gd` (public `act()` for a polled pad verdict),
+`src/ui/screens/SettingsScreen.gd`, `src/ui/screens/PauseOverlay.gd`,
+`src/ui/components/ControlLegend.gd`, `src/ui/screens/SmashTutorial.gd`,
+`src/ui/screens/CharactersScreen.gd`, `src/ui/theme/padel_theme.tres` (13 rows,
+3-arg → 4-arg `Color`), plus the audits named in §3.
+
+## 6. Limits kept honest
+
+- The ported column and the ported HUD keep their dev text and Italian literals **on
+  the diagnostic path only** (`--ui=legacy`); `game_slice_test.gd` asserts that
+  surface, so it is set to the legacy switch rather than rewritten (no assertion deleted).
+- `drill` ends stay the drill module's own; only quick/tournament/career matches route
+  to the result screen.
+- D-pad navigation has no model path in the reference either; the pad is polled once
+  per frame like the reference's render loop.
+- External feedback is queued only: the host never installs a delivery sender
+  (`FeedbackScreen.set_delivery` is the only door), so no audit can submit anything.

@@ -1,0 +1,103 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok help/the_router_still_carries_thirteen_ids
+ok help/all_thirteen_slots_register
+ok help/the_scene_registers_under_the_help_id
+ok help/go_to_mounts_the_screen
+ok help/the_screen_is_active
+ok help/the_mounted_scene_carries_HelpScreen_gd
+ok help/the_scene_mounts_the_theme
+ok help/the_screen_reports_its_own_id
+ok help/the_declared_return_is_a_router_id
+ok help/the_return_matches_the_router_table
+ok help/the_screen_kept_the_router_fact
+ok help/the_declared_capture_states_are_the_screen_own
+ok help/an_undeclared_capture_state_is_refused
+ok help/the_cards_block_exists
+ERROR: Node not found: "Title" (relative to "/root/ScreenHelpAuditFrame/Router/ScreenHost/HelpScreen/ScreenShell/Margin/Rows/Content/HelpScroll/HelpBody/HelpRow/HelpSections/HelpCard0").
+   at: get_node (scene/main/node.cpp:1976)
+   GDScript backtrace (most recent call first):
+       [0] _content (res://tests/ui/screen_help_audit.gd:145)
+       [1] _run (res://tests/ui/screen_help_audit.gd:89)
+       [2] _mount (res://tests/ui/screen_help_audit.gd:128)
+SCRIPT ERROR: Invalid access to property or key 'text' on a base object of type 'null instance'.
+          at: _content (res://tests/ui/screen_help_audit.gd:145)
+          GDScript backtrace (most recent call first):
+              [0] _content (res://tests/ui/screen_help_audit.gd:145)
+              [1] _run (res://tests/ui/screen_help_audit.gd:89)
+              [2] _mount (res://tests/ui/screen_help_audit.gd:128)
+ok help/the_keyboard_guide_exists
+ok help/the_keyboard_guide_has_the_reference_s_seven_rows
+ok help/the_screen_declares_seven_rows
+ok help/every_row_carries_the_reference_s_caps
+ok help/every_row_label_is_its_locale_text
+ok help/the_seven_labels_agree_with_the_input_lane
+ok help/every_label_resolves_in_both_locale_tables
+ok help/both_input_panels_exist
+ok help/the_keyboard_tab_is_the_default_view
+ok help/the_keyboard_panel_starts_visible
+ok help/and_the_controller_panel_starts_hidden
+ok help/the_active_tab_carries_the_segmented_active_variation
+ok help/the_idle_tab_carries_the_idle_variation
+ok help/switching_to_the_controller_view_lands
+ok help/the_panels_swap
+ok help/the_keyboard_tab_goes_idle
+ok help/an_unknown_view_is_refused
+ok help/the_refused_switch_left_the_view_alone
+ok help/the_controller_panel_carries_the_legend_component
+ok help/the_legend_declares_the_reference_s_thirteen_rows
+ok help/the_mounted_legend_shows_thirteen_rows
+ok help/the_legend_labels_are_the_input_lane_s_own
+ok help/the_legend_descriptions_are_the_input_lane_s_own
+ok help/the_legend_caps_are_the_input_lane_s_own
+ok help/the_two_rows_with_no_inputmap_action_are_the_reference_s_own
+ok help/every_other_row_s_action_exists_in_the_scheme
+ok help/the_default_layout_is_xbox
+ok help/the_playstation_layout_applies
+FAIL help/and_swaps_every_cap: expected ["L3","R3","✕","□","△","○","L1","L2","R2","R1","D-PAD","✕+✕","OPTIONS"], got ["LS","RS","A","X","Y","B","LB","LT","RT","RB","D-PAD","A+A","☰"]
+ok help/and_keeps_a_caption
+ok help/an_unknown_layout_is_refused
+ok help/the_refused_layout_left_the_swap_alone
+ok help/the_help_legend_shows_no_tutorial_link
+ok help/the_component_renders_the_tutorial_row_when_asked
+ok help/the_tutorial_row_is_the_smash_row
+ok help/pressing_the_tutorial_row_emits_the_signal
+SCRIPT ERROR: Invalid call. Nonexistent function 'title_control' in base 'Control (HelpScreen.gd)'.
+          at: _strings (res://tests/ui/screen_help_audit.gd:320)
+          GDScript backtrace (most recent call first):
+              [0] _strings (res://tests/ui/screen_help_audit.gd:320)
+              [1] _run (res://tests/ui/screen_help_audit.gd:93)
+              [2] _mount (res://tests/ui/screen_help_audit.gd:128)
+ok help/both_declared_capture_states_apply
+ok help/the_last_state_left_the_controller_tab_up
+ok help/the_first_state_puts_the_keyboard_back
+# report 1280x720: widest=1264.0 body=1264.0 scroll=650.0 columns=2
+ok help/nothing_is_wider_than_the_frame
+ok help/the_cards_are_two_columns_at_1280
+ok help/the_two_columns_sit_side_by_side_at_1280
+# report 1024x600: widest=1008.0 body=1008.0 scroll=530.0 columns=2
+ok help/nothing_is_wider_than_the_small_frame
+ok help/the_cards_are_still_two_columns_at_1024
+# report 820x600: widest=1008.0 columns=2 stacked=true
+FAIL help/nothing_is_wider_than_the_narrow_frame: expected true, got false
+ok help/the_two_columns_collapse_below_860px
+# report 540x600: columns=1
+ok help/the_cards_collapse_to_one_column_below_560px
+ok help/the_literal_scan_flags_prose_and_ignores_developer_text
+ok help/the_screen_source_is_readable
+ok help/HelpScreen_gd_carries_no_prose_literal
+ok help/ControlLegend_gd_carries_no_prose_literal
+ok help/the_two_scenes_carry_no_literals
+ok help/the_theme_carries_every_palette_key_the_screen_names
+ok help/the_screen_recorded_no_missing_palette_key
+ok help/the_legend_recorded_no_missing_palette_key
+ok help/the_screen_registers_three_focusables
+ok help/the_back_control_is_registered
+ok help/both_tabs_are_registered
+ok help/one_focusable_speaks_for_the_declared_return
+ok help/the_bridge_reads_the_three_controls
+ok help/the_bridge_can_focus_the_controller_tab
+FAIL 73/75
+FAIL 73/75
+# first failure FAIL help/and_swaps_every_cap: expected ["L3","R3","✕","□","△","○","L1","L2","R2","R1","D-PAD","✕+✕","OPTIONS"], got ["LS","RS","A","X","Y","B","LB","LT","RT","RB","D-PAD","A+A","☰"]
+# first failure FAIL help/and_swaps_every_cap: expected ["L3","R3","✕","□","△","○","L1","L2","R2","R1","D-PAD","✕+✕","OPTIONS"], got ["LS","RS","A","X","Y","B","LB","LT","RT","RB","D-PAD","A+A","☰"]

@@ -1,0 +1,221 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok replay/this_audit_writes_only_to_its_temp_dir
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+ok replay/the_audit_frame_is_the_missions_own_1280x720
+ok replay/the_overlay_starts_hidden
+ok replay/nothing_is_painted_before_a_replay
+ok replay/the_scene_mounts_the_theme
+ok replay/the_one_capture_state_is_declared
+ok replay/an_unknown_capture_state_is_refused
+ok replay/the_overlay_carries_no_focusable_node
+ok replay/the_overlay_swallows_no_input
+ok replay/the_canvas_to_frame_scale_is_the_one_conversion
+ok replay/the_ReplayBanner_node_exists
+ok replay/the_ReplayBannerLabel_node_exists
+ok replay/the_ReplayExitHint_node_exists
+ok replay/the_ReplayProgress_node_exists
+ok replay/the_ReplayProgressTrack_node_exists
+ok replay/the_ReplayProgressFill_node_exists
+ok replay/the_banner_is_40_canvas_px_read_at_this_scale
+ok replay/the_bar_is_8_canvas_px_read_at_this_scale
+ok replay/the_banner_sits_on_the_top_edge
+ok replay/the_bar_sits_on_the_bottom_edge
+ok replay/the_banner_spans_the_frame
+ok replay/the_bar_spans_the_frame
+ok replay/the_banner_text_starts_14_canvas_px_in
+ok replay/the_exit_hint_ends_14_canvas_px_in
+ok replay/the_banner_text_is_centred_in_the_strip
+ok replay/the_exit_hint_is_right_aligned
+ok replay/the_banner_font_is_the_references_12px_read_at_this_scale
+ok replay/the_hint_font_is_the_references_11px_read_at_this_scale
+ok replay/an_idle_overlay_paints_no_fill
+ok replay/set_replay_shows_the_chrome
+ok replay/a_quarter_of_the_point_paints_a_quarter_of_the_bar
+ok replay/overflow_clamps_to_the_full_track
+ok replay/a_negative_progress_clamps_to_empty
+ok replay/the_banner_carries_the_reference_glyph_and_word
+ok replay/the_hint_carries_the_reference_key
+ok replay/hiding_the_replay_hides_the_chrome
+ok replay/without_a_seam_refresh_paints_nothing
+ok replay/without_a_seam_the_overlay_stays_hidden
+WARNING: ReplayOverlay: the seam misses start_replay(); the overlay stays hidden
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _note_missing (res://src/ui/screens/ReplayOverlay.gd:476)
+         [1] apply_capture_state (res://src/ui/screens/ReplayOverlay.gd:274)
+         [2] _overlay_chrome (res://tests/ui/replay_audit.gd:238)
+         [3] _run (res://tests/ui/replay_audit.gd:164)
+ok replay/a_capture_without_a_replay_is_refused
+ok replay/the_tree_pause_is_not_touched
+ok replay/every_palette_miss_is_a_key_this_overlay_declares
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+ok replay/the_state_carries_the_record_field
+ok replay/the_record_is_bounded_at_the_references_720
+ok replay/a_fresh_match_starts_with_an_empty_record
+ok replay/the_playback_cadence_is_1_60s
+ok replay/the_capture_cadence_is_the_sim_tick
+# report the reference's buffer: replayMax=720, capture 1/120 s, playback 1/60 s (js/game.js:314, :338-364, js/main.js:1315)
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+ok replay/playing_records_frames
+ok replay/the_record_never_exceeds_its_bound
+ok replay/the_count_readout_matches_the_record
+ok replay/every_frame_carries_the_references_pad_and_ball_fields
+ok replay/frames_are_copies_that_move_with_the_match
+# report recorded 240 frames in 240 ticks (0.9 KB by JSON encoding of the first frame)
+ok replay/a_tick_that_captures_exists
+ok replay/the_newest_frame_is_the_live_state
+ok replay/one_tick_records_one_frame
+ok replay/a_new_point_restarts_the_record
+ok replay/the_restarted_record_fills_one_frame_per_tick
+ok replay/the_restarted_record_is_not_the_old_one
+ok replay/at_capacity_the_record_holds_exactly_its_bound
+ok replay/at_capacity_the_oldest_frame_was_dropped
+ok replay/the_count_readout_matches_the_capped_record
+ok replay/the_capped_record_respects_the_bound_it_was_given
+# note the front-drop ran at replayMax=240 (this audit's instrumentation); the shipped bound is asserted as 720
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+ok replay/playback_has_frames_to_play
+ok replay/the_controller_exposes_replay_finished
+ok replay/r_starts_a_replay_when_frames_exist
+ok replay/the_replay_is_active
+ok replay/entering_clears_the_pause_like_the_reference
+ok replay/playback_starts_at_the_first_frame
+ok replay/progress_is_index_plus_one_over_total
+ok replay/the_simulation_does_not_advance_while_the_replay_runs
+ok replay/the_cursor_advances_one_frame_per_1_60s_of_rendered_frame
+ok replay/progress_follows_the_cursor
+ok replay/the_cursor_clamps_at_the_last_frame
+ok replay/the_full_point_reads_a_full_bar
+ok replay/replay_finished_fires_once_at_the_end
+ok replay/the_ball_rendered_during_playback_is_the_recorded_ball
+ok replay/a_finished_replay_keeps_the_last_frame
+ok replay/the_frozen_simulation_stays_frozen
+ok replay/stopping_ends_the_replay
+ok replay/the_state_digest_is_byte_identical_after_playback
+ok replay/the_live_ball_is_back_exactly
+ok replay/the_match_resumes_on_the_next_frame
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+ok replay/one_frame_is_not_enough_to_replay
+ok replay/a_refused_entry_leaves_the_match_running
+ok replay/a_refused_entry_does_not_pause
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+ok replay/from_live_play_the_mask_ends_unpaused
+ok replay/the_remembered_pause_state_was_false
+ok replay/the_card_can_be_open_before_the_replay
+ok replay/the_card_starts_a_replay
+ok replay/entering_from_the_card_closes_the_card_like_the_reference
+ok replay/the_remembered_pause_state_was_true
+ok replay/leaving_a_card_started_replay_restores_the_pause
+ok replay/the_restored_pause_reopens_the_card
+ok replay/the_restored_card_opens_on_the_match_tab
+ok replay/the_overlay_shows_while_the_match_replays
+ok replay/the_overlay_paints_the_seams_progress
+ok replay/the_overlay_hides_when_the_replay_ends
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+ok replay/the_keys_have_frames_to_play
+ok replay/r_starts_a_replay_in_play
+ok replay/r_no_longer_restarts_the_match
+ok replay/r_leaves_the_record_untouched
+ok replay/r_stops_a_running_replay
+ok replay/the_replay_is_up_before_escape
+ok replay/escape_stops_a_running_replay
+ok replay/escape_did_not_pause_the_match_instead
+ok replay/the_pause_still_works_after_the_replay
+ok replay/r_while_paused_is_refused
+ok replay/the_refused_key_leaves_the_card_up
+ok replay/the_refused_key_does_not_restart_the_match
+ok replay/the_flag_enables_the_entry
+ok replay/an_enabled_entry_carries_no_reason
+ok replay/the_replay_button_exists
+ok replay/the_button_is_pressable_once_uir27_is_wired
+ok replay/the_button_route_reaches_the_entry
+ok replay/the_entry_emits_replay_requested
+ok replay/escs_step_0_is_the_replay
+ok replay/step_0_closes_the_replay
+ok replay/the_button_never_pauses_the_tree
+ok replay/the_flag_is_the_only_gate
+ok replay/the_gate_records_its_dependency_when_off
+# note integration wiring: the button's gate and the ESC step 0 are two different facts in UIR-20's single flag (availability vs a replay that is up) — §Seam of evidence/uir-27-replay.log names the split the integration owner has to pick
+ok replay/a_seam_that_turns_on_moves_the_view
+ok replay/the_seam_turns_the_overlay_on
+ok replay/the_seams_progress_paints_the_bar
+ok replay/the_seam_turns_the_overlay_off
+WARNING: ReplayOverlay: the seam misses replay_progress(); the overlay stays hidden
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _note_missing (res://src/ui/screens/ReplayOverlay.gd:476)
+         [1] refresh (res://src/ui/screens/ReplayOverlay.gd:220)
+         [2] _overlay_seam (res://tests/ui/replay_audit.gd:625)
+         [3] _run (res://tests/ui/replay_audit.gd:171)
+         [4] _keys (res://tests/ui/replay_audit.gd:574)
+ok replay/a_half_seam_still_shows_the_chrome
+ok replay/a_missing_progress_reader_paints_an_empty_bar
+ok replay/the_missing_reader_is_recorded_by_name
+ok replay/unbinding_the_seam_hides_the_chrome
+ok replay/a_second_locale_exists
+ok replay/the_other_language_is_taken
+ok replay/the_banner_follows_the_language
+ok replay/the_hint_follows_the_language
+ok replay/the_banner_text_moved_with_the_flip
+ok replay/the_hint_text_moved_with_the_flip
+ok replay/an_unknown_locale_is_refused
+ok replay/the_first_language_comes_back
+ok replay/the_replay_key_resolves
+ok replay/the_replayExit_key_resolves
+ok replay/the_overlay_source_is_readable
+ok replay/ReplayOverlay.gd_never_carries_SceneTree.paused
+ok replay/ReplayOverlay.gd_never_carries_get_tree().paused
+ok replay/ReplayOverlay.gd_never_carries_paused_=_true
+ok replay/ReplayOverlay.gd_never_carries_paused_=_false
+ok replay/zero_prose_literals_in_the_overlay
+ok replay/the_audit_calls_bind_seam_which_exists
+ok replay/the_audit_calls_seam_which_exists
+ok replay/the_audit_calls_set_replay_which_exists
+ok replay/the_audit_calls_refresh_which_exists
+ok replay/the_audit_calls_is_active_which_exists
+ok replay/the_audit_calls_progress_which_exists
+ok replay/the_audit_calls_set_language_which_exists
+ok replay/the_audit_calls_refresh_strings_which_exists
+ok replay/the_audit_calls_report_which_exists
+ok replay/the_audit_calls_palette_misses_which_exists
+ok replay/the_audit_calls_focus_controls_which_exists
+ok replay/the_audit_calls_capture_states_which_exists
+ok replay/the_audit_calls_apply_capture_state_which_exists
+ok replay/the_audit_calls_banner_text_which_exists
+ok replay/the_audit_calls_exit_hint_text_which_exists
+ok replay/the_audit_calls_banner_rect_which_exists
+ok replay/the_audit_calls_bar_rect_which_exists
+ok replay/the_audit_calls_fill_ratio_which_exists
+ok replay/the_static_palette_list_is_readable
+ok replay/palette_gold_is_in_the_theme_or_declared
+ok replay/palette_white_is_in_the_theme_or_declared
+ok replay/palette_replay_banner_is_in_the_theme_or_declared
+ok replay/the_banner_key_is_a_miss_exactly_when_the_theme_lacks_it
+# not-ported engine/run: no Godot process ran this file in the UIR-27 wave (the wave's dispatch forbids it): the tally below is what the file asserts, and the acceptance command in evidence/uir-27-replay.log is the run that is owed
+# not-ported input/physical_keyboard: the r/ESC paths are injected through Input.parse_input_event, the engine's own pipeline, not pressed on hardware
+# report overlay: hidden=true banner=53.33px bar=10.67px inset=18.67px
+PASS 166/166
+WARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

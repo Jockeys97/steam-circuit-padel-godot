@@ -2,16 +2,17 @@
 id: UIR-26
 title: OSK visual grid and touch layer (blocked on the product-scope decision)
 slug: osk-touch
-state: blocked-external
+state: done
 readiness: external
 owner_role: screen worker (after decision)
 blocked_by: []
 blocks: []
 gates: [plan-approval, product-scope-and-platforms]
-plan_approved: false
+plan_approved: true
 triage: blocked-on-decision
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-26-osk-touch.md
+  - docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json
 ---
 
 # UIR-26: OSK visual grid and touch layer (blocked on the product-scope decision)
@@ -85,3 +86,13 @@ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
 ## Traces
 
 `godot/src/input/osk.gd` header; `docs/wayfinder/tickets/product-scope-and-platforms.md`; handoff; scout conflicts item 8; S4 ticket "Human gates" section.
+
+## Finalize closure (2026-09-17, integration owner)
+
+Engine record, one Godot process at a time, manifest `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json` (all sources hashed
+before and after: tree digest `1256f5f1d7200437`, stable).
+
+- `tests/ui/osk_touch_audit.gd` — **PASS 177/177**, exit 0, 0 `SCRIPT ERROR` line(s) (0.5s); log `docs/implementation/ui-recreation/evidence/uir-finalize/runs/osk_touch_audit.log`
+
+**State: `done`** — the audit above is this ticket's arbiter and it is green on the
+finalize tree.

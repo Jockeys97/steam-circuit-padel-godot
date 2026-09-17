@@ -1,0 +1,58 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+music port drift test — module vs the reference's own generated output
+  engine dump   res://src/audio/music_reference.json  sha256 780cd6ec7f02d0ea9bbac7110828d93ada2c7b60e3314122d39c8ba46992941c
+  authoritative tools/audio-music-port/out/music-reference.json
+  extractor     tools/audio-music-port/extract-music.mjs
+  vending tool  tools/audio-music-port/sync-godot-music.mjs
+  driver        Dummy (headless dummy — structure and engine state only)
+ok dump is vendored byte-identical to the generated one
+ok dump schema and version
+ok dump carries the reference's 15 scenarios
+ok the extractor's own self-checks all passed
+ok dump matches the js/audio.js on disk
+ok dump matches the js/main.js on disk
+ok music bus gain is the reference's 0.55 (from the event contract)
+ok the Music bus is set to that gain
+ok the Music bus feeds the master bus
+ok no bus effect is invented (ducking/panning are undefined in the reference)
+ok the mixer numbers come from the same contract file the SFX module reads
+ok sequencer constants are the reference's
+ok voice stop tails are the reference's
+ok the voice pool is bounded
+ok the module's PROG is the reference's four chords
+ok the bars carry the reference's chords (Am at bar 0, F at bar 1)
+ok every scenario's step+event stream equals the reference's
+ok the compared stream is non-trivial
+ok the loop walks 64 steps and wraps to the same material
+ok intensity follows js/main.js:1220-1226 exactly
+ok menu context is silent and match context plays the progression
+ok set_context maps menu->stop, match->start, and refuses an unknown context
+ok mute freezes the scheduler and the score resumes at the catch-up
+ok volume 0 is silent, still plays, and does not change the score
+ok master gain clamps to the contract's range
+ok master gain applies relative to the reference's own default (0.5 = unity)
+ok mute is a flag: it mutes no bus and cuts no sounding voice
+ok voices start under the dummy driver and are routed to the Music bus
+ok pooled voices stay bounded by the signature count
+ok a voice is addressed at the reference's gain for that note
+ok describe() reports the contracted bus layout and the mixer state
+ok no per-voice runtime volume is invented beyond the reference's gain
+
+ok drift/wrong-chord — mutation injection produced wrong-chord@step 0.0 ev 4: midi/freq 58/233.081880759045 != 57.0/220.0
+ok drift/wrong-voice — mutation injection produced wrong-voice@step 0.0 ev 4: pad/tone != arp/tone
+ok drift/wrong-timbre — mutation injection produced wrong-timbre@step 0.0 ev 4: sawtooth != square
+ok drift/wrong-tempo — mutation injection produced wrong-tempo@step 3.0 index 3: t 0.42343965517241 != 0.403275862
+ok drift/wrong-step — mutation injection produced wrong-step@index 2: step 3 != 2.0
+ok drift/dropped-note — mutation injection produced dropped-note@59 of 60 events
+ok drift/added-note — mutation injection produced added-note@61 of 60 events
+ok drift/truncated-stream — mutation injection produced stream-truncated@21 of 24 steps
+ok drift/wrong-gain — mutation injection produced wrong-gain@step 0.0 ev 1: 0.09 != 0.032
+ok drift/wrong-filter — mutation injection produced wrong-filter@step 0.0 ev 4: lowpass/1800.0 != lowpass/2200.0
+ok drift/wrong-buffer — mutation injection produced wrong-buffer@step 1.0 ev 7: 1800 != 1764.0
+ok drift/wrong-intensity — engine injection produced wrong-intensity@frame 5 module=0.17 reference=0.12
+ok drift/wrong-context — engine injection produced wrong-context@menu steps=17 events=11 playing=true
+ok drift/mute-drift — engine injection produced mute-drift@24 events scheduled while muted (window ends 1.01666666666667)
+ok drift/volume-drift — engine injection produced volume-drift@silent=false voices_started=20
+injected drift: 15/15 cases caught, each with its own named failure
+PASS 32/32

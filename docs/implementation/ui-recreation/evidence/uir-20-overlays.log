@@ -1,0 +1,277 @@
+# UIR-20 Pause overlay + smash tutorial — evidence log
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-20-game-overlays.md`
+Wave: finalize-playable wave (UIR-20 + UIR-26 in one worker; UIR-17/18/19/21 and the theme are
+other workers' lanes). $0, no commits/staging/push, no deletions, no API calls.
+Engine: **NOT run by this worker.** The wave's dispatch forbids starting Godot ("NO Godot from
+you"), so the acceptance command in §10 is the run that is **owed**, and everything green in this
+log is static (§3) plus the audit file itself (`godot/tests/ui/pause_audit.gd`, 163 assertion
+sites) which was written to make that run the arbiter. **Nothing here is device- or engine-tested.**
+Result of the static pass: **70/70 checks green** over the four sources; audit self-checks
+**21/21 green** (§3). No engine tally exists yet — the audit's own tally is what §10 prints.
+
+## 1. What landed this wave
+
+| path | lines | bytes | sha256 (16) | what |
+|---|---|---|---|---|
+| `godot/src/ui/screens/PauseOverlay.gd` | 1546 | 57091 | `b2d7d4dcfb1ea0d5` | the pause card: three tabs, four actions, quit 2-step, controller panel (mode strip, three shared rows, two stick monitors), COMANDI panel consuming the full 13-row `ControlLegend` + tutorial link, the pause seam, the five-step ESC hierarchy, five capture states; the replay entry's flag split (`set_replay_available`, UIR-27's closure) |
+| `godot/src/ui/screens/PauseOverlay.tscn` | 15 | 440 | `f52b77db07f8b709` | the scene: full-rect Control, theme mounted, `mouse_filter` IGNORE like `Hud.tscn` |
+| `godot/src/ui/screens/SmashTutorial.gd` | 741 | 27528 | `4c58da27403fe587` | the tutorial: eyebrow/title/intro, four steps, stick-guide diagram (X2/X3/BANDEJA), four result rows, readiness strip, RIPRENDI E PROVA |
+| `godot/src/ui/screens/SmashTutorial.tscn` | 16 | 458 | `a6696a820e09596e` | the scene, hidden by default (the overlay shows it) |
+| `godot/tests/ui/pause_audit.gd` | 697 | 38339 | `8c1efea55a45320c` | the contract audit, 163 checks |
+| `godot/tests/ui/pause_audit.tscn` | 6 | 196 | `934e22d146caab3d` | runner scene, the house pattern (`screen_help_audit.tscn`) |
+
+**Row hashes re-computed 2026-09-17 (finalize wave).** The three rows that moved
+(`PauseOverlay.gd` 1502->1529 lines, `SmashTutorial.gd` 707->741, `pause_audit.gd` byte 38332->38339)
+are the engine-driven repairs the integration wave landed after this log was written: the
+`result["cap_up"]` guard and the HBoxContainer orientation swap in the tutorial, the pause card's
+range/tab work, and the audit's own parse repairs (a static call to a non-static `palette_keys()`,
+an untyped `var x :=`). The table above is the current disk state (`wc -l`, `stat -f%z`,
+`shasum -a 256 | cut -c1-16`); the earlier numbers are preserved in git history, not deleted.
+**Re-computed once more 2026-09-17 (finalize closure, same day):** `PauseOverlay.gd` moved again
+(1529->1546 lines, `b2d7d4dcfb1ea0d5`) — UIR-27's replay-entry flag split (`set_replay_available`)
+and its gate landed with the closure; the table above reads the closure state.
+
+No `.uid` sidecars were written: they are engine-generated, the scenes reference the scripts by
+path (exactly as `ControlLegend.tscn` does), and an invented uid would be a defect rather than a
+convenience. Godot will mint them on first open.
+
+## 2. The reference this was built from (anchors, not paraphrases)
+
+| area | reference |
+|---|---|
+| card, scrim, header | `index.html:566-569`, `styles.css:1423-1473` |
+| status row | `index.html:573-578`, `styles.css:1474-1490` (`#7ef3ff` 11px span, `#fff` Lilita 26 strong) |
+| tabs | `index.html:569-572`, `styles.css:1491-1512`, `js/main.js:224-241` |
+| match panel + actions | `index.html:579-591`, `styles.css:1513-1556`, `js/main.js:1578-1640` |
+| quit 2-step | `js/main.js:1615-1634` (`ESCI`→`CONFERMI?`, `quitConfirm`) |
+| controller panel | `index.html:596-614`, `styles.css:1557-1626` |
+| stick monitor math | `styles.css:1627-1657`, `js/main.js:447-451` (`x * 17`) |
+| controls panel + legend | `index.html:617-640`, `styles.css:1658-1680` |
+| smash tutorial | `index.html:642-685`, `styles.css:1749-1930` + `:1970-2026` |
+| ESC hierarchy / pause semantics | `js/main.js:751-770`, `:2595-2620`, `:1532,1543` |
+| reopen/close integration | `match_controller.gd:1881-1906`, `:1946`, `:1955`, `:1965`, `:1974+` |
+
+## 3. Static evidence — the checks that did run
+
+Scratch checker (not a repo file; outside this ticket's write allowlist): `/tmp/uir2026_static_check.py`.
+
+- **Sources mode** — `python3 /tmp/uir2026_static_check.py` → **`70 checks, 0 failures`** over
+  `PauseOverlay.gd`, `SmashTutorial.gd`, `OskPanel.gd`, `TouchControls.gd`. It applies the same
+  rules the audits assert in-engine: bracket balance and unterminated strings, the literal scan
+  (a quoted string containing a space on a line that is not developer output — developer markers
+  `push_error(`/`push_warning(`/`printerr(`/`assert(`), no `SceneTree.paused`/`get_tree().paused`/
+  `paused = true|false` in code, every `_palette()` key either in `padel_theme.tres` or in this
+  ticket's request set (§7), every `theme_type_variation` in the theme, every referenced
+  `padel_*` action in `project.godot`, every `UiStrings.t("…")` and `*_KEY` const value in
+  `locale_data.gd`, every `_font(role)` declared in the theme.
+- **Audits mode** — `python3 /tmp/uir2026_static_check.py audits` → **`21 audit checks, 0 failures`**:
+  both audits parse-shape clean (brackets/strings/tabs), carry ≥40 `audit.check_` sites, extend
+  `SceneTree` with `_initialize()`/`audit.finish()`, assign the tree pause nowhere, and — the one
+  that catches GDScript's dynamic-dispatch trap — **every method the audits call on a component
+  exists in that component** (69 distinct call sites checked against the component sources).
+- Palette keys by file: `PauseOverlay.gd` 12 (6 requested of the theme, §7), `SmashTutorial.gd` 11
+  (3 requested), `OskPanel.gd` 11 (1), `TouchControls.gd` 4 (1).
+
+The in-engine audits encode the same rules and supersede this pass; they are the evidence the
+ticket asks for.
+
+## 4. The pause seam — the exact call UIR-22 must preserve
+
+The overlay never touches the engine's global tree pause and never fakes a match state. It asks a
+seam, in this order (`pause_route()` says which route is live):
+
+1. **`set_match_paused` — the one-line seam this ticket requests.** Shape:
+
+   ```gdscript
+   ## match_controller.gd — the one line UIR-20 asks for; the existing bodies of
+   ## _on_ui_pause() (:741-748) and the ESC branch of _unhandled_input() (:1881-1906) both
+   ## collapse into it (they already do exactly this sequence, toggling):
+   func set_match_paused(paused: bool) -> bool:
+       _paused = paused                     # explicit, not a toggle — both callers pass not _paused / true
+       _reset_transient_input()             # BOTH EDGES, the reference's own semantics
+       if _hud != null:
+           _hud.set_paused(_paused)         # the legacy HUD (`game/hud.gd`) keeps its own pause look
+       if _ui_hud != null:
+           _ui_hud.set_paused(_paused)      # the recreated HUD (`src/ui/Hud.tscn`)
+       if _pause_overlay != null:
+           _pause_overlay.set_match_paused(_paused)   # ← the echo line: the overlay follows the match
+       return _paused
+   ```
+
+   The overlay calls it on CONTINUE, on ESC step 4 (false) and on ESC step 5 (true), and on
+   RIPRENDI E PROVA from the tutorial. It also reads `is_paused()` through the same seam
+   (`read_paused()`; `null` when no seam is bound — the overlay refuses to guess).
+2. **The action route, until the seam lands** (`pause_route() == "action"`): the overlay builds
+   `InputEventAction("padel_pause", pressed)` (`pause_action_event()`, asserted against
+   `InputMap.has_action`) and feeds it through `Input.parse_input_event` — the same branch ESC
+   takes, so `_reset_transient_input` and both HUD updates happen once, in the controller.
+3. **Neither route available**: the missing method names are recorded in
+   `report()["seam_missing"]` and nothing is faked. Freezing the tree is never an option here.
+
+**Mount recipe for UIR-22** (the exact hand-off; nothing in this list was edited by this ticket):
+
+1. `const PauseOverlayScene := preload("res://src/ui/screens/PauseOverlay.tscn")`, instantiate and
+   add it to the match layer **above** the HUD (`match_controller.gd:725` mounts
+   `res://src/ui/Hud.tscn`; the overlay belongs on the same layer, after it).
+2. `overlay.set_store(store)` before (or after) mounting — it defaults to `Config.save_store()`.
+3. `overlay.bind_seam(self)` → the seam above. Then **exactly one** path is live: bind the seam
+   *or* connect the signals, never both (`resume_requested`/`pause_requested`/`rematch_requested`/
+   `quit_requested` are emitted in addition; a mount that also calls `set_match_paused` from a
+   handler would double-toggle).
+4. `overlay.set_match_paused(_paused)` in the echo line — the overlay opens on `true`, closes on
+   `false`, and a second identical echo is a no-op (asserted).
+5. Feed live sticks while the overlay is open: `overlay.handle_joypad_motion(event)` returns true
+   for `JOY_AXIS_LEFT_X/Y` and `JOY_AXIS_RIGHT_X/Y`; it takes the player's deadzone from the
+   shared store (`gamepadDeadzone`), like `input_map.gd`.
+6. `overlay.set_pad_connected(menu_nav.pad_connected())` when the pad state changes (the reference
+   greys the controller copy with no pad; the flag is consumed by `report()`/layout, not by the
+   seam).
+7. On quit: the overlay emits `quit_requested` and calls `seam.leave_match()` if it exists;
+   otherwise it defers to the host (`_leave_match()` is private today — expose it or bind the
+   signal). On rematch: `seam.rematch()`.
+8. Focus: `overlay.focus_controls()` returns 7/9/1 node entries
+   (`{"id","node","action","opts"}`) ready for `MenuFocus.add`; ids are `pause/tab-match`,
+   `pause/tab-controller`, `pause/tab-controls`, `pause/resume`, `pause/replay`, `pause/rematch`,
+   `pause/quit-match`, `pause/control-mode:<mode>`, `pause/deadzone`, `pause/vibration`,
+   `pause/volume`, `pause/open-smash-tutorial`. Drive the overlay through `set_tab()`,
+   `handle_quit()`, `back()` (the ESC hierarchy), `set_osk_open()`, `set_replay_active()`.
+
+## 5. The five-step ESC hierarchy — the proof lines
+
+`back()` returns `{"step": n, …}` for each rung; the audit asserts each one by number
+(`pause/esc_step_0…5`, `OverlayClass.STEP_*`):
+
+| step | what | asserted |
+|---|---|---|
+| 0 | the replay overlay is up → replay closes it (`js/main.js:2607`) | `pause/esc_step_0_is_replay` |
+| 1 | the OSK is open → close the keyboard (`js/main.js:751-757`) | `pause/esc_step_1_is_the_keyboard` |
+| 2 | the tutorial is open → close it, **pause stays open**, tab stays COMANDI | `pause/step_2_closes_the_tutorial`, `pause/step_2_keeps_the_pause_open` |
+| 3 | any other tab → back to PARTITA | `pause/esc_step_3_returns_to_the_match_tab` |
+| 4 | PARTITA + open → resume (the seam call, once, `false`) | `pause/step_4_calls_the_seam_once` |
+| 5 | closed → pause (the seam call, `true`) | `pause/esc_step_5_pauses` |
+
+`SceneTree.paused` is asserted `false` after every rung (`pause/the_tree_is_not_paused_after_the_esc_walk`
+plus five more), and both sources are grep-asserted for the pattern with comments stripped
+(`pause/PauseOverlay.gd_never_touches_the_tree_pause`).
+
+## 6. Quit 2-step and the replay forward reference
+
+- First press: arms, the button text becomes `quitConfirm`, no signal, no seam call
+  (`pause/the_first_press_only_arms`). Second press: emits `quit_requested` **and** calls
+  `seam.leave_match()` once, closes the card (`pause/leaving_calls_the_seam`). Leaving the overlay
+  disarms (`reset_quit_confirm()` is called on every `close()`/echo-close).
+- **Replay — UIR-27 dependency, recorded not faked**:
+  `replay_enabled() == false`, `replay_disabled_reason() == "uir27-replay-entry-not-landed"`, the
+  button ships disabled, and a programmatic `replay()` returns `false`. `set_replay_active(true)`
+  is the UIR-27 seam: with a replay overlay in the tree the button re-enables and ESC step 0 takes
+  over. The log names it; nothing pretends a replay happened.
+
+## 7. Palette: requested, near-matched, and the gaps
+
+Theme (`godot/src/ui/theme/padel_theme.tres`) carries the palette; these keys are **not in it
+yet** and are requested with their reference line (the components read through `_palette()`, which
+records the miss and falls back to the palette's `ink` meanwhile — no invented colours, and every
+miss appears in `report()["palette_misses"]`):
+
+| requested key | value | reference |
+|---|---|---|
+| `overlay_scrim` | `rgba(4,4,14,0.82)` | `.pause-overlay` `styles.css:1423` |
+| `segmented_gradient_end` | `#16bed7` | tab active / `b` circles / `.icon-back:hover` `:1502, :1797` |
+| `danger_border` | `#ff4b4b` | `.pause-actions .btn--confirm` `:1524` |
+| `danger_fill` | `#5c141c` | same rule |
+| `danger_fill_hover` | `#7a1a24` | same rule (`:hover`) |
+| `danger_shadow` | `rgba(60,8,12,0.5)` | same rule |
+| `stick_hub` | `#16486b` | `.smash-stick-guide__diagram` inner stop, `:1830` |
+| `tutorial_ink` | `#eafaff` | `.smash-steps strong` `:1810`, `.smash-ready span` `#dffaff` `:1892` |
+
+Near-matches used instead of new keys (all within the pack's ≤8/255-per-channel rule except the
+one noted; each is recorded with its delta):
+
+| reference | token used | delta |
+|---|---|---|
+| `.pause-match-status span` `#7ef3ff` | `text_soft_3` | exact |
+| `.smash-tutorial__header p` `#91abc1` | `help_muted` `#8aa5bc` | 7/6/5 |
+| `.smash-ready span` `#dffaff` | requested `tutorial_ink` `#eafaff` | 11/5/0 (R only, same role) |
+| `.icon-back` `color: #fff`, `.pause-match-status strong` `#fff` | `white` `#ffffff` | exact |
+| `.osk__key` `#0d2646` | `surface_2` `#0b2444` | 2/2/2 (UIR-26) |
+
+Recorded gaps (reference effects with no faithful Godot equivalent; not faked):
+`.pause-card`'s second glow shadow `0 0 34px rgba(18,223,240,0.08)`; `.pause-tabs button.is-active`'s
+`0 0 14px rgba(22,190,215,0.25)`; `.pause-overlay`'s `backdrop-filter: blur(8px)`; the shared
+`RangeRow`'s value text does not carry the reference's `#fff36a` (that is UIR-19's component look;
+recorded, not overridden from a consumer); `.pause-panel` at ≤760 keeps 330 px only for
+match/controller and 0 for COMANDI (implemented), and the ≤470 tab font is 10 (implemented).
+
+## 8. Read-only consumption (what this ticket did not edit)
+
+- **Consumed, unmodified** (hashes taken this wave):
+  `godot/src/ui/components/ControlLegend.gd` `sha256 968486cceb1ca4ab…`,
+  `godot/src/ui/components/SettingsRows.gd` `sha256 d2c43c1ccec04888…` — used through their public
+  API only (`setup`/`reference_rows`/`row_count`/`tutorial_link_enabled`/`tutorial_button`/
+  `tutorial_requested`; `make_range`/`make_toggle`/`focus_node`/`focus_kind`/`refresh_strings`), and
+  the audit asserts the API the ticket names (`pause/the_legend_carries_the_reference_rows`,
+  `pause/the_deadzone_row_is_the_shared_component`).
+- `godot/src/ui/Hud.gd` / `Hud.tscn` (the recreated HUD): **not edited** — the overlay is mounted
+  beside it by UIR-22, and the pause echo goes through `_ui_hud.set_paused()` as it always did.
+- `godot/game/hud.gd` (the legacy in-match HUD): **not edited and not deleted.** Its 14 static
+  helpers are a live dependency of `match_controller.gd` (`const HudScript := preload(...)` at
+  `:54`; the timing/presentation statics such as `panel_rect` `:133`, `field_energy_color` `:464`,
+  `precision_color` `:479` are read from the timing-presentation path around `:1259`) — preserved
+  exactly as found.
+- `godot/src/input/osk.gd` / `menu_nav.gd` (the input lane): **not edited** — UIR-20 consumes
+  `is_paused()`/`padel_pause` only.
+- `git status --short` this wave shows the 6 files of this ticket as untracked additions and no
+  modifications to any shared file by this worker (`M` rows in the tree belong to the other
+  workers' lanes: `UiData.gd`, `UiFocusBridge.gd`, `theme/*`, `input_a11y_audit.gd`,
+  `theme_probe.gd`).
+
+## 9. What is NOT tested — read this before trusting a green
+
+`pause_audit.gd` carries four `not_ported` rows, so the tally itself says this:
+
+| not ported | why |
+|---|---|
+| `device/physical_pad` | **no pad was attached to this Mac.** The two stick monitors were driven by injected `InputEventJoypadMotion` events (the ticket's own instruction); real-hardware behaviour is unchecked. |
+| `device/pause_seam_live` | `match_controller.gd` has no `set_match_paused(bool)` yet (UIR-22 owns it, §4). The seam contract is asserted against a fake seam of the documented shape; the live call is owed. |
+| `feature/replay` | no replay entry until UIR-27; the disabled state and its recorded reason are what is asserted. |
+| `engine/run` | **no Godot process ran this file** in this wave. The static pass (§3) and the audit file are the evidence; the run is owed (§10). |
+
+## 10. Acceptance command — the run that is owed
+
+```bash
+export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
+"$GODOT" --headless --path godot/ --script res://tests/ui/pause_audit.gd ; echo "exit=$?"
+```
+
+Reading a run: the exit code is not a pass signal (a script that fails to parse also exits 0) —
+the tally line `PASS n/n` / `FAIL n/n` and the `SCRIPT ERROR` count are the evidence. What a green
+run prints: `PASS 163/163` … with the `# notes:` block naming the palette misses (§7), the
+not-ported rows (§9), the theme parse error (§11) and the language-flip count. A FAIL names the
+check; every check name is namespaced (`pause/…`) and greppable.
+
+## 11. Blockers for that run (cross-lane, not edited here)
+
+1. **The shared theme does not parse at this instant.** `godot/src/ui/theme/padel_theme.tres` lines
+   **419-429 and 434-435** use a three-argument `Color(r, g, b)` (thirteen rows: `win_green`,
+   `win_ink`, `loss_red`, `loss_ink`, `trophy_yellow`, `stat_muted`, `item_ink`, `help_muted`,
+   `kbd_border`, `white`, `challenge_cyan`, `challenge_row_fill`, `challenge_done_border`…). The
+   same defect UIR-19's log §5 recorded; the theme is the theme lane's file — mechanical fix:
+   append `, 1`. This ticket's components survive it (a null theme records the miss and falls back
+   to ink; `_palette`/`_font` are null-safe), but `pause/the_scene_mounts_the_theme` and every
+   palette near-match will only read true once the theme parses.
+2. **UIR-22's seam line** (§4) — without it the audit's seam checks pass against the fake while the
+   action route is what a live match would take.
+
+## 12. Hand-back, one screen
+
+- **Built**: the reference's pause overlay and smash tutorial, 1:1, over the shared components, with
+  zero prose literals and no tree-pause anywhere (grep-asserted).
+- **The exact call UIR-22 must preserve**: `set_match_paused(paused: bool) -> bool` (bodies of
+  `_on_ui_pause()` `:741-748` and the ESC branch `:1881-1906` collapse into it), called by the
+  overlay on CONTINUE/ESC-step-4 (`false`), ESC-step-5 (`true`), RIPRENDI E PROVA; echoed back
+  through `overlay.set_match_paused(_paused)`; `Report()["pause_route"]` names which route is live.
+- **Mount**: §4 steps 1-8 (scene preload, seam, store, echo, axis feed, focus table).
+- **Replay**: disabled + `uir27-replay-entry-not-landed`; `set_replay_active(true)` is UIR-27's seam.
+- **Owed**: the engine run (§10) once the theme parses; the pad check on hardware.

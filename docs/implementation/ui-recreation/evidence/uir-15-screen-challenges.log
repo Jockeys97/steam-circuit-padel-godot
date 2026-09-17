@@ -1,0 +1,89 @@
+# UIR-15 ChallengesScreen 1:1 — evidence log
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-15-screen-challenges.md`
+Wave: post-approval information/profile wave (UIR-13 → UIR-14 → UIR-15 → UIR-16).
+Branch tip at wave start: `6343312` (brother `a1e10f04` preserved; no commits/staging/push).
+Engine: **not started this wave**. All checks static. $0.
+
+## 1. What landed
+
+| path | what |
+|---|---|
+| `godot/src/ui/screens/ChallengesScreen.gd` | the board: three sections, group sub-lists, rows, the limited build's note, four capture states |
+| `godot/src/ui/screens/ChallengesScreen.tscn` | theme + script |
+| `godot/tests/ui/screen_challenges_audit.gd` | 72 checks, temp store, no loop-dependent count |
+| `godot/tests/ui/screen_challenges_audit.tscn` | runner scene |
+
+## 2. Contract, element by element (screen ← reference)
+
+| element | reference | implementation |
+|---|---|---|
+| board | `styles.css:3176-3180` padding 24/64/64, max width 1100 | `ChallengeBoard` inside a scroll, `CenterContainer` cap at 1100 |
+| three sections | `renderChallenges` `js/ui.js:1157-1211` | `sectionAthletes` / `sectionOutfits` / `sectionArenas`, in that order |
+| section head | `:3203-3216` 1.05rem, `.14em`, `var(--cyan)`, rule `rgba(120,200,255,.2)`, count `.82rem` right | `cyan` palette, rule `challenge_cyan@0.2`, count label right-aligned |
+| rows | `:3217-3243` border `rgba(120,200,255,.16)`, fill `rgba(8,16,44,.5)`, radius 10 | `challenge_cyan@0.16` + `challenge_row_fill`, 10 px / 14 px padding |
+| row, done | `:3221-3224` border `rgba(255,210,120,.4)`, fill `rgba(60,42,8,.28)`, name `#ffd98a`, state `state_yellow_soft` | `challenge_done_border` / `challenge_done_fill`, name+state `state_yellow_soft` |
+| row columns | `28px minmax(150px,1fr) minmax(0,2fr) auto` | `Mark` (28) · `Name` (≥150, expand) · `What` (expand ×2) · `State` (shrink) |
+| row below 900 px | `:3249-3254` what+state under the name | `Row_*` rebuilt as mark + one column; asserted in three frame sizes |
+| mark | `js/ui.js:1129` `🏅` / `🎯` | same two glyphs, chosen from `done` |
+| name | `:1131-1134` athlete colour, arena accent | `Frozen` colour / `palette.accent`, verbatim data |
+| role small | `:3228-3234` role, or `challengeLockedAthlete` | `athlete_<id>_role` / the reference's own locked word |
+| cost line | `costo()` `js/ui.js:1145-1150` | `🏆 {n}/{n} {trophyOne|trophyMany}` / `⭐ …`, joined with the locale lane's separator |
+| challenge sentence | `challengeLabel()` `:670-688` | `chWin` + `_prova()` per part, ` · ` joined; `metric_<metric>`, `chAtMost`/`chAtLeast`/`chNone`, `chRally`/`chTotalHits`/`chWins`, `chSkillHard`/`chSkillLegend` |
+| groups | `:1165-1176` | one `Group_<nameKey>` per athlete with challenge outfits, `h3` in the athlete's colour |
+| note | `:1203-1208` `IS_DEMO` | `demoCareerNote` when the gate says demo (this port has no beta build — recorded); `demo-limited` pins it visible |
+| counts ↔ Profile | `unlock_summary` | section `done/total` asserted equal to `UiData.unlock_summary`'s own buckets |
+| capture states | ticket | `["default", "some-complete", "all-complete", "demo-limited"]` |
+
+## 3. Capture states, defined here (the page has no interaction)
+
+- `default` — the live career, no pins.
+- `some-complete` — pinned: the first challenge outfit of every athlete added to the career's
+  own `outfitsWon` (`unlockAll` false). Asserted: ≥1 done **and** ≥1 still to win.
+- `all-complete` — pinned: the career's own `unlockAll = true` (the store's own "everything
+  done" field, so nothing is invented).
+- `demo-limited` — pinned: the note rendered regardless of the build gate, with the gate's own
+  key. In a full build the reference shows no note; the state is labeled scaffolding for the
+  capture lane, and the audit asserts the default follows the gate in both build kinds.
+
+## 4. Seams recorded, nothing edited outside this ticket
+
+- **Section counts are read from the same adapter the Profile uses** (`UiData.unlock_summary`),
+  so the board and the Profile's summary line cannot disagree about what is unlocked.
+- **The limited-build note's beta branch is unreachable in this port**: `DemoGate.build()`
+  answers `demo`/`full` only, so `betaCareerNote` is never requested (the audit says so in a
+  check name rather than pretending otherwise). If a beta build id is ever added, the note key
+  follows it — that is the one line for the gate's owner.
+- **Theme tokens**: shares the 15-row request in `uir-13-screen-help.log` §3 (this screen's own
+  new names: `challenge_cyan`, `challenge_row_fill`, `challenge_done_border`,
+  `challenge_done_fill`, `trophy_yellow`, `stat_muted`). **Resolved 2026-09-17 (wave 3):**
+  every one of these rows is in `padel_theme.tres`, `theme/README.md` §3 and
+  `theme_probe.gd` — see `uir-wave3-shared-seams.log` §1.
+- **Cost/challenge glyphs** (`🏅 🎯 🏆 ⭐`) come from the frozen reference content itself
+  (`js/ui.js:1129,1145-1150`), the same way the port keeps the HUD's own glyphs.
+
+## 5. Checks actually run (static)
+
+```
+$ gdlint godot/src/ui/screens/ChallengesScreen.gd godot/tests/ui/screen_challenges_audit.gd
+Success: no problems found          # after the round-1 fixes listed in uir-13 log §4
+```
+
+## 6. Pending engine work (exact commands)
+
+```sh
+export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+pgrep -x Godot                      # never kill a pre-existing process
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_challenges_audit.gd
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_challenges_audit.gd -- --demo
+```
+
+## 7. Honest status
+
+- **UNVERIFIED BY THE ENGINE.** The audit has never run.
+- Risks the first run settles: the `challengeLabel` composition against real `modes.json`
+  challenges (the audit pins maestro's `circuit` sentence), the 900 px stack under `resized`,
+  and whether the full build's gate answers `full` for the note check.
+- Budget: $0, no paid API, no nested workers, no deletions; two workers' lanes untouched
+  (selection screens and feedback/settings/results were being written in parallel — no file of
+  theirs is imported, edited, or deleted here).

@@ -2,16 +2,17 @@
 id: UIR-20
 title: Pause overlay, replay entry and smash tutorial (screen-game overlays)
 slug: game-overlays
-state: blocked
+state: done
 readiness: potential
 owner_role: screen worker
 blocked_by: [UIR-02, UIR-03, UIR-04, UIR-05, UIR-07, UIR-08, UIR-13, UIR-19]
 blocks: [UIR-22, UIR-27]
 gates: [plan-approval, gate-a]
-plan_approved: false
+plan_approved: true
 triage: ready-for-agent
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-20-overlays.log
+  - docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json
 capture_states: [pause-match, pause-controller, pause-controls, quit-confirm, smash-tutorial]
 ---
 
@@ -99,3 +100,13 @@ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
 ## Traces
 
 `index.html:566-688`, `js/main.js:1584-1628, :1243-1362`, `godot/game/match_controller.gd:1080-1176, :494`, `styles.css` pause block + `:1970, :2003`; scout T09 acceptance (states half).
+
+## Finalize closure (2026-09-17, integration owner)
+
+Engine record, one Godot process at a time, manifest `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json` (all sources hashed
+before and after: tree digest `1256f5f1d7200437`, stable).
+
+- `tests/ui/pause_audit.gd` — **PASS 176/176**, exit 0, 0 `SCRIPT ERROR` line(s) (0.6s); log `docs/implementation/ui-recreation/evidence/uir-finalize/runs/pause_audit.log`
+
+**State: `done`** — the audit above is this ticket's arbiter and it is green on the
+finalize tree.

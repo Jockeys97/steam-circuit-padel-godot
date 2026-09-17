@@ -2,7 +2,7 @@
 
 Live status board for the 28 tickets. The coordinator is the only writer of this file; workers never edit it. Claims happen through the coordinator (claim protocol below): the acknowledgement row is the lock. Status changes happen only with the evidence named in the ticket.
 
-Last updated: 2026-09-17 (pre-GATE-A closeout: UIR-07's recorded caption finding and a second caption defect closed, the wave-3 HUD review reconciled with `hud_audit` 172/172 and `ui_legibility_audit` 76/76, captures regenerated for real, the full 19-run sweep green; `gate-a`, the platform/touch decision and `luca-final` stay untouched and unclaimed; **plus the post-pull correction pass** — merge provenance re-verified read-only, UIR-08/UIR-09 rows flipped to `done` on their landed evidence, UIR-24 recorded `in-progress`/partial, GATE-A handoff pack published at `board-gate-a.md` + `gate-a-review/`; **plus the post-pull closeout** — the merged-tip 1280×720 HUD recapture landed, ticket frontmatter and the README `approved` flag reconciled with this board, nothing pushed — see the "Post-pull correction" and "Post-pull closeout" notes below)
+Last updated: 2026-09-17 (**finalize closure** — every repair landed and the pack was re-run serially on the final tree, one engine process at a time: **32 runs, 32 green**, 4,318 checks, 0 `SCRIPT ERROR`, 11 classified engine lines; tree digest `1256f5f1d7200437`, stable; the playable route `menu→modes→characters→arena→drill→match→pause→result→rematch→settings` verified in-engine; tickets 26 done / 1 ready / 1 blocked; the replay seam + pause flag split closed; hash registers re-fingerprinted; `board-gate-a.md`'s stale opt-in text corrected to UIR-22's approved default-NEW; **nothing committed or pushed** — see the "Finalize closure" note below). Previous: 2026-09-17 (**finalize wave** — UIR-22 integration landed and the whole pack re-run serially on the merged tree, one engine process at a time; 32 runs, 24 green, 8 red with the failing check names recorded; the playable route `menu→modes→characters→arena→drill→match→pause→result→rematch→settings` verified in-engine; tickets reconciled to 18 done / 8 in-progress / 2 blocked; the stale `SmashTutorial.gd` hash row corrected; **nothing committed or pushed** — see the "Finalize wave" note below). Previous: 2026-09-17 (post-pull closeout — merged-tip 1280×720 HUD recapture, ticket frontmatter and the README `approved` flag reconciled with this board, nothing pushed; **plus the post-pull correction pass** — merge provenance re-verified read-only, UIR-08/UIR-09 rows flipped to `done` on their landed evidence, UIR-24 recorded `in-progress`/partial, the GATE-A handoff pack published at `board-gate-a.md` + `gate-a-review/`; **plus the pre-GATE-A closeout** — UIR-07's recorded caption finding and a second caption defect closed, the wave-3 HUD review reconciled with `hud_audit` 172/172 and `ui_legibility_audit` 76/76, captures regenerated for real, the full 19-run sweep green; `gate-a`, the platform/touch decision and `luca-final` stay untouched and unclaimed — see the "Post-pull correction" and "Post-pull closeout" notes below)
 
 ## State legend
 
@@ -23,7 +23,7 @@ Last updated: 2026-09-17 (pre-GATE-A closeout: UIR-07's recorded caption finding
 
 ## Frontier
 
-Nothing is `ready` yet: every remaining ticket sits behind `gate-a` (`plan-approval` is recorded passed; see Standings). Once GATE-A has Luca's verdict, the post-gate waves become claimable; claims go through the coordinator. The waves follow the DAG exactly:
+**Closure note (2026-09-17):** every wave below has landed and GATE-A passed (`passed-by-owner`); UIR-23 closed on its own executed acceptance (full `PASS 133/133`, demo `PASS 178/178` — see its closure note below), and UIR-25 waits on `luca-final` alone. Claims go through the coordinator. The waves followed the DAG exactly:
 
 - Wave 0 (parallel; `plan-approval` only): UIR-00 baseline, UIR-01 assets, UIR-03 router, UIR-06 computed styles.
 - Wave 1: UIR-02 theme (needs UIR-01 + UIR-06), UIR-04 adapters, UIR-05 input/a11y.
@@ -143,25 +143,83 @@ slice line anchors. The push decision remains Luca's; nothing is pushed.
 | UIR-07 | MenuScreen 1:1 (GATE-A prototype) | done | potential | UIR-02, 03, 04, 05, 06 | plan-approval | screen worker | `uir-07-screen-menu.log` |
 | UIR-08 | In-match HUD 1:1 (GATE-A prototype) | done | potential | UIR-02, 03, 04, 05, 06 | plan-approval | screen worker | `uir-08-hud-audit.log` (implementation register) + `uir-pre-gate-a-hud-audit.log` (**PASS 172/172**, 0 SCRIPT ERRORs) + merged-tree re-run `ui-hud-audit PASS 172/172` in `uir-pull-wave/sweep-results.txt` |
 | UIR-09 | Prototype mount | done | potential | UIR-07, UIR-08 | plan-approval | integration owner | `uir-09-prototype-mount.md` + `uir-pre-gate-a-captures.log` (11 real capture runs) + `uir-pull-wave/captures.log` (merged-tip re-capture); GATE-A brief completed by `board-gate-a.md` |
-| GATE-A | Luca verdict on prototype approach | open | external | UIR-09 | luca | Luca | verdict recorded in `docs/wayfinder/tickets/ui-port-approach.md` |
-| UIR-10 | ModesScreen 1:1 | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-10-screen-modes.log` |
-| UIR-11 | CharactersScreen 1:1 | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-11-screen-characters.log` |
-| UIR-12 | ArenaScreen 1:1 | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-12-screen-arena.log` |
-| UIR-13 | HelpScreen 1:1 + ControlLegend | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-13-screen-help.log` |
-| UIR-14 | HistoryScreen 1:1 | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-14-screen-history.log` |
-| UIR-15 | ChallengesScreen 1:1 | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-15-screen-challenges.log` |
-| UIR-16 | ProfileScreen 1:1 | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-16-screen-profile.log` |
-| UIR-17 | FeedbackScreen 1:1 | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-17-screen-feedback.log` |
-| UIR-18 | DrillScreen 1:1 | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-18-screen-drill.log` |
-| UIR-19 | SettingsScreen 1:1 + SettingsRows | blocked | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-19-screen-settings.log` |
-| UIR-20 | Pause overlay, replay entry, smash tutorial | blocked | potential | UIR-02..08, 13, 19 | + gate-a | screen worker | `uir-20-overlays.log` |
-| UIR-21 | ResultScreen 1:1 | blocked | potential | UIR-02..05, 07, 08 | + gate-a | screen worker | `uir-21-screen-result.log` |
-| UIR-22 | Full integration | blocked | potential | UIR-03, UIR-07, UIR-08, UIR-09, UIR-10-21 | + gate-a | integration owner | `uir-22-integration.md` |
-| UIR-23 | Demo and beta content matrix | blocked | potential | UIR-04, 10, 11, 12, 21 | + gate-a | verification worker | `uir-23-demo-matrix.md` |
-| UIR-24 | Capture harness + legibility audit | in-progress | potential | UIR-03, UIR-09 | + gate-a | verification worker | `uir-24-capture.log` + `uir-24-legibility.log` + closeout re-runs (`PASS 76/76`, harness `PASS 5/5`); **partial — coverage grows as screens land (menu + HUD today); not `done` until UIR-10–UIR-21 exist** |
+| GATE-A | Luca verdict on prototype approach | passed-by-owner | external | UIR-09 | luca | Luca | owner approved the approach and the remaining screens 2026-09-17 ("All approved let's go finalize this, so I can play-test the game with the current devs", recorded in `handoff-20260917-121721-ui-recreation-finalize.md`); no agent certifies the look/feel — that verdict is the owner's play-test |
+| UIR-10 | ModesScreen 1:1 | done | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-10-screen-modes.log` + finalize closure `PASS 118/118` |
+| UIR-11 | CharactersScreen 1:1 | done | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-11-screen-characters.log` + finalize closure `PASS 148/148` |
+| UIR-12 | ArenaScreen 1:1 | done | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-12-screen-arena.log` + finalize closure `PASS 133/133` |
+| UIR-13 | HelpScreen 1:1 + ControlLegend | done | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-13-screen-help.log` + finalize closure `PASS 91/91` |
+| UIR-14 | HistoryScreen 1:1 | done | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-14-screen-history.log` + finalize closure `PASS 56/56` |
+| UIR-15 | ChallengesScreen 1:1 | done | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-15-screen-challenges.log` + finalize closure `PASS 73/73` |
+| UIR-16 | ProfileScreen 1:1 | done | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-16-screen-profile.log` + finalize closure `PASS 74/74` |
+| UIR-17 | FeedbackScreen 1:1 | done | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-17-screen-feedback.log` + finalize closure `PASS 119/119` |
+| UIR-18 | DrillScreen 1:1 | done | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-18-screen-drill.log` + finalize closure `PASS 89/89` |
+| UIR-19 | SettingsScreen 1:1 + SettingsRows | done | potential | UIR-02..06, UIR-09 | + gate-a | screen worker | `uir-19-screen-settings.log` + finalize closure `PASS 91/91` |
+| UIR-20 | Pause overlay, replay entry, smash tutorial | done | potential | UIR-02..08, 13, 19 | + gate-a | screen worker | `uir-20-overlays.log` (hash rows re-computed to the closure state) + finalize closure `PASS 176/176`; the replay entry's flag split (`set_replay_available`) landed with UIR-27 |
+| UIR-21 | ResultScreen 1:1 | done | potential | UIR-02..05, 07, 08 | + gate-a | screen worker | `uir-21-screen-result.log` + finalize closure `PASS 176/176` |
+| UIR-22 | Full integration | done | potential | UIR-03, UIR-07, UIR-08, UIR-09, UIR-10-21 | + gate-a | integration owner | `uir-22-integration.log` + `uir-22-integration-journal.md` + finalize closure `PASS 71/71` + `uir_route_audit PASS 44/44` + slice `PASS 342/342` (demo `293/293`) |
+| UIR-23 | Demo and beta content matrix | done | potential | UIR-04, 10, 11, 12, 21 | + gate-a | verification worker | `uir-23-demo-matrix.md` + `.log` — full `PASS 133/133`, demo `PASS 178/178`, exit 0, 0 `SCRIPT ERROR` (release captain, 2026-09-17; beta column `not_ported`, recorded) |
+| UIR-24 | Capture harness + legibility audit | done | potential | UIR-03, UIR-09 | + gate-a | verification worker | `uir-24-capture.log` + `uir-24-legibility.log` + finalize closure `PASS 664/664` (the audit's background resolution corrected against the page base; the real opaque-fill defects fixed in the source) |
 | UIR-25 | Final regression and Luca acceptance | blocked | potential | UIR-22, 23, 24, 27 (+ UIR-26 conditional) | + gate-a; closes on luca-final | coordinator + Luca | `uir-25-final.md` |
-| UIR-26 | OSK visual grid and touch layer | blocked-external | external | product-scope decision | product-scope-and-platforms | screen worker (after decision) | `uir-26-osk-touch.md` |
-| UIR-27 | Replay point (buffer + overlay) | blocked | potential | UIR-20, 22 | + gate-a | integration + screen pair | `uir-27-replay.log` |
+| UIR-26 | OSK visual grid and touch layer | done | external | product-scope decision | product-scope-and-platforms | screen worker (after decision) | `uir-26-osk-touch.md` (§11 closure; `OskPanel.gd`/audit fixes in `evidence/uir-finalize/runs-small-gates/`) + finalize closure `PASS 177/177` |
+| UIR-27 | Replay point (buffer + overlay) | done | potential | UIR-20, 22 | + gate-a | integration + screen pair | `uir-27-replay.log` (§12 closure: seam executed, pause flag split picked and wired) + finalize closure `PASS 166/166` |
+
+
+## Finalize closure (2026-09-17, integration owner; local only, **nothing pushed**)
+
+Every repair landed and the whole pack was re-run serially on the final tree, one Godot process at
+a time (`pgrep -x Godot` guard before every run). Machine-readable record:
+`evidence/uir-finalize/ui-audit-sweep.json` (per run: exact command, exit, tally, ok/FAIL counts,
+`SCRIPT ERROR` count) + `evidence/uir-finalize/README.md` (the human table and the classified
+engine lines) + `evidence/uir-finalize/playable-route.md`. All sources under `godot/game`,
+`godot/src`, `godot/tests` and `project.godot` were hashed before and after: tree digest
+`1256f5f1d7200437`, **stable**. Earlier sweeps are kept, not deleted:
+`evidence/uir-finalize/superseded/` (sweep 1: 24 green / 8 red; sweep 2: 31 green / 1 red).
+
+- Sweep: **32 runs**; **32 green** (exit 0, no `FAIL` line, 0 `SCRIPT ERROR`); **4,318 checks
+  passed**; **0 `SCRIPT ERROR`** lines. The 11 engine `ERROR:` lines are classified in the README:
+  4 named allowances (`godot/game/check_log.sh`: the arena unknown-id probe ×2, the engine shutdown
+  report ×2), 4 deliberate refusal probes flanked by their `ok` checks (router `register` ×2, menu
+  `register` ×1, profile `route_action` ×1) and 3 headless-clipboard lines (no display clipboard;
+  the feedback screen's copy path). Nothing is unexplained.
+- Repairs that closed the wave: the replay seam landed in `match_controller.gd` with the pause flag
+  split (`set_replay_available`), so the card's RIGUARDA PUNTO is reachable and ESC's step 0 is
+  never stale; the audits' own defects corrected with citations (node paths, counts, one impossible
+  ball-triple inequality replaced with the array-identity proof); the small-gates fixes (`OskPanel`
+  targets / field-id capture / eager build, help, challenges, history, profile, feedback) landed
+  with their logs in `evidence/uir-finalize/runs-small-gates/`.
+- The playable route is verified in-engine end to end — `menu → modes → characters → arena →
+  drill → match → pause → result → rematch → settings` — by `godot/tests/ui/uir_route_audit.gd`
+  (**PASS 44/44**) plus `uir22_integration_audit.gd` (**PASS 71/71**), both drawing on the real
+  screens, the real bridge and a real played-out match; the slice is **PASS 342/342**, demo 293/293.
+- The wired card entry, executed (not one of the 32): `_probe_replay_card.gd` on the real MOUNTED
+  card — gate off with its reason before any frames, the pause echo + availability feed, the real
+  `ReplayButton`'s press → `start_replay()` (card hides, pause lifts), `stop_replay()` → pause
+  restored, card back on MATCH — **PASS 18/18**, 0 `SCRIPT ERROR`; log
+  `evidence/uir-finalize/scripts/probe-replay-card.log`, script preserved beside it (project root
+  copy stays re-runnable; the manifest digest was re-checked after the probe: stable).
+- Ticket truth, from frontmatter recomputed against this sweep: **26 `done`** — UIR-00..UIR-22,
+  UIR-24, UIR-26, UIR-27; **1 `ready`** — UIR-23 (all its blockers landed; flipped from `blocked`);
+  **1 `blocked`** — UIR-25 (closes on `luca-final`). No ticket is done off a partial green.
+- Hash registers re-fingerprinted to the closure state: `evidence/uir-20-overlays.log`
+  (`PauseOverlay.gd` 1546/57091/`b2d7d4dcfb1ea0d5`), `uir-26-osk-touch.md` §11, `uir-27-replay.log`
+  §12 (closure fingerprints + the executed runs), `uir-22-integration-journal.md` (naming drift
+  closed — the ticket's evidence now points at the real files).
+- Stale opt-in text corrected: `board-gate-a.md`'s "default stays legacy" statements now read as
+  superseded by UIR-22's approved default-NEW flip (`--ui=legacy` is the opt-out).
+- Nothing committed, nothing pushed; the push stays the owner's decision.
+
+## UIR-23 closure (2026-09-17, release captain; acceptance executed, local only)
+
+`demo_matrix_audit.gd` written (UIR-23's own file, mounts the playable host read-only through the
+router) and the ticket's two acceptance commands run serially, `pgrep -x Godot` empty before each:
+full `PASS 133/133`, demo (`-- --demo`) `PASS 178/178`, both exit 0 with 0 `SCRIPT ERROR` and no
+engine `ERROR:` lines. Matrix table with per-cell evidence: `evidence/uir-23-demo-matrix.md`;
+both transcripts: `evidence/uir-23-demo-matrix.log`; beta column `not_ported` (no beta build in
+the port today — `BuildFlag.gd` is one boolean), never emulated. Findings handed back, not
+patched: the `storeFollow` locale gap (already recorded by UIR-21) and `ArenaScreen.gd:10-11`'s
+stale "no arena carries an `unlock`" prose (UIR-12's file). The finalize manifest (32 runs) is
+unchanged; `evidence/uir-finalize/sweep.py`'s `RUNS` list now carries the two UIR-23 runs for the
+next full sweep.
 
 ## Claim protocol
 
@@ -183,8 +241,18 @@ slice line anchors. The push decision remains Luca's; nothing is pushed.
 
 ## Standings
 
-- Tickets done: 10 of 28 (UIR-00–UIR-09) — recomputed programmatically from the ticket frontmatter and row evidence on 2026-09-17 (`gate-a-review/ticket-status-assessment.txt`; the earlier "0 of 28" standing was stale against the rows).
-- Partial: 1 — UIR-24 `in-progress` (harness + legibility green; capture coverage grows as screens register).
-- Blocked: 16 (UIR-10–UIR-23, UIR-25, UIR-27) + UIR-26 `blocked-external`.
-- Gates: plan-approval — implementation approved by Luca's request (`CHARTER.md`; `LOG.md:4`); the pack README's flag is now flipped (`approved: true`) and the UIR-08/09/24 frontmatter is reconciled (closeout note above). **GATE-A OPEN** (evidence prepared: `board-gate-a.md` + `gate-a-review/`; no verdict exists). product-scope-and-platforms OPEN. `luca-final` OPEN.
+- Tickets done: **27 of 28** (UIR-00–UIR-24, UIR-26, UIR-27) — UIR-00..UIR-22, UIR-24, UIR-26,
+  UIR-27 recomputed from the ticket frontmatter against the finalize closure's engine record
+  (`evidence/uir-finalize/ui-audit-sweep.json`) on 2026-09-17, plus UIR-23 on its own executed
+  acceptance (full `PASS 133/133`, demo `PASS 178/178`, 2026-09-17 release captain); a ticket is
+  `done` only when the audit that is its arbiter exited 0 with no `FAIL` line and 0 `SCRIPT ERROR`.
+- Ready: **0** — UIR-23 closed on its executed acceptance (2026-09-17).
+- Blocked: **1** — UIR-25 (final regression + Luca acceptance; closes on `luca-final`).
+- Gates: plan-approval — implementation approved by Luca's request (`CHARTER.md`; `LOG.md:4`); the
+  pack README's flag is `approved: true`. **GATE-A passed-by-owner** 2026-09-17 (the owner's
+  "All approved let's go finalize this, so I can play-test the game with the current devs", recorded
+  in the finalize handoff) — the look/feel verdict itself is the owner's play-test and no agent
+  certifies it. `product-scope-and-platforms`: the touch/OSK direction was approved in the same
+  request; UIR-26 is `done` on its green audit, with the device pass recorded as owed
+  (`not_ported`, §5/§11 of `uir-26-osk-touch.md`). `luca-final` OPEN.
 - Nothing here self-certifies.

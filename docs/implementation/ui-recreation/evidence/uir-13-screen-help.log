@@ -1,0 +1,109 @@
+# UIR-13 HelpScreen 1:1 — evidence log
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-13-screen-help.md`
+Wave: post-approval information/profile wave (UIR-13 → UIR-14 → UIR-15 → UIR-16), single
+worker, four screens. Repo: `/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot`.
+Branch tip at wave start: `6343312` (brother `a1e10f04` already merged and preserved; no
+commits, no staging, no push).
+Engine: **no Godot process was started this wave** (dispatch: "No Godot this wave, selection
+captain alone engine owner"). All checks below are static. Budget: $0, no paid APIs.
+Retries: 1 lint round (see §4) — under the 2-retry cap.
+
+## 1. What landed
+
+| path | what |
+|---|---|
+| `godot/src/ui/components/ControlLegend.gd` | the shared controller legend (`.controls-guide__legend`, `index.html:243-257` help, `:641-668` pause COMANDI): art + caption + layout-aware rows; `setup()`, `set_device_layout()`, `tutorial_button()`/`tutorial_requested` |
+| `godot/src/ui/components/ControlLegend.tscn` | one-line scene wrapping that script |
+| `godot/src/ui/screens/HelpScreen.gd` | the screen: shell chrome, the eight cards, the tabs, the keyboard guide, the controller panel, `set_input_view()`, the 860/560 layout rules |
+| `godot/src/ui/screens/HelpScreen.tscn` | theme + script, ready for the router |
+| `godot/tests/ui/screen_help_audit.gd` | 90 checks, no loop-dependent count |
+| `godot/tests/ui/screen_help_audit.tscn` | runner scene |
+
+## 2. Contract, element by element (screen ← reference)
+
+| element | reference | implementation |
+|---|---|---|
+| title / subtitle | `helpTitle` / `helpIntro` | `ScreenShell.set_title/set_subtitle` |
+| return | `menu` | `back_target()` = `Router.back_target_of("help")` |
+| eight cards, order | `index.html:192-216` | `CARDS` (title_key, body_key, academy flag) |
+| card body keys | `helpMove…helpObj` + `helpAcademy` | same, resolved through `UiStrings` |
+| card box | `styles.css:2426` border `#28567d`, gradient `#0b2444@.85 → #061426@.85`, radius 10, shadow `0 18 40 rgba(0,0,0,.25)` | border `tab_border`, fill `surface_2@0.85` (**gradient collapses to its first stop — StyleBoxFlat carries no gradient**; recorded), radius 10, shadow `_alpha(shadow, 0.25)` |
+| card title | `styles.css:2434-2438` Lilita 1.05rem, `#d2f5ff` | variation `CardTitle` font, size 17, `text_soft_3` |
+| card body | `:2437` 0.82rem `#8aa5bc` | variation `CardBody`, size 13, `help_muted` (**request: `help_muted`**) |
+| tabs | `:2456-2480`, `.segmented` strip | `PanelContainer` variation `SegmentedContainer` + two `SegmentedActive/Inactive` buttons, `custom_minimum_size.x` 360, centred |
+| keyboard guide | `:2611-2630`, generic `kbd` | border `line`, border-bottom 3, radius 6, fill `surface_2`, size 12, min width 32; rows `help_muted` 12 |
+| keyboard rows | `index.html:232-238`: W A S D / Space / ⌘ / A D ← → / Option / Z / Esc | `KEYBOARD_ROWS`, caps and label ids in that order |
+| controller panel | `index.html:243-257` | `ControlLegend` (`columns=1`, `row_min_height=48`) |
+| layout | `:2407-2415` two columns; `@media 860px` one‑column; `@media 560px` one‑column cards | `_apply_layout()` reparents through `HelpRow` at 860 and folds `HelpSections.columns` to 1 below 560 |
+| capture states | ticket | `["keyboard-tab", "controller-tab"]` |
+
+## 3. Seams recorded, nothing edited outside this ticket
+
+1. **Theme tokens (15 rows for the theme owner).** `padel_theme.tres` must grow
+   `Palette/colors/*` entries — the screen reads every colour through the palette and records
+   any miss in `palette_misses()`:
+   `win_green #3fd36f` (`styles.css:2662,2697`), `win_ink #04210f` (`:2697`),
+   `loss_red #ff5d7a` (`:2663,2698`), `loss_ink #21040a` (`:2698`),
+   `trophy_yellow #ffd23a` (`:2664`), `stat_muted #6f91ad` (`:2655,2704,2717,2722`),
+   `item_ink #e6f8ff` (`:2702`), `help_muted #8aa5bc` (`:2437,2623`),
+   `kbd_border #29c9dc` (`:1727`), `white #ffffff` (base for the reference's
+   `rgba(255,255,255,α)` hairlines/labels: α .03 `:1321`, .05 `:1234`, .55 `:1237`, .72 `:1263`),
+   `challenge_cyan #78c8ff` (`:3216,3267`), `challenge_row_fill rgba(8,16,44,.5)` (`:3217`),
+   `challenge_done_border rgba(255,210,120,.4)` (`:3222`),
+   `challenge_done_fill rgba(60,42,8,.28)` (`:3223`),
+   `summary_fill rgba(8,22,48,.6)` (`:3592`).
+   **Fulfilled 2026-09-17 (wave 3):** all fifteen rows (plus `stat_bar`/`stat_bar_rival`,
+   two inks UIR-11's strip needed) are in `padel_theme.tres`, in `theme/README.md`'s §3
+   table with these same sources, and in `theme_probe.gd`'s `PALETTE` map — the three
+   places the probe and this log's own audit surface keep in sync. The exact rows, the
+   transcription check and the pending engine commands are in
+   `uir-wave3-shared-seams.log` §1 and §6–7.
+   Already present and used as-is: `ink`, `muted`, `line`, `cyan`, `gold`, `green`,
+   `state_yellow_soft`, `tab_border`, `surface_0/1/2`, `text_soft_3`, `shadow`.
+2. **Keyboard guide caps are the reference's own groups**, not the input lane's combined
+   `KEYBOARD_LEGEND` strings — the label **ids** are asserted equal to
+   `input/strings.gd:KEYBOARD_LEGEND[*].label_id` in order, so the two lanes cannot drift.
+3. **`tutorial_requested`** is emitted and unbound on the help screen (`SETTINGS.tutorial_link`
+   defaults off); UIR-20's pause overlay is the consumer.
+4. **Capture harness needs nothing from this lane**: `tests/ui/capture_ui.gd:129-130` reads
+   `capture_states()` from the mounted screen, and the router registration is UIR-22's mount.
+
+## 4. Checks actually run (static)
+
+```
+$ python3 - <<'PY'  # gdtoolkit is on PATH
+$ gdlint godot/src/ui/components/ControlLegend.gd godot/src/ui/screens/HelpScreen.gd \
+        godot/src/ui/screens/HistoryScreen.gd godot/src/ui/screens/ChallengesScreen.gd \
+        godot/src/ui/screens/ProfileScreen.gd
+Success: no problems found
+```
+Round 1 caught real defects and they were fixed before this log: a C-style ternary (GDScript has
+none) in `HistoryScreen`, a `signal` declared after the consts in `ControlLegend`, a duplicated
+`load()` of the theme, three lines over the lint length, and two expression-statements that
+discarded a call. Nothing in this wave was left half-edited.
+
+## 5. Pending engine work (exact commands — for the engine-owning captain)
+
+```sh
+export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+pgrep -x Godot            # never kill a pre-existing process; wait for an idle window
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_help_audit.gd
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_history_audit.gd
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_challenges_audit.gd
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_profile_audit.gd
+```
+Each prints `PASS screen_help: <n>/<n>`-style lines and exits non-zero on failure. The four
+screens are **not** registered in the router mount yet (UIR-22 owns `Main`/`ScreenRouter`
+registration); the audits register them into their own temp router, so they run today.
+
+## 6. Honest status
+
+- **UNVERIFIED BY THE ENGINE.** No `--headless` run happened this wave: the four audits have
+  never executed. Static evidence only (gdlint parse clean, check counts stable, no
+  loop-dependent assertions).
+- Known risks the first run will settle: (a) the exact `check_le/check_ge/check_gt` names on
+  `AuditBase` — verified by reading `audit_base.gd` before use; (b) `SegmentedActive` /
+  `SegmentedContainer` variation names; (c) the 860/560 reparent timing under `resized`.
+- The `dd/mm` date is the recorded divergence from the reference's `toLocaleDateString`
+  (`js/ui.js:1600`), which has no ported equivalent.

@@ -2,16 +2,17 @@
 id: UIR-17
 title: FeedbackScreen 1:1 (screen-feedback, queue + failure ladder)
 slug: screen-feedback
-state: blocked
+state: done
 readiness: potential
 owner_role: screen worker
 blocked_by: [UIR-02, UIR-03, UIR-04, UIR-05, UIR-07]
 blocks: [UIR-22]
 gates: [plan-approval, gate-a]
-plan_approved: false
+plan_approved: true
 triage: ready-for-agent
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-17-screen-feedback.log
+  - docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json
 capture_states: [default, counted, diagnostics-open, manual-fallback, sent]
 ---
 
@@ -97,3 +98,13 @@ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
 ## Traces
 
 `index.html:310-364`, `js/ui.js:244-404`, `scripts/feedback-audit.mjs`, `godot/game/run.sh` header (no network assumptions); scout T07 acceptance list.
+
+## Finalize closure (2026-09-17, integration owner)
+
+Engine record, one Godot process at a time, manifest `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json` (all sources hashed
+before and after: tree digest `1256f5f1d7200437`, stable).
+
+- `tests/ui/screen_feedback_audit.gd` — **PASS 119/119**, exit 0, 0 `SCRIPT ERROR` line(s) (0.4s); log `docs/implementation/ui-recreation/evidence/uir-finalize/runs/screen_feedback_audit.log`
+
+**State: `done`** — the audit above is this ticket's arbiter and it is green on the
+finalize tree.

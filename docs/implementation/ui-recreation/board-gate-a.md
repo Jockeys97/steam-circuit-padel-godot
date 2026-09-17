@@ -18,7 +18,10 @@ wants, what "3D flair" means beyond the live 3D court.
      --resolution 1280x720 res://game/Main.tscn -- --ui=new --seed=20260916 --tier=3
    ```
    `--ui=new` mounts the recreated menu and (from a match) the recreated HUD beside the ported ones;
-   both old and new constructions remain runnable (`--ui=legacy` default).
+   both old and new constructions remain runnable. **Corrected 2026-09-17 (UIR-22 landed): the
+   recreated UI is the DEFAULT and `--ui=legacy` is the opt-out** — the "`--ui=legacy` default"
+   reading this report was written under is superseded (owner-approved; BOARD row GATE-A,
+   `main_menu.gd:111`, `match_controller.gd:413`).
 2. **The before/after pairs** (real captures only; every file hash-recorded):
    - `gate-a-review/sheets/menu-before-after-1280x720.png` — REFERENCE (web) | BEFORE (ported, UIR-00
      register) | AFTER (recreated MenuScreen, merged tip `c9470e2`, 1280×720).
@@ -40,9 +43,11 @@ wants, what "3D flair" means beyond the live 3D court.
   0 SCRIPT ERRORs; combined pull-wave sweep on the merged tree (`evidence/uir-pull-wave/`), the only
   red being the branch's own `padel.pck` export check (needs an exported pack on the gate host).
   `court_dimensions_test.gd` was run explicitly: `PASS court dimensions: 1111 checks, 0 failures`.
-- **Prototype mounts are opt-in** (verified in the review and re-checked at `HEAD`): legacy
-  `_hud`/`_mode_hud` hidden only under `--ui=new` (`match_controller.gd:718/735`); default stays
-  legacy; `project.godot` `run/main_scene` unchanged (`3aef17de…`).
+- **Prototype mounts were opt-in at GATE-A; corrected 2026-09-17 (UIR-22 landed):** the approved
+  UIR-22 flip made the recreated UI the default — `--ui=legacy` keeps the legacy construction
+  reachable (`match_controller.gd:413` `_ui_new = _arg(args, "--ui=", "new") != "legacy"`,
+  `main_menu.gd:111`), and `project.godot` `run/main_scene` is unchanged (`3aef17de…`, still
+  frozen; UIR-22's mount goes through `main_menu.gd`, not the main scene).
 
 ## What to judge (the brief)
 

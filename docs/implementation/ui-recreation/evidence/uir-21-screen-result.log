@@ -1,0 +1,103 @@
+# UIR-21 ResultScreen 1:1 — evidence log
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-21-screen-result.md`
+Wave: UIR-17/18/19/21 completion wave — sole engine runner; $0; no commits/staging/push.
+Engine: **ran this wave** — `"/Applications/Godot.app/Contents/MacOS/Godot" --headless --path godot/ --script res://tests/ui/screen_result_audit.gd`
+Result: **167/168 checks — FAIL 1: `result/the_scene_mounts_the_theme`**, the shared theme's parse error (§6). Every other check green.
+Run logs: `/tmp/padel-uir21-run{1..6}.log`, final `/tmp/padel-uir-final-result.log`.
+
+**Reading a run:** the exit code is not a pass signal — a script that fails to parse also
+exits 0. The tally line (`PASS n/n` / `FAIL n/n`) and the `SCRIPT ERROR` count are the
+evidence; this log's numbers come from those.
+
+## 1. What landed this wave
+
+| path | what |
+|---|---|
+| `godot/tests/ui/screen_result_audit.gd` | **the missing audit, authored this wave** (168 checks) — the UIR-17/18/19 audits already existed |
+| `godot/tests/ui/screen_result_audit.tscn` + `.gd.uid` | runner scene + `uid://jhnd8tuudk0f` |
+| `godot/src/ui/screens/ResultScreen.gd` | two engine-caught fixes (§3) |
+
+## 2. What the audit proves (all green)
+
+1. the router mounts it; no back target (the reference's own row), one `to-menu` action.
+2. win/loss are separate localized states with the mode's narrative line.
+3. **the score line's three shapes** (`js/ui.js:1493-1502`), each built by writing the
+   state's own fields and reading them back through `result_from_state`: points match
+   `7-3`, one-set `6-4`, multi-set `2-1` — rendered and compared.
+4. the four stat rows against the payload's raw stats: values, labels, the better side
+   (including **errors lower-is-better**), the green highlight when the theme is present
+   (and the plain-white fallback when it is not), the longest-rally and average foot
+   figures (`3.5`, and `0` without rallies).
+5. the career endings (`careerFinale`/`careerSeasonWin`/`careerSeasonPromoted`/
+   `careerSeasonRepeat` + plain win/loss), the rival-streak sentence at |streak| ≥ 2 and
+   its silence at 1, the tournament next-fixture and win lines.
+6. the objectives block: hidden off-career; the season's own rows with check/progress/
+   category; a met row; a claimed row (`objAlreadyClaimed`); the match bonus row; the
+   stars on the head line; a newly won outfit announced immediately.
+7. the CTA: hidden by default; wishlist/follow wording; the body key by build; a payload
+   URL too; cleared again. **The audit never presses the CTA button** (it opens the OS).
+8. rematch label `rematch`/`nextMatch` with `continue_pending`, the signal, and the menu
+   route through the router (one screen left mounted).
+9. the language flip across ten slots, and the flip back.
+10. the literal scan (probe-proven) over `ResultScreen.gd`.
+11. **the LIVE path**: a quick match stepped 2,400 ticks (~40+ simulated seconds,
+    reported in the run) and a career points match stepped 900; the rendered score, all
+    four stat rows, the foot and the average are compared against the state's own fields;
+    a render is byte-compared against `user://uir21-result-audit` before/after — **it
+    writes nothing**.
+12. the ten declared capture states, each applied and the specific ones asserted.
+
+## 3. What the run caught, and the fixes
+
+1. **A name-rename race in the objectives block** (real, subtle, engine-only):
+   `_render_objectives` rebuilt its rows with a deferred `queue_free`, leaving the old
+   rows attached for a frame; `add_child` then auto-renamed each fresh row whose name
+   collided with a still-attached sibling — `ObjRow0` became `@HBoxContainer@37`. The
+   accessor reads by name, so a read that raced the rebuild saw the renamed rows and
+   returned empty strings (found by bisecting three red checks across two renders while
+   adjacent renders passed). Fixed in the screen: **detach first (`remove_child`), then
+   `queue_free`**. The audit also settles one frame after every `enter()` in that
+   section, so reads are deterministic by construction.
+2. **Captures were not self-contained**: `default` inherited the previous capture's CTA
+   placeholder URL (so the blank card showed the CTA). `_base_capture()` now pins
+   `store_url: ""` / `store_kind: wishlist`, so every capture is a complete state in any
+   walk order.
+3. Audit-side: the objective reads now settle a frame; the claimed row's staging writes
+   the season list itself (the store's own signature) instead of relying on regeneration;
+   the met row lifts every season metric past its target (max-unit rows deliberately stay
+   open).
+
+## 4. Seams recorded (as the ticket asks)
+
+- **Store URL: not configured.** The CTA is hidden by default (`cta_visible() == false`,
+  asserted); only the `demo-cta` / `beta-cta` captures pin a placeholder URL. Recording
+  it is the ticket's expected outcome; nothing links anywhere.
+- **Pending-continue data source:** the payload's `continue_pending` (the mode flow's
+  field) drives the `rematch` → `nextMatch` label swap — proven both ways.
+- **Score format sources:** `result_from_state` reads `pointsToWin` / `setScores` /
+  `sets` (the state's own fields); constructed payloads must carry `player`/`ai` — the
+  screen never recomputes a score from parts it does not own.
+- **Locale gaps recorded (for the locale lane, the tables are frozen here):**
+  `betaResultBody` and `storeFollow` are not resolvable in either locale; the screen
+  shows the id fallback (asserted as the current, visible behaviour) — both are new
+  copy this screen needs for the full-build CTA.
+- The audit writes only `user://uir21-result-audit` (the staged career it stages for the
+  objectives section is labeled CONSTRUCTED in the audit output).
+
+## 5. Constructed vs live, where each appears
+
+- Constructed (labeled): the captures; the three score shapes' state fields; the
+  career staged into the temp store; the narrative/mission payloads.
+- Live: the quick and career simulations stepped above, whose rendered figures are the
+  state's own. No fabricated data enters that section, and no external call is made.
+
+## 6. The one red check — a cross-lane blocker in the shared theme
+
+`result/the_scene_mounts_the_theme` fails because
+`godot/src/ui/theme/padel_theme.tres` **does not parse**: `Parse Error: Expected 4
+arguments for constructor` at line 419 — thirteen palette rows use a 3-argument
+`Color(r, g, b)`. Exact lines: **419–429 and 434–435**; mechanical fix: append `, 1`.
+The theme file is the theme lane's — recorded, not edited. The theme mount is the only
+theme-dependent check in this audit; the stats-highlight colour assertions switch to a
+recorded fallback while it lasts.

@@ -1,0 +1,48 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _run (res://_probe_replay_card.gd:65)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _run (res://_probe_replay_card.gd:65)
+ok probe/the_real_card_is_mounted
+ok probe/the_real_entry_button_is_there
+ok probe/the_card_starts_closed
+ok probe/the_entry_is_gated_off_before_any_frames
+ok probe/the_gate_names_the_landing
+ok probe/frames_are_recorded
+ok probe/the_match_pauses
+ok probe/the_echo_opens_the_card
+ok probe/the_availability_feed_reaches_the_card
+ok probe/an_enabled_entry_carries_no_reason
+ok probe/the_real_button_is_not_disabled
+ok probe/the_button_press_starts_the_replay
+ok probe/entering_lifts_the_pause
+ok probe/the_card_hides_on_entry
+ok probe/stopping_restores_the_pause
+ok probe/the_playback_ends
+ok probe/the_card_reopens_after_stop
+ok probe/a_second_replay_is_startable
+# report wired entry: button -> signal -> start_replay -> stop_replay, all on the mounted card
+PASS 18/18
+WARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

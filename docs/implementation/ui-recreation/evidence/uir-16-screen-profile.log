@@ -1,0 +1,91 @@
+# UIR-16 ProfileScreen 1:1 — evidence log
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-16-screen-profile.md`
+Wave: post-approval information/profile wave (UIR-13 → UIR-14 → UIR-15 → UIR-16).
+Branch tip at wave start: `6343312` (brother `a1e10f04` preserved; no commits/staging/push).
+Engine: **not started this wave**. All checks static. $0.
+
+## 1. What landed
+
+| path | what |
+|---|---|
+| `godot/src/ui/screens/ProfileScreen.gd` | the page: four boxes, the season objectives, the unlock summary with its one button, `route_action("to-challenges")`, three capture states |
+| `godot/src/ui/screens/ProfileScreen.tscn` | theme + script |
+| `godot/tests/ui/screen_profile_audit.gd` | 74 checks, temp store with a constructed career, no loop-dependent count |
+| `godot/tests/ui/screen_profile_audit.tscn` | runner scene |
+
+## 2. Contract, element by element (screen ← reference)
+
+| element | reference | implementation |
+|---|---|---|
+| four boxes | `renderProfile` `js/ui.js:1616-1621`, `styles.css:1296-1312` auto-fit `minmax(130px,1fr)` | `GridContainer`, 4 columns at 1280 and fewer in a narrow frame |
+| box inks | `histWins`/`profileSeasons`/`profileStars`/`profileWinRate` | `win_green` / `trophy_yellow` / `gold` / `cyan` (+ the reference's own `%` on the rate) |
+| box box | `history-stats__box` (shared) | border `tab_border`, radius 10, fill `surface_2@0.85` (**gradient collapse recorded**, as in UIR-13/14) |
+| section titles | `:1314-1317` 0.8rem, `.1em`, uppercase, `var(--muted)` | `objSeasonTitle`, `profileUnlocksTitle`, theme `muted` |
+| objective row | `:1195-1218` grid `1.2em 1fr auto auto`, rule `rgba(255,255,255,.05)` | `Check` · `Label` · `Progress` · `Cat`, each row a panel with a top hairline |
+| check glyph | `:1224` `✓` / `○` | same two glyphs, from `done` |
+| label | `:1247` `obj_<id>` with `{n}` | `obj_<id>` + `{n: target}` through `UiStrings.t` |
+| progress | `:1230-1245` `P/T`, `#3fd36f` when done | `"%d/%d"`, `green` palette when done, `white@0.55` otherwise |
+| category | `:1262-1268` `objDone` / `objAlreadyClaimed` / empty | the reference's own two words, `muted` |
+| empty list | `:1639` | `profileNoObjectives` in the objectives box |
+| unlock summary | `:3592` border `rgba(0,229,255,.22)`, fill `rgba(8,22,48,.6)` | `cyan@0.22` + `summary_fill`, radius 12 |
+| unlock line + button | `:1646-1665` | `profileUnlocksCount {done}/{total}` + a `ButtonSecondary` labelled `challenges` |
+| the one route | `data-action="to-challenges"` | `route_action("to-challenges")` → the router's `go_to("challenges")` |
+| capture states | ticket | `["default", "empty-objectives", "mid-season"]` |
+
+## 3. The scout's acceptance, in the audit
+
+The four box values are compared against **`ModesSave.profile(store)`'s own career group** and
+against **`UiData.profile_summary`**, in the same test, on a career the audit itself wrote
+(7/3/2/5 → the fourth box must read `70%`). No expectation in that block is hand-copied from
+the screen.
+
+## 4. Capture states, defined here
+
+- `default` — the live career and season.
+- `empty-objectives` — the reference's own empty branch (`js/ui.js:1639`): the list shows
+  `profileNoObjectives` and zero rows. Asserted, then reverted.
+- `mid-season` — pinned progress: the live season's `seasonProgress` with its first pending
+  objective's metric brought to that objective's target, so the page shows one done row and at
+  least one still open. Asserted both ways.
+
+## 5. Seams recorded, nothing edited outside this ticket
+
+- **`ModesSave.profile()` / `load_career()` / `UiData.season_objectives()` are read-only calls**;
+  the audit builds its career through `ModesSave.save_career` inside
+  `user://uir16-profile-audit` and removes the directory. The real `user://save` is untouched.
+- **Theme tokens**: shares the 15-row request in `uir-13-screen-help.log` §3 (this screen's own
+  new names: `win_green`, `stat_muted`, `trophy_yellow`, `white`, `summary_fill`; everything
+  else it names – `gold`, `green`, `cyan`, `ink`, `muted`, `line` – already exists).
+  **Resolved 2026-09-17 (wave 3):** every one of these rows is in `padel_theme.tres`,
+  `theme/README.md` §3 and `theme_probe.gd` — see `uir-wave3-shared-seams.log` §1.
+- **Focusables**: back + `profile/unlocks-challenges`; `focus_controls()` is a shell
+  pass-through, so UIR-05's bridge reads them without a screen-owned policy.
+- **UIR-22's mount** owns the router registration; the Profile needs nothing from it beyond the
+  standard payload (`router_id`, `back_target`, `store`) it already reads.
+
+## 6. Checks actually run (static)
+
+```
+$ gdlint godot/src/ui/screens/ProfileScreen.gd godot/tests/ui/screen_profile_audit.gd
+Success: no problems found          # after the round-1 fixes listed in uir-13 log §4
+```
+
+## 7. Pending engine work (exact commands)
+
+```sh
+export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+pgrep -x Godot                      # never kill a pre-existing process
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_profile_audit.gd
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_profile_audit.gd -- --demo
+```
+
+## 8. Honest status
+
+- **UNVERIFIED BY THE ENGINE.** The audit has never run.
+- Risks the first run settles: whether the live season offers ≥2 objectives for the
+  `mid-season` pin to show one done and one open; the objectives box's row structure under the
+  4-column-to-`auto-fit` refold; the `%` suffix check's exact rounding on the constructed
+  career.
+- Budget: $0, no paid API, no nested workers, no deletions; the parallel lanes (selection
+  screens, feedback/settings/results) share no file with this one.

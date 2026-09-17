@@ -2,7 +2,7 @@
 id: UIR-23
 title: Demo and beta content matrix evidence
 slug: demo-matrix
-state: blocked
+state: done
 readiness: potential
 owner_role: verification worker
 blocked_by: [UIR-04, UIR-10, UIR-11, UIR-12, UIR-21]
@@ -12,6 +12,7 @@ plan_approved: false
 triage: ready-for-agent
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-23-demo-matrix.md
+  - docs/implementation/ui-recreation/evidence/uir-23-demo-matrix.log
 ---
 
 # UIR-23: Demo and beta content matrix evidence
@@ -94,3 +95,19 @@ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
 ## Traces
 
 `js/build.js:1-112`, `js/ui.js:737-770, :1417-1420`, `godot/game/content_gate.gd`; scout T12 acceptance list; handoff demo-lock treatment requirement.
+
+## Closure (2026-09-17, release captain — acceptance executed)
+
+- Audit written: `godot/tests/ui/demo_matrix_audit.gd` (+ `.tscn`) — mounts the playable host
+  read-only through its router, temp profile `user://uir23-demo-matrix-audit`, wiped; no screen or
+  gate file modified.
+- Acceptance commands (the ticket's own), serial, `pgrep -x Godot` empty before each:
+  - `"$GODOT" --headless --path godot/ --script res://tests/ui/demo_matrix_audit.gd` → **PASS 133/133**, exit 0, 0 `SCRIPT ERROR`
+  - same + `-- --demo` → **PASS 178/178**, exit 0, 0 `SCRIPT ERROR`
+- Evidence: `evidence/uir-23-demo-matrix.md` (matrix with per-cell log line) +
+  `evidence/uir-23-demo-matrix.log` (both transcripts).
+- DoD: matrix fully populated — every cell proven or explicitly not-runnable (beta column
+  `not_ported` with the `BuildFlag.gd` reason, never emulated); findings handed to owners, not
+  patched (the `storeFollow` locale gap already recorded by UIR-21; `ArenaScreen.gd:10-11` prose).
+- The finalize manifest (32 runs) is unchanged; `evidence/uir-finalize/sweep.py`'s `RUNS` list now
+  carries the two UIR-23 runs so the next full sweep (UIR-25's) includes them.

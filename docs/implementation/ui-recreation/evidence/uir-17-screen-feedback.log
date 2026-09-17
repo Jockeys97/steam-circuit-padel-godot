@@ -1,0 +1,79 @@
+# UIR-17 FeedbackScreen 1:1 — evidence log
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-17-screen-feedback.md`
+Wave: UIR-17/18/19/21 completion wave — sole engine runner; $0; no commits/staging/push.
+Engine: **ran this wave** — `"/Applications/Godot.app/Contents/MacOS/Godot" --headless --path godot/ --script res://tests/ui/screen_feedback_audit.gd`
+Result: **118/119 checks — FAIL 1: `feedback/the_scene_mounts_the_theme`**, the shared theme's parse error (§6). Every other check green.
+Run logs: `/tmp/padel-uir17-run*.log`, final `/tmp/padel-uir-final-feedback.log`.
+
+**Reading a run:** the exit code is not a pass signal — a script that fails to parse also
+exits 0. The tally line (`PASS n/n` / `FAIL n/n`) and the `SCRIPT ERROR` count are the
+evidence; this log's numbers come from those.
+
+## 1. What landed this wave
+
+| path | what |
+|---|---|
+| `godot/tests/ui/screen_feedback_audit.gd` | the ticket's audit, exercised in-engine; two fixes this wave (§3) |
+| `godot/tests/ui/screen_feedback_audit.tscn` + `.gd.uid` | runner scene + `uid://m989iqtwukvg` (the three sibling audits got the same pair this wave; without them `--script` cannot load the audit) |
+| `godot/src/ui/screens/FeedbackScreen.gd` | fixes this wave: `:=` inference off dynamic calls (a parse error), the `resized` re-entrancy guard, the segment pressed-state fix |
+
+## 2. The engine's word, per area (all green)
+
+- topics render; empty reject; the counter bounds; the queue entry shape.
+- **queue-first ordering**: an entry is in the queue before the delivery seam is called;
+  a failure never loses the text (`feedback/entering_and_capturing_deliver_nothing`,
+  `feedback/only_a_button_press_reaches_the_seam`).
+- the failure ladder (rejected / offline / ok) — the seam's verdicts are **simulated
+  locally**; no network call is made by the audit (§4).
+- sent marking; manual reveal; the Steam/Discord button stays hidden while both URLs are
+  null; OSK open/type/close; the language flip; the five capture states; the literal scan
+  (probe line now proves it flags prose and spares developer text — see §3).
+
+## 3. What the run caught, and the fixes
+
+1. **The `_literals` scanner was vacuous.** It appended only escaped characters and
+   dropped every plain one, so each probe scanned `""`. Fixed in this audit (and the two
+   siblings); the scan now returns the planted offender
+   `res://probe.gd:2 "Play now"`, and later caught a real debug string during this wave.
+2. **The send slot didn't follow the screen's own state.** The audit listed
+   `feedbackSend`, but with **no endpoint configured** the screen labels the button
+   `feedbackSaveAndCopy` (`send_label_key()`), which the same audit asserts two blocks
+   earlier. The slot now reads the screen's current key, and the flip compares against it.
+3. Parse errors from `:=` off dynamic calls (`store().read_group(...)`,
+   `_constructed_entry_from_form()`) — typed, plus the missing-underscore call fix.
+4. The `resized` handler re-entry that stack-overflows the engine natively (proven on the
+   shared layout shape, DrillScreen crash reports) — guarded here too.
+
+## 4. Delivery seam status (named back, as the ticket asks)
+
+- **No endpoint configured.** The delivery path is documented absence, not a stub: the
+  audit proves ordering and the failure ladder against the seam's failure path; the `sent`
+  state is reached only through the seam's own success path supplied by the test double —
+  **this run is a simulated seam response** in that one area, and the audit says so.
+- Diagnostics field list, exact shape asserted: `lang, demo, platform, screen, gamepad,
+  controlMode, reduceMotion, settings{difficulty, matchLength, drillDifficulty},
+  career{season, trophies, stars, wins, losses}, drillRecords, recentMatches,
+  matchesPlayed`.
+- OSK: open/type/close proven through the entry seam; the OSK **grid** is UIR-26's
+  (gated by `docs/wayfinder/tickets/product-scope-and-platforms.md`).
+- Steam/Discord CTA: hidden while both URLs are null (`feedback/...` asserts the hidden
+  state; the URLs are configurable later through the same seam).
+
+## 5. Where the audit writes
+
+`user://uir17-feedback-audit` only (created, asserted, removed); the real `user://`
+profile is never written. No audit run makes a network call.
+
+## 6. The one red check — a cross-lane blocker in the shared theme
+
+`feedback/the_scene_mounts_the_theme` fails because
+`godot/src/ui/theme/padel_theme.tres` **does not parse**: Godot reports
+`Parse Error: Expected 4 arguments for constructor` at line 419. Thirteen palette rows
+were written with a 3-argument `Color(r, g, b)`; the `.tres` constructor requires 4
+(`r, g, b, a`). Exact lines: **419–429 and 434–435** (`win_green`, `win_ink`, `loss_red`,
+`loss_ink`, `trophy_yellow`, `stat_muted`, `item_ink`, `help_muted`, `kbd_border`,
+`white`, `challenge_cyan`, `stat_bar`, `stat_bar_rival`).
+Mechanical fix: append `, 1` to each. The theme file is the theme lane's (not this
+ticket's) — recorded, not edited. The theme mount is the only theme-dependent check in
+this audit, so with those 13 lines valid this run has no other candidate red.

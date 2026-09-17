@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# Engine.get_version_info() = { "major": 4, "minor": 7, "patch": 2, "hex": 263938, "status": "stable", "build": "official", "hash": "ed1daf0bf001b61586d9930840f2f1394092c079", "timestamp": 0, "string": "4.7.2-stable (official)" }
+ok engine major version
+ok engine minor version
+ok engine patch version
+ok engine channel is stable
+ok engine version string
+ok engine build commit
+ok physics tick is 120 Hz
+ok float accumulator overshoots 120 steps (count integer ticks)
+PASS 8/8

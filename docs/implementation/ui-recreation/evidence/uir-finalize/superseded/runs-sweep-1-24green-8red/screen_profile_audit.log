@@ -1,0 +1,95 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok profile/the_router_still_carries_thirteen_ids
+ok profile/all_thirteen_slots_register
+ok profile/the_scene_registers_under_the_profile_id
+ok profile/go_to_mounts_the_screen
+ok profile/the_mounted_scene_carries_ProfileScreen_gd
+ok profile/the_scene_mounts_the_theme
+ok profile/the_screen_reads_the_temp_store
+ok profile/the_screen_reports_its_own_id
+ok profile/the_declared_return_is_the_router_table_s
+ok profile/the_screen_kept_the_router_fact
+ok profile/the_three_declared_capture_states
+ok profile/an_undeclared_capture_state_is_refused
+ok profile/the_constructed_career_is_the_one_in_the_store
+ok profile/the_reference_shows_four_boxes
+FAIL profile/the_wins_box_is_the_career_s_own: expected "7", got ""
+FAIL profile/the_wins_box_is_the_adapter_s_own: expected "7", got ""
+FAIL profile/the_trophies_box_is_the_career_s_own: expected "2", got ""
+FAIL profile/the_trophies_box_matches_the_adapter: expected "2", got ""
+FAIL profile/the_stars_box_is_the_career_s_own: expected "5", got ""
+FAIL profile/the_stars_box_matches_the_adapter: expected "5", got ""
+FAIL profile/the_win_rate_is_seventy_per_cent_for_seven_of_ten: expected "70%", got ""
+FAIL profile/and_it_is_the_adapter_s_own_rounding: expected "70", got ""
+FAIL profile/the_first_box_label_is_the_reference_s: expected "Wins", got ""
+FAIL profile/the_second_box_label_is_the_reference_s: expected "Season trophies", got ""
+FAIL profile/the_third_box_label_is_the_reference_s: expected "Stars", got ""
+FAIL profile/the_fourth_box_label_is_the_reference_s: expected "Win rate", got ""
+ok profile/the_list_is_the_adapter_s_own_row_count
+ok profile/a_fresh_season_has_objectives
+ok profile/the_first_target_is_the_adapter_s
+ok profile/the_first_progress_is_the_adapter_s
+FAIL profile/the_first_objective_row_exists: expected true, got false
+SCRIPT ERROR: Cannot call method 'get_child' on a null value.
+          at: _objectives (res://tests/ui/screen_profile_audit.gd:176)
+          GDScript backtrace (most recent call first):
+              [0] _objectives (res://tests/ui/screen_profile_audit.gd:176)
+              [1] _run (res://tests/ui/screen_profile_audit.gd:90)
+              [2] _mount (res://tests/ui/screen_profile_audit.gd:128)
+ok profile/the_unlock_summary_line_exists
+ok profile/the_summary_line_is_the_adapter_s_own_count
+FAIL profile/the_unlock_button_exists: expected true, got false
+SCRIPT ERROR: Invalid access to property or key 'text' on a base object of type 'null instance'.
+          at: _unlocks (res://tests/ui/screen_profile_audit.gd:206)
+          GDScript backtrace (most recent call first):
+              [0] _unlocks (res://tests/ui/screen_profile_audit.gd:206)
+              [1] _run (res://tests/ui/screen_profile_audit.gd:91)
+              [2] _mount (res://tests/ui/screen_profile_audit.gd:128)
+ERROR: ProfileScreen.route_action: 'nope' is not one of this screen's actions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] route_action (res://src/ui/screens/ProfileScreen.gd:206)
+       [1] _route (res://tests/ui/screen_profile_audit.gd:224)
+       [2] _run (res://tests/ui/screen_profile_audit.gd:92)
+       [3] _mount (res://tests/ui/screen_profile_audit.gd:128)
+ok profile/an_unknown_action_is_refused
+ok profile/the_unlock_button_s_route_lands
+ok profile/and_the_router_moved_to_challenges
+ok profile/the_audit_returns_to_the_profile
+ok profile/the_unlock_button_is_a_registered_focusable
+ok profile/the_back_control_is_registered
+ok profile/the_bridge_reads_every_registered_control
+FAIL profile/the_seasons_label_is_the_locale_text: expected "Season trophies", got ""
+FAIL profile/the_english_seasons_label_differs: expected true, got false
+SCRIPT ERROR: Invalid call. Nonexistent function 'title_control' in base 'Control (ProfileScreen.gd)'.
+          at: _strings (res://tests/ui/screen_profile_audit.gd:256)
+          GDScript backtrace (most recent call first):
+              [0] _strings (res://tests/ui/screen_profile_audit.gd:256)
+              [1] _run (res://tests/ui/screen_profile_audit.gd:93)
+              [2] _route (res://tests/ui/screen_profile_audit.gd:241)
+ok profile/all_three_declared_states_apply
+ok profile/the_mid_season_state_applies
+ok profile/mid_season_has_at_least_one_met_objective
+ok profile/and_at_least_one_still_open
+# report mid-season: 1 done, 2 open
+ok profile/the_default_state_applies_again
+# report 1280x720: widest=1264.0 columns=4
+ok profile/nothing_is_wider_than_the_frame
+ok profile/the_four_boxes_sit_in_one_row_at_1280
+ok profile/the_objectives_box_stays_inside_the_frame
+ok profile/the_unlocks_box_stays_inside_the_frame
+# report 1024x600: widest=1008.0 columns=4
+ok profile/nothing_is_wider_than_the_small_frame
+ok profile/the_boxes_refold_inside_the_small_frame
+ok profile/the_literal_scan_flags_prose_and_ignores_developer_text
+ok profile/the_screen_source_is_readable
+ok profile/ProfileScreen_gd_carries_no_prose_literal
+ok profile/the_scene_carries_no_literals
+ok profile/the_theme_carries_every_palette_key_the_screen_names
+ok profile/the_screen_recorded_no_missing_palette_key
+# report temp store: user://uir16-profile-audit — the real user:// profile was never written
+FAIL 44/60
+FAIL 44/60
+# first failure FAIL profile/the_wins_box_is_the_career_s_own: expected "7", got ""
+# first failure FAIL profile/the_wins_box_is_the_career_s_own: expected "7", got ""

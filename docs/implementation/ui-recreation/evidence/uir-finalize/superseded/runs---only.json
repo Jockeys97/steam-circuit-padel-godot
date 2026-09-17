@@ -1,0 +1,44 @@
+[
+  {
+    "name": "uir22_integration_audit",
+    "cmd": "/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/uir22_integration_audit.gd",
+    "exit": 0,
+    "tally": "PASS",
+    "pass_count": 71,
+    "total_count": 71,
+    "ok_lines": 71,
+    "fail_lines": 0,
+    "script_errors": 0,
+    "engine_error_lines": 0,
+    "seconds": 4.1,
+    "log": "docs/implementation/ui-recreation/evidence/uir-finalize/runs/uir22_integration_audit.log"
+  },
+  {
+    "name": "screen_arena_audit",
+    "cmd": "/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/screen_arena_audit.gd",
+    "exit": 0,
+    "tally": "PASS",
+    "pass_count": 133,
+    "total_count": 133,
+    "ok_lines": 133,
+    "fail_lines": 0,
+    "script_errors": 0,
+    "engine_error_lines": 0,
+    "seconds": 1.0,
+    "log": "docs/implementation/ui-recreation/evidence/uir-finalize/runs/screen_arena_audit.log"
+  },
+  {
+    "name": "screen_drill_audit",
+    "cmd": "/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot/ --script res://tests/ui/screen_drill_audit.gd",
+    "exit": 0,
+    "tally": "PASS",
+    "pass_count": 89,
+    "total_count": 89,
+    "ok_lines": 89,
+    "fail_lines": 0,
+    "script_errors": 0,
+    "engine_error_lines": 0,
+    "seconds": 0.4,
+    "log": "docs/implementation/ui-recreation/evidence/uir-finalize/runs/screen_drill_audit.log"
+  }
+]

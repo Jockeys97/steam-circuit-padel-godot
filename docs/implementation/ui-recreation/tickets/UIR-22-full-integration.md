@@ -2,16 +2,18 @@
 id: UIR-22
 title: Full integration (router wired, dev text removed, locale unified, display scaling)
 slug: full-integration
-state: blocked
+state: done
 readiness: potential
 owner_role: integration owner
 blocked_by: [UIR-03, UIR-07, UIR-08, UIR-09, UIR-10, UIR-11, UIR-12, UIR-13, UIR-14, UIR-15, UIR-16, UIR-17, UIR-18, UIR-19, UIR-20, UIR-21]
 blocks: [UIR-25, UIR-27]
 gates: [plan-approval, gate-a]
-plan_approved: false
+plan_approved: true
 triage: ready-for-agent
 evidence:
-  - docs/implementation/ui-recreation/evidence/uir-22-integration.md
+  - docs/implementation/ui-recreation/evidence/uir-22-integration.log
+  - docs/implementation/ui-recreation/evidence/uir-22-integration-journal.md
+  - docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json
 ---
 
 # UIR-22: Full integration (router wired, dev text removed, locale unified, display scaling)
@@ -41,7 +43,9 @@ The individual screens land as components. This ticket makes the game BE the new
 - `godot/project.godot` (the `[display]` block only; leave `[application] run/main_scene` untouched, leave `[input]` untouched)
 - `.uid` sidecars for the files above
 - `godot/tests/game_slice_test.gd` (only for the assertion reconciliation in microstep 5; every edit cited in the evidence file)
-- `docs/implementation/ui-recreation/evidence/uir-22-integration.md`
+- `docs/implementation/ui-recreation/evidence/uir-22-integration.md` (landed as
+  `…/uir-22-integration.log` + `…/uir-22-integration-journal.md` — the `.md` name never survived;
+  the drift is closed in the journal, finalize closure 2026-09-17)
 
 No other writes. Do NOT touch `godot/src/sim/**`, `godot/src/locale/**`, `godot/src/modes/**`, `godot/src/save/**`, the frozen web reference, or other tickets' files.
 
@@ -105,3 +109,14 @@ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
 ## Traces
 
 Handoff next-steps 7-9; S4 ticket sections (ownership, tests, recovery); `godot/game/match_controller.gd:47-48, :580-704, :1080-1176`; `godot/project.godot` comments.
+
+## Finalize closure (2026-09-17, integration owner)
+
+Engine record, one Godot process at a time, manifest `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json` (all sources hashed
+before and after: tree digest `1256f5f1d7200437`, stable).
+
+- `tests/ui/uir22_integration_audit.gd` — **PASS 71/71**, exit 0, 0 `SCRIPT ERROR` line(s) (3.6s); log `docs/implementation/ui-recreation/evidence/uir-finalize/runs/uir22_integration_audit.log`
+- `tests/ui/uir_route_audit.gd` — **PASS 44/44**, exit 0, 0 `SCRIPT ERROR` line(s) (4.7s); log `docs/implementation/ui-recreation/evidence/uir-finalize/runs/uir_route_audit.log`
+
+**State: `done`** — the audit above is this ticket's arbiter and it is green on the
+finalize tree.

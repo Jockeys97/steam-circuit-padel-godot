@@ -2,16 +2,17 @@
 id: UIR-10
 title: ModesScreen 1:1 (screen-modes + match setup)
 slug: screen-modes
-state: blocked
+state: done
 readiness: potential
 owner_role: screen worker
 blocked_by: [UIR-02, UIR-03, UIR-04, UIR-05, UIR-07]
 blocks: [UIR-22, UIR-23]
 gates: [plan-approval, gate-a]
-plan_approved: false
+plan_approved: true
 triage: ready-for-agent
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-10-screen-modes.log
+  - docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json
 capture_states: [default, quick, tournament, career, demo-locked]
 ---
 
@@ -93,3 +94,13 @@ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
 ## Traces
 
 `index.html:103-154`, `js/ui.js:737-770`, `js/data.js:689-698`, `styles.css:460-503`; scout T02 acceptance list.
+
+## Finalize closure (2026-09-17, integration owner)
+
+Engine record, one Godot process at a time, manifest `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json` (all sources hashed
+before and after: tree digest `1256f5f1d7200437`, stable).
+
+- `tests/ui/screen_modes_audit.gd` — **PASS 118/118**, exit 0, 0 `SCRIPT ERROR` line(s) (0.7s); log `docs/implementation/ui-recreation/evidence/uir-finalize/runs/screen_modes_audit.log`
+
+**State: `done`** — the audit above is this ticket's arbiter and it is green on the
+finalize tree.

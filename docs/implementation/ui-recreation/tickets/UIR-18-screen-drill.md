@@ -2,16 +2,17 @@
 id: UIR-18
 title: DrillScreen 1:1 (screen-drill, setup + session handoff)
 slug: screen-drill
-state: blocked
+state: done
 readiness: potential
 owner_role: screen worker
 blocked_by: [UIR-02, UIR-03, UIR-04, UIR-05, UIR-07]
 blocks: [UIR-22]
 gates: [plan-approval, gate-a]
-plan_approved: false
+plan_approved: true
 triage: ready-for-agent
 evidence:
   - docs/implementation/ui-recreation/evidence/uir-18-screen-drill.log
+  - docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json
 capture_states: [precision, smash, rally, serve, difficulty-variants]
 ---
 
@@ -91,3 +92,13 @@ cd /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
 ## Traces
 
 `index.html:366-396`, `js/drill.js:53-71, :466-498`, `js/ui.js:206-243`, `godot/game/mode_screen.gd:280-336`, `godot/src/modes/drill_session.gd`; scout T08 acceptance list.
+
+## Finalize closure (2026-09-17, integration owner)
+
+Engine record, one Godot process at a time, manifest `docs/implementation/ui-recreation/evidence/uir-finalize/ui-audit-sweep.json` (all sources hashed
+before and after: tree digest `1256f5f1d7200437`, stable).
+
+- `tests/ui/screen_drill_audit.gd` — **PASS 89/89**, exit 0, 0 `SCRIPT ERROR` line(s) (0.5s); log `docs/implementation/ui-recreation/evidence/uir-finalize/runs/screen_drill_audit.log`
+
+**State: `done`** — the audit above is this ticket's arbiter and it is green on the
+finalize tree.

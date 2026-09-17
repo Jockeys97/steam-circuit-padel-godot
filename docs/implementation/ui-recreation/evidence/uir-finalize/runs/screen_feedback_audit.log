@@ -1,0 +1,152 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok feedback/the_router_still_carries_thirteen_ids
+ok feedback/all_thirteen_slots_register
+ok feedback/the_scene_registers_under_the_feedback_id
+ok feedback/go_to_mounts_the_screen
+ok feedback/the_screen_is_active
+ok feedback/one_screen_is_mounted
+ok feedback/the_mounted_screen_exists
+ok feedback/the_mounted_scene_carries_FeedbackScreen_gd
+ok feedback/the_scene_mounts_the_theme
+ok feedback/the_audit_store_is_the_temp_one
+ok feedback/the_screen_reports_its_own_id
+ok feedback/the_declared_return_is_the_router_own
+ok feedback/the_return_is_not_hardcoded
+ok feedback/the_declared_capture_states_are_the_screen_own
+ok feedback/an_undeclared_capture_state_is_refused
+ok feedback/with_no_seam_installed_there_is_nowhere_to_send
+ok feedback/the_reference_lists_six_topics
+ok feedback/every_topic_is_a_button
+ok feedback/every_topic_shows_its_own_label
+ok feedback/the_first_topic_is_the_default
+ok feedback/a_known_topic_can_be_chosen
+ok feedback/the_choice_is_the_one_made
+ok feedback/an_unknown_topic_is_refused
+ok feedback/a_refused_choice_changes_nothing
+ok feedback/the_message_ceiling_is_FEEDBACK_maxMessage
+ok feedback/the_queue_cap_is_the_reference_own
+ok feedback/a_message_at_the_ceiling_is_kept_whole
+ok feedback/the_counter_shows_the_ceiling
+ok feedback/a_longer_message_is_refused_on_screen
+ok feedback/the_counter_shows_the_cap
+ok feedback/the_contact_field_carries_the_reference_ceiling
+ERROR: Clipboard is not supported by this display server.
+   at: clipboard_get (servers/display/display_server.cpp:548)
+   GDScript backtrace (most recent call first):
+       [0] copy_to_clipboard (res://src/ui/screens/FeedbackScreen.gd:599)
+       [1] _offer_fallback (res://src/ui/screens/FeedbackScreen.gd:590)
+       [2] submit (res://src/ui/screens/FeedbackScreen.gd:554)
+       [3] _queue_first (res://tests/ui/screen_feedback_audit.gd:218)
+       [4] _run (res://tests/ui/screen_feedback_audit.gd:97)
+       [5] _facts (res://tests/ui/screen_feedback_audit.gd:157)
+ok feedback/the_delivery_saw_the_entry_already_queued
+ok feedback/a_valid_submit_queues
+ok feedback/a_rejected_delivery_ends_on_the_manual_hint
+ok feedback/one_entry_is_on_disk
+ok feedback/the_entry_is_unsent_until_a_seam_says_otherwise
+ok feedback/the_stored_topic_is_the_chosen_one
+ok feedback/the_stored_message_is_whole
+ok feedback/the_stored_contact_is_sliced_to_the_reference_length
+ok feedback/the_id_is_the_reference_shape
+ok feedback/the_timestamp_is_iso
+ok feedback/the_manual_block_is_revealed
+ok feedback/the_revealed_text_is_the_entry_text
+ok feedback/the_message_field_is_cleared_after_queueing
+ERROR: Clipboard is not supported by this display server.
+   at: clipboard_get (servers/display/display_server.cpp:548)
+   GDScript backtrace (most recent call first):
+       [0] copy_to_clipboard (res://src/ui/screens/FeedbackScreen.gd:599)
+       [1] _offer_fallback (res://src/ui/screens/FeedbackScreen.gd:590)
+       [2] submit (res://src/ui/screens/FeedbackScreen.gd:551)
+       [3] _ladder (res://tests/ui/screen_feedback_audit.gd:246)
+       [4] _run (res://tests/ui/screen_feedback_audit.gd:98)
+       [5] _facts (res://tests/ui/screen_feedback_audit.gd:157)
+ok feedback/an_offline_delivery_says_offline
+ok feedback/offline_still_offers_the_text
+ok feedback/the_offline_entry_stays_queued
+ok feedback/a_success_verdict_reports_sent
+ok feedback/a_success_verdict_says_sent
+ok feedback/a_success_marks_every_pending_entry_sent_on_disk
+# note the seam's verdicts (rejected/offline/ok) are simulated locally: this audit makes no network call and writes only to user://uir17-feedback-audit
+ok feedback/with_no_seam_there_is_no_endpoint
+ok feedback/the_send_button_promises_only_a_save
+ok feedback/the_note_says_nothing_leaves_the_game
+ERROR: Clipboard is not supported by this display server.
+   at: clipboard_get (servers/display/display_server.cpp:548)
+   GDScript backtrace (most recent call first):
+       [0] copy_to_clipboard (res://src/ui/screens/FeedbackScreen.gd:599)
+       [1] _offer_fallback (res://src/ui/screens/FeedbackScreen.gd:590)
+       [2] submit (res://src/ui/screens/FeedbackScreen.gd:548)
+       [3] _no_endpoint (res://tests/ui/screen_feedback_audit.gd:276)
+       [4] _run (res://tests/ui/screen_feedback_audit.gd:100)
+       [5] _facts (res://tests/ui/screen_feedback_audit.gd:157)
+ok feedback/a_submit_without_an_endpoint_names_the_reason
+ok feedback/with_no_endpoint_the_text_is_offered
+ok feedback/the_entry_is_still_queued_without_an_endpoint
+ok feedback/the_status_line_shows_the_key
+ok feedback/a_successful_copy_says_copied
+ok feedback/the_writer_was_asked_once
+ok feedback/the_copied_text_carries_the_message
+ok feedback/a_refused_clipboard_falls_back_to_the_text
+ok feedback/the_refused_copy_still_shows_the_text
+ok feedback/the_revealed_text_is_this_message
+ok feedback/copy_with_an_empty_field_is_reported
+ok feedback/the_payload_carries_the_reference_keys
+ok feedback/the_payload_names_the_session_language
+ok feedback/the_payload_names_the_platform
+ok feedback/the_payload_carries_the_frame_size
+ok feedback/the_payload_carries_the_three_settings
+ok feedback/the_payload_carries_the_five_career_figures
+ok feedback/the_disclosure_shows_the_payload_verbatim
+ok feedback/attach_off_stores_null
+ok feedback/the_run_starts_in_the_default_language
+ok feedback/every_visible_key_resolves_in_both_locales
+ok feedback/there_is_a_second_locale_to_flip_to
+ok feedback/the_flip_shows_the_other_tables_own_text
+ok feedback/the_flip_moved_strings_that_differ
+# report language flip: 13 of 15 visible slots differ between tables, all now show it
+ok feedback/the_flip_back_restores_every_slot
+ok feedback/the_message_field_takes_the_focus
+ok feedback/the_keyboard_starts_closed
+ok feedback/confirm_on_the_field_is_handled
+ok feedback/with_a_pad_confirm_opens_the_keyboard_model
+ok feedback/the_verdict_names_the_keyboard
+ok feedback/the_keyboard_opened_for_the_message_field
+ok feedback/the_field_offers_the_reference_ceiling_to_the_keyboard
+ok feedback/the_field_names_its_own_label_to_the_keyboard
+ok feedback/the_keyboard_targets_are_the_reference_rows
+ok feedback/the_keyboard_model_takes_a_character
+ok feedback/a_second_character_lands_in_the_model
+ok feedback/the_model_holds_what_was_typed
+ok feedback/the_screen_accepts_the_models_value
+ok feedback/the_typed_characters_land_in_the_field
+ok feedback/the_counter_follows_the_typed_text
+ok feedback/an_over_long_value_is_accepted_by_the_field
+ok feedback/and_is_capped_at_the_ceiling
+ok feedback/back_with_the_keyboard_open_is_handled
+ok feedback/back_closes_the_keyboard_model
+ok feedback/the_verdict_names_the_close
+ok feedback/closing_the_keyboard_gives_the_field_back
+ok feedback/capture_state_default_applies
+ok feedback/capture_state_counted_applies
+ok feedback/capture_state_diagnostics-open_applies
+ok feedback/capture_state_fallback_applies
+ok feedback/capture_state_sent_applies
+ok feedback/the_counted_state_applies
+ok feedback/the_counted_state_fills_the_counter
+ok feedback/the_diagnostics_state_applies
+ok feedback/the_diagnostics_state_opens_the_disclosure
+ok feedback/the_fallback_state_applies
+ok feedback/the_fallback_state_shows_the_text
+ok feedback/the_sent_state_applies
+ok feedback/the_sent_state_pins_the_sent_line
+ok feedback/the_default_state_applies
+ok feedback/the_default_state_clears_the_field
+ok feedback/the_literal_scan_flags_prose_and_ignores_developer_text
+ok feedback/the_screen_source_is_readable
+ok feedback/FeedbackScreen_gd_carries_no_prose_literal
+ok feedback/entering_and_capturing_deliver_nothing
+ok feedback/only_a_button_press_reaches_the_seam
+# report temp store: user://uir17-feedback-audit (6 entries, 5 groups) — the real user:// profile was never written
+PASS 119/119

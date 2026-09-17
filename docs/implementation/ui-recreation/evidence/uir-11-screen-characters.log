@@ -1,0 +1,120 @@
+# UIR-11 CharactersScreen 1:1 — evidence log
+
+Wave: post-approval selection-screens wave (UIR-10 → UIR-11 → UIR-12), single screen worker.
+Repo: `/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot`, commit `6343312`
+("Brother a1e10f04" court geometry / cameras / input / timing already in HEAD; untouched here).
+
+## What this ticket was asked for, and what shipped
+
+- **One grid, three views, no markup per view.** The reference empties `#athleteGrid` and draws
+  again (`js/ui.js` `showTeam` / `showPicker` / `showOutfits`); the port does the same in
+  `CharactersScreen._build_view()` → `_build_team()` / `_build_picker()` / `_build_outfits()`.
+  Node names follow the view ("TeamSlot_player", "PickCard_<athlete>", "OutfitCard_<outfit>") so
+  an audit can read the view back without a screenshot.
+- **Head row changes with the view** (`_refresh_head()`): team = Confirm (`teamConfirm`),
+  picker = `teamPickBack` + `teamChooseYou` / `teamChoose`, outfits = `teamPickBack` +
+  `outfitSub`. The reference's own strings, nothing invented.
+- **Slots are the reference's four**: `Lineup.ROLES` order, the player's card on the
+  `PanelCardSelected` box (theme token that already exists for exactly this), rivals on
+  `PanelDark`, tag `slotYou` / `slotPartner` / `slotOpponent` / `slotOpponentNet`, and a
+  dictated slot appends `slotByCalendar` / `slotByBracket` in the tag (the reference's `<em>`).
+  A dictated slot is not editable and carries no `slotChangeAthlete`.
+- **Picks go through the port's own seams** — no parallel store, no second adapter:
+  `Lineup.set_pref_source(prefs)` / `Lineup.resolve(Config.athlete(), dictated)` for the team,
+  `ModesSave.save_pref(store, "lineup", slots)` for the three slots, `Config.athlete_index` for
+  "you", `ModesSave.save_career(store, career)` for `equippedOutfits` / `unlockAll`,
+  `UiData.athlete_rows(store)` for the roster, `ModeTables` for outfits and the frozen code.
+  `slots_of()` is the one shape helper: the reference's `ui.lineup` has three keys, the player
+  is `Config`'s own athlete.
+- **The swap is explicit.** The reference gets "never a duplicate" out of `resolveLineup`'s
+  `usati` set plus the reserve fallback; the port keeps the invariant and makes the swap
+  deterministic: a pick already on court hands its old slot to whoever it displaces, in both
+  directions (rival slot picked, and "you" picked with a rival holding the target).
+- **The unlock code is the reference's own triple tap**: `UNLOCK_TAP_WINDOW` (1400 ms) and
+  `UNLOCK_TAP_REQUIRED` (3) off `js/ui.js:713-717`, candidates = progression-locked athletes
+  only, code from `ModeTables.unlock_code()` (from the generated table — never a literal here),
+  right code sets `career.unlockAll` through `ModesSave.save_career`. A build-locked
+  (demo-excluded) athlete counts no taps and stays locked after the code — the ticket's
+  negation, asserted in every run (demo: live rows; full build: the pinned `demo-locked` state).
+
+## Blockers and gaps (recorded, not papered over)
+
+1. **Stat strip — RESOLVED 2026-09-17 (wave 3).** The reference's `statLine()`
+   (`js/ui.js:814-828`; the earlier text here cited `:963-983`, which is the team card that
+   *calls* it) draws three five-tick bars from `STAT_RANGE` plus `t("stat" + key)`. The
+   seam this line requested now exists in the port's data layer:
+   `UiData.stat_range()` derives the reference's own per-stat min/max from the frozen
+   roster (the port's `ATHLETES`, checked row by row against `js/data.js` — 6/6 athletes,
+   all three stats), and `UiData.stat_rows()` returns `{key, label_key, value, filled,
+   ticks}` with the reference's own fill count (`1 + round(clampUnit(...) * 4)`,
+   `js/ui.js:819`). `CharactersScreen` paints them: `SlotStat_<role>` on all four team
+   slots — rival slots take `stat_bar_rival`, the reference's own rival ink
+   (`styles.css:3030`) — and `PickStat_<id>` on every unlocked picker card, none on a
+   locked card. The picker's strip is lifted above the special line so the reference's
+   reading order (desc, `statLine`, footer `⚡ special`, `js/ui.js:1064-1072`) survives the
+   port's body/footer shape; the team slot needs no lift (the reference's scheda reads
+   desc, special, `statLine`, `:968-971`). The audit's new §4b holds the screen to
+   `STAT_BARS` — the six rows pinned from `js/data.js` — so the scale cannot quietly
+   become a build's subset: a two-athlete demo that used its own scale would paint
+   `steamer`'s power bar with five ticks, and the pinned row says four. The seam's
+   contract is in `uir-wave3-shared-seams.log` §2.
+2. **Code entry is keyboard, not the pad OSK.** The park's input layer has an OSK model
+   (`MenuNav.set_osk_targets` + `osk.open_for`, used by feedback/settings text fields). This
+   screen's door is a `LineEdit` (`UnlockCodeInput`) inside the head row, because the port's
+   platform is desktop with a keyboard and the audit must drive it headlessly. If a pad-only
+   platform gate lands, the hand-off is `MenuNav.set_osk_targets([...])` + `osk.open_for(...)`
+   for the same `submit_unlock_code()` call — the validation door does not change.
+3. **Theme seam**: `SegmentedContainer` is declared on `BaseType Panel`, so a `PanelContainer`
+   cannot carry it (Godot resolves variations along the class chain, and `PanelContainer` is not
+   a `Panel`). Same hole as UIR-10; this screen needs no segmented control, so it is only noted
+   here once. Cards read their frame with `_theme_box("PanelDark" / "PanelCardSelected")` and
+   zero the content margins so the art bleeds (`styles.css:460`), which is the reference's own
+   trick (`margin: -18px -18px 0`).
+
+## Evidence (commands and tallies)
+
+```
+cd godot && /Applications/Godot.app/Contents/MacOS/Godot --headless --path . \
+    --script res://tests/ui/screen_characters_audit.gd            # exit 0, PASS 137/137
+… --script res://tests/ui/screen_characters_audit.gd -- --demo     # exit 0, PASS 130/130
+grep -c "SCRIPT ERROR" <log>                                       # 0 in both (exit 0 does not
+                                                                   # imply this: a parse error
+                                                                   # exits 0, so it is checked)
+```
+
+**Those two tallies are the pre-wave-3 runs.** Wave 3 added section 4b (the stat strip — 11
+checks) to this audit, so the next run's totals are higher; the runner's log is where they
+are first stated. The exact re-run commands are unchanged:
+
+```sh
+export GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+pgrep -x Godot                      # never kill a pre-existing process
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_characters_audit.gd
+"$GODOT" --headless --path godot/ --script res://tests/ui/screen_characters_audit.gd -- --demo
+grep -c "SCRIPT ERROR" <log>        # 0 expected in both
+```
+
+Both runs print the build's own exposure instead of assuming it: `selectable beside the player`
+(`["steamer"]` in a demo, six athletes in a full build), `dictated=[…] build=quick|career`, the
+unlock candidate, and `build withheld from the demo table: 4 of 6`. In a demo the mate slot is
+held by a build-locked athlete the resolve fields (`js/ui.js` "nella demo si gioca con due
+atleti e si affrontano gli altri"): the audit reports that and asserts the roster invariant
+rather than a swap through a card that cannot be selected.
+
+## Files (this ticket's allowlist only)
+
+- `godot/src/ui/screens/CharactersScreen.gd` (created) + `.tscn` (created) + `.gd.uid` (created)
+- `godot/tests/ui/screen_characters_audit.gd` (created) + `.tscn` (created) + `.gd.uid` (created)
+- this log
+
+No file outside the ticket's allowlist was touched: the theme, the router, the adapters, the
+frozen web sources and the mode/save/locale layers are all read-only here.
+
+**Wave 3 addendum (2026-09-17).** The strip landed through the shared lanes this ticket's
+blocker 1 asked for, so three files outside the original allowlist were also written:
+`godot/src/ui/data/UiData.gd` (the `stat_range`/`stat_rows` seam),
+`godot/src/ui/theme/padel_theme.tres` + `theme/README.md` + `godot/tests/ui/theme_probe.gd`
+(the `stat_bar` / `stat_bar_rival` inks the strip reads), and this log plus
+`uir-wave3-shared-seams.log`. The screen, its scene and its audit remain this ticket's own.
+The story, sources and pending engine commands for all of it are in
+`uir-wave3-shared-seams.log`.

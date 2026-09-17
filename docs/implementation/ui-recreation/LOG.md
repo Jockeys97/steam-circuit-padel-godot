@@ -256,3 +256,144 @@ it); no post-gate screen work started; the S14 frame-relative re-measurement and
 slice line anchors remain open (named in `REPORT.md` §8 and on the board). This closeout commits
 the mission docs + capture evidence only — the unrelated working-tree changes (`.hermes/`,
 `art/`, `meshy/README.md`, stray imports) stay unstaged.
+
+## UIR-27 replay — UI half + recorded-gameplay audit (2026-09-17 12:17, worker; no engine started)
+
+UIR-27's UI half landed and its acceptance audit is written; the controller half is a frozen
+contract handed to the integration owner (`evidence/uir-27-replay.log` §Seam). No engine process
+was started by this worker — the dispatch names the integration captain as sole runner — so the
+log's §5 is a static conformance pass and §9 is the run that is owed.
+
+- **The buffer half was already faithful.** `sim.gd` carries `capture_replay_frame` (`:257-286`,
+  front-drop included), both resets (`:454-455`, `:2761`) and both reference capture sites
+  (`:2774`, `:3070`). Nothing there needs touching; the missing half is the playback state
+  machine (API in the log §3.2, insertion points §3.3).
+- **Built**: `godot/src/ui/screens/ReplayOverlay.gd/.tscn` — the reference's `drawReplayOverlay`
+  chrome at 1280/960 (banner, exit hint, progress bar), zero prose literals, nothing painted
+  without a seam, a capture refused rather than invented — and `godot/tests/ui/replay_audit.gd/.tscn`
+  (924 lines: a real scripted point through `Match.tscn`; buffer bound / one-tick cadence / restart /
+  front-drop; playback cadence, clamp, `replay_finished`; the rendered ball read off the `Ball`
+  node; parity-digest restore-equality; both pause entry paths; the `r`/ESC keys; UIR-20's button;
+  the static scan).
+- **Static conformance**: `/tmp/uir27_static_check.py` → `STATIC OK` (tab indentation, bracket
+  balance, prose-literal scan, every cross-file call). Of the seam names the controller still owes,
+  four are required and four are optional readouts (log §5).
+- **Nothing to amend for the retired key**: the ticket's `game_slice_test.gd` clause is satisfied by
+  a negative — no test in the tree presses `r` or asserts a rematch; `rematch()` itself stays (the
+  pause card and the result screen are its callers).
+- **One decision handed back, not taken**: UIR-20's single `_replay_active` flag serves both the
+  button's gate and ESC's step 0, and the two want different values (availability vs a replay that
+  is up). Log §3.4 names the split and both readings; the audit enforces neither.
+- **Evidence**: `evidence/uir-27-replay.log`. Acceptance owed:
+  `--script res://tests/ui/replay_audit.gd`, and the slice must stay green.
+
+**Not done, on purpose:** no Godot run (dispatch); the playable-path mount, the `replay.png`
+capture shot and the pause-flag split belong to the integration owner (their files, one writer);
+`replay_banner` stays a recorded palette miss until the theme lane adds it.
+
+## Finalize wave — UIR-22 integration + the whole pack re-run (2026-09-17, integration captain, local only)
+
+One writer at a time: the previous captain's delegation (`deleg_3afad8d7`) was still writing until
+12:24:26, so this wave stayed read-only until it stopped, then took over as sole code/doc writer and
+sole engine owner. No nested agents, no paid APIs ($0), native configured identity, no model
+override claimed. No commit, no push.
+
+- **The three integration blockers from `/tmp/uir-final-integration-review.md`, closed on the record:**
+  - **F1 quick-match player mode** — `match_config.pending_player_mode` (new, store-then-take with its
+    doc comment) is written by `ArenaScreen.start_match()` (quick only; every other mode forced to
+    `solo`, the reference's own rule `js/main.js:1156`) and read by `match_controller.start_match()`,
+    which now passes `{"humanMode": …}` into `Sim.create_match_state` against the reference's three ids.
+  - **F6 stored settings applied** — `input_map.DEADZONE` is a `static var` with `set_deadzone()`
+    clamped to the reference's 0.08–0.30 band (`js/main.js:2276`); `match_config.stored_prefs()` reads
+    the same `prefs` group the settings screen writes; `main_menu` applies volume → the audio module's
+    `set_master_gain` and deadzone → the pad reader at boot and on every `range_changed`;
+    `match_controller` applies them on both match-boot paths and on the pause card's rows.
+    `prefs.vibration` still has no consumer to gate (nothing in the port rumbles) — recorded, not hidden.
+  - **F8 drill gate** — `DrillScreen.start()` asks `ModeSession.can_start("drill")` first; a refused
+    build writes no config, changes no scene, and shows the lock (start disabled, card dimmed at 0.55,
+    caption swapped for `Gate.locked_key()`).
+  - **F3 recorded as a divergence, not a defect** — `menu_nav.push_overlay()`/`set_in_match()` have no
+    production caller because the in-match card owns its own `MenuFocus` and the router is not in that
+    path; the review's failure scenario cannot arise.
+- **New end-to-end driver**: `godot/tests/ui/uir_route_audit.gd` — the playable path in one headless
+  run with the real screens, the real bridge, a real match played out by the scripted player:
+  `menu → modes → characters → arena → drill → match → pause → result → rematch → settings`, plus the
+  three human modes through `create_match_state`. **PASS 44/44**, exit 0, 0 `SCRIPT ERROR`.
+- **The sweep**: 32 runs, serial, `pgrep -x Godot` guard before each, real engine
+  (`/Applications/Godot.app/Contents/MacOS/Godot`, 4.7.2.stable). **24 green / 8 red**;
+  2,869 checks passed in the green runs; 16 `SCRIPT ERROR` lines, all inside the red runs.
+  Sources hashed before and after: tree digest `30820ee3dddaf826`, stable.
+  Record: `evidence/uir-finalize/{ui-audit-sweep.json,README.md,playable-route.md}` + `runs/*.log`
+  (32 per-run logs with the exact command line each).
+- **Reds, named**: `osk_touch` 171/177, `ui_legibility` 572/664, `replay` 95/103 (the controller's
+  `start_replay`/`stop_replay`/`replay_active`/`replay_progress` seam is absent — UIR-27 is not done),
+  `screen_characters` 147/148, `screen_help` 73/75, `screen_history` 37/42, `screen_challenges` 64/68,
+  `screen_profile` 44/60. Their audits were never executed before this wave (the review's own point);
+  they run now and name what is open.
+- **Trackers reconciled truthfully**: ticket frontmatter re-derived from that engine record (18 `done`,
+  8 `in-progress`, 2 `blocked`); BOARD rows, GATE-A row (passed-by-owner, feel verdict still the
+  owner's), Standings and a finalize note; mission LOG entry. `replay_audit.gd`'s four parse errors
+  fixed so it can load at all (it still fails 95/103 on the missing seam — a real, named blocker).
+- **Stale hash rows corrected in `evidence/uir-20-overlays.log`**: `SmashTutorial.gd` 707→741 lines /
+  27528 B / `4c58da27403fe587` (verified against the file on disk), `PauseOverlay.gd` 1502→1529 /
+  56402 B / `a1021956ca184279`, and the audit byte count; the file's own changelog line records it.
+
+**Not done, on purpose:** no commit and no push (the owner's call); the eight reds stay red with their
+failing checks in the record rather than being smoothed over; the touch/platform lane and `luca-final`
+stay open; the look/feel verdict is the owner's play-test, not an agent's.
+
+## Finalize closure — replay seam executed, pause split, all-green pack (2026-09-17, integration owner, local only)
+
+All repairs landed and the whole pack was re-run serially on the final tree, one Godot process at
+a time (`pgrep -x Godot` guard before every run; no pre-existing engine was killed). Sources under
+`godot/game`, `godot/src`, `godot/tests` and `project.godot` hashed before and after: tree digest
+`1256f5f1d7200437`, stable.
+
+- **Sweep: 32/32 green** — exit 0, no `FAIL` line, 0 `SCRIPT ERROR`, 4,318 checks passed; 11 engine
+  `ERROR:` lines, all classified in `evidence/uir-finalize/README.md` §2 (4 named `check_log.sh`
+  allowances, 4 ok-flanked refusal probes, 3 headless-clipboard lines). Manifest:
+  `evidence/uir-finalize/ui-audit-sweep.json`. Earlier sweeps kept in `superseded/` (1: 24/8; 2: 31/1).
+- **Replay seam executed** (it was static-only): `match_controller.gd` carries
+  `start_replay`/`stop_replay`/`replay_active`/`replay_progress`/`replay_index`/`replay_frame_count`/
+  `replay_was_paused` + `replay_finished`; ESC's replay rung first, `r` toggles in play and is
+  refused while the card is up. `replay_audit` **PASS 166/166**.
+- **The wired card entry, executed** (closure probe, not one of the 32 suites): `_probe_replay_card.gd`
+  boots `Match.tscn` the game's way and drives the MOUNTED card — gate off with its reason before
+  frames → the pause echo opens the card and the availability feed enables the real `ReplayButton`
+  → the button's own `pressed` → `start_replay()` (card hides, pause lifts) → `stop_replay()` →
+  pause restored, card reopens on MATCH — **PASS 18/18**, exit 0, 0 `SCRIPT ERROR` (log
+  `evidence/uir-finalize/scripts/probe-replay-card.log`). The probe sits at the project root,
+  outside the sweep's hashed trees; the manifest digest was re-verified after it — `1256f5f1d7200437`,
+  393 files, no drift.
+- **The pause flag split picked and wired**: `PauseOverlay.set_replay_available` (fed by
+  `_replay_can_start()` on every pause edge) opens the card's RIGUARDA PUNTO gate; the playback
+  reading still drives ESC step 0; the card entry runs `start_replay()` like the reference
+  (`js/main.js:2238-2241`). `pause_audit` stays **PASS 176/176**.
+- **Two audit corrections with their citations**: replay's `the_restarted_record_is_not_the_old_one`
+  asserted an impossible ball-triple inequality (the point-end reset re-runs `prepare_serve` with
+  the same serve side, so the fresh record's first frame is the same canonical serve state);
+  replaced by the array-identity proof (`sim.gd:248`). `screen_history_audit`'s mode-line
+  expectation gained the reference's own `${modeBase} · ${hm}` segment (`js/ui.js:1594-1596`) —
+  **PASS 56/56**.
+- **Route + slices green**: `uir_route_audit` **44/44**, `uir22_integration_audit` **71/71**,
+  slice **342/342**, demo **293/293**.
+- **Trackers reconciled from the record**: 16 ticket frontmatter `state` recomputed (all `done`);
+  BOARD rows/note/Standings updated; UIR-23 flipped `blocked`→`ready` (all blockers landed);
+  UIR-25 stays `blocked` (closes on `luca-final`); hash registers re-fingerprinted
+  (`uir-20-overlays.log`, `uir-26-osk-touch.md` §11, `uir-27-replay.log` §12,
+  `uir-22-integration-journal.md` naming drift); `board-gate-a.md`'s stale opt-in text corrected to
+  UIR-22's approved default-NEW.
+- **Nothing committed, nothing pushed** (the owner's call); no deletions, no other process killed,
+  one engine process at a time throughout. Spend unchanged: $0.
+- **UIR-23 closure (release captain, later on 2026-09-17)**: `demo_matrix_audit.gd` written and the
+  ticket's two acceptance commands executed serially (`pgrep -x Godot` empty before each) — full
+  **PASS 133/133**, demo **PASS 178/178**, exit 0, 0 `SCRIPT ERROR`, no engine `ERROR:` lines.
+  Matrix table `evidence/uir-23-demo-matrix.md` + transcripts `evidence/uir-23-demo-matrix.log`;
+  beta column `not_ported` (no beta build in the port today), never emulated; UIR-23 `done`
+  (27 of 28, standings updated); `evidence/uir-finalize/sweep.py`'s `RUNS` list carries the two
+  UIR-23 runs for the next full sweep; the 32-run finalize manifest is left as its own record.
+  UIR-25 stays `blocked` on `luca-final`; the feel/framing verdict remains the owner's.
+- **Scoped release**: under the owner's handoff authorization, the mission-only paths were staged
+  explicitly (no `git add -A`; `.hermes/`, `art/**`, `meshy/**`, the generated `.import`/`.uid`
+  sidecars, the probe files and `docs/wayfinder/evidence/ccl/` stay out) and pushed to
+  `origin/main`; remote read-back verified. No force push.

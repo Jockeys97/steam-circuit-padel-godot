@@ -1,0 +1,163 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok replay/this_audit_writes_only_to_its_temp_dir
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:410)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:350)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:429)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:352)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+ok replay/the_audit_frame_is_the_missions_own_1280x720
+ok replay/the_overlay_starts_hidden
+ok replay/nothing_is_painted_before_a_replay
+ok replay/the_scene_mounts_the_theme
+ok replay/the_one_capture_state_is_declared
+ok replay/an_unknown_capture_state_is_refused
+ok replay/the_overlay_carries_no_focusable_node
+ok replay/the_overlay_swallows_no_input
+ok replay/the_canvas_to_frame_scale_is_the_one_conversion
+ok replay/the_ReplayBanner_node_exists
+ok replay/the_ReplayBannerLabel_node_exists
+ok replay/the_ReplayExitHint_node_exists
+ok replay/the_ReplayProgress_node_exists
+ok replay/the_ReplayProgressTrack_node_exists
+ok replay/the_ReplayProgressFill_node_exists
+ok replay/the_banner_is_40_canvas_px_read_at_this_scale
+ok replay/the_bar_is_8_canvas_px_read_at_this_scale
+ok replay/the_banner_sits_on_the_top_edge
+ok replay/the_bar_sits_on_the_bottom_edge
+ok replay/the_banner_spans_the_frame
+ok replay/the_bar_spans_the_frame
+ok replay/the_banner_text_starts_14_canvas_px_in
+ok replay/the_exit_hint_ends_14_canvas_px_in
+ok replay/the_banner_text_is_centred_in_the_strip
+ok replay/the_exit_hint_is_right_aligned
+ok replay/the_banner_font_is_the_references_12px_read_at_this_scale
+ok replay/the_hint_font_is_the_references_11px_read_at_this_scale
+ok replay/an_idle_overlay_paints_no_fill
+ok replay/set_replay_shows_the_chrome
+ok replay/a_quarter_of_the_point_paints_a_quarter_of_the_bar
+ok replay/overflow_clamps_to_the_full_track
+ok replay/a_negative_progress_clamps_to_empty
+ok replay/the_banner_carries_the_reference_glyph_and_word
+ok replay/the_hint_carries_the_reference_key
+ok replay/hiding_the_replay_hides_the_chrome
+ok replay/without_a_seam_refresh_paints_nothing
+ok replay/without_a_seam_the_overlay_stays_hidden
+WARNING: ReplayOverlay: the seam misses start_replay(); the overlay stays hidden
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _note_missing (res://src/ui/screens/ReplayOverlay.gd:470)
+         [1] apply_capture_state (res://src/ui/screens/ReplayOverlay.gd:268)
+         [2] _overlay_chrome (res://tests/ui/replay_audit.gd:238)
+         [3] _run (res://tests/ui/replay_audit.gd:164)
+ok replay/a_capture_without_a_replay_is_refused
+SCRIPT ERROR: Invalid access to property or key 'paused' on a base object of type 'SceneTree'.
+          at: _overlay_chrome (res://tests/ui/replay_audit.gd:239)
+          GDScript backtrace (most recent call first):
+              [0] _overlay_chrome (res://tests/ui/replay_audit.gd:239)
+              [1] _run (res://tests/ui/replay_audit.gd:164)
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+ok replay/the_state_carries_the_record_field
+ok replay/the_record_is_bounded_at_the_references_720
+ok replay/a_fresh_match_starts_with_an_empty_record
+ok replay/the_playback_cadence_is_1_60s
+ok replay/the_capture_cadence_is_the_sim_tick
+# report the reference's buffer: replayMax=720, capture 1/120 s, playback 1/60 s (js/game.js:314, :338-364, js/main.js:1315)
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+FAIL replay/recording_group_can_run: expected "", got "match_controller misses ["start_replay","replay_active"]"
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+FAIL replay/playback_group_can_run: expected "", got "match_controller misses ["start_replay","stop_replay","replay_active","replay_progress"]"
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+FAIL replay/stop_group_can_run: expected "", got "match_controller misses ["start_replay","stop_replay","replay_active","replay_progress"]"
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"campione","tier_index":2}
+MATCH_START tier=campione athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+FAIL replay/keys_group_can_run: expected "", got "match_controller misses ["start_replay","stop_replay","replay_active","replay_progress"]"
+ok replay/the_flag_enables_the_entry
+ok replay/an_enabled_entry_carries_no_reason
+ok replay/the_replay_button_exists
+ok replay/the_button_is_pressable_once_uir27_is_wired
+ok replay/the_button_route_reaches_the_entry
+ok replay/the_entry_emits_replay_requested
+ok replay/escs_step_0_is_the_replay
+ok replay/step_0_closes_the_replay
+SCRIPT ERROR: Invalid access to property or key 'paused' on a base object of type 'SceneTree'.
+          at: _pause_button (res://tests/ui/replay_audit.gd:584)
+          GDScript backtrace (most recent call first):
+              [0] _pause_button (res://tests/ui/replay_audit.gd:584)
+              [1] _run (res://tests/ui/replay_audit.gd:170)
+FAIL replay/a_seam_that_turns_on_moves_the_view: expected true, got false
+ok replay/the_seam_turns_the_overlay_on
+ok replay/the_seams_progress_paints_the_bar
+ok replay/the_seam_turns_the_overlay_off
+WARNING: ReplayOverlay: the seam misses replay_progress(); the overlay stays hidden
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] _note_missing (res://src/ui/screens/ReplayOverlay.gd:470)
+         [1] refresh (res://src/ui/screens/ReplayOverlay.gd:214)
+         [2] bind_seam (res://src/ui/screens/ReplayOverlay.gd:169)
+         [3] _overlay_seam (res://tests/ui/replay_audit.gd:612)
+         [4] _run (res://tests/ui/replay_audit.gd:171)
+ok replay/a_half_seam_still_shows_the_chrome
+ok replay/a_missing_progress_reader_paints_an_empty_bar
+ok replay/the_missing_reader_is_recorded_by_name
+FAIL replay/unbinding_the_seam_hides_the_chrome: expected false, got true
+ok replay/a_second_locale_exists
+ok replay/the_other_language_is_taken
+FAIL replay/the_banner_follows_the_language: expected "RIPRODUZIONE", got "▶ RIPRODUZIONE"
+ok replay/the_hint_follows_the_language
+ok replay/the_banner_text_moved_with_the_flip
+ok replay/the_hint_text_moved_with_the_flip
+ok replay/an_unknown_locale_is_refused
+ok replay/the_first_language_comes_back
+ok replay/the_replay_key_resolves
+ok replay/the_replayExit_key_resolves
+ok replay/the_overlay_source_is_readable
+ok replay/ReplayOverlay.gd_never_carries_SceneTree.paused
+ok replay/ReplayOverlay.gd_never_carries_get_tree().paused
+ok replay/ReplayOverlay.gd_never_carries_paused_=_true
+ok replay/ReplayOverlay.gd_never_carries_paused_=_false
+ok replay/zero_prose_literals_in_the_overlay
+ok replay/the_audit_calls_bind_seam_which_exists
+ok replay/the_audit_calls_seam_which_exists
+ok replay/the_audit_calls_set_replay_which_exists
+ok replay/the_audit_calls_refresh_which_exists
+ok replay/the_audit_calls_is_active_which_exists
+ok replay/the_audit_calls_progress_which_exists
+ok replay/the_audit_calls_set_language_which_exists
+ok replay/the_audit_calls_refresh_strings_which_exists
+ok replay/the_audit_calls_report_which_exists
+ok replay/the_audit_calls_palette_misses_which_exists
+ok replay/the_audit_calls_focus_controls_which_exists
+ok replay/the_audit_calls_capture_states_which_exists
+ok replay/the_audit_calls_apply_capture_state_which_exists
+ok replay/the_audit_calls_banner_text_which_exists
+ok replay/the_audit_calls_exit_hint_text_which_exists
+ok replay/the_audit_calls_banner_rect_which_exists
+ok replay/the_audit_calls_bar_rect_which_exists
+ok replay/the_audit_calls_fill_ratio_which_exists
+ok replay/the_static_palette_list_is_readable
+ok replay/palette_gold_is_in_the_theme_or_declared
+ok replay/palette_white_is_in_the_theme_or_declared
+ok replay/palette_replay_banner_is_in_the_theme_or_declared
+FAIL replay/the_banner_key_is_a_miss_exactly_when_the_theme_lacks_it: expected true, got false
+# not-ported engine/run: no Godot process ran this file in the UIR-27 wave (the wave's dispatch forbids it): the tally below is what the file asserts, and the acceptance command in evidence/uir-27-replay.log is the run that is owed
+# not-ported input/physical_keyboard: the r/ESC paths are injected through Input.parse_input_event, the engine's own pipeline, not pressed on hardware
+# note the controller seam was absent, so these check groups did not run: ["recording","playback","stop","keys"] — every name is in §Seam of evidence/uir-27-replay.log
+# report overlay: hidden=false banner=53.33px bar=10.67px inset=18.67px
+FAIL 95/103
+FAIL 95/103
+# first failure FAIL replay/recording_group_can_run: expected "", got "match_controller misses ["start_replay","replay_active"]"
+# first failure FAIL replay/recording_group_can_run: expected "", got "match_controller misses ["start_replay","replay_active"]"

@@ -1,0 +1,199 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok route/the_route_starts_on_the_menu
+ok route/the_menu_registers_its_play_button
+ok route/the_host_owns_the_bridge
+ok route/the_play_button_takes_the_focus
+ok route/the_confirm_is_handled
+ok route/a_real_confirm_on_play_lands_on_modes
+ok route/characters_arena_and_drill_mount_one_at_a_time
+ok route/the_drill_screen_is_what_mounted
+ok route/this_build_grants_the_drill
+ok route/the_drill_start_names_the_mode
+ok route/the_drill_start_points_at_the_match_scene
+ok route/and_writes_the_pending_mode
+ok route/and_the_chosen_exercise
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+MODE_RESOLVED {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"exercise":"precision","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillHits","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"score":0,"score_line":"—","streak":0,"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0}},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _drill_boots_a_real_session (res://tests/ui/uir_route_audit.gd:148)
+         [6] _initialize (res://tests/ui/uir_route_audit.gd:61)
+         [7] _route_to_the_drill (res://tests/ui/uir_route_audit.gd:138)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _drill_boots_a_real_session (res://tests/ui/uir_route_audit.gd:148)
+         [6] _initialize (res://tests/ui/uir_route_audit.gd:61)
+         [7] _route_to_the_drill (res://tests/ui/uir_route_audit.gd:138)
+MODE_START {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"exercise":"precision","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillHits","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"score":0,"score_line":"—","streak":0,"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0}},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+ok drill/the_match_adopts_a_session
+ok drill/and_it_is_the_drill_the_screen_asked_for
+ok drill/the_state_runs_the_drill_mode
+ok drill/and_it_ticks (the drill's own step)
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:173)
+         [6] _match_pause_and_result (res://tests/ui/uir_route_audit.gd:180)
+         [7] _initialize (res://tests/ui/uir_route_audit.gd:62)
+         [8] _drill_boots_a_real_session (res://tests/ui/uir_route_audit.gd:162)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:173)
+         [6] _match_pause_and_result (res://tests/ui/uir_route_audit.gd:180)
+         [7] _initialize (res://tests/ui/uir_route_audit.gd:62)
+         [8] _drill_boots_a_real_session (res://tests/ui/uir_route_audit.gd:162)
+ok match/the_match_starts_running
+ok pause/escape_on_a_running_match_pauses
+ok pause/and_the_card_is_open
+ok pause/a_second_escape_resumes
+ok pause/and_closes_the_card
+ok result/the_scripted_match_reaches_a_result
+ok result/the_finish_route_is_the_result
+ok result/the_payload_waits_for_the_host
+ok result/the_host_boots_straight_onto_the_result
+ok result/and_shows_the_matches_own_numbers
+ok result/the_payload_is_consumed_once
+ok rematch/rematch_goes_back_to_the_match_scene
+ok rematch/and_keeps_the_run_mode
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+ok settings/the_router_mounts_the_settings_screen
+ok settings/the_volume_row_takes_the_focus
+ok settings/the_right_press_is_handled
+ok settings/the_press_steps_the_row
+ok settings/the_step_lands_in_the_save
+ok settings/the_host_owns_the_audio_application
+ok settings/the_stepped_value_is_APPLIED_to_the_mixer (F6)
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:173)
+         [6] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:261)
+         [7] _initialize (res://tests/ui/uir_route_audit.gd:64)
+         [8] _settings_apply_what_they_store (res://tests/ui/uir_route_audit.gd:250)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:173)
+         [6] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:261)
+         [7] _initialize (res://tests/ui/uir_route_audit.gd:64)
+         [8] _settings_apply_what_they_store (res://tests/ui/uir_route_audit.gd:250)
+ok human/coop_reaches_the_state
+ok human/coop_sets_the_coop_flag
+ok human/coop_sets_the_pvp_flag
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:173)
+         [6] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:261)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:173)
+         [6] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:261)
+ok human/pvp_reaches_the_state
+ok human/pvp_sets_the_coop_flag
+ok human/pvp_sets_the_pvp_flag
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+MODE_RESOLVED {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"exercise":"precision","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillHits","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"score":0,"score_line":"—","streak":0,"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0}},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:272)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:810)
+         [4] _ready (res://game/match_controller.gd:468)
+         [5] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:272)
+MODE_START {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"exercise":"precision","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillHits","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"score":0,"score_line":"—","streak":0,"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0}},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+ok human/a_non_quick_mode_stays_solo
+PASS 44/44

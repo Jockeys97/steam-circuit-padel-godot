@@ -1,0 +1,83 @@
+# UIR-18 DrillScreen 1:1 — evidence log
+
+Ticket: `docs/implementation/ui-recreation/tickets/UIR-18-screen-drill.md`
+Wave: UIR-17/18/19/21 completion wave — sole engine runner; $0; no commits/staging/push.
+Engine: **ran this wave** — `"/Applications/Godot.app/Contents/MacOS/Godot" --headless --path godot/ --script res://tests/ui/screen_drill_audit.gd`
+Result: **88/89 checks — FAIL 1: `drill/the_scene_mounts_the_theme`**, the shared theme's parse error (§5). Every other check green.
+Run logs: `/tmp/padel-uir18-run{1..8}.log`, final `/tmp/padel-uir-final-drill.log`.
+
+**Reading a run:** the exit code is not a pass signal — a script that fails to parse also
+exits 0. The tally line (`PASS n/n` / `FAIL n/n`) and the `SCRIPT ERROR` count are the
+evidence; this log's numbers come from those.
+
+## 1. What landed this wave
+
+| path | what |
+|---|---|
+| `godot/tests/ui/screen_drill_audit.gd` | the ticket's audit, exercised in-engine; scanner + key-list fixes (§3) |
+| `godot/tests/ui/screen_drill_audit.tscn` + `.gd.uid` | runner scene + `uid://rvadwb3r4dmt` |
+| `godot/src/ui/screens/DrillScreen.gd` | fixes this wave: `:=` inference off dynamic calls, the `resized` re-entrancy guard (§3.2), `start(dry_run)` payload flag, segment pressed-state |
+
+## 2. The engine's word, per area (all green)
+
+- the header (title/subtitle/hint from the exercise), the four metric boxes with `best`
+  seeded from the stored record and `0` before a drill starts, the exercise tabs, the
+  difficulty control naming the reference's four values in order, the court area, the one
+  start action, the language flip, the eleven capture states, the literal scan.
+- the metric labels come from the scoring module (not re-typed); **the screen simulates
+  nothing** — the preview drill runs through the frozen module, and the audit asserts the
+  screen holds no engine of its own.
+
+## 3. What the run caught, and the fixes
+
+1. **Parse errors** — `:=` inferring from dynamic calls (`_shell.content()`,
+   `screen.exercise()`); typed instead.
+2. **A native stack overflow (segfault), root-caused in-engine.** Crash reports
+   (`~/Library/Logs/DiagnosticReports/Godot-*.ips`) showed repeated frames — infinite
+   recursion. Bisecting the connections isolated
+   `centering.resized.connect(_apply_column_width.bind(centering, column))`: setting a
+   theme-constant override from inside the layout pass re-enters synchronously and
+   overflows. Fixed with a `_applying_width` re-entrancy guard that converges; the same
+   shape was then guarded on the three sibling screens. The audit went from crashing to
+   completing.
+3. **The `_literals` scanner was vacuous** (only escaped characters were appended), so
+   every probe scanned `""`. Fixed; the probe now proves the scan flags the planted
+   `"Play now"` and spares developer text.
+4. **`arenaCta` removed from the key-resolve list** — that key is this screen's own new
+   copy, not a reference string.
+5. The audit drives `start(true)` (dry run): the payload is produced and the tree is not
+   touched. `start(dry_run)` now carries `payload["dry_run"]` so the flow can see it.
+
+## 4. The port's own decisions, recorded as the ticket requires
+
+- **The court area is a static frame.** The reference starts the drill inside the same
+  page because its canvas *is* the court; the port plays the drill in the match scene, so
+  this page is the setup step: the reference's frame treatment (`#0a1633`,
+  `styles.css:1401-1407`) with the arena's name and **one prominent start action**
+  (`training`). Anything beyond this is GATE-A material — recorded, not silently diverged.
+- **The start action** hands the flow `{mode: "drill", exercise, difficulty, scene}` and
+  sets `Config.pending_mode` / `Config.pending_exercise`; `start(true)` proves it without
+  touching the engine.
+- **Difficulty seam (recorded):** the four values are the reference's own; the initial
+  value is seeded from the stored `aiDifficulty`; choosing a difficulty **persists
+  nothing** — the reference does not either (`collectPrefs`, `js/ui.js:422-442`, has no
+  such key). The choice lives in the screen's own state. **Seam request for the drill
+  lane:** the match flow that starts the drill should read the choice from
+  `screen.difficulty()` / `start_payload()` (it is already in the payload); today no
+  consumer outside this screen reads it.
+- **Best score is the stored record** (`ModesSave.load_drill_records`), not a live engine
+  value — the audit asserts the stored-record path.
+
+## 5. The one red check — a cross-lane blocker in the shared theme
+
+`drill/the_scene_mounts_the_theme` fails because
+`godot/src/ui/theme/padel_theme.tres` **does not parse**: `Parse Error: Expected 4
+arguments for constructor` at line 419 — thirteen palette rows use a 3-argument
+`Color(r, g, b)`. Exact lines: **419–429 and 434–435**; mechanical fix: append `, 1`.
+The theme file is the theme lane's — recorded, not edited. The theme mount is the only
+theme-dependent check in this audit.
+
+## 6. Where the audit writes
+
+`user://uir18-drill-audit` only (created, asserted, removed); the real `user://` profile
+is never written.

@@ -1,0 +1,108 @@
+# UIR-12 ArenaScreen 1:1 — evidence log
+
+Wave: post-approval selection-screens wave (UIR-10 → UIR-11 → UIR-12), single screen worker.
+Repo: `/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot`, commit `6343312`.
+UIR-12 depends on UIR-11 (characters routes here); both landed, in order.
+
+## The field table (microstep 1), as this build answers it
+
+| id | build exposure (full / demo) | career wall | accent |
+| --- | --- | --- | --- |
+| officina | exposed / withheld | none | `#00e5ff` |
+| locomotive | exposed / withheld | unlocks | table's own |
+| clockwork | exposed / **the demo's one arena** | unlocks | table's own |
+| cattedrale | exposed / withheld | unlocks | table's own |
+| forgia | exposed / withheld | unlocks | table's own |
+| tempesta | exposed / withheld | unlocks | table's own |
+| abissale | exposed / withheld | unlocks | table's own |
+| caldera | exposed / withheld | unlocks | table's own |
+| orrery | exposed / withheld | unlocks | table's own |
+
+Two facts the ticket's brief did not carry, both measured and both written into the audit:
+**six of the nine arenas carry an `unlock` wall in the frozen table** (`grep`-free: the audit
+counts them and reports `arenas carrying an unlock wall in the frozen table: 6`), so in a
+*fully built* run the grid is not nine open cards but three open + six locked by the career.
+And **the demo's table exposes exactly one arena** (`DemoContent.allowed_arena_ids()`), so a
+demo run's live walls are 8 of 9 (`live walls: 8 of 9 (build=demo, …)`).
+
+## What shipped
+
+- `godot/src/ui/screens/ArenaScreen.gd` + `.tscn` — the header, the nine-card grid, the
+  player-mode panel, three card states and the start path.
+- Views/state, per `renderArenas` (`js/ui.js:1220-1275`): `selectable`, `locked`,
+  `out_of_matchday`, `in_program`; the card body carries exactly one of the renderer's own
+  four sentences (`arena_<id>_desc`, `demoOnlyFull`, `lockLabel`'s key, `arenaOtherMatchday` /
+  `arenaOtherRound`) and the badge names where the fixture came from (`arenaByCalendar` /
+  `arenaByBracket`). The lock badge is the renderer's `🔒` from its code point; no prose
+  literal is added anywhere (`router_audit`'s lane rule, scanned by this audit too).
+- **The three walls are read, not assumed**: the build's (`demoLocked` — live in a demo, and
+  reachable in a full build through the `demo-locked` capture state, which is how the
+  negation is proved in both runs), the career's (`isUnlocked`), and the calendar's
+  (every non-fixture card switched off, with the sentence that says why).
+- **The fixture's pool is the career's**, because the reference's `selectableArenas()`
+  (`js/ui.js:490-492`) is `demoFilter(...).filter(isUnlocked)`: `Config.selectable_arenas()`
+  is only the build's half (`match_config.gd:64-66`), so the screen composes it with the
+  career's answer out of `UiData.arena_rows()`' own `locked` flag. Without that, the calendar
+  named an arena the career had not opened and the fixture card rendered locked — the exact
+  "choice the game discards" defect the reference's comment (`js/ui.js:1227-1230`) complains
+  about, in a new costume. The audit now fails if the fixture is not one of the open cards.
+- **The start path is the frozen contract, not a new one**: `Config.pending_mode` +
+  `Config.arena_index` (`match_config.gd:22-27`), then the scene `game/main_menu.gd` already
+  changes to — `res://game/Match.tscn` for a quick match (`:497`), `res://game/ModeScreen.tscn`
+  for the mode route (`:502`). The audit reads those two paths **out of `main_menu.gd`** and
+  holds this screen's constants to them, rather than trusting a constant of mine. No mode
+  rule, no simulation, no `ModeSession` change.
+- **Player mode**: the panel is the quick match's (`js/main.js:1656`:
+  `playerModeSetup.hidden = ui.selectedMode !== "quick"`), its three options persist through
+  `prefs.playerMode` (the reference keeps it there — `js/ui.js:439`, restored at
+  `js/main.js:2282`), the active segment is the chosen one, and the hint is `pmHint`, the one
+  key the reference has (there is no per-mode hint key: `pmHintCoop`/`pmHintPvp` do not exist
+  in the tables — the ticket's "hint matches the selected mode" is the *active segment* plus
+  that one sentence, which names both co-op and versus).
+
+Hand-back names this run owes the parent:
+- **start payload keys**: `mode`, `arena_id`, `arena_index`, `player_mode`, `scene` —
+  e.g. `{"arena_id":"officina","arena_index":0,"mode":"quick","player_mode":"solo","scene":"res://game/Match.tscn"}`.
+- **wording keys**: `arenaByCalendar` / `arenaByBracket` (the badge),
+  `arenaOtherMatchday` / `arenaOtherRound` (the switched-off sentence), `demoOnlyFull` (the
+  build's wall), `arenaTitle`, `arenaSub`, `playerMode`, `pmSolo`, `pmCoop`, `pmPvp`, `pmHint`.
+- **disabled-state proof lines**: `arena/a_switched_off_card_refuses_the_press`,
+  `arena/a_switched_off_card_carries_no_handler`, `arena/the_locked_card_refuses_the_press`,
+  `arena/the_locked_card_refuses_through_its_own_card`.
+
+## Gaps recorded, not papered over
+
+1. **`UiData.arena_rows()` carries no accent.** The renderer paints
+   `arena.palette.accent`; the row seam (`UiData.gd:337-360`) carries id/keys/art/locked only.
+   The screen reads the accent off the frozen table (`Frozen.arenas()`, read-only) and this
+   line is the request: a `UiData.accent_of(row)` / `arena_rows()["accent"]` would close the
+   hole without touching the frozen data.
+2. **`UiData.arena_rows()` carries no `unlock` either**, so the career-wall sentence
+   (`lockLabel`) is composed from the frozen table's own `unlock` — the same read, same
+   request. No arena's `unlock` is invented: the audit asserts the count it finds (6).
+3. The theme seam from UIR-10/UIR-11 stands unchanged (arena cards read `PanelDark` /
+   `PanelCardSelected` and zero their content margins so the preview bleeds, `styles.css:508-522`).
+
+## Evidence (commands and tallies)
+
+```
+cd godot && /Applications/Godot.app/Contents/MacOS/Godot --headless --path . \
+    --script res://tests/ui/screen_arena_audit.gd            # exit 0, PASS 133/133, 0 SCRIPT ERROR
+… --script res://tests/ui/screen_arena_audit.gd -- --demo     # exit 0, PASS 120/120, 0 SCRIPT ERROR
+```
+
+A parse error also exits 0, so every run is checked for `SCRIPT ERROR` separately — one was
+found and fixed during this ticket (an indexed read of an empty list in the audit), which is
+why the line above is a rule and not a formality. The demo run's reports:
+`live walls: 8 of 9 (build=demo, career-walled: 8)`, `career pool: 1 arenas, fixture clockwork`,
+`out of the matchday: 0 cards` — the one-arena build says so instead of the audit inventing a
+switched-off card.
+
+## Files (this ticket's allowlist only)
+
+- `godot/src/ui/screens/ArenaScreen.gd` (created) + `.tscn` (created) + `.gd.uid` (created)
+- `godot/tests/ui/screen_arena_audit.gd` (created) + `.tscn` (created) + `.gd.uid` (created)
+- this log
+
+Nothing outside the allowlist was written: no theme, router, adapter, mode-rule, save-schema
+or frozen-data edit; no commit, no stage, no push.
