@@ -1,0 +1,103 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# WORLD_ARENAS_FIELD_LAW · Godot 4.7.2-stable (official) · field-law z=-8.0 · presets=["default", "wide", "playable"]
+# targets=["torii", "medina", "carioca", "aurora", "egeo"] build=full
+ok every target arena id is known to the arena library (frozen nine + world five)
+ok the target ids are distinct
+ok the frozen roster is still exactly the frozen table's nine, in order, with no world id inside it
+ok every target arena is offered as a choice by this build (full)
+ok a FULL build offers the five world arenas as choices
+ARENA id=torii    family=world  wallBounce=0.89 rear_alpha=0.380 meshes=206 props=16 dressing=16 closest_scenery_z=-10.83(Roof0) wall_z=-12.00 module_z=-12.00 overlaps=0 glass_z=-10.02(GlassFar 6/6) behind_glass=0 kinds=moon,petal,petal,petal,petal,petal,torii,torii,torii,torii,torii,lantern,lantern,lantern,lantern,pagoda
+ok arena 'torii' declares family "world"
+ok arena 'torii' carries a name and a description
+ok arena 'torii' carries a usable wallBounce (0.89 -> rear alpha 0.380)
+ok arena 'torii' has a distinct style signature
+ok arena 'torii' builds the court, the net and a populated Scenery
+ok arena 'torii' carries its own scenery vocabulary
+ok arena 'torii' scenery stays behind BACKDROP_Z=-8.0 (closest vertex z=-10.83 at 'Roof0')
+ok arena 'torii' backdrop wall stands behind BACKDROP_Z=-8.0 (z=-12.00, module constant -12.00)
+ok arena 'torii' has no scenery over the playable footprint (never inside the cage)
+ok arena 'torii' six rear panes give a real glass plane (measured glass z=-10.02 at GlassFar)
+ok arena 'torii' every scenery mesh stays behind the MEASURED rear glass (closest z=-10.83 at 'Roof0' vs glass z=-10.02)
+ok arena 'torii' shared structural dressing classified + covered (GearRing z=-11.35 behind glass, AccentPostL/R outside the cage)
+STRUCTURAL arena=torii gear={ "found": true, "z": -11.3499994277954, "behind_glass": true } posts=[{ "name": "AccentPostL", "z": 3.40000009536743, "x": -7.0, "outside_cage": true }, { "name": "AccentPostR", "z": 3.40000009536743, "x": 7.0, "outside_cage": true }] classified=shared structural court dressing (court_builder.gd), identical in every arena including the frozen nine; not arena scenery
+ok RED CONTROL arena 'torii': scenery at z=-9 is REJECTED by the glass safety (closest vertex z=-9.00 > measured glass z=-10.02)
+ok RED CONTROL arena 'torii': the SAME z=-9 dressing is NOT a violation of the mandated -8 plane (the checks are independent)
+ok arena 'torii' glass cage intact: six rear panes + frame + side walls, all visible, alphas as built
+ok arena 'torii' builds under every real preset ["default", "wide", "playable"]
+ARENA id=medina   family=world  wallBounce=0.89 rear_alpha=0.380 meshes=235 props=13 dressing=13 closest_scenery_z=-11.13(Base) wall_z=-12.00 module_z=-12.00 overlaps=0 glass_z=-10.02(GlassFar 6/6) behind_glass=0 kinds=sun,wall,zellige,arch,minaret,palm,palm,palm,palm,palm,lantern,lantern,lantern
+ok arena 'medina' declares family "world"
+ok arena 'medina' carries a name and a description
+ok arena 'medina' carries a usable wallBounce (0.89 -> rear alpha 0.380)
+ok arena 'medina' has a distinct style signature
+ok arena 'medina' builds the court, the net and a populated Scenery
+ok arena 'medina' carries its own scenery vocabulary
+ok arena 'medina' scenery stays behind BACKDROP_Z=-8.0 (closest vertex z=-11.13 at 'Base')
+ok arena 'medina' backdrop wall stands behind BACKDROP_Z=-8.0 (z=-12.00, module constant -12.00)
+ok arena 'medina' has no scenery over the playable footprint (never inside the cage)
+ok arena 'medina' six rear panes give a real glass plane (measured glass z=-10.02 at GlassFar)
+ok arena 'medina' every scenery mesh stays behind the MEASURED rear glass (closest z=-11.13 at 'Base' vs glass z=-10.02)
+ok arena 'medina' shared structural dressing classified + covered (GearRing z=-11.35 behind glass, AccentPostL/R outside the cage)
+STRUCTURAL arena=medina gear={ "found": true, "z": -11.3499994277954, "behind_glass": true } posts=[{ "name": "AccentPostL", "z": 3.40000009536743, "x": -7.0, "outside_cage": true }, { "name": "AccentPostR", "z": 3.40000009536743, "x": 7.0, "outside_cage": true }] classified=shared structural court dressing (court_builder.gd), identical in every arena including the frozen nine; not arena scenery
+ok RED CONTROL arena 'medina': scenery at z=-9 is REJECTED by the glass safety (closest vertex z=-9.00 > measured glass z=-10.02)
+ok RED CONTROL arena 'medina': the SAME z=-9 dressing is NOT a violation of the mandated -8 plane (the checks are independent)
+ok arena 'medina' glass cage intact: six rear panes + frame + side walls, all visible, alphas as built
+ok arena 'medina' builds under every real preset ["default", "wide", "playable"]
+ARENA id=carioca  family=world  wallBounce=0.89 rear_alpha=0.380 meshes=183 props=14 dressing=14 closest_scenery_z=-10.59(Skirt) wall_z=-12.00 module_z=-12.00 overlaps=0 glass_z=-10.02(GlassFar 6/6) behind_glass=0 kinds=sun,cloud,cloud,ridge,peak,peak,cable,palm,palm,palm,palm,foam,foam,foam
+ok arena 'carioca' declares family "world"
+ok arena 'carioca' carries a name and a description
+ok arena 'carioca' carries a usable wallBounce (0.89 -> rear alpha 0.380)
+ok arena 'carioca' has a distinct style signature
+ok arena 'carioca' builds the court, the net and a populated Scenery
+ok arena 'carioca' carries its own scenery vocabulary
+ok arena 'carioca' scenery stays behind BACKDROP_Z=-8.0 (closest vertex z=-10.59 at 'Skirt')
+ok arena 'carioca' backdrop wall stands behind BACKDROP_Z=-8.0 (z=-12.00, module constant -12.00)
+ok arena 'carioca' has no scenery over the playable footprint (never inside the cage)
+ok arena 'carioca' six rear panes give a real glass plane (measured glass z=-10.02 at GlassFar)
+ok arena 'carioca' every scenery mesh stays behind the MEASURED rear glass (closest z=-10.59 at 'Skirt' vs glass z=-10.02)
+ok arena 'carioca' shared structural dressing classified + covered (GearRing z=-11.35 behind glass, AccentPostL/R outside the cage)
+STRUCTURAL arena=carioca gear={ "found": true, "z": -11.3499994277954, "behind_glass": true } posts=[{ "name": "AccentPostL", "z": 3.40000009536743, "x": -7.0, "outside_cage": true }, { "name": "AccentPostR", "z": 3.40000009536743, "x": 7.0, "outside_cage": true }] classified=shared structural court dressing (court_builder.gd), identical in every arena including the frozen nine; not arena scenery
+ok RED CONTROL arena 'carioca': scenery at z=-9 is REJECTED by the glass safety (closest vertex z=-9.00 > measured glass z=-10.02)
+ok RED CONTROL arena 'carioca': the SAME z=-9 dressing is NOT a violation of the mandated -8 plane (the checks are independent)
+ok arena 'carioca' glass cage intact: six rear panes + frame + side walls, all visible, alphas as built
+ok arena 'carioca' builds under every real preset ["default", "wide", "playable"]
+ARENA id=aurora   family=world  wallBounce=0.89 rear_alpha=0.380 meshes=181 props=13 dressing=13 closest_scenery_z=-11.10(Column1) wall_z=-12.00 module_z=-12.00 overlaps=0 glass_z=-10.02(GlassFar 6/6) behind_glass=0 kinds=star,star,star,star,star,moon,aurora,aurora,basalt,basalt,snowridge,steam,steam
+ok arena 'aurora' declares family "world"
+ok arena 'aurora' carries a name and a description
+ok arena 'aurora' carries a usable wallBounce (0.89 -> rear alpha 0.380)
+ok arena 'aurora' has a distinct style signature
+ok arena 'aurora' builds the court, the net and a populated Scenery
+ok arena 'aurora' carries its own scenery vocabulary
+ok arena 'aurora' scenery stays behind BACKDROP_Z=-8.0 (closest vertex z=-11.10 at 'Column1')
+ok arena 'aurora' backdrop wall stands behind BACKDROP_Z=-8.0 (z=-12.00, module constant -12.00)
+ok arena 'aurora' has no scenery over the playable footprint (never inside the cage)
+ok arena 'aurora' six rear panes give a real glass plane (measured glass z=-10.02 at GlassFar)
+ok arena 'aurora' every scenery mesh stays behind the MEASURED rear glass (closest z=-11.10 at 'Column1' vs glass z=-10.02)
+ok arena 'aurora' shared structural dressing classified + covered (GearRing z=-11.35 behind glass, AccentPostL/R outside the cage)
+STRUCTURAL arena=aurora gear={ "found": true, "z": -11.3499994277954, "behind_glass": true } posts=[{ "name": "AccentPostL", "z": 3.40000009536743, "x": -7.0, "outside_cage": true }, { "name": "AccentPostR", "z": 3.40000009536743, "x": 7.0, "outside_cage": true }] classified=shared structural court dressing (court_builder.gd), identical in every arena including the frozen nine; not arena scenery
+ok RED CONTROL arena 'aurora': scenery at z=-9 is REJECTED by the glass safety (closest vertex z=-9.00 > measured glass z=-10.02)
+ok RED CONTROL arena 'aurora': the SAME z=-9 dressing is NOT a violation of the mandated -8 plane (the checks are independent)
+ok arena 'aurora' glass cage intact: six rear panes + frame + side walls, all visible, alphas as built
+ok arena 'aurora' builds under every real preset ["default", "wide", "playable"]
+ARENA id=egeo     family=world  wallBounce=0.89 rear_alpha=0.380 meshes=159 props= 7 dressing= 7 closest_scenery_z=-11.12(House0) wall_z=-12.00 module_z=-12.00 overlaps=0 glass_z=-10.02(GlassFar 6/6) behind_glass=0 kinds=sun,sea,island,island,windmill,bougainvillea,bougainvillea
+ok arena 'egeo' declares family "world"
+ok arena 'egeo' carries a name and a description
+ok arena 'egeo' carries a usable wallBounce (0.89 -> rear alpha 0.380)
+ok arena 'egeo' has a distinct style signature
+ok arena 'egeo' builds the court, the net and a populated Scenery
+ok arena 'egeo' carries its own scenery vocabulary
+ok arena 'egeo' scenery stays behind BACKDROP_Z=-8.0 (closest vertex z=-11.12 at 'House0')
+ok arena 'egeo' backdrop wall stands behind BACKDROP_Z=-8.0 (z=-12.00, module constant -12.00)
+ok arena 'egeo' has no scenery over the playable footprint (never inside the cage)
+ok arena 'egeo' six rear panes give a real glass plane (measured glass z=-10.02 at GlassFar)
+ok arena 'egeo' every scenery mesh stays behind the MEASURED rear glass (closest z=-11.12 at 'House0' vs glass z=-10.02)
+ok arena 'egeo' shared structural dressing classified + covered (GearRing z=-11.35 behind glass, AccentPostL/R outside the cage)
+STRUCTURAL arena=egeo gear={ "found": true, "z": -11.3499994277954, "behind_glass": true } posts=[{ "name": "AccentPostL", "z": 3.40000009536743, "x": -7.0, "outside_cage": true }, { "name": "AccentPostR", "z": 3.40000009536743, "x": 7.0, "outside_cage": true }] classified=shared structural court dressing (court_builder.gd), identical in every arena including the frozen nine; not arena scenery
+ok RED CONTROL arena 'egeo': scenery at z=-9 is REJECTED by the glass safety (closest vertex z=-9.00 > measured glass z=-10.02)
+ok RED CONTROL arena 'egeo': the SAME z=-9 dressing is NOT a violation of the mandated -8 plane (the checks are independent)
+ok arena 'egeo' glass cage intact: six rear panes + frame + side walls, all visible, alphas as built
+ok arena 'egeo' builds under every real preset ["default", "wide", "playable"]
+ok the five world arenas are five distinct environments (signature digests)
+ok every present target arena is selectable through Config.set_arena_id
+ok every present target arena reaches the selection the match would start with
+PASS 88/88

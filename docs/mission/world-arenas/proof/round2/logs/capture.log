@@ -1,0 +1,133 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4
+
+# WORLD_ARENAS_CAPTURE · Godot 4.7.2-stable (official) · field-law z=-8.0 · presets=["default", "wide", "playable"]
+# display=macOS adapter=Apple M4 api=4.1 Metal - 91.7 size=(1280, 720) out=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures targets=["torii", "medina", "carioca", "aurora", "egeo"] presets=["default", "wide", "playable"]
+ok the display server is not headless (a dummy driver renders blank frames)
+ok capture default/torii: every glass pane and scenery mesh is visible at capture time
+ok capture default/torii: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture default/torii: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/torii: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture default/torii: the frame is non-vacuous (187 colours on a 64x36 grid)
+ok capture default/torii: all court corners + side/rear glass extents inside the frame
+ok capture default/torii: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/default/arena-torii.png)
+CAPTURE_RECORD preset=default arena=torii png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/default/arena-torii.png px=1280x720 colours=187 min_margin=55.1px(court_corner_left_near) sha256=6e0d46be919e5755cd464a3cd10ad0bd81f30974c488946279bb3b71021b1db8
+ok capture default/medina: every glass pane and scenery mesh is visible at capture time
+ok capture default/medina: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture default/medina: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/medina: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture default/medina: the frame is non-vacuous (204 colours on a 64x36 grid)
+ok capture default/medina: all court corners + side/rear glass extents inside the frame
+ok capture default/medina: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/default/arena-medina.png)
+CAPTURE_RECORD preset=default arena=medina png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/default/arena-medina.png px=1280x720 colours=204 min_margin=55.1px(court_corner_left_near) sha256=4142060f46eb8310200e4695c98dc0ae520eaaf9100a0a4160ba3740571c8b34
+ok capture default/carioca: every glass pane and scenery mesh is visible at capture time
+ok capture default/carioca: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture default/carioca: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/carioca: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture default/carioca: the frame is non-vacuous (161 colours on a 64x36 grid)
+ok capture default/carioca: all court corners + side/rear glass extents inside the frame
+ok capture default/carioca: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/default/arena-carioca.png)
+CAPTURE_RECORD preset=default arena=carioca png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/default/arena-carioca.png px=1280x720 colours=161 min_margin=55.1px(court_corner_left_near) sha256=ff94cd6a6f160692b1840a6387b6605109b86a9d3561a6c45eb7463449ae4dbb
+ok capture default/aurora: every glass pane and scenery mesh is visible at capture time
+ok capture default/aurora: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture default/aurora: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/aurora: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture default/aurora: the frame is non-vacuous (200 colours on a 64x36 grid)
+ok capture default/aurora: all court corners + side/rear glass extents inside the frame
+ok capture default/aurora: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/default/arena-aurora.png)
+CAPTURE_RECORD preset=default arena=aurora png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/default/arena-aurora.png px=1280x720 colours=200 min_margin=55.1px(court_corner_left_near) sha256=c54ef6009af4db699d0e2812f525fd9f981f2be618e6c9d87b1d0335b3c6ceee
+ok capture default/egeo: every glass pane and scenery mesh is visible at capture time
+ok capture default/egeo: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture default/egeo: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/egeo: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture default/egeo: the frame is non-vacuous (171 colours on a 64x36 grid)
+ok capture default/egeo: all court corners + side/rear glass extents inside the frame
+ok capture default/egeo: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/default/arena-egeo.png)
+CAPTURE_RECORD preset=default arena=egeo png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/default/arena-egeo.png px=1280x720 colours=171 min_margin=55.1px(court_corner_left_near) sha256=a8cd0676f423525f571c1b5f7ef7bb632c48c666cc04caf2b833d36b7a35d614
+ok preset default: the captured arenas render differently (5 captures, 5 distinct signatures)
+ok capture wide/torii: every glass pane and scenery mesh is visible at capture time
+ok capture wide/torii: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture wide/torii: frame is the full render target (1280, 720) (got 1280x720)
+ok capture wide/torii: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture wide/torii: the frame is non-vacuous (116 colours on a 64x36 grid)
+ok capture wide/torii: all court corners + side/rear glass extents inside the frame
+ok capture wide/torii: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/wide/arena-torii.png)
+CAPTURE_RECORD preset=wide arena=torii png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/wide/arena-torii.png px=1280x720 colours=116 min_margin=132.8px(court_corner_left_near) sha256=4fc20d886f11a9308c2981e32c29ba233441581c09f1694259ad28cb698deaba
+ok capture wide/medina: every glass pane and scenery mesh is visible at capture time
+ok capture wide/medina: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture wide/medina: frame is the full render target (1280, 720) (got 1280x720)
+ok capture wide/medina: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture wide/medina: the frame is non-vacuous (120 colours on a 64x36 grid)
+ok capture wide/medina: all court corners + side/rear glass extents inside the frame
+ok capture wide/medina: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/wide/arena-medina.png)
+CAPTURE_RECORD preset=wide arena=medina png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/wide/arena-medina.png px=1280x720 colours=120 min_margin=132.8px(court_corner_left_near) sha256=bfa12203e4ef33dafa9b15923dd67e4bef0ee25311ab0bba4e5049bb2e91a3a2
+ok capture wide/carioca: every glass pane and scenery mesh is visible at capture time
+ok capture wide/carioca: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture wide/carioca: frame is the full render target (1280, 720) (got 1280x720)
+ok capture wide/carioca: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture wide/carioca: the frame is non-vacuous (96 colours on a 64x36 grid)
+ok capture wide/carioca: all court corners + side/rear glass extents inside the frame
+ok capture wide/carioca: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/wide/arena-carioca.png)
+CAPTURE_RECORD preset=wide arena=carioca png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/wide/arena-carioca.png px=1280x720 colours=96 min_margin=132.8px(court_corner_left_near) sha256=3994cc0ba6d0b8d8f45d34cd5481cd3c223424f5b5baf3db5ff64c89502d4d65
+ok capture wide/aurora: every glass pane and scenery mesh is visible at capture time
+ok capture wide/aurora: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture wide/aurora: frame is the full render target (1280, 720) (got 1280x720)
+ok capture wide/aurora: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture wide/aurora: the frame is non-vacuous (128 colours on a 64x36 grid)
+ok capture wide/aurora: all court corners + side/rear glass extents inside the frame
+ok capture wide/aurora: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/wide/arena-aurora.png)
+CAPTURE_RECORD preset=wide arena=aurora png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/wide/arena-aurora.png px=1280x720 colours=128 min_margin=132.8px(court_corner_left_near) sha256=3b32a249cda875750d5d3e4fb78f77360f4d367111a968cf8dfcfaa1fa284836
+ok capture wide/egeo: every glass pane and scenery mesh is visible at capture time
+ok capture wide/egeo: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture wide/egeo: frame is the full render target (1280, 720) (got 1280x720)
+ok capture wide/egeo: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture wide/egeo: the frame is non-vacuous (98 colours on a 64x36 grid)
+ok capture wide/egeo: all court corners + side/rear glass extents inside the frame
+ok capture wide/egeo: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/wide/arena-egeo.png)
+CAPTURE_RECORD preset=wide arena=egeo png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/wide/arena-egeo.png px=1280x720 colours=98 min_margin=132.8px(court_corner_left_near) sha256=0f573f8fa955dccd02190755f08643317bfda83015dbcffb9951691a04c1d131
+ok preset wide: the captured arenas render differently (5 captures, 5 distinct signatures)
+ok capture playable/torii: every glass pane and scenery mesh is visible at capture time
+ok capture playable/torii: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture playable/torii: frame is the full render target (1280, 720) (got 1280x720)
+ok capture playable/torii: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture playable/torii: the frame is non-vacuous (320 colours on a 64x36 grid)
+ok capture playable/torii: all court corners + side/rear glass extents inside the frame
+ok capture playable/torii: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/playable/arena-torii.png)
+CAPTURE_RECORD preset=playable arena=torii png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/playable/arena-torii.png px=1280x720 colours=320 min_margin=38.3px(court_corner_left_near) sha256=23c8c101b4edb9de94653b90e34e0d72bec60f34aac7400a1fec9841753950bd
+ok capture playable/medina: every glass pane and scenery mesh is visible at capture time
+ok capture playable/medina: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture playable/medina: frame is the full render target (1280, 720) (got 1280x720)
+ok capture playable/medina: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture playable/medina: the frame is non-vacuous (346 colours on a 64x36 grid)
+ok capture playable/medina: all court corners + side/rear glass extents inside the frame
+ok capture playable/medina: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/playable/arena-medina.png)
+CAPTURE_RECORD preset=playable arena=medina png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/playable/arena-medina.png px=1280x720 colours=346 min_margin=38.3px(court_corner_left_near) sha256=0572b43a5e0b8bf44cbc982b017d349d3132dcd215cff65e827618cbd517d1f9
+ok capture playable/carioca: every glass pane and scenery mesh is visible at capture time
+ok capture playable/carioca: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture playable/carioca: frame is the full render target (1280, 720) (got 1280x720)
+ok capture playable/carioca: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture playable/carioca: the frame is non-vacuous (241 colours on a 64x36 grid)
+ok capture playable/carioca: all court corners + side/rear glass extents inside the frame
+ok capture playable/carioca: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/playable/arena-carioca.png)
+CAPTURE_RECORD preset=playable arena=carioca png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/playable/arena-carioca.png px=1280x720 colours=241 min_margin=38.3px(court_corner_left_near) sha256=92224a8a266c6f19c05f9671a3b4b79eef54c5f242711b58346725c71510adb5
+ok capture playable/aurora: every glass pane and scenery mesh is visible at capture time
+ok capture playable/aurora: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture playable/aurora: frame is the full render target (1280, 720) (got 1280x720)
+ok capture playable/aurora: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture playable/aurora: the frame is non-vacuous (318 colours on a 64x36 grid)
+ok capture playable/aurora: all court corners + side/rear glass extents inside the frame
+ok capture playable/aurora: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/playable/arena-aurora.png)
+CAPTURE_RECORD preset=playable arena=aurora png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/playable/arena-aurora.png px=1280x720 colours=318 min_margin=38.3px(court_corner_left_near) sha256=970a18047242bd313e2f9dc29a0a42b4c8d6fe3697a3ae9cf1122cbaa4b13ef3
+ok capture playable/egeo: every glass pane and scenery mesh is visible at capture time
+ok capture playable/egeo: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture playable/egeo: frame is the full render target (1280, 720) (got 1280x720)
+ok capture playable/egeo: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture playable/egeo: the frame is non-vacuous (233 colours on a 64x36 grid)
+ok capture playable/egeo: all court corners + side/rear glass extents inside the frame
+ok capture playable/egeo: PNG saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/playable/arena-egeo.png)
+CAPTURE_RECORD preset=playable arena=egeo png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/playable/arena-egeo.png px=1280x720 colours=233 min_margin=38.3px(court_corner_left_near) sha256=6a8a86d50e25d017c96287e9458ffbc3edef0707a20e959661bbd5c3f71ff2b5
+ok preset playable: the captured arenas render differently (5 captures, 5 distinct signatures)
+ok every capture was written and recorded
+ok captures.json written (15 records)
+CAPTURE_SUMMARY captures=15 log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/captures.json
+PASS 111/111

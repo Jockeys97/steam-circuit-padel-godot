@@ -1,0 +1,1 @@
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/world_arenas_field_law_test.gd

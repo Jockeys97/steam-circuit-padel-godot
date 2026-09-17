@@ -1,0 +1,83 @@
+{
+	"adapter": "Apple M4",
+	"display": "macOS",
+	"engine": "4.7.2-stable (official)",
+	"record": {
+		"adapter": "Apple M4",
+		"buttons": {
+			"aurora": {
+				"inside_frame": true,
+				"px_colour": "#a1a2a3ff",
+				"rect": [
+					1002.0,
+					240.0,
+					90.0,
+					26.0
+				],
+				"text": "AURORA",
+				"visible": true
+			},
+			"carioca": {
+				"inside_frame": true,
+				"px_colour": "#13151aff",
+				"rect": [
+					1002.0,
+					206.0,
+					90.0,
+					26.0
+				],
+				"text": "CARIOCA",
+				"visible": true
+			},
+			"egeo": {
+				"inside_frame": true,
+				"px_colour": "#606165ff",
+				"rect": [
+					1002.0,
+					274.0,
+					90.0,
+					26.0
+				],
+				"text": "EGEO",
+				"visible": true
+			},
+			"medina": {
+				"inside_frame": true,
+				"px_colour": "#b3b4b5ff",
+				"rect": [
+					1002.0,
+					172.0,
+					90.0,
+					26.0
+				],
+				"text": "MEDINA",
+				"visible": true
+			},
+			"torii": {
+				"inside_frame": true,
+				"px_colour": "#13151aff",
+				"rect": [
+					1002.0,
+					138.0,
+					90.0,
+					26.0
+				],
+				"text": "TORII",
+				"visible": true
+			}
+		},
+		"colours": 122,
+		"display": "macOS",
+		"engine": "4.7.2-stable (official)",
+		"min_margin_px": 138.0,
+		"png": "menu/menu-world-chooser.png",
+		"sha256": "c8bf28c1cc1b42e375e01ab5b0882d0a903b936645a372f2d68bf21b9e0a4d4f",
+		"size": [
+			1280,
+			720
+		],
+		"timestamp": 1789664726.18869
+	},
+	"scene": "res://game/Main.tscn",
+	"tool": "world_arenas_menu_capture.gd"
+}

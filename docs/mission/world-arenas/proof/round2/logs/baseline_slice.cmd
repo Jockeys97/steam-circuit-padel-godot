@@ -1,0 +1,1 @@
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/game_slice_test.gd

@@ -12,6 +12,7 @@ const Frozen := preload("res://src/sim/frozen.gd")
 const Gate := preload("res://game/content_gate.gd")
 const AthleteSpawn := preload("res://src/character/athlete_spawn.gd")
 const Store := preload("res://src/save/save_store.gd")
+const Arena := preload("res://game/arenas/arena_library.gd")
 
 ## Roster-order defaults, per `PLAN.md` "Athlete roster order": the first athlete
 ## and the first arena are the slice's defaults.
@@ -24,6 +25,14 @@ const Store := preload("res://src/save/save_store.gd")
 ## selection is inside the exposed set after a demo build starts.
 static var athlete_index: int = 0
 static var arena_index: int = 0
+## The WORLD arena seat (port additions, `arena_library.gd::world_ids()`). Empty
+## means "the frozen `arena_index` is the selection"; a non-empty id means the
+## selected arena is that world arena and `arena_index` is left where it was, so
+## pressing a frozen arena button (or restoring the frozen selection) simply
+## clears the seat. Only a FULL build can hold one (`set_arena_id` refuses a
+## world id in a demo, and `apply_build_limits()` clears the seat) — the demo's
+## content rule is the reference's own table and knows nothing of the world set.
+static var world_arena_id: String = ""
 static var tier_index: int = 0
 static var seed_value: int = 20260916
 static var camera_preset: String = "default"
@@ -99,6 +108,20 @@ static func selectable_athletes() -> Array:
 ## The arenas this build offers as a choice. One in the packaged demo.
 static func selectable_arenas() -> Array:
 	return Gate.arenas()
+
+
+## The WORLD arenas this build offers as a further choice: the five port
+## additions in a full build, nothing in a demo (`Gate.world_arenas()`). A
+## separate list, never merged into `selectable_arenas()`: the frozen list's size
+## and order are the reference's own (the slice pins them), and the world set is
+## additive content the selection asks for by name.
+static func selectable_world_arenas() -> Array:
+	return Gate.world_arenas()
+
+
+## Is the current selection a world arena (the world seat is occupied)?
+static func is_world_selected() -> bool:
+	return world_arena_id != ""
 
 
 ## The mode ids this build offers (`["quick"]` in the demo).
@@ -192,6 +215,10 @@ static func apply_build_limits() -> Dictionary:
 	var changed := {}
 	if not Gate.is_demo():
 		return changed
+	# The world set is full-build content: a demo can never hold a world seat.
+	if world_arena_id != "":
+		changed["world_arena_id"] = world_arena_id
+		world_arena_id = ""
 	var tier := Gate.fixed_tier_index()
 	if tier >= 0 and tier_index != tier:
 		changed["tier_index"] = tier
@@ -279,6 +306,11 @@ static func apply_cli_selection(athlete_arg: String, arena_arg: String, tier_arg
 		var index := arena_index_of(arena_arg)
 		if index >= 0 and grants_arena(index):
 			arena_index = index
+			world_arena_id = ""
+		elif Arena.is_world(arena_arg) and not Gate.is_demo():
+			# A world arena this build offers: the seat is the id itself. A demo
+			# refuses it below, with everything else it does not grant.
+			world_arena_id = arena_arg
 		else:
 			refused["arena"] = arena_arg
 	if tier_arg != "":
@@ -317,20 +349,28 @@ static func arena_index_of(id: String) -> int:
 	return -1
 
 
-## The selected arena's id. `arena_index` stays the single piece of state, so
-## nothing downstream needs to know an id was ever involved.
+## The selected arena's id. `arena_index` stays the single piece of FROZEN state
+## (nothing downstream needs to know an id was ever involved), and the world seat
+## — when occupied — is the id itself.
 static func arena_id() -> String:
+	if world_arena_id != "":
+		return world_arena_id
 	return String(arena()["id"])
 
 
-## Selects an arena by id. Returns false for an unknown id: the caller decides
+## Selects an arena by id. Returns false for an unknown id — and for a WORLD id
+## in a demo build, which does not offer the world set at all: the caller decides
 ## what to do about it rather than the config silently picking something else.
 static func set_arena_id(id: String) -> bool:
 	var index := arena_index_of(id)
-	if index < 0:
-		return false
-	arena_index = index
-	return true
+	if index >= 0:
+		arena_index = index
+		world_arena_id = ""
+		return true
+	if Arena.is_world(id) and not Gate.is_demo():
+		world_arena_id = id
+		return true
+	return false
 
 
 static func tiers() -> Array:
@@ -342,7 +382,12 @@ static func athlete() -> Dictionary:
 	return list[clampi(athlete_index, 0, list.size() - 1)]
 
 
+## The arena record the match runs on: the frozen row at `arena_index`, or — when
+## the world seat is occupied — the world arena's own record
+## (`Arena.world_info()`, which carries the provisional physics the sim reads).
 static func arena() -> Dictionary:
+	if world_arena_id != "":
+		return Arena.world_info(world_arena_id)
 	var list := arenas()
 	return list[clampi(arena_index, 0, list.size() - 1)]
 

@@ -812,3 +812,41 @@ except for a divergence proven by the ticket's own reproduction.
 
 Open after S14: the owner's feel verdict; `run.sh`'s capture list and the `out/*.png`
 gitignore question; co-op/PvP and other tiers outside all three gates.
+
+## Five-world-arena lane (scoped) — round-2 re-score recorded (2026-09-17 19:27 CEST)
+
+Compact addendum for the scoped world-arenas mission (`docs/mission/world-arenas/`, branch
+`feat/native-world-arenas`). No historical content above is rewritten. **Status: technical and
+visual gates PASS on the frozen round-2 tree; protocol compliance remains PARTIAL (no
+cross-family council); code/tests uncommitted — not merged, not pushed; merge NOT authorized;
+owner taste unapproved. The original review contract is NOT fully complete.**
+
+- **What it is**: five native world arenas (torii, medina, carioca, aurora, egeo) as port
+  additions — frozen roster of nine untouched; selection seam wired (content gate / match
+  config / legacy menu world row / capture enumeration); new proof tooling; one authorised
+  refinement spent (aurora snow-ridge + proof coverage); final round-2 re-score recorded.
+  Ledger `ccl-ledger.jsonl` now **10 rows** (5 round-1 + 5 round-2, unique per arena-round).
+- **Round 2**: two independent read-only critics, same family (exact
+  `opencode-go/deepseek-flash`; lenses environmental-art / gameplay-rendering) — 5 arenas ×
+  2 critics × 8 items = **80/80 PASS**; both re-hashed the 16 frozen captures (15 arenas +
+  menu chooser) and the 9 step logs before scoring; rubric `COUNCIL.md` unchanged
+  (`aea2971556…`). Record: `review-round2.md`.
+- **Parent proof (personal re-run)**: `tools/world-arenas/run_proof.sh --baseline
+  --run-id=ceo-final-01` exit **0**; nine steps all exit 0 — slice **342/342**, demo
+  **293/293**, field law **88/88**, frame **14/14**, selection **18/18**, selection demo
+  **8/8**, capture **111/111**, menu capture **9/9** = **883 checks, zero `SCRIPT ERROR`**;
+  tree stable `6e0dad26fcce00fc -> 6e0dad26fcce00fc` (695 files, head `bcecd9bf`); parent's
+  captures 16/16 byte-identical to the freeze. **Five complete deterministic matches** (one
+  `WORLD_PLAYTHROUGH` per arena, `ticks=31295 points=26` each). Round-1 doubts closed: aurora
+  ridge legible across all presets; glass-safety measured plane `-10.02` + `z=-9` red control;
+  playthroughs 5/5. Round-1 freeze untouched (15/15 re-hashed).
+- **Honest caveats**: heterogeneous cross-family council unfulfilled (single-native-model
+  constraint — recorded, never fabricated); shutdown `resources still in use at exit` warnings
+  classified (audio-stream class; not zero warnings); provisional physics `wallBounce 0.89` is
+  a recommendation, not frozen balance; shared `GearRing`/`AccentPostL/R` classified structural
+  dressing; minor petals/steam stylisation noted. Preserved unrelated files: `godot/=/` debris,
+  unrelated `.uid` sidecars, modified `art/concepts/world-arenas-r1/README.md`.
+- **Evidence handles**: `docs/mission/world-arenas/{BOARD.md,MAP.md,LOG.md,review-round1.md,
+  review-round2.md,refinement.md,integrator.md,ccl-ledger.jsonl}`; `proof/round2/` (frames +
+  `CAPTURE_MANIFEST.md` + logs); run dirs `tools/world-arenas/out/{refinement-01,ceo-final-01}/`.
+- **Next**: owner taste verdict + merge decision — separate approvals; nothing auto-merges.

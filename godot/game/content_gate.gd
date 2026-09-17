@@ -29,6 +29,7 @@ extends RefCounted
 const BuildFlag := preload("res://tests/build/BuildFlag.gd")
 const ContentFilter := preload("res://tests/build/ContentFilter.gd")
 const Frozen := preload("res://src/sim/frozen.gd")
+const Arena := preload("res://game/arenas/arena_library.gd")
 
 ## The reference's four difficulty rungs ARE this port's four AI tiers
 ## (`js/ui.js:1531`: `{easy:0, medium:1, hard:2, legend:3}[difficulty]`), so the
@@ -53,6 +54,20 @@ static func roster() -> Array:
 ## The arenas this build offers as a choice.
 static func arenas() -> Array:
 	return ContentFilter.arenas()
+
+
+## The five world arenas (port additions, `arena_library.gd::world_rows()`): a
+## FULL build offers them as a further choice; a DEMO build offers none of them.
+## The demo's content rule is the reference's own table (`js/build.js`
+## `DEMO_CONTENT`), which cannot list port additions — preserving the demo means
+## the world set simply does not exist there, exactly as the frozen nine's demo
+## subset is unchanged. This is the gate seam only: `Config.selectable_arenas()`
+## stays the frozen roster's list (the slice pins its counts), and
+## `Config.selectable_world_arenas()` is where this answer reaches the selection.
+static func world_arenas() -> Array:
+	if is_demo():
+		return []
+	return Arena.world_rows()
 
 
 ## `demoLocked` (`js/build.js:73`): true only in the demo, and only for something

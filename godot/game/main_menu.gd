@@ -38,6 +38,9 @@ const Locale := preload("res://src/locale/locale.gd")
 const Gate := preload("res://game/content_gate.gd")
 const InputStrings := preload("res://src/input/strings.gd")
 const MenuFocus := preload("res://game/menu_focus.gd")
+## The world-arena set (port additions). Only `is_world` is used here: the list
+## itself always comes from `Config.selectable_world_arenas()`.
+const Arena := preload("res://game/arenas/arena_library.gd")
 const ModesSave := preload("res://src/modes/modes_save.gd")
 const InputSource := preload("res://game/input_map.gd")
 ## The verified audio module, for the one job the host has in it: applying the stored
@@ -57,6 +60,11 @@ const MODE_ENTRIES := [
 var _tier_buttons: Array[Button] = []
 var _athlete_buttons: Array[Button] = []
 var _arena_buttons: Array[Button] = []
+## The world-arena row (port additions, full build only). Plain buttons, NOT
+## toggle buttons: the frozen row's contract is one toggle per exposed arena
+## (`game_slice_test.gd` counts them against `selectable_arenas()`), and the
+## world set is additive content selected by id.
+var _world_arena_buttons: Array[Button] = []
 var _mode_buttons: Array[Button] = []
 var _info: Label
 var _seed_label: Label
@@ -223,6 +231,51 @@ func _ready() -> void:
 		athlete_col.add_child(b)
 		_athlete_buttons.append(b)
 		_register("athlete:%d" % full_index, b, "athlete:%d" % full_index)
+
+	# --- world arena column (port additions) ----------------------------------
+	# The five world arenas (`arena_style.gd`, `family: "world"`) have no frozen
+	# row and no seat in the frozen arena row below: a FULL build offers them as
+	# this setup column, a demo offers none of them
+	# (`Config.selectable_world_arenas()` is empty there, so the column is not
+	# built at all). It lives HERE, beside AVVERSARIO and ATLETA, and not as a
+	# row of its own: this column's slot already has the vertical space (the
+	# athlete column sets the row's height at 261 px, this one needs 184), while
+	# a new row measured 677 px against the 1152x648 frame the fit assertion in
+	# `game_slice_test.gd` measures — the screen's vertical budget is spent to
+	# the pixel (separation 4, the mode title moved out of its row), and the fit
+	# check is not the thing to change. Width is the other half of that budget:
+	# the column is 90 px wide, so the setup row grows from 914 to 1044 against
+	# the 1056 the frame allows, and the arena row below stays the widest row.
+	# Plain buttons, never toggle buttons: the frozen arena row's own contract —
+	# one toggle per exposed arena, counted by `game_slice_test.gd` — stays
+	# exactly what it was. The selection lands in `match_config.gd`'s world seat
+	# (`_on_world_arena`), the tooltip carries the same facts as the frozen
+	# row's, and the active one is marked on the button itself
+	# (`_apply_selection_state`).
+	var world_list: Array = Config.selectable_world_arenas()
+	if not world_list.is_empty():
+		var world_col := VBoxContainer.new()
+		world_col.add_theme_constant_override("separation", 8)
+		lists.add_child(world_col)
+		world_col.add_child(_label("MONDI (%d)" % world_list.size(), 16, Color(0.0, 0.898, 1.0)))
+		for i in world_list.size():
+			var arena: Dictionary = world_list[i]
+			var arena_id := String(arena["id"])
+			var b := Button.new()
+			b.name = "WorldArena_%s" % arena_id
+			b.text = _arena_label(arena)
+			b.focus_mode = Control.FOCUS_ALL
+			b.add_theme_font_size_override("font_size", 12)
+			b.custom_minimum_size = Vector2(90.0, 26.0)
+			b.clip_text = true
+			b.tooltip_text = "%s (%s) — %s · wallBounce %.2f (provisional) · floorGrip %.2f" % [
+				String(arena["name"]), arena_id, String(arena["desc"]),
+				float(arena["wallBounce"]), float(arena["floorGrip"]),
+			]
+			b.pressed.connect(_on_world_arena.bind(arena_id))
+			world_col.add_child(b)
+			_world_arena_buttons.append(b)
+			_register("arena:%s" % arena_id, b, "arena:%s" % arena_id)
 
 	_info = _label("", 16, Color(0.80, 0.86, 0.92))
 	col.add_child(_info)
@@ -655,9 +708,24 @@ func _apply_selection_state() -> void:
 	for i in _athlete_buttons.size():
 		var full_index := Gate.index_in(Frozen.athletes(), Config.selectable_athletes()[i])
 		_athlete_buttons[i].button_pressed = full_index == Config.athlete_index
+	# A world arena being selected clears the frozen row's pressed state: the
+	# frozen indices are still what they were, but the arena the match would start
+	# on is the world one.
+	var world_active := Config.is_world_selected()
 	for i in _arena_buttons.size():
 		var full_index := Gate.index_in(Frozen.arenas(), Config.selectable_arenas()[i])
-		_arena_buttons[i].button_pressed = full_index == Config.arena_index
+		_arena_buttons[i].button_pressed = full_index == Config.arena_index and not world_active
+	# The world row marks its own selection: `Button` without toggle mode has no
+	# pressed state, so the active id carries the accent colour instead.
+	var world_list: Array = Config.selectable_world_arenas()
+	for i in _world_arena_buttons.size():
+		if i >= world_list.size():
+			break
+		var id := String((world_list[i] as Dictionary).get("id", ""))
+		if world_active and Config.arena_id() == id:
+			_world_arena_buttons[i].add_theme_color_override("font_color", Color(0.0, 0.898, 1.0))
+		else:
+			_world_arena_buttons[i].remove_theme_color_override("font_color")
 	_refresh_outfit_button()
 
 
@@ -706,6 +774,24 @@ func _on_arena(full_index: int) -> void:
 	if full_index < 0:
 		return
 	Config.arena_index = full_index
+	# The two seats are mutually exclusive: choosing a frozen arena clears the
+	# world one (`Config.arena_id()` reads the frozen index again) and the world
+	# row's own marking is refreshed below.
+	Config.world_arena_id = ""
+	_apply_selection_state()
+	_refresh_info()
+
+
+## A world arena's own handler. The frozen row routes through `_on_arena(index)`;
+## a world arena has no frozen index, so the selection goes through
+## `Config.set_arena_id` — the seat is the id itself. A refusal here means the
+## build does not offer the set (a demo builds no world row at all), so it is
+## reported rather than swallowed.
+func _on_world_arena(arena_id: String) -> void:
+	if not Config.set_arena_id(arena_id):
+		push_error("main_menu: this build does not offer the world arena '%s'" % arena_id)
+		return
+	_apply_selection_state()
 	_refresh_info()
 
 
@@ -865,7 +951,11 @@ func _run_action(action: String) -> void:
 	elif action.begins_with("athlete:"):
 		_on_athlete(int(action.substr(8)))
 	elif action.begins_with("arena:"):
-		_on_arena(_full_arena_index(action.substr(6)))
+		var arena_id := action.substr(6)
+		if Arena.is_world(arena_id):
+			_on_world_arena(arena_id)
+		else:
+			_on_arena(_full_arena_index(arena_id))
 	elif action.begins_with("mode:"):
 		_open_mode(action.substr(5))
 

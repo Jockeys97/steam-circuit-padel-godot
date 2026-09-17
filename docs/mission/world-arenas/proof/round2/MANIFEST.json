@@ -1,0 +1,3281 @@
+{
+  "tool": "tools/world-arenas/build_manifest.py",
+  "run_dir": "/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01",
+  "engine": "Engine",
+  "steps": [
+    {
+      "step": "import",
+      "exit": "0",
+      "tally": null,
+      "passed": null,
+      "total": null,
+      "script_errors": 0,
+      "command": "/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --import",
+      "log": "logs/import.log",
+      "log_sha256": "f5e9e5ef7688742ecb05464fcd8230f4fa6d226ec7963d22d3831695ae9f5fdc",
+      "log_sha256_matches_record": true
+    },
+    {
+      "step": "baseline_slice",
+      "exit": "0",
+      "tally": "PASS 342/342",
+      "passed": 342,
+      "total": 342,
+      "script_errors": 0,
+      "command": "/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/game_slice_test.gd",
+      "log": "logs/baseline_slice.log",
+      "log_sha256": "b32a7ad8c600b529f26aa8cf250e6ef8aea8e230d0743bf08e16f24b675d4e5d",
+      "log_sha256_matches_record": true
+    },
+    {
+      "step": "baseline_demo",
+      "exit": "0",
+      "tally": "PASS 293/293",
+      "passed": 293,
+      "total": 293,
+      "script_errors": 0,
+      "command": "/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/game_slice_test.gd -- --demo",
+      "log": "logs/baseline_demo.log",
+      "log_sha256": "c66cdb1bb7370e12ca7c38e7362ce27a532d4c2a708f1cd8ff31f97e364fa10a",
+      "log_sha256_matches_record": true
+    },
+    {
+      "step": "field_law",
+      "exit": "0",
+      "tally": "PASS 88/88",
+      "passed": 88,
+      "total": 88,
+      "script_errors": 0,
+      "command": "/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/world_arenas_field_law_test.gd",
+      "log": "logs/field_law.log",
+      "log_sha256": "5e59eb6aea4867bdf332c333928d93cb4a22e0c918c511c418b8a34a070bc93c",
+      "log_sha256_matches_record": true
+    },
+    {
+      "step": "frame",
+      "exit": "0",
+      "tally": "PASS 14/14",
+      "passed": 14,
+      "total": 14,
+      "script_errors": 0,
+      "command": "/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/world_arenas_frame_test.gd",
+      "log": "logs/frame.log",
+      "log_sha256": "c21d0aa27b09c2625bad92c4ed46f42c0fd60c0dd5d87dc365d4f7c3349d44eb",
+      "log_sha256_matches_record": true
+    },
+    {
+      "step": "selection",
+      "exit": "0",
+      "tally": "PASS 18/18",
+      "passed": 18,
+      "total": 18,
+      "script_errors": 0,
+      "command": "/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/world_arenas_selection_test.gd",
+      "log": "logs/selection.log",
+      "log_sha256": "332032869c536d622028a4b1be879607bf1fa017ecd10101d1372b462ef6fce2",
+      "log_sha256_matches_record": true
+    },
+    {
+      "step": "selection_demo",
+      "exit": "0",
+      "tally": "PASS 8/8",
+      "passed": 8,
+      "total": 8,
+      "script_errors": 0,
+      "command": "/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/world_arenas_selection_test.gd -- --demo",
+      "log": "logs/selection_demo.log",
+      "log_sha256": "0fc3e68c0eb834168ab4003ae2bf5aff71d8570455bb2a42106aa356d4bf3c2c",
+      "log_sha256_matches_record": true
+    },
+    {
+      "step": "capture",
+      "exit": "0",
+      "tally": "PASS 111/111",
+      "passed": 111,
+      "total": 111,
+      "script_errors": 0,
+      "command": "/Applications/Godot.app/Contents/MacOS/Godot --path godot --rendering-driver opengl3 --resolution 1280x720 res://tests/world_arenas_capture.tscn -- --out=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures",
+      "log": "logs/capture.log",
+      "log_sha256": "485c2a6e17feebb9f17d3e0dabc8389b142c8097804843b1a884d65828292c49",
+      "log_sha256_matches_record": true
+    },
+    {
+      "step": "menu_capture",
+      "exit": "0",
+      "tally": "PASS 9/9",
+      "passed": 9,
+      "total": 9,
+      "script_errors": 0,
+      "command": "/Applications/Godot.app/Contents/MacOS/Godot --path godot --rendering-driver opengl3 --resolution 1280x720 res://tests/world_arenas_menu_capture.tscn -- --out=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures",
+      "log": "logs/menu_capture.log",
+      "log_sha256": "4c4b4405d931ea99800b4db784229324373c3edadec9223e571781de8018d9cd",
+      "log_sha256_matches_record": true
+    }
+  ],
+  "run_green": true,
+  "tree_before": {
+    "head": "bcecd9bf7f2e3cf075e8b74d41417e30be924d88",
+    "files": 695,
+    "digest": "6e0dad26fcce00fc",
+    "dirty": [
+      " M art/concepts/world-arenas-r1/README.md",
+      " M godot/game/arenas/arena_library.gd",
+      " M godot/game/arenas/arena_scenery.gd",
+      " M godot/game/arenas/arena_style.gd",
+      " M godot/game/content_gate.gd",
+      " M godot/game/main_menu.gd",
+      " M godot/game/match_config.gd",
+      " M godot/game/match_controller.gd",
+      "?? docs/mission/world-arenas/",
+      "?? godot/=/",
+      "?? godot/_probe_replay_card.gd.uid",
+      "?? godot/src/ui/components/BoxColumn.gd.uid",
+      "?? godot/src/ui/components/BoxRow.gd.uid",
+      "?? godot/tests/ui/_probe_challenges.gd.uid",
+      "?? godot/tests/ui/_probe_help.gd.uid",
+      "?? godot/tests/ui/_probe_input.gd.uid",
+      "?? godot/tests/ui/_probe_input_root.gd.uid",
+      "?? godot/tests/ui/_probe_osk2.gd.uid",
+      "?? godot/tests/ui/_probe_overflow.gd.uid",
+      "?? godot/tests/ui/_probe_profile.gd.uid",
+      "?? godot/tests/ui/_probe_theme.gd.uid",
+      "?? godot/tests/ui/_probe_touch.gd.uid",
+      "?? godot/tests/ui/demo_matrix_audit.gd.uid",
+      "?? godot/tests/ui/uir22_integration_audit.gd.uid",
+      "?? godot/tests/ui/uir_route_audit.gd.uid",
+      "?? godot/tests/world_arenas_band_probe.gd",
+      "?? godot/tests/world_arenas_band_probe.gd.uid",
+      "?? godot/tests/world_arenas_capture.gd",
+      "?? godot/tests/world_arenas_capture.gd.uid",
+      "?? godot/tests/world_arenas_capture.tscn",
+      "?? godot/tests/world_arenas_common.gd",
+      "?? godot/tests/world_arenas_common.gd.uid",
+      "?? godot/tests/world_arenas_field_law_test.gd",
+      "?? godot/tests/world_arenas_field_law_test.gd.uid",
+      "?? godot/tests/world_arenas_frame_test.gd",
+      "?? godot/tests/world_arenas_frame_test.gd.uid",
+      "?? godot/tests/world_arenas_menu_capture.gd",
+      "?? godot/tests/world_arenas_menu_capture.gd.uid",
+      "?? godot/tests/world_arenas_menu_capture.tscn",
+      "?? godot/tests/world_arenas_menu_probe.gd",
+      "?? godot/tests/world_arenas_menu_probe.gd.uid",
+      "?? godot/tests/world_arenas_selection_test.gd",
+      "?? godot/tests/world_arenas_selection_test.gd.uid",
+      "?? godot/tests/world_arenas_transform_probe.gd",
+      "?? godot/tests/world_arenas_transform_probe.gd.uid",
+      "?? tools/world-arenas/"
+    ]
+  },
+  "tree_after": {
+    "head": "bcecd9bf7f2e3cf075e8b74d41417e30be924d88",
+    "files": 695,
+    "digest": "6e0dad26fcce00fc",
+    "dirty": [
+      " M art/concepts/world-arenas-r1/README.md",
+      " M godot/game/arenas/arena_library.gd",
+      " M godot/game/arenas/arena_scenery.gd",
+      " M godot/game/arenas/arena_style.gd",
+      " M godot/game/content_gate.gd",
+      " M godot/game/main_menu.gd",
+      " M godot/game/match_config.gd",
+      " M godot/game/match_controller.gd",
+      "?? docs/mission/world-arenas/",
+      "?? godot/=/",
+      "?? godot/_probe_replay_card.gd.uid",
+      "?? godot/src/ui/components/BoxColumn.gd.uid",
+      "?? godot/src/ui/components/BoxRow.gd.uid",
+      "?? godot/tests/ui/_probe_challenges.gd.uid",
+      "?? godot/tests/ui/_probe_help.gd.uid",
+      "?? godot/tests/ui/_probe_input.gd.uid",
+      "?? godot/tests/ui/_probe_input_root.gd.uid",
+      "?? godot/tests/ui/_probe_osk2.gd.uid",
+      "?? godot/tests/ui/_probe_overflow.gd.uid",
+      "?? godot/tests/ui/_probe_profile.gd.uid",
+      "?? godot/tests/ui/_probe_theme.gd.uid",
+      "?? godot/tests/ui/_probe_touch.gd.uid",
+      "?? godot/tests/ui/demo_matrix_audit.gd.uid",
+      "?? godot/tests/ui/uir22_integration_audit.gd.uid",
+      "?? godot/tests/ui/uir_route_audit.gd.uid",
+      "?? godot/tests/world_arenas_band_probe.gd",
+      "?? godot/tests/world_arenas_band_probe.gd.uid",
+      "?? godot/tests/world_arenas_capture.gd",
+      "?? godot/tests/world_arenas_capture.gd.uid",
+      "?? godot/tests/world_arenas_capture.tscn",
+      "?? godot/tests/world_arenas_common.gd",
+      "?? godot/tests/world_arenas_common.gd.uid",
+      "?? godot/tests/world_arenas_field_law_test.gd",
+      "?? godot/tests/world_arenas_field_law_test.gd.uid",
+      "?? godot/tests/world_arenas_frame_test.gd",
+      "?? godot/tests/world_arenas_frame_test.gd.uid",
+      "?? godot/tests/world_arenas_menu_capture.gd",
+      "?? godot/tests/world_arenas_menu_capture.gd.uid",
+      "?? godot/tests/world_arenas_menu_capture.tscn",
+      "?? godot/tests/world_arenas_menu_probe.gd",
+      "?? godot/tests/world_arenas_menu_probe.gd.uid",
+      "?? godot/tests/world_arenas_selection_test.gd",
+      "?? godot/tests/world_arenas_selection_test.gd.uid",
+      "?? godot/tests/world_arenas_transform_probe.gd",
+      "?? godot/tests/world_arenas_transform_probe.gd.uid",
+      "?? tools/world-arenas/"
+    ]
+  },
+  "tree_stable_during_run": true,
+  "captures": {
+    "capture_size": [
+      1280,
+      720
+    ],
+    "adapter": "Apple M4",
+    "display": "macOS",
+    "count": 15,
+    "files_on_disk": 15,
+    "files_size_ok": 15,
+    "pngs": [
+      {
+        "preset": "default",
+        "arena": "torii",
+        "png": "captures/default/arena-torii.png",
+        "sha256": "6e0d46be919e5755cd464a3cd10ad0bd81f30974c488946279bb3b71021b1db8",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 187,
+        "min_margin_px": 55.084228515625,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#5781a1ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "court_corner_left_far",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6998ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "court_corner_left_near",
+            "px": [
+              380.792999267578,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#dcf1f3ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "court_corner_right_far",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "court_corner_right_near",
+            "px": [
+              899.20703125,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5781a1ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5894d2ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "side_glass_left_top_far",
+            "px": [
+              473.417541503906,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6998ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              380.792999267578,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4c8cc6ff",
+            "inside": true,
+            "margin": 167.774536132812,
+            "name": "side_glass_left_top_near",
+            "px": [
+              361.855499267578,
+              552.225463867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#dcf1f3ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5f99d5ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "side_glass_right_top_far",
+            "px": [
+              806.582458496094,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              899.20703125,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4885c0ff",
+            "inside": true,
+            "margin": 167.774536132812,
+            "name": "side_glass_right_top_near",
+            "px": [
+              918.14453125,
+              552.225463867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5781a1ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "rear_glass_left_foot",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5894d2ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "rear_glass_left_top",
+            "px": [
+              473.417541503906,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#dcf1f3ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "rear_glass_right_foot",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5f99d5ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "rear_glass_right_top",
+            "px": [
+              806.582458496094,
+              83.2083892822266
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "default",
+        "arena": "medina",
+        "png": "captures/default/arena-medina.png",
+        "sha256": "4142060f46eb8310200e4695c98dc0ae520eaaf9100a0a4160ba3740571c8b34",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 204,
+        "min_margin_px": 55.084228515625,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#4f82a6ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "court_corner_left_far",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6998ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "court_corner_left_near",
+            "px": [
+              380.792999267578,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#cff3fcff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "court_corner_right_far",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "court_corner_right_near",
+            "px": [
+              899.20703125,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4f82a6ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5894d2ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "side_glass_left_top_far",
+            "px": [
+              473.417541503906,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6998ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              380.792999267578,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4b8cc7ff",
+            "inside": true,
+            "margin": 167.774536132812,
+            "name": "side_glass_left_top_near",
+            "px": [
+              361.855499267578,
+              552.225463867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#cff3fcff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5f99d5ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "side_glass_right_top_far",
+            "px": [
+              806.582458496094,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              899.20703125,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4885c0ff",
+            "inside": true,
+            "margin": 167.774536132812,
+            "name": "side_glass_right_top_near",
+            "px": [
+              918.14453125,
+              552.225463867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4f82a6ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "rear_glass_left_foot",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5894d2ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "rear_glass_left_top",
+            "px": [
+              473.417541503906,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#cff3fcff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "rear_glass_right_foot",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5f99d5ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "rear_glass_right_top",
+            "px": [
+              806.582458496094,
+              83.2083892822266
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "default",
+        "arena": "carioca",
+        "png": "captures/default/arena-carioca.png",
+        "sha256": "ff94cd6a6f160692b1840a6387b6605109b86a9d3561a6c45eb7463449ae4dbb",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 161,
+        "min_margin_px": 55.084228515625,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#5783a1ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "court_corner_left_far",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6998ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "court_corner_left_near",
+            "px": [
+              380.792999267578,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#dcf4f3ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "court_corner_right_far",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "court_corner_right_near",
+            "px": [
+              899.20703125,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5783a1ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5894d2ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "side_glass_left_top_far",
+            "px": [
+              473.417541503906,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6998ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              380.792999267578,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4c8cc6ff",
+            "inside": true,
+            "margin": 167.774536132812,
+            "name": "side_glass_left_top_near",
+            "px": [
+              361.855499267578,
+              552.225463867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#dcf4f3ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5f99d5ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "side_glass_right_top_far",
+            "px": [
+              806.582458496094,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              899.20703125,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4885c0ff",
+            "inside": true,
+            "margin": 167.774536132812,
+            "name": "side_glass_right_top_near",
+            "px": [
+              918.14453125,
+              552.225463867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5783a1ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "rear_glass_left_foot",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5894d2ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "rear_glass_left_top",
+            "px": [
+              473.417541503906,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#dcf4f3ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "rear_glass_right_foot",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5f99d5ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "rear_glass_right_top",
+            "px": [
+              806.582458496094,
+              83.2083892822266
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "default",
+        "arena": "aurora",
+        "png": "captures/default/arena-aurora.png",
+        "sha256": "c54ef6009af4db699d0e2812f525fd9f981f2be618e6c9d87b1d0335b3c6ceee",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 200,
+        "min_margin_px": 55.084228515625,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#5084a6ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "court_corner_left_far",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6998ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "court_corner_left_near",
+            "px": [
+              380.792999267578,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#d0f7fbff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "court_corner_right_far",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "court_corner_right_near",
+            "px": [
+              899.20703125,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5084a6ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5894d2ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "side_glass_left_top_far",
+            "px": [
+              473.417541503906,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6998ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              380.792999267578,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4b8cc7ff",
+            "inside": true,
+            "margin": 167.774536132812,
+            "name": "side_glass_left_top_near",
+            "px": [
+              361.855499267578,
+              552.225463867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#d0f7fbff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5f99d5ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "side_glass_right_top_far",
+            "px": [
+              806.582458496094,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              899.20703125,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4885c0ff",
+            "inside": true,
+            "margin": 167.774536132812,
+            "name": "side_glass_right_top_near",
+            "px": [
+              918.14453125,
+              552.225463867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5084a6ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "rear_glass_left_foot",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5894d2ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "rear_glass_left_top",
+            "px": [
+              473.417541503906,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#d0f7fbff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "rear_glass_right_foot",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5f99d5ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "rear_glass_right_top",
+            "px": [
+              806.582458496094,
+              83.2083892822266
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "default",
+        "arena": "egeo",
+        "png": "captures/default/arena-egeo.png",
+        "sha256": "a8cd0676f423525f571c1b5f7ef7bb632c48c666cc04caf2b833d36b7a35d614",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 171,
+        "min_margin_px": 55.084228515625,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#4e7da7ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "court_corner_left_far",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6998ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "court_corner_left_near",
+            "px": [
+              380.792999267578,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#ceebfdff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "court_corner_right_far",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "court_corner_right_near",
+            "px": [
+              899.20703125,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4e7da7ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5894d2ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "side_glass_left_top_far",
+            "px": [
+              473.417541503906,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6998ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              380.792999267578,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4b8bc7ff",
+            "inside": true,
+            "margin": 167.774536132812,
+            "name": "side_glass_left_top_near",
+            "px": [
+              361.855499267578,
+              552.225463867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#ceebfdff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5f99d5ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "side_glass_right_top_far",
+            "px": [
+              806.582458496094,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 55.084228515625,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              899.20703125,
+              664.915771484375
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4885c0ff",
+            "inside": true,
+            "margin": 167.774536132812,
+            "name": "side_glass_right_top_near",
+            "px": [
+              918.14453125,
+              552.225463867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4e7da7ff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "rear_glass_left_foot",
+            "px": [
+              480.400909423828,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5894d2ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "rear_glass_left_top",
+            "px": [
+              473.417541503906,
+              83.2083892822266
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#ceebfdff",
+            "inside": true,
+            "margin": 172.255950927734,
+            "name": "rear_glass_right_foot",
+            "px": [
+              799.59912109375,
+              172.255950927734
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5f99d5ff",
+            "inside": true,
+            "margin": 83.2083892822266,
+            "name": "rear_glass_right_top",
+            "px": [
+              806.582458496094,
+              83.2083892822266
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "wide",
+        "arena": "torii",
+        "png": "captures/wide/arena-torii.png",
+        "sha256": "4fc20d886f11a9308c2981e32c29ba233441581c09f1694259ad28cb698deaba",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 116,
+        "min_margin_px": 132.842407226562,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "court_corner_left_far",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9eff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "court_corner_left_near",
+            "px": [
+              498.25634765625,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5883a4ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "court_corner_right_far",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9fff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "court_corner_right_near",
+            "px": [
+              781.74365234375,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5490cfff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "side_glass_left_top_far",
+            "px": [
+              544.226928710938,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9eff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              498.25634765625,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4888c5ff",
+            "inside": true,
+            "margin": 167.383911132812,
+            "name": "side_glass_left_top_near",
+            "px": [
+              481.718627929688,
+              552.616088867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5883a4ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5a94d1ff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "side_glass_right_top_far",
+            "px": [
+              735.773071289062,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9fff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              781.74365234375,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4d8fccff",
+            "inside": true,
+            "margin": 167.383911132812,
+            "name": "side_glass_right_top_near",
+            "px": [
+              798.281372070312,
+              552.616088867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "rear_glass_left_foot",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5490cfff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "rear_glass_left_top",
+            "px": [
+              544.226928710938,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5883a4ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "rear_glass_right_foot",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5a94d1ff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "rear_glass_right_top",
+            "px": [
+              735.773071289062,
+              183.082626342773
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "wide",
+        "arena": "medina",
+        "png": "captures/wide/arena-medina.png",
+        "sha256": "bfa12203e4ef33dafa9b15923dd67e4bef0ee25311ab0bba4e5049bb2e91a3a2",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 120,
+        "min_margin_px": 132.842407226562,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "court_corner_left_far",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9eff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "court_corner_left_near",
+            "px": [
+              498.25634765625,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5084a9ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "court_corner_right_far",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9fff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "court_corner_right_near",
+            "px": [
+              781.74365234375,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5490cfff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "side_glass_left_top_far",
+            "px": [
+              544.226928710938,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9eff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              498.25634765625,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4888c5ff",
+            "inside": true,
+            "margin": 167.383911132812,
+            "name": "side_glass_left_top_near",
+            "px": [
+              481.718627929688,
+              552.616088867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5084a9ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5a94d1ff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "side_glass_right_top_far",
+            "px": [
+              735.773071289062,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9fff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              781.74365234375,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4d8fccff",
+            "inside": true,
+            "margin": 167.383911132812,
+            "name": "side_glass_right_top_near",
+            "px": [
+              798.281372070312,
+              552.616088867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "rear_glass_left_foot",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5490cfff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "rear_glass_left_top",
+            "px": [
+              544.226928710938,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5084a9ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "rear_glass_right_foot",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5a94d1ff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "rear_glass_right_top",
+            "px": [
+              735.773071289062,
+              183.082626342773
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "wide",
+        "arena": "carioca",
+        "png": "captures/wide/arena-carioca.png",
+        "sha256": "3994cc0ba6d0b8d8f45d34cd5481cd3c223424f5b5baf3db5ff64c89502d4d65",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 96,
+        "min_margin_px": 132.842407226562,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "court_corner_left_far",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9eff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "court_corner_left_near",
+            "px": [
+              498.25634765625,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5885a4ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "court_corner_right_far",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9fff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "court_corner_right_near",
+            "px": [
+              781.74365234375,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5490cfff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "side_glass_left_top_far",
+            "px": [
+              544.226928710938,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9eff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              498.25634765625,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4888c5ff",
+            "inside": true,
+            "margin": 167.383911132812,
+            "name": "side_glass_left_top_near",
+            "px": [
+              481.718627929688,
+              552.616088867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5885a4ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5a94d1ff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "side_glass_right_top_far",
+            "px": [
+              735.773071289062,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9fff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              781.74365234375,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4d8fccff",
+            "inside": true,
+            "margin": 167.383911132812,
+            "name": "side_glass_right_top_near",
+            "px": [
+              798.281372070312,
+              552.616088867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "rear_glass_left_foot",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5490cfff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "rear_glass_left_top",
+            "px": [
+              544.226928710938,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5885a4ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "rear_glass_right_foot",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5a94d1ff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "rear_glass_right_top",
+            "px": [
+              735.773071289062,
+              183.082626342773
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "wide",
+        "arena": "aurora",
+        "png": "captures/wide/arena-aurora.png",
+        "sha256": "3b32a249cda875750d5d3e4fb78f77360f4d367111a968cf8dfcfaa1fa284836",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 128,
+        "min_margin_px": 132.842407226562,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "court_corner_left_far",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9eff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "court_corner_left_near",
+            "px": [
+              498.25634765625,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5186a9ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "court_corner_right_far",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9fff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "court_corner_right_near",
+            "px": [
+              781.74365234375,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5490cfff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "side_glass_left_top_far",
+            "px": [
+              544.226928710938,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9eff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              498.25634765625,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4888c5ff",
+            "inside": true,
+            "margin": 167.383911132812,
+            "name": "side_glass_left_top_near",
+            "px": [
+              481.718627929688,
+              552.616088867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5186a9ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5a94d1ff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "side_glass_right_top_far",
+            "px": [
+              735.773071289062,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9fff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              781.74365234375,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4d8fccff",
+            "inside": true,
+            "margin": 167.383911132812,
+            "name": "side_glass_right_top_near",
+            "px": [
+              798.281372070312,
+              552.616088867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "rear_glass_left_foot",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5490cfff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "rear_glass_left_top",
+            "px": [
+              544.226928710938,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5186a9ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "rear_glass_right_foot",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5a94d1ff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "rear_glass_right_top",
+            "px": [
+              735.773071289062,
+              183.082626342773
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "wide",
+        "arena": "egeo",
+        "png": "captures/wide/arena-egeo.png",
+        "sha256": "0f573f8fa955dccd02190755f08643317bfda83015dbcffb9951691a04c1d131",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 98,
+        "min_margin_px": 132.842407226562,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "court_corner_left_far",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9eff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "court_corner_left_near",
+            "px": [
+              498.25634765625,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4f80aaff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "court_corner_right_far",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9fff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "court_corner_right_near",
+            "px": [
+              781.74365234375,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5490cfff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "side_glass_left_top_far",
+            "px": [
+              544.226928710938,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9eff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              498.25634765625,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4888c5ff",
+            "inside": true,
+            "margin": 167.383911132812,
+            "name": "side_glass_left_top_near",
+            "px": [
+              481.718627929688,
+              552.616088867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4f80aaff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5a94d1ff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "side_glass_right_top_far",
+            "px": [
+              735.773071289062,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3e6f9fff",
+            "inside": true,
+            "margin": 132.842407226562,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              781.74365234375,
+              587.157592773438
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4d8fccff",
+            "inside": true,
+            "margin": 167.383911132812,
+            "name": "side_glass_right_top_near",
+            "px": [
+              798.281372070312,
+              552.616088867188
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#265587ff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "rear_glass_left_foot",
+            "px": [
+              550.542358398438,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5490cfff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "rear_glass_left_top",
+            "px": [
+              544.226928710938,
+              183.082626342773
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4f80aaff",
+            "inside": true,
+            "margin": 229.250213623047,
+            "name": "rear_glass_right_foot",
+            "px": [
+              729.457641601562,
+              229.250213623047
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#5a94d1ff",
+            "inside": true,
+            "margin": 183.082626342773,
+            "name": "rear_glass_right_top",
+            "px": [
+              735.773071289062,
+              183.082626342773
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "playable",
+        "arena": "torii",
+        "png": "captures/playable/arena-torii.png",
+        "sha256": "23c8c101b4edb9de94653b90e34e0d72bec60f34aac7400a1fec9841753950bd",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 320,
+        "min_margin_px": 38.3388061523438,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "court_corner_left_far",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "court_corner_left_near",
+            "px": [
+              309.9873046875,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#eaf7f8ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "court_corner_right_far",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "court_corner_right_near",
+            "px": [
+              970.0126953125,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#21324aff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "side_glass_left_top_far",
+            "px": [
+              524.321533203125,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              309.9873046875,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4587c5ff",
+            "inside": true,
+            "margin": 204.405029296875,
+            "name": "side_glass_left_top_near",
+            "px": [
+              266.46240234375,
+              515.594970703125
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#eaf7f8ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#74ace8ff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "side_glass_right_top_far",
+            "px": [
+              755.678466796875,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              970.0126953125,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4f89c2ff",
+            "inside": true,
+            "margin": 204.405029296875,
+            "name": "side_glass_right_top_near",
+            "px": [
+              1013.53759765625,
+              515.594970703125
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "rear_glass_left_foot",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#21324aff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "rear_glass_left_top",
+            "px": [
+              524.321533203125,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#eaf7f8ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "rear_glass_right_foot",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#74ace8ff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "rear_glass_right_top",
+            "px": [
+              755.678466796875,
+              238.40104675293
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "playable",
+        "arena": "medina",
+        "png": "captures/playable/arena-medina.png",
+        "sha256": "0572b43a5e0b8bf44cbc982b017d349d3132dcd215cff65e827618cbd517d1f9",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 346,
+        "min_margin_px": 38.3388061523438,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "court_corner_left_far",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "court_corner_left_near",
+            "px": [
+              309.9873046875,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#e2f8fdff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "court_corner_right_far",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "court_corner_right_near",
+            "px": [
+              970.0126953125,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#21324aff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "side_glass_left_top_far",
+            "px": [
+              524.321533203125,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              309.9873046875,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4587c5ff",
+            "inside": true,
+            "margin": 204.405029296875,
+            "name": "side_glass_left_top_near",
+            "px": [
+              266.46240234375,
+              515.594970703125
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#e2f8fdff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#74ace8ff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "side_glass_right_top_far",
+            "px": [
+              755.678466796875,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              970.0126953125,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4f89c2ff",
+            "inside": true,
+            "margin": 204.405029296875,
+            "name": "side_glass_right_top_near",
+            "px": [
+              1013.53759765625,
+              515.594970703125
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "rear_glass_left_foot",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#21324aff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "rear_glass_left_top",
+            "px": [
+              524.321533203125,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#e2f8fdff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "rear_glass_right_foot",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#74ace8ff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "rear_glass_right_top",
+            "px": [
+              755.678466796875,
+              238.40104675293
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "playable",
+        "arena": "carioca",
+        "png": "captures/playable/arena-carioca.png",
+        "sha256": "92224a8a266c6f19c05f9671a3b4b79eef54c5f242711b58346725c71510adb5",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 241,
+        "min_margin_px": 38.3388061523438,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "court_corner_left_far",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "court_corner_left_near",
+            "px": [
+              309.9873046875,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#eaf9f8ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "court_corner_right_far",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "court_corner_right_near",
+            "px": [
+              970.0126953125,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#21324aff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "side_glass_left_top_far",
+            "px": [
+              524.321533203125,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              309.9873046875,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4587c5ff",
+            "inside": true,
+            "margin": 204.405029296875,
+            "name": "side_glass_left_top_near",
+            "px": [
+              266.46240234375,
+              515.594970703125
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#eaf9f8ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#74ace8ff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "side_glass_right_top_far",
+            "px": [
+              755.678466796875,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              970.0126953125,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4f89c2ff",
+            "inside": true,
+            "margin": 204.405029296875,
+            "name": "side_glass_right_top_near",
+            "px": [
+              1013.53759765625,
+              515.594970703125
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "rear_glass_left_foot",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#21324aff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "rear_glass_left_top",
+            "px": [
+              524.321533203125,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#eaf9f8ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "rear_glass_right_foot",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#74ace8ff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "rear_glass_right_top",
+            "px": [
+              755.678466796875,
+              238.40104675293
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "playable",
+        "arena": "aurora",
+        "png": "captures/playable/arena-aurora.png",
+        "sha256": "970a18047242bd313e2f9dc29a0a42b4c8d6fe3697a3ae9cf1122cbaa4b13ef3",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 318,
+        "min_margin_px": 38.3388061523438,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "court_corner_left_far",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "court_corner_left_near",
+            "px": [
+              309.9873046875,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#e3fafdff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "court_corner_right_far",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "court_corner_right_near",
+            "px": [
+              970.0126953125,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#21324aff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "side_glass_left_top_far",
+            "px": [
+              524.321533203125,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              309.9873046875,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4587c5ff",
+            "inside": true,
+            "margin": 204.405029296875,
+            "name": "side_glass_left_top_near",
+            "px": [
+              266.46240234375,
+              515.594970703125
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#e3fafdff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#74ace8ff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "side_glass_right_top_far",
+            "px": [
+              755.678466796875,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              970.0126953125,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4f89c2ff",
+            "inside": true,
+            "margin": 204.405029296875,
+            "name": "side_glass_right_top_near",
+            "px": [
+              1013.53759765625,
+              515.594970703125
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "rear_glass_left_foot",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#21324aff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "rear_glass_left_top",
+            "px": [
+              524.321533203125,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#e3fafdff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "rear_glass_right_foot",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#74ace8ff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "rear_glass_right_top",
+            "px": [
+              755.678466796875,
+              238.40104675293
+            ]
+          }
+        ]
+      },
+      {
+        "preset": "playable",
+        "arena": "egeo",
+        "png": "captures/playable/arena-egeo.png",
+        "sha256": "6a8a86d50e25d017c96287e9458ffbc3edef0707a20e959661bbd5c3f71ff2b5",
+        "sha256_matches_in_run_record": true,
+        "size": [
+          1280,
+          720
+        ],
+        "colours": 233,
+        "min_margin_px": 38.3388061523438,
+        "worst_point": "court_corner_left_near",
+        "glass": {
+          "rear_alpha": 0.379999995231628,
+          "expected_rear_alpha": 0.38,
+          "side_alpha": 0.340000003576279,
+          "all_visible": true
+        },
+        "points": [
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "court_corner_left_far",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "court_corner_left_near",
+            "px": [
+              309.9873046875,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#e1f3feff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "court_corner_right_far",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "court_corner_right_near",
+            "px": [
+              970.0126953125,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "side_glass_left_foot_far",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#21324aff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "side_glass_left_top_far",
+            "px": [
+              524.321533203125,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "side_glass_left_foot_near",
+            "px": [
+              309.9873046875,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4587c5ff",
+            "inside": true,
+            "margin": 204.405029296875,
+            "name": "side_glass_left_top_near",
+            "px": [
+              266.46240234375,
+              515.594970703125
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#e1f3feff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "side_glass_right_foot_far",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#74ace8ff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "side_glass_right_top_far",
+            "px": [
+              755.678466796875,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#3a6a98ff",
+            "inside": true,
+            "margin": 38.3388061523438,
+            "name": "side_glass_right_foot_near",
+            "px": [
+              970.0126953125,
+              681.661193847656
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#4f89c2ff",
+            "inside": true,
+            "margin": 204.405029296875,
+            "name": "side_glass_right_top_near",
+            "px": [
+              1013.53759765625,
+              515.594970703125
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#183f69ff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "rear_glass_left_foot",
+            "px": [
+              528.86083984375,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#21324aff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "rear_glass_left_top",
+            "px": [
+              524.321533203125,
+              238.40104675293
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#e1f3feff",
+            "inside": true,
+            "margin": 305.204895019531,
+            "name": "rear_glass_right_foot",
+            "px": [
+              751.13916015625,
+              305.204895019531
+            ]
+          },
+          {
+            "behind": false,
+            "colour": "#74ace8ff",
+            "inside": true,
+            "margin": 238.40104675293,
+            "name": "rear_glass_right_top",
+            "px": [
+              755.678466796875,
+              238.40104675293
+            ]
+          }
+        ]
+      }
+    ],
+    "menu": {
+      "png": "captures/menu/menu-world-chooser.png",
+      "sha256": "c8bf28c1cc1b42e375e01ab5b0882d0a903b936645a372f2d68bf21b9e0a4d4f",
+      "sha256_matches_in_run_record": true,
+      "size": [
+        1280,
+        720
+      ],
+      "colours": 122,
+      "min_margin_px": 138.0,
+      "buttons": {
+        "aurora": {
+          "inside_frame": true,
+          "px_colour": "#a1a2a3ff",
+          "rect": [
+            1002.0,
+            240.0,
+            90.0,
+            26.0
+          ],
+          "text": "AURORA",
+          "visible": true
+        },
+        "carioca": {
+          "inside_frame": true,
+          "px_colour": "#13151aff",
+          "rect": [
+            1002.0,
+            206.0,
+            90.0,
+            26.0
+          ],
+          "text": "CARIOCA",
+          "visible": true
+        },
+        "egeo": {
+          "inside_frame": true,
+          "px_colour": "#606165ff",
+          "rect": [
+            1002.0,
+            274.0,
+            90.0,
+            26.0
+          ],
+          "text": "EGEO",
+          "visible": true
+        },
+        "medina": {
+          "inside_frame": true,
+          "px_colour": "#b3b4b5ff",
+          "rect": [
+            1002.0,
+            172.0,
+            90.0,
+            26.0
+          ],
+          "text": "MEDINA",
+          "visible": true
+        },
+        "torii": {
+          "inside_frame": true,
+          "px_colour": "#13151aff",
+          "rect": [
+            1002.0,
+            138.0,
+            90.0,
+            26.0
+          ],
+          "text": "TORII",
+          "visible": true
+        }
+      },
+      "display": "macOS",
+      "engine": "4.7.2-stable (official)"
+    }
+  }
+}

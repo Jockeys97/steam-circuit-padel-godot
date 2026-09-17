@@ -1,0 +1,1 @@
+/Applications/Godot.app/Contents/MacOS/Godot --path godot --rendering-driver opengl3 --resolution 1280x720 res://tests/world_arenas_capture.tscn -- --out=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures

@@ -1,0 +1,1 @@
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/world_arenas_selection_test.gd -- --demo

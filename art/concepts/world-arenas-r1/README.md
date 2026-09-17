@@ -19,7 +19,7 @@ Brief + freeze checklist: `BRIEF.md`. Spend: `image-spend.json` (5 calls, cap 5,
 sha256:
 ```
 7270dc64c00e7278f1620679fa73c852e0dfa6d1ccf62e42296e7fd08e6641bd  01-torii.png
-de48d63e7419010ab88cfec999252f7f964f3afd5feb0b058706e33050fbbbe  02-medina.png
+de48d63e7419010ab88cfec999252f7f964f3afd5feb0b058706e33050fbbbe5  02-medina.png
 513ec2ad7e609621d2e1a3a8e4dc525cdc2225fb8f78cb41a474df369fd808b8  03-carioca.png
 1d2dcdad5bc77aa7563408da050a38e2eebbd7ed175709c0e90ce2e1398f2e01  04-aurora.png
 4097f12b0a3515be2ecb83dd329207fd58799a3123a56d9df6074e8238c76dd8  05-egeo.png

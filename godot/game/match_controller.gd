@@ -475,9 +475,12 @@ func _ready() -> void:
 		engine_driven = false
 		set_physics_process(false)
 		if capture == "arenas":
-			# One engine run renders all nine arenas: this host allows exactly one
-			# Godot process at a time and every software-rendered start-up is paid
-			# for once (`godot/game/run.sh shots-arenas`).
+			# One engine run renders every arena THIS build offers — the frozen
+			# nine and, in a full build, the five world arenas
+			# (`_run_arena_capture` enumerates the library through the build's own
+			# content rule): this host allows exactly one Godot process at a time
+			# and every software-rendered start-up is paid for once
+			# (`godot/game/run.sh shots-arenas`).
 			_run_arena_capture()
 		elif capture == "modes":
 			# One engine run renders all three mode HUDs, in the same scene, for the
@@ -2007,15 +2010,29 @@ func _run_capture() -> void:
 ##
 ## Same scene, same controller, same camera preset, same tick: the only thing that
 ## changes between two frames is the arena — its environment, its court dressing,
-## its backdrop and its scenery — plus the arena's own frozen values in the
-## simulation state. Deliberately ONE engine run for all nine: this host allows a
-## single Godot process at a time and each software-rendered start-up is expensive.
+## its backdrop and its scenery — plus the arena's own values in the simulation
+## state. The enumeration is the WHOLE library (`Arena.all_ids()`: the frozen nine,
+## then the world five), so a world arena is captured like any other; the frames
+## land side by side in `res://game/out/` and are TRACKED evidence — this path is
+## only re-run deliberately. Deliberately ONE engine run for all of them: this host
+## allows a single Godot process at a time and each software-rendered start-up is
+## expensive.
 func _run_arena_capture() -> void:
 	await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 	var out_dir := "res://game/out"
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(out_dir))
-	var want := Arena.ids()
+	# Every arena this build OFFERS, through the config's own build-aware lists:
+	# the frozen nine (`Arena.ids()`, the roster order) plus — in a full build
+	# only — the five world arenas (port additions, `selectable_world_arenas()` is
+	# empty in a demo, and a demo must not render a court it cannot offer).
+	# `Arena.all_ids()` is the library's whole list; the capture enumerates the
+	# same ids in a full build and stays consistent with the demo's content rule.
+	var want: Array = []
+	for id in Arena.ids():
+		want.append(String(id))
+	for row in Config.selectable_world_arenas():
+		want.append(String((row as Dictionary)["id"]))
 	var written := 0
 	for id in want:
 		if not set_arena(String(id)):

@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4
+
+# WORLD_ARENAS_MENU_CAPTURE · Godot 4.7.2-stable (official) · field-law z=-8.0 · presets=["default", "wide", "playable"]
+# display=macOS adapter=Apple M4 size=(1280, 720) out=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures menu=res://game/Main.tscn
+ok the display server is not headless (a dummy driver renders blank frames)
+ok this is a FULL build: the world chooser exists only there (full)
+ok the real menu (res://game/Main.tscn) built its ported column (MenuColumn)
+ok the world chooser shows one WorldArena_<id> button per world arena, each visible and fully inside the frame
+ok frame is the full render target (1280, 720) (got 1280x720)
+ok capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok the frame is non-vacuous (122 colours on a 64x36 grid)
+ok the menu PNG is saved and hashed (/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/menu/menu-world-chooser.png)
+MENU_CAPTURE_RECORD png=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/tools/world-arenas/out/refinement-01/captures/menu/menu-world-chooser.png px=1280x720 colours=122 buttons=5 min_margin=138.0px sha256=c8bf28c1cc1b42e375e01ab5b0882d0a903b936645a372f2d68bf21b9e0a4d4f
+ok menu_capture.json written
+PASS 9/9
