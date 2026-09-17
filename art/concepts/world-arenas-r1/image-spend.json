@@ -1,0 +1,61 @@
+{
+  "set": "world-arenas-r1",
+  "cap": 5,
+  "cap_source": "user request 2026-09-16: 'image-gen iterate some paddle court looks to recreate in godot, give me 5 new arenae' \u2014 plus one refine call allowed if the probe fails a gating checklist item",
+  "provider": "openai",
+  "model": "gpt-image-2.5-flare",
+  "provider_config": "~/.hermes/profiles/dev-work/config.yaml (image_gen)",
+  "aspect_ratio": "landscape",
+  "output_dir": "art/concepts/world-arenas-r1/",
+  "checklist": "BRIEF.md (G1-G3 gating + 6 binary)",
+  "calls": [
+    {
+      "n": 1,
+      "arena": "torii",
+      "file": "01-torii.png",
+      "cache": "openai_gpt-image-2.5-flare_20260916_230420_4fe6de2b.png",
+      "size": "1536x1024",
+      "quality": "auto",
+      "role": "probe",
+      "result": "passed G1-G3; camera-lower deviation recorded"
+    },
+    {
+      "n": 2,
+      "arena": "medina",
+      "file": "02-medina.png",
+      "cache": "openai_gpt-image-2.5-flare_20260916_230550_da27b758.png",
+      "size": "1536x1024",
+      "quality": "auto",
+      "role": "set"
+    },
+    {
+      "n": 3,
+      "arena": "carioca",
+      "file": "03-carioca.png",
+      "cache": "openai_gpt-image-2.5-flare_20260916_230547_74aef030.png",
+      "size": "1536x1024",
+      "quality": "auto",
+      "role": "set"
+    },
+    {
+      "n": 4,
+      "arena": "aurora",
+      "file": "04-aurora.png",
+      "cache": "openai_gpt-image-2.5-flare_20260916_230552_c06e69c6.png",
+      "size": "1536x1024",
+      "quality": "auto",
+      "role": "set"
+    },
+    {
+      "n": 5,
+      "arena": "egeo",
+      "file": "05-egeo.png",
+      "cache": "openai_gpt-image-2.5-flare_20260916_230552_8198de93.png",
+      "size": "1536x1024",
+      "quality": "auto",
+      "role": "set"
+    }
+  ],
+  "total_calls": 5,
+  "cost_telemetry": "tool returns no per-call cost; 5 calls at 1536x1024 quality=auto on gpt-image-2.5-flare. Refine allowance (1) unused."
+}
