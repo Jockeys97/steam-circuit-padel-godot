@@ -51,6 +51,7 @@ const CourtBuilder := preload("res://game/arenas/court_builder.gd")
 const ArenaStyle := preload("res://game/arenas/arena_style.gd")
 const Bleachers := preload("res://game/arenas/bleachers.gd")
 const ArenaProps := preload("res://game/arenas/arena_props.gd")
+const Crowd := preload("res://game/arenas/crowd.gd")
 
 ## The backdrop wall's world z. Behind `COURT`'s rear line (-6.35 m at this
 ## scale) and in front of the point where the ground plane leaves the frame, so
@@ -142,6 +143,10 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 	#    glass. After the stands because the shelters place themselves from
 	#    `Bleachers.span_z()`.
 	ArenaProps.build(root)
+
+	# 7. The people on the stands. After the stands because every spectator is
+	#    placed from `Bleachers.span_z()` and the stands' own raked box.
+	Crowd.build(root)
 	return root
 
 

@@ -349,6 +349,9 @@ var _touch_layer: Control = null
 var _pause_focus = null
 var _pause_pad_seen := false
 var _audio
+## The stands' crowd, found in the arena after the scenery is built. Presentation
+## only; null in any build whose arena has no stands.
+var _crowd: Node = null
 var _cam: Camera3D
 ## The arena environment currently in the scene, built by
 ## `game/arenas/arena_library.gd`. Rebuilt in place when the arena changes (the
@@ -692,6 +695,10 @@ func _swap_arena(id: String) -> bool:
 	_arena_root = Arena.build_into(self, id, Config.camera_preset)
 	if _arena_root == null:
 		return false
+	# The crowd belongs to the arena, so it is found again on every arena change
+	# rather than cached once: a rebuilt arena carries a new crowd, and holding the
+	# old one would tick a freed node.
+	_crowd = _arena_root.find_child("Crowd", true, false)
 	meta["arena"] = id
 	return true
 
@@ -1383,6 +1390,11 @@ func tick_fixed(dt: float, input: Dictionary, input2: Dictionary) -> Variant:
 	# build and the headless harness hear the same match.
 	if _audio != null:
 		_audio.observe(state, ticks)
+	# The crowd reads the same state on the same tick, and for the same reason: the
+	# sim stores no "cheer now" flag, so the reaction is derived from the totals it
+	# does keep. Presentation only — nothing it does is read back here.
+	if _crowd != null:
+		_crowd.observe(state, ticks)
 	return result
 
 

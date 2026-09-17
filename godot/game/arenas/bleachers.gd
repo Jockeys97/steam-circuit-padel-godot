@@ -48,6 +48,11 @@ const VERTICES := 271287
 ## loaded mesh reports; `span_z()` multiplies it by the scale and the copy count so
 ## the neighbours can place themselves without a second GLB read).
 const UNIT_WIDTH_M := 1.903
+## The unit's own height and depth along its local Y and Z, same source and same
+## reason: whatever sits ON the stands (`arena_props.gd` beside them, `crowd.gd` on
+## their seating) needs the raked box without loading the GLB a second time.
+const UNIT_HEIGHT_M := 0.957
+const UNIT_DEPTH_M := 0.961
 
 ## Uniform scale of one copy. The unit is 1.9 m wide as authored — a bench, not a
 ## tribune — and the camera reads the stands from ~30 m away at ~36 px/m, where a
