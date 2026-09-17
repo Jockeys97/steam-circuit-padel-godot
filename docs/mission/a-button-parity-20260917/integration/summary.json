@@ -1,0 +1,644 @@
+{
+  "schemaVersion": 2,
+  "fixedStep": "1/120",
+  "js_harness_exit": 0,
+  "godot_harness_exit": 0,
+  "deterministic": true,
+  "total_comparisons": 2788,
+  "total_divergences": 121,
+  "intended_latch_divergences": 60,
+  "unexpected_divergences": 61,
+  "red_control_detected": true,
+  "truncated_output_detected": true,
+  "first_divergence": {
+    "key": [
+      "no-input",
+      0
+    ],
+    "field": "steps",
+    "js": 1,
+    "gd": 0
+  },
+  "first_divergence_by_scenario": {
+    "no-input": {
+      "key": [
+        "no-input",
+        0
+      ],
+      "field": "steps",
+      "js": 1,
+      "gd": 0
+    },
+    "a-tap": {
+      "key": [
+        "a-tap",
+        0
+      ],
+      "field": "steps",
+      "js": 1,
+      "gd": 0
+    },
+    "a-short-charge": {
+      "key": [
+        "a-short-charge",
+        0
+      ],
+      "field": "steps",
+      "js": 1,
+      "gd": 0
+    },
+    "rb-a": {
+      "key": [
+        "rb-a",
+        0
+      ],
+      "field": "steps",
+      "js": 1,
+      "gd": 0
+    },
+    "left-stick-aim": {
+      "key": [
+        "left-stick-aim",
+        0
+      ],
+      "field": "steps",
+      "js": 1,
+      "gd": 0
+    },
+    "hz60-release": {
+      "key": [
+        "hz60-release",
+        0
+      ],
+      "field": "steps",
+      "js": 2,
+      "gd": 1
+    },
+    "zero-substep-latch": {
+      "key": [
+        "zero-substep-latch",
+        1
+      ],
+      "field": "steps",
+      "js": 1,
+      "gd": 0
+    },
+    "hz144-latch": {
+      "key": [
+        "hz144-latch",
+        6
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.031746",
+      "gd": "0.000000"
+    }
+  },
+  "latch_evidence": [
+    {
+      "key": [
+        "zero-substep-latch",
+        1
+      ],
+      "field": "steps",
+      "js": 1,
+      "gd": 0
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        1
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.007937",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        2
+      ],
+      "field": "steps",
+      "js": 0,
+      "gd": 1
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        2
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.007937",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        2
+      ],
+      "field": "sim.queuedShotVariant",
+      "js": "auto",
+      "gd": "drive"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        2
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        2
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.271667"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        3
+      ],
+      "field": "steps",
+      "js": 1,
+      "gd": 0
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        3
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.007937",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        3
+      ],
+      "field": "sim.queuedShotVariant",
+      "js": "auto",
+      "gd": "drive"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        3
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        3
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.271667"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        4
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.007937",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        4
+      ],
+      "field": "sim.queuedShotVariant",
+      "js": "auto",
+      "gd": "drive"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        4
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        4
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.263333"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        5
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.007937",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        5
+      ],
+      "field": "sim.queuedShotVariant",
+      "js": "auto",
+      "gd": "drive"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        5
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        5
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.255000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        6
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.007937",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        6
+      ],
+      "field": "sim.queuedShotVariant",
+      "js": "auto",
+      "gd": "drive"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        6
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        6
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.246667"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        7
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.007937",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        7
+      ],
+      "field": "sim.queuedShotVariant",
+      "js": "auto",
+      "gd": "drive"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        7
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        7
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.238333"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        8
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.007937",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        8
+      ],
+      "field": "sim.queuedShotVariant",
+      "js": "auto",
+      "gd": "drive"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        8
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        8
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.230000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        9
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.007937",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        9
+      ],
+      "field": "sim.queuedShotVariant",
+      "js": "auto",
+      "gd": "drive"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        9
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        9
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.221667"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        6
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.031746",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        6
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.430159"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        6
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.271667"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        7
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.031746",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        7
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.430159"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        7
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.263333"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        8
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.031746",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        8
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.430159"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        8
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.255000"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        9
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.031746",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        9
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.430159"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        9
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.246667"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        10
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.031746",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        10
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.430159"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        10
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.238333"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        11
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.031746",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        11
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.430159"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        11
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.230000"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        12
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.031746",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        12
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.430159"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        12
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.221667"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        13
+      ],
+      "field": "sim.shotCharge",
+      "js": "0.031746",
+      "gd": "0.000000"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        13
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.430159"
+    },
+    {
+      "key": [
+        "hz144-latch",
+        13
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.213333"
+    }
+  ],
+  "artifacts": {
+    "js_trace": "/tmp/padel-a-button-20260917-port/js.trace.txt",
+    "godot_trace": "/tmp/padel-a-button-20260917-port/gd.trace.txt",
+    "corrupt_copy": "/tmp/padel-a-button-20260917-port/gd.corrupt.txt",
+    "corpus": "/Users/alessiofantini/Documents/steam-circuit-padel-godot/docs/mission/a-button-parity-20260917/integration/corpus/production_rate.json"
+  }
+}

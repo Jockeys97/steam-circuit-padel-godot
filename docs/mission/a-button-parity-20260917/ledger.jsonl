@@ -1,0 +1,5 @@
+{"event": "planned", "team": "Reference", "provider": "opencode-go", "model": "deepseek-v4-pro", "mutation": "mission artifacts and isolated scratch only", "launch": 1, "launch_cap": 6}
+{"event": "planned", "team": "Port", "provider": "opencode-go", "model": "deepseek-v4-pro", "mutation": "mission artifacts and isolated scratch only", "launch": 2, "launch_cap": 6}
+{"event": "planned", "team": "Review", "provider": "opencode-go", "model": "deepseek-v4-pro", "mutation": "mission artifacts and isolated scratch only", "launch": 3, "launch_cap": 6}
+{"event": "verified-partial", "batch": "deleg_ed4116b6", "reference": "reproducible; corrupted copy rejected", "port": "PASS 32/32; SCRIPT ERROR 0", "cross_engine": "not yet tested"}
+{"event": "planned", "launch": 4, "team": "Port integration", "provider": "opencode-go", "model": "deepseek-v4-pro", "launch_cap": 6}

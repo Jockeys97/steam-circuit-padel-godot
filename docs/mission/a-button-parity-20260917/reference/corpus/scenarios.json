@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "dt": 0.016666666666666666,
+  "seed": 12345,
+  "source": "js/main.js",
+  "buttonMap": {
+    "A": 0, "B": 1, "X": 2, "Y": 3, "LB": 4, "RB": 5,
+    "LT": 6, "RT": 7,
+    "dpadUp": 12, "dpadDown": 13, "dpadLeft": 14, "dpadRight": 15
+  },
+  "axisMap": { "lx": 0, "ly": 1, "rx": 2, "ry": 3, "LT": 4, "RT": 5 },
+  "scenarios": [
+    {
+      "id": "no-input",
+      "description": "No button, neutral sticks, five fixed ticks. Baseline: nothing queues.",
+      "bench": "stationary",
+      "frames": [
+        { "b": [], "a": [0, 0, 0, 0, 0, 0], "n": 5 }
+      ]
+    },
+    {
+      "id": "a-tap",
+      "description": "A pressed one frame, released the next. Shortest possible tap.",
+      "bench": "stationary",
+      "frames": [
+        { "b": [0], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0], "n": 8 }
+      ]
+    },
+    {
+      "id": "a-release-hold-1-frame",
+      "description": "A held exactly one fixed tick, then released (tick-boundary release).",
+      "bench": "stationary",
+      "frames": [
+        { "b": [0], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [0], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0], "n": 6 }
+      ]
+    },
+    {
+      "id": "a-release-hold-2-frames",
+      "description": "A held two fixed ticks, then released.",
+      "bench": "stationary",
+      "frames": [
+        { "b": [0], "a": [0, 0, 0, 0, 0, 0], "n": 2 },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0], "n": 6 }
+      ]
+    },
+    {
+      "id": "a-short-charge",
+      "description": "A held 12 ticks (0.2s), then released. Partial charge accrual.",
+      "bench": "stationary",
+      "frames": [
+        { "b": [0], "a": [0, 0, 0, 0, 0, 0], "n": 12 },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0], "n": 6 }
+      ]
+    },
+    {
+      "id": "a-full-charge",
+      "description": "A held 66 ticks (1.1s), then released. Charge caps at 1.0; power is maximal.",
+      "bench": "stationary",
+      "frames": [
+        { "b": [0], "a": [0, 0, 0, 0, 0, 0], "n": 66 },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0], "n": 6 }
+      ]
+    },
+    {
+      "id": "a-repress-smashPrimed",
+      "description": "Full-charge release primes smash; A re-pressed one tick later inside the tap window promotes the queued shot to smash.",
+      "bench": "stationary",
+      "frames": [
+        { "b": [0], "a": [0, 0, 0, 0, 0, 0], "n": 66 },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [0], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0], "n": 6 }
+      ]
+    },
+    {
+      "id": "rb-a",
+      "description": "RB + A held together, then released. technicalModifier turns A into chiquita.",
+      "bench": "stationary",
+      "frames": [
+        { "b": [5, 0], "a": [0, 0, 0, 0, 0, 0], "n": 12 },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0], "n": 6 }
+      ]
+    },
+    {
+      "id": "modifier-change-mid-hold",
+      "description": "A held, RB pressed mid-hold, released. chargeAction is latched at press: variant must stay drive.",
+      "bench": "stationary",
+      "frames": [
+        { "b": [0], "a": [0, 0, 0, 0, 0, 0], "n": 6 },
+        { "b": [0, 5], "a": [0, 0, 0, 0, 0, 0], "n": 6 },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0], "n": 6 }
+      ]
+    },
+    {
+      "id": "left-stick-aim",
+      "description": "A held while the left stick is pushed; release captures the curved aim on shotAimAxis(radialStick()).",
+      "bench": "stationary",
+      "frames": [
+        { "b": [0], "a": [-0.8, -0.5, 0, 0, 0, 0], "n": 12 },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0], "n": 6 }
+      ]
+    },
+    {
+      "id": "a-tap-contact",
+      "description": "A tap with an approaching ball: the queued drive must strike on contact (shot outcome, not just queued state).",
+      "bench": "contact",
+      "frames": [
+        { "b": [0], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0] },
+        { "b": [], "a": [0, 0, 0, 0, 0, 0], "n": 30 }
+      ]
+    }
+  ]
+}
