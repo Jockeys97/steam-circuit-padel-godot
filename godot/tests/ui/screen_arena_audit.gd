@@ -21,7 +21,20 @@
 ##      follows the selection;
 ##   7. every bound string is the locale's, in both languages, with the zero-literal rule
 ##      scanned out of the screen source and the scene;
-##   8. the five capture states apply, and each one is the state it names.
+##   8. the five capture states apply, and each one is the state it names;
+##   9. the header chrome is bound, not raw: `TitleLabel` / `SubLabel` / `BackButton`
+##      show the locale's words, and the binding survives a grid rebuild (`_clear`
+##      resets the list the whole screen shares, so the header is bound after the
+##      grid is built — the 2026-09-18 screenshot read the keys themselves);
+##  10. the world five are on the screen above the frozen nine: `world_arena_rows_now()`
+##      is torii, medina, carioca, aurora, egeo in catalog order, each
+##      `WorldArenaCard_<id>` exists, and `WorldGridArea` is a PREVIOUS sibling of
+##      `GridArea` — while a demo build draws neither rows nor cards;
+##  11. a locked card's wall is `lockLabel`'s own sentence (`js/ui.js:685-702`): the
+##      count is interpolated and no card shows the raw "{n} {word}" template;
+##  12. `activate_arena(id, apply_scene)` is the press's path: an open card starts the
+##      match (quick, without touching the tree), a locked card refuses and moves
+##      nothing, and a world card takes the world seat.
 
 extends SceneTree
 
@@ -88,6 +101,10 @@ func _run(audit: AuditBase) -> void:
 	await _literals(audit)
 	await _layout(audit)
 	await _captures(audit)
+	await _header(audit)
+	await _world(audit)
+	await _unlock_lines(audit)
+	await _activation(audit)
 
 
 # ---------------------------------------------------------------------------
@@ -630,3 +647,152 @@ func _build_withheld_ids() -> Array:
 		if not DemoContent.allowed_arena_ids().has(id):
 			out.append(id)
 	return out
+
+
+# ---------------------------------------------------------------------------
+# 9. The header is bound, not raw
+
+func _header(audit: AuditBase) -> void:
+	var screen: Node = await _mount()
+	var title: String = String(screen.text_shown("TitleLabel"))
+	var sub: String = String(screen.text_shown("SubLabel"))
+	var back: String = String(screen.text_shown("BackButton"))
+	audit.report("header: title=%s sub=%s back=%s" % [title, sub, back])
+	audit.check_eq(title, UiStrings.t("arenaTitle"), "arena/the_title_is_the_locales_word")
+	audit.check_ne(title, "arenaTitle", "arena/the_title_is_not_the_raw_key")
+	audit.check_eq(sub, UiStrings.t("arenaSub"), "arena/the_subtitle_is_the_locales_word")
+	audit.check_ne(sub, "arenaSub", "arena/the_subtitle_is_not_the_raw_key")
+	audit.check_eq(back, UiStrings.t("back"), "arena/the_back_control_is_the_locales_word")
+	audit.check_ne(back, "back", "arena/the_back_control_is_not_the_raw_key")
+
+	# `_build_grid` clears the binding list the whole screen shares: a header bound
+	# before it would flip back to its key on the next refresh. A capture state is a
+	# full rebuild, so it is the honest way to ask.
+	audit.check_true(screen.apply_capture_state("career-calendar"), "arena/the_calendar_state_applies_to_a_fresh_header")
+	audit.check_eq(screen.text_shown("TitleLabel"), UiStrings.t("arenaTitle"), "arena/the_title_survives_a_grid_rebuild")
+	audit.check_true(screen.apply_capture_state("default"), "arena/the_live_state_returns_after_the_header_read")
+
+
+# ---------------------------------------------------------------------------
+# 10. The world five, on screen above the frozen nine
+
+func _world(audit: AuditBase) -> void:
+	var screen: Node = await _mount()
+	var ids: Array = []
+	for row in screen.world_arena_rows_now():
+		ids.append(String((row as Dictionary).get("id", "")))
+	var five := ["torii", "medina", "carioca", "aurora", "egeo"]
+	if DemoGate.build() == "demo":
+		audit.report("demo build: world rows=%d" % ids.size())
+		audit.check_eq(ids, [], "arena/a_demo_offers_no_world_arena")
+		audit.check_true(screen.find_child(ArenaScreenClass.WORLD_CARD_PREFIX + "*", true, false) == null,
+			"arena/a_demo_builds_no_world_card")
+		audit.check_true(screen.find_child(ArenaScreenClass.WORLD_AREA, true, false) == null,
+			"arena/a_demo_builds_no_world_area")
+		return
+	audit.report("world rows: %s" % JSON.stringify(ids))
+	audit.check_eq(ids, five, "arena/the_world_five_are_on_screen_in_catalog_order")
+	for id in five:
+		audit.check_true(screen.find_child(ArenaScreenClass.WORLD_CARD_PREFIX + String(id), true, false) != null,
+			"arena/the_world_card_%s_is_on_screen" % id)
+	var area := screen.find_child(ArenaScreenClass.WORLD_AREA, true, false)
+	var frozen := screen.find_child(ArenaScreenClass.GRID_AREA_NODE, true, false)
+	audit.check_true(area != null and frozen != null, "arena/both_grid_blocks_are_in_the_body")
+	if area != null and frozen != null:
+		audit.report("Body children: WorldGridArea#%d GridArea#%d" % [area.get_index(), frozen.get_index()])
+		audit.check_true(area.get_parent() == frozen.get_parent() and area.get_index() < frozen.get_index(),
+			"arena/the_world_block_sits_above_the_frozen_block")
+		audit.check_true(area.visible, "arena/the_world_block_is_shown")
+
+
+# ---------------------------------------------------------------------------
+# 11. A locked card's wall is lockLabel's sentence
+
+func _unlock_lines(audit: AuditBase) -> void:
+	var screen: Node = await _mount()
+	var read := 0
+	for row in screen.arena_rows_now():
+		var entry: Dictionary = row
+		var id := String(entry.get("id", ""))
+		if not bool(entry.get("locked", false)) or bool(entry.get("demo_locked", false)):
+			continue
+		var unlock := _unlock_of(id)
+		if unlock.is_empty():
+			continue
+		var line: String = String(screen.text_shown(ArenaScreenClass.LINE_PREFIX + id))
+		var trophies := int(unlock.get("trophies", 0))
+		var count := trophies if trophies > 0 else int(unlock.get("stars", 0))
+		audit.report("%s: %s" % [id, line])
+		read += 1
+		audit.check_true(not line.contains("{"), "arena/the_locked_line_of_%s_shows_no_raw_template" % id)
+		audit.check_true(line.contains(str(count)), "arena/the_locked_line_of_%s_shows_its_count" % id)
+	if DemoGate.build() == "demo":
+		audit.report("a demo words its walls demoOnlyFull: no counted unlock line to read")
+	else:
+		audit.check_gt(read, 0, "arena/the_build_shows_a_counted_unlock_wall_to_read")
+
+
+## The frozen table's own unlock wall for an id (`Frozen.arenas()[…].unlock`), read here
+## rather than trusted to the screen's copy of it.
+func _unlock_of(arena_id: String) -> Dictionary:
+	for arena in Frozen.arenas():
+		var entry: Dictionary = arena
+		if String(entry.get("id", "")) == arena_id and entry.get("unlock") is Dictionary:
+			return entry["unlock"]
+	return {}
+
+
+# ---------------------------------------------------------------------------
+# 12. The press's path: activate_arena
+
+func _activation(audit: AuditBase) -> void:
+	Config.pending_mode = "quick"
+	ModesSave.save_pref(Config.save_store(), "playerMode", "solo")
+	var screen: Node = await _mount()
+	var open_ids: Array = []
+	var walled: Array = []
+	for row in screen.arena_rows_now():
+		var entry: Dictionary = row
+		var id := String(entry.get("id", ""))
+		if bool(entry.get("locked", false)):
+			walled.append(id)
+		else:
+			open_ids.append(id)
+	audit.report("open=%s walled=%s" % [JSON.stringify(open_ids), JSON.stringify(walled)])
+	audit.check_ge(open_ids.size(), 1, "arena/the_build_exposes_a_card_to_activate")
+	audit.check_ge(walled.size(), 1, "arena/the_build_keeps_a_card_to_refuse")
+
+	var chosen := String(open_ids[0])
+	audit.check_eq(screen.activate_arena(chosen, false), true, "arena/an_open_card_activates_without_touching_the_tree")
+	audit.check_eq(Config.arena_id(), chosen, "arena/the_activation_writes_the_session_arena")
+	audit.check_eq(String(Config.pending_mode), "quick", "arena/the_activation_keeps_the_pending_mode_quick")
+	audit.check_eq(screen.selected_arena_id(), chosen, "arena/the_activation_moves_the_sessions_choice")
+	var card := screen.find_child(ArenaScreenClass.CARD_PREFIX + chosen, true, false) as Control
+	audit.check_true(card != null and card.gui_input.get_connections().size() > 0,
+		"arena/the_open_card_carries_the_press_handler")
+
+	var refused := String(walled[0])
+	var index_before := Config.arena_index
+	var world_before := Config.world_arena_id
+	var selected_before: String = String(screen.selected_arena_id())
+	audit.check_eq(screen.activate_arena(refused, false), false, "arena/a_locked_card_refuses_activation")
+	audit.check_eq(Config.arena_index, index_before, "arena/the_refusal_does_not_start_a_match")
+	audit.check_eq(Config.world_arena_id, world_before, "arena/the_refusal_does_not_take_a_world_seat")
+	audit.check_eq(screen.selected_arena_id(), selected_before, "arena/the_refusal_leaves_the_choice_where_it_was")
+	audit.check_eq(screen.activate_arena("invented_arena", false), false, "arena/an_invented_arena_is_refused")
+
+	# The world half (full build): the same call takes the world seat the ported
+	# column's world row takes (`Config.set_arena_id`).
+	var world_ids: Array = []
+	for row in screen.world_arena_rows_now():
+		world_ids.append(String((row as Dictionary).get("id", "")))
+	if world_ids.is_empty():
+		audit.report("demo build: no world card to activate")
+		return
+	var world_id := String(world_ids[0])
+	audit.check_eq(screen.activate_arena(world_id, false), true, "arena/a_world_card_activates_without_touching_the_tree")
+	audit.check_eq(Config.world_arena_id, world_id, "arena/the_world_activation_takes_the_world_seat")
+	audit.check_eq(Config.arena_id(), world_id, "arena/the_world_activation_names_the_world_arena")
+	var world_card := screen.find_child(ArenaScreenClass.WORLD_CARD_PREFIX + world_id, true, false) as Control
+	audit.check_true(world_card != null and world_card.gui_input.get_connections().size() > 0,
+		"arena/the_world_card_carries_the_press_handler")

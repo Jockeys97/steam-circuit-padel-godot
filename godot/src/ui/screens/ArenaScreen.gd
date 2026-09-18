@@ -81,6 +81,11 @@ const WORLD_CARD_PREFIX := "WorldArenaCard_"
 const WORLD_ART_PREFIX := "WorldArenaArt_"
 const WORLD_NAME_PREFIX := "WorldArenaName_"
 const WORLD_LINE_PREFIX := "WorldArenaLine_"
+## The world five's CARD art, copied from the direction deck
+## (`art/concepts/world-arenas-r1/`) and named by arena id so the path is the id.
+## Card preview only: the 3D backdrop stays procedural (`world_info().artwork` is
+## empty on purpose), so these stills never reach a match.
+const WORLD_ART_DIR := "res://game/arenas/art/world/"
 const BODY_NODE := "Body"
 const GRID_AREA_NODE := "GridArea"
 
@@ -210,6 +215,11 @@ func refresh_data() -> void:
 			or arena_card_state(_selected_id) == "locked":
 		_selected_id = _first_selectable_id()
 	_build_grid()
+	# The header is bound AFTER the grid: `_clear(ArenaGrid)` resets the binding list
+	# the whole screen shares (`_bindings`, `_text_nodes`), so a header bound before it
+	# would show its key on the next refresh — the 2026-09-18 screenshot read
+	# "arenaTitle" / "arenaSub" / "back" for exactly that reason.
+	_bind_header()
 	_build_world_grid()
 	_build_player_mode()
 	_apply_layout()
@@ -391,12 +401,34 @@ func arena_line_key(arena_id: String) -> String:
 	return String(row.get("desc_key", ""))
 
 
+## `lockLabel(unlock)`'s own params (`js/ui.js:685-702`): the count, and the noun chosen
+## by the reference's rule — `{n: 2, word: t("trophyMany")}` resolves to "🏆 2 trofei",
+## never the raw "{n} {word}" template the locked cards showed (the 2026-09-18
+## screenshot). The noun is resolved here, at binding time, the way the reference
+## resolves it in the same expression; a key with no wall to count carries no params.
+func _line_params_of(arena_id: String, line_key: String) -> Dictionary:
+	var unlock := _arena_unlock_of(arena_id)
+	var count := 0
+	var word_key := ""
+	if line_key == "unlockTrophies":
+		count = int(unlock.get("trophies", 0))
+		word_key = "trophyOne" if count == 1 else "trophyMany"
+	elif line_key == "unlockStars":
+		count = int(unlock.get("stars", 0))
+		word_key = "starOne" if count == 1 else "starMany"
+	if word_key == "":
+		return {}
+	return {"n": count, "word": UiStrings.t(word_key)}
+
+
 # ---------------------------------------------------------------------------
 # Selection and the preserved start contract
 
 
 ## `ui.selectedArena = arena; onSelect?.(arena)` (`js/ui.js:1264-1265`) — the choice is the
 ## session's, and the port's seat for it is `Config.arena_index` (`match_config.gd:22-27`).
+## Select-only, by design: the audits and the career fixtures read the choice on its own,
+## and the press's own path is `activate_arena` below.
 func select_arena(arena_id: String) -> bool:
 	if not _is_a_card(arena_id):
 		return false
@@ -404,7 +436,24 @@ func select_arena(arena_id: String) -> bool:
 	if state == "locked" or state == "out_of_matchday":
 		return false
 	_selected_id = arena_id
+	_apply_selection_styles()
 	return true
+
+
+## The press's own path, UIR-12's rule: "Selecting an eligible arena starts the match".
+## A walled card refuses (locked, or switched off by the calendar), an eligible one
+## moves the session's choice and then runs `start_match` — which is what a click and,
+## once the bridge can reach the screen, a keyboard confirm both mean. `apply_scene` is
+## `start_match`'s own: false is how an audit starts without touching the tree.
+func activate_arena(arena_id: String, apply_scene: bool = true) -> bool:
+	if not _is_a_card(arena_id):
+		return false
+	var state := arena_card_state(arena_id)
+	if state == "locked" or state == "out_of_matchday":
+		return false
+	if not select_arena(arena_id):
+		return false
+	return start_match(apply_scene)
 
 
 ## Which arena the start will use: the chosen one, or — in career and tournament — the
@@ -557,10 +606,10 @@ func _build_grid() -> void:
 		card.theme_type_variation = &""
 		# The reference paints exactly three card states — locked, out of the matchday, in
 		# program (`js/ui.js:1238-1243`) — and no "chosen" one: the choice is the session's,
-		# not the card's.
-		card.add_theme_stylebox_override("panel", _card_box())
-		if state == "in_program":
-			card.add_theme_stylebox_override("panel", _selected_box())
+		# not the card's. The port draws the session's own choice on top of them
+		# (`_card_box_of`), so the card the player picked is the one the selection frame
+		# marks; without it a press read as a no-op (the 2026-09-18 screenshot).
+		card.add_theme_stylebox_override("panel", _card_box_of(id))
 		grid.add_child(card)
 		var column := VBoxContainer.new()
 		column.name = card.name + "Column"
@@ -617,7 +666,8 @@ func _build_grid() -> void:
 		line.theme_type_variation = &"CardBody"
 		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		stack.add_child(line)
-		_bind(line, arena_line_key(id))
+		var line_key := arena_line_key(id)
+		_bind(line, line_key, _line_params_of(id, line_key))
 
 		# A switched-off card is a card the reference hands to `card.disabled`
 		# (`js/ui.js:1263-1271`), never a card that quietly does nothing.
@@ -652,9 +702,11 @@ func _build_world_grid() -> void:
 		_build_world_card(grid, row)
 
 
-## Builds the world area and its grid into the screen's own body, right below the
-## frozen grid: the scene carries the frozen grid alone, so the world half is added
-## where the layout already put its sibling, with the same margins and separation.
+## Builds the world area and its grid into the screen's own body, ABOVE the frozen
+## grid: the scene carries the frozen grid alone, so the world half is inserted where
+## the layout already put its sibling, with the same margins and separation. Above,
+## not below — the five are the reason the screen exists for a player who wants one,
+## and below nine 16:9 frozen cards they sat past the fold (the 2026-09-18 screenshot).
 func _make_world_grid() -> GridContainer:
 	var body := _control(BODY_NODE)
 	if body == null:
@@ -674,7 +726,7 @@ func _make_world_grid() -> GridContainer:
 	area.add_child(grid)
 	var frozen_area := _control(GRID_AREA_NODE)
 	if frozen_area != null:
-		body.move_child(area, frozen_area.get_index() + 1)
+		body.move_child(area, frozen_area.get_index())
 	return grid
 
 
@@ -686,7 +738,7 @@ func _build_world_card(grid: GridContainer, row: Dictionary) -> void:
 	card.mouse_filter = Control.MOUSE_FILTER_STOP
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	card.theme_type_variation = &""
-	card.add_theme_stylebox_override("panel", _card_box())
+	card.add_theme_stylebox_override("panel", _card_box_of(id))
 	grid.add_child(card)
 	var column := VBoxContainer.new()
 	column.name = card.name + "Column"
@@ -694,14 +746,24 @@ func _build_world_card(grid: GridContainer, row: Dictionary) -> void:
 	column.add_theme_constant_override("separation", 0)
 	card.add_child(column)
 
-	# A world deck ships no UI art (`UiArtPaths.gd` names the frozen nine's only), so
-	# the preview is the panel with the deck's own accent: the screen's empty state,
-	# never a broken texture.
+	# The frozen grid's own preview, in the frozen grid's own idiom: the accented panel
+	# carries the deck still for this arena. The panel stays the fallback — a build that
+	# has not imported the stills shows the accent, never a broken texture.
 	var preview := PanelContainer.new()
 	preview.name = WORLD_ART_PREFIX + id
 	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	preview.add_theme_stylebox_override("panel", _preview_box(String(row.get("accent", ""))))
 	column.add_child(preview)
+	var art := TextureRect.new()
+	art.name = preview.name + "Texture"
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var art_path := WORLD_ART_DIR + id + ".png"
+	var texture: Texture2D = load(art_path) if ResourceLoader.exists(art_path) else null
+	if texture != null:
+		art.texture = texture
+	preview.add_child(art)
 
 	var body := MarginContainer.new()
 	body.name = card.name + "Body"
@@ -757,7 +819,9 @@ func _clear_children(container: Node) -> void:
 func _on_card_input(event: InputEvent, arena_id: String) -> void:
 	var click := event as InputEventMouseButton
 	if click != null and click.pressed and click.button_index == MOUSE_BUTTON_LEFT:
-		select_arena(arena_id)
+		# A press on an eligible card STARTS (`activate_arena`); a walled card's
+		# press refuses inside the same call, so the handler needs no second rule.
+		activate_arena(arena_id)
 
 
 func _place_overlay(host: Control, overlay_name: String, overlay: Control, visible_now: bool) -> void:
@@ -785,8 +849,8 @@ func _update_preview_heights() -> void:
 	var column_width := (width - float(columns - 1) * float(_grid_separation())) / float(columns)
 	for row in _rows:
 		_fit_preview(ART_PREFIX, CARD_PREFIX, String((row as Dictionary).get("id", "")), column_width)
-	# The world cards' previews keep the same ratio: same card, same art frame, no
-	# texture (a world deck ships none).
+	# The world cards' previews keep the same ratio: same card, same art frame, same
+	# deck still behind it.
 	for row in _world_rows:
 		_fit_preview(WORLD_ART_PREFIX, WORLD_CARD_PREFIX,
 			String((row as Dictionary).get("id", "")), column_width)
@@ -859,6 +923,37 @@ func _card_box() -> StyleBoxFlat:
 
 func _selected_box() -> StyleBoxFlat:
 	return _theme_box("PanelCardSelected")
+
+
+## The frame the card wears: the calendar's fixture, or the session's own pick.
+## Without it a press left the grid looking untouched (the 2026-09-18 screenshot).
+func _card_box_of(arena_id: String) -> StyleBoxFlat:
+	if arena_id == _in_program or arena_id == _selected_id:
+		return _selected_box()
+	return _card_box()
+
+
+func _apply_selection_styles() -> void:
+	for arena_id in _card_ids():
+		var card := _control(CARD_PREFIX + String(arena_id))
+		if card == null:
+			card = _control(WORLD_CARD_PREFIX + String(arena_id))
+		if card == null:
+			continue
+		card.add_theme_stylebox_override("panel", _card_box_of(String(arena_id)))
+
+
+## Bound after `_build_grid` because `_clear(ArenaGrid)` wipes `_bindings`.
+func _bind_header() -> void:
+	var title := _control("TitleLabel")
+	if title != null:
+		_bind(title, "arenaTitle")
+	var sub := _control("SubLabel")
+	if sub != null:
+		_bind(sub, "arenaSub")
+	var back := _control("BackButton")
+	if back != null:
+		_bind(back, "back")
 
 
 func _setup_box() -> StyleBoxFlat:
