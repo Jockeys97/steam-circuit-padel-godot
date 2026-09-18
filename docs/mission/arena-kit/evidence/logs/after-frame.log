@@ -1,0 +1,40 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# WORLD_ARENAS_FRAME · Godot 4.7.2-stable (official) · field-law z=-8.0 · presets=["default", "wide", "playable"]
+ok the harness viewport is 1280x720 (the framing contract's size)
+# targets=["torii", "medina", "carioca", "aurora", "egeo"] presets=["default", "wide", "playable"] viewport=(1280.0, 720.0)
+FRAME preset=default arena=torii points=16 inside=16 behind=0 worst=55.1px(court_corner_left_near) failures=none
+FRAME preset=default arena=medina points=16 inside=16 behind=0 worst=55.1px(court_corner_left_near) failures=none
+FRAME preset=default arena=carioca points=16 inside=16 behind=0 worst=55.1px(court_corner_left_near) failures=none
+FRAME preset=default arena=aurora points=16 inside=16 behind=0 worst=55.1px(court_corner_left_near) failures=none
+FRAME preset=default arena=egeo points=16 inside=16 behind=0 worst=55.1px(court_corner_left_near) failures=none
+ok preset default: every arena keeps all court corners + side/rear glass extents inside (1280.0, 720.0)
+ok preset default: no required point is behind the camera
+ok preset default: every scenery object is fully inside the frame
+FRAME_PRESET preset=default arenas=5 worst_margin=55.1px
+FRAME preset=wide arena=torii points=16 inside=16 behind=0 worst=132.8px(court_corner_left_near) failures=none
+FRAME preset=wide arena=medina points=16 inside=16 behind=0 worst=132.8px(court_corner_left_near) failures=none
+FRAME preset=wide arena=carioca points=16 inside=16 behind=0 worst=132.8px(court_corner_left_near) failures=none
+FRAME preset=wide arena=aurora points=16 inside=16 behind=0 worst=132.8px(court_corner_left_near) failures=none
+FRAME preset=wide arena=egeo points=16 inside=16 behind=0 worst=132.8px(court_corner_left_near) failures=none
+ok preset wide: every arena keeps all court corners + side/rear glass extents inside (1280.0, 720.0)
+ok preset wide: no required point is behind the camera
+ok preset wide: every scenery object is fully inside the frame
+FRAME_PRESET preset=wide arenas=5 worst_margin=132.8px
+FRAME preset=playable arena=torii points=16 inside=16 behind=0 worst=38.3px(court_corner_left_near) failures=none
+FRAME preset=playable arena=medina points=16 inside=16 behind=0 worst=38.3px(court_corner_left_near) failures=none
+FRAME preset=playable arena=carioca points=16 inside=16 behind=0 worst=38.3px(court_corner_left_near) failures=none
+FRAME preset=playable arena=aurora points=16 inside=16 behind=0 worst=38.3px(court_corner_left_near) failures=none
+FRAME preset=playable arena=egeo points=16 inside=16 behind=0 worst=38.3px(court_corner_left_near) failures=none
+ok preset playable: every arena keeps all court corners + side/rear glass extents inside (1280.0, 720.0)
+ok preset playable: no required point is behind the camera
+ok preset playable: every scenery object is fully inside the frame
+FRAME_PRESET preset=playable arenas=5 worst_margin=38.3px
+ok preset default: the scenery band covers the frame through the LIVE camera (top 5.49 >= required 4.80, half_x 23.54 >= required 20.70)
+BAND_COVER preset=default live_pitch=-36.03 band_top=5.49 required_top=4.80 band_half_x=23.54 required_half_x=20.70
+ok preset wide: the scenery band covers the frame through the LIVE camera (top 11.94 >= required 11.06, half_x 38.92 >= required 36.88)
+BAND_COVER preset=wide live_pitch=-50.00 band_top=11.94 required_top=11.06 band_half_x=38.92 required_half_x=36.88
+ok preset playable: the scenery band covers the frame through the LIVE camera (top 25.75 >= required 12.30, half_x 33.34 >= required 30.58)
+BAND_COVER preset=playable live_pitch=-21.53 band_top=25.75 required_top=12.30 band_half_x=33.34 required_half_x=30.58
+ok the presets are the game's own, unmodified: ["default", "wide", "playable"]
+PASS 14/14

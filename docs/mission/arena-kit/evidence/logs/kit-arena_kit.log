@@ -1,0 +1,102 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# arena-kit intake suite — godot 4.7.2-stable (official), repo /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot
+ok spec/the_spec_table_covers_the_five_world_arenas
+ok spec/the_slot_set_is_the_frozen_ten_in_order
+ok spec/every_slot_name_is_unique
+ok spec/every_arena_carries_exactly_the_ten_frozen_slots
+ok spec/every_anchor_is_a_ground_contact
+ok spec/every_target_height_is_metres_inside_the_built_band
+ok spec/repeat_count_and_spread_agree
+ok spec/every_repeat_run_stays_inside_the_authored_half_span
+ok spec/every_slot_carries_a_footprint_note
+ok spec/every_footprint_clears_the_field_law_plane_z_minus_8
+ok spec/every_footprint_clears_the_measured_glass_plane
+ok spec/every_footprint_fits_the_depth_budget
+ok spec/suppress_defaults_off_in_every_slot
+ok spec/every_suppress_target_is_a_real_prop_kind
+ok spec/no_slot_is_suppressed_without_a_glb_in_place
+ok pre/godot_assets_arenas_holds_no_glb_yet (the empty-kit state)
+ok pre/has_kit_is_false_for_torii
+ok pre/has_kit_is_false_for_medina
+ok pre/has_kit_is_false_for_carioca
+ok pre/has_kit_is_false_for_aurora
+ok pre/has_kit_is_false_for_egeo
+ok pre/slot_report_lists_all_ten_slots_as_procedural_with_their_path
+ok regression/the_recorded_baseline_is_readable (run/tmp/arena-kit/baseline.json)
+ok regression/every_arena_digest_equals_the_recorded_baseline
+ok regression/mesh_and_dressing_counts_are_unchanged
+ok regression/the_digest_is_deterministic_inside_the_run
+ok regression/no_kit_node_is_built_without_a_glb
+ok regression/the_field_law_still_holds
+ok fixture/tiny_prop_fixture_exists (tools/arena-kit/fixtures/tiny_prop.glb)
+ok fixture/copy_the_tiny_glb_into_the_slot_path
+ok fixture/the_kit_sees_the_drop (has_kit)
+INFO resource_loader_exists(res://assets/arenas/torii/light_source.glb)=false file_exists=true
+ok fixture/only_the_slot_with_the_file_reports_loaded
+ok fixture/mount_slot_returns_the_slot_node
+ok fixture/the_slot_node_is_named_Slot_<slot>
+ok fixture/the_slot_node_sits_at_the_spec_anchor
+ok fixture/the_slot_node_records_its_asset_path
+ok fixture/the_declared_repeat_count_is_mounted
+ok fixture/every_repeat_is_placed_on_the_declared_spread
+ok fixture/every_piece_measures_the_spec_target_height
+ok fixture/every_piece_is_bottom_origin_and_x_centred_on_its_anchor
+ok fixture/the_scale_is_exactly_target_height_over_the_source_box (0.50 m fixture)
+ok fixture/the_shared_material_policy_corrects_the_meshy_defaults
+ok fixture/the_policy_keeps_each_models_own_colour (3/3 surfaces)
+ok fixture/one_material_instance_is_shared_across_the_repeats (1)
+ok fixture/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok fixture/the_mounted_geometry_stays_behind_the_measured_glass_plane
+ok fixture/a_built_arena_carries_Scenery/Kit
+ok fixture/the_built_arena_has_Kit/Slot_light_source
+ok fixture/the_field_law_still_holds_with_a_glb_mounted
+ok fixture/under_another_camera_preset_the_anchor_follows_the_presets_x_scale
+ok repo_glb/the_repo_fixture_exists (res://assets/athletes/volpe-rigged.glb)
+ok repo_glb/the_fixture_is_the_size_the_repo_states (8898424 bytes)
+ok repo_glb/copy_the_volpe_glb_into_the_slot_path
+ok repo_glb/a_real_repo_glb_mounts_as_Kit/Slot_hero_landmark
+ok repo_glb/it_stands_at_the_spec_anchor
+ok repo_glb/one_piece_for_a_single_instance_slot
+INFO repo_glb measured box=(2.835498, 4.0, 1.202723) scale=2.2222 source_h=1.8000 m
+ok repo_glb/the_skinned_source_is_measured_in_metres_not_centimetres
+ok repo_glb/the_scale_is_target_height_over_the_measured_source
+ok repo_glb/the_mounted_box_measures_the_spec_target_height (4.00 m)
+ok repo_glb/it_is_bottom_origin_on_the_anchor
+ok repo_glb/the_mounted_geometry_stays_behind_the_measured_glass_plane
+ok repo_glb/the_shared_material_policy_corrects_the_meshy_defaults
+ok repo_glb/the_policy_keeps_each_models_own_colour (1/1 surfaces)
+ok repo_glb/one_material_instance_is_shared_across_the_repeats (1)
+ok repo_glb/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok repo_glb/the_field_law_still_holds
+ok suppress/the_slot_names_a_procedural_kind_to_stand_over (["pagoda"])
+ok suppress/with_the_flag_off_the_procedural_prop_is_still_built
+ok suppress/forcing_the_flag_lists_the_kind
+ok suppress/the_container_is_still_built (one Dressing_ per authored prop)
+ok suppress/the_matching_procedural_prop_is_skipped
+ok suppress/the_kit_slot_itself_is_still_mounted
+ok suppress/other_kinds_are_untouched
+ok suppress/the_override_clears_back_to_the_frozen_table
+ok clean/both_fixtures_are_gone_and_no_glb_is_staged (2 removed)
+ok clean/has_kit_is_false_again_for_torii
+ok clean/has_kit_is_false_again_for_medina
+ok clean/has_kit_is_false_again_for_carioca
+ok clean/has_kit_is_false_again_for_aurora
+ok clean/has_kit_is_false_again_for_egeo
+ok clean/slot_report_lists_all_ten_slots_as_procedural_with_their_path
+ok clean/after_removal_every_arena_digest_matches_the_baseline_again
+ok clean/the_per_arena_drop_folders_and_their_readmes_survive
+PASS 83/83
+ERROR: Pages in use exist at exit in PagedAllocator: N20RasterizerSceneDummy21GeometryInstanceDummyE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: 16 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 2 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 2 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 2 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 1 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 2 RID allocations of type 'N17RendererSceneCull8InstanceE' were leaked at exit.

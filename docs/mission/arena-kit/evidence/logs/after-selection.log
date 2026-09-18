@@ -1,0 +1,292 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# WORLD_ARENAS_SELECTION · Godot 4.7.2-stable (official) · field-law z=-8.0 · presets=["default", "wide", "playable"]
+# targets=["torii", "medina", "carioca", "aurora", "egeo"] build=full
+ok a FULL build offers exactly the five world arenas, in table order
+ok every offered world row carries name, desc and the PROVISIONAL physics (marked as such)
+ok the frozen list this build offers is still exactly the reference's own (full)
+ok every frozen arena this build grants still selects and lands (and never sets the world seat)
+ok every world id selects through Config.set_arena_id in a FULL build and is refused in a DEMO
+ok a world selection reaches Config.arena_id()/arena(); a demo never moves off its granted arena
+ok choosing a frozen arena after a world one clears the world seat
+ok the CLI route lands on the requested world arena in a FULL build and refuses it by name in a DEMO
+MATCH_BUILD_GATE refused={} effective={"arena":"torii","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=torii seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:179)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:179)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+MATCH_BUILD_GATE refused={} effective={"arena":"medina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=medina seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:179)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:179)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+MATCH_BUILD_GATE refused={} effective={"arena":"carioca","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=carioca seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:179)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:179)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+MATCH_BUILD_GATE refused={} effective={"arena":"aurora","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=aurora seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:179)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:179)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+MATCH_BUILD_GATE refused={} effective={"arena":"egeo","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=egeo seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:179)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:179)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+ok every world arena builds in the REAL match scene, and the sim state carries the provisional wallBounce
+MATCH_BUILD_GATE refused={} effective={"arena":"torii","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=torii seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:211)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:211)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+# WORLD_PLAYTHROUGH arena=torii ticks=31295 points=26 result={ "winner": "ai" } score=0-0
+ok a full quick match PLAYED on world court 'torii' reaches a real result (ticks=31295 points=26)
+MATCH_BUILD_GATE refused={} effective={"arena":"medina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=medina seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:211)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:211)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+# WORLD_PLAYTHROUGH arena=medina ticks=31295 points=26 result={ "winner": "ai" } score=0-0
+ok a full quick match PLAYED on world court 'medina' reaches a real result (ticks=31295 points=26)
+MATCH_BUILD_GATE refused={} effective={"arena":"carioca","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=carioca seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:211)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:211)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+# WORLD_PLAYTHROUGH arena=carioca ticks=31295 points=26 result={ "winner": "ai" } score=0-0
+ok a full quick match PLAYED on world court 'carioca' reaches a real result (ticks=31295 points=26)
+MATCH_BUILD_GATE refused={} effective={"arena":"aurora","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=aurora seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:211)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:211)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+# WORLD_PLAYTHROUGH arena=aurora ticks=31295 points=26 result={ "winner": "ai" } score=0-0
+ok a full quick match PLAYED on world court 'aurora' reaches a real result (ticks=31295 points=26)
+MATCH_BUILD_GATE refused={} effective={"arena":"egeo","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"ingegnere","tier_index":1}
+MATCH_START tier=ingegnere athlete=maestro arena=egeo seed=20260916 camera=default models=false headless=true switch=semi
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:211)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+         [5] _new_match_node (res://tests/world_arenas_selection_test.gd:318)
+         [6] _run (res://tests/world_arenas_selection_test.gd:211)
+         [7] _process (res://tests/world_arenas_selection_test.gd:66)
+# WORLD_PLAYTHROUGH arena=egeo ticks=31295 points=26 result={ "winner": "ai" } score=0-0
+ok a full quick match PLAYED on world court 'egeo' reaches a real result (ticks=31295 points=26)
+ok every target world arena completed its own played match (5 arenas, exact lines above)
+ok the ported menu offers one focusable WorldArena_ button per world arena (none in a demo)
+ok a world button press selects that arena, and a frozen press clears the world seat
+ok the world work never entered selectable_arenas() (the frozen list this build reports)
+PASS 18/18
+WARNING: 90 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 7 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

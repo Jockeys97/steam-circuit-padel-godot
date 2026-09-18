@@ -1,0 +1,28 @@
+--- [after/slice_full] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/game_slice_test.gd (watchdog 900s)
+    exit=1 tally='FAIL 344/345' script_errors=0 verdict=red(exit=1),red(FAIL 344/345) log_sha256=657639445cd25548… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/after-slice_full.log
+    ^^ step reported NOT green
+--- [after/slice_demo] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/game_slice_test.gd -- --demo (watchdog 900s)
+    exit=1 tally='FAIL 295/296' script_errors=0 verdict=red(exit=1),red(FAIL 295/296) log_sha256=cffcbc069cef30e5… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/after-slice_demo.log
+    ^^ step reported NOT green
+--- [after/field_law] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/world_arenas_field_law_test.gd (watchdog 400s)
+    exit=0 tally='PASS 88/88' script_errors=0 verdict=green log_sha256=5e59eb6aea4867bd… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/after-field_law.log
+--- [after/frame] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/world_arenas_frame_test.gd (watchdog 400s)
+    exit=0 tally='PASS 14/14' script_errors=0 verdict=green log_sha256=c21d0aa27b09c262… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/after-frame.log
+--- [after/selection] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/world_arenas_selection_test.gd (watchdog 900s)
+    exit=0 tally='PASS 18/18' script_errors=0 verdict=green log_sha256=7b1ecff87c315d10… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/after-selection.log
+--- [after/selection_demo] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/world_arenas_selection_test.gd -- --demo (watchdog 400s)
+    exit=0 tally='PASS 8/8' script_errors=0 verdict=green log_sha256=0fc3e68c0eb83416… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/after-selection_demo.log
+--- [after/selector_contract] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/ui/arena_selector_contract_test.gd (watchdog 400s)
+    exit=0 tally='PASS 30/30' script_errors=0 verdict=green log_sha256=3296424550001485… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/after-selector_contract.log
+--- [after/screen_audit] /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --script res://tests/ui/screen_arena_audit.gd (watchdog 400s)
+    exit=0 tally='PASS 180/180' script_errors=0 verdict=green log_sha256=f2210d9b148df581… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/after-screen_audit.log
+
+=== after tallies (project: godot) ===
+  slice_full           exit=1    FAIL 344/345 script_errors=0   red(exit=1),red(FAIL 344/345)
+  slice_demo           exit=1    FAIL 295/296 script_errors=0   red(exit=1),red(FAIL 295/296)
+  field_law            exit=0    PASS 88/88   script_errors=0   green
+  frame                exit=0    PASS 14/14   script_errors=0   green
+  selection            exit=0    PASS 18/18   script_errors=0   green
+  selection_demo       exit=0    PASS 8/8     script_errors=0   green
+  selector_contract    exit=0    PASS 30/30   script_errors=0   green
+  screen_audit         exit=0    PASS 180/180 script_errors=0   green

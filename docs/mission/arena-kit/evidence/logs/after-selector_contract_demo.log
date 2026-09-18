@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/arena_selector_contract_test.gd:120)
+         [1] _run (res://tests/ui/arena_selector_contract_test.gd:94)
+         [2] _initialize (res://tests/ui/arena_selector_contract_test.gd:75)
+ok arena/the_screen_mounts
+# report header: title=STEAMPUNK COURTS sub=Pick the circuit arena back=← Back
+ok arena/title_is_the_locales_word
+ok arena/title_is_not_the_raw_key
+ok arena/sub_is_the_locales_word
+ok arena/sub_is_not_the_raw_key
+ok arena/back_is_the_locales_word
+ok arena/back_is_not_the_raw_key
+ok arena/world_arena_rows_now_exists
+# report demo build: world rows=0
+ok arena/demo_offers_no_world_rows
+ok arena/demo_builds_no_world_card_torii
+# report visible text nodes scanned: 34
+ok arena/the_label_scan_reaches_the_screen
+ok arena/no_visible_label_shows_a_raw_template
+ok arena/activate_arena_exists
+# report open frozen id: clockwork
+ok arena/activate_arena_returns_true_for_an_open_arena
+ok arena/activate_arena_writes_the_session_arena
+ok arena/activate_arena_keeps_the_pending_mode_quick
+# report locked frozen id: officina
+ok arena/activate_arena_refuses_a_locked_arena
+PASS 17/17

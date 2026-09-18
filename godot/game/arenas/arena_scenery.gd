@@ -66,6 +66,7 @@ extends RefCounted
 const Court := preload("res://game/court.gd")
 const CourtBuilder := preload("res://game/arenas/court_builder.gd")
 const ArenaStyle := preload("res://game/arenas/arena_style.gd")
+const ArenaKit := preload("res://game/arenas/arena_kit.gd")
 
 ## The backdrop wall's world z. Behind `COURT`'s rear line (-6.35 m at this
 ## scale) and in front of the point where the ground plane leaves the frame, so
@@ -157,6 +158,14 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 		"x_scale": x_scale,
 	}
 	var props: Array = style.get("props", [])
+	# 4b. The arena kit's suppression seam (KIT-STANDARD §5). A slot that has BOTH a GLB
+	#     in place (`res://assets/arenas/<id>/<slot>.glb`) and `suppress = true` in the
+	#     kit's spec table stands INSTEAD OF the procedural prop it maps to, so
+	#     `_build_prop` is skipped for that kind. The container is still built, so "one
+	#     `Dressing_*` per authored prop" — the invariant the frozen suites pin — does
+	#     not move. Empty today: every slot ships with the flag off (asserted by
+	#     `tests/arena_kit_test.gd`), and with no GLB in place the list is empty anyway.
+	var skipped := ArenaKit.suppressed_kinds(id)
 	for i in props.size():
 		var prop: Dictionary = props[i]
 		var kind := String(prop.get("kind", "spark"))
@@ -165,7 +174,17 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 		container.position = Vector3(float(prop.get("x", 0.0)) * x_scale, 0.0, float(prop.get("z", -7.65)) - 4.0)
 		container.set_meta("kind", kind)
 		root.add_child(container)
+		if skipped.has(kind):
+			continue
 		_build_prop(container, prop, ctx)
+
+	# 4c. The arena kit (KIT-STANDARD §5). GLBs dropped at
+	#     `res://assets/arenas/<id>/<slot>.glb` mount at their spec anchor under
+	#     `Scenery/Kit/Slot_<slot>`, ADDITIVE to the props above and silent when the
+	#     arena has no file at all: `mount()` returns null and adds no node, which is
+	#     what keeps an empty-kit build identical to the pre-kit tree (proved against
+	#     the recorded baseline by `tests/arena_kit_test.gd`).
+	ArenaKit.mount(root, id, ctx)
 	return root
 
 
@@ -254,15 +273,27 @@ static func field_law_report(arena_root: Node3D) -> Array[String]:
 		if holder == null:
 			out.append("field law: %s is not a Node3D" % child.name)
 			continue
-		var xf := _xform_to(holder, arena_root)
-		var holder_z := (xf * Vector3.ZERO).z
-		if holder_z > FIELD_LAW_Z:
-			out.append("field law: %s stands at z %.2f" % [holder.name, holder_z])
-		for mi in _meshes_of(holder):
+		var meshes := _meshes_of(holder)
+		if meshes.is_empty():
+			# Nothing this child draws: a prop container whose prop the arena kit
+			# suppressed, or the kit's grouping node with no slot filled. Its origin is
+			# not a place any geometry stands, so it is not a violation — the law is
+			# about what is on screen. (Every container built today carries geometry,
+			# so this pass is unreachable until a kit GLB is mounted.)
+			continue
+		for mi in meshes:
 			var mesh := (mi as MeshInstance3D).mesh
 			if mesh == null:
 				continue
-			var mxf := xf * (mi as Node3D).transform
+			# The FULL chain to the arena root, not the holder's transform times the
+			# mesh's own transform: a mounted kit GLB sits at `Kit/Slot_<slot>/Piece/
+			# <mesh>`, and the one-level product was blind to everything between — a
+			# nested piece standing in front of the plane went unreported (measured on
+			# the first fixture mount: `Kit reaches z -0.25`, the piece read as if it
+			# stood at the kit node's own origin). For today's trees — one
+			# `MeshInstance3D` directly under each `Dressing_*` container — the two
+			# products are the same number, so this changes no measured value.
+			var mxf := _xform_to(mi, arena_root)
 			var aabb := mesh.get_aabb()
 			for corner in 8:
 				var corner_z := (mxf * aabb.get_endpoint(corner)).z

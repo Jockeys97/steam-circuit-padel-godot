@@ -1,0 +1,20 @@
+--- [before/frame] /Applications/Godot.app/Contents/MacOS/Godot --headless --path run/tmp/arena-kit/pristine --script res://tests/world_arenas_frame_test.gd (watchdog 400s)
+    exit=0 tally='PASS 14/14' script_errors=0 verdict=green log_sha256=c21d0aa27b09c262… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/before-frame.log
+--- [before/selection] /Applications/Godot.app/Contents/MacOS/Godot --headless --path run/tmp/arena-kit/pristine --script res://tests/world_arenas_selection_test.gd (watchdog 900s)
+    exit=0 tally='PASS 18/18' script_errors=12 verdict=green,red(12 SCRIPT ERROR) log_sha256=631d3f1776151817… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/before-selection.log
+    ^^ step reported NOT green
+--- [before/selection_demo] /Applications/Godot.app/Contents/MacOS/Godot --headless --path run/tmp/arena-kit/pristine --script res://tests/world_arenas_selection_test.gd -- --demo (watchdog 400s)
+    exit=0 tally='PASS 8/8' script_errors=0 verdict=green log_sha256=0fc3e68c0eb83416… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/before-selection_demo.log
+--- [before/screen_audit] /Applications/Godot.app/Contents/MacOS/Godot --headless --path run/tmp/arena-kit/pristine --script res://tests/ui/screen_arena_audit.gd (watchdog 400s)
+    exit=1 tally='FAIL 178/180' script_errors=0 verdict=red(exit=1),red(FAIL 178/180) log_sha256=8947133cefc9c6f9… log=/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/run/tmp/arena-kit/evidence/logs/before-screen_audit.log
+    ^^ step reported NOT green
+
+=== before tallies (project: run/tmp/arena-kit/pristine) ===
+  frame                exit=0    PASS 14/14   script_errors=0   green
+  selection            exit=0    PASS 18/18   script_errors=12  green,red(12 SCRIPT ERROR)
+  selection_demo       exit=0    PASS 8/8     script_errors=0   green
+  screen_audit         exit=1    FAIL 178/180 script_errors=0   red(exit=1),red(FAIL 178/180)
+  frame                exit=0    PASS 14/14   script_errors=0   green
+  selection            exit=0    PASS 18/18   script_errors=12  green,red(12 SCRIPT ERROR)
+  selection_demo       exit=0    PASS 8/8     script_errors=0   green
+  screen_audit         exit=1    FAIL 178/180 script_errors=0   red(exit=1),red(FAIL 178/180)

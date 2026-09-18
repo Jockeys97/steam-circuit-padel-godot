@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/ui/arena_selector_contract_test.gd:120)
+         [1] _run (res://tests/ui/arena_selector_contract_test.gd:94)
+         [2] _initialize (res://tests/ui/arena_selector_contract_test.gd:75)
+ok arena/the_screen_mounts
+# report header: title=STEAMPUNK COURTS sub=Pick the circuit arena back=← Back
+ok arena/title_is_the_locales_word
+ok arena/title_is_not_the_raw_key
+ok arena/sub_is_the_locales_word
+ok arena/sub_is_not_the_raw_key
+ok arena/back_is_the_locales_word
+ok arena/back_is_not_the_raw_key
+ok arena/world_arena_rows_now_exists
+# report world rows: ["torii","medina","carioca","aurora","egeo"]
+ok arena/world_rows_are_the_five_in_catalog_order
+ok arena/world_card_torii_is_on_the_screen
+ok arena/world_card_medina_is_on_the_screen
+ok arena/world_card_carioca_is_on_the_screen
+ok arena/world_card_aurora_is_on_the_screen
+ok arena/world_card_egeo_is_on_the_screen
+ok arena/world_grid_area_exists
+# report Body children: WorldGridArea#0 GridArea#1
+ok arena/world_grid_area_sits_above_the_frozen_grid
+# report WorldArenaArt_torii texture: (res://game/arenas/art/world/torii.png):<CompressedTexture2D#-9223371984476305560>
+ok arena/world_card_torii_shows_its_still
+# report WorldArenaArt_medina texture: (res://game/arenas/art/world/medina.png):<CompressedTexture2D#-9223371983905880196>
+ok arena/world_card_medina_shows_its_still
+# report WorldArenaArt_carioca texture: (res://game/arenas/art/world/carioca.png):<CompressedTexture2D#-9223371983335454832>
+ok arena/world_card_carioca_shows_its_still
+# report WorldArenaArt_aurora texture: (res://game/arenas/art/world/aurora.png):<CompressedTexture2D#-9223371982765029468>
+ok arena/world_card_aurora_shows_its_still
+# report WorldArenaArt_egeo texture: (res://game/arenas/art/world/egeo.png):<CompressedTexture2D#-9223371982194604104>
+ok arena/world_card_egeo_shows_its_still
+# report visible text nodes scanned: 42
+ok arena/the_label_scan_reaches_the_screen
+ok arena/no_visible_label_shows_a_raw_template
+ok arena/activate_arena_exists
+# report open frozen id: officina
+ok arena/activate_arena_returns_true_for_an_open_arena
+ok arena/activate_arena_writes_the_session_arena
+ok arena/activate_arena_keeps_the_pending_mode_quick
+# report locked frozen id: cattedrale
+ok arena/activate_arena_refuses_a_locked_arena
+ok arena/activate_arena_reaches_a_world_arena
+ok arena/activate_arena_takes_the_world_seat
+PASS 30/30
