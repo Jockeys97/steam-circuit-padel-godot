@@ -955,7 +955,17 @@ func _build_capsule_fallback() -> void:
 		base.queue_free()
 	for key in ["player", "playerMate", "opponent", "opponentMate"]:
 		_paddle_views[key] = Court.make_racket_view(self, "Racket_%s" % key,
-			_player_color if key.begins_with("player") else _ai_color)
+			_player_color if key.begins_with("player") else _ai_color, _racket_style_of(key))
+
+
+## The same racket style the rigged path would have chosen (`AthletesView.racket_style_for`),
+## read off the lineup this match already resolved: the capsule fallback is a degraded
+## build, not a different athlete — Fornaio keeps Il Cornetto even here.
+func _racket_style_of(role: String) -> StringName:
+	var athlete: Variant = _lineup.get(role, null)
+	if athlete == null:
+		return Court.RACKET_STYLE_STANDARD
+	return AthletesView.racket_style_for(StringName(String((athlete as Dictionary)["id"])))
 
 
 ## The four athletes' roots (rigs, or the capsule fallbacks) — the slice test reads

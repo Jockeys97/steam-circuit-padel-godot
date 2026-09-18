@@ -30,6 +30,7 @@ const BuildFlag := preload("res://tests/build/BuildFlag.gd")
 const ContentFilter := preload("res://tests/build/ContentFilter.gd")
 const Frozen := preload("res://src/sim/frozen.gd")
 const ArenaCatalog := preload("res://game/arenas/arena_catalog.gd")
+const Specials := preload("res://src/character/specials.gd")
 
 ## The reference's four difficulty rungs ARE this port's four AI tiers
 ## (`js/ui.js:1531`: `{easy:0, medium:1, hard:2, legend:3}[difficulty]`), so the
@@ -80,6 +81,18 @@ static func arena_catalog() -> RefCounted:
 static func world_arenas() -> Array:
 	var catalog: Variant = arena_catalog()
 	return catalog.world_rows()
+
+
+## The GODOT-ONLY SPECIAL ATHLETES (`src/character/specials.gd`): a FULL build
+## offers them as a further choice beside the six, a DEMO build offers none of
+## them — same rule and same reason as the world arenas above, and the same shape:
+## a separate list, never merged into `roster()` or `Config.selectable_athletes()`
+## (the slice pins the frozen roster's size, and the demo's content rule is the
+## reference's own table). `Config.selectable_special_athletes()` is where this
+## answer reaches the selection; `Specials.selectable()` is handed THIS build's
+## flag, because the specials module may not read the build flag itself.
+static func special_athletes() -> Array:
+	return Specials.selectable(is_demo())
 
 
 ## `demoLocked` (`js/build.js:73`): true only in the demo, and only for something

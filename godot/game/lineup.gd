@@ -115,6 +115,12 @@ static func _free(reserves: Array, used: Dictionary, player: Dictionary) -> Dict
 ## `ui.lineup[role]` (`js/main.js:2218-2226`): an athlete the player picked in the
 ## team screen, and only if it still exists in the roster. The port has no team
 ## screen yet, so this reads the prefs the save module already carries.
+##
+## The pool is the exposed roster PLUS the specials THIS build offers
+## (`Gate.special_athletes()`, empty in a demo): the team screen's special strip
+## can assign one to any slot, and a preference the resolver dropped would make
+## that pick silently revert. The two lists stay separate — a special is never
+## added to `Gate.roster()`, whose size the slice pins.
 static func _pref(role: String) -> Variant:
 	var prefs: Variant = _PREF_SOURCE
 	if prefs == null:
@@ -125,7 +131,7 @@ static func _pref(role: String) -> Variant:
 	var id: Variant = lineup.get(role)
 	if typeof(id) != TYPE_STRING:
 		return null
-	for athlete in Gate.roster():
+	for athlete in Gate.roster() + Gate.special_athletes():
 		if String(athlete["id"]) == String(id):
 			return athlete
 	return null

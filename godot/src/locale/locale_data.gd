@@ -731,6 +731,12 @@ const TABLES := {
 		"drillPoints": "Punti",
 		"ariaDrill": "Allenamento",
 		"ariaDrillCourt": "Campo di allenamento",
+		# PORT ADDITION — NOT FROM `js/i18n.js`. A special athlete is Godot-only
+		# (`godot/src/character/specials.gd`); the reference has no such key, so this
+		# hand-edit is a DELIBERATE drift from the generated tables:
+		# `tools/i18n-port/verify-i18n-port.mjs` reports it by name, and
+		# `docs/wayfinder/evidence/fornaio-special.md` records the consequence.
+		"athlete_fornaio_name": "IL FORNAIO",
 	},
 	"en": {
 		"brand": "STEAM CIRCUIT PADEL PRO",
@@ -1421,5 +1427,7 @@ const TABLES := {
 		"drillPoints": "Points",
 		"ariaDrill": "Training",
 		"ariaDrillCourt": "Training court",
+		# PORT ADDITION — see the note at the end of the "it" table above.
+		"athlete_fornaio_name": "THE BAKER",
 	},
 }

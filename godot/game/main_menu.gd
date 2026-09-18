@@ -65,6 +65,12 @@ var _arena_buttons: Array[Button] = []
 ## (`game_slice_test.gd` counts them against `selectable_arenas()`), and the
 ## world set is additive content selected by id.
 var _world_arena_buttons: Array[Button] = []
+## The special-athlete strip (port additions, full build only). The same contract
+## shape as the world row: plain buttons selected by id, never toggles, so the
+## slice's own counts over the frozen rows are untouched. They live in the same
+## column as the world arenas — this strip's own labelled block, not a row of the
+## frozen ATLETA column whose count the slice pins.
+var _special_athlete_buttons: Array[Button] = []
 var _mode_buttons: Array[Button] = []
 var _info: Label
 var _seed_label: Label
@@ -253,11 +259,20 @@ func _ready() -> void:
 	# row's, and the active one is marked on the button itself
 	# (`_apply_selection_state`).
 	var world_list: Array = Config.selectable_world_arenas()
-	if not world_list.is_empty():
-		var world_col := VBoxContainer.new()
+	# The special-athlete strip (port additions) rides the SAME column, as its own
+	# labelled block: a column of its own did not fit the setup row's width budget
+	# (see the block comment above — 1044 of the 1056 px a 1152x648 frame allows),
+	# and the column has the vertical slack. One column, two labelled blocks; the
+	# node names and the selection handler of each stay its own.
+	var special_list: Array = Config.selectable_special_athletes()
+	var world_col: VBoxContainer = null
+	if not world_list.is_empty() or not special_list.is_empty():
+		world_col = VBoxContainer.new()
 		world_col.add_theme_constant_override("separation", 8)
 		lists.add_child(world_col)
-		world_col.add_child(_label("MONDI (%d)" % world_list.size(), 16, Color(0.0, 0.898, 1.0)))
+	if not world_list.is_empty():
+		var world_head := _label("MONDI (%d)" % world_list.size(), 16, Color(0.0, 0.898, 1.0))
+		world_col.add_child(world_head)
 		for i in world_list.size():
 			var arena: Dictionary = world_list[i]
 			var arena_id := String(arena["id"])
@@ -276,6 +291,36 @@ func _ready() -> void:
 			world_col.add_child(b)
 			_world_arena_buttons.append(b)
 			_register("arena:%s" % arena_id, b, "arena:%s" % arena_id)
+
+	# --- special-athlete strip (port additions) -------------------------------
+	# The Godot-only specials (`src/character/specials.gd`, `Config.selectable_special_athletes()`;
+	# one in a full build, none in a demo) get their OWN labelled block — never a
+	# row of ATLETA, whose label's count and whose toggle buttons the slice pins to
+	# the frozen roster, and never a merge into `Config.selectable_athletes()`. The
+	# button is selected by id through `Config.set_special_athlete_id` and marked on
+	# the button itself (`_apply_selection_state`), exactly like a world arena. The
+	# name is the overlay's own (`IL FORNAIO`); the tooltip says out loud that the
+	# on-court body is a stand-in until the owner drops a Meshy export.
+	if not special_list.is_empty():
+		world_col.add_child(_label("SPECIAL (%d)" % special_list.size(), 16, Color("d98e2b")))
+		for i in special_list.size():
+			var athlete: Dictionary = special_list[i]
+			var athlete_id := String(athlete["id"])
+			var b := Button.new()
+			b.name = "SpecialAthlete_%s" % athlete_id
+			b.text = String(athlete["name"])
+			b.focus_mode = Control.FOCUS_ALL
+			b.add_theme_font_size_override("font_size", 12)
+			b.custom_minimum_size = Vector2(90.0, 26.0)
+			b.clip_text = true
+			b.tooltip_text = "%s (%s) — %s · %s" % [
+				String(athlete["name"]), athlete_id, String(athlete.get("role", "")),
+				String(athlete.get("stand_in_note", "")),
+			]
+			b.pressed.connect(_on_special_athlete.bind(athlete_id))
+			world_col.add_child(b)
+			_special_athlete_buttons.append(b)
+			_register("athlete:%s" % athlete_id, b, "athlete:%s" % athlete_id)
 
 	_info = _label("", 16, Color(0.80, 0.86, 0.92))
 	col.add_child(_info)
@@ -726,6 +771,17 @@ func _apply_selection_state() -> void:
 			_world_arena_buttons[i].add_theme_color_override("font_color", Color(0.0, 0.898, 1.0))
 		else:
 			_world_arena_buttons[i].remove_theme_color_override("font_color")
+	# The special strip marks its own selection the same way (amber is the roster
+	# UI colour the overlay carries for `fornaio`).
+	var special_list: Array = Config.selectable_special_athletes()
+	for i in _special_athlete_buttons.size():
+		if i >= special_list.size():
+			break
+		var special_id := String((special_list[i] as Dictionary).get("id", ""))
+		if Config.is_special_selected() and Config.athlete_id() == special_id:
+			_special_athlete_buttons[i].add_theme_color_override("font_color", Color("d98e2b"))
+		else:
+			_special_athlete_buttons[i].remove_theme_color_override("font_color")
 	_refresh_outfit_button()
 
 
@@ -764,8 +820,26 @@ func _on_tier(index: int) -> void:
 func _on_athlete(full_index: int) -> void:
 	if full_index < 0:
 		return
+	# A frozen pick takes the selection back from the special seat (the two are
+	# mutually exclusive, exactly like the frozen and world arena seats).
+	Config.clear_special_athlete()
 	Config.athlete_index = full_index
 	Config.outfit_index = 0
+	_apply_selection_state()
+	_refresh_info()
+	_refresh_outfit_button()
+
+
+## A special athlete's own handler. A special has no frozen roster index, so the
+## selection goes through `Config.set_special_athlete_id` — the seat is the id
+## itself. A refusal means this build does not offer the set (a demo builds no
+## strip at all), so it is reported rather than swallowed.
+func _on_special_athlete(athlete_id: String) -> void:
+	if not Config.set_special_athlete_id(athlete_id):
+		push_error("main_menu: this build does not offer the special athlete '%s'" % athlete_id)
+		return
+	Config.outfit_index = 0
+	_apply_selection_state()
 	_refresh_info()
 	_refresh_outfit_button()
 

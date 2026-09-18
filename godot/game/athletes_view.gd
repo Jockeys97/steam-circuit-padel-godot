@@ -55,6 +55,7 @@ var rigs: Dictionary = {}            # role -> Node3D
 var ids: Dictionary = {}             # role -> athlete id
 var outfits: Dictionary = {}         # role -> outfit id
 var rackets: Dictionary = {}         # role -> Node3D, on hand bone or legacy rig fallback
+var racket_styles: Dictionary = {}   # role -> String, which head that racket was built with
 var spawn_ms: float = 0.0
 var spawn_rigs: int = 0
 var load_errors: int = 0
@@ -81,7 +82,14 @@ const RACKET_HAND_ROTATION := Vector3.ZERO
 ## pack `res://assets/athletes/**`). Never leaves a half-built rig behind —
 ## `AthleteSpawn.make()` returns null rather than a broken node and this view does
 ## not add a null child.
-func spawn(lineup: Dictionary, outfit_map: Dictionary, colors: Dictionary) -> int:
+##
+## `styles` is optional and per role: an explicit racket style name
+## (`Court.RACKET_STYLE_*`) that OVERRIDES the athlete-id rule. The croissant is
+## Fornaio's (`fornaio` -> `cornetto`, `racket_style_for`), so it is chosen from the
+## lineup alone; the override exists for a caller that knows the racket but not the id
+## — a preview, or a menu holding the prop before the special athlete ships.
+func spawn(lineup: Dictionary, outfit_map: Dictionary, colors: Dictionary,
+		styles: Dictionary = {}) -> int:
 	var started := Time.get_ticks_msec()
 	_colors = colors
 	spawn_rigs = 0
@@ -111,12 +119,14 @@ func spawn(lineup: Dictionary, outfit_map: Dictionary, colors: Dictionary) -> in
 		var on_hand := hand_anchor != null
 		if on_hand:
 			racket_parent = hand_anchor
-		var racket := Court.make_racket_view(racket_parent, "Racket_%s" % role, _color_of(role))
+		var style: StringName = _racket_style(role, athlete_id, styles)
+		var racket := Court.make_racket_view(racket_parent, "Racket_%s" % role, _color_of(role), style)
 		if on_hand:
 			racket.position = RACKET_HAND_LOCAL
 			racket.rotation_degrees = RACKET_HAND_ROTATION
 		rigs[role] = rig
 		rackets[role] = racket
+		racket_styles[role] = String(style)
 		_racket_on_hand[role] = on_hand
 		ids[role] = String(athlete["id"])
 		outfits[role] = String(outfit_id)
@@ -126,6 +136,23 @@ func spawn(lineup: Dictionary, outfit_map: Dictionary, colors: Dictionary) -> in
 		spawn_rigs += 1
 	spawn_ms = float(Time.get_ticks_msec() - started)
 	return spawn_rigs
+
+
+## Which head an athlete swings: Fornaio the croissant, everyone else the shipped
+## ellipse. The special athlete's id is not in the frozen roster yet (the roster lane
+## owns that), so this is the one place the id -> racket rule lives, and an explicit
+## style name (`spawn(..., styles)`) can say it directly without waiting for the id.
+static func racket_style_for(athlete_id: StringName) -> StringName:
+	if String(athlete_id) == "fornaio":
+		return Court.RACKET_STYLE_CORNETTO
+	return Court.RACKET_STYLE_STANDARD
+
+
+## Explicit style wins; otherwise the athlete id decides; otherwise the ellipse.
+func _racket_style(role: String, athlete_id: StringName, styles: Dictionary) -> StringName:
+	if styles.has(role):
+		return StringName(String(styles[role]))
+	return racket_style_for(athlete_id)
 
 
 func _color_of(role: String) -> Color:
@@ -250,6 +277,7 @@ func describe_all() -> Dictionary:
 		var d: Dictionary = AthleteSpawn.describe(rigs[role])
 		d["athlete_id"] = ids[role]
 		d["outfit_id"] = outfits[role]
+		d["racket_style"] = racket_styles.get(role, "standard")
 		d["gait"] = String(_gait[role])
 		d["last_stroke"] = String(_last_stroke[role])
 		out[role] = d

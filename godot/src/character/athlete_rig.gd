@@ -91,9 +91,20 @@ const GLB_RUN := "res://assets/athletes/volpe-running.glb"
 ## which athlete is docs/art/roster-3d.json (frozen in docs/art/character-standard.md).
 ## `python3 tools/character/validate_standard.py` checks the GLBs against it without
 ## needing Godot.
+##
+## `fornaio` IS A GODOT-ONLY SPECIAL ATHLETE AND HAS NO GLB. Character-standard
+## forbids a GLB whose name is not a roster id, so nothing new was copied into
+## `godot/assets/athletes/`: the id is mapped onto MAESTRO'S EXISTING MESH as a
+## TEMPORARY HUMAN STAND-IN until the owner drops a Meshy export. The on-court
+## body is therefore the maestro mesh, not the baker — recorded in
+## `docs/wayfinder/evidence/fornaio-special.md` and in the overlay's
+## `stand_in_note` (`assets/athletes/specials_catalogue.json`). The Volpe fox is
+## never what a player gets: an unknown id still falls back to it, so a special
+## MUST have an entry here the day it is offered.
 const ATHLETE_GLB := {
 	&"colosso": "res://assets/athletes/colosso.glb",
 	&"maestro": "res://assets/athletes/maestro-rigged.glb",
+	&"fornaio": "res://assets/athletes/maestro-rigged.glb",
 }
 
 const CLIP_IDLE := &"idle"
@@ -109,6 +120,13 @@ const LOCOMOTION := [CLIP_IDLE, CLIP_WALK, CLIP_RUN]
 ## GLB_WALK / GLB_RUN constants above and needs no entry here.
 const COMPANION_CLIPS := {
 	&"maestro": {
+		CLIP_IDLE: "res://assets/athletes/maestro-idle.glb",
+		CLIP_WALK: "res://assets/athletes/maestro-walking.glb",
+		CLIP_RUN: "res://assets/athletes/maestro-running.glb",
+	},
+	## The stand-in special rides the maestro mesh, so it adopts the same three
+	## single-clip companions (see `ATHLETE_GLB`'s note above).
+	&"fornaio": {
 		CLIP_IDLE: "res://assets/athletes/maestro-idle.glb",
 		CLIP_WALK: "res://assets/athletes/maestro-walking.glb",
 		CLIP_RUN: "res://assets/athletes/maestro-running.glb",
@@ -184,6 +202,14 @@ func set_athlete_asset(athlete_id: StringName) -> bool:
 
 func get_athlete_asset() -> StringName:
 	return _athlete_id
+
+
+## The res:// path of the mesh this rig actually loads. For a special athlete with
+## no Meshy export of its own this is the STAND-IN mesh (`ATHLETE_GLB`), which is
+## why it is readable rather than private: an evidence file and a test both have to
+## be able to say which body a special got.
+func get_athlete_glb_path() -> String:
+	return _glb_base_path
 
 
 ## The legacy catalogue shader is authored for the Volpe atlas. A Meshy athlete

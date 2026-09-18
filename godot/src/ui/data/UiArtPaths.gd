@@ -5,6 +5,9 @@
 ## than invented:
 ##
 ##   athletes/<id>.webp                        one per frozen athlete id
+##   athletes/<id>.png                         one per GODOT-ONLY special athlete
+##                                             (a byte copy of the Meshy front view,
+##                                             see `src/character/specials.gd`)
 ##   arenas/<slug>.webp                        the slug is NOT the arena id
 ##   modes/quick-match|career|tournament.webp  the reference's three mode cards
 ##
@@ -18,6 +21,7 @@
 extends RefCounted
 
 const ROOT := "res://assets/ui"
+const Specials := preload("res://src/character/specials.gd")
 
 ## Mode id -> file stem, in the reference's own mode order. `quick-match.webp` is the
 ## one whose stem differs from its id.
@@ -47,6 +51,11 @@ static func candidate_for(kind: String, id: String) -> String:
 		"athletes":
 			if id == "":
 				return ""
+			# A special athlete has no UIR-01 webp: his portrait is the Meshy front
+			# view, copied byte for byte into the same namespace with its own
+			# extension. The frozen six keep the webp convention untouched.
+			if Specials.has(id):
+				return "%s/athletes/%s.png" % [ROOT, id]
 			return "%s/athletes/%s.webp" % [ROOT, id]
 		"arenas":
 			if not ARENAS.has(id):

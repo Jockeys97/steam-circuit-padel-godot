@@ -85,6 +85,13 @@ static func display_name(athlete_id: StringName) -> String:
 	return String(Catalogue.athlete(athlete_id).get("name", ""))
 
 
+## The record a menu describes an athlete with: the frozen row for one of the six,
+## a special's overlay record for a Godot-only addition (`specials.gd`), {} for an
+## unknown id. One door, so a screen never has to ask two tables.
+static func record(athlete_id: StringName) -> Dictionary:
+	return Catalogue.athlete(athlete_id)
+
+
 ## The reference's i18n key for the outfit's display name ("outfitLegend", ...), so a
 ## menu never has to hard-code a label. "" for an unknown pair.
 static func outfit_name_key(athlete_id: StringName, outfit_id: StringName) -> String:
@@ -174,6 +181,7 @@ static func describe(rig: Node3D) -> Dictionary:
 	return {
 		"name": rig.name,
 		"athlete_asset": rig.get_athlete_asset(),
+		"asset_glb": rig.get_athlete_glb_path(),
 		"load_error": rig.get_load_error(),
 		"joints": skel.get_bone_count() if skel != null else -1,
 		"triangles": rig.get_triangle_count(),

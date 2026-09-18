@@ -138,6 +138,13 @@ const PICK_ROLE_PREFIX := "PickRole_"
 const PICK_DESC_PREFIX := "PickDesc_"
 const PICK_SPECIAL_PREFIX := "PickSpecial_"
 const PICK_TAG_PREFIX := "PickTag_"
+## The special-athlete strip (port additions): its OWN prefixes, so no frozen
+## picker node is touched and the audits that count `PickCard_<id>` cards over
+## `athlete_rows_now()` (the six) stay exactly what they were.
+const SPECIAL_HEAD := "SpecialStripHead"
+const SPECIAL_CARD_PREFIX := "SpecialPickCard_"
+const SPECIAL_NAME_PREFIX := "SpecialPickName_"
+const SPECIAL_STAT_PREFIX := "SpecialPickStat_"
 const OUTFIT_CARD_PREFIX := "OutfitCard_"
 const OUTFIT_NAME_PREFIX := "OutfitName_"
 const OUTFIT_ART_PREFIX := "OutfitArt_"
@@ -327,7 +334,10 @@ func _athlete_item(athlete_id: String) -> Dictionary:
 	for athlete in Frozen.athletes():
 		if String((athlete as Dictionary).get("id", "")) == athlete_id:
 			return athlete
-	return {}
+	# A Godot-only special athlete (`src/character/specials.gd`): the frozen table
+	# does not hold him and never will, but the stat strip and the career door must
+	# see the record a card for him is drawn from.
+	return AthleteSpawn.record(StringName(athlete_id))
 
 
 ## `dictatedRivals` for the mode the session is in (`js/ui.js:531-546`); `{}` for quick.
@@ -542,6 +552,39 @@ func _build_picker() -> void:
 		else:
 			_bind(tag, "available")
 		_wire_picker_card(card["panel"], id, locked)
+
+	# --- special-athlete strip (port additions) --------------------------------
+	# The Godot-only specials (`Config.selectable_special_athletes()`: one in a full
+	# build, none in a demo) are offered in their OWN strip after the frozen picker
+	# — never as frozen pick cards: `athlete_rows_now()` stays the six the audits
+	# count, and the strip's cards carry their own `SpecialPickCard_` names. A pick
+	# goes through the same `select_athlete` door, and the frozen grid's own rule
+	# holds here too: the athlete already in the "player" slot is not offered to a
+	# rival slot, so no pick can duplicate him.
+	var specials: Array = Config.selectable_special_athletes()
+	if not specials.is_empty():
+		var head := Label.new()
+		head.name = SPECIAL_HEAD
+		head.theme_type_variation = &"CardTitle"
+		head.text = "SPECIAL"
+		grid.add_child(head)
+		for row_in in specials:
+			var row: Dictionary = row_in
+			var id := String(row.get("id", ""))
+			if _picker_role != "player" and id == player_id:
+				continue
+			var active := id == slot_athlete_id(_picker_role)
+			var card := _make_card(SPECIAL_CARD_PREFIX + id, _art_for(id), "gold",
+				_select_box() if active else _plain_box(false))
+			var stack := card["stack"] as VBoxContainer
+			var name_label := Label.new()
+			name_label.name = SPECIAL_NAME_PREFIX + id
+			name_label.theme_type_variation = &"CardTitle"
+			name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			stack.add_child(name_label)
+			_bind(name_label, "athlete_%s_name" % id)
+			_add_stat_line(card, SPECIAL_STAT_PREFIX, id, id, false)
+			_wire_picker_card(card["panel"], id, false)
 
 
 func _build_outfits() -> void:
@@ -836,10 +879,15 @@ func close_subview() -> bool:
 ## the lineup preference. A swap is performed explicitly, so no path can duplicate an
 ## athlete (`resolveLineup`'s `usati` set is the reference's way of the same invariant).
 func select_athlete(athlete_id: String) -> bool:
+	if not role_editable(_picker_role):
+		return false
+	# A Godot-only special is not a frozen row and has no frozen index: it takes
+	# the special seat (`_select_special`). A demo offers none, so the door refuses
+	# there exactly as it refuses a withheld frozen athlete.
+	if _is_special_athlete(athlete_id):
+		return _select_special(athlete_id)
 	var row := _row_of(athlete_id)
 	if row.is_empty() or bool(row.get("locked", false)):
-		return false
-	if not role_editable(_picker_role):
 		return false
 	var store := Config.save_store()
 	var prefs: Dictionary = ModesSave.profile(store).get("prefs", {})
@@ -860,6 +908,52 @@ func select_athlete(athlete_id: String) -> bool:
 		if index < 0:
 			return false
 		Config.athlete_index = index
+		if holder != "" and previous_player != "":
+			lineup[holder] = previous_player
+	else:
+		if holder != "":
+			lineup[holder] = displaced if displaced != "" else null
+		lineup[_picker_role] = athlete_id
+	ModesSave.save_pref(store, "lineup", lineup)
+	_refresh_lineup_and_save(store)
+	_view = VIEW_TEAM
+	_build_view()
+	_apply_layout()
+	_refresh_head()
+	return true
+
+
+## Is this id one of the Godot-only specials THIS build offers? A demo offers
+## none (`Config.selectable_special_athletes()` is empty there), which is what
+## makes the picker door refuse a special in a demo.
+func _is_special_athlete(athlete_id: String) -> bool:
+	for row in Config.selectable_special_athletes():
+		if String((row as Dictionary).get("id", "")) == athlete_id:
+			return true
+	return false
+
+
+## The pick of a special: `resolveLineup`'s rule (`js/ui.js:1030-1046`), on the
+## special seat. The player slot moves `Config`'s own athlete selection onto the
+## special (`Config.set_special_athlete_id` — the seat is the id itself, since a
+## special has no frozen roster index); a rival slot writes the lineup preference
+## exactly as the frozen path does. The swap is explicit, so no path can
+## duplicate an athlete.
+func _select_special(athlete_id: String) -> bool:
+	var store := Config.save_store()
+	var prefs: Dictionary = ModesSave.profile(store).get("prefs", {})
+	var stored: Variant = prefs.get("lineup")
+	var lineup: Dictionary = (stored as Dictionary).duplicate(true) if stored is Dictionary else {}
+	var previous_player := slot_athlete_id("player")
+	var displaced := slot_athlete_id(_picker_role)
+	var holder := ""
+	for role in EDITABLE_ROLES:
+		if role != _picker_role and slot_athlete_id(role) == athlete_id:
+			holder = role
+			break
+	if _picker_role == "player":
+		if not Config.set_special_athlete_id(athlete_id):
+			return false
 		if holder != "" and previous_player != "":
 			lineup[holder] = previous_player
 	else:

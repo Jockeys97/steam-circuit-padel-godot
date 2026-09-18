@@ -25,6 +25,15 @@ const Arena := preload("res://game/arenas/arena_library.gd")
 ## selection is inside the exposed set after a demo build starts.
 static var athlete_index: int = 0
 static var arena_index: int = 0
+## The SPECIAL athlete seat (port additions, `src/character/specials.gd`). Empty
+## means "the frozen `athlete_index` is the selection"; a non-empty id means the
+## selected athlete is that Godot-only special and `athlete_index` is left where it
+## was, so pressing a frozen athlete button (or restoring the frozen selection)
+## simply clears the seat. The world-arena seat below works the same way. Only a
+## FULL build can hold one (`set_special_athlete_id` refuses an id this build does
+## not offer, and `apply_build_limits()` clears the seat in a demo): the demo's
+## content rule is the reference's own table and knows nothing of the special set.
+static var special_athlete_id: String = ""
 ## The WORLD arena seat (port additions, `arena_library.gd::world_ids()`). Empty
 ## means "the frozen `arena_index` is the selection"; a non-empty id means the
 ## selected arena is that world arena and `arena_index` is left where it was, so
@@ -119,6 +128,15 @@ static func selectable_world_arenas() -> Array:
 	return Gate.world_arenas()
 
 
+## The SPECIAL athletes this build offers as a further choice: the Godot-only
+## additions (fornaio) in a full build, nothing in a demo
+## (`Gate.special_athletes()`). A separate list, never merged into
+## `selectable_athletes()` — that list is the reference's own roster and the slice
+## pins its size; a special is additive content the selection asks for BY NAME.
+static func selectable_special_athletes() -> Array:
+	return Gate.special_athletes()
+
+
 ## THE ONE ARENA CATALOG for this build (`content_gate.gd::arena_catalog()`,
 ## `game/arenas/arena_catalog.gd`): the frozen index, the world set and the seat rule
 ## all come from it, so this file no longer decides frozen-vs-world by itself — the
@@ -131,6 +149,29 @@ static func arena_catalog() -> Variant:
 ## Is the current selection a world arena (the world seat is occupied)?
 static func is_world_selected() -> bool:
 	return world_arena_id != ""
+
+
+## Is the current selection a special athlete (the special seat is occupied)?
+static func is_special_selected() -> bool:
+	return special_athlete_id != ""
+
+
+## Selects a special athlete by id. False for an id this build does not offer — a
+## demo build refuses every special, exactly as it refuses a world arena. The
+## caller decides what to do about the refusal rather than the config silently
+## picking something else. `athlete_index` is left where it was, so a frozen pick
+## (or the demo's limits) simply puts the frozen selection back in charge.
+static func set_special_athlete_id(id: String) -> bool:
+	for row in selectable_special_athletes():
+		if String((row as Dictionary).get("id", "")) == id:
+			special_athlete_id = id
+			return true
+	return false
+
+
+## Gives the frozen roster back the selection: the special seat is cleared.
+static func clear_special_athlete() -> void:
+	special_athlete_id = ""
 
 
 ## The mode ids this build offers (`["quick"]` in the demo).
@@ -228,6 +269,11 @@ static func apply_build_limits() -> Dictionary:
 	if world_arena_id != "":
 		changed["world_arena_id"] = world_arena_id
 		world_arena_id = ""
+	# The special set is full-build content too: a demo can never hold the seat.
+	if special_athlete_id != "":
+		changed["special_athlete_id"] = special_athlete_id
+		special_athlete_id = ""
+		outfit_index = 0
 	var tier := Gate.fixed_tier_index()
 	if tier >= 0 and tier_index != tier:
 		changed["tier_index"] = tier
@@ -386,9 +432,25 @@ static func tiers() -> Array:
 	return Frozen.ai_opponents()
 
 
+## The selected athlete record the match and the screens describe: the special's
+## own record when the special seat is occupied (`AthleteSpawn.record`, which the
+## catalogue answers for a Godot-only id), else the frozen row at `athlete_index`.
 static func athlete() -> Dictionary:
+	if special_athlete_id != "":
+		var special: Dictionary = AthleteSpawn.record(StringName(special_athlete_id))
+		if not special.is_empty():
+			return special
 	var list := athletes()
 	return list[clampi(athlete_index, 0, list.size() - 1)]
+
+
+## The selected athlete's id. `athlete_index` stays the single piece of FROZEN
+## state (nothing downstream needs to know an id was ever involved), and the
+## special seat — when occupied — is the id itself. Mirrors `arena_id()`.
+static func athlete_id() -> String:
+	if special_athlete_id != "":
+		return special_athlete_id
+	return String(athlete()["id"])
 
 
 ## The arena record the match runs on: the frozen row at `arena_index`, or — when

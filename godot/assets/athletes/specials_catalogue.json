@@ -1,0 +1,69 @@
+{
+  "_schema": "steam-circuit-padel-pro.specials-catalogue",
+  "_schemaVersion": 1,
+  "_source": "owner brief: IL FORNAIO / the cheerful baker (docs/wayfinder/evidence/fornaio-special.md)",
+  "_tool": "hand-written overlay (tools/character/extract_reference_catalogue.py extracts the FROZEN six into reference_catalogue.json and must never learn about this file)",
+  "_note": "Godot-only special athletes. A port addition has no row in `js/data.js`, so it can never appear in `Frozen.athletes`, `OutfitCatalogue.athlete_ids()` or `Config.selectable_athletes()` — those stay the reference's six (tests/game_slice_test.gd pins the count). This overlay is the ONE place a special's facts live; `src/character/specials.gd` only reads it. A DEMO build does not offer the set at all (`Specials.selectable(true)` is empty): the reference's own DEMO_CONTENT cannot list an addition, exactly as the world arenas cannot. Outfit colours are one base pair from the DNA: white jacket #f7f4ee as the primary family and amber #d98e2b as the trim family — the same two-family mapping reference_catalogue.json uses (see its `anchors`).",
+  "specials": [
+    {
+      "id": "fornaio",
+      "name": "IL FORNAIO",
+      "role": "Il panettiere",
+      "color": "#d98e2b",
+      "height_m": 1.82,
+      "desc": "Il panettiere del circuito: spalle larghe, farina sulla maglia, racchetta a forma di croissant.",
+      "dna": "sturdy baker; dark curled mustache; snug white baker cap (not a tall toque); white double-breasted short-sleeve jacket with amber buttons and rolled sleeves; flour dust; navy shorts with amber piping; amber wristbands; white sneakers with navy accents",
+      "visual": {
+        "frame": "sturdy",
+        "skin": "#c08552",
+        "hair": "#241b19",
+        "hairStyle": "mustache-curled",
+        "cap": "#f7f4ee",
+        "jacket": "#f7f4ee",
+        "kit": "#f7f4ee",
+        "secondary": "#22304a",
+        "accent": "#d98e2b",
+        "wristbands": "#d98e2b",
+        "shoes": "#f7f4ee"
+      },
+      "palette": {
+        "jacket": "#f7f4ee",
+        "amber": "#d98e2b",
+        "navy": "#22304a",
+        "skin": "#c08552"
+      },
+      "stats": {
+        "speed": 0.92,
+        "power": 1.18,
+        "control": 0.94,
+        "reach": 1.06,
+        "stamina": 1.1
+      },
+      "special": {
+        "name": "Racchetta Croissant",
+        "cooldown": 3,
+        "desc": "Palla a effetto appena sfornata: rimbalzo irregolare e traiettoria a mezzaluna."
+      },
+      "unlock": null,
+      "provisional": true,
+      "stand_in": "res://assets/athletes/maestro-rigged.glb",
+      "stand_in_note": "TEMPORARY human stand-in: no Meshy GLB exists for fornaio yet, so the rig maps him onto the maestro-rigged mesh and companion clips (`athlete_rig.gd`). The on-court body is NOT the baker."
+    }
+  ],
+  "outfits": {
+    "fornaio": [
+      {
+        "id": "base",
+        "unlock_key": "fornaio:base",
+        "name_key": "outfitBase",
+        "colors": [
+          "#f7f4ee",
+          "#d98e2b"
+        ],
+        "has_challenge": false,
+        "has_sprites": false,
+        "preview": ""
+      }
+    ]
+  }
+}

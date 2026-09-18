@@ -73,6 +73,15 @@ class_name OutfitCatalogue
 const DATA_PATH := "res://assets/athletes/reference_catalogue.json"
 const SHADER_PATH := "res://src/character/outfit_recolour.gdshader"
 
+## GODOT-ONLY SPECIALS (port additions). `reference_catalogue.json` is generated
+## from the frozen browser reference and holds exactly the six athletes; a special
+## (see `src/character/specials.gd`) is not in it and never will be. The roster
+## readers below therefore FALL BACK to the specials overlay for an id the frozen
+## file does not know. What must NOT change: `athlete_ids()` and `entries()` stay
+## the reference's six, and `resolve()`'s shape is untouched — a special's colors
+## arrive through the same `colors[0] -> primary, colors[1] -> trim` mapping.
+const Specials := preload("res://src/character/specials.gd")
+
 ## Measured mask constants, carried over verbatim from the previous slice's
 ## tools/character/outfits-strong.json `defaults`. Not re-tuned in this lane.
 const MASK_DEFAULTS := {
@@ -144,6 +153,10 @@ static func source_info() -> Dictionary:
 # Roster
 # =========================================================================
 
+## The reference's six ids, in reference order. A special athlete is NOT in this
+## list (the roster is the frozen file's, and the slice pins its size): the
+## specials are reachable by name through the roster readers below, which consult
+## the overlay when the frozen file has no entry.
 static func athlete_ids() -> Array:
 	_ensure_loaded()
 	var out := []
@@ -154,27 +167,28 @@ static func athlete_ids() -> Array:
 	return out
 
 
+## The frozen record for one of the six, or a special's record when the id is a
+## Godot-only addition (`specials.gd::athlete()`, marked `special_athlete: true`).
+## {} for anything else.
 static func athlete(athlete_id: StringName) -> Dictionary:
 	_ensure_loaded()
-	if _error != OK:
-		return {}
-	for a in (_data["athletes"] as Array):
-		if StringName((a as Dictionary)["id"]) == athlete_id:
-			return a as Dictionary
-	return {}
+	if _error == OK:
+		for a in (_data["athletes"] as Array):
+			if StringName((a as Dictionary)["id"]) == athlete_id:
+				return a as Dictionary
+	return Specials.athlete(athlete_id)
 
 
 static func outfit_ids(athlete_id: StringName) -> Array:
 	_ensure_loaded()
 	var out := []
-	if _error != OK:
-		return out
-	var lists: Dictionary = _data["outfits"]
-	if not lists.has(String(athlete_id)):
-		return out
-	for e in (lists[String(athlete_id)] as Array):
-		out.append(StringName((e as Dictionary)["id"]))
-	return out
+	if _error == OK:
+		var lists: Dictionary = _data["outfits"]
+		if lists.has(String(athlete_id)):
+			for e in (lists[String(athlete_id)] as Array):
+				out.append(StringName((e as Dictionary)["id"]))
+			return out
+	return Specials.outfit_ids(athlete_id)
 
 
 static func has_outfit(athlete_id: StringName, outfit_id: StringName) -> bool:
@@ -202,15 +216,13 @@ static func entries() -> Array:
 
 static func _outfit_record(athlete_id: StringName, outfit_id: StringName) -> Dictionary:
 	_ensure_loaded()
-	if _error != OK:
-		return {}
-	var lists: Dictionary = _data["outfits"]
-	if not lists.has(String(athlete_id)):
-		return {}
-	for e in (lists[String(athlete_id)] as Array):
-		if StringName((e as Dictionary)["id"]) == outfit_id:
-			return e as Dictionary
-	return {}
+	if _error == OK:
+		var lists: Dictionary = _data["outfits"]
+		if lists.has(String(athlete_id)):
+			for e in (lists[String(athlete_id)] as Array):
+				if StringName((e as Dictionary)["id"]) == outfit_id:
+					return e as Dictionary
+	return Specials.outfit_record(athlete_id, outfit_id)
 
 
 # =========================================================================
