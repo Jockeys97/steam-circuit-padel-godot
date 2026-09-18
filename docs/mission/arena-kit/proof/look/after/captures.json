@@ -1,0 +1,1037 @@
+{
+	"adapter": "Apple M4",
+	"capture_size": [
+		1280,
+		720
+	],
+	"display": "macOS",
+	"engine": "4.7.2-stable (official)",
+	"records": [
+		{
+			"adapter": "Apple M4",
+			"arena": "torii",
+			"colours": 1095,
+			"display": "macOS",
+			"engine": "4.7.2-stable (official)",
+			"glass": {
+				"all_visible": true,
+				"core_present": true,
+				"count": 27,
+				"expected_rear_alpha": 0.38,
+				"rear_alpha": 0.379999995231628,
+				"scenery_visible": true,
+				"side_alpha": 0.340000003576279
+			},
+			"min_margin_px": 55.084228515625,
+			"png": "default/arena-torii.png",
+			"points": [
+				{
+					"behind": false,
+					"colour": "#a69893ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "court_corner_left_far",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#927267ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "court_corner_left_near",
+					"px": [
+						380.792999267578,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#c7bdbfff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "court_corner_right_far",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#8f6f65ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "court_corner_right_near",
+					"px": [
+						899.20703125,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#a69893ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "side_glass_left_foot_far",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#8b5a60ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "side_glass_left_top_far",
+					"px": [
+						473.417541503906,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#927267ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "side_glass_left_foot_near",
+					"px": [
+						380.792999267578,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#595166ff",
+					"inside": true,
+					"margin": 167.774536132812,
+					"name": "side_glass_left_top_near",
+					"px": [
+						361.855499267578,
+						552.225463867188
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#c7bdbfff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "side_glass_right_foot_far",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#805564ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "side_glass_right_top_far",
+					"px": [
+						806.582458496094,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#8f6f65ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "side_glass_right_foot_near",
+					"px": [
+						899.20703125,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#584e61ff",
+					"inside": true,
+					"margin": 167.774536132812,
+					"name": "side_glass_right_top_near",
+					"px": [
+						918.14453125,
+						552.225463867188
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#a69893ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "rear_glass_left_foot",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#8b5a60ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "rear_glass_left_top",
+					"px": [
+						473.417541503906,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#c7bdbfff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "rear_glass_right_foot",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#805564ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "rear_glass_right_top",
+					"px": [
+						806.582458496094,
+						83.2083892822266
+					]
+				}
+			],
+			"preset": "default",
+			"sha256": "70aa35c594a34776c6468bb65c72c216eef2c0634939530a29289d146e6db16f",
+			"signature": "632732ff622632ff602632ff5f2533ff5e2533ff5e2533ff5d2533ff5d2333ff5b2333ff5b2333ff5a2433ff5a2433ff5a2233ff5a2233ff5a2233ff592233ff592233ff592233ff5a2233ff5a2233ff5a2433ff5a2433ff5a2433ff5b2333ff5b2434ff5d2534ff5d2534ff5e2534ff5e2634ff5f2634ff602735ff622835ff6b2e49ff6a2e49ff672d4aff672d4aff662d4aff662c4aff652c4affd1c3b5ff642c4aff642c4aff642c4aff632b4aff652c4aff642b4aff632b4aff632b4aff632b4aff632b4aff632b4aff632b4aff632b4aff632c4aff642c4aff642c4aff642c4aff652c4aff652d4aff662d4aff662d4aff672d4aff692e4aff6a2e4bff843e59ff823e59ff823e59ff813d5aff813c5aff813c5aff803c5bff803c5aff813c59ff803b59ff7f3b5bff8c405cff8a435cff86415cff80405effc94e2fffc94e2effc84d2effc94d2fff803f5eff7e3e5cff7f3b5bff7f3b5bff803c5aff813c5aff813c5aff764052ff813c5bff813d5bff813f5bff823f5bff823f5bffc96c56ffc96c56ffc96c56ffc96c56ffc34624ffc34624ffc86c57ffc96b56ffc96b54ffc96b54ffc96b56ffd0715affb5928fffb5918effb5918effb5918eff9b786dffb5918effba8279ffb5918effb6928fffc86c57ffc86c57ffc96a55ffc96b55ffc96a54ff784051ffc24525ffc34625ffc86c57ffc86c57ffc86c57ff873519ff853519ff843318ff863519ff853518ff843518ff823318ff823318ff813218ff7f3218ff7e3119ff7f341eff87525bff8f7472ff8e7472ff8d7572ff96766aff8c7573ff8c7573ff8b7472ffd5b7a7ff7d3422ff813521ff70271aff823521ff823622ff813522ff833625ff843625ff843726ff853726ff853727ff843316ff833216ff803216ff7e3115ff7f3216ff7e3116ff7d2f15ff7a2e15ff7d2f16ff7c2e16ff7a2e15ff7c341fff7e587fff7c5580ff7b547fff7a537fff7a527eff7c5581ff7b5580ff7b5480ff7e5a82ff7e3725ff7a301dff7a311eff7d321fff7d321fff752d1dff7c3221ff7f3522ff803525ff803525ff823525ff7f3116ff7d3015ff7b2e14ff7c2e15ff792d14ff782c14ff792d15ff762c14ff772d15ff762c16ff752b14ffa59e9bff785480ff75517eff775381ff76517fffdab2b3ff765482ff75517fff74517eff7a5783ffa49e9aff762d1cff762d1cff782e1eff792e1eff782e1eff7a301fff7a311fff7a311fff7c3322ff7c3222ff792d14ff772c13ff782c14ff752b13ff762c14ff732b13ff732b14ff722913ff722b14ff712913ff722915ffa4a09dff714d7eff724f80ff5d3869ff714f80ffd8b0b3ff704f81ff674575ff715181ff714f7fffa4a19eff722c1bff712b1bff732c1cff722c1cff742d1dff672516ff762e1eff762e1eff793020ff793120ff762c13ff722912ff722b13ff732b13ff712912ff712913ff6f2812ff6e2812ff782d14ff6d2612ff6d2917ff9f9a97ff745282ff6f4c7cff694879ff714f7effd1a8adff735282ff62406fff6c4979ff725180ff8d7871ff6c2a1aff6e2919ff782e1bff692619ff5b1d15ff702b1cff732c1dff722c1dff742d1fff732c1dff702812ff702812ff702912ff6c2711ff6c2612ff6c2512ff6a2411ff6a2411ffffb270ff6a2613ff6b2919ffd5c6bdff68497dff6a4c7fff6b4c80ff684b7effd8b2b4ff6a4d80ff674b7eff694b7eff6b4d80ffa19e9dff6c2d1fff692617ffffb270ff672617ff692718ff6c281bff6d2a1cff6d2a1bff6f2b1cff702c1eff6b2611ff6b2511ff6b2511ff6a2511ff6a2511ff672310ff672311ff672311ff7b2c12ff642210ff929290ff6b5284ff674d82ff634a80ff644b81ff644c82ffd9b3b6ff634a80ff634c81ff644c82ff664d82ff6d5486ff836d67ff662416ff7a2d16ff672417ff682618ff662417ff682618ff692719ff6a281bff6b2a1dff692410ff672310ff672310ff672310ff652310ff652310ff61210dff61210fff6a2510ff63210fffa0a09dff634b7fff583f76ff614980ff614b81ff624b81ffd8b3b6ff624c82ff634d83ff604980ff614b81ff644d82ff9fa09eff642515ff6a2714ff622316ff632318ff642417ff672619ff652317ff672417ff682618ff68230eff65230eff64220eff64220eff63220fff5f200eff5f200eff5e200eff5e1e0eff5f1f10ffa09f9fff604981ff604881ff604982ff5f4983ff5f4983ffd4afb4ff604b84ff5d4780ff5d4880ff5d4880ff604a82ffa0a1a0ff602216ff5d2014ff5d2114ff5e2115ff602215ff612216ff612216ff622318ff642417ff63210dff61210dff601f0dff5f200eff5e200eff5e1e0eff5c1e0eff5b1e0eff5a1e0dff5c2113ff9e9f9eff5b4782ff5b4782ff5b4782ff5b4782ff5b4782ffd6b1b6ff5b4782ff5b4782ff5b4782ff5b4782ff5b4782ff9f9fa0ff5b2418ff5d2114ff591e14ff5e2115ff5e2215ff602216ff612216ff612316ff622318ff5f200eff5e200cff5d1e0cff5b1d0dff591c0dff5b1d0eff5a1d0eff591c0eff591c0dff572318ffa1a4a6ff6a5f91ff685f91ff685e91ff695e91ff675e91ff6e658cff675e90ff675d90ff675d90ff6b6091ff6b6091ffa2a5a6ff5b261eff571c13ff571d13ff581f13ff591f13ff5c2115ff5d2115ff5e2115ff5e2217ff5d1e0cff5b1e0dff591c0dff571a0cff591c0dff591c0dff571a0dff561a0dff55190cff571f12ff6a6292ff665d90ff665c8fff675f91ff655e91ff655e91ff6b658cff665d91ff665d90ff655c90ff675f92ff675f91ff6c6592ff562117ff561c13ff571c13ff571c13ff571f13ff571f13ff581f13ff581f14ff5d2115ff5a1d0dff591c0dff571a0cff561a0cff54190cff561a0dff55190cff54190cff52180cff551c11ff645d8fff665e91ff665d91ff645d91ff635c90ff625b90ff6c648dff645d91ff645d91ff635c91ff635c90ff655e92ff676091ff4f1910ff531b10ff531b10ff531b12ff531b12ff531b12ff571d15ff571d15ff581f14ff561a0cff55190cff561a0cff55190cff52180cff51180bff51190cff50180dff4f170bff50180dff501c10ff4f1b11ff4e1b11ff501c12ff4f1b11ff4e1b11ff4e1b11ff501c12ff4f1c12ff4f1b12ff4e1b12ff501c13ff501c13ff4e1810ff4d180eff511911ff511911ff521911ff551c13ff551c13ff551b14ff551b14ff",
+			"size": [
+				1280,
+				720
+			],
+			"timestamp": 1789745429.13969,
+			"worst_point": "court_corner_left_near"
+		},
+		{
+			"adapter": "Apple M4",
+			"arena": "medina",
+			"colours": 704,
+			"display": "macOS",
+			"engine": "4.7.2-stable (official)",
+			"glass": {
+				"all_visible": true,
+				"core_present": true,
+				"count": 27,
+				"expected_rear_alpha": 0.38,
+				"rear_alpha": 0.379999995231628,
+				"scenery_visible": true,
+				"side_alpha": 0.340000003576279
+			},
+			"min_margin_px": 55.084228515625,
+			"png": "default/arena-medina.png",
+			"points": [
+				{
+					"behind": false,
+					"colour": "#8c9693ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "court_corner_left_far",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7c7366ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "court_corner_left_near",
+					"px": [
+						380.792999267578,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#cccdc8ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "court_corner_right_far",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#766e62ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "court_corner_right_near",
+					"px": [
+						899.20703125,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#8c9693ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "side_glass_left_foot_far",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7e7875ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "side_glass_left_top_far",
+					"px": [
+						473.417541503906,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7c7366ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "side_glass_left_foot_near",
+					"px": [
+						380.792999267578,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#5f7478ff",
+					"inside": true,
+					"margin": 167.774536132812,
+					"name": "side_glass_left_top_near",
+					"px": [
+						361.855499267578,
+						552.225463867188
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#cccdc8ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "side_glass_right_foot_far",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#807c7bff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "side_glass_right_top_far",
+					"px": [
+						806.582458496094,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#766e62ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "side_glass_right_foot_near",
+					"px": [
+						899.20703125,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#596d71ff",
+					"inside": true,
+					"margin": 167.774536132812,
+					"name": "side_glass_right_top_near",
+					"px": [
+						918.14453125,
+						552.225463867188
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#8c9693ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "rear_glass_left_foot",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7e7875ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "rear_glass_left_top",
+					"px": [
+						473.417541503906,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#cccdc8ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "rear_glass_right_foot",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#807c7bff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "rear_glass_right_top",
+					"px": [
+						806.582458496094,
+						83.2083892822266
+					]
+				}
+			],
+			"preset": "default",
+			"sha256": "d3202102992b00a939b55023dd27717e42304be966bb62d07dfc92e1abc9f46c",
+			"signature": "d5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd5b389ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd5ad84ffd4a577ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a475ffd4a476ffd4a476ffd4a476ffd4a476ffd4a476ffcf8f5effcf8f5effcf8f5effcf8f5effcf8f5effcf8f5effcf905effd09e73ffcf8f5dffa58a45ffcf8f5dffb39752ffcd8d5cffcc8c5dffcd8e5effcd8e5fff67361eff69381fffcd8d5dffcd8e5effcc8c5dffcf8f5dffce8e5cffcf8f5dffcf8f5dffcf905fffcf905effcf8f5effcf8f5effcf8f5effcf8f5effcf8f5effba6b43ffba6b43ffba6b43ffba6b43ffba6b41ffba6b42ffba6a42ffba6b42ffb47240ff58421fffb96a41ffb47140ffa68e85ffa29284ffa29284ffa58e85ff7b7a6dff787673ffa29284ffa29284ffa68e85ffb47240ffb96a40ffb47240ffb37240ffcca277ffba6b42ffba6b43ffba6b43ffba6b43ffba6b43ffba6b43ffcd864dffcd874effcc854bffcc864dffcd864dffce864effcc844bffcc854dffcd864dffcb834bffcc844cffcd854eff745352ffb09784ffb29986ffb19784ff7c7a6dffb29986ffa69080ffb29986ffc4b8aaffce8751ffcc844effcd8650ffce8752ffcc8550ffc57e49ffcf8854ffcf8a56ffce8754ffcf8955ffd08b57ffcb834affcb834affcb834affcb834affcb834affcb834affcb834affcb834affcb834affcc844affcc844bffca854eff7a7c99ff747796ff747796ff747796ff757797ff757896ff6f708fff757897ff7a7c98ffca844effcb844dffcb844dffcc844effcd854fffcc8550ffcd8550ffcd8651ffcd8751ffce8753ffce8854ffca834affca8248ffcc844bffcc844affcb8349ffca8248ffc98146ffcc844affcb8349ffcb8348ffca8248ffb4b1a6ff727697ff707596ff737799ff727798ffebd8caff717798ff707495ff74799aff767a99ffb4b1a7ffca824bffcd854effcd854effcc844effcc844dffc07742ffce8650ffce8651ffcd8651ffcd8551ffcb8349ffca8246ffcb8348ffca8247ffc98046ffcb8248ffc98146ffcc8348ffca8146ffc98045ffcb8248ffb4b1a8ff6e7396ff707699ff6e7497ff707699ffead8cbff6e7497ff707699ff6e7598ff72789affb4b1a8ffcc844cffcb824bffc98149ffcb834cffca824cffcd854effcb844dffca834dffcd854fffcc844effca8146ffcb8348ffca8045ffca8246ffc97f44ffca8045ffcb8247ffc97f45ffca8147ffc97d43ffc98045ffb0aca3ff6f7698ff6c7395ff62678aff5f6386ffe4cfc0ff62678aff616588ff64698dff606487ff7d8880ffba703affbf753effc9814affcb824bffcc844cffca824bffb96e3affb36736ffcb844dffcd854fffc98145ffcb8146ffc87d43ffc97e43ffc97e44ffca7f45ffcb8045ffc87d43ff88b68dffc97e44ffc98049ffc7c7c1ff697197ff687297ff697398ff676f94ffead7caff697297ff697398ff677096ff666f93ffa9aba4ffc98049ffca8148ff88b68cffc87f47ffc98049ffc0753effcb824bffcc844cffca814affcb824cffca8045ffca8045ffca7f45ffc77c41ffc77c41ffc87c42ffc87c42ffc87c42ffc67e43ffc87c42ffacaa9fff555c80ff687298ff687298ff687399ff687399ffe9d7c9ff647096ff647097ff657097ff667198ff6a7499ff787f79ffc87d44ffc77f46ffc87e45ffc97f45ffc98048ffc98048ffba6e39ffca8149ffca824bffc87d42ffc87c42ffc77b41ffc77b40ffca7e44ffc97e43ffc97d43ffc97d42ffc87d42ffb1642dffb2b0a7ff657298ff637097ff616e96ff626f97ff626f96ffe9d7c9ff657399ff64739aff626d96ff647299ff667399ffb2b0a8ffc77b43ffc67a42ffcb7f47ffca7f47ffca7f47ffca7f47ffca7f47ffc98048ffc98048ffc77b40ffc97d42ffc87c42ffc77b40ffc67a3fffc97d42ffc87c41ffc77b40ffc67a3fffc87d43ffb2b1a9ff4e5980ff617097ff606e96ff63729aff627199ffead8cbff606f97ff5b6992ff627199ff627198ff627097ffb1b0a9ffc97c43ffc87c43ffca7f46ffca7e46ffc97d44ffc87d44ffcb8047ffcb7f47ffca7f47ffc97d42ffc87b40ffc67a3fffc87c41ffc77a40ffc87d42ffc77b40ffc77a3fffc97c41ffc67c43ffb1b0a8ff5f6d96ff607098ff5f6f97ff617199ff606f98ffe9d7c9ff607199ff5f6f98ff5d6e97ff607099ff5f6f97ffb3b1a9ffc67b44ffca7d44ffc97c43ffc77b42ffca7e45ffc87c44ffcb7f46ffca7e46ffc97d44ffc87c42ffc67a3fffc87c41ffc67a3fffc87c41ffc67a3fffc87c41ffc6793fffc87b40ffc0763effb0b3aeff697fa2ff687da0ff697fa2ff687da0ff697fa2ff677c98ff697fa2ff687ea0ff697fa2ff687ea1ff697fa2ffb0b3adffc57c44ffc97d43ffc87b41ffca7d44ffc87b43ffca7e45ffc87c43ffca7e46ffc97d44ffc87c41ffc67a3fffc77b40ffc5783dffc67a3fffc87b40ffc6793dffc77a3fffc5783dffc67a42ff6b7f9fff687da1ff697ea2ff677da0ff687ea2ff667ca0ff647c99ff697ea2ff677da1ff687ea2ff697fa3ff687ea2ff6d82a3ffc87d44ffc67a40ffc77a40ffca7d43ffc87b41ffc97d43ffc77a41ffc97c43ffca7e45ffc5783dffc6793fffc77a3fffc87b3fffc5783dffc6793fffc77b3fffc5783cffc6793dffc67b40ff677ea0ff677da1ff687fa3ff657ca0ff667da1ff677ea2ff667d9aff657da0ff667ea2ff677fa3ff657ca0ff667da1ff6980a3ffc77b40ffc87c42ffc67940ffc87b40ffc97c42ffc97d43ffc77a41ffc87c43ffc97d43ffc6793fffc77a3fffc77b3fffc4773cffc5783cffc6783dffc6793effc77a3fffc87a3fffc5773cffc5793dffc67940ffc67a40ffc77b40ffc87b41ffc5783fffc6793fffc67a41ffc77b41ffc87c42ffc4783fffc67940ffc67a40ffc77a40ffc87b40ffc87c42ffc6793effc67a40ffc87a40ffc97b42ffca7d43ffc67940ff",
+			"size": [
+				1280,
+				720
+			],
+			"timestamp": 1789745431.23688,
+			"worst_point": "court_corner_left_near"
+		},
+		{
+			"adapter": "Apple M4",
+			"arena": "carioca",
+			"colours": 285,
+			"display": "macOS",
+			"engine": "4.7.2-stable (official)",
+			"glass": {
+				"all_visible": true,
+				"core_present": true,
+				"count": 27,
+				"expected_rear_alpha": 0.38,
+				"rear_alpha": 0.379999995231628,
+				"scenery_visible": true,
+				"side_alpha": 0.340000003576279
+			},
+			"min_margin_px": 55.084228515625,
+			"png": "default/arena-carioca.png",
+			"points": [
+				{
+					"behind": false,
+					"colour": "#87a8b8ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "court_corner_left_far",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#769db6ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "court_corner_left_near",
+					"px": [
+						380.792999267578,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#d7e0e1ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "court_corner_right_far",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7aa1b9ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "court_corner_right_near",
+					"px": [
+						899.20703125,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#87a8b8ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "side_glass_left_foot_far",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7daeccff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "side_glass_left_top_far",
+					"px": [
+						473.417541503906,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#769db6ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "side_glass_left_foot_near",
+					"px": [
+						380.792999267578,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#6fa6c4ff",
+					"inside": true,
+					"margin": 167.774536132812,
+					"name": "side_glass_left_top_near",
+					"px": [
+						361.855499267578,
+						552.225463867188
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#d7e0e1ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "side_glass_right_foot_far",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7caccbff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "side_glass_right_top_far",
+					"px": [
+						806.582458496094,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7aa1b9ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "side_glass_right_foot_near",
+					"px": [
+						899.20703125,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#659cbeff",
+					"inside": true,
+					"margin": 167.774536132812,
+					"name": "side_glass_right_top_near",
+					"px": [
+						918.14453125,
+						552.225463867188
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#87a8b8ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "rear_glass_left_foot",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7daeccff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "rear_glass_left_top",
+					"px": [
+						473.417541503906,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#d7e0e1ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "rear_glass_right_foot",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7caccbff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "rear_glass_right_top",
+					"px": [
+						806.582458496094,
+						83.2083892822266
+					]
+				}
+			],
+			"preset": "default",
+			"sha256": "b7e47ed3bda5cbe423bbc4c0efbc014ed9312fa07bbfb0a362ed323a209ca2e6",
+			"signature": "78bac9ff78bac9ff78bac9ff78bac9ff78bac9ff78bac9ff77bac9ff77bac9ff77bac9ff77b9c9ff77b9c9ff77b9c9ff77b9c9ff77b9c9ff77b9c9ff77b9c9ff77b9c9ff77b9c9ff77b9c9ff77b9c9ff77b9c9ff77b9c9ff77b9c9ff77bac9ff77bac9ff77bac9ff78bac9ff78bac9ff78bac9ff78bac9ff78bac9ff78bac9ff96c0ccff96c0ccff96c0ccff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff96c1ccffb7c1b4ffa6c0c0ff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff95c0ccff96c0ccff95c0ccff95c0ccff96c0ccff96c0ccff96c0ccffafc7ceffafc7ceffafc7ceffafc7ceffafc7ceffafc7ceffcccfd1ffaec6cdffafc7ceffafc7ceffafc7ceffafc7ceffaec7ceffaec7ceffadc5ccffaec5cdffadc5ccffadc5ccffaec5cdffadc5ccff6e8d99ffaec6cdffafc6ceffafc7ceff3d5763ffafc7ceffafc7ceffafc7cdffafc7ceffafc7ceffafc7ceffafc7ceffc1cbd0ffc1cbd0ffc1cbd0ffc1cbd0ffc1cbd0ffc1cbd0ffc1cbd0ffa3b7bfffc0cbcfff9cb2bbffa3b7bfffa3b7bfff9bb5beff9ab5beff9fb8c0ffb4c5cbff6295b4ffb4c5cbffb4c6cbffb3c5caff80a0abffbfcacfffc0cbd0ffc1cbd0ffc1cbd0ffc1cbd0ff7d97a1ffbfcaceffc1cbd0ffc1cbd0ffc1cbd0ffc1cbd0ffd5d3c5ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd4d3c4ffd5d3c4ffd4d2c4ffc5cbd0ffc2c9c1ffc3c9c2ffc3c9c2ff6296b4ffadb9b3ffc3cac2ffc2cac1ffc1caccffd5d3c4ffd5d3c4ffd5d3c5ffd5d3c5ffd5d3c5ffd4d2c4ffd5d3c5ffd5d4c5ffd5d4c5ffd6d4c6ffd6d4c6ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c3ffd5d3c3ffd5d2c3ffd5d2c3ffd5d2c3ffd4d2c3ff84b0e2ff80aee2ff80aee2ff80aee2ff81afe3ff80afe3ff81afe3ff81afe3ff84b0e2ffd4d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c5ffd5d3c5ffd5d3c5ffd5d3c5ffd5d3c5ffd5d3c3ffd5d3c3ffd5d2c3ffd5d2c3ffd5d2c3ffd5d2c3ffd5d2c3ffd4d2c3ffd4d2c3ffd4d2c3ffd4d2c3ffb8c3bcff80afe2ff7eaee2ff7eaee2ff7eaee2ffeff2f4ff7eaee3ff7eaee3ff7faee3ff5a90cdffc6cdc6ffd5d2c3ffd5d2c3ffd5d2c4ffd5d2c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c4ffd5d3c5ffd5d2c3ffd5d2c3ffd4d2c3ffd4d2c3ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffc6cdc6ff7eade2ff7dade2ff7dade2ff7dade2ffeff2f4ff7dade2ff7dade2ff7eade2ff7eaee2ffc6cdc6ffd4d2c3ffd4d2c3ffd4d2c3ffd4d2c3ffd4d2c3ffd4d2c4ffd5d2c4ffd4d2c4ffd5d3c4ffd5d3c4ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd5d2c2ffd4d2c2ffd4d2c2ffc2cac3ff80afe3ff80afe3ff80afe3ff80afe3ffeff2f4ff80afe3ff80afe3ff81afe3ff6a9ed8ff33566fffd4d2c2ffd4d2c2ffd4d3c3ffd4d2c3ffd4d2c3ffd4d2c3ffd4d2c3ffd4d2c3ffd4d2c3ffd4d2c4ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c1ffd4d2c2ffd4d2c1ffd4d2c1ffd4d2c1ffe5d59bffd4d2c1ffd3d1c1ffc9d3d4ff7aabe2ff78a9e1ff70a4ddff7aabe2ffeef2f3ff6fa3ddff77a9e0ff7bace2ff73a6dfffc4cdc6ffd4d1c2ffd4d2c2ffe4d499ffd4d2c2ffd4d2c2ffd4d2c3ffd4d2c3ffd4d2c3ffd4d2c3ffd4d2c3ffd4d2c1ffd4d2c1ffd4d2c1ffd4d2c1ffd4d2c1ffd4d2c1ffd4d2c1ffd4d2c1ffafb19effd4d1c1ffc1c9c1ff7dade2ff79abe2ff79abe2ff7aabe2ff7aabe2ffeff2f4ff7aabe2ff7aace2ff7aace2ff7aace2ff7faee2ff2f506affd4d1c2ffd4d2c1ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c3ffd4d2c3ffd4d2c1ffd4d2c1ffd4d2c1ffd4d2c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffc5cdc5ff7aace2ff78abe2ff78abe2ff78abe2ff78abe2ffeff2f4ff79abe2ff79abe2ff79abe2ff79abe2ff7cade2ffc5cdc6ffd4d1c1ffd4d2c1ffd4d2c2ffd4d1c1ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd4d2c2ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd3d1c0ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd3d1c1ffc6cdc6ff78abe2ff78abe2ff78abe2ff78abe2ff78abe2ffeff2f4ff78abe2ff78abe2ff78abe2ff78abe2ff7aabe2ffc6cec6ffd3d1c1ffd4d1c1ffd4d1c1ffd4d2c1ffd4d2c1ffd4d1c1ffd4d2c2ffd4d2c2ffd4d2c2ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd3d1c0ffc6cec7ff77aae2ff77aae2ff77aae2ff77abe2ff77abe2ffeff2f4ff77abe2ff77abe2ff78abe2ff78abe2ff79abe2ffc6cec7ffd3d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d2c1ffd4d2c1ffd4d2c2ffd4d2c2ffd4d1c1ffd4d1c1ffd4d1c1ffd3d1c0ffd4d1c1ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffcfcdbcffc3ccc7ff80aee0ff81afe0ff81afe0ff81afe0ff81afdfff7eaddaff81afe0ff81b0e0ff81afe0ff81afe0ff70a1d6ffc4cdc7ffd2d0c0ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd3d1c1ffd4d1c1ffd4d1c1ffd4d2c1ffd3d0c0ffd4d1c1ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd1cfbfff83b0dfff7faedfff7faddfff7faedfff7faedfff7faedfff78a9d8ff7faedfff7faedfff7faedfff7faedfff7faedfff84b1dfffd3d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd3d1c1ffd3d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c1ff81afdfff80aee0ff80aee0ff80aee0ff80aee0ff80aee0ff79aad9ff80aee0ff80aee0ff80aee0ff80aee0ff80afdfff5c91c9ffd3d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd3d1c0ffd4d1c1ffd4d1c1ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d0c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c0ffd3d1c1ffd3d1c1ffd3d1c1ffd3d1c1ffd3d1c1ffd3d1c1ffd3d1c1ffd3d1c1ffd3d1c1ffd3d1c1ffd3d1c1ffd3d1c1ffd3d1c1ffd3d1c0ffd3d1c1ffd3d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ffd4d1c1ff",
+			"size": [
+				1280,
+				720
+			],
+			"timestamp": 1789745432.80064,
+			"worst_point": "court_corner_left_near"
+		},
+		{
+			"adapter": "Apple M4",
+			"arena": "aurora",
+			"colours": 584,
+			"display": "macOS",
+			"engine": "4.7.2-stable (official)",
+			"glass": {
+				"all_visible": true,
+				"core_present": true,
+				"count": 27,
+				"expected_rear_alpha": 0.38,
+				"rear_alpha": 0.379999995231628,
+				"scenery_visible": true,
+				"side_alpha": 0.340000003576279
+			},
+			"min_margin_px": 55.084228515625,
+			"png": "default/arena-aurora.png",
+			"points": [
+				{
+					"behind": false,
+					"colour": "#4788a7ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "court_corner_left_far",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#00487bff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "court_corner_left_near",
+					"px": [
+						380.792999267578,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#93bdcaff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "court_corner_right_far",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#00497eff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "court_corner_right_near",
+					"px": [
+						899.20703125,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#4788a7ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "side_glass_left_foot_far",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#00487fff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "side_glass_left_top_far",
+					"px": [
+						473.417541503906,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#00487bff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "side_glass_left_foot_near",
+					"px": [
+						380.792999267578,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#004c7aff",
+					"inside": true,
+					"margin": 167.774536132812,
+					"name": "side_glass_left_top_near",
+					"px": [
+						361.855499267578,
+						552.225463867188
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#93bdcaff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "side_glass_right_foot_far",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#004576ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "side_glass_right_top_far",
+					"px": [
+						806.582458496094,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#00497eff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "side_glass_right_foot_near",
+					"px": [
+						899.20703125,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#003c6cff",
+					"inside": true,
+					"margin": 167.774536132812,
+					"name": "side_glass_right_top_near",
+					"px": [
+						918.14453125,
+						552.225463867188
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#4788a7ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "rear_glass_left_foot",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#00487fff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "rear_glass_left_top",
+					"px": [
+						473.417541503906,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#93bdcaff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "rear_glass_right_foot",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#004576ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "rear_glass_right_top",
+					"px": [
+						806.582458496094,
+						83.2083892822266
+					]
+				}
+			],
+			"preset": "default",
+			"sha256": "cbb6570c0bb4e72361c236e8bb9d68464aacaeda4ce391dd7706f9703029b946",
+			"signature": "001227ff001225ff001225ff001025ff001025ff001024ff001024ff001024ff000f24ff000f24ff000f24ff000f24ff000f24ff000f24ff000f22ff000f22ff000f22ff000f24ff000f24ff000f24ff000f24ff000f24ff001024ff001024ff001024ff001024ff001025ff001025ff001225ff001225ff001228ff001328ff001931ff001931ff001831ff001831ff001731ff001831ff001631ff001631ff001630ff001c35ff001f39ff001f39ff001f39ff001f39ff001d37ff001c37ff001832ff001730ff001530ff001833ff22877dff22877dff25897eff23887dff004854ff001832ff001731ff001831ff001e37ff001931ff001931ff001933ff002142ff002142ff002142ff002042ff002042ff002042ff002042ff002042ff002444ffaebbc5ffafbbc6ff002750ff002951ff002c55ff002d54ff002d52ff002f51ff00294aff002c4eff00294cff002547ff002042ff002244ff002649ff002344ff002042ff002042ff002042ff002242ff002142ff002142ff002142ff003446ff003446ff003346ff003346ff003346ff003346ff003346ff003345ff003245ff041927ff041927ff061e33ff397d91ff397e92ffb3c8d0ff4c7f93ff166294ff4e8094ff528296ff538497ff518295ff003446ff003243ff051b2aff003346ff003346ff003346ff003346ff003346ff003446ff003446ff003446ff001b2eff001c30ff001a2eff001b2eff001b30ff001a2dff001b2eff001a2dff001b2eff001222ff001a2dff001e31ff5b92afff2e6a82ff306c83ff2f6b83ff02558dff2e6a80ff316c84ff306b84ff77a6baff001d31ff001c30ff001c2eff001d2fff001f31ff001d31ff001f32ff002031ff002232ff002133ff002235ff001b2eff001a2dff00182cff001a2dff00182cff00182aff001a2cff00182cff00172bff00182cff00182aff002436ff004f9eff004899ff004696ff00499bff004899ff003f89ff00499bff004899ff004d98ff002436ff001a2cff001c2eff001b2eff001b2dff001d2fff001c30ff001c2eff001f31ff001f31ff001f2fff00182aff001a2dff00182cff00182cff00182aff001729ff001728ff001628ff001729ff001729ff001727ff6e9fa9ff004b9aff004798ff004697ff004596ff73a6c5ff00357dff00499aff004899ff004b99ff6e9fa8ff001a2cff001a2cff001a2cff001b2cff001b2dff001b2dff001b2dff001d2fff001d2fff001d2fff00182aff001829ff001729ff001729ff001626ff001626ff001426ff001325ff000e1eff001325ff001325ff73a3acff004799ff004799ff00479aff00479aff74a7c6ff002e72ff00489aff00489bff004a9cff73a2acff001829ff001829ff001a2aff001a2cff001a2cff001b2dff001a2aff001a2cff001a2cff001b2dff001627ff001325ff001426ff001426ff001426ff001426ff001223ff001325ff001729ff001325ff001527ff6898a2ff002e6fff003174ff002966ff002c6aff3f7fa0ff002f70ff00357bff002866ff004797ff002438ff001928ff001727ff001b2aff001726ff001728ff001829ff001a2aff001829ff001a2aff001a2cff001325ff001325ff001325ff001124ff001323ff001325ff001124ff000612ff34a6a0ff001122ff001c2eff90bbc9ff004499ff004090ff004497ff00459aff6fa4c3ff004090ff00459aff003e8fff004599ff6fa0aaff001b2dff001425ff31a49fff001625ff001726ff001625ff001726ff001827ff001727ff00182aff001124ff001325ff001122ff001124ff001022ff001124ff001022ff001122ff001926ff001223ff6697a1ff004998ff00459aff004296ff00459aff004296ff76a7c7ff004396ff00459aff002769ff00469aff004b9aff001628ff001322ff001a29ff001323ff001425ff001323ff001426ff001625ff001726ff001726ff001022ff001021ff001022ff001021ff000f20ff001021ff000f1eff00101fff001222ff000f20ff75a3acff00479aff004297ff00459bff004399ff004297ff72a4c4ff004398ff004297ff00459bff004399ff004697ff74a3acff001122ff001526ff001122ff001122ff001325ff001323ff001323ff001425ff001625ff001021ff000f20ff00101fff000f1fff000f1eff000d1cff000f1fff000f1eff000d1cff001020ff76a5aeff00459cff00449aff004298ff004297ff004095ff76a9c8ff004399ff004297ff004196ff00459bff004499ff77a5aeff001224ff001121ff001121ff001021ff001323ff001323ff001323ff001323ff001322ff000d1cff000f1fff000f1eff000f1eff000d1cff000d1cff000d1bff000c1bff000c1bff001525ff76a4adff00449cff00449aff004299ff004298ff004297ff73a6c5ff004196ff00459bff00459bff00449aff004399ff76a4aeff001523ff000f1cff00101fff001121ff001121ff001121ff001122ff001122ff001122ff000d1cff000d1cff000c1bff000c1bff000c1bff000c1bff000c1aff000c1aff000716ff001726ff7ba9b3ff0b5ba4ff0b5ba4ff0b5ba5ff0b5ba4ff0b5aa3ff0c5da3ff0b5ba4ff0b5aa4ff0b5aa3ff0b5aa3ff0b5aa3ff7daab4ff00192aff000f1eff00101eff00101eff00101fff00101fff001121ff001122ff001122ff000c1bff000c1bff000c1bff000c1aff000a1aff000a1aff000a1aff000a1aff000a1aff001223ff1560a6ff0b5aa5ff0b5aa5ff0b5ba4ff0b5ba5ff0d5ba5ff0e5da4ff0d5ca7ff0d5ca7ff0d5da8ff0d5da8ff0b59a3ff1661a6ff001524ff000c1aff000d1bff000d1bff000f1cff000f1cff000f1eff00101eff001021ff000b1bff000a1bff000a1bff000a1bff000918ff000918ff000918ff00091aff00091aff000b1aff0e5ca5ff0b5ba6ff0c5ca7ff0c5ca8ff0a59a3ff0b5aa5ff0c5ca3ff0c5ca6ff0c5ca8ff0c5da8ff0b59a3ff0b5ba4ff105ea5ff000e1cff000d1bff000d1bff000f1cff000d1bff000d1bff000f1cff000f1eff00101fff00091aff00091aff00091aff000817ff000818ff000918ff000918ff000817ff000817ff000818ff000d1dff000c1bff000c1bff000c1dff000d1dff000c1bff000c1bff000d1dff000d1dff000c1bff000d1dff000e1eff000d1bff000918ff000c1aff000d1bff000c1aff000c1aff000d1bff000f1cff000d1bff000f1cff",
+			"size": [
+				1280,
+				720
+			],
+			"timestamp": 1789745434.45268,
+			"worst_point": "court_corner_left_near"
+		},
+		{
+			"adapter": "Apple M4",
+			"arena": "egeo",
+			"colours": 278,
+			"display": "macOS",
+			"engine": "4.7.2-stable (official)",
+			"glass": {
+				"all_visible": true,
+				"core_present": true,
+				"count": 27,
+				"expected_rear_alpha": 0.38,
+				"rear_alpha": 0.379999995231628,
+				"scenery_visible": true,
+				"side_alpha": 0.340000003576279
+			},
+			"min_margin_px": 55.084228515625,
+			"png": "default/arena-egeo.png",
+			"points": [
+				{
+					"behind": false,
+					"colour": "#7ca5c1ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "court_corner_left_far",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7ba5c2ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "court_corner_left_near",
+					"px": [
+						380.792999267578,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#cfdde6ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "court_corner_right_far",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7ba6c2ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "court_corner_right_near",
+					"px": [
+						899.20703125,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7ca5c1ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "side_glass_left_foot_far",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7aadd4ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "side_glass_left_top_far",
+					"px": [
+						473.417541503906,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7ba5c2ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "side_glass_left_foot_near",
+					"px": [
+						380.792999267578,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#68a4cdff",
+					"inside": true,
+					"margin": 167.774536132812,
+					"name": "side_glass_left_top_near",
+					"px": [
+						361.855499267578,
+						552.225463867188
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#cfdde6ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "side_glass_right_foot_far",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#71a8d2ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "side_glass_right_top_far",
+					"px": [
+						806.582458496094,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7ba6c2ff",
+					"inside": true,
+					"margin": 55.084228515625,
+					"name": "side_glass_right_foot_near",
+					"px": [
+						899.20703125,
+						664.915771484375
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#63a0cbff",
+					"inside": true,
+					"margin": 167.774536132812,
+					"name": "side_glass_right_top_near",
+					"px": [
+						918.14453125,
+						552.225463867188
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7ca5c1ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "rear_glass_left_foot",
+					"px": [
+						480.400909423828,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#7aadd4ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "rear_glass_left_top",
+					"px": [
+						473.417541503906,
+						83.2083892822266
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#cfdde6ff",
+					"inside": true,
+					"margin": 172.255950927734,
+					"name": "rear_glass_right_foot",
+					"px": [
+						799.59912109375,
+						172.255950927734
+					]
+				},
+				{
+					"behind": false,
+					"colour": "#71a8d2ff",
+					"inside": true,
+					"margin": 83.2083892822266,
+					"name": "rear_glass_right_top",
+					"px": [
+						806.582458496094,
+						83.2083892822266
+					]
+				}
+			],
+			"preset": "default",
+			"sha256": "782e9170bf4aacdab37c7d899afc683e147560307650138588141b94488bd50c",
+			"signature": "458bcfff448bcfff438bcfff438bcfff438bcfff438bcfff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff438bd0ff448bcfff448bcfff438bd0ff438bd0ff438bcfff438bcfff438bcfff438bcfff448bcfff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff74a5d2ff73a5d2ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ffaebac4ff94b0caff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff72a4d1ff9ab8d2ff9ab8d2ff9ab8d2ff9ab8d2ff9ab8d2ff99b8d2ff99b8d2ff99b8d2ff99b8d2ffcaced2ff9ab8d2ffa0bdd5ffa0bdd5ffa1bdd5ff98b7d1ff98b7d2ff97b6d1ff97b7d1ff98b7d2ff97b6d1ff96b5d0ff99b8d2ff99b8d2ff99b8d2ff99b8d2ff99b8d2ff99b8d2ff99b8d2ff9ab8d2ff9ab8d2ff9ab8d2ff9ab8d2ffbdc7d2ffbdc7d2ffbdc7d2ffbdc7d2ffbdc7d2ffbdc7d2ffbdc7d2ffbdc7d1ff797d83ffccced2ffc8cbcfffcccfd2ffb6c4cdff7e96a5ff7e97a5ffadc1cfff5c97bcff7d95a4ff7c95a3ff7d95a4ffb3c2cbff757a80ffbcc6d1ffbcc7d2ffbdc7d2ffcecfd1ffbdc7d2ffbdc7d2ffbdc7d2ffbdc7d2ffbdc7d2ffbdc7d2ffccd0d2ffccd0d2ffccd0d2ffccd0d2ffccd0d2ffccd0d2ffccd0d2ffccd0d2ffccd0d2ffcbd0d2ffcbd0d2ffcbd0d2ff75869cffb8c7ceffb9c7ceffb8c7ceff5b96bcffb8c7ceffb9c7ceffb8c6ceffbfcbd2ffcbd0d2ffccd0d2ffccd0d2ffccd1d3ffccd1d3ffccd1d3ffcdd1d3ffcdd1d3ffccd1d3ffcdd1d4ffcdd1d4ffccd0d2ffccd0d2ffcbd0d1ffccd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbcfd1ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ff7aadeaff76abeaff76abeaff76abeaff77aceaff77abeaff77abeaff76aae9ff7baeeaffcbd0d2ffcbd0d2ffcbd0d2ffccd0d3ffccd0d3ffccd1d3ffccd1d3ffccd1d3ffccd1d3ffcbd0d3ffccd1d3ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffbbcbd2ff77aceaff75abeaff74aaeaff75abeaffeef2f7ff75abe9ff75abeaff75abeaff78aceaffbacad2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d3ffccd0d3ffccd0d3ffccd1d3ffcbd0d2ffcbd0d2ffcbcfd1ffcbd0d1ffcbd0d1ffcbd0d1ffcbcfd1ffcbcfd1ffcbcfd1ffcbcfd1ffcbcfd1ffbacad2ff4c8cd7ff73a9e9ff73aaeaff73aaeaffeef2f7ff74aaeaff74aaeaff74aaeaff75abeaffbacad2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbcfd2ffcbd0d2ffcbd0d3ffcbd0d1ffcbcfd1ffcbcfd1ffcbcfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffb7c7d0ff78ace9ff79adeaff79adeaff7aadeaffeef2f7ff7aadeaff7aaeeaff7aaeeaff79adeaff5c91b6ffcacfd1ffcacfd1ffcacfd2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcbd0d2ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ff6aa0e7ffcacfd1ffc9ced1ffc8d5ddff71a8e9ff72a9e9ff6ba4e7ff6fa6e8ffeef2f7ff6fa6e8ff68a1e5ff72a8e9ff71a8e8ffb8c9d2ffcacfd1ffcacfd1ff6ca2e8ffcacfd2ffcacfd1ffcbcfd2ffcbd0d2ffcbcfd2ffcbd0d2ffcbd0d2ffcacfd1ffcacfd1ffcacfd1ffcacfd0ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffc9ced1ffc9ced1ffb5c6ceff76abeaff72a9eaff72a9eaff72a9eaff72a9eaffeef2f7ff72aae9ff72aae9ff72aae9ff72aae9ff78aceaff5a8db2ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd2ffcacfd2ffcbcfd2ffcbcfd2ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcaced1ffcacfd1ffbacad2ff73a9e9ff71a9e9ff71a9e9ff71a8e9ff71a9eaffeef2f7ff71a8e9ff72a9eaff72a9eaff71a8e9ff75abeaffabbfcaffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd2ffcacfd1ffc9ced0ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffc9ced0ffcacfd1ffcaced1ffbbcad2ff71a9e9ff71a9e9ff71a9e9ff71a9e9ff71a9e9ffeef2f7ff71a9e9ff71a9e9ff71a8e9ff72a9eaff73a9eaffbacad2ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcaced1ffbbcbd3ff66a0e4ff71a9e9ff71a9e9ff71a9e9ff71a9e9ffeef2f7ff71a9e9ff71a9e9ff71a9e9ff71a9e9ff72a9e9ffbbcbd3ffc9ced1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcaced0ffcacfd1ffcacfd1ffcaced1ffcacfd1ffcaced1ffcacfd1ffcaced1ffcaced1ffc5cacdffb9cad3ff7aade7ff7baee7ff7baee7ff7baee7ff7baee7ff79abe1ff7baee7ff7aade7ff7bade7ff7baee7ff7baee7ffbacad4ffc8cdd0ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcaced1ffc9ced0ffcaced1ffcaced1ffcaced1ffcaced0ffcaced1ffcaced1ff7caee7ff77abe7ff78ace7ff78ace7ff78ace7ff78ace7ff73a7e0ff78ace7ff78ace7ff78ace7ff77abe6ff78ace7ff7dafe7ffcaced0ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcaced1ffcaced1ffcaced1ffcaced1ffcaced1ffcaced1ffcaced1ffcaced1ffcaced1ff7aade7ff78ace7ff78abe6ff78ace7ff78ace7ff78ace7ff74a8e0ff79ace7ff79ace7ff79ace7ff79ace7ff79ace7ff7baee7ffcaced1ffcaced1ffcaced1ffcaced1ffcaced1ffcacfd1ffcaced1ffcacfd1ffcacfd1ffcaced1ffcaced1ffcaced1ffcaced1ffcaced1ffcaced1ffc9ced0ffcaced1ffc9ced0ffcaced1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffcacfd1ffc9ced0ffcaced1ffcaced1ffcaced1ffcaced1ffcaced1ffcacfd1ffcacfd1ffcacfd1ff",
+			"size": [
+				1280,
+				720
+			],
+			"timestamp": 1789745436.20586,
+			"worst_point": "court_corner_left_near"
+		}
+	],
+	"tool": "world_arenas_capture.gd"
+}

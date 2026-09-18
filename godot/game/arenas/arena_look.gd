@@ -87,7 +87,7 @@ const LOOKS := {
 		"ambient_sky_contribution": 0.72,
 		"exposure": 1.03,
 		"saturation": 1.18,
-		"contrast": 1.06,
+		"adjust_contrast": 1.06,
 		"fog_depth": Vector3(16.0, 220.0, 0.65),
 		"fog_color": Color(0.78, 0.40, 0.28),         # #c76647 coral horizon haze
 		"fog_energy": 0.85,
@@ -114,7 +114,7 @@ const LOOKS := {
 		"ambient_sky_contribution": 0.70,
 		"exposure": 1.00,
 		"saturation": 1.12,
-		"contrast": 1.04,
+		"adjust_contrast": 1.04,
 		"fog_depth": Vector3(20.0, 260.0, 0.70),
 		"fog_color": Color(0.85, 0.60, 0.42),         # #d9996b dust-warm haze
 		"fog_energy": 0.90,
@@ -141,7 +141,7 @@ const LOOKS := {
 		"ambient_sky_contribution": 0.85,
 		"exposure": 1.04,
 		"saturation": 1.06,
-		"contrast": 1.02,
+		"adjust_contrast": 1.02,
 		"fog_depth": Vector3(28.0, 320.0, 0.80),
 		"fog_color": Color(0.80, 0.90, 0.96),         # #cce6f5 sea haze over the ridges
 		"fog_energy": 0.90,
@@ -168,7 +168,7 @@ const LOOKS := {
 		"ambient_sky_contribution": 0.85,
 		"exposure": 1.06,
 		"saturation": 1.20,
-		"contrast": 1.08,
+		"adjust_contrast": 1.08,
 		"fog_depth": Vector3(14.0, 170.0, 0.60),
 		"fog_color": Color(0.10, 0.22, 0.28),         # #1a3847 night air
 		"fog_energy": 0.80,
@@ -195,7 +195,7 @@ const LOOKS := {
 		"ambient_sky_contribution": 0.85,
 		"exposure": 1.05,
 		"saturation": 1.10,
-		"contrast": 1.03,
+		"adjust_contrast": 1.03,
 		"fog_depth": Vector3(34.0, 340.0, 0.85),
 		"fog_color": Color(0.82, 0.90, 0.98),         # #d1e6fa caldera haze
 		"fog_energy": 0.85,
@@ -279,75 +279,75 @@ static func apply(env: Environment, sun: DirectionalLight3D, fill: DirectionalLi
 	var id := String(arena.get("id", ""))
 	if not LOOKS.has(id):
 		return false
-	var L := look(id)
+	var rig: Dictionary = look(id)
 
 	# 1. The sky: BG_SKY plus a generated, dithered panorama. Only BG_SKY feeds
 	#    `fog_aerial_perspective`, sky-derived ambient and the pane reflections.
 	var sky := Sky.new()
-	sky.sky_material = _panorama_material(id, L)
-	sky.process_mode = int(L["sky_process_mode"])
-	sky.radiance_size = int(L["sky_radiance_size"])
+	sky.sky_material = _panorama_material(id)
+	sky.process_mode = int(rig["sky_process_mode"])
+	sky.radiance_size = int(rig["sky_radiance_size"])
 	env.sky = sky
 	env.background_mode = Environment.BG_SKY
 
 	# 2. Ambient: the cool side of the stills comes from the sky itself, mixed with a per-arena
 	#    tint (`ambient_light_color` only bites below a sky contribution of 1.0).
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_sky_contribution = float(L["ambient_sky_contribution"])
-	env.ambient_light_color = L["ambient_color"]
-	env.ambient_light_energy = float(L["ambient_energy"])
+	env.ambient_light_sky_contribution = float(rig["ambient_sky_contribution"])
+	env.ambient_light_color = rig["ambient_color"]
+	env.ambient_light_energy = float(rig["ambient_energy"])
 
 	# 3. Depth fog: the painted horizon band and the aerial perspective the stills have and the
 	#    captures before this lane had none of. Volumetric fog is Forward+-only (Table B).
 	env.fog_enabled = true
-	env.fog_mode = int(L["fog_mode"])
-	var fd: Vector3 = L["fog_depth"]
+	env.fog_mode = int(rig["fog_mode"])
+	var fd: Vector3 = rig["fog_depth"]
 	env.fog_depth_begin = fd.x
 	env.fog_depth_end = fd.y
 	env.fog_depth_curve = fd.z
-	env.fog_light_color = L["fog_color"]
-	env.fog_light_energy = float(L["fog_energy"])
-	env.fog_sun_scatter = float(L["fog_sun_scatter"])
-	env.fog_aerial_perspective = float(L["fog_aerial"])
-	env.fog_sky_affect = float(L["fog_sky_affect"])
+	env.fog_light_color = rig["fog_color"]
+	env.fog_light_energy = float(rig["fog_energy"])
+	env.fog_sun_scatter = float(rig["fog_sun_scatter"])
+	env.fog_aerial_perspective = float(rig["fog_aerial"])
+	env.fog_sky_affect = float(rig["fog_sky_affect"])
 
 	# 4. Contact darkening. Compatibility's SSAO exposes only radius and intensity (4.6+).
 	env.ssao_enabled = true
-	env.ssao_radius = float(L["ssao_radius"])
-	env.ssao_intensity = float(L["ssao_intensity"])
+	env.ssao_radius = float(rig["ssao_radius"])
+	env.ssao_intensity = float(rig["ssao_intensity"])
 
 	# 5. Glow on an LDR buffer: the threshold has to sit below 1.0 or nothing blooms
 	#    (`stylized-look-godot.md` §1.5; glow_levels/strength/blend_mode are inert here).
 	env.glow_enabled = true
-	env.glow_hdr_threshold = float(L["glow_threshold"])
-	env.glow_hdr_scale = float(L["glow_hdr_scale"])
-	env.glow_hdr_luminance_cap = float(L["glow_luminance_cap"])
-	env.glow_bloom = float(L["glow_bloom"])
-	env.glow_intensity = float(L["glow_intensity"])
+	env.glow_hdr_threshold = float(rig["glow_threshold"])
+	env.glow_hdr_scale = float(rig["glow_hdr_scale"])
+	env.glow_hdr_luminance_cap = float(rig["glow_luminance_cap"])
+	env.glow_bloom = float(rig["glow_bloom"])
+	env.glow_intensity = float(rig["glow_intensity"])
 
 	# 6. Tonemap and grade. AgX keeps the magenta/coral dusk from clipping to white; the
 	#    adjustments are applied AFTER tonemapping (docs) and are the stills' saturation.
-	env.tonemap_mode = int(L["tonemap"])
-	env.tonemap_exposure = float(L["exposure"])
-	env.tonemap_agx_contrast = float(L["agx_contrast"])
+	env.tonemap_mode = int(rig["tonemap"])
+	env.tonemap_exposure = float(rig["exposure"])
+	env.tonemap_agx_contrast = float(rig["agx_contrast"])
 	env.adjustment_enabled = true
-	env.adjustment_brightness = float(L["adjust_brightness"])
-	env.adjustment_contrast = float(L["adjust_contrast"])
-	env.adjustment_saturation = float(L["saturation"])
+	env.adjustment_brightness = float(rig["adjust_brightness"])
+	env.adjustment_contrast = float(rig["adjust_contrast"])
+	env.adjustment_saturation = float(rig["saturation"])
 
 	# 7. The light rig: a low warm key with `shadow_opacity` < 1 (the documented GI fake, since
 	#    SSIL/VoxelGI/SDFGI are unavailable), a cool shadowless fill, and the two-split shadow
 	#    budget the scan recommends for a bounded arena.
-	sun.rotation_degrees = L["sun_rotation"]
-	sun.light_color = L["sun_color"]
-	sun.light_energy = float(L["sun_energy"])
+	sun.rotation_degrees = rig["sun_rotation"]
+	sun.light_color = rig["sun_color"]
+	sun.light_energy = float(rig["sun_energy"])
 	sun.shadow_enabled = true
-	sun.shadow_opacity = float(L["shadow_opacity"])
-	sun.directional_shadow_mode = int(L["shadow_mode"])
-	sun.directional_shadow_max_distance = float(L["shadow_max_distance"])
-	fill.rotation_degrees = L["fill_rotation"]
-	fill.light_color = L["fill_color"]
-	fill.light_energy = float(L["fill_energy"])
+	sun.shadow_opacity = float(rig["shadow_opacity"])
+	sun.directional_shadow_mode = int(rig["shadow_mode"])
+	sun.directional_shadow_max_distance = float(rig["shadow_max_distance"])
+	fill.rotation_degrees = rig["fill_rotation"]
+	fill.light_color = rig["fill_color"]
+	fill.light_energy = float(rig["fill_energy"])
 	fill.shadow_enabled = false
 	return true
 
@@ -363,14 +363,14 @@ static func sky_texture(arena_id: String) -> Texture2D:
 		return _sky_cache[arena_id]
 	if not LOOKS.has(arena_id):
 		return null
-	var L := look(arena_id)
-	var img := panorama_image(L["sky_stops"], L["apron"], PANORAMA_W, PANORAMA_H, arena_id)
+	var rig := look(arena_id)
+	var img := panorama_image(rig["sky_stops"], rig["apron"], PANORAMA_W, PANORAMA_H, arena_id)
 	var tex := ImageTexture.create_from_image(img)
 	_sky_cache[arena_id] = tex
 	return tex
 
 
-static func _panorama_material(arena_id: String, L: Dictionary) -> PanoramaSkyMaterial:
+static func _panorama_material(arena_id: String) -> PanoramaSkyMaterial:
 	var pano := PanoramaSkyMaterial.new()
 	pano.panorama = sky_texture(arena_id)
 	# `filter` stays on (default): the radiance map is generated once and blurred, which is what
@@ -473,12 +473,21 @@ static func ground_texture(arena_id: String) -> Texture2D:
 	return tex
 
 
+## TEST SEAM (mirrors `arena_kit.gd::suppress_overrides` in spirit): drops one arena's cached
+## ground texture so a suite that drops a fixture file and removes it again can re-read the
+## absent state in the same process. Production never calls this — a shipped swatch does not
+## disappear at runtime.
+static func forget_ground_texture(arena_id: String) -> void:
+	_ground_cache.erase(ground_texture_path(arena_id))
+
+
 ## Tiles the arena's ground texture over a material whose UVs span `uv_size` metres. Returns
 ## false — having touched NOTHING — when the slot is empty or the arena has no kit, so the
 ## absent-file build is byte-identical to the pre-look one (KIT-STANDARD §5's fallback rule).
 ## The digested material facts (albedo colour, metallic, roughness, transparency, shading) are
 ## never modified: only the texture, its scaling and its filter.
-static func apply_ground_texture(mat: StandardMaterial3D, arena_id: String, uv_size: Vector2) -> bool:
+static func apply_ground_texture(mat: StandardMaterial3D, arena_id: String,
+		uv_size: Vector2) -> bool:
 	if mat == null:
 		return false
 	var tex := ground_texture(arena_id)

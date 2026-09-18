@@ -75,3 +75,26 @@ the locale table size (689 keys vs 688 expected) from another lane's uncommitted
 **Honest gaps:** the live Meshy API pull path is unverified (no key on this machine) — the
 inbox path is proven end-to-end. No Meshy models exist yet (owner-side generation pending).
 
+
+## 2026-09-18 17:55 CEST — look lane delivered + CEO verification
+
+Look lane (`deleg_0d08be6c`): `arena_look.gd` (504 lines, per-arena LOOKS table, generated
+dithered 256x128 panorama per arena), `arena_look_test.gd` (566 lines), ground-texture slot
+wired in `court_builder.gd` (+14) and `arena_scenery.gd` (+11), LOOK.md, before/after captures
+in `docs/mission/arena-kit/proof/look/`.
+
+CEO verification: `arena_look_test` PASS 373/373 and `arena_kit_test` PASS 83/83 re-run by the
+CEO, 0 SCRIPT ERRORs; torii before/after reviewed by the CEO (real dusk read); aurora flagged
+TOO DARK to play (mean luma 79 -> 37; court lines/glass lost) — owner verdict pending.
+Ground textures copied into the engine path (`godot/assets/arenas/<arena>/ground_texture.png`)
+and a third capture pass ran (PASS 39/39): aprons now use the generated swatches; tile scale
+noted as slightly small (2.5 m) and tiling is uniform.
+
+Known defect (named by the lane): sky banding in the generated panorama, visible in
+`after/arena-torii.png`; fix path ~640-blit dither, not yet applied.
+
+Housekeeping gap for the next lane: `arena_kit_test.gd` reads its recorded baseline from
+`run/tmp/arena-kit/baseline.json`, which is gitignored — move it to a tracked path.
+
+Note: a parallel session committed overlapping look-lane files at 16:42 (42d5505) before this
+lane finished; the working tree holds the lane's final version, which is what this commit lands.
