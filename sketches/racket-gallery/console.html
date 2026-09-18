@@ -1,0 +1,1043 @@
+<!doctype html>
+<!--
+  Steam Circuit Padel Pro - racket gallery UX review console.
+  Throwaway design instrument, NOT production code. Nothing here ships.
+  Static skeleton (data-family / data-screen / data-device) + JS renderers keyed by
+  family + screen + device. Single file, zero external scripts, styles, fonts, fetch.
+  Product copy is Italian (game register); console chrome stays English and utilitarian.
+-->
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steam Circuit Padel Pro - Racket Gallery UX Review Console</title>
+<style>
+  :root{
+    /* game brand tokens (accents only) */
+    --ink-light:#f6f7fb; --cyan:#00e5ff; --gold:#ffcc00; --coral:#ff4b6e; --green:#1aff8a;
+    --display:'Lilita One', 'Trebuchet MS', cursive;
+    --body:'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    /* console chrome */
+    --cn-bg:#0f131b; --cn-bar:#151a24; --cn-line:#242c3c; --cn-text:#e8edf6; --cn-dim:#93a1b8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--cn-bg);font-family:var(--body);color:#111;font-size:16px;line-height:1.55}
+  :focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+  /* ---------------- console chrome (utilitarian, not part of the design direction) --------------- */
+  .cn-bar{position:fixed;inset:0 0 auto 0;z-index:60;background:var(--cn-bar);border-bottom:1px solid var(--cn-line);
+          display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:9px 16px;color:var(--cn-text)}
+  .cn-brand{font-family:var(--display);font-size:16px;letter-spacing:.02em;line-height:1.15;color:var(--ink-light)}
+  .cn-brand span{display:block;font-family:var(--body);font-size:13px;font-weight:700;letter-spacing:.14em;
+                 text-transform:uppercase;color:var(--cn-dim)}
+  .cn-group{display:flex;gap:4px;align-items:center;background:#1b2130;border:1px solid #262f42;border-radius:10px;padding:3px}
+  .cn-group button{font:inherit;font-family:var(--body);font-size:13px;font-weight:800;color:#b9c5da;background:transparent;
+                   border:0;padding:6px 11px;border-radius:7px;cursor:pointer;white-space:nowrap}
+  .cn-group button.on{background:var(--ink-light);color:#141821}
+  .cn-toggle{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:#b9c5da;cursor:pointer}
+  .cn-toggle input{width:16px;height:16px;accent-color:#00e5ff}
+  .cn-meta{display:flex;flex-wrap:wrap;gap:14px;padding:0 16px 9px;background:var(--cn-bar);
+           border-bottom:1px solid var(--cn-line);position:fixed;left:0;right:0;top:56px;z-index:59;
+           font-size:13px;color:var(--cn-dim)}
+  .cn-meta b{color:#cdd7e6;font-weight:800}
+  .cn-body{padding:118px 20px 70px}
+
+  /* ---------------- frames (no fake browser or phone chrome) --------------- */
+  .frame{background:#fff;border:1px solid #c9d2df;border-radius:16px;overflow:hidden;margin:0 0 22px;
+         box-shadow:0 20px 44px rgba(4,8,16,.34)}
+  .frame.desk{width:1060px;max-width:100%}
+  .frame.mob{width:390px;max-width:100%}
+  .frame-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;
+              background:#eef1f6;border-bottom:1px solid #dde3ec}
+  .synth-tag{font-size:13px;font-weight:800;letter-spacing:.16em;color:#8a2f14;background:#ffd9c9;
+             border:1px solid #ffb79b;border-radius:6px;padding:2px 8px}
+  .frame-meta{font-size:13px;color:#5a6577;letter-spacing:.03em;text-align:right}
+  .frame-body{font-size:16px}
+  .notes{display:none;background:#141821;color:#e8edf6;font-size:14px;line-height:1.62;padding:12px 18px;
+         border-top:1px solid var(--cn-line)}
+  .notes p{margin:0 0 6px;max-width:78ch}
+  .notes b{color:#ffd9a0}
+  .notes code{font-family:ui-monospace, SFMono-Regular, Menlo, monospace;font-size:13px;color:#9fe8ff}
+  body.show-notes .notes{display:block}
+
+  /* skeleton states */
+  .family[hidden]{display:none}
+  .screen{display:none}
+  .screen.on{display:block}
+  .slot{display:none}
+  .slot.on{display:block}
+
+  /* ---------------- shared 3D stand-in (CSS 3D orbit of the real PNG) --------------- */
+  .ob{position:relative}
+  .ob-persp{position:relative;perspective:1200px;perspective-origin:50% 44%;cursor:grab;touch-action:none;
+            margin:0 auto;z-index:2}
+  .ob-persp.grabbing{cursor:grabbing}
+  .plate{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+  .plate .face{position:absolute;inset:0}
+  .plate img{width:100%;height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none}
+  .face.front{transform:translateZ(10px)}
+  .face.back{transform:rotateY(180deg) translateZ(10px) scaleX(-1);filter:brightness(.58) saturate(.55)}
+  .rim{position:absolute;inset:5% 9%;border-radius:46% 46% 20% 20% / 36% 36% 15% 15%;
+       box-shadow:0 0 0 2px var(--ob-accent, #b9c5da);opacity:.4;filter:blur(1.5px);transform:translateZ(0)}
+  .ob-shadow{position:absolute;left:16%;right:16%;bottom:-2px;height:22px;border-radius:50%;
+             background:radial-gradient(closest-side, rgba(24,20,14,.42), rgba(24,20,14,0))}
+  .ob-label{position:absolute;left:0;right:0;bottom:-26px;text-align:center;font-size:13px;font-weight:800;
+            letter-spacing:.1em;text-transform:uppercase;color:#6b7280}
+
+  /* ================= FAMILY 1: STAGE (arcade plus vetro) ================= */
+  .st{background:#fffaf1;padding:18px 20px 20px;font-family:var(--body)}
+  .st-top{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+  .st-kick{display:block;font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#a86a22}
+  .st-title{margin:4px 0 0;font-family:var(--display);font-weight:400;font-size:30px;line-height:1.05;color:#241c10}
+  .st-set{display:flex;gap:8px}
+  .st-setslab{font:inherit;font-family:var(--display);font-weight:400;font-size:18px;color:#241c10;background:#fff;
+              border:3px solid #241c10;border-radius:16px 20px 14px 22px;padding:7px 14px;cursor:pointer}
+  .st-setslab.on{background:var(--gold);box-shadow:0 4px 0 #241c10}
+  .st-stage{position:relative;height:440px;border:3px solid #241c10;border-radius:28px 34px 26px 36px;
+            background:radial-gradient(120% 90% at 50% 112%, #ffe3b4 0%, #fffaf1 62%)}
+  .st-stage .ob{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%)}
+  .st-stage .ob-persp{width:334px;height:400px}
+  .st-cap{position:absolute;left:22px;top:18px;max-width:46%}
+  .st-rung{display:inline-block;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+           color:#241c10;background:#fff;border:2px solid #241c10;border-radius:8px;padding:3px 8px;transform:rotate(-1.6deg)}
+  .st-name{margin:8px 0 2px;font-family:var(--display);font-weight:400;font-size:34px;line-height:1;color:#241c10}
+  .st-verb{margin:0;font-size:16px;color:#4a3c26}
+  .st-sendwrap{position:absolute;right:20px;bottom:18px;display:flex;flex-direction:column;align-items:flex-end;gap:12px;z-index:4}
+  .st-orb{font-family:var(--display);font-weight:400;font-size:19px;color:#12252b;width:104px;height:104px;border-radius:50%;
+          border:2px solid rgba(255,255,255,.85);cursor:pointer;
+          background:linear-gradient(160deg, rgba(255,255,255,.68), rgba(214,246,255,.42));
+          backdrop-filter:blur(12px) saturate(1.3);-webkit-backdrop-filter:blur(12px) saturate(1.3);
+          box-shadow:0 12px 26px rgba(20,30,40,.20), inset 0 1px 0 rgba(255,255,255,.9)}
+  .st-orb:hover{background:linear-gradient(160deg, rgba(255,255,255,.85), rgba(198,244,255,.6))}
+  .st-panel{width:272px;background:rgba(255,255,255,.58);border:1px solid rgba(255,255,255,.8);border-radius:20px;
+            padding:12px 13px;backdrop-filter:blur(16px) saturate(1.35);-webkit-backdrop-filter:blur(16px) saturate(1.35);
+            box-shadow:0 16px 34px rgba(24,34,44,.16)}
+  .st-panel-kick{display:block;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#2b4650;margin-bottom:8px}
+  .st-players{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+  .st-player{font:inherit;font-size:16px;font-weight:700;text-align:left;color:#14343d;background:rgba(255,255,255,.72);
+             border:1px solid rgba(20,80,96,.14);border-radius:12px;padding:8px 11px;cursor:pointer;display:flex;
+             justify-content:space-between;gap:10px;align-items:center}
+  .st-player.on{background:#12252b;color:#eafcff;border-color:#12252b}
+  .st-player i{font-style:normal;font-size:13px;font-weight:800;letter-spacing:.06em;color:#5d7f88}
+  .st-player.on i{color:var(--green)}
+  .st-dot{width:10px;height:10px;border-radius:50%;flex:none}
+  .st-go{font-family:var(--display);font-weight:400;font-size:18px;color:#12252b;width:100%;border:0;border-radius:14px;
+         padding:9px 12px;cursor:pointer;background:linear-gradient(100deg, var(--green), var(--cyan))}
+  .st-sent{padding:2px 0 4px}
+  .st-sent-kick{display:inline-block;font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+                color:#0b3b22;background:var(--green);border-radius:8px;padding:3px 8px}
+  .st-sent-line{margin:9px 0 3px;font-size:17px;font-weight:800;color:#12252b}
+  .st-sent-load{margin:0 0 10px;font-size:14px;color:#3d5a61}
+  .st-again{font:inherit;font-size:15px;font-weight:800;color:#12252b;background:rgba(255,255,255,.8);border:0;
+            border-radius:12px;padding:8px 12px;cursor:pointer;width:100%}
+  .st-strip{display:flex;gap:10px;margin-top:16px;overflow-x:auto;padding:10px 4px 6px}
+  .st-slab{flex:1 1 0;min-width:132px;background:#fff;border:3px solid #241c10;border-radius:16px 22px 14px 24px;
+           padding:8px 9px 6px;cursor:pointer;transform:rotate(-1.4deg);text-align:left;
+           box-shadow:0 5px 0 rgba(36,28,16,.85)}
+  .st-slab:nth-child(even){transform:rotate(1.5deg)}
+  .st-slab.on{background:var(--gold);transform:rotate(0) scale(1.06);box-shadow:0 6px 0 #241c10}
+  .st-slab-num{display:block;font-size:13px;font-weight:800;letter-spacing:.1em;color:#6a5637}
+  .st-slab.on .st-slab-num{color:#3a2c12}
+  .st-slab-name{display:block;font-family:var(--display);font-weight:400;font-size:17px;line-height:1.05;color:#241c10}
+  .st-slab-thumb{display:block;height:52px;margin-top:2px}
+  .st-slab-thumb img{height:100%;margin:0 auto;object-fit:contain;display:block}
+  .st-sheet{margin-top:16px;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.85);border-radius:22px;
+            padding:14px 16px 16px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+            box-shadow:0 14px 30px rgba(24,34,44,.14)}
+  .st-grab{display:block;width:54px;height:5px;border-radius:3px;background:rgba(18,37,43,.25);margin:0 auto 12px}
+  .st-slot{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:start;padding:9px 0;
+           border-top:1px solid rgba(18,37,43,.12)}
+  .st-slot:first-of-type{border-top:0}
+  .st-slot-title{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#2b4650;padding-top:5px}
+  .st-chips{display:flex;flex-wrap:wrap;gap:7px}
+  .st-chip{font:inherit;font-size:15px;font-weight:700;color:#14343d;background:rgba(255,255,255,.72);
+           border:1px solid rgba(20,80,96,.16);border-radius:999px;padding:6px 13px;cursor:pointer}
+  .st-chip.on{background:#12252b;color:#eafcff;border-color:#12252b}
+  .st-hint{margin:12px 0 0;font-size:14px;color:#6a5637}
+  .st-summary{margin-top:14px;font-size:15px;font-weight:700;color:#241c10;background:rgba(255,255,255,.7);
+              border:2px dashed #241c10;border-radius:14px;padding:8px 12px}
+
+  /* ================= FAMILY 2: LADDER (editoriale) ================= */
+  .ld{background:#fbf8f1;color:#17150f;font-family:var(--body)}
+  .ld-cols{display:grid;grid-template-columns:1.5fr 1fr}
+  .ld-col{padding:22px 24px 26px;min-width:0}
+  .ld-desk{padding:22px 24px 26px;border-left:1px solid #ded6c4;background:#f7f3e9;min-width:0}
+  .ld-kick{display:block;font-size:13px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:#e2562a}
+  .ld-title{margin:6px 0 4px;font-family:var(--display);font-weight:400;font-size:38px;line-height:1;color:#17150f}
+  .ld-standfirst{margin:0 0 4px;font-size:17px;line-height:1.5;color:#4b463a;max-width:60ch}
+  .ld-sets{margin:12px 0 0;display:flex;gap:16px}
+  .ld-set{font:inherit;font-size:14px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#7a7364;
+          background:none;border:0;border-bottom:2px solid transparent;padding:0 0 2px;cursor:pointer}
+  .ld-set.on{color:#17150f;border-bottom-color:#e2562a}
+  .ld-rungs{list-style:none;margin:14px 0 0;padding:0}
+  .ld-rung{border-top:1px solid #ded6c4;padding:12px 0 13px;display:grid;grid-template-columns:52px 1fr auto;gap:14px;
+           cursor:pointer;align-items:start}
+  .ld-rung:last-child{border-bottom:1px solid #ded6c4}
+  .ld-rung.on{background:#fff7ea}
+  .ld-num{font-size:15px;font-weight:800;letter-spacing:.08em;color:#8d8574;padding-top:6px}
+  .ld-rung.on .ld-num{color:#e2562a}
+  .ld-rungname{margin:0;font-family:var(--display);font-weight:400;font-size:26px;line-height:1.08;color:#17150f}
+  .ld-rung.on .ld-rungname{color:#c8350a}
+  .ld-line{margin:3px 0 0;font-size:16px;line-height:1.5;color:#4b463a}
+  .ld-sig{margin:9px 0 0;font-size:16px;line-height:1.55;color:#26231c;border-left:3px solid #e2562a;padding-left:12px;max-width:64ch}
+  .ld-meta{margin:8px 0 0;font-size:14px;color:#6f695c}
+  .ld-mark{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#e2562a;
+           border:1px solid #e2562a;border-radius:2px;padding:3px 7px;white-space:nowrap}
+  .ld-rung:not(.on) .ld-mark{visibility:hidden}
+  .ld-plate{width:236px;height:290px;margin:14px auto 30px;position:relative}
+  .ld-plate .ob-persp{width:236px;height:290px}
+  .ld-deskhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:2px solid #17150f;
+               padding-bottom:7px}
+  .ld-deskname{margin:0;font-family:var(--display);font-weight:400;font-size:25px;line-height:1;color:#17150f}
+  .ld-spec{list-style:none;margin:12px 0 0;padding:0}
+  .ld-spec li{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:7px 0;border-bottom:1px solid #e6dfcf;font-size:16px}
+  .ld-spec dt,.ld-spec .k{font-size:13px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#7a7364}
+  .ld-group{border-top:1px solid #ded6c4;padding:11px 0 12px}
+  .ld-group:first-of-type{border-top:0}
+  .ld-grouptitle{font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#17150f}
+  .ld-opts{margin:5px 0 0;font-size:16px;line-height:1.75}
+  .ld-opt{font:inherit;font-size:16px;background:none;border:0;padding:0;cursor:pointer;color:#4b463a;
+          border-bottom:1px solid #b9b0a0}
+  .ld-opt.on{color:#c8350a;border-bottom:2px solid #e2562a;font-weight:800}
+  .ld-sep{color:#b9b0a0}
+  .ld-stock{margin:4px 0 0;font-size:14px;color:#6f695c}
+  .ld-send{border-top:2px solid #17150f;margin-top:16px;padding-top:12px}
+  .ld-players{display:grid;gap:2px;margin:8px 0 12px}
+  .ld-player{font:inherit;font-size:16px;text-align:left;display:flex;gap:10px;align-items:baseline;background:none;border:0;
+             border-bottom:1px solid #e6dfcf;padding:8px 2px;cursor:pointer;color:#26231c}
+  .ld-player .ld-box{width:13px;height:13px;border:1.5px solid #17150f;flex:none;align-self:center}
+  .ld-player.on{font-weight:800;color:#c8350a}
+  .ld-player.on .ld-box{background:#e2562a;border-color:#e2562a}
+  .ld-player i{font-style:normal;font-size:14px;color:#7a7364;margin-left:auto}
+  .ld-go{font:inherit;font-family:var(--display);font-weight:400;font-size:19px;color:#fbf8f1;background:#17150f;border:0;
+         padding:10px 22px;cursor:pointer;letter-spacing:.02em}
+  .ld-stamp{margin-top:14px;border:2px solid #17150f;padding:12px 14px;background:#fff}
+  .ld-stamp b{display:block;font-family:var(--display);font-weight:400;font-size:23px;letter-spacing:.04em;color:#c8350a}
+  .ld-stamp p{margin:6px 0 0;font-size:16px;color:#26231c}
+  .ld-stamp .ld-load{margin:5px 0 0;font-size:14px;color:#6f695c}
+  .ld-again{margin-top:10px;font:inherit;font-size:15px;font-weight:800;background:none;border:0;border-bottom:1px solid #17150f;
+            padding:0 0 1px;cursor:pointer;color:#17150f}
+  .ld-link{font:inherit;font-size:15px;font-weight:800;color:#c8350a;background:none;border:0;border-bottom:1px solid #e2562a;
+           padding:0 0 1px;cursor:pointer;margin-top:12px}
+
+  /* ================= FAMILY 3: BENCH (zen plus broadcast) ================= */
+  .bn{background:#f7f9fb;color:#0e1418;font-family:var(--body);display:grid;grid-template-columns:158px 1fr 328px}
+  .bn-rail{padding:18px 14px;border-right:1px solid #e2e8ef;background:#f7f9fb}
+  .bn-rail-r{padding:18px 18px 22px;border-left:1px solid #e2e8ef;background:#fff;border-top:0}
+  .bn-kick{display:block;font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#8494a6;margin-bottom:8px}
+  .bn-step{width:100%;display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #dbe3ec;border-radius:3px;
+           padding:7px 8px;margin-bottom:5px;cursor:pointer;font:inherit;font-size:16px;text-align:left;color:#0e1418}
+  .bn-step .bn-num{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.02em;min-width:15px}
+  .bn-step .bn-rname{font-size:13px;color:#4a5a6b;line-height:1.25}
+  .bn-step.on{border-color:#2f5aff;box-shadow:inset 3px 0 0 #ff2d78}
+  .bn-step.on .bn-num{color:#0e1418}
+  .bn-step.on .bn-rname{color:#0e1418;font-weight:800}
+  .bn-mid{position:relative;padding:26px 18px 30px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+          min-height:520px;background:#fcfdfe}
+  .bn-mid .ob{width:100%}
+  .bn-mid .ob-persp{width:264px;height:322px;margin-top:6px}
+  .bn-chip{margin-top:30px;font-size:15px;font-weight:700;color:#22303c;background:#fff;border:1px solid #e6ebf1;
+           border-radius:999px;padding:6px 15px;box-shadow:0 4px 12px rgba(18,30,44,.06)}
+  .bn-quiet{margin:10px 0 0;font-size:14px;color:#8494a6;letter-spacing:.02em}
+  .bn-hint{margin:16px 0 0;font-size:13px;color:#a3b1bf}
+  .bn-head{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;padding-bottom:9px;border-bottom:2px solid #0e1418}
+  .bn-head h3{margin:0;font-family:var(--display);font-weight:400;font-size:24px;line-height:1;color:#0e1418}
+  .bn-count{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;color:#0e1418}
+  .bn-count small{font-size:14px;font-weight:800;color:#8494a6}
+  .bn-sets{display:flex;margin:12px 0 0;border:1px solid #dbe3ec;border-radius:3px;overflow:hidden}
+  .bn-set{flex:1;font:inherit;font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#fff;
+          border:0;border-right:1px solid #dbe3ec;padding:8px 4px;cursor:pointer;color:#4a5a6b}
+  .bn-set:last-child{border-right:0}
+  .bn-set.on{background:#0e1418;color:#fff}
+  .bn-rows{margin-top:14px}
+  .bn-row{border-top:1px solid #e6ebf1;padding:9px 0 10px}
+  .bn-row:first-child{border-top:0}
+  .bn-rowhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .bn-rowk{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8494a6}
+  .bn-rowv{font-size:16px;font-weight:700;color:#0e1418;text-align:right}
+  .bn-seg{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+  .bn-segbtn{font:inherit;font-size:14px;font-weight:700;background:#fff;border:1px solid #dbe3ec;border-radius:3px;
+             padding:5px 9px;cursor:pointer;color:#3d4c5c;font-variant-numeric:tabular-nums}
+  .bn-segbtn.on{border-color:#2f5aff;background:#f2f5ff;color:#10233f;box-shadow:inset 0 -2px 0 #ff2d78}
+  .bn-stock{margin:4px 0 0;font-size:14px;color:#8494a6}
+  .bn-players{display:grid;gap:5px;margin:8px 0 12px}
+  .bn-player{font:inherit;font-size:16px;text-align:left;display:flex;align-items:center;gap:9px;background:#fff;
+             border:1px solid #dbe3ec;border-radius:3px;padding:8px 10px;cursor:pointer;color:#0e1418}
+  .bn-player .bn-dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .bn-player i{font-style:normal;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;color:#5c6b7c;margin-left:auto}
+  .bn-player.on{border-color:#0e1418;box-shadow:inset 3px 0 0 #2f5aff;background:#f7f9fb}
+  .bn-go{width:100%;font:inherit;font-family:var(--display);font-weight:400;font-size:19px;color:#fff;background:#0e1418;
+         border:0;border-radius:3px;padding:11px 12px;cursor:pointer;letter-spacing:.03em}
+  .bn-sent{border:1px solid #0e1418;border-radius:3px;padding:12px 13px;background:#fff}
+  .bn-sent b{display:block;font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#0b7a4a}
+  .bn-sent .bn-sentline{margin:7px 0 0;font-size:17px;font-weight:800;color:#0e1418}
+  .bn-sent .bn-sentload{margin:4px 0 0;font-size:14px;color:#5c6b7c}
+  .bn-again{margin-top:11px;font:inherit;font-size:15px;font-weight:800;background:none;border:0;border-bottom:1px solid #0e1418;
+            padding:0 0 1px;cursor:pointer;color:#0e1418}
+  .bn-focus{font-size:14px;color:#5c6b7c;margin:0 0 10px}
+
+  /* ---------------- mobile frames: same markup, recomposed --------------- */
+  .frame[data-view="mobile"] .st{padding:12px 12px 14px}
+  .frame[data-view="mobile"] .st-title{font-size:22px}
+  .frame[data-view="mobile"] .st-stage{height:404px;border-radius:22px;display:flex;flex-direction:column;
+            align-items:stretch;padding:14px 14px 0}
+  .frame[data-view="mobile"] .st-cap{position:static;max-width:100%}
+  .frame[data-view="mobile"] .st-stage .ob{position:relative;left:auto;top:auto;transform:none;margin:6px auto 0}
+  .frame[data-view="mobile"] .st-stage .ob-persp{width:196px;height:232px}
+  .frame[data-view="mobile"] .st-name{font-size:24px}
+  .frame[data-view="mobile"] .st-sendwrap{right:10px;bottom:10px}
+  .frame[data-view="mobile"] .st-orb{width:82px;height:82px;font-size:16px}
+  .frame[data-view="mobile"] .st-panel{width:224px}
+  .frame[data-view="mobile"] .st-strip{gap:8px}
+  .frame[data-view="mobile"] .st-slab{min-width:118px;flex:0 0 auto}
+  .frame[data-view="mobile"] .st-slot{grid-template-columns:1fr;gap:5px}
+
+  .frame[data-view="mobile"] .ld-cols{grid-template-columns:1fr}
+  .frame[data-view="mobile"] .ld-desk{border-left:0;border-top:1px solid #ded6c4}
+  .frame[data-view="mobile"] .ld-col,.frame[data-view="mobile"] .ld-desk{padding:16px 14px}
+  .frame[data-view="mobile"] .ld-title{font-size:29px}
+  .frame[data-view="mobile"] .ld-rung{grid-template-columns:34px 1fr;gap:9px}
+  .frame[data-view="mobile"] .ld-mark{grid-column:2;justify-self:start;margin-top:4px}
+  .frame[data-view="mobile"] .ld-rungname{font-size:22px}
+  .frame[data-view="mobile"] .ld-plate{width:170px;height:206px}
+  .frame[data-view="mobile"] .ld-plate .ob-persp{width:170px;height:206px}
+  .frame[data-view="mobile"] .ld-spec li{grid-template-columns:82px 1fr}
+
+  .frame[data-view="mobile"] .bn{grid-template-columns:1fr}
+  .frame[data-view="mobile"] .bn-rail{border-right:0;border-bottom:1px solid #e2e8ef;display:flex;gap:6px;overflow-x:auto;padding:12px 12px}
+  .frame[data-view="mobile"] .bn-rail .bn-kick{display:none}
+  .frame[data-view="mobile"] .bn-step{width:auto;flex:0 0 auto;min-width:74px;margin-bottom:0;flex-direction:column;gap:2px;align-items:flex-start}
+  .frame[data-view="mobile"] .bn-mid{min-height:360px;padding:18px 12px 22px}
+  .frame[data-view="mobile"] .bn-mid .ob-persp{width:216px;height:264px}
+  .frame[data-view="mobile"] .bn-rail-r{border-left:0;border-top:1px solid #e2e8ef;padding:16px 14px 20px}
+</style>
+</head>
+<body>
+
+<header class="cn-bar">
+  <div class="cn-brand">Steam Circuit Padel Pro<span>Racket gallery - UX review console</span></div>
+  <div class="cn-group" id="fam-tabs">
+    <button data-act="family" data-val="stage" class="on">1 Stage</button>
+    <button data-act="family" data-val="ladder">2 Ladder</button>
+    <button data-act="family" data-val="bench">3 Bench</button>
+  </div>
+  <div class="cn-group" id="screen-tabs">
+    <button data-act="screen" data-val="select" class="on">Select</button>
+    <button data-act="screen" data-val="inspect">Inspect</button>
+    <button data-act="screen" data-val="send">Send</button>
+  </div>
+  <div class="cn-group" id="dev-tabs">
+    <button data-act="device" data-val="desktop" class="on">Desktop 1060</button>
+    <button data-act="device" data-val="mobile">Mobile 390</button>
+  </div>
+  <label class="cn-toggle"><input type="checkbox" id="notes-toggle"> design notes</label>
+</header>
+<div class="cn-meta">
+  <span><b>Synthetic</b> every frame is a throwaway sketch, no production code</span>
+  <span><b>Assets</b> real racket front PNGs, CSS 3D orbit is the stand-in for the GLB</span>
+  <span><b>Reduced motion</b> honored: idle spin off, drag still works</span>
+  <span><b>Content source</b> meshy/rackets briefs and art/generated/rackets DESIGN sheets</span>
+</div>
+
+<main class="cn-body">
+
+  <!-- Static skeleton: family section, screen, device slot. Greppable without JS. -->
+  <section class="family" data-family="stage" data-synthetic="true">
+    <div class="screen on" data-screen="select">
+      <div class="slot on" data-device="desktop" data-synthetic="true"></div>
+      <div class="slot" data-device="mobile" data-synthetic="true"></div>
+    </div>
+    <div class="screen" data-screen="inspect">
+      <div class="slot" data-device="desktop" data-synthetic="true"></div>
+      <div class="slot" data-device="mobile" data-synthetic="true"></div>
+    </div>
+    <div class="screen" data-screen="send">
+      <div class="slot" data-device="desktop" data-synthetic="true"></div>
+      <div class="slot" data-device="mobile" data-synthetic="true"></div>
+    </div>
+  </section>
+
+  <section class="family" data-family="ladder" data-synthetic="true" hidden>
+    <div class="screen on" data-screen="select">
+      <div class="slot on" data-device="desktop" data-synthetic="true"></div>
+      <div class="slot" data-device="mobile" data-synthetic="true"></div>
+    </div>
+    <div class="screen" data-screen="inspect">
+      <div class="slot" data-device="desktop" data-synthetic="true"></div>
+      <div class="slot" data-device="mobile" data-synthetic="true"></div>
+    </div>
+    <div class="screen" data-screen="send">
+      <div class="slot" data-device="desktop" data-synthetic="true"></div>
+      <div class="slot" data-device="mobile" data-synthetic="true"></div>
+    </div>
+  </section>
+
+  <section class="family" data-family="bench" data-synthetic="true" hidden>
+    <div class="screen on" data-screen="select">
+      <div class="slot on" data-device="desktop" data-synthetic="true"></div>
+      <div class="slot" data-device="mobile" data-synthetic="true"></div>
+    </div>
+    <div class="screen" data-screen="inspect">
+      <div class="slot" data-device="desktop" data-synthetic="true"></div>
+      <div class="slot" data-device="mobile" data-synthetic="true"></div>
+    </div>
+    <div class="screen" data-screen="send">
+      <div class="slot" data-device="desktop" data-synthetic="true"></div>
+      <div class="slot" data-device="mobile" data-synthetic="true"></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  /* ============ shared content: grounded in the racket briefs and DESIGN sheets ============ */
+  var SETS = {
+    steampunk: {
+      id:'steampunk', name:'Steampunk', kicker:'Serie Steampunk',
+      rungs:[
+        { n:1, id:'sfiato', name:'Lo Sfiato', verb:'sfiata', origin:'Caldera Titano', glow:'un filo di vapore',
+          accent:'#1aff8a', grip:'Nastro vulcanizzato', bed:'Lamiera forata', special:'Sfiato',
+          specialDesc:'una boccata di vapore maschera la direzione del colpo per mezzo tempo',
+          material:'Acciaio di recupero battuto su anima di faggio, rivetti spaiati, valvola in ottone sul ponte',
+          signature:'La valvola sfiatata a meta carica copre la direzione del colpo per mezzo tempo. Il primo speciale della carriera.' },
+        { n:2, id:'scatto', name:'Lo Scatto', verb:'ticchetta', origin:'Fabbrica a Orologeria', glow:'un freddo bagliore',
+          accent:'#00e5ff', grip:'Pelle cerata', bed:'Lamiera brunita', special:'Tic',
+          specialDesc:'tre colpi puliti caricano il cricchetto e regalano una micro carica',
+          material:'Acciaio scuro lucido, fissaggi in ottone, pila di ingranaggi a cricchetto nella gola',
+          signature:'Tre colpi puliti caricano il cricchetto e regalano una micro carica, senza sprecare il metro.' },
+        { n:3, id:'campanone', name:'Il Campanone', verb:'rintocca', origin:'Officina Vapore', glow:'un luccichio caldo',
+          accent:'#ffcc00', grip:'Pelle e filo metallico', bed:'Bronzo inciso', special:'Rintocco',
+          specialDesc:'tutto l armonico accumulato si spende in un unico rintocco',
+          material:'Bronzo campanario in una sola colata, archi concentrici incisi, gola a bocca di campana',
+          signature:'I colpi al centro suonano una nota vera e accumulano armonici; lo speciale spende tutto lo stack in un rintocco.' },
+        { n:4, id:'novilunio', name:'Il Novilunio', verb:'svanisce', origin:'Santuario Abissale', glow:'una corona sottile',
+          accent:'#00e5ff', grip:'Pelle nera, ghiera d oro', bed:'Vetro lunare nero', special:'Sparizione',
+          specialDesc:'in carica la scia della palla corre scura e non si legge',
+          material:'Disco di vetro specchiato annerito, corona ciano sottile, oro vecchio trattenuto',
+          signature:'In carica la scia della palla corre scura: gli avversari capiscono dove e andata quando atterra.' },
+        { n:5, id:'orsa-maggiore', name:'L Orsa Maggiore', verb:'ascende', origin:'Orrery Celeste', glow:'luce di stelle',
+          accent:'#ffcc00', grip:'Pelle scura', bed:'Cielo notturno', special:'Pioggia di Stelle',
+          specialDesc:'sette stelle in un solo scambio, poi lo smash sfonda ogni speciale',
+          material:'Ottone e oro bruniti, sette stelle su bracci sottili, anello armillare al manico',
+          signature:'Ogni colpo accende una stella; sette stelle in un solo scambio chiamano una Pioggia di Stelle che brucia una costellazione sul campo.' }
+      ]
+    },
+    country: {
+      id:'country', name:'Country', kicker:'Serie Country',
+      rungs:[
+        { n:1, id:'capezza', name:'La Capezza', verb:'tiene', origin:'La fattoria', glow:'niente, corda sfilacciata',
+          accent:'#1aff8a', grip:'Corda a tre capi', bed:'Tela di sacco', special:'Tenuta',
+          specialDesc:'la carica tiene la linea e decade la meta mentre ti muovi',
+          material:'Cerchio di filo di recinzione steso su tela di sacco, doghe di frassino, corda a tre capi',
+          signature:'La capezza non tira: la carica tiene la linea e decade la meta mentre ti muovi.' },
+        { n:2, id:'bottone', name:'Il Bottone', verb:'scatta', origin:'La domenica', glow:'un solo lustro di perla',
+          accent:'#00e5ff', grip:'Manica inamidata', bed:'Bottoni di madreperla', special:'Scatto Secco',
+          specialDesc:'rilascia nel battito finale e il colpo parte senza preparazione',
+          material:'Denim indaco doppiato, arco di bottoni di madreperla, collo a piega, manica inamidata',
+          signature:'I bottoni scattano all ultimo istante: rilascia la carica nel battito finale e il colpo parte senza preparazione.' },
+        { n:3, id:'marchio', name:'Il Marchio', verb:'marchia', origin:'La forgia', glow:'ferro ciliegia in carica',
+          accent:'#ff4b6e', grip:'Latigo bruciato', bed:'Ferro punzonato', special:'Marchiatura',
+          specialDesc:'lo smash lascia un segno rovente che nessuno attraversa due volte',
+          material:'Ferro battuto nero, fori punzonati a formare il marchio, gola piegata come il glifo',
+          signature:'In carica il marchio va ciliegia: lo smash scende rovente e lascia sul campo un segno che nessuno attraversa due volte.' },
+        { n:4, id:'alambicco', name:'L Alambicco', verb:'versa', origin:'L alambicco', glow:'il rame scalda',
+          accent:'#ffcc00', grip:'Pelle con filo di rame', bed:'Rame battuto', special:'Distillato',
+          specialDesc:'la palla esce dal collo di cigno tremando come spirito versato',
+          material:'Rame battuto a bolle, saldature a vista, file di fori del piatto di mosto, collo di cigno piegato in gola',
+          signature:'Gli scambi lunghi scaldano il rame: lo speciale esce dal collo di cigno tremando come spirito versato, dritto attraverso la risposta.' },
+        { n:5, id:'bisonte', name:'Il Bisonte Bianco', verb:'travolge', origin:'Le pianure', glow:'chiaro, calmo, sacro',
+          accent:'#f6f7fb', grip:'Pelle chiara, banda scura', bed:'Osso chiaro', special:'Carica',
+          specialDesc:'sotto match point la mandria carica e ogni colpo non torna',
+          material:'Testa color osso, fori a forma di zoccolo, gola a corno, ciuffi chiari sul bordo alto',
+          signature:'Una volta per partita, sotto match point, la mandria carica: per uno scambio ogni colpo che colpisci e irrintracciabile.' }
+      ]
+    }
+  };
+
+  var GRIPS = [
+    { id:'tape', name:'Nastro vulcanizzato', src:'Lo Sfiato' },
+    { id:'leather', name:'Pelle cerata', src:'Lo Scatto' },
+    { id:'wire', name:'Pelle e filo', src:'Il Campanone' },
+    { id:'rope', name:'Corda a tre capi', src:'La Capezza' },
+    { id:'latigo', name:'Latigo bruciato', src:'Il Marchio' }
+  ];
+  var BEDS = [
+    { id:'steel', name:'Lamiera forata', src:'Lo Sfiato' },
+    { id:'copper', name:'Rame battuto', src:'L Alambicco' },
+    { id:'pearl', name:'Bottoni di madreperla', src:'Il Bottone' },
+    { id:'canvas', name:'Tela di sacco', src:'La Capezza' },
+    { id:'bone', name:'Osso chiaro', src:'Il Bisonte Bianco' },
+    { id:'moon', name:'Vetro lunare nero', src:'Il Novilunio' }
+  ];
+  var SPECIALS = {
+    steampunk: [
+      { id:'own' },
+      { id:'volano', name:'Il Volano', desc:'la lunghezza dello scambio alimenta la potenza dello smash' },
+      { id:'pallasite', name:'La Pallasite', desc:'le finestre di olivina mostrano l asse di rotazione della palla' }
+    ],
+    country: [
+      { id:'own' },
+      { id:'banjo', name:'Il Banjo', desc:'gli scambi suonano accordi e un accordo pieno carica lo speciale' },
+      { id:'batea', name:'La Batea', desc:'i colpi carichi setacciano polvere d oro che deriva sul campo' }
+    ]
+  };
+
+  var PLAYERS = [
+    { id:'maestro', name:'Il Maestro', role:'Tecnica', line:'Precisione millimetrica e lettura di gioco superiore.', num:'Controllo 1.28', dot:'#00e5ff' },
+    { id:'steamer', name:'Lo Steamer', role:'Potenza', line:'Smash devastanti e colpi wall che sfondano ogni difesa.', num:'Potenza 1.24', dot:'#ff8c00' },
+    { id:'volpe', name:'La Volpe', role:'', line:'Camicia avorio con finiture oro, occhiali sulla fronte.', num:'', dot:'#ffcc00' },
+    { id:'colosso', name:'Il Colosso', role:'Potenza', line:'Una potenza bruta che piega il vetro ad ogni impatto.', num:'Potenza 1.32', dot:'#ffd54a' }
+  ];
+
+  /* ============ state ============ */
+  var state = {
+    family:'stage', screen:'select', device:'desktop',
+    set:'steampunk',
+    pick:{ steampunk:'sfiato', country:'capezza' },
+    grip:'stock', bed:'stock', special:'own',
+    player:'maestro', sent:false
+  };
+  var orbit = { angle:-16, vel:0, idle:true, dragging:false, lastX:0, lastT:0 };
+
+  /* ============ small helpers ============ */
+  function rungOf(setId, id){
+    var list = SETS[setId].rungs;
+    for(var i=0;i<list.length;i++){ if(list[i].id === id) return list[i]; }
+    return list[0];
+  }
+  function curRung(){ return rungOf(state.set, state.pick[state.set]); }
+  function playerById(id){
+    for(var i=0;i<PLAYERS.length;i++){ if(PLAYERS[i].id === id) return PLAYERS[i]; }
+    return PLAYERS[0];
+  }
+  function orbitBlock(r, cls, label){
+    var im = '<img src="assets/rackets/' + r.id + '-front.png" alt="' + r.name + '" draggable="false">';
+    return '<div class="ob ' + cls + '" data-orbit style="--ob-accent:' + r.accent + '">' +
+      '<div class="ob-persp">' +
+        '<div class="plate" data-orbit-plate>' +
+          '<div class="rim"></div>' +
+          '<div class="face front">' + im + '</div>' +
+          '<div class="face back">' + im + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ob-shadow" data-orbit-shadow></div>' +
+      (label ? '<span class="ob-label">' + label + '</span>' : '') +
+    '</div>';
+  }
+  function loadoutPair(){
+    var r = curRung();
+    var g = resolve('grip', r), b = resolve('bed', r), s = resolve('special', r);
+    return 'Presa: ' + g.name + '  /  Faccia: ' + b.name + '  /  Speciale: ' + s.name;
+  }
+  function slotOptions(kind){
+    if(kind === 'grip') return [{ id:'stock' }].concat(GRIPS);
+    if(kind === 'bed') return [{ id:'stock' }].concat(BEDS);
+    return SPECIALS[state.set];
+  }
+  function optLabel(kind, o, r){
+    if(kind === 'special') return o.id === 'own' ? r.special : o.name;
+    if(o.id === 'stock') return kind === 'grip' ? r.grip : r.bed;
+    return o.name;
+  }
+  function resolve(kind, r){
+    var opts = slotOptions(kind), cur = state[kind];
+    for(var i=0;i<opts.length;i++){
+      if(opts[i].id !== cur) continue;
+      var o = opts[i];
+      if(cur === 'stock' || cur === 'own') return { name:optLabel(kind,o,r), marker:'di serie', desc:null };
+      return { name:o.name, marker:'modificato', desc: kind === 'special' ? o.desc : ('da ' + o.src) };
+    }
+    return { name:optLabel(kind,{ id:'stock' },r), marker:'di serie', desc:null };
+  }
+  function playerNote(p){ return p.num ? p.num : 'nessuna riga nel roster'; }
+  function notesFor(family, screen){
+    var t = {
+      stage: {
+        why:'<p><b>Stage thesis.</b> The racket is the hero and the choice is a physical act: a coverflow stage where the selected racket is huge and orbits in the centre, with the rest of the set as an arcade filmstrip of slightly tilted slabs along the bottom. Customising is a glass bottom sheet that never leaves the stage, and Send is the round glass button sitting on the stage itself.</p>',
+        src:'<p>Sources: <code>meshy/rackets/steampunk/brief.md</code>, <code>meshy/rackets/country/brief.md</code>, <code>art/generated/rackets/*/DESIGN.md</code>. Kernel 04 arcade (chunky slabs, cream and tangerine) plus kernel 02 vetro (glass sheet and round send button).</p>'
+      },
+      ladder: {
+        why:'<p><b>Ladder thesis.</b> The five rungs read as a magazine story down the page, separated by hairline rules, with kickers and a standfirst. There is no card grid and no carousel: you read the ladder, click a rung and a side column becomes the inspect and send desk with the spec as a printed table.</p>',
+        src:'<p>Source: the arc table in <code>art/generated/rackets/*/DESIGN.md</code> (glow, finish, verb, comes from). Kernel 01 editoriale (off-white paper, near-black ink, one persimmon accent, hairlines).</p>'
+      },
+      bench: {
+        why:'<p><b>Bench thesis.</b> Loadout first: a tiny broadcast filmstrip of numbered steps on the left, a quiet zen stage in the middle with a single small chip, and the loadout and send rail on the right. Customise happens inline in that rail, never as a modal, so the loadout is always in view while you change it.</p>',
+        src:'<p>Sources: brief tiers 1 to 5 plus the bench alternates in the DESIGN sheets (Il Volano, La Pallasite, Il Banjo, La Batea). Kernel 05 zen (almost no chrome) plus kernel 03 broadcast (segmented boxes, tabular numerals, magenta and blue edge).</p>'
+      }
+    }[family];
+    var per = {
+      select:'<p><b>Select.</b> Choosing only. Inspect and customize stay secondary here: the rung list, filmstrip or step list carries the decision.</p>',
+      inspect:'<p><b>Inspect.</b> The 3D stand-in plus the three customise slots (grip tape, string bed, special). The stand-in is a CSS 3D plate driven by the real front PNG: drag to rotate, idle spin until touched.</p>',
+      send:'<p><b>Send.</b> Pick a teammate and send the loadout. Confirmation names the player and the racket, and repeats the loadout so the receiver knows what is coming.</p>'
+    }[screen];
+    return '<div class="notes">' + t.why + per + t.src +
+      '<p>Honesty: La Volpe has no gameplay row in the reference roster yet (art lane only), so this console gives her no role and no stat line instead of inventing numbers.</p></div>';
+  }
+
+  /* ============ family 1: stage (arcade plus vetro) ============ */
+  function stageSetSwitch(){
+    var out = [];
+    for(var i=0;i<2;i++){
+      var s = i === 0 ? SETS.steampunk : SETS.country;
+      out.push('<button class="st-setslab' + (state.set === s.id ? ' on' : '') + '" data-act="set" data-val="' + s.id + '">' + s.name + '</button>');
+    }
+    return '<div class="st-set">' + out.join('') + '</div>';
+  }
+  function stageSlots(){
+    var r = curRung(), out = [];
+    var kinds = [ { k:'grip', t:'Grip tape' }, { k:'bed', t:'String bed' }, { k:'special', t:'Special' } ];
+    for(var i=0;i<kinds.length;i++){
+      var kind = kinds[i].k, opts = slotOptions(kind), chips = [];
+      for(var j=0;j<opts.length;j++){
+        var on = state[kind] === opts[j].id;
+        chips.push('<button class="st-chip' + (on ? ' on' : '') + '" data-act="slot" data-kind="' + kind + '" data-val="' + opts[j].id + '">' +
+          optLabel(kind, opts[j], r) + '</button>');
+      }
+      out.push('<div class="st-slot"><span class="st-slot-title">' + kinds[i].t + '</span><div class="st-chips">' + chips.join('') + '</div></div>');
+    }
+    return out.join('');
+  }
+  function stageSheet(){
+    return '<div class="st-sheet"><span class="st-grab"></span>' +
+      '<span class="st-slot-title">Messa a punto</span>' + stageSlots() + '</div>';
+  }
+  function stageStrip(){
+    var list = SETS[state.set].rungs, out = [];
+    for(var i=0;i<list.length;i++){
+      var r = list[i], on = r.id === state.pick[state.set];
+      out.push('<button class="st-slab' + (on ? ' on' : '') + '" data-act="pick" data-id="' + r.id + '">' +
+        '<span class="st-slab-num">Piolo ' + r.n + '</span>' +
+        '<span class="st-slab-name">' + r.name + '</span>' +
+        '<span class="st-slab-thumb"><img src="assets/rackets/' + r.id + '-front.png" alt="" draggable="false"></span>' +
+      '</button>');
+    }
+    return '<div class="st-strip">' + out.join('') + '</div>';
+  }
+  function stagePlayers(){
+    var out = [];
+    for(var i=0;i<PLAYERS.length;i++){
+      var p = PLAYERS[i], on = state.player === p.id;
+      out.push('<button class="st-player' + (on ? ' on' : '') + '" data-act="player" data-val="' + p.id + '">' +
+        '<span class="st-dot" style="background:' + p.dot + '"></span>' +
+        '<span>' + p.name + '</span>' +
+        '<i>' + (p.role ? p.role : 'ospite') + '</i></button>');
+    }
+    return out.join('');
+  }
+  function stageSend(r){
+    var inner = '';
+    if(state.sent){
+      var p = playerById(state.player);
+      inner = '<div class="st-panel st-panel-sent">' +
+        '<span class="st-sent-kick">Inviata</span>' +
+        '<p class="st-sent-line">' + p.name + ' riceve ' + r.name + '</p>' +
+        '<p class="st-sent-load">' + loadoutPair() + '</p>' +
+        '<button class="st-again" data-act="again">Invia di nuovo</button></div>';
+    } else if(state.screen === 'send'){
+      inner = '<div class="st-panel">' +
+        '<span class="st-panel-kick">Spedisci a</span>' +
+        '<div class="st-players">' + stagePlayers() + '</div>' +
+        '<button class="st-go" data-act="send">Conferma invio</button></div>';
+    }
+    var label = state.screen === 'send' ? (state.sent ? 'Fatto' : 'Invia') : 'Invia';
+    return '<div class="st-sendwrap">' + inner +
+      '<button class="st-orb" data-act="send" aria-label="Invia il racket a un compagno">' + label + '</button></div>';
+  }
+  function stageSlotLabel(){
+    if(state.screen === 'send') return loadoutPair();
+    return state.screen === 'inspect' ? 'Modifica presa, faccia e speciale' : 'Trascina per ruotare';
+  }
+  function stageFrame(device, screen){
+    var r = curRung();
+    var html = '<div class="st">' +
+      '<div class="st-top">' +
+        '<div class="st-brand"><span class="st-kick">Steam Circuit Padel Pro</span>' +
+        '<h2 class="st-title">Scegli il racket da battaglia</h2></div>' +
+        stageSetSwitch() +
+      '</div>' +
+      '<div class="st-stage">' +
+        '<div class="st-cap"><span class="st-rung">Piolo ' + r.n + ' di 5</span>' +
+        '<h3 class="st-name">' + r.name + '</h3>' +
+        '<p class="st-verb">' + r.verb + ', da ' + r.origin + '</p></div>' +
+        orbitBlock(r, '', '') +
+        stageSend(r) +
+      '</div>' +
+      stageStrip() +
+      (screen === 'inspect' ? stageSheet() : '') +
+      (screen === 'send' ? '' : '<p class="st-summary">' + loadoutPair() + '</p>') +
+      '<p class="st-hint">' + stageSlotLabel() + '</p>' +
+    '</div>';
+    return frame(device, 'stage', html, notesFor('stage', screen));
+  }
+
+  /* ============ family 2: ladder (editoriale) ============ */
+  function ladderSetSwitch(){
+    var out = [];
+    for(var i=0;i<2;i++){
+      var s = i === 0 ? SETS.steampunk : SETS.country;
+      out.push('<button class="ld-set' + (state.set === s.id ? ' on' : '') + '" data-act="set" data-val="' + s.id + '">' + s.kicker + '</button>');
+    }
+    return '<div class="ld-sets">' + out.join('') + '</div>';
+  }
+  function ladderStory(){
+    var list = SETS[state.set].rungs, out = [];
+    for(var i=0;i<list.length;i++){
+      var r = list[i], on = r.id === state.pick[state.set];
+      var body = '<h3 class="ld-rungname">' + r.name + '</h3>' +
+        '<p class="ld-line">' + r.verb + ', ' + r.glow + '. Da ' + r.origin + '.</p>';
+      if(on){
+        body += '<p class="ld-sig">' + r.signature + '</p>' +
+          '<p class="ld-meta">Materiale: ' + r.material + '.</p>' +
+          '<p class="ld-meta">Presa di serie: ' + r.grip + '. Faccia: ' + r.bed + '. Speciale: ' + r.special + '.</p>';
+      }
+      out.push('<li class="ld-rung' + (on ? ' on' : '') + '">' +
+        '<span class="ld-num">' + (r.n < 10 ? '0' + r.n : r.n) + '</span>' +
+        '<div class="ld-body">' + body + '</div>' +
+        '<span class="ld-mark">in prova</span>' +
+      '</li>');
+    }
+    return '<ol class="ld-rungs">' + out.join('') + '</ol>';
+  }
+  function ladderSpec(r, compact){
+    var rows = [
+      ['Serie', SETS[state.set].name],
+      ['Piolo', r.n + ' di 5'],
+      ['Verbo', r.verb],
+      ['Luce', r.glow]
+    ];
+    if(!compact) rows.push(['Origine', r.origin]);
+    var out = [];
+    for(var i=0;i<rows.length;i++){
+      out.push('<li><span class="k">' + rows[i][0] + '</span><span>' + rows[i][1] + '</span></li>');
+    }
+    return '<ul class="ld-spec">' + out.join('') + '</ul>';
+  }
+  function ladderSlotGroups(){
+    var r = curRung(), kinds = [ { k:'grip', t:'Grip tape' }, { k:'bed', t:'String bed' }, { k:'special', t:'Special' } ], out = [];
+    for(var i=0;i<kinds.length;i++){
+      var kind = kinds[i].k, opts = slotOptions(kind), links = [];
+      for(var j=0;j<opts.length;j++){
+        var on = state[kind] === opts[j].id;
+        links.push('<button class="ld-opt' + (on ? ' on' : '') + '" data-act="slot" data-kind="' + kind + '" data-val="' + opts[j].id + '">' +
+          optLabel(kind, opts[j], r) + '</button>');
+        if(j < opts.length - 1) links.push('<span class="ld-sep"> / </span>');
+      }
+      var res = resolve(kind, r);
+      out.push('<div class="ld-group"><span class="ld-grouptitle">' + kinds[i].t + '</span>' +
+        '<p class="ld-opts">' + links.join('') + '</p>' +
+        '<p class="ld-stock">' + res.marker + (res.desc ? ', ' + res.desc : '') + '</p></div>');
+    }
+    return out.join('');
+  }
+  function ladderPlayers(){
+    var out = [];
+    for(var i=0;i<PLAYERS.length;i++){
+      var p = PLAYERS[i], on = state.player === p.id;
+      out.push('<button class="ld-player' + (on ? ' on' : '') + '" data-act="player" data-val="' + p.id + '">' +
+        '<span class="ld-box"></span><span>' + p.name + '</span>' +
+        '<i>' + (p.role ? p.role + ' / ' + p.num : 'ospite, nessuna riga') + '</i></button>');
+    }
+    return out.join('');
+  }
+  function ladderDesk(screen){
+    var r = curRung(), head = '<div class="ld-deskhead"><h3 class="ld-deskname">' + r.name + '</h3>' +
+      '<span class="ld-kick">' + SETS[state.set].name + '</span></div>';
+    var plate = '<div class="ld-plate">' + orbitBlock(r, '', '') + '</div>';
+    if(screen === 'select'){
+      return head + plate + ladderSpec(r, false) +
+        '<p class="ld-stock">Banco di prova. Scegli un piolo per cambiare racket.</p>' +
+        '<button class="ld-link" data-act="screen" data-val="inspect">Apri la messa a punto</button>';
+    }
+    if(screen === 'inspect'){
+      return head + plate + ladderSpec(r, true) + ladderSlotGroups();
+    }
+    if(state.sent){
+      var p = playerById(state.player);
+      return head + ladderSpec(r, true) +
+        '<div class="ld-send"><span class="ld-grouptitle">Spedisci a</span>' +
+        '<div class="ld-players">' + ladderPlayers() + '</div>' +
+        '<div class="ld-stamp"><b>Inviata</b><p>' + p.name + ' riceve <strong>' + r.name + '</strong>.</p>' +
+        '<p class="ld-load">' + loadoutPair() + '</p></div>' +
+        '<button class="ld-again" data-act="again">Invia di nuovo</button></div>';
+    }
+    return head + ladderSpec(r, true) +
+      '<div class="ld-send"><span class="ld-grouptitle">Spedisci a</span>' +
+      '<div class="ld-players">' + ladderPlayers() + '</div>' +
+      '<button class="ld-go" data-act="send">Invia il carico</button></div>';
+  }
+  function ladderFrame(device, screen){
+    var html = '<div class="ld"><div class="ld-cols">' +
+      '<div class="ld-col">' +
+        '<span class="ld-kick">Le cinque speciali</span>' +
+        '<h2 class="ld-title">La scala</h2>' +
+        '<p class="ld-standfirst">Ogni piolo porta un materiale nuovo, una luce nuova e un verbo nuovo. Si legge dall alto verso il basso.</p>' +
+        ladderSetSwitch() + ladderStory() +
+      '</div>' +
+      '<aside class="ld-desk">' + ladderDesk(screen) + '</aside>' +
+    '</div></div>';
+    return frame(device, 'ladder', html, notesFor('ladder', screen));
+  }
+
+  /* ============ family 3: bench (zen plus broadcast) ============ */
+  function benchSteps(){
+    var list = SETS[state.set].rungs, out = [];
+    for(var i=0;i<list.length;i++){
+      var r = list[i], on = r.id === state.pick[state.set];
+      out.push('<button class="bn-step' + (on ? ' on' : '') + '" data-act="pick" data-id="' + r.id + '">' +
+        '<span class="bn-num">' + String(r.n).padStart(2, '0') + '</span>' +
+        '<span class="bn-rname">' + r.name + '</span></button>');
+    }
+    return '<div class="bn-rail"><span class="bn-kick">Piolo</span>' + out.join('') + '</div>';
+  }
+  function benchSetSwitch(){
+    var out = [];
+    for(var i=0;i<2;i++){
+      var s = i === 0 ? SETS.steampunk : SETS.country;
+      out.push('<button class="bn-set' + (state.set === s.id ? ' on' : '') + '" data-act="set" data-val="' + s.id + '">' + s.name + '</button>');
+    }
+    return '<div class="bn-sets">' + out.join('') + '</div>';
+  }
+  function benchRows(screen, r){
+    if(screen === 'select'){
+      return '<div class="bn-rows">' +
+        '<p class="bn-focus">Carico corrente</p>' +
+        '<div class="bn-row"><div class="bn-rowhead"><span class="bn-rowk">Presa</span><span class="bn-rowv">' + resolve('grip', r).name + '</span></div></div>' +
+        '<div class="bn-row"><div class="bn-rowhead"><span class="bn-rowk">Faccia</span><span class="bn-rowv">' + resolve('bed', r).name + '</span></div></div>' +
+        '<div class="bn-row"><div class="bn-rowhead"><span class="bn-rowk">Speciale</span><span class="bn-rowv">' + resolve('special', r).name + '</span></div></div>' +
+        '<button class="bn-segbtn" data-act="screen" data-val="inspect">Metti a punto</button>' +
+      '</div>';
+    }
+    var kinds = [ { k:'grip', t:'Grip tape' }, { k:'bed', t:'String bed' }, { k:'special', t:'Special' } ], out = [];
+    for(var i=0;i<kinds.length;i++){
+      var kind = kinds[i].k, opts = slotOptions(kind), btns = [];
+      for(var j=0;j<opts.length;j++){
+        var on = state[kind] === opts[j].id;
+        btns.push('<button class="bn-segbtn' + (on ? ' on' : '') + '" data-act="slot" data-kind="' + kind + '" data-val="' + opts[j].id + '">' +
+          optLabel(kind, opts[j], r) + '</button>');
+      }
+      var res = resolve(kind, r);
+      out.push('<div class="bn-row"><div class="bn-rowhead"><span class="bn-rowk">' + kinds[i].t + '</span>' +
+        '<span class="bn-rowv">' + res.name + '</span></div>' +
+        '<div class="bn-seg">' + btns.join('') + '</div>' +
+        (res.desc ? '<p class="bn-stock">' + res.desc + '</p>' : '') + '</div>');
+    }
+    return '<div class="bn-rows">' + out.join('') + '</div>';
+  }
+  function benchPlayers(){
+    var out = [];
+    for(var i=0;i<PLAYERS.length;i++){
+      var p = PLAYERS[i], on = state.player === p.id;
+      out.push('<button class="bn-player' + (on ? ' on' : '') + '" data-act="player" data-val="' + p.id + '">' +
+        '<span class="bn-dot" style="background:' + p.dot + '"></span>' +
+        '<span>' + p.name + '</span>' +
+        '<i>' + playerNote(p) + '</i></button>');
+    }
+    return out.join('');
+  }
+  function benchRail(screen, r){
+    var head = state.sent
+      ? '<div class="bn-head"><h3>Inviata</h3><span class="bn-count">' + playerById(state.player).name.charAt(0) + '<small> / 4</small></span></div>'
+      : '<div class="bn-head"><h3>Carico</h3><span class="bn-count">' + r.n + '<small> / 5</small></span></div>';
+    var body = '';
+    if(state.sent){
+      body = '<div class="bn-sent"><b>Confermata</b>' +
+        '<p class="bn-sentline">' + playerById(state.player).name + ' riceve ' + r.name + '</p>' +
+        '<p class="bn-sentload">' + loadoutPair() + '</p>' +
+        '<button class="bn-again" data-act="again">Invia di nuovo</button></div>';
+    } else if(screen === 'send'){
+      body = '<div class="bn-rows"><p class="bn-focus">Compagno</p>' +
+        '<div class="bn-players">' + benchPlayers() + '</div>' +
+        '<button class="bn-go" data-act="send">Invia il carico</button></div>';
+    } else {
+      body = benchRows(screen, r);
+    }
+    return '<div class="bn-rail-r">' + head + benchSetSwitch() + body + '</div>';
+  }
+  function benchMid(screen, r){
+    var quiet = screen === 'inspect'
+      ? 'Grip tape, string bed e speciale si cambiano qui a destra.'
+      : (screen === 'send' ? 'Scrivi a chi lo mandi, il carico resta questo.' : 'Presa, faccia e speciale di serie.');
+    return '<div class="bn-mid">' + orbitBlock(r, '', '') +
+      '<span class="bn-chip">' + r.name + '</span>' +
+      '<p class="bn-quiet">' + loadoutPair() + '</p>' +
+      '<p class="bn-hint">' + quiet + ' Trascina il racket per ruotarlo.</p></div>';
+  }
+  function benchFrame(device, screen){
+    var r = curRung();
+    var html = '<div class="bn">' + benchSteps() + benchMid(screen, r) + benchRail(screen, r) + '</div>';
+    return frame(device, 'bench', html, notesFor('bench', screen));
+  }
+
+  /* ============ frame wrapper, renderers, render loop ============ */
+  function frame(device, family, inner, notes){
+    var view = device === 'mobile' ? 'mobile' : 'desktop';
+    var width = view === 'mobile' ? '390px' : '1060px';
+    var titles = { stage:'Stage / coverflow', ladder:'Ladder / magazine', bench:'Bench / loadout first' };
+    return '<div class="frame ' + (view === 'mobile' ? 'mob' : 'desk') + '" data-view="' + view + '" data-family-view="' + family + '" data-synthetic="true">' +
+      '<div class="frame-head"><span class="synth-tag">SYNTHETIC</span>' +
+      '<span class="frame-meta">' + titles[family] + ' / ' + view + ' ' + width + '</span></div>' +
+      '<div class="frame-body">' + inner + '</div>' + notes + '</div>';
+  }
+  var FAMILIES = { stage:stageFrame, ladder:ladderFrame, bench:benchFrame };
+
+  function renderKey(){
+    return [state.family, state.screen, state.device, state.set, state.pick[state.set],
+            state.grip, state.bed, state.special, state.player, state.sent ? 1 : 0].join('|');
+  }
+  function markTabs(sel, attr, val){
+    var btns = document.querySelectorAll(sel + ' button');
+    for(var i=0;i<btns.length;i++){ btns[i].classList.toggle('on', btns[i].getAttribute(attr) === val); }
+  }
+  function render(){
+    var secs = document.querySelectorAll('.family'), key = renderKey();
+    for(var i=0;i<secs.length;i++){
+      var sec = secs[i], famOn = sec.getAttribute('data-family') === state.family;
+      sec.hidden = !famOn;
+      var screens = sec.querySelectorAll('.screen');
+      for(var j=0;j<screens.length;j++){
+        var sc = screens[j], scrOn = sc.getAttribute('data-screen') === state.screen;
+        sc.classList.toggle('on', scrOn);
+        var slots = sc.querySelectorAll('.slot');
+        for(var k=0;k<slots.length;k++){
+          var slot = slots[k], devOn = slot.getAttribute('data-device') === state.device;
+          slot.classList.toggle('on', devOn);
+          if(famOn && scrOn && devOn){
+            /* fill key includes the device (P2: a boolean guard would never re-render on device switch) */
+            if(slot.getAttribute('data-key') !== key){
+              slot.setAttribute('data-key', key);
+              slot.innerHTML = FAMILIES[state.family](state.device, state.screen);
+            }
+          } else if(slot.innerHTML !== ''){
+            slot.innerHTML = '';
+            slot.setAttribute('data-key', '');
+          }
+        }
+      }
+    }
+    markTabs('#fam-tabs', 'data-val', state.family);
+    markTabs('#screen-tabs', 'data-val', state.screen);
+    markTabs('#dev-tabs', 'data-val', state.device);
+  }
+
+  /* ============ 3D stand-in: drag to rotate, slow idle spin, reduced motion honored ============ */
+  function applyOrbit(){
+    var plates = document.querySelectorAll('[data-orbit-plate]');
+    for(var i=0;i<plates.length;i++){
+      plates[i].style.transform = 'rotateY(' + orbit.angle.toFixed(2) + 'deg)';
+    }
+    var shadows = document.querySelectorAll('[data-orbit-shadow]');
+    var k = Math.abs(Math.cos(orbit.angle * Math.PI / 180));
+    for(var j=0;j<shadows.length;j++){
+      shadows[j].style.transform = 'scaleX(' + (0.55 + 0.45 * k).toFixed(3) + ')';
+      shadows[j].style.opacity = (0.30 + 0.34 * k).toFixed(3);
+    }
+  }
+  var lastT = 0;
+  function loop(t){
+    var dt = lastT ? Math.min(48, t - lastT) : 16;
+    lastT = t;
+    if(!orbit.dragging){
+      if(Math.abs(orbit.vel) > 0.02){
+        orbit.angle += orbit.vel * dt / 16;
+        orbit.vel *= Math.pow(0.94, dt / 16);
+        if(Math.abs(orbit.vel) <= 0.02){ orbit.vel = 0; }
+      } else if(orbit.idle && !REDUCED){
+        orbit.angle += dt * 0.011;   /* slow idle spin, about 11 deg per second */
+      }
+    }
+    applyOrbit();
+    window.requestAnimationFrame(loop);
+  }
+  function closest(el, sel){
+    while(el && el.nodeType === 1){
+      if(el.matches && el.matches(sel)) return el;
+      el = el.parentNode;
+    }
+    return null;
+  }
+  document.addEventListener('pointerdown', function(e){
+    var area = closest(e.target, '.ob-persp');
+    if(!area) return;
+    orbit.dragging = true;
+    orbit.idle = false;
+    orbit.vel = 0;
+    orbit.lastX = e.clientX;
+    orbit.lastT = (window.performance && performance.now) ? performance.now() : Date.now();
+    area.classList.add('grabbing');
+    if(area.setPointerCapture){ area.setPointerCapture(e.pointerId); }
+    e.preventDefault();
+  });
+  document.addEventListener('pointermove', function(e){
+    if(!orbit.dragging) return;
+    var dx = e.clientX - orbit.lastX;
+    orbit.lastX = e.clientX;
+    orbit.angle += dx * 0.55;
+    var v = dx * 0.55;
+    if(v > 6) v = 6;
+    if(v < -6) v = -6;
+    orbit.vel = v;
+  });
+  function endDrag(){
+    if(!orbit.dragging) return;
+    orbit.dragging = false;
+    /* let inertia decay in the loop, then the idle spin resumes (never under reduced motion) */
+    orbit.idle = false;
+    var areas = document.querySelectorAll('.ob-persp.grabbing');
+    for(var i=0;i<areas.length;i++){ areas[i].classList.remove('grabbing'); }
+  }
+  document.addEventListener('pointerup', endDrag);
+  document.addEventListener('pointercancel', endDrag);
+  document.addEventListener('pointerleave', endDrag);
+
+  /* ============ one delegated click handler for chrome and product controls ============ */
+  document.addEventListener('click', function(e){
+    var el = closest(e.target, '[data-act]');
+    if(!el) return;
+    var act = el.getAttribute('data-act');
+    var val = el.getAttribute('data-val');
+    if(act === 'family'){ state.family = val; }
+    else if(act === 'screen'){ state.screen = val; state.sent = false; }
+    else if(act === 'device'){ state.device = val; }
+    else if(act === 'set'){
+      if(state.set !== val){
+        state.set = val;
+        state.grip = 'stock'; state.bed = 'stock'; state.special = 'own';
+        state.sent = false;
+      }
+    }
+    else if(act === 'pick'){
+      if(state.pick[state.set] !== el.getAttribute('data-id')){
+        state.pick[state.set] = el.getAttribute('data-id');
+        state.grip = 'stock'; state.bed = 'stock'; state.special = 'own';
+        state.sent = false;
+      }
+    }
+    else if(act === 'slot'){
+      state[el.getAttribute('data-kind')] = val;
+      state.sent = false;
+    }
+    else if(act === 'player'){ state.player = val; state.sent = false; }
+    else if(act === 'send'){
+      if(state.screen !== 'send'){ state.screen = 'send'; state.sent = false; }
+      else { state.sent = true; }
+    }
+    else if(act === 'again'){ state.sent = false; }
+    else { return; }
+    render();
+  });
+
+  document.getElementById('notes-toggle').addEventListener('change', function(e){
+    document.body.classList.toggle('show-notes', e.target.checked);
+  });
+
+  render();
+  window.requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

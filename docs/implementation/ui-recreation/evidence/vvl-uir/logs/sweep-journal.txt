@@ -1,0 +1,68 @@
+[01:07:56] SNAPSHOT 53 png in /tmp/vvl-uir-out-snapshot
+[01:07:56] === viewport 1280x720 ===
+[01:07:56] RUN harness@1280x720
+[01:08:04] EXIT harness@1280x720 rc=0 script_errors=3 :: CAPTURE_UI_START which=all seed=20260916 tier=3 frame=(1280.0, 720.0) PASS 59/59 
+[01:08:06] STAGED 47 PNG -> port-1280x720
+[01:08:06] RUN match@1280x720
+[01:08:17] EXIT match@1280x720 rc=0 script_errors=0 :: CAPTURE_DONE shots=5 ticks=25962 result={ "winner": "ai" } score=0-0 points=24 
+[01:08:18] STAGED 54 PNG -> port-1280x720
+[01:08:18] RUN menu@1280x720
+[01:08:21] EXIT menu@1280x720 rc=0 script_errors=5 :: 
+[01:08:22] STAGED 55 PNG -> port-1280x720
+[01:08:22] === viewport 1710x1073 ===
+[01:08:22] RUN harness@1710x1073
+[01:08:32] EXIT harness@1710x1073 rc=0 script_errors=4 :: CAPTURE_UI_START which=all seed=20260916 tier=3 frame=(1280.0, 720.0) PASS 59/59 
+[01:08:33] STAGED 55 PNG -> port-1710x1073
+[01:08:33] RUN match@1710x1073
+[01:08:44] EXIT match@1710x1073 rc=0 script_errors=0 :: CAPTURE_DONE shots=5 ticks=25962 result={ "winner": "ai" } score=0-0 points=24 
+[01:08:45] STAGED 55 PNG -> port-1710x1073
+[01:08:45] RUN menu@1710x1073
+[01:08:48] EXIT menu@1710x1073 rc=0 script_errors=4 :: 
+[01:08:48] STAGED 55 PNG -> port-1710x1073
+[01:08:49] REMOVED sweep-only ui-challenges-all-complete.png
+[01:08:49] REMOVED sweep-only ui-challenges-demo-limited.png
+[01:08:49] REMOVED sweep-only ui-challenges-some-complete.png
+[01:08:49] REMOVED sweep-only ui-challenges.png
+[01:08:49] REMOVED sweep-only ui-characters-demo-locked.png
+[01:08:49] REMOVED sweep-only ui-characters-locked-athlete.png
+[01:08:49] REMOVED sweep-only ui-characters-outfit-open.png
+[01:08:49] REMOVED sweep-only ui-characters-picker-open.png
+[01:08:49] REMOVED sweep-only ui-characters.png
+[01:08:49] REMOVED sweep-only ui-drill-hard.png
+[01:08:49] REMOVED sweep-only ui-drill-legend.png
+[01:08:49] REMOVED sweep-only ui-drill-precision.png
+[01:08:49] REMOVED sweep-only ui-drill-rally.png
+[01:08:49] REMOVED sweep-only ui-drill-serve.png
+[01:08:49] REMOVED sweep-only ui-drill-smash.png
+[01:08:49] REMOVED sweep-only ui-drill.png
+[01:08:49] REMOVED sweep-only ui-feedback-counted.png
+[01:08:49] REMOVED sweep-only ui-feedback-diagnostics-open.png
+[01:08:49] REMOVED sweep-only ui-feedback-fallback.png
+[01:08:49] REMOVED sweep-only ui-feedback-sent.png
+[01:08:49] REMOVED sweep-only ui-feedback.png
+[01:08:49] REMOVED sweep-only ui-help-controller-tab.png
+[01:08:49] REMOVED sweep-only ui-help-keyboard-tab.png
+[01:08:49] REMOVED sweep-only ui-history-empty.png
+[01:08:49] REMOVED sweep-only ui-history-populated.png
+[01:08:50] REMOVED sweep-only ui-modes-career.png
+[01:08:50] REMOVED sweep-only ui-modes-demo-locked.png
+[01:08:50] REMOVED sweep-only ui-modes-quick.png
+[01:08:50] REMOVED sweep-only ui-modes-tournament.png
+[01:08:50] REMOVED sweep-only ui-modes.png
+[01:08:50] REMOVED sweep-only ui-profile-empty-objectives.png
+[01:08:50] REMOVED sweep-only ui-profile-mid-season.png
+[01:08:50] REMOVED sweep-only ui-profile.png
+[01:08:50] REMOVED sweep-only ui-result-beta-cta.png
+[01:08:50] REMOVED sweep-only ui-result-career-promotion.png
+[01:08:50] REMOVED sweep-only ui-result-demo-cta.png
+[01:08:50] REMOVED sweep-only ui-result-loss-points.png
+[01:08:50] REMOVED sweep-only ui-result-loss-set.png
+[01:08:50] REMOVED sweep-only ui-result-multi-set.png
+[01:08:50] REMOVED sweep-only ui-result-tournament-next.png
+[01:08:50] REMOVED sweep-only ui-result-win-points.png
+[01:08:50] REMOVED sweep-only ui-result-win-set.png
+[01:08:50] REMOVED sweep-only ui-result.png
+[01:08:50] REMOVED sweep-only ui-settings.png
+[01:08:50] REMOVED sweep-only ui-vvl-menu.png
+[01:08:50] RESTORED 53 png to out/
+[01:08:50] SWEEP DONE

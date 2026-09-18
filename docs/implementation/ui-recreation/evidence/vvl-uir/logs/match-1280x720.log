@@ -1,0 +1,61 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4
+
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"leggenda","tier_index":3}
+MATCH_START tier=leggenda athlete=maestro arena=officina seed=20260916 camera=default models=true headless=false switch=semi
+ATHLETES rigs=4 source=res://assets/athletes/volpe-rigged.glb glb_loads=12 spawn_ms=2110 lineup={"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"}
+MODELS rigged_glb=res://assets/athletes/volpe-rigged.glb mesh_instances=170 copies=4 rigs=4
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:716)
+         [4] _ready (res://game/match_controller.gd:359)
+CAPTURE_MARKER zone=(514,580) pin=(507,491) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(640,360) advice=(505,472) verdict=(640,360) energy=(491,588) ring_visible=false advice_visible=true verdict_visible=false fill=1.000 segments=0 radius_m=0.620 energy=1.000 advice_w_m=3.917
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.000 eta=0.000 in_window=true precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/quickmatch-serve.png size=1280x720
+CAPTURE_SHOT name=quickmatch-serve.png tick=143 points=0 crossings=1 rally=0
+CAPTURE_MARKER zone=(533,588) pin=(527,500) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(860,552) advice=(525,480) verdict=(855,526) energy=(510,597) ring_visible=false advice_visible=true verdict_visible=true fill=1.000 segments=0 radius_m=0.620 energy=0.951 advice_w_m=3.917
+CAPTURE_VERDICT word=PERFECT mode=BALANCED grade=perfect paddle=playerMate alpha=0.256 charge=0.000 eta=0.000 in_window=true precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/rally.png size=1280x720
+CAPTURE_SHOT name=rally.png tick=420 points=0 crossings=3 rally=3
+CAPTURE_MARKER zone=(429,607) pin=(417,518) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(421,551) advice=(414,499) verdict=(855,526) energy=(404,616) ring_visible=true advice_visible=true verdict_visible=false fill=0.509 segments=20 radius_m=0.620 energy=0.974 advice_w_m=3.111
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.508 eta=0.270 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/timing.png size=1280x720
+CAPTURE_SHOT name=timing.png tick=512 points=0 crossings=4 rally=3
+CAPTURE_MARKER zone=(429,607) pin=(417,518) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(421,551) advice=(414,499) verdict=(855,526) energy=(404,616) ring_visible=false advice_visible=false verdict_visible=false fill=0.509 segments=0 radius_m=0.620 energy=0.974 advice_w_m=0.000
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.508 eta=0.270 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/timing-off.png size=1280x720
+CAPTURE_AB file=timing-off.png timing_hidden=true tick=512
+CAPTURE_MARKER zone=(428,609) pin=(416,520) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(421,551) advice=(413,501) verdict=(421,558) energy=(403,618) ring_visible=false advice_visible=true verdict_visible=true fill=0.853 segments=0 radius_m=0.620 energy=0.900 advice_w_m=3.889
+CAPTURE_VERDICT word=PERFECT mode=BALANCED grade=perfect paddle=player alpha=1.000 charge=0.000 eta=0.081 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/hud.png size=1280x720
+CAPTURE_SHOT name=hud.png tick=536 points=0 crossings=4 rally=4
+CAPTURE_MARKER zone=(428,609) pin=(416,520) zone_visible=true pin_visible=true
+CAPTURE_TIMING ring=(421,551) advice=(413,501) verdict=(421,558) energy=(403,618) ring_visible=false advice_visible=false verdict_visible=false fill=0.853 segments=0 radius_m=0.620 energy=0.900 advice_w_m=0.000
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.000 eta=0.081 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/hud-off.png size=1280x720
+CAPTURE_AB file=hud-off.png timing_hidden=true tick=536
+CAPTURE_MARKER zone=(749,603) pin=(755,515) zone_visible=false pin_visible=false
+CAPTURE_TIMING ring=(430,550) advice=(631,479) verdict=(631,532) energy=(731,612) ring_visible=false advice_visible=false verdict_visible=false fill=0.000 segments=0 radius_m=0.620 energy=1.000 advice_w_m=0.000
+CAPTURE_VERDICT word= mode= grade= paddle= alpha=0.000 charge=0.175 eta=5.085 in_window=false precision=0.000
+CAPTURE_SAVE err=0 path=res://game/out/result.png size=1280x720
+CAPTURE_SHOT name=result.png tick=25962 points=24 crossings=174 rally=16
+CAPTURE_DONE shots=5 ticks=25962 result={ "winner": "ai" } score=0-0 points=24

@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4
+
+SCRIPT ERROR: Parse Error: Function "_bind_header()" not found in base self.
+          at: GDScript::reload (res://src/ui/screens/ArenaScreen.gd:217)
+          GDScript backtrace (most recent call first):
+              [0] _mount_ui_prototype (res://game/main_menu.gd:494)
+              [1] _ready (res://game/main_menu.gd:124)
+SCRIPT ERROR: Parse Error: Function "_apply_selection_styles()" not found in base self.
+          at: GDScript::reload (res://src/ui/screens/ArenaScreen.gd:434)
+          GDScript backtrace (most recent call first):
+              [0] _mount_ui_prototype (res://game/main_menu.gd:494)
+              [1] _ready (res://game/main_menu.gd:124)
+SCRIPT ERROR: Parse Error: Function "_card_box_of()" not found in base self.
+          at: GDScript::reload (res://src/ui/screens/ArenaScreen.gd:607)
+          GDScript backtrace (most recent call first):
+              [0] _mount_ui_prototype (res://game/main_menu.gd:494)
+              [1] _ready (res://game/main_menu.gd:124)
+SCRIPT ERROR: Parse Error: Function "_card_box_of()" not found in base self.
+          at: GDScript::reload (res://src/ui/screens/ArenaScreen.gd:736)
+          GDScript backtrace (most recent call first):
+              [0] _mount_ui_prototype (res://game/main_menu.gd:494)
+              [1] _ready (res://game/main_menu.gd:124)
+ERROR: Failed to load script "res://src/ui/screens/ArenaScreen.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _mount_ui_prototype (res://game/main_menu.gd:494)
+       [1] _ready (res://game/main_menu.gd:124)
+UI_PROTOTYPE_ON_SCREEN {"playable":true,"router":"menu","screen":"menu"}
+CAPTURE_SAVE err=0 path=res://game/out/ui-vvl-menu.png size=1710x961

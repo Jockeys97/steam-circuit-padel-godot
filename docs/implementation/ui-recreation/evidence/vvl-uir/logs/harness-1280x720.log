@@ -1,0 +1,151 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 91.7 - Compatibility - Using Device: Apple - Apple M4
+
+CAPTURE_UI_START which=all seed=20260916 tier=3 frame=(1280.0, 720.0)
+SCRIPT ERROR: Parse Error: Function "_bind_header()" not found in base self.
+          at: GDScript::reload (res://src/ui/screens/ArenaScreen.gd:217)
+          GDScript backtrace (most recent call first):
+              [0] _mount_ui_prototype (res://game/main_menu.gd:494)
+              [1] _ready (res://game/main_menu.gd:124)
+              [2] _walk (res://tests/ui/capture_ui.gd:68)
+SCRIPT ERROR: Parse Error: Function "_card_box_of()" not found in base self.
+          at: GDScript::reload (res://src/ui/screens/ArenaScreen.gd:568)
+          GDScript backtrace (most recent call first):
+              [0] _mount_ui_prototype (res://game/main_menu.gd:494)
+              [1] _ready (res://game/main_menu.gd:124)
+              [2] _walk (res://tests/ui/capture_ui.gd:68)
+SCRIPT ERROR: Parse Error: Function "_line_params_of()" not found in base self.
+          at: GDScript::reload (res://src/ui/screens/ArenaScreen.gd:626)
+          GDScript backtrace (most recent call first):
+              [0] _mount_ui_prototype (res://game/main_menu.gd:494)
+              [1] _ready (res://game/main_menu.gd:124)
+              [2] _walk (res://tests/ui/capture_ui.gd:68)
+ERROR: Failed to load script "res://src/ui/screens/ArenaScreen.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _mount_ui_prototype (res://game/main_menu.gd:494)
+       [1] _ready (res://game/main_menu.gd:124)
+       [2] _walk (res://tests/ui/capture_ui.gd:68)
+ok harness/the_host_mounted_a_router
+SCREENS registered=["menu","characters","modes","arena","help","history","challenges","profile","feedback","drill","settings","result"] pending=["game"]
+ok screen/menu/mounted
+STATES screen=menu states=["default","demo","beta"]
+ok capture/ui-menu
+ok ui-menu path=res://game/out/ui-menu.png size=1280x720 colours=62
+ok capture/ui-menu-demo
+ok ui-menu-demo path=res://game/out/ui-menu-demo.png size=1280x720 colours=68
+ok capture/ui-menu-beta
+ok ui-menu-beta path=res://game/out/ui-menu-beta.png size=1280x720 colours=68
+ok screen/characters/mounted
+STATES screen=characters states=["default","picker-open","outfit-open","locked-athlete","demo-locked"]
+ok capture/ui-characters
+ok ui-characters path=res://game/out/ui-characters.png size=1280x720 colours=34
+ok capture/ui-characters-picker-open
+ok ui-characters-picker-open path=res://game/out/ui-characters-picker-open.png size=1280x720 colours=47
+ok capture/ui-characters-outfit-open
+ok ui-characters-outfit-open path=res://game/out/ui-characters-outfit-open.png size=1280x720 colours=40
+ok capture/ui-characters-locked-athlete
+ok ui-characters-locked-athlete path=res://game/out/ui-characters-locked-athlete.png size=1280x720 colours=47
+ok capture/ui-characters-demo-locked
+ok ui-characters-demo-locked path=res://game/out/ui-characters-demo-locked.png size=1280x720 colours=46
+ok screen/modes/mounted
+STATES screen=modes states=["default","quick","tournament","career","demo-locked"]
+ok capture/ui-modes
+ok ui-modes path=res://game/out/ui-modes.png size=1280x720 colours=54
+ok capture/ui-modes-quick
+ok ui-modes-quick path=res://game/out/ui-modes-quick.png size=1280x720 colours=54
+ok capture/ui-modes-tournament
+ok ui-modes-tournament path=res://game/out/ui-modes-tournament.png size=1280x720 colours=47
+ok capture/ui-modes-career
+ok ui-modes-career path=res://game/out/ui-modes-career.png size=1280x720 colours=47
+ok capture/ui-modes-demo-locked
+ok ui-modes-demo-locked path=res://game/out/ui-modes-demo-locked.png size=1280x720 colours=53
+note screen/arena pending: the recreation has not landed; it keeps its own capture lane
+ok screen/help/mounted
+STATES screen=help states=["keyboard-tab","controller-tab"]
+ok capture/ui-help-keyboard-tab
+ok ui-help-keyboard-tab path=res://game/out/ui-help-keyboard-tab.png size=1280x720 colours=25
+ok capture/ui-help-controller-tab
+ok ui-help-controller-tab path=res://game/out/ui-help-controller-tab.png size=1280x720 colours=49
+ok screen/history/mounted
+STATES screen=history states=["empty","populated"]
+ok capture/ui-history-empty
+ok ui-history-empty path=res://game/out/ui-history-empty.png size=1280x720 colours=8
+ok capture/ui-history-populated
+ok ui-history-populated path=res://game/out/ui-history-populated.png size=1280x720 colours=8
+ok screen/challenges/mounted
+STATES screen=challenges states=["default","some-complete","all-complete","demo-limited"]
+ok capture/ui-challenges
+ok ui-challenges path=res://game/out/ui-challenges.png size=1280x720 colours=14
+ok capture/ui-challenges-some-complete
+ok ui-challenges-some-complete path=res://game/out/ui-challenges-some-complete.png size=1280x720 colours=15
+ok capture/ui-challenges-all-complete
+ok ui-challenges-all-complete path=res://game/out/ui-challenges-all-complete.png size=1280x720 colours=14
+ok capture/ui-challenges-demo-limited
+ok ui-challenges-demo-limited path=res://game/out/ui-challenges-demo-limited.png size=1280x720 colours=14
+ok screen/profile/mounted
+STATES screen=profile states=["default","empty-objectives","mid-season"]
+ok capture/ui-profile
+ok ui-profile path=res://game/out/ui-profile.png size=1280x720 colours=8
+ok capture/ui-profile-empty-objectives
+ok ui-profile-empty-objectives path=res://game/out/ui-profile-empty-objectives.png size=1280x720 colours=11
+ok capture/ui-profile-mid-season
+ok ui-profile-mid-season path=res://game/out/ui-profile-mid-season.png size=1280x720 colours=8
+ok screen/feedback/mounted
+STATES screen=feedback states=["default","counted","diagnostics-open","fallback","sent"]
+ok capture/ui-feedback
+ok ui-feedback path=res://game/out/ui-feedback.png size=1280x720 colours=7
+ok capture/ui-feedback-counted
+ok ui-feedback-counted path=res://game/out/ui-feedback-counted.png size=1280x720 colours=12
+ok capture/ui-feedback-diagnostics-open
+ok ui-feedback-diagnostics-open path=res://game/out/ui-feedback-diagnostics-open.png size=1280x720 colours=13
+ok capture/ui-feedback-fallback
+ok ui-feedback-fallback path=res://game/out/ui-feedback-fallback.png size=1280x720 colours=13
+ok capture/ui-feedback-sent
+ok ui-feedback-sent path=res://game/out/ui-feedback-sent.png size=1280x720 colours=13
+ok screen/drill/mounted
+STATES screen=drill states=["default","precision","smash","rally","serve","hard","legend"]
+ok capture/ui-drill
+ok ui-drill path=res://game/out/ui-drill.png size=1280x720 colours=13
+ok capture/ui-drill-precision
+ok ui-drill-precision path=res://game/out/ui-drill-precision.png size=1280x720 colours=13
+ok capture/ui-drill-smash
+ok ui-drill-smash path=res://game/out/ui-drill-smash.png size=1280x720 colours=10
+ok capture/ui-drill-rally
+ok ui-drill-rally path=res://game/out/ui-drill-rally.png size=1280x720 colours=10
+ok capture/ui-drill-serve
+ok ui-drill-serve path=res://game/out/ui-drill-serve.png size=1280x720 colours=12
+ok capture/ui-drill-hard
+ok ui-drill-hard path=res://game/out/ui-drill-hard.png size=1280x720 colours=12
+ok capture/ui-drill-legend
+ok ui-drill-legend path=res://game/out/ui-drill-legend.png size=1280x720 colours=11
+ok screen/settings/mounted
+STATES screen=settings states=["default"]
+ok capture/ui-settings
+ok ui-settings path=res://game/out/ui-settings.png size=1280x720 colours=6
+ok screen/result/mounted
+STATES screen=result states=["default","win-points","loss-points","win-set","loss-set","multi-set","career-promotion","tournament-next","demo-cta","beta-cta"]
+ok capture/ui-result
+ok ui-result path=res://game/out/ui-result.png size=1280x720 colours=5
+ok capture/ui-result-win-points
+ok ui-result-win-points path=res://game/out/ui-result-win-points.png size=1280x720 colours=5
+ok capture/ui-result-loss-points
+ok ui-result-loss-points path=res://game/out/ui-result-loss-points.png size=1280x720 colours=5
+ok capture/ui-result-win-set
+ok ui-result-win-set path=res://game/out/ui-result-win-set.png size=1280x720 colours=5
+ok capture/ui-result-loss-set
+ok ui-result-loss-set path=res://game/out/ui-result-loss-set.png size=1280x720 colours=5
+ok capture/ui-result-multi-set
+ok ui-result-multi-set path=res://game/out/ui-result-multi-set.png size=1280x720 colours=5
+ok capture/ui-result-career-promotion
+ok ui-result-career-promotion path=res://game/out/ui-result-career-promotion.png size=1280x720 colours=4
+ok capture/ui-result-tournament-next
+ok ui-result-tournament-next path=res://game/out/ui-result-tournament-next.png size=1280x720 colours=3
+ok capture/ui-result-demo-cta
+ok ui-result-demo-cta path=res://game/out/ui-result-demo-cta.png size=1280x720 colours=5
+ok capture/ui-result-beta-cta
+ok ui-result-beta-cta path=res://game/out/ui-result-beta-cta.png size=1280x720 colours=5
+# refused=[]
+# blank=[]
+# saved=["res://game/out/ui-menu.png","res://game/out/ui-menu-demo.png","res://game/out/ui-menu-beta.png","res://game/out/ui-characters.png","res://game/out/ui-characters-picker-open.png","res://game/out/ui-characters-outfit-open.png","res://game/out/ui-characters-locked-athlete.png","res://game/out/ui-characters-demo-locked.png","res://game/out/ui-modes.png","res://game/out/ui-modes-quick.png","res://game/out/ui-modes-tournament.png","res://game/out/ui-modes-career.png","res://game/out/ui-modes-demo-locked.png","res://game/out/ui-help-keyboard-tab.png","res://game/out/ui-help-controller-tab.png","res://game/out/ui-history-empty.png","res://game/out/ui-history-populated.png","res://game/out/ui-challenges.png","res://game/out/ui-challenges-some-complete.png","res://game/out/ui-challenges-all-complete.png","res://game/out/ui-challenges-demo-limited.png","res://game/out/ui-profile.png","res://game/out/ui-profile-empty-objectives.png","res://game/out/ui-profile-mid-season.png","res://game/out/ui-feedback.png","res://game/out/ui-feedback-counted.png","res://game/out/ui-feedback-diagnostics-open.png","res://game/out/ui-feedback-fallback.png","res://game/out/ui-feedback-sent.png","res://game/out/ui-drill.png","res://game/out/ui-drill-precision.png","res://game/out/ui-drill-smash.png","res://game/out/ui-drill-rally.png","res://game/out/ui-drill-serve.png","res://game/out/ui-drill-hard.png","res://game/out/ui-drill-legend.png","res://game/out/ui-settings.png","res://game/out/ui-result.png","res://game/out/ui-result-win-points.png","res://game/out/ui-result-loss-points.png","res://game/out/ui-result-win-set.png","res://game/out/ui-result-loss-set.png","res://game/out/ui-result-multi-set.png","res://game/out/ui-result-career-promotion.png","res://game/out/ui-result-tournament-next.png","res://game/out/ui-result-demo-cta.png","res://game/out/ui-result-beta-cta.png"]
+PASS 59/59
