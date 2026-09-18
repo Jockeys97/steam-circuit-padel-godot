@@ -50,6 +50,10 @@ tools/sim-port/out/
 __pycache__/
 # Local agent config
 .claude/
+# Nested checkouts — never commit (each has its own .git pointer).
+.worktrees/
+# Accidental path from a botched redirect (`godot/=/Users/...`).
+godot/=/
 
 # Copie di sola revisione: 56 MB rigenerabili da art/generated/athletes/.
 # La scena che le usa sta in res://prototypes/*, escluso da ogni preset di export.
