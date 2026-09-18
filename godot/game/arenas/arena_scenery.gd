@@ -67,6 +67,7 @@ const Court := preload("res://game/court.gd")
 const CourtBuilder := preload("res://game/arenas/court_builder.gd")
 const ArenaStyle := preload("res://game/arenas/arena_style.gd")
 const ArenaKit := preload("res://game/arenas/arena_kit.gd")
+const ArenaLook := preload("res://game/arenas/arena_look.gd")
 
 ## The backdrop wall's world z. Behind `COURT`'s rear line (-6.35 m at this
 ## scale) and in front of the point where the ground plane leaves the frame, so
@@ -120,7 +121,8 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 	var top: float = float(extent["top"])
 
 	# 1. The backdrop wall: the arena's sky gradient, drawn unshaded so it reads as
-	#    paint rather than a lit surface.
+	#    paint rather than a lit surface. (Its 128-row gradient is deliberately left
+	#    alone: see `arena_look.gd`'s note on where the debanding dither is spent.)
 	var sky_tex := CourtBuilder.gradient_texture(style.get("sky", [["0.0", "#0a1420"], ["1.0", "#20344a"]]), 128)
 	CourtBuilder.textured_quad(root, "Backdrop", Vector2(half_x * 2.0, top), Vector3(0.0, top * 0.5, BACKDROP_Z), sky_tex)
 
@@ -133,10 +135,13 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 		CourtBuilder.textured_quad(root, "BackdropVeil", Vector2(half_x * 2.0, top), Vector3(0.0, top * 0.5, BACKDROP_Z + 0.04), veil_tex)
 	root.set_meta("artwork", art != null)
 
-	# 3. The apron: the ground beyond the cage, in this arena's own exterior tone.
+	# 3. The apron: the ground beyond the cage, in this arena's own exterior tone — and, for a
+	#    world deck whose `ground_texture` kit slot has a file in it, wearing that texture.
 	var apron := Color(String(style.get("apron", "#3a4a55")))
-	CourtBuilder.unshaded(root, "BackdropApron", CourtBuilder.box_mesh(Vector3(half_x * 2.0, APRON_H, 0.08)),
+	var apron_mi := CourtBuilder.unshaded(root, "BackdropApron", CourtBuilder.box_mesh(Vector3(half_x * 2.0, APRON_H, 0.08)),
 		Vector3(0.0, APRON_H * 0.5, BACKDROP_Z + 0.05), apron)
+	ArenaLook.apply_ground_texture(apron_mi.material_override as StandardMaterial3D, id,
+		Vector2(half_x * 2.0, APRON_H))
 
 	# 4. Scenery objects. Their x is scaled by the frame's top-row half-width so the
 	#    same table stays inside the frame under any camera preset (the tables are

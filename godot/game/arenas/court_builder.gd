@@ -27,6 +27,7 @@
 extends RefCounted
 
 const Court := preload("res://game/court.gd")
+const ArenaLook := preload("res://game/arenas/arena_look.gd")
 
 ## `GLASS_H` re-exported for the builder's own use.
 const GLASS_H := Court.GLASS_H
@@ -184,6 +185,11 @@ static func textured_quad(parent: Node3D, name: String, size: Vector2, pos: Vect
 
 ## Environment + lights: the arena-spike numbers, with the arena's own palette
 ## colouring the ground.
+##
+## The nine frozen arenas keep EXACTLY these numbers — they are the ones their committed
+## captures were made with. The five `family: "world"` decks get the LOOK lane's per-arena
+## sky/atmosphere/lighting rig on top (`arena_look.gd::apply()`, called at the end): the
+## same three nodes, the same names, no node added, and a no-op for everything else.
 static func build_world(parent: Node3D, arena: Dictionary) -> void:
 	var we := WorldEnvironment.new()
 	we.name = "WorldEnvironment"
@@ -210,6 +216,8 @@ static func build_world(parent: Node3D, arena: Dictionary) -> void:
 	fill.shadow_enabled = false
 	parent.add_child(fill)
 
+	ArenaLook.apply(env, sun, fill, arena)
+
 
 # ---------------------------------------------------------------------------
 # The court
@@ -229,6 +237,12 @@ static func build_court(parent: Node3D, arena: Dictionary, wall_bounce := 0.89) 
 	floor_mi.mesh = pm
 	floor_mi.position = Vector3(0.0, -0.02, 0.0)
 	floor_mi.material_override = Court.material(floor_color.darkened(0.35))
+	# The ground beyond the cage carries the arena's `ground_texture` kit slot when one has been
+	# dropped in (`res://assets/arenas/<arena>/ground_texture.png`), tiled at player scale. With
+	# no file — today — this returns false before touching the material, so the ground is exactly
+	# the palette colour it has always been (`arena_look.gd::apply_ground_texture`).
+	ArenaLook.apply_ground_texture(floor_mi.material_override as StandardMaterial3D,
+		String(arena.get("id", "")), Vector2(pm.size.x, pm.size.y))
 	parent.add_child(floor_mi)
 
 	var bed := MeshInstance3D.new()
