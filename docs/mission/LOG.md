@@ -336,3 +336,21 @@ stays the owner's decision.
   group inherits that rule; the reference's own `[hidden]` guard has no CSS rule, so its hide does not
   take visual effect — recorded, not fixed). Committed on `luca-game-mechanics`; `.uid` sidecars left
   untracked as the convention requires. Spend $0.
+- 2026-09-19 the second player stands still in co-op — DIAGNOSIS, no code changed. The owner reported
+  "the second player stops moving now, something broke" straight after the pace work; nothing in the
+  code is at fault and nothing changed. His stored profile is `playerMode: "coop"`, and co-op means
+  two humans by the reference's own design: the partner slot is fed by the second player's sampler,
+  which is pad-only (`input_map.gd:31-33`; the reference's `getInput2()` reads `gamepad2` alone,
+  `js/main.js:1096`), and `sim.gd::update_doubles_ai:2457` moves the partner with the AI only
+  `if not state.coop`. The machine carries exactly one controller (an Xbox pad, per `hidutil`), so the
+  partner is repositioned for each serve and takes no part in the match. Measured with a new ad-hoc
+  probe (`godot/_probe_second_player.gd`, PASS 17/17, 0 `SCRIPT ERROR`): over 20 s of played padel per
+  mode, the partner moves continuously for **859 frames in solo and 0 frames in co-op** (3 serve
+  jumps, 304 px of travel — which is exactly why a travel-only metric reads that partner as moving),
+  and the longest rally falls from 9 to 1. The same probe on the pre-pace tree (`deab8cf` =
+  `9ea56e5^`) returns numbers identical to the float, so neither the pace clock nor the play-flow row
+  is implicated. The fix is a click (Solo on the arena screen's players panel, or a second
+  controller); the three code options — a live "no second controller" indicator, gating the
+  buttons, or an AI fallback for the partner — are recorded for the owner's verdict rather than
+  chosen here. Report `evidence/second-player-coop-needs-a-controller.md`; probe + report committed,
+  no gameplay change. Spend $0.00008 (one Jev call: 0.76 on the diagnosis, 1.03 on blocking).
