@@ -37,6 +37,28 @@
 ## `ModesSave.save_pref(store, "matchLength", …)`, the validated preference the
 ## reference itself keeps (`js/main.js:2277`). No new settings schema.
 ##
+## THE GAME-PACE GROUP IS A PORT ADDITION, NEXT TO THE REFERENCE'S TWO. `#matchSetup`
+## carries the difficulty and the match-length segments and nothing else; the pace
+## rungs are this build's own (`src/sim/pace.gd`, the same control the settings screen
+## shows) and they wear the setup groups' own presentation. Their display text comes
+## from that module — `locale_data.gd` is generated from the frozen `js/i18n.js` — and
+## the choice is written through the same prefs carrier the other two use, so the match
+## reads it at start (`Config.pace_id()`) with no second store and no second default.
+##
+## THE SETUP ROW WRAPS, AND WHY IT HAS TO. `SetupArea` reproduces the reference's own
+## content box with two margins — `side = max(0, (size.x - 760) / 2) + 24` — so the
+## content it holds is exactly the reference's 712 px (`760 - 2 * 24`), and a child
+## container whose MINIMUM is wider than 712 overflows the screen instead of shrinking
+## (a Godot container never squeezes a child below its minimum). Two groups fit that
+## budget in every state; three do not, and the state that breaks it is not a layout
+## the reference ever renders: in the demo view the three un-granted difficulty rungs
+## are disabled, disabled segmented buttons measure 80-95 px instead of 36-51, and the
+## row's minimum goes to 769 px. So `MatchSetup` is a wrapping `HFlowContainer`: at the
+## design frame the three groups pack onto one line (which is what the two reference
+## groups did before), and where they cannot — the demo view — the third group flows
+## onto a second line instead of pushing `Frame` past the screen's right edge. The
+## width rule itself is not moved: `SetupArea` still centres a 712 px box.
+##
 ## LITERALS. `ModesScreen.gd` carries none: every visible string is a locale id
 ## resolved through `UiStrings`. The scene carries none either (this screen's nodes
 ## are named, not worded).
@@ -49,6 +71,8 @@ const UiData := preload("res://src/ui/data/UiData.gd")
 const ModesSave := preload("res://src/modes/modes_save.gd")
 const Config := preload("res://game/match_config.gd")
 const Gate := preload("res://game/content_gate.gd")
+const Pace := preload("res://src/sim/pace.gd")
+const Locale := preload("res://src/locale/locale.gd")
 
 const SCREEN_ID := "modes"
 
@@ -61,6 +85,18 @@ const SELECT_MODE_ACTION := "select-mode"
 const DIFFICULTY_ACTION := "difficulty"
 const LENGTH_ACTION := "length"
 const ROUTE_TO_CHARACTERS := "characters"
+
+## PORT ADDITION: the game-pace rung (`src/sim/pace.gd`) — the same control the
+## settings screen carries, on the page a match is actually started from. The ladder,
+## its factors and its display text are that module's; this screen shows the rungs and
+## writes the chosen id through the prefs carrier the match reads at start
+## (`Config.pace_id()`), exactly as the two reference segments write theirs.
+const PACE_ACTION := "pace"
+const PACE_KEY := "pacePreset"
+## The pace group's own title, resolved through the pace module rather than through
+## `UiStrings`: it is a port addition, and `locale_data.gd` is generated from the
+## frozen `js/i18n.js` (its verifier rejects any key the reference lacks).
+const PACE_TITLE_KEY := "pacePreset"
 
 ## `index.html:136-139`, in the reference's own order.
 const DIFFICULTY_ORDER: Array[String] = ["easy", "medium", "hard", "legend"]
@@ -82,6 +118,13 @@ const LENGTH_KEYS := {
 	"set": "lenSet",
 	"match2": "lenMatch2",
 }
+
+## A pace rung's label is a whole sentence (`Realistic (1:1)`), where the difficulty
+## rungs are single words: one rung per row keeps the group's own minimum width at its
+## widest label, so the setup row can pack all three groups on one line and wrap them
+## when they do not fit (the row's own note, at the top of this file). The rungs
+## themselves are `Pace.ids()`, in the module's own ladder order.
+const PACE_COLUMNS := 1
 
 ## The three mode ids in the reference's document order (`index.html:112-156`).
 const MODE_ORDER: Array[String] = ["quick", "tournament", "career"]
@@ -110,6 +153,11 @@ const ARIA_SLOTS := {
 	"DifficultySegmented": "difficulty",
 	"LengthSegmented": "matchLength",
 }
+
+## PORT ADDITION: the pace group's own screen-reader name. It resolves through
+## `Pace.text`, like its rung labels, so it is not a row of `ARIA_SLOTS` above —
+## every row of that table resolves through `UiStrings`.
+const PACE_ARIA_NODE := "PaceSegmented"
 
 ## `.mode-card__art { aspect-ratio: 3 / 1 }` (`styles.css:460-474`).
 const ART_RATIO := 3.0
@@ -153,6 +201,7 @@ const TAG_PREFIX := "ModeTag_"
 const FIXTURE_PREFIX := "ModeFixture_"
 const DIFFICULTY_PREFIX := "DiffButton_"
 const LENGTH_PREFIX := "LengthButton_"
+const PACE_PREFIX := "PaceButton_"
 
 ## `find_child` cannot find the root by name; the aria slot for the screen itself
 ## (`index.html:103`, `data-i18n-aria="ariaSelectModes"`) is addressed as this.
@@ -173,6 +222,7 @@ var _text_nodes: Dictionary = {}
 var _cards: Dictionary = {}
 var _difficulty_buttons: Dictionary = {}
 var _length_buttons: Dictionary = {}
+var _pace_buttons: Dictionary = {}
 var _focus_specs: Dictionary = {}
 
 
@@ -451,6 +501,19 @@ func _build_segments() -> void:
 			button.pressed.connect(select_length.bind(key))
 			length.add_child(button)
 			_length_buttons[key] = button
+	var pace := _control("PaceSegmented")
+	if pace != null:
+		# The port's own group. Its rungs come from the pace module, in that module's
+		# ladder order, and they are not `_segment_button`s: their labels are `Pace`'s
+		# strings, not locale ids, so `_refresh_pace()` sets both the text and the
+		# selected look for them.
+		if pace is GridContainer:
+			(pace as GridContainer).columns = PACE_COLUMNS
+		for id in Pace.ids():
+			var button := _pace_button(PACE_PREFIX + String(id))
+			button.pressed.connect(select_pace.bind(String(id)))
+			pace.add_child(button)
+			_pace_buttons[String(id)] = button
 
 
 func _segment_button(node_name: String, key: String) -> Button:
@@ -459,6 +522,19 @@ func _segment_button(node_name: String, key: String) -> Button:
 	button.theme_type_variation = &"SegmentedInactive"
 	button.custom_minimum_size = Vector2(0, SEGMENT_HEIGHT)
 	_bind(button, key)
+	return button
+
+
+## A pace rung. Registered in `_text_nodes` — the audits read a control's text through
+## `text_shown()`, the same door as every other control — but deliberately NOT in
+## `_bindings`: every row of that list resolves through `UiStrings`, and a rung's label
+## is `Pace`'s own string (`_refresh_pace()` is what fills it, in both locales).
+func _pace_button(node_name: String) -> Button:
+	var button := Button.new()
+	button.name = node_name
+	button.theme_type_variation = &"SegmentedInactive"
+	button.custom_minimum_size = Vector2(0, SEGMENT_HEIGHT)
+	_text_nodes[node_name] = button
 	return button
 
 
@@ -541,6 +617,26 @@ func select_length(key: String) -> bool:
 	return true
 
 
+## The pace rung the save holds. Read through the config's own validated reader — the
+## same call `match_controller` latches when a match starts — so the screen can never
+## show a rung the clock would not run, and a save from a build without the key reads
+## back as the module's default rather than as a stopped clock.
+func active_pace() -> String:
+	return Config.pace_id()
+
+
+## The pace rung press: the chosen id is written through the same save door the two
+## reference segments use (`ModesSave.save_pref`), into the key the match reads at
+## start. An id outside the ladder is refused rather than stored — a stored id no
+## clock can read would just be a rung that never runs.
+func select_pace(id: String) -> bool:
+	if not Pace.has(id):
+		return false
+	ModesSave.save_pref(Config.save_store(), PACE_KEY, id)
+	_refresh_pace()
+	return true
+
+
 ## The screen's one activation door for UIR-05's bridge: an action the bridge does
 ## not route (it is not a `to-*` edge) is reported to the mount, which hands it here.
 func activate(action: String) -> bool:
@@ -554,6 +650,8 @@ func activate(action: String) -> bool:
 			return select_difficulty(parts[1])
 		LENGTH_ACTION:
 			return select_length(parts[1])
+		PACE_ACTION:
+			return select_pace(parts[1])
 	return false
 
 
@@ -640,7 +738,29 @@ func refresh_strings() -> void:
 			(node as Button).text = text
 		elif node is Label:
 			(node as Label).text = text
+	_refresh_pace()
 	_refresh_aria()
+
+
+## The pace group's three moving parts: every rung's label, the group's own title and
+## which rung wears the selected look. Its strings are `Pace`'s — this is the one place
+## on this screen where text does not come from `UiStrings`, because the pace rungs are
+## a port addition and `locale_data.gd` carries only the reference's ids — and it runs
+## on a language flip with everything else. The active state is the same
+## `SegmentedActive`/`SegmentedInactive` swap the two reference segments use.
+func _refresh_pace() -> void:
+	var lang := Locale.current_lang()
+	var current := active_pace()
+	for id in _pace_buttons:
+		var button: Button = _pace_buttons[id]
+		var preset: Dictionary = Pace.preset(String(id))
+		button.text = Pace.text(String(preset["label_key"]), lang)
+		var active: bool = String(id) == current
+		button.theme_type_variation = &"SegmentedActive" if active else &"SegmentedInactive"
+		button.set_meta("active", active)
+	var title := _control("PaceLabel") as Label
+	if title != null:
+		title.text = Pace.text(PACE_TITLE_KEY, lang)
 
 
 ## `careerTag` `{season}/{match}/{total}` + `careerFixture` … (`js/main.js:1549-1567`).
@@ -677,6 +797,9 @@ func aria_names() -> Dictionary:
 	var out := {}
 	for node_name in ARIA_SLOTS:
 		out[node_name] = UiStrings.t(String(ARIA_SLOTS[node_name]))
+	# PORT ADDITION: the pace group's own name, resolved through the module that owns
+	# its text (the reference's two segments resolve theirs through `UiStrings`).
+	out[PACE_ARIA_NODE] = Pace.text(PACE_TITLE_KEY, Locale.current_lang())
 	for row in _rows:
 		var id := String(row.get("id", ""))
 		out[ART_PREFIX + id] = UiStrings.t(String(MODE_ARIA_KEYS.get(id, "")))
@@ -781,6 +904,9 @@ func _register_focus() -> void:
 	for key in _length_buttons:
 		var button: Button = _length_buttons[key]
 		_focus_specs[LENGTH_PREFIX + key] = _focus_spec(LENGTH_PREFIX + key, button, "%s:%s" % [LENGTH_ACTION, key])
+	for id in _pace_buttons:
+		var button: Button = _pace_buttons[id]
+		_focus_specs[PACE_PREFIX + id] = _focus_spec(PACE_PREFIX + id, button, "%s:%s" % [PACE_ACTION, id])
 
 
 func _focus_spec(node_name: String, control: Control, action: String) -> Dictionary:
@@ -860,11 +986,11 @@ func _style_chrome() -> void:
 	var sub := _control("SubLabel")
 	if sub != null:
 		sub.theme_type_variation = &"ScreenSubtitle"
-	for panel_name in ["DifficultyGroup", "LengthGroup"]:
+	for panel_name in ["DifficultyGroup", "LengthGroup", "PaceGroup"]:
 		var panel := _control(panel_name)
 		if panel != null:
 			(panel as PanelContainer).add_theme_stylebox_override("panel", _setup_box(theme))
-	for card_name in ["DifficultySegmentedBox", "LengthSegmentedBox"]:
+	for card_name in ["DifficultySegmentedBox", "LengthSegmentedBox", "PaceSegmentedBox"]:
 		var segmented := _control(card_name)
 		if segmented != null:
 			(segmented as PanelContainer).add_theme_stylebox_override("panel", _theme_box("SegmentedContainer"))

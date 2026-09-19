@@ -313,3 +313,26 @@ stays the owner's decision.
   `docs/wayfinder/evidence/game-pace-presets.md`. Committed on `luca-game-mechanics`; the
   `.uid` sidecars the import pass generated are left untracked as the convention requires.
   Spend $0 (owner's Claude Code subscription).
+- 2026-09-19 game-pace rungs on the play-flow screen, and the setup row they exposed — the pace
+  ladder shipped earlier today was reachable only from Settings; it is now a third group inside
+  `#matchSetup` on `screen-modes`, beside the reference's difficulty and match-length segments, so
+  the owner can swap the rung on the page he actually starts a match from. Same carrier as the other
+  two segments (`ModesSave.save_pref(…)` into `pacePreset`), same validated reader the match latches
+  (`Config.pace_id()`), an id outside the ladder refused; the labels come from `src/sim/pace.gd`, so
+  no new literal and no edit to the generated `locale_data.gd`. `pace_screen_test.gd` new (101
+  checks): it presses each rung's own `pressed` signal, reads the pref back three ways (payload,
+  the `prefs.json` group file on disk, the match's own reader) and boots one `Match.tscn` per rung,
+  counting whole ticks — 60 frames buy 180/120/90/72/60 ticks at factors 1.50/1.00/0.75/0.60/0.50, so
+  the chain UI → prefs → clock is the thing measured rather than inferred. The change first broke
+  `ui_legibility_audit` (660/664: the row's minimum grew past the 712 px content box `SetupArea`
+  centres, reachable only in the demo view, where the disabled difficulty rungs measure 80–95 px and
+  take the row to 769 px); fixed in the layout — `MatchSetup` is now a wrapping `HFlowContainer` — and
+  the audit is back to 664/664 **with the audit itself unedited**. `screen_modes_audit` 118/118 →
+  119/119 (focusables 14 → 19 plus one new rung-action check), settings audit 91/91, save 138/138,
+  court_speed 25/25, slice `342/343` (sole red = the absent export pack), hud leak scan exit 0,
+  probes 16/16 and 9 checks — every gate re-run by the parent on the frozen tree, not taken from the
+  worker's report. Reports `evidence/game-pace-play-flow-control.md` (measured) and
+  `evidence/pace-match-setup-parity.md` (reference rules: `#matchSetup` is quick-only and a third
+  group inherits that rule; the reference's own `[hidden]` guard has no CSS rule, so its hide does not
+  take visual effect — recorded, not fixed). Committed on `luca-game-mechanics`; `.uid` sidecars left
+  untracked as the convention requires. Spend $0.
