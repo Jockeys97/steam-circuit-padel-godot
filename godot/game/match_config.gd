@@ -13,6 +13,7 @@ const Gate := preload("res://game/content_gate.gd")
 const AthleteSpawn := preload("res://src/character/athlete_spawn.gd")
 const Store := preload("res://src/save/save_store.gd")
 const Arena := preload("res://game/arenas/arena_library.gd")
+const Pace := preload("res://src/sim/pace.gd")
 
 ## Roster-order defaults, per `PLAN.md` "Athlete roster order": the first athlete
 ## and the first arena are the slice's defaults.
@@ -168,6 +169,21 @@ static func control_mode() -> String:
 		return "semi"
 	var value := String((payload as Dictionary).get("controlMode", "semi"))
 	return value if CONTROL_MODES.has(value) else "semi"
+
+
+## The stored game-pace preset, validated against the ladder (`src/sim/pace.gd`).
+## Same shape as `control_mode()` above: the save's own group door, the module's
+## own list, its own default for anything else. A reader rather than a var, so a
+## setting changed in the menu is live for the next match without a second write.
+static func pace_id() -> String:
+	var value := String(stored_prefs().get("pacePreset", Pace.default_id()))
+	return value if Pace.has(value) else Pace.default_id()
+
+
+## The dt multiplier the stored preset means. The clock reads this once per match
+## start, never per frame.
+static func pace_factor() -> float:
+	return Pace.factor_for(pace_id())
 
 
 ## The options a mode session needs, from the state this config already carries.

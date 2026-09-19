@@ -151,7 +151,9 @@ func json_eq(a: Variant, b: Variant) -> bool:
 
 func _realistic_prefs() -> Dictionary:
 	# Every field `collectPrefs()` writes (`js/ui.js:422-442`), non-default so a
-	# round-trip that dropped one would be visible.
+	# round-trip that dropped one would be visible, plus the port's own additions,
+	# non-default for the same reason. The key order is `PREFS_DEFAULTS`'s, because
+	# the comparison below is `JSON.stringify` equality.
 	return {
 		"athleteId": "maestro",
 		"arenaId": "arena-centrale",
@@ -169,6 +171,8 @@ func _realistic_prefs() -> Dictionary:
 		"colorblind": true,
 		"lang": "it",
 		"playerMode": "pvp",
+		# PORT ADDITION, no `js/ui.js` line: the game-pace preset (`src/sim/pace.gd`).
+		"pacePreset": "relaxed",
 		"lineup": {"playerMate": "pantera", "opponent": "maestro", "opponentMate": "pantera"},
 	}
 
@@ -288,8 +292,15 @@ func _schema_anchors() -> void:
 	check_eq("career default claimedObjectives is empty (js/ui.js:30)", Schema.CAREER_DEFAULTS["claimedObjectives"], {})
 
 	# The prefs defaults are the `ui` object's own start values (js/ui.js:460-481)
-	# for every field collectPrefs writes, plus the audio defaults.
-	check_eq("prefs defaults carry all 17 collectPrefs fields", Schema.PREFS_DEFAULTS.size(), 17)
+	# for every field collectPrefs writes, plus the audio defaults, plus the port's
+	# own additions. Counted apart, so a reference field that goes missing still
+	# fails even while the port adds keys of its own.
+	const PORT_PREF_KEYS := ["pacePreset"]
+	var reference_prefs := Schema.PREFS_DEFAULTS.size() - PORT_PREF_KEYS.size()
+	check_eq("prefs defaults carry all 17 collectPrefs fields", reference_prefs, 17)
+	for key in PORT_PREF_KEYS:
+		check("prefs defaults carry the port addition '%s'" % key,
+			Schema.PREFS_DEFAULTS.has(key), str(Schema.PREFS_DEFAULTS.keys()))
 	check_eq("prefs default controlMode is 'semi' (js/ui.js:466)", Schema.PREFS_DEFAULTS["controlMode"], "semi")
 	check_eq("prefs default gamepadDeadzone is 0.15 (js/ui.js:467)", Schema.PREFS_DEFAULTS["gamepadDeadzone"], 0.15)
 	check_eq("prefs default matchLength is 'points11' (js/ui.js:470)", Schema.PREFS_DEFAULTS["matchLength"], "points11")

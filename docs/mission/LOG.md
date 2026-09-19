@@ -298,3 +298,18 @@ stays the owner's decision.
   handoff authorization the mission-only paths were staged explicitly (no `git add -A`) and pushed
   to `origin/main`; remote read-back verified; no force push; unrelated dirt (`.hermes/`, `art/**`,
   `meshy/**`, generated sidecars, probe files) left untouched. Spend $0.
+- 2026-09-19 game-pace presets (Realistic and slower rungs) — `src/sim/pace.gd` holds five rungs,
+  a `Realistic` anchor derived from the verified real band (876 ms measured, 541–689 ms real, so
+  factor 1.50) with `1.5:1` landing exactly on the tuning the build already had; **the owner's
+  game was already running at two thirds of real pace.** The preset scales the sim's clock in
+  `advance_frame` rather than `BALANCE`, so every trajectory, timing window and balance ratio is
+  preserved by construction and browser parity stays intact — `court_speed_audit` needed no
+  edit. Measured on the real clock, not inferred: 60 frames buy exactly 120 ticks at the default
+  rung and 180 at Realistic (ad-hoc probe `_probe_pace_clock.gd`, 16/16). `pace_presets_test`
+  new (59 checks), `save_steam_test` 138/138 (one stale fixture completed, not weakened),
+  `court_speed_audit` 25/25, slice `342/343` (sole red = the absent export pack, per the
+  documented no-pack state), hud leak scan exit 0; `verify-i18n-port` red pre-existing with
+  `locale/`, `tools/i18n-port/` and `js/` unmodified. Report
+  `docs/wayfinder/evidence/game-pace-presets.md`. Committed on `luca-game-mechanics`; the
+  `.uid` sidecars the import pass generated are left untracked as the convention requires.
+  Spend $0 (owner's Claude Code subscription).

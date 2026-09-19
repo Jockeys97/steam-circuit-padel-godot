@@ -47,6 +47,7 @@ const ModesSave := preload("res://src/modes/modes_save.gd")
 const Schema := preload("res://src/save/save_schema.gd")
 const Config := preload("res://game/match_config.gd")
 const Rows := preload("res://src/ui/components/SettingsRows.gd")
+const Pace := preload("res://src/sim/pace.gd")
 const AccessibilitySettings := preload("res://src/accessibility/accessibility_settings.gd")
 const UiMotionPolicy := preload("res://src/ui/accessibility/UiMotionPolicy.gd")
 
@@ -59,6 +60,16 @@ const CAPTURE_STATES: Array[String] = ["default"]
 
 ## `index.html:410-413`: the toggle's two values, in the reference's own order.
 const LANGS: Array[String] = ["it", "en"]
+
+## PORT ADDITION: the stored key of the game-pace preset. The ladder, its factors
+## and its text are `src/sim/pace.gd`'s; this screen only shows them and writes the
+## chosen id through the same save door every other row uses.
+const PACE_KEY := "pacePreset"
+## The pace group's own title, taken from the pace module rather than from
+## `TEXT_SLOTS`: `locale_data.gd` is generated from the frozen `js/i18n.js` and its
+## verifier rejects any key the reference does not carry, so a port addition brings
+## its own strings.
+const PACE_TITLE_KEY := "pacePreset"
 
 ## `index.html:433`: `min=0 max=1 step=0.01`.
 const VOLUME_MIN := 0.0
@@ -105,6 +116,8 @@ var _applying_width := false
 var _grid: GridContainer = null
 var _rows: Dictionary = {}
 var _lang_buttons: Dictionary = {}
+var _pace_buttons: Dictionary = {}
+var _pace_blurb: Label = null
 var _access: AccessibilitySettings = null
 var _motion: UiMotionPolicy = null
 var _content_root: Control = null
@@ -212,6 +225,13 @@ func colorblind() -> bool:
 	return bool(snapshot().get("colorblind", false))
 
 
+## The stored game-pace preset, validated against the ladder. Same shape as
+## `language()` above: an unknown id reads back as the module's own default.
+func pace() -> String:
+	var id := String(snapshot().get("pace_preset", Pace.default_id()))
+	return id if Pace.has(id) else Pace.default_id()
+
+
 ## The accessibility object this screen owns, fed from the stored prefs and read by
 ## `motion_policy()`. A UI effect that asks the policy sees a toggle immediately.
 func accessibility() -> AccessibilitySettings:
@@ -241,6 +261,16 @@ func set_language(lang: String) -> bool:
 	_persist("lang", lang)
 	Locale.set_lang(lang)
 	refresh_strings()
+	return true
+
+
+## Picks a pace preset. Refused for an id outside the ladder, exactly as
+## `set_language` refuses a locale the port does not carry.
+func set_pace(id: String) -> bool:
+	if not Pace.has(id):
+		return false
+	_persist(PACE_KEY, id)
+	_refresh_pace()
 	return true
 
 
@@ -319,6 +349,7 @@ func refresh_strings() -> void:
 	for row_name in _rows:
 		Rows.refresh_strings(_rows[row_name])
 	_refresh_language_buttons()
+	_refresh_pace()
 
 
 ## Every stored value onto its row. Called on `enter()` — the reference syncs the whole
@@ -333,6 +364,7 @@ func refresh_values() -> void:
 	_rows_set("VibrationRow", snap.get("vibration", true))
 	_access.apply_prefs(_stored_prefs())
 	_refresh_language_buttons()
+	_refresh_pace()
 	_apply_grid_columns()
 
 
@@ -348,6 +380,23 @@ func _refresh_language_buttons() -> void:
 		var button := _lang_buttons[lang] as Button
 		var active: bool = String(lang) == current
 		_style_segment(button, active)
+
+
+## The pace group's three moving parts: the selected rung, every button's label and
+## the blurb under them. All three follow the locale, so this runs on a flip too.
+func _refresh_pace() -> void:
+	var lang := Locale.current_lang()
+	var current := pace()
+	for id in _pace_buttons:
+		var button := _pace_buttons[id] as Button
+		var preset: Dictionary = Pace.preset(String(id))
+		button.text = Pace.text(String(preset["label_key"]), lang)
+		_style_segment(button, String(id) == current)
+	var title := _control("PaceTitle") as Label
+	if title != null:
+		title.text = Pace.text(PACE_TITLE_KEY, lang)
+	if _pace_blurb != null:
+		_pace_blurb.text = Pace.text(String(Pace.preset(current)["blurb_key"]), lang)
 
 
 # ---------------------------------------------------------------------------
@@ -376,6 +425,7 @@ func _build() -> void:
 	_grid.add_child(_group("LanguageGroup", "LanguageTitle", _language_body()))
 	_grid.add_child(_group("AccessibilityGroup", "AccessibilityTitle", _accessibility_body()))
 	_grid.add_child(_group("AudioGroup", "AudioTitle", _audio_body()))
+	_grid.add_child(_group("PaceGroup", "PaceTitle", _pace_body()))
 	_register_focus()
 	resized.connect(_apply_grid_columns)
 	refresh_values()
@@ -444,6 +494,34 @@ func _language_body() -> Control:
 		seg.add_child(button)
 		_lang_buttons[lang] = button
 	return seg
+
+
+## The game-pace group: one segmented rung per preset plus the blurb of the chosen
+## one. Built here, the way the difficulty rungs are built in `ModesScreen`, rather
+## than through `SettingsRows`: that component's two kinds are the reference's range
+## and toggle, and a rung group is neither.
+func _pace_body() -> Control:
+	var column := VBoxContainer.new()
+	column.name = "PaceRows"
+	column.add_theme_constant_override("separation", 8)
+	var seg := VBoxContainer.new()
+	seg.name = "PaceSeg"
+	seg.add_theme_constant_override("separation", 0)
+	for id in Pace.ids():
+		var button := Button.new()
+		button.name = "Pace_%s" % id
+		button.toggle_mode = true
+		button.pressed.connect(set_pace.bind(String(id)))
+		seg.add_child(button)
+		_pace_buttons[String(id)] = button
+	column.add_child(seg)
+	_pace_blurb = Label.new()
+	_pace_blurb.name = "PaceBlurb"
+	_pace_blurb.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_pace_blurb.add_theme_font_size_override("font_size", Rows.TITLE_SIZE)
+	_pace_blurb.modulate.a = Rows.LABEL_ALPHA
+	column.add_child(_pace_blurb)
+	return column
 
 
 func _accessibility_body() -> Control:
@@ -538,6 +616,8 @@ func _style_segment(button: Button, active: bool) -> void:
 func _register_focus() -> void:
 	for lang in _lang_buttons:
 		_shell.add_focus("Lang_%s" % lang, _lang_buttons[lang], "lang:%s" % lang, {"kind": "button"})
+	for id in _pace_buttons:
+		_shell.add_focus("Pace_%s" % id, _pace_buttons[id], "pace:%s" % id, {"kind": "button"})
 	for row_name in _rows:
 		var row: Control = _rows[row_name]
 		var opts := {"kind": Rows.focus_kind(row)}

@@ -472,6 +472,7 @@ static func settings_snapshot(store: RefCounted = null) -> Dictionary:
 		"match_length": _text(prefs.get("matchLength", defaults.get("matchLength", "points11"))),
 		"player_mode": _text(prefs.get("playerMode", defaults.get("playerMode", "solo"))),
 		"ai_difficulty": _text(prefs.get("aiDifficulty", defaults.get("aiDifficulty", "easy"))),
+		"pace_preset": _text(prefs.get("pacePreset", defaults.get("pacePreset", ""))),
 		"tournament_round": _int(prefs.get("tournamentRound", defaults.get("tournamentRound", 0)), 0),
 	}
 

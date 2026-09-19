@@ -194,6 +194,14 @@ var use_scripted_input: bool = false
 ## The browser's accumulator (`js/main.js:1187-1205`). Simulated time owed, in
 ## seconds, never above `FIXED_STEP * MAX_SIM_STEPS` and never negative.
 var sim_accumulator: float = 0.0
+## The game-pace preset's dt multiplier (`src/sim/pace.gd`), read once when a match
+## or a mode session starts. This is the ONE place the pace setting enters the
+## simulation: `advance_frame` is the only clock that turns real frame time into
+## simulated time, for a quick match and for a mode session alike (a mode's own
+## `step` is called from `tick_fixed` with a whole `FIXED_STEP`, so scaling there
+## too would apply the factor twice). The default preset's factor is 1.0, which is
+## why an untouched profile runs the arithmetic it always ran.
+var pace_factor: float = 1.0
 ## One-shot fields armed by a rendered frame and not yet consumed by a sub-step.
 var queued_one_shots: Dictionary = {}
 ## The second player's latched one-shots, kept apart from the first's: the reference
@@ -437,6 +445,7 @@ func _adopt_session() -> void:
 	# The saved switching mode, on the state the mode session built: the reference
 	# copies it onto the match before its loop starts (`js/main.js:1184`).
 	state.controlMode = Config.control_mode()
+	pace_factor = Config.pace_factor()
 	ticks = 0
 	crossings = 0
 	points_scored = 0
@@ -1000,6 +1009,7 @@ func start_match() -> void:
 	# `matchState.controlMode = ui.controlMode`), validated against the reference's
 	# own three values by `Config.control_mode()` (`js/main.js:2273`).
 	state.controlMode = Config.control_mode()
+	pace_factor = Config.pace_factor()
 	ticks = 0
 	crossings = 0
 	points_scored = 0
@@ -1067,8 +1077,13 @@ func start_match() -> void:
 func advance_frame(delta: float) -> Dictionary:
 	if state == null:
 		return {"steps": 0, "accumulator": sim_accumulator, "ticks": ticks}
-	var dt := minf(delta, MAX_FRAME_DELTA)
-	sim_accumulator = minf(sim_accumulator + dt, FIXED_STEP * float(MAX_SIM_STEPS))
+	# The game-pace preset scales the SIMULATED time a real frame is worth, and the
+	# catch-up clamp with it: leaving the clamp at its unscaled value would make it
+	# k times tighter in simulated seconds, so a fast preset would quietly drop sim
+	# time whenever a frame ran long. Both clamps stay the reference's own at the
+	# default preset, whose factor is 1.0.
+	var dt := minf(delta, MAX_FRAME_DELTA) * pace_factor
+	sim_accumulator = minf(sim_accumulator + dt, FIXED_STEP * float(MAX_SIM_STEPS) * pace_factor)
 	var input := _pending_input
 	var input2 := _pending_input2
 	var steps := 0
