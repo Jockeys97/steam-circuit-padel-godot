@@ -1,0 +1,47 @@
+{
+  "model": "typesafe/jev-1.13-20260917",
+  "state": "FRAME INVENTORY - character-selection screen, 3420x2146 px screenshot. Description only, no verdicts.\n\nHEADER: a back button reading \"Back to the team\" with a left arrow, then the line \"Pick the athlete you play as\".\nLAYOUT: a grid of athlete cards, 4 columns. Two rows are populated: 4 cards in the top row, 2 cards in the second row.\nEACH CARD: a portrait image on top, then a dark panel carrying, in order, the athlete name in capitals, a role word, a description sentence, a line beginning with a lightning-bolt symbol and an ability name, then a status word.\n\nCard 1: \"THE MAESTRO\" / Technique / \"Millimetric precision and superior game reading.\" / Precision Shot / Available\nCard 2: \"THE PANTHER\" / Speed / \"Lightning reflexes and unpredictable net play.\" / Lightning Dash / Available\nCard 3: \"THE STEAMER\" / Power / \"Devastating smashes and wall shots that break any defense.\" / Steam Smash / Available\nCard 4: \"THE FLAME\" / Stamina / \"Relentless, recovers every point and wears down opponents.\" / Steam Shield / Available\nCard 5: \"THE ORACLE\" / Technique / \"Reads every trajectory: top-tier control and vision.\" / Perfect Vision / (no status word visible)\nCard 6: \"THE COLOSSUS\" / Power / \"Brute force that bends the glass with every impact.\" / Steam Hammer / (no status word visible)\n\nSTAT-MARK ROW: under each description there is a row of small marks.\n- On cards 1-4 the row contains 4 small square/rectangular marks with visible gaps between them. All 4 marks carry the same ink, a light grey, nearest hex #C0C0C0. No mark of any other colour appears in the row.\n- The marks are small relative to the card's text.\n- On cards 5 and 6 no mark row is visible.\n\nCLIPPING: cards 5 and 6 are cut off by the bottom edge of the frame - their status word is not visible and their panel ends at the image boundary. Cards 1-4 are fully inside the frame.\n\nDETERMINISTIC FACTS - read from the port's own source, not from the image:\n- The mark row is drawn as one text label: five glyphs, an optional number of U+25AE followed by U+25AF to make five ticks in total.\n- That label's font colour is overridden from the theme token \"stat_bar\"; the port's value for that token is #7ee0ff. For rival cards the token is \"stat_bar_rival\", value #ffb08c.\n- The label has text clipping enabled, and the card container clips its content.\n- On cards 1-4 the description sentence wraps onto a second line.\n",
+  "questions": {
+    "six_cards": {
+      "type": "noul",
+      "instructions": "Does this frame show six athlete cards?",
+      "true": "The frame shows six athlete cards",
+      "false": "The frame does not show six athlete cards"
+    },
+    "bars_read": {
+      "type": "noul",
+      "instructions": "Do the stat bars on the athlete cards read the way the design intends - a five-tick bar whose filled ticks are clearly visible in the theme's accent colour, so a player can compare athletes at a glance?",
+      "true": "The bars read as intended: visible, accent-coloured, comparable five-tick bars",
+      "false": "The bars do not read as intended: not visible as accent-coloured comparable bars"
+    },
+    "clipped": {
+      "type": "noul",
+      "instructions": "Is any athlete card clipped or cut off by the edge of the frame?",
+      "true": "At least one card is clipped by the frame edge",
+      "false": "No card is clipped by the frame edge"
+    },
+    "defect_class": {
+      "type": "choice",
+      "instructions": "Which single defect class best fits the stat-mark row on these cards?",
+      "criteria": {
+        "colour_mismatch": "The ink of the marks does not match the colour the theme prescribes for the bar",
+        "glyph_not_rendering": "The glyphs the bar is made of do not render, so the bar is invisible or empty",
+        "tick_count_wrong": "The number of ticks drawn does not match the number the design calls for",
+        "layout_clipping": "The row is coloured correctly but is clipped by the card or the frame",
+        "none": "No defect: the row is as the design intends",
+        "other": "None of these fit"
+      }
+    },
+    "severity": {
+      "type": "score",
+      "instructions": "How far does this frame deviate from a shippable screen? level 0 = matches, ascending to worst",
+      "criteria": [
+        "No visible deviation",
+        "Cosmetic nit",
+        "Noticeable but tolerable",
+        "Clearly wrong, a player would notice",
+        "Broken: the element does not work as a visual element"
+      ]
+    }
+  }
+}

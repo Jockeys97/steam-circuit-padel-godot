@@ -1,0 +1,3619 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SPECS_JSON_BEGIN
+{
+  "arena_kit_path": "res://game/arenas/arena_kit.gd",
+  "arenas": [
+    {
+      "id": "torii",
+      "instances_total": 27,
+      "slots": [
+        {
+          "anchor": {
+            "x": -3.20000004768372,
+            "y": 0.0,
+            "z": -11.3000001907349
+          },
+          "back_z": -12.0800001907349,
+          "depth": 1.56,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.52 x 4.0 x 1.56 m - pagoda mass on the left of the band",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.56,
+            "h": 4.0,
+            "matches": true,
+            "note": "1.52 x 4.0 x 1.56 m - pagoda mass on the left of the band",
+            "w": 1.52,
+            "what": "pagoda mass on the left of the band"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.5200001907349,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -3.20000004768372,
+              "ax_max": -2.44000004768372,
+              "ax_min": -3.96000004768372,
+              "back_z": -12.0800001907349,
+              "cx": -4.29999377030277,
+              "cz": -11.3000001907349,
+              "front_z": -10.5200001907349,
+              "i": 1,
+              "x_max": -3.53999377030277,
+              "x_min": -5.05999377030277
+            }
+          ],
+          "kinds": [
+            "pagoda"
+          ],
+          "repeats": 1,
+          "run_half_x": 0.0,
+          "slot": "hero_landmark",
+          "spread": 0.0,
+          "suppress": true,
+          "target_h": 4.0
+        },
+        {
+          "anchor": {
+            "x": 4.0,
+            "y": 0.0,
+            "z": -11.1000003814697
+          },
+          "back_z": -11.3500003814697,
+          "depth": 0.5,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "2.77 x 2.6 x 0.5 m - vermillion gate, opening on the anchor",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.5,
+            "h": 2.6,
+            "matches": true,
+            "note": "2.77 x 2.6 x 0.5 m - vermillion gate, opening on the anchor",
+            "w": 2.77,
+            "what": "vermillion gate, opening on the anchor"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.8500003814697,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 4.0,
+              "ax_max": 5.385,
+              "ax_min": 2.615,
+              "back_z": -11.3500003814697,
+              "cx": 5.37499213278484,
+              "cz": -11.1000003814697,
+              "front_z": -10.8500003814697,
+              "i": 1,
+              "x_max": 6.75999213278484,
+              "x_min": 3.98999213278484
+            }
+          ],
+          "kinds": [
+            "torii"
+          ],
+          "repeats": 1,
+          "run_half_x": 0.0,
+          "slot": "gate_portal",
+          "spread": 0.0,
+          "suppress": true,
+          "target_h": 2.6
+        },
+        {
+          "anchor": {
+            "x": -8.39999961853027,
+            "y": 0.0,
+            "z": -11.0500001907349
+          },
+          "back_z": -11.3400001907349,
+          "depth": 0.58,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.58 x 1.15 x 0.58 m - stone lantern on a post",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.58,
+            "h": 1.15,
+            "matches": true,
+            "note": "0.58 x 1.15 x 0.58 m - stone lantern on a post",
+            "w": 0.58,
+            "what": "stone lantern on a post"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.7600001907349,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -9.89999961853027,
+              "ax_max": -9.60999961853027,
+              "ax_min": -10.1899996185303,
+              "back_z": -11.3400001907349,
+              "cx": -13.3031050160433,
+              "cz": -11.0500001907349,
+              "front_z": -10.7600001907349,
+              "i": 1,
+              "x_max": -13.0131050160433,
+              "x_min": -13.5931050160433
+            },
+            {
+              "ax": -8.39999961853027,
+              "ax_max": -8.10999961853027,
+              "ax_min": -8.68999961853027,
+              "back_z": -11.3400001907349,
+              "cx": -11.287482966249,
+              "cz": -11.0500001907349,
+              "front_z": -10.7600001907349,
+              "i": 2,
+              "x_max": -10.997482966249,
+              "x_min": -11.577482966249
+            },
+            {
+              "ax": -6.89999961853027,
+              "ax_max": -6.60999961853027,
+              "ax_min": -7.18999961853027,
+              "back_z": -11.3400001907349,
+              "cx": -9.27186091645465,
+              "cz": -11.0500001907349,
+              "front_z": -10.7600001907349,
+              "i": 3,
+              "x_max": -8.98186091645465,
+              "x_min": -9.56186091645465
+            }
+          ],
+          "kinds": [
+            "lantern"
+          ],
+          "repeats": 3,
+          "run_half_x": 1.5,
+          "slot": "light_source",
+          "spread": 1.5,
+          "suppress": true,
+          "target_h": 1.15
+        },
+        {
+          "anchor": {
+            "x": -10.1999998092651,
+            "y": 0.0,
+            "z": -11.4499998092651
+          },
+          "back_z": -12.0999998092651,
+          "depth": 1.3,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "2.7 x 2.6 x 1.3 m - cherry cluster, seams hidden",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.3,
+            "h": 2.6,
+            "matches": true,
+            "note": "2.7 x 2.6 x 1.3 m - cherry cluster, seams hidden",
+            "w": 2.7,
+            "what": "cherry cluster, seams hidden"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.7999998092651,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -11.0999998092651,
+              "ax_max": -9.74999980926514,
+              "ax_min": -12.4499998092651,
+              "back_z": -12.0999998092651,
+              "cx": -14.9156029121783,
+              "cz": -11.4499998092651,
+              "front_z": -10.7999998092651,
+              "i": 1,
+              "x_max": -13.5656029121783,
+              "x_min": -16.2656029121783
+            },
+            {
+              "ax": -9.29999980926514,
+              "ax_max": -7.94999980926514,
+              "ax_min": -10.6499998092651,
+              "back_z": -12.0999998092651,
+              "cx": -12.4968564524251,
+              "cz": -11.4499998092651,
+              "front_z": -10.7999998092651,
+              "i": 2,
+              "x_max": -11.1468564524251,
+              "x_min": -13.8468564524251
+            }
+          ],
+          "kinds": [
+            "petal"
+          ],
+          "repeats": 2,
+          "run_half_x": 0.9,
+          "slot": "vegetation_cluster",
+          "spread": 1.8,
+          "suppress": true,
+          "target_h": 2.6
+        },
+        {
+          "anchor": {
+            "x": 6.59999990463257,
+            "y": 0.0,
+            "z": -10.75
+          },
+          "back_z": -11.375,
+          "depth": 1.25,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.35 x 0.55 x 1.25 m - raked gravel mound",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.25,
+            "h": 0.55,
+            "matches": true,
+            "note": "1.35 x 0.55 x 1.25 m - raked gravel mound",
+            "w": 1.35,
+            "what": "raked gravel mound"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.125,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 5.49999990463257,
+              "ax_max": 6.17499990463257,
+              "ax_min": 4.82499990463257,
+              "back_z": -11.375,
+              "cx": 7.39061405442935,
+              "cz": -10.75,
+              "front_z": -10.125,
+              "i": 1,
+              "x_max": 8.06561405442935,
+              "x_min": 6.71561405442935
+            },
+            {
+              "ax": 7.69999990463257,
+              "ax_max": 8.37499990463257,
+              "ax_min": 7.02499990463257,
+              "back_z": -11.375,
+              "cx": 10.346859727461,
+              "cz": -10.75,
+              "front_z": -10.125,
+              "i": 2,
+              "x_max": 11.021859727461,
+              "x_min": 9.67185972746101
+            }
+          ],
+          "kinds": [],
+          "repeats": 2,
+          "run_half_x": 1.1,
+          "slot": "ground_dressing",
+          "spread": 2.2,
+          "suppress": false,
+          "target_h": 0.55
+        },
+        {
+          "anchor": {
+            "x": 0.800000011920929,
+            "y": 0.0,
+            "z": -10.8999996185303
+          },
+          "back_z": -11.2649996185303,
+          "depth": 0.73,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.76 x 0.9 x 0.73 m - shrine panel",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.73,
+            "h": 0.9,
+            "matches": true,
+            "note": "0.76 x 0.9 x 0.73 m - shrine panel",
+            "w": 0.76,
+            "what": "shrine panel"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.5349996185303,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -0.549999988079071,
+              "ax_max": -0.169999988079071,
+              "ax_min": -0.929999988079071,
+              "back_z": -11.2649996185303,
+              "cx": -0.73906140223919,
+              "cz": -10.8999996185303,
+              "front_z": -10.5349996185303,
+              "i": 1,
+              "x_max": -0.35906140223919,
+              "x_min": -1.11906140223919
+            },
+            {
+              "ax": 0.350000011920929,
+              "ax_max": 0.730000011920929,
+              "ax_min": -0.0299999880790711,
+              "back_z": -11.2649996185303,
+              "cx": 0.470311827637398,
+              "cz": -10.8999996185303,
+              "front_z": -10.5349996185303,
+              "i": 2,
+              "x_max": 0.850311827637398,
+              "x_min": 0.0903118276373981
+            },
+            {
+              "ax": 1.25000001192093,
+              "ax_max": 1.63000001192093,
+              "ax_min": 0.870000011920929,
+              "back_z": -11.2649996185303,
+              "cx": 1.67968505751399,
+              "cz": -10.8999996185303,
+              "front_z": -10.5349996185303,
+              "i": 3,
+              "x_max": 2.05968505751399,
+              "x_min": 1.29968505751399
+            },
+            {
+              "ax": 2.15000001192093,
+              "ax_max": 2.53000001192093,
+              "ax_min": 1.77000001192093,
+              "back_z": -11.2649996185303,
+              "cx": 2.88905828739057,
+              "cz": -10.8999996185303,
+              "front_z": -10.5349996185303,
+              "i": 4,
+              "x_max": 3.26905828739057,
+              "x_min": 2.50905828739057
+            }
+          ],
+          "kinds": [],
+          "repeats": 4,
+          "run_half_x": 1.35,
+          "slot": "ornament_accent",
+          "spread": 0.9,
+          "suppress": false,
+          "target_h": 0.9
+        },
+        {
+          "anchor": {
+            "x": 9.60000038146973,
+            "y": 0.0,
+            "z": -10.9499998092651
+          },
+          "back_z": -11.1599998092651,
+          "depth": 0.42,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.56 x 2.6 x 0.42 m - vermillion post",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.42,
+            "h": 2.6,
+            "matches": true,
+            "note": "0.56 x 2.6 x 0.42 m - vermillion post",
+            "w": 0.56,
+            "what": "vermillion post"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.7399998092651,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 8.40000038146973,
+              "ax_max": 8.68000038146973,
+              "ax_min": 8.12000038146973,
+              "back_z": -11.1599998092651,
+              "cx": 11.2874839914474,
+              "cz": -10.9499998092651,
+              "front_z": -10.7399998092651,
+              "i": 1,
+              "x_max": 11.5674839914474,
+              "x_min": 11.0074839914474
+            },
+            {
+              "ax": 9.20000038146973,
+              "ax_max": 9.48000038146973,
+              "ax_min": 8.92000038146973,
+              "back_z": -11.1599998092651,
+              "cx": 12.3624824180043,
+              "cz": -10.9499998092651,
+              "front_z": -10.7399998092651,
+              "i": 2,
+              "x_max": 12.6424824180043,
+              "x_min": 12.0824824180043
+            },
+            {
+              "ax": 10.0000003814697,
+              "ax_max": 10.2800003814697,
+              "ax_min": 9.72000038146973,
+              "back_z": -11.1599998092651,
+              "cx": 13.4374808445613,
+              "cz": -10.9499998092651,
+              "front_z": -10.7399998092651,
+              "i": 3,
+              "x_max": 13.7174808445613,
+              "x_min": 13.1574808445613
+            },
+            {
+              "ax": 10.8000003814697,
+              "ax_max": 11.0800003814697,
+              "ax_min": 10.5200003814697,
+              "back_z": -11.1599998092651,
+              "cx": 14.5124792711183,
+              "cz": -10.9499998092651,
+              "front_z": -10.7399998092651,
+              "i": 4,
+              "x_max": 14.7924792711183,
+              "x_min": 14.2324792711183
+            }
+          ],
+          "kinds": [],
+          "repeats": 4,
+          "run_half_x": 1.2,
+          "slot": "column_pillar",
+          "spread": 0.8,
+          "suppress": false,
+          "target_h": 2.6
+        },
+        {
+          "anchor": {
+            "x": -6.19999980926514,
+            "y": 0.0,
+            "z": -10.6999998092651
+          },
+          "back_z": -10.8299998092651,
+          "depth": 0.26,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.62 x 1.05 x 0.26 m - wooden rail tile",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.26,
+            "h": 1.05,
+            "matches": true,
+            "note": "1.62 x 1.05 x 0.26 m - wooden rail tile",
+            "w": 1.62,
+            "what": "wooden rail tile"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.5699998092651,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -8.94999980926514,
+              "ax_max": -8.13999980926514,
+              "ax_min": -9.75999980926514,
+              "back_z": -10.8299998092651,
+              "cx": -12.0265446408065,
+              "cz": -10.6999998092651,
+              "front_z": -10.5699998092651,
+              "i": 1,
+              "x_max": -11.2165446408065,
+              "x_min": -12.8365446408065
+            },
+            {
+              "ax": -7.84999980926514,
+              "ax_max": -7.03999980926514,
+              "ax_min": -8.65999980926514,
+              "back_z": -10.8299998092651,
+              "cx": -10.5484218042906,
+              "cz": -10.6999998092651,
+              "front_z": -10.5699998092651,
+              "i": 2,
+              "x_max": -9.73842180429065,
+              "x_min": -11.3584218042906
+            },
+            {
+              "ax": -6.74999980926514,
+              "ax_max": -5.93999980926514,
+              "ax_min": -7.55999980926514,
+              "back_z": -10.8299998092651,
+              "cx": -9.07029896777481,
+              "cz": -10.6999998092651,
+              "front_z": -10.5699998092651,
+              "i": 3,
+              "x_max": -8.26029896777481,
+              "x_min": -9.88029896777481
+            },
+            {
+              "ax": -5.64999980926514,
+              "ax_max": -4.83999980926514,
+              "ax_min": -6.45999980926514,
+              "back_z": -10.8299998092651,
+              "cx": -7.59217613125899,
+              "cz": -10.6999998092651,
+              "front_z": -10.5699998092651,
+              "i": 4,
+              "x_max": -6.78217613125899,
+              "x_min": -8.40217613125898
+            },
+            {
+              "ax": -4.54999980926514,
+              "ax_max": -3.73999980926514,
+              "ax_min": -5.35999980926514,
+              "back_z": -10.8299998092651,
+              "cx": -6.11405329474315,
+              "cz": -10.6999998092651,
+              "front_z": -10.5699998092651,
+              "i": 5,
+              "x_max": -5.30405329474315,
+              "x_min": -6.92405329474316
+            },
+            {
+              "ax": -3.44999980926514,
+              "ax_max": -2.63999980926514,
+              "ax_min": -4.25999980926514,
+              "back_z": -10.8299998092651,
+              "cx": -4.63593045822732,
+              "cz": -10.6999998092651,
+              "front_z": -10.5699998092651,
+              "i": 6,
+              "x_max": -3.82593045822732,
+              "x_min": -5.44593045822733
+            }
+          ],
+          "kinds": [],
+          "repeats": 6,
+          "run_half_x": 2.75,
+          "slot": "railing_segment",
+          "spread": 1.1,
+          "suppress": false,
+          "target_h": 1.05
+        },
+        {
+          "anchor": {
+            "x": 2.59999990463257,
+            "y": 0.0,
+            "z": -10.8000001907349
+          },
+          "back_z": -11.2450001907349,
+          "depth": 0.89,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "3.02 x 0.95 x 0.89 m - bench",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.89,
+            "h": 0.95,
+            "matches": true,
+            "note": "3.02 x 0.95 x 0.89 m - bench",
+            "w": 3.02,
+            "what": "bench"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.3550001907349,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 1.79999990463257,
+              "ax_max": 3.30999990463257,
+              "ax_min": 0.289999904632568,
+              "back_z": -11.2450001907349,
+              "cx": 2.41874633160338,
+              "cz": -10.8000001907349,
+              "front_z": -10.3550001907349,
+              "i": 1,
+              "x_max": 3.92874633160338,
+              "x_min": 0.908746331603378
+            },
+            {
+              "ax": 3.39999990463257,
+              "ax_max": 4.90999990463257,
+              "ax_min": 1.88999990463257,
+              "back_z": -11.2450001907349,
+              "cx": 4.56874318471731,
+              "cz": -10.8000001907349,
+              "front_z": -10.3550001907349,
+              "i": 2,
+              "x_max": 6.07874318471731,
+              "x_min": 3.05874318471731
+            }
+          ],
+          "kinds": [],
+          "repeats": 2,
+          "run_half_x": 0.8,
+          "slot": "furniture",
+          "spread": 1.6,
+          "suppress": false,
+          "target_h": 0.95
+        },
+        {
+          "anchor": {
+            "x": -1.39999997615814,
+            "y": 0.0,
+            "z": -10.9200000762939
+          },
+          "back_z": -11.1000000762939,
+          "depth": 0.36,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.86 x 1.4 x 0.36 m - noren panel",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.36,
+            "h": 1.4,
+            "matches": true,
+            "note": "0.86 x 1.4 x 0.36 m - noren panel",
+            "w": 0.86,
+            "what": "noren panel"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.7400000762939,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -1.99999997615814,
+              "ax_max": -1.56999997615814,
+              "ax_min": -2.42999997615814,
+              "back_z": -11.1000000762939,
+              "cx": -2.68749603435497,
+              "cz": -10.9200000762939,
+              "front_z": -10.7400000762939,
+              "i": 1,
+              "x_max": -2.25749603435497,
+              "x_min": -3.11749603435497
+            },
+            {
+              "ax": -0.799999976158142,
+              "ax_max": -0.369999976158142,
+              "ax_min": -1.22999997615814,
+              "back_z": -11.1000000762939,
+              "cx": -1.07499839451952,
+              "cz": -10.9200000762939,
+              "front_z": -10.7400000762939,
+              "i": 2,
+              "x_max": -0.644998394519518,
+              "x_min": -1.50499839451952
+            }
+          ],
+          "kinds": [],
+          "repeats": 2,
+          "run_half_x": 0.6,
+          "slot": "signage_banner",
+          "spread": 1.2,
+          "suppress": false,
+          "target_h": 1.4
+        }
+      ]
+    },
+    {
+      "id": "medina",
+      "instances_total": 31,
+      "slots": [
+        {
+          "anchor": {
+            "x": -4.19999980926514,
+            "y": 0.0,
+            "z": -11.3500003814697
+          },
+          "back_z": -11.7100003814697,
+          "depth": 0.72,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.73 x 3.9 x 0.72 m - minaret shaft and balcony",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.72,
+            "h": 3.9,
+            "matches": true,
+            "note": "0.73 x 3.9 x 0.72 m - minaret shaft and balcony",
+            "w": 0.73,
+            "what": "minaret shaft and balcony"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.9900003814697,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -4.19999980926514,
+              "ax_max": -3.83499980926514,
+              "ax_min": -4.56499980926514,
+              "back_z": -11.7100003814697,
+              "cx": -5.64374148312448,
+              "cz": -11.3500003814697,
+              "front_z": -10.9900003814697,
+              "i": 1,
+              "x_max": -5.27874148312448,
+              "x_min": -6.00874148312448
+            }
+          ],
+          "kinds": [
+            "minaret"
+          ],
+          "repeats": 1,
+          "run_half_x": 0.0,
+          "slot": "hero_landmark",
+          "spread": 0.0,
+          "suppress": true,
+          "target_h": 3.9
+        },
+        {
+          "anchor": {
+            "x": 3.59999990463257,
+            "y": 0.0,
+            "z": -11.1499996185303
+          },
+          "back_z": -11.4899996185303,
+          "depth": 0.68,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "2.37 x 2.8 x 0.68 m - horseshoe arch",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.68,
+            "h": 2.8,
+            "matches": true,
+            "note": "2.37 x 2.8 x 0.68 m - horseshoe arch",
+            "w": 2.37,
+            "what": "horseshoe arch"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.8099996185303,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 3.59999990463257,
+              "ax_max": 4.78499990463257,
+              "ax_min": 2.41499990463257,
+              "back_z": -11.4899996185303,
+              "cx": 4.83749279135655,
+              "cz": -11.1499996185303,
+              "front_z": -10.8099996185303,
+              "i": 1,
+              "x_max": 6.02249279135656,
+              "x_min": 3.65249279135655
+            }
+          ],
+          "kinds": [
+            "arch"
+          ],
+          "repeats": 1,
+          "run_half_x": 0.0,
+          "slot": "gate_portal",
+          "spread": 0.0,
+          "suppress": true,
+          "target_h": 2.8
+        },
+        {
+          "anchor": {
+            "x": -7.80000019073486,
+            "y": 0.0,
+            "z": -11.0
+          },
+          "back_z": -11.19,
+          "depth": 0.38,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.44 x 1.3 x 0.38 m - brass lantern",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.38,
+            "h": 1.3,
+            "matches": true,
+            "note": "0.44 x 1.3 x 0.38 m - brass lantern",
+            "w": 0.44,
+            "what": "brass lantern"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.81,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -9.90000019073486,
+              "ax_max": -9.68000019073486,
+              "ax_min": -10.1200001907349,
+              "back_z": -11.19,
+              "cx": -13.3031057849421,
+              "cz": -11.0,
+              "front_z": -10.81,
+              "i": 1,
+              "x_max": -13.0831057849421,
+              "x_min": -13.5231057849421
+            },
+            {
+              "ax": -8.50000019073486,
+              "ax_max": -8.28000019073486,
+              "ax_min": -8.72000019073486,
+              "back_z": -11.19,
+              "cx": -11.4218585384674,
+              "cz": -11.0,
+              "front_z": -10.81,
+              "i": 2,
+              "x_max": -11.2018585384674,
+              "x_min": -11.6418585384674
+            },
+            {
+              "ax": -7.10000019073486,
+              "ax_max": -6.88000019073486,
+              "ax_min": -7.32000019073486,
+              "back_z": -11.19,
+              "cx": -9.54061129199268,
+              "cz": -11.0,
+              "front_z": -10.81,
+              "i": 3,
+              "x_max": -9.32061129199268,
+              "x_min": -9.76061129199268
+            },
+            {
+              "ax": -5.70000019073486,
+              "ax_max": -5.48000019073486,
+              "ax_min": -5.92000019073486,
+              "back_z": -11.19,
+              "cx": -7.65936404551799,
+              "cz": -11.0,
+              "front_z": -10.81,
+              "i": 4,
+              "x_max": -7.43936404551799,
+              "x_min": -7.87936404551799
+            }
+          ],
+          "kinds": [
+            "lantern"
+          ],
+          "repeats": 4,
+          "run_half_x": 2.1,
+          "slot": "light_source",
+          "spread": 1.4,
+          "suppress": true,
+          "target_h": 1.3
+        },
+        {
+          "anchor": {
+            "x": -10.6000003814697,
+            "y": 0.0,
+            "z": -11.5
+          },
+          "back_z": -12.05,
+          "depth": 1.1,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "2.13 x 2.7 x 1.1 m - palm cluster",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.1,
+            "h": 2.7,
+            "matches": true,
+            "note": "2.13 x 2.7 x 1.1 m - palm cluster",
+            "w": 2.13,
+            "what": "palm cluster"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.95,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -11.6000003814697,
+              "ax_max": -10.5350003814697,
+              "ax_min": -12.6650003814697,
+              "back_z": -12.05,
+              "cx": -15.5874776976752,
+              "cz": -11.5,
+              "front_z": -10.95,
+              "i": 1,
+              "x_max": -14.5224776976752,
+              "x_min": -16.6524776976752
+            },
+            {
+              "ax": -9.60000038146973,
+              "ax_max": -8.53500038146973,
+              "ax_min": -10.6650003814697,
+              "back_z": -12.05,
+              "cx": -12.8999816312828,
+              "cz": -11.5,
+              "front_z": -10.95,
+              "i": 2,
+              "x_max": -11.8349816312828,
+              "x_min": -13.9649816312828
+            }
+          ],
+          "kinds": [
+            "palm"
+          ],
+          "repeats": 2,
+          "run_half_x": 1.0,
+          "slot": "vegetation_cluster",
+          "spread": 2.0,
+          "suppress": true,
+          "target_h": 2.7
+        },
+        {
+          "anchor": {
+            "x": 5.80000019073486,
+            "y": 0.0,
+            "z": -10.6999998092651
+          },
+          "back_z": -11.0749998092651,
+          "depth": 0.75,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.7 x 0.6 x 0.75 m - pottery and kerb strip",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.75,
+            "h": 0.6,
+            "matches": true,
+            "note": "0.7 x 0.6 x 0.75 m - pottery and kerb strip",
+            "w": 0.7,
+            "what": "pottery and kerb strip"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.3249998092651,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 3.80000019073486,
+              "ax_max": 4.15000019073486,
+              "ax_min": 3.45000019073486,
+              "back_z": -11.0749998092651,
+              "cx": 5.10624278244519,
+              "cz": -10.6999998092651,
+              "front_z": -10.3249998092651,
+              "i": 1,
+              "x_max": 5.45624278244519,
+              "x_min": 4.75624278244519
+            },
+            {
+              "ax": 5.80000019073486,
+              "ax_max": 6.15000019073486,
+              "ax_min": 5.45000019073486,
+              "back_z": -11.0749998092651,
+              "cx": 7.79373884883761,
+              "cz": -10.6999998092651,
+              "front_z": -10.3249998092651,
+              "i": 2,
+              "x_max": 8.14373884883761,
+              "x_min": 7.44373884883761
+            },
+            {
+              "ax": 7.80000019073486,
+              "ax_max": 8.15000019073486,
+              "ax_min": 7.45000019073486,
+              "back_z": -11.0749998092651,
+              "cx": 10.48123491523,
+              "cz": -10.6999998092651,
+              "front_z": -10.3249998092651,
+              "i": 3,
+              "x_max": 10.83123491523,
+              "x_min": 10.13123491523
+            }
+          ],
+          "kinds": [],
+          "repeats": 3,
+          "run_half_x": 2.0,
+          "slot": "ground_dressing",
+          "spread": 2.0,
+          "suppress": false,
+          "target_h": 0.6
+        },
+        {
+          "anchor": {
+            "x": 0.400000005960464,
+            "y": 0.0,
+            "z": -11.289999961853
+          },
+          "back_z": -12.504999961853,
+          "depth": 2.43,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "2.43 x 1.0 x 2.43 m - zellige panel",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 2.43,
+            "h": 1.0,
+            "matches": true,
+            "note": "2.43 x 1.0 x 2.43 m - zellige panel",
+            "w": 2.43,
+            "what": "zellige panel"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.074999961853,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -1.09999999403954,
+              "ax_max": 0.115000005960465,
+              "ax_min": -2.31499999403954,
+              "back_z": -12.504999961853,
+              "cx": -1.47812282850647,
+              "cz": -11.289999961853,
+              "front_z": -10.074999961853,
+              "i": 1,
+              "x_max": -0.263122828506468,
+              "x_min": -2.69312282850647
+            },
+            {
+              "ax": -0.0999999940395355,
+              "ax_max": 1.11500000596046,
+              "ax_min": -1.31499999403954,
+              "back_z": -12.504999961853,
+              "cx": -0.134374795310259,
+              "cz": -11.289999961853,
+              "front_z": -10.074999961853,
+              "i": 2,
+              "x_max": 1.08062520468974,
+              "x_min": -1.34937479531026
+            },
+            {
+              "ax": 0.900000005960464,
+              "ax_max": 2.11500000596046,
+              "ax_min": -0.314999994039536,
+              "back_z": -12.504999961853,
+              "cx": 1.20937323788595,
+              "cz": -11.289999961853,
+              "front_z": -10.074999961853,
+              "i": 3,
+              "x_max": 2.42437323788595,
+              "x_min": -0.00562676211404933
+            },
+            {
+              "ax": 1.90000000596046,
+              "ax_max": 3.11500000596046,
+              "ax_min": 0.685000005960464,
+              "back_z": -12.504999961853,
+              "cx": 2.55312127108216,
+              "cz": -11.289999961853,
+              "front_z": -10.074999961853,
+              "i": 4,
+              "x_max": 3.76812127108216,
+              "x_min": 1.33812127108216
+            }
+          ],
+          "kinds": [
+            "zellige"
+          ],
+          "repeats": 4,
+          "run_half_x": 1.5,
+          "slot": "ornament_accent",
+          "spread": 1.0,
+          "suppress": true,
+          "target_h": 1.0
+        },
+        {
+          "anchor": {
+            "x": 8.80000019073486,
+            "y": 0.0,
+            "z": -10.8999996185303
+          },
+          "back_z": -11.1049996185303,
+          "depth": 0.41,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.83 x 2.7 x 0.41 m - zellige column",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.41,
+            "h": 2.7,
+            "matches": true,
+            "note": "0.83 x 2.7 x 0.41 m - zellige column",
+            "w": 0.83,
+            "what": "zellige column"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.6949996185303,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 7.10000019073486,
+              "ax_max": 7.51500019073486,
+              "ax_min": 6.68500019073486,
+              "back_z": -11.1049996185303,
+              "cx": 9.54061129199268,
+              "cz": -10.8999996185303,
+              "front_z": -10.6949996185303,
+              "i": 1,
+              "x_max": 9.95561129199268,
+              "x_min": 9.12561129199268
+            },
+            {
+              "ax": 7.95000019073486,
+              "ax_max": 8.36500019073486,
+              "ax_min": 7.53500019073486,
+              "back_z": -11.1049996185303,
+              "cx": 10.6827971202095,
+              "cz": -10.8999996185303,
+              "front_z": -10.6949996185303,
+              "i": 2,
+              "x_max": 11.0977971202095,
+              "x_min": 10.2677971202095
+            },
+            {
+              "ax": 8.80000019073486,
+              "ax_max": 9.21500019073486,
+              "ax_min": 8.38500019073486,
+              "back_z": -11.1049996185303,
+              "cx": 11.8249829484262,
+              "cz": -10.8999996185303,
+              "front_z": -10.6949996185303,
+              "i": 3,
+              "x_max": 12.2399829484262,
+              "x_min": 11.4099829484262
+            },
+            {
+              "ax": 9.65000019073486,
+              "ax_max": 10.0650001907349,
+              "ax_min": 9.23500019073486,
+              "back_z": -11.1049996185303,
+              "cx": 12.967168776643,
+              "cz": -10.8999996185303,
+              "front_z": -10.6949996185303,
+              "i": 4,
+              "x_max": 13.382168776643,
+              "x_min": 12.552168776643
+            },
+            {
+              "ax": 10.5000001907349,
+              "ax_max": 10.9150001907349,
+              "ax_min": 10.0850001907349,
+              "back_z": -11.1049996185303,
+              "cx": 14.1093546048598,
+              "cz": -10.8999996185303,
+              "front_z": -10.6949996185303,
+              "i": 5,
+              "x_max": 14.5243546048598,
+              "x_min": 13.6943546048598
+            }
+          ],
+          "kinds": [],
+          "repeats": 5,
+          "run_half_x": 1.7,
+          "slot": "column_pillar",
+          "spread": 0.85,
+          "suppress": false,
+          "target_h": 2.7
+        },
+        {
+          "anchor": {
+            "x": -5.59999990463257,
+            "y": 0.0,
+            "z": -10.6499996185303
+          },
+          "back_z": -10.7649996185303,
+          "depth": 0.23,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.7 x 1.15 x 0.23 m - iron grille",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.23,
+            "h": 1.15,
+            "matches": true,
+            "note": "1.7 x 1.15 x 0.23 m - iron grille",
+            "w": 1.7,
+            "what": "iron grille"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.5349996185303,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -8.47499990463257,
+              "ax_max": -7.62499990463257,
+              "ax_min": -9.32499990463257,
+              "back_z": -10.7649996185303,
+              "cx": -11.3882644531881,
+              "cz": -10.6499996185303,
+              "front_z": -10.5349996185303,
+              "i": 1,
+              "x_max": -10.5382644531881,
+              "x_min": -12.2382644531881
+            },
+            {
+              "ax": -7.32499990463257,
+              "ax_max": -6.47499990463257,
+              "ax_min": -8.17499990463257,
+              "back_z": -10.7649996185303,
+              "cx": -9.84295421501243,
+              "cz": -10.6499996185303,
+              "front_z": -10.5349996185303,
+              "i": 2,
+              "x_max": -8.99295421501243,
+              "x_min": -10.6929542150124
+            },
+            {
+              "ax": -6.17499990463257,
+              "ax_max": -5.32499990463257,
+              "ax_min": -7.02499990463257,
+              "back_z": -10.7649996185303,
+              "cx": -8.29764397683679,
+              "cz": -10.6499996185303,
+              "front_z": -10.5349996185303,
+              "i": 3,
+              "x_max": -7.44764397683679,
+              "x_min": -9.14764397683679
+            },
+            {
+              "ax": -5.02499990463257,
+              "ax_max": -4.17499990463257,
+              "ax_min": -5.87499990463257,
+              "back_z": -10.7649996185303,
+              "cx": -6.75233373866115,
+              "cz": -10.6499996185303,
+              "front_z": -10.5349996185303,
+              "i": 4,
+              "x_max": -5.90233373866115,
+              "x_min": -7.60233373866115
+            },
+            {
+              "ax": -3.87499990463257,
+              "ax_max": -3.02499990463257,
+              "ax_min": -4.72499990463257,
+              "back_z": -10.7649996185303,
+              "cx": -5.20702350048551,
+              "cz": -10.6499996185303,
+              "front_z": -10.5349996185303,
+              "i": 5,
+              "x_max": -4.35702350048551,
+              "x_min": -6.05702350048551
+            },
+            {
+              "ax": -2.72499990463257,
+              "ax_max": -1.87499990463257,
+              "ax_min": -3.57499990463257,
+              "back_z": -10.7649996185303,
+              "cx": -3.66171326230987,
+              "cz": -10.6499996185303,
+              "front_z": -10.5349996185303,
+              "i": 6,
+              "x_max": -2.81171326230987,
+              "x_min": -4.51171326230987
+            }
+          ],
+          "kinds": [],
+          "repeats": 6,
+          "run_half_x": 2.875,
+          "slot": "railing_segment",
+          "spread": 1.15,
+          "suppress": false,
+          "target_h": 1.15
+        },
+        {
+          "anchor": {
+            "x": 2.20000004768372,
+            "y": 0.0,
+            "z": -10.7799997329712
+          },
+          "back_z": -11.4899997329712,
+          "depth": 1.42,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.42 x 0.95 x 1.42 m - divan",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.42,
+            "h": 0.95,
+            "matches": true,
+            "note": "1.42 x 0.95 x 1.42 m - divan",
+            "w": 1.42,
+            "what": "divan"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.0699997329712,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 0.900000047683716,
+              "ax_max": 1.61000004768372,
+              "ax_min": 0.190000047683716,
+              "back_z": -11.4899997329712,
+              "cx": 1.20937329395149,
+              "cz": -10.7799997329712,
+              "front_z": -10.0699997329712,
+              "i": 1,
+              "x_max": 1.91937329395149,
+              "x_min": 0.499373293951488
+            },
+            {
+              "ax": 2.20000004768372,
+              "ax_max": 2.91000004768372,
+              "ax_min": 1.49000004768372,
+              "back_z": -11.4899997329712,
+              "cx": 2.95624573710656,
+              "cz": -10.7799997329712,
+              "front_z": -10.0699997329712,
+              "i": 2,
+              "x_max": 3.66624573710656,
+              "x_min": 2.24624573710656
+            },
+            {
+              "ax": 3.50000004768372,
+              "ax_max": 4.21000004768372,
+              "ax_min": 2.79000004768372,
+              "back_z": -11.4899997329712,
+              "cx": 4.70311818026163,
+              "cz": -10.7799997329712,
+              "front_z": -10.0699997329712,
+              "i": 3,
+              "x_max": 5.41311818026163,
+              "x_min": 3.99311818026163
+            }
+          ],
+          "kinds": [],
+          "repeats": 3,
+          "run_half_x": 1.3,
+          "slot": "furniture",
+          "spread": 1.3,
+          "suppress": false,
+          "target_h": 0.95
+        },
+        {
+          "anchor": {
+            "x": -1.60000002384186,
+            "y": 0.0,
+            "z": -10.8800001144409
+          },
+          "back_z": -11.4950001144409,
+          "depth": 1.23,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "2.28 x 1.3 x 1.23 m - awning sign",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.23,
+            "h": 1.3,
+            "matches": true,
+            "note": "2.28 x 1.3 x 1.23 m - awning sign",
+            "w": 2.28,
+            "what": "awning sign"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.2650001144409,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -2.15000002384186,
+              "ax_max": -1.01000002384186,
+              "ax_min": -3.29000002384186,
+              "back_z": -11.4950001144409,
+              "cx": -2.8890583034093,
+              "cz": -10.8800001144409,
+              "front_z": -10.2650001144409,
+              "i": 1,
+              "x_max": -1.7490583034093,
+              "x_min": -4.0290583034093
+            },
+            {
+              "ax": -1.05000002384186,
+              "ax_max": 0.089999976158142,
+              "ax_min": -2.19000002384186,
+              "back_z": -11.4950001144409,
+              "cx": -1.41093546689347,
+              "cz": -10.8800001144409,
+              "front_z": -10.2650001144409,
+              "i": 2,
+              "x_max": -0.270935466893469,
+              "x_min": -2.55093546689347
+            }
+          ],
+          "kinds": [],
+          "repeats": 2,
+          "run_half_x": 0.55,
+          "slot": "signage_banner",
+          "spread": 1.1,
+          "suppress": false,
+          "target_h": 1.3
+        }
+      ]
+    },
+    {
+      "id": "carioca",
+      "instances_total": 30,
+      "slots": [
+        {
+          "anchor": {
+            "x": 4.59999990463257,
+            "y": 0.0,
+            "z": -11.9300003051758
+          },
+          "back_z": -13.7850003051758,
+          "depth": 3.71,
+          "depth_ok": false,
+          "field_law_ok": true,
+          "footprint": "3.71 x 3.6 x 3.71 m - sugarloaf mass",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 3.71,
+            "h": 3.6,
+            "matches": true,
+            "note": "3.71 x 3.6 x 3.71 m - sugarloaf mass",
+            "w": 3.71,
+            "what": "sugarloaf mass"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.0750003051758,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 4.59999990463257,
+              "ax_max": 6.45499990463257,
+              "ax_min": 2.74499990463257,
+              "back_z": -13.7850003051758,
+              "cx": 6.18124082455276,
+              "cz": -11.9300003051758,
+              "front_z": -10.0750003051758,
+              "i": 1,
+              "x_max": 8.03624082455276,
+              "x_min": 4.32624082455276
+            }
+          ],
+          "kinds": [
+            "peak"
+          ],
+          "repeats": 1,
+          "run_half_x": 0.0,
+          "slot": "hero_landmark",
+          "spread": 0.0,
+          "suppress": true,
+          "target_h": 3.6
+        },
+        {
+          "anchor": {
+            "x": -4.0,
+            "y": 0.0,
+            "z": -11.1000003814697
+          },
+          "back_z": -11.4000003814697,
+          "depth": 0.6,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "2.57 x 2.4 x 0.6 m - quay arch",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.6,
+            "h": 2.4,
+            "matches": true,
+            "note": "2.57 x 2.4 x 0.6 m - quay arch",
+            "w": 2.57,
+            "what": "quay arch"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.8000003814697,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -4.0,
+              "ax_max": -2.715,
+              "ax_min": -5.285,
+              "back_z": -11.4000003814697,
+              "cx": -5.37499213278484,
+              "cz": -11.1000003814697,
+              "front_z": -10.8000003814697,
+              "i": 1,
+              "x_max": -4.08999213278484,
+              "x_min": -6.65999213278484
+            }
+          ],
+          "kinds": [],
+          "repeats": 1,
+          "run_half_x": 0.0,
+          "slot": "gate_portal",
+          "spread": 0.0,
+          "suppress": false,
+          "target_h": 2.4
+        },
+        {
+          "anchor": {
+            "x": 7.59999990463257,
+            "y": 0.0,
+            "z": -10.9499998092651
+          },
+          "back_z": -11.1399998092651,
+          "depth": 0.38,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "2.77 x 1.5 x 0.38 m - festoon post",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.38,
+            "h": 1.5,
+            "matches": true,
+            "note": "2.77 x 1.5 x 0.38 m - festoon post",
+            "w": 2.77,
+            "what": "festoon post"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.7599998092651,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 5.89999990463257,
+              "ax_max": 7.28499990463257,
+              "ax_min": 4.51499990463257,
+              "back_z": -11.1399998092651,
+              "cx": 7.92811326770784,
+              "cz": -10.9499998092651,
+              "front_z": -10.7599998092651,
+              "i": 1,
+              "x_max": 9.31311326770784,
+              "x_min": 6.54311326770784
+            },
+            {
+              "ax": 7.59999990463257,
+              "ax_max": 8.98499990463257,
+              "ax_min": 6.21499990463257,
+              "back_z": -11.1399998092651,
+              "cx": 10.2124849241414,
+              "cz": -10.9499998092651,
+              "front_z": -10.7599998092651,
+              "i": 2,
+              "x_max": 11.5974849241414,
+              "x_min": 8.82748492414139
+            },
+            {
+              "ax": 9.29999990463257,
+              "ax_max": 10.6849999046326,
+              "ax_min": 7.91499990463257,
+              "back_z": -11.1399998092651,
+              "cx": 12.4968565805749,
+              "cz": -10.9499998092651,
+              "front_z": -10.7599998092651,
+              "i": 3,
+              "x_max": 13.8818565805749,
+              "x_min": 11.1118565805749
+            }
+          ],
+          "kinds": [],
+          "repeats": 3,
+          "run_half_x": 1.7,
+          "slot": "light_source",
+          "spread": 1.7,
+          "suppress": false,
+          "target_h": 1.5
+        },
+        {
+          "anchor": {
+            "x": -9.80000019073486,
+            "y": 0.0,
+            "z": -11.3999996185303
+          },
+          "back_z": -12.1899996185303,
+          "depth": 1.58,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "2.4 x 2.5 x 1.58 m - banana and tree-fern clump",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.58,
+            "h": 2.5,
+            "matches": true,
+            "note": "2.4 x 2.5 x 1.58 m - banana and tree-fern clump",
+            "w": 2.4,
+            "what": "banana and tree-fern clump"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.6099996185303,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -11.5000001907349,
+              "ax_max": -10.3000001907349,
+              "ax_min": -12.7000001907349,
+              "back_z": -12.1899996185303,
+              "cx": -15.453102638056,
+              "cz": -11.3999996185303,
+              "front_z": -10.6099996185303,
+              "i": 1,
+              "x_max": -14.253102638056,
+              "x_min": -16.653102638056
+            },
+            {
+              "ax": -9.80000019073486,
+              "ax_max": -8.60000019073486,
+              "ax_min": -11.0000001907349,
+              "back_z": -12.1899996185303,
+              "cx": -13.1687309816224,
+              "cz": -11.3999996185303,
+              "front_z": -10.6099996185303,
+              "i": 2,
+              "x_max": -11.9687309816224,
+              "x_min": -14.3687309816224
+            },
+            {
+              "ax": -8.10000019073486,
+              "ax_max": -6.90000019073486,
+              "ax_min": -9.30000019073486,
+              "back_z": -12.1899996185303,
+              "cx": -10.8843593251889,
+              "cz": -11.3999996185303,
+              "front_z": -10.6099996185303,
+              "i": 3,
+              "x_max": -9.6843593251889,
+              "x_min": -12.0843593251889
+            }
+          ],
+          "kinds": [
+            "palm"
+          ],
+          "repeats": 3,
+          "run_half_x": 1.7,
+          "slot": "vegetation_cluster",
+          "spread": 1.7,
+          "suppress": true,
+          "target_h": 2.5
+        },
+        {
+          "anchor": {
+            "x": 4.19999980926514,
+            "y": 0.0,
+            "z": -10.6999998092651
+          },
+          "back_z": -11.1199998092651,
+          "depth": 0.84,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.88 x 0.5 x 0.84 m - beach boulders",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.84,
+            "h": 0.5,
+            "matches": true,
+            "note": "0.88 x 0.5 x 0.84 m - beach boulders",
+            "w": 0.88,
+            "what": "beach boulders"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.2799998092651,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 2.89999980926514,
+              "ax_max": 3.33999980926514,
+              "ax_min": 2.45999980926514,
+              "back_z": -11.1199998092651,
+              "cx": 3.89686903996941,
+              "cz": -10.6999998092651,
+              "front_z": -10.2799998092651,
+              "i": 1,
+              "x_max": 4.33686903996941,
+              "x_min": 3.45686903996941
+            },
+            {
+              "ax": 5.49999980926514,
+              "ax_max": 5.93999980926514,
+              "ax_min": 5.05999980926514,
+              "back_z": -11.1199998092651,
+              "cx": 7.39061392627955,
+              "cz": -10.6999998092651,
+              "front_z": -10.2799998092651,
+              "i": 2,
+              "x_max": 7.83061392627955,
+              "x_min": 6.95061392627955
+            }
+          ],
+          "kinds": [
+            "foam"
+          ],
+          "repeats": 2,
+          "run_half_x": 1.3,
+          "slot": "ground_dressing",
+          "spread": 2.6,
+          "suppress": true,
+          "target_h": 0.5
+        },
+        {
+          "anchor": {
+            "x": -1.0,
+            "y": 0.0,
+            "z": -11.8800001144409
+          },
+          "back_z": -13.6900001144409,
+          "depth": 3.62,
+          "depth_ok": false,
+          "field_law_ok": true,
+          "footprint": "3.62 x 0.85 x 3.62 m - capoeira ring brass",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 3.62,
+            "h": 0.85,
+            "matches": true,
+            "note": "3.62 x 0.85 x 3.62 m - capoeira ring brass",
+            "w": 3.62,
+            "what": "capoeira ring brass"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.0700001144409,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -2.65,
+              "ax_max": -0.84,
+              "ax_min": -4.46,
+              "back_z": -13.6900001144409,
+              "cx": -3.56093228796996,
+              "cz": -11.8800001144409,
+              "front_z": -10.0700001144409,
+              "i": 1,
+              "x_max": -1.75093228796996,
+              "x_min": -5.37093228796996
+            },
+            {
+              "ax": -1.55,
+              "ax_max": 0.26,
+              "ax_min": -3.36,
+              "back_z": -13.6900001144409,
+              "cx": -2.08280945145412,
+              "cz": -11.8800001144409,
+              "front_z": -10.0700001144409,
+              "i": 2,
+              "x_max": -0.272809451454124,
+              "x_min": -3.89280945145412
+            },
+            {
+              "ax": -0.45,
+              "ax_max": 1.36,
+              "ax_min": -2.26,
+              "back_z": -13.6900001144409,
+              "cx": -0.604686614938294,
+              "cz": -11.8800001144409,
+              "front_z": -10.0700001144409,
+              "i": 3,
+              "x_max": 1.20531338506171,
+              "x_min": -2.41468661493829
+            },
+            {
+              "ax": 0.65,
+              "ax_max": 2.46,
+              "ax_min": -1.16,
+              "back_z": -13.6900001144409,
+              "cx": 0.873436221577536,
+              "cz": -11.8800001144409,
+              "front_z": -10.0700001144409,
+              "i": 4,
+              "x_max": 2.68343622157754,
+              "x_min": -0.936563778422464
+            }
+          ],
+          "kinds": [],
+          "repeats": 4,
+          "run_half_x": 1.65,
+          "slot": "ornament_accent",
+          "spread": 1.1,
+          "suppress": false,
+          "target_h": 0.85
+        },
+        {
+          "anchor": {
+            "x": -7.19999980926514,
+            "y": 0.0,
+            "z": -10.8500003814697
+          },
+          "back_z": -11.0700003814697,
+          "depth": 0.44,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.49 x 2.6 x 0.44 m - painted mast",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.44,
+            "h": 2.6,
+            "matches": true,
+            "note": "0.49 x 2.6 x 0.44 m - painted mast",
+            "w": 0.49,
+            "what": "painted mast"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.6300003814697,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -8.54999980926514,
+              "ax_max": -8.30499980926514,
+              "ax_min": -8.79499980926514,
+              "back_z": -11.0700003814697,
+              "cx": -11.489045427528,
+              "cz": -10.8500003814697,
+              "front_z": -10.6300003814697,
+              "i": 1,
+              "x_max": -11.244045427528,
+              "x_min": -11.734045427528
+            },
+            {
+              "ax": -7.64999980926514,
+              "ax_max": -7.40499980926514,
+              "ax_min": -7.89499980926514,
+              "back_z": -11.0700003814697,
+              "cx": -10.2796721976514,
+              "cz": -10.8500003814697,
+              "front_z": -10.6300003814697,
+              "i": 2,
+              "x_max": -10.0346721976514,
+              "x_min": -10.5246721976514
+            },
+            {
+              "ax": -6.74999980926514,
+              "ax_max": -6.50499980926514,
+              "ax_min": -6.99499980926514,
+              "back_z": -11.0700003814697,
+              "cx": -9.07029896777481,
+              "cz": -10.8500003814697,
+              "front_z": -10.6300003814697,
+              "i": 3,
+              "x_max": -8.82529896777482,
+              "x_min": -9.31529896777481
+            },
+            {
+              "ax": -5.84999980926514,
+              "ax_max": -5.60499980926514,
+              "ax_min": -6.09499980926514,
+              "back_z": -11.0700003814697,
+              "cx": -7.86092573789823,
+              "cz": -10.8500003814697,
+              "front_z": -10.6300003814697,
+              "i": 4,
+              "x_max": -7.61592573789823,
+              "x_min": -8.10592573789823
+            }
+          ],
+          "kinds": [],
+          "repeats": 4,
+          "run_half_x": 1.35,
+          "slot": "column_pillar",
+          "spread": 0.9,
+          "suppress": false,
+          "target_h": 2.6
+        },
+        {
+          "anchor": {
+            "x": 1.39999997615814,
+            "y": 0.0,
+            "z": -10.5500001907349
+          },
+          "back_z": -10.6950001907349,
+          "depth": 0.29,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.51 x 1.0 x 0.29 m - quay rope rail",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.29,
+            "h": 1.0,
+            "matches": true,
+            "note": "1.51 x 1.0 x 0.29 m - quay rope rail",
+            "w": 1.51,
+            "what": "quay rope rail"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.4050001907349,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -1.60000002384186,
+              "ax_max": -0.845000023841858,
+              "ax_min": -2.35500002384186,
+              "back_z": -10.6950001907349,
+              "cx": -2.14999688515138,
+              "cz": -10.5500001907349,
+              "front_z": -10.4050001907349,
+              "i": 1,
+              "x_max": -1.39499688515138,
+              "x_min": -2.90499688515138
+            },
+            {
+              "ax": -0.400000023841858,
+              "ax_max": 0.354999976158142,
+              "ax_min": -1.15500002384186,
+              "back_z": -10.6950001907349,
+              "cx": -0.537499245315933,
+              "cz": -10.5500001907349,
+              "front_z": -10.4050001907349,
+              "i": 2,
+              "x_max": 0.217500754684067,
+              "x_min": -1.29249924531593
+            },
+            {
+              "ax": 0.799999976158142,
+              "ax_max": 1.55499997615814,
+              "ax_min": 0.0449999761581421,
+              "back_z": -10.6950001907349,
+              "cx": 1.07499839451952,
+              "cz": -10.5500001907349,
+              "front_z": -10.4050001907349,
+              "i": 3,
+              "x_max": 1.82999839451952,
+              "x_min": 0.319998394519518
+            },
+            {
+              "ax": 1.99999997615814,
+              "ax_max": 2.75499997615814,
+              "ax_min": 1.24499997615814,
+              "back_z": -10.6950001907349,
+              "cx": 2.68749603435497,
+              "cz": -10.5500001907349,
+              "front_z": -10.4050001907349,
+              "i": 4,
+              "x_max": 3.44249603435497,
+              "x_min": 1.93249603435497
+            },
+            {
+              "ax": 3.19999997615814,
+              "ax_max": 3.95499997615814,
+              "ax_min": 2.44499997615814,
+              "back_z": -10.6950001907349,
+              "cx": 4.29999367419042,
+              "cz": -10.5500001907349,
+              "front_z": -10.4050001907349,
+              "i": 5,
+              "x_max": 5.05499367419042,
+              "x_min": 3.54499367419042
+            },
+            {
+              "ax": 4.39999997615814,
+              "ax_max": 5.15499997615814,
+              "ax_min": 3.64499997615814,
+              "back_z": -10.6950001907349,
+              "cx": 5.91249131402587,
+              "cz": -10.5500001907349,
+              "front_z": -10.4050001907349,
+              "i": 6,
+              "x_max": 6.66749131402587,
+              "x_min": 5.15749131402587
+            }
+          ],
+          "kinds": [],
+          "repeats": 6,
+          "run_half_x": 3.0,
+          "slot": "railing_segment",
+          "spread": 1.2,
+          "suppress": false,
+          "target_h": 1.0
+        },
+        {
+          "anchor": {
+            "x": 9.39999961853027,
+            "y": 0.0,
+            "z": -10.8500003814697
+          },
+          "back_z": -11.3750003814697,
+          "depth": 1.05,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.8 x 0.9 x 1.05 m - deck chair",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.05,
+            "h": 0.9,
+            "matches": true,
+            "note": "0.8 x 0.9 x 1.05 m - deck chair",
+            "w": 0.8,
+            "what": "deck chair"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.3250003814697,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 7.99999961853027,
+              "ax_max": 8.39999961853027,
+              "ax_min": 7.59999961853027,
+              "back_z": -11.3750003814697,
+              "cx": 10.7499837529705,
+              "cz": -10.8500003814697,
+              "front_z": -10.3250003814697,
+              "i": 1,
+              "x_max": 11.1499837529705,
+              "x_min": 10.3499837529705
+            },
+            {
+              "ax": 9.39999961853027,
+              "ax_max": 9.79999961853027,
+              "ax_min": 8.99999961853027,
+              "back_z": -11.3750003814697,
+              "cx": 12.6312309994452,
+              "cz": -10.8500003814697,
+              "front_z": -10.3250003814697,
+              "i": 2,
+              "x_max": 13.0312309994452,
+              "x_min": 12.2312309994452
+            },
+            {
+              "ax": 10.7999996185303,
+              "ax_max": 11.1999996185303,
+              "ax_min": 10.3999996185303,
+              "back_z": -11.3750003814697,
+              "cx": 14.5124782459199,
+              "cz": -10.8500003814697,
+              "front_z": -10.3250003814697,
+              "i": 3,
+              "x_max": 14.9124782459199,
+              "x_min": 14.1124782459199
+            }
+          ],
+          "kinds": [],
+          "repeats": 3,
+          "run_half_x": 1.4,
+          "slot": "furniture",
+          "spread": 1.4,
+          "suppress": false,
+          "target_h": 0.9
+        },
+        {
+          "anchor": {
+            "x": -2.40000009536743,
+            "y": 0.0,
+            "z": -10.8000001907349
+          },
+          "back_z": -10.8450001907349,
+          "depth": 0.09,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.78 x 1.2 x 0.09 m - bandeira",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.09,
+            "h": 1.2,
+            "matches": true,
+            "note": "0.78 x 1.2 x 0.09 m - bandeira",
+            "w": 0.78,
+            "what": "bandeira"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.7550001907349,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -3.70000009536743,
+              "ax_max": -3.31000009536743,
+              "ax_min": -4.09000009536743,
+              "back_z": -10.8450001907349,
+              "cx": -4.97186785097577,
+              "cz": -10.8000001907349,
+              "front_z": -10.7550001907349,
+              "i": 1,
+              "x_max": -4.58186785097577,
+              "x_min": -5.36186785097577
+            },
+            {
+              "ax": -2.40000009536743,
+              "ax_max": -2.01000009536743,
+              "ax_min": -2.79000009536743,
+              "back_z": -10.8450001907349,
+              "cx": -3.2249954078207,
+              "cz": -10.8000001907349,
+              "front_z": -10.7550001907349,
+              "i": 2,
+              "x_max": -2.8349954078207,
+              "x_min": -3.6149954078207
+            },
+            {
+              "ax": -1.10000009536743,
+              "ax_max": -0.710000095367432,
+              "ax_min": -1.49000009536743,
+              "back_z": -10.8450001907349,
+              "cx": -1.47812296466563,
+              "cz": -10.8000001907349,
+              "front_z": -10.7550001907349,
+              "i": 3,
+              "x_max": -1.08812296466563,
+              "x_min": -1.86812296466563
+            }
+          ],
+          "kinds": [],
+          "repeats": 3,
+          "run_half_x": 1.3,
+          "slot": "signage_banner",
+          "spread": 1.3,
+          "suppress": false,
+          "target_h": 1.2
+        }
+      ]
+    },
+    {
+      "id": "aurora",
+      "instances_total": 28,
+      "slots": [
+        {
+          "anchor": {
+            "x": -5.0,
+            "y": 0.0,
+            "z": -12.0
+          },
+          "back_z": -13.92,
+          "depth": 3.84,
+          "depth_ok": false,
+          "field_law_ok": true,
+          "footprint": "4.0 x 4.0 x 3.84 m - ice spire",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 3.84,
+            "h": 4.0,
+            "matches": true,
+            "note": "4.0 x 4.0 x 3.84 m - ice spire",
+            "w": 4.0,
+            "what": "ice spire"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.08,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -5.0,
+              "ax_max": -3.0,
+              "ax_min": -7.0,
+              "back_z": -13.92,
+              "cx": -6.71874016598105,
+              "cz": -12.0,
+              "front_z": -10.08,
+              "i": 1,
+              "x_max": -4.71874016598105,
+              "x_min": -8.71874016598105
+            }
+          ],
+          "kinds": [
+            "snowridge"
+          ],
+          "repeats": 1,
+          "run_half_x": 0.0,
+          "slot": "hero_landmark",
+          "spread": 0.0,
+          "suppress": true,
+          "target_h": 4.0
+        },
+        {
+          "anchor": {
+            "x": 3.20000004768372,
+            "y": 0.0,
+            "z": -11.0500001907349
+          },
+          "back_z": -11.9100001907349,
+          "depth": 1.72,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.7 x 2.2 x 1.72 m - cairn marker",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.72,
+            "h": 2.2,
+            "matches": true,
+            "note": "1.7 x 2.2 x 1.72 m - cairn marker",
+            "w": 1.7,
+            "what": "cairn marker"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.1900001907349,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 3.20000004768372,
+              "ax_max": 4.05000004768372,
+              "ax_min": 2.35000004768372,
+              "back_z": -11.9100001907349,
+              "cx": 4.29999377030277,
+              "cz": -11.0500001907349,
+              "front_z": -10.1900001907349,
+              "i": 1,
+              "x_max": 5.14999377030277,
+              "x_min": 3.44999377030277
+            }
+          ],
+          "kinds": [],
+          "repeats": 1,
+          "run_half_x": 0.0,
+          "slot": "gate_portal",
+          "spread": 0.0,
+          "suppress": false,
+          "target_h": 2.2
+        },
+        {
+          "anchor": {
+            "x": -8.80000019073486,
+            "y": 0.0,
+            "z": -11.0299997329712
+          },
+          "back_z": -11.9799997329712,
+          "depth": 1.9,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.9 x 1.6 x 1.9 m - brazier",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.9,
+            "h": 1.6,
+            "matches": true,
+            "note": "1.9 x 1.6 x 1.9 m - brazier",
+            "w": 1.9,
+            "what": "brazier"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.0799997329712,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -11.0500001907349,
+              "ax_max": -10.1000001907349,
+              "ax_min": -12.0000001907349,
+              "back_z": -11.9799997329712,
+              "cx": -14.8484160231177,
+              "cz": -11.0299997329712,
+              "front_z": -10.0799997329712,
+              "i": 1,
+              "x_max": -13.8984160231177,
+              "x_min": -15.7984160231177
+            },
+            {
+              "ax": -9.55000019073486,
+              "ax_max": -8.60000019073486,
+              "ax_min": -10.5000001907349,
+              "back_z": -11.9799997329712,
+              "cx": -12.8327939733234,
+              "cz": -11.0299997329712,
+              "front_z": -10.0799997329712,
+              "i": 2,
+              "x_max": -11.8827939733234,
+              "x_min": -13.7827939733234
+            },
+            {
+              "ax": -8.05000019073486,
+              "ax_max": -7.10000019073486,
+              "ax_min": -9.00000019073486,
+              "back_z": -11.9799997329712,
+              "cx": -10.8171719235291,
+              "cz": -11.0299997329712,
+              "front_z": -10.0799997329712,
+              "i": 3,
+              "x_max": -9.86717192352908,
+              "x_min": -11.7671719235291
+            },
+            {
+              "ax": -6.55000019073486,
+              "ax_max": -5.60000019073486,
+              "ax_min": -7.50000019073486,
+              "back_z": -11.9799997329712,
+              "cx": -8.80154987373477,
+              "cz": -11.0299997329712,
+              "front_z": -10.0799997329712,
+              "i": 4,
+              "x_max": -7.85154987373477,
+              "x_min": -9.75154987373477
+            }
+          ],
+          "kinds": [],
+          "repeats": 4,
+          "run_half_x": 2.25,
+          "slot": "light_source",
+          "spread": 1.5,
+          "suppress": false,
+          "target_h": 1.6
+        },
+        {
+          "anchor": {
+            "x": 8.60000038146973,
+            "y": 0.0,
+            "z": -11.3500003814697
+          },
+          "back_z": -12.5300003814697,
+          "depth": 2.36,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "2.36 x 1.9 x 2.36 m - moss-rock tuft",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 2.36,
+            "h": 1.9,
+            "matches": true,
+            "note": "2.36 x 1.9 x 2.36 m - moss-rock tuft",
+            "w": 2.36,
+            "what": "moss-rock tuft"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.1700003814697,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 7.50000038146973,
+              "ax_max": 8.68000038146973,
+              "ax_min": 6.32000038146973,
+              "back_z": -12.5300003814697,
+              "cx": 10.0781107615708,
+              "cz": -11.3500003814697,
+              "front_z": -10.1700003814697,
+              "i": 1,
+              "x_max": 11.2581107615708,
+              "x_min": 8.89811076157076
+            },
+            {
+              "ax": 9.70000038146973,
+              "ax_max": 10.8800003814697,
+              "ax_min": 8.52000038146973,
+              "back_z": -12.5300003814697,
+              "cx": 13.0343564346024,
+              "cz": -11.3500003814697,
+              "front_z": -10.1700003814697,
+              "i": 2,
+              "x_max": 14.2143564346024,
+              "x_min": 11.8543564346024
+            }
+          ],
+          "kinds": [],
+          "repeats": 2,
+          "run_half_x": 1.1,
+          "slot": "vegetation_cluster",
+          "spread": 2.2,
+          "suppress": false,
+          "target_h": 1.9
+        },
+        {
+          "anchor": {
+            "x": -2.79999995231628,
+            "y": 0.0,
+            "z": -10.6499996185303
+          },
+          "back_z": -10.9449996185303,
+          "depth": 0.59,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.66 x 0.7 x 0.59 m - basalt shards",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.59,
+            "h": 0.7,
+            "matches": true,
+            "note": "0.66 x 0.7 x 0.59 m - basalt shards",
+            "w": 0.66,
+            "what": "basalt shards"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.3549996185303,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -5.19999995231628,
+              "ax_max": -4.86999995231628,
+              "ax_min": -5.52999995231628,
+              "back_z": -10.9449996185303,
+              "cx": -6.98748970854539,
+              "cz": -10.6499996185303,
+              "front_z": -10.3549996185303,
+              "i": 1,
+              "x_max": -6.65748970854539,
+              "x_min": -7.31748970854539
+            },
+            {
+              "ax": -2.79999995231628,
+              "ax_max": -2.46999995231628,
+              "ax_min": -3.12999995231628,
+              "back_z": -10.9449996185303,
+              "cx": -3.76249442887449,
+              "cz": -10.6499996185303,
+              "front_z": -10.3549996185303,
+              "i": 2,
+              "x_max": -3.43249442887449,
+              "x_min": -4.09249442887449
+            },
+            {
+              "ax": -0.399999952316284,
+              "ax_max": -0.0699999523162843,
+              "ax_min": -0.729999952316284,
+              "back_z": -10.9449996185303,
+              "cx": -0.537499149203584,
+              "cz": -10.6499996185303,
+              "front_z": -10.3549996185303,
+              "i": 3,
+              "x_max": -0.207499149203584,
+              "x_min": -0.867499149203584
+            }
+          ],
+          "kinds": [
+            "basalt"
+          ],
+          "repeats": 3,
+          "run_half_x": 2.4,
+          "slot": "ground_dressing",
+          "spread": 2.4,
+          "suppress": true,
+          "target_h": 0.7
+        },
+        {
+          "anchor": {
+            "x": 0.600000023841858,
+            "y": 0.0,
+            "z": -10.7799997329712
+          },
+          "back_z": -10.8499997329712,
+          "depth": 0.14,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.44 x 1.1 x 0.14 m - runestone",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.14,
+            "h": 1.1,
+            "matches": true,
+            "note": "0.44 x 1.1 x 0.14 m - runestone",
+            "w": 0.44,
+            "what": "runestone"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.7099997329712,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -0.899999976158142,
+              "ax_max": -0.679999976158142,
+              "ax_min": -1.11999997615814,
+              "back_z": -10.8499997329712,
+              "cx": -1.20937319783914,
+              "cz": -10.7799997329712,
+              "front_z": -10.7099997329712,
+              "i": 1,
+              "x_max": -0.989373197839139,
+              "x_min": -1.42937319783914
+            },
+            {
+              "ax": 0.100000023841858,
+              "ax_max": 0.320000023841858,
+              "ax_min": -0.119999976158142,
+              "back_z": -10.8499997329712,
+              "cx": 0.134374835357071,
+              "cz": -10.7799997329712,
+              "front_z": -10.7099997329712,
+              "i": 2,
+              "x_max": 0.354374835357071,
+              "x_min": -0.0856251646429294
+            },
+            {
+              "ax": 1.10000002384186,
+              "ax_max": 1.32000002384186,
+              "ax_min": 0.880000023841858,
+              "back_z": -10.8499997329712,
+              "cx": 1.47812286855328,
+              "cz": -10.7799997329712,
+              "front_z": -10.7099997329712,
+              "i": 3,
+              "x_max": 1.69812286855328,
+              "x_min": 1.25812286855328
+            },
+            {
+              "ax": 2.10000002384186,
+              "ax_max": 2.32000002384186,
+              "ax_min": 1.88000002384186,
+              "back_z": -10.8499997329712,
+              "cx": 2.82187090174949,
+              "cz": -10.7799997329712,
+              "front_z": -10.7099997329712,
+              "i": 4,
+              "x_max": 3.04187090174949,
+              "x_min": 2.60187090174949
+            }
+          ],
+          "kinds": [],
+          "repeats": 4,
+          "run_half_x": 1.5,
+          "slot": "ornament_accent",
+          "spread": 1.0,
+          "suppress": false,
+          "target_h": 1.1
+        },
+        {
+          "anchor": {
+            "x": 5.40000009536743,
+            "y": 0.0,
+            "z": -10.8800001144409
+          },
+          "back_z": -11.4700001144409,
+          "depth": 1.18,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.25 x 2.8 x 1.18 m - basalt prism",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.18,
+            "h": 2.8,
+            "matches": true,
+            "note": "1.25 x 2.8 x 1.18 m - basalt prism",
+            "w": 1.25,
+            "what": "basalt prism"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.2900001144409,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 3.90000009536743,
+              "ax_max": 4.52500009536743,
+              "ax_min": 3.27500009536743,
+              "back_z": -11.4700001144409,
+              "cx": 5.24061745761501,
+              "cz": -10.8800001144409,
+              "front_z": -10.2900001144409,
+              "i": 1,
+              "x_max": 5.86561745761501,
+              "x_min": 4.61561745761501
+            },
+            {
+              "ax": 4.90000009536743,
+              "ax_max": 5.52500009536743,
+              "ax_min": 4.27500009536743,
+              "back_z": -11.4700001144409,
+              "cx": 6.58436549081122,
+              "cz": -10.8800001144409,
+              "front_z": -10.2900001144409,
+              "i": 2,
+              "x_max": 7.20936549081122,
+              "x_min": 5.95936549081122
+            },
+            {
+              "ax": 5.90000009536743,
+              "ax_max": 6.52500009536743,
+              "ax_min": 5.27500009536743,
+              "back_z": -11.4700001144409,
+              "cx": 7.92811352400743,
+              "cz": -10.8800001144409,
+              "front_z": -10.2900001144409,
+              "i": 3,
+              "x_max": 8.55311352400743,
+              "x_min": 7.30311352400743
+            },
+            {
+              "ax": 6.90000009536743,
+              "ax_max": 7.52500009536743,
+              "ax_min": 6.27500009536743,
+              "back_z": -11.4700001144409,
+              "cx": 9.27186155720364,
+              "cz": -10.8800001144409,
+              "front_z": -10.2900001144409,
+              "i": 4,
+              "x_max": 9.89686155720364,
+              "x_min": 8.64686155720364
+            }
+          ],
+          "kinds": [],
+          "repeats": 4,
+          "run_half_x": 1.5,
+          "slot": "column_pillar",
+          "spread": 1.0,
+          "suppress": false,
+          "target_h": 2.8
+        },
+        {
+          "anchor": {
+            "x": -3.59999990463257,
+            "y": 0.0,
+            "z": -10.5
+          },
+          "back_z": -10.615,
+          "depth": 0.23,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.18 x 0.95 x 0.23 m - driftwood fence",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.23,
+            "h": 0.95,
+            "matches": true,
+            "note": "1.18 x 0.95 x 0.23 m - driftwood fence",
+            "w": 1.18,
+            "what": "driftwood fence"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.385,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -6.19999990463257,
+              "ax_max": -5.60999990463257,
+              "ax_min": -6.78999990463257,
+              "back_z": -10.615,
+              "cx": -8.3312376776667,
+              "cz": -10.5,
+              "front_z": -10.385,
+              "i": 1,
+              "x_max": -7.7412376776667,
+              "x_min": -8.9212376776667
+            },
+            {
+              "ax": -4.89999990463257,
+              "ax_max": -4.30999990463257,
+              "ax_min": -5.48999990463257,
+              "back_z": -10.615,
+              "cx": -6.58436523451163,
+              "cz": -10.5,
+              "front_z": -10.385,
+              "i": 2,
+              "x_max": -5.99436523451163,
+              "x_min": -7.17436523451163
+            },
+            {
+              "ax": -3.59999990463257,
+              "ax_max": -3.00999990463257,
+              "ax_min": -4.18999990463257,
+              "back_z": -10.615,
+              "cx": -4.83749279135655,
+              "cz": -10.5,
+              "front_z": -10.385,
+              "i": 3,
+              "x_max": -4.24749279135655,
+              "x_min": -5.42749279135655
+            },
+            {
+              "ax": -2.29999990463257,
+              "ax_max": -1.70999990463257,
+              "ax_min": -2.88999990463257,
+              "back_z": -10.615,
+              "cx": -3.09062034820148,
+              "cz": -10.5,
+              "front_z": -10.385,
+              "i": 4,
+              "x_max": -2.50062034820148,
+              "x_min": -3.68062034820148
+            },
+            {
+              "ax": -0.999999904632568,
+              "ax_max": -0.409999904632568,
+              "ax_min": -1.58999990463257,
+              "back_z": -10.615,
+              "cx": -1.34374790504641,
+              "cz": -10.5,
+              "front_z": -10.385,
+              "i": 5,
+              "x_max": -0.753747905046411,
+              "x_min": -1.93374790504641
+            }
+          ],
+          "kinds": [],
+          "repeats": 5,
+          "run_half_x": 2.6,
+          "slot": "railing_segment",
+          "spread": 1.3,
+          "suppress": false,
+          "target_h": 0.95
+        },
+        {
+          "anchor": {
+            "x": 10.1999998092651,
+            "y": 0.0,
+            "z": -11.3599996566772
+          },
+          "back_z": -12.6449996566772,
+          "depth": 2.57,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.6 x 0.9 x 2.57 m - sled bench",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 2.57,
+            "h": 0.9,
+            "matches": true,
+            "note": "1.6 x 0.9 x 2.57 m - sled bench",
+            "w": 1.6,
+            "what": "sled bench"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.0749996566772,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 9.39999980926514,
+              "ax_max": 10.1999998092651,
+              "ax_min": 8.59999980926514,
+              "back_z": -12.6449996566772,
+              "cx": 12.6312312557448,
+              "cz": -11.3599996566772,
+              "front_z": -10.0749996566772,
+              "i": 1,
+              "x_max": 13.4312312557448,
+              "x_min": 11.8312312557448
+            },
+            {
+              "ax": 10.9999998092651,
+              "ax_max": 11.7999998092651,
+              "ax_min": 10.1999998092651,
+              "back_z": -12.6449996566772,
+              "cx": 14.7812281088587,
+              "cz": -11.3599996566772,
+              "front_z": -10.0749996566772,
+              "i": 2,
+              "x_max": 15.5812281088587,
+              "x_min": 13.9812281088587
+            }
+          ],
+          "kinds": [],
+          "repeats": 2,
+          "run_half_x": 0.8,
+          "slot": "furniture",
+          "spread": 1.6,
+          "suppress": false,
+          "target_h": 0.9
+        },
+        {
+          "anchor": {
+            "x": 1.79999995231628,
+            "y": 0.0,
+            "z": -10.7200002670288
+          },
+          "back_z": -10.7750002670288,
+          "depth": 0.11,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.93 x 1.5 x 0.11 m - pennant",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.11,
+            "h": 1.5,
+            "matches": true,
+            "note": "0.93 x 1.5 x 0.11 m - pennant",
+            "w": 0.93,
+            "what": "pennant"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.6650002670288,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 1.09999995231628,
+              "ax_max": 1.56499995231628,
+              "ax_min": 0.634999952316284,
+              "back_z": -10.7750002670288,
+              "cx": 1.47812277244093,
+              "cz": -10.7200002670288,
+              "front_z": -10.6650002670288,
+              "i": 1,
+              "x_max": 1.94312277244093,
+              "x_min": 1.01312277244093
+            },
+            {
+              "ax": 2.49999995231628,
+              "ax_max": 2.96499995231628,
+              "ax_min": 2.03499995231628,
+              "back_z": -10.7750002670288,
+              "cx": 3.35937001891562,
+              "cz": -10.7200002670288,
+              "front_z": -10.6650002670288,
+              "i": 2,
+              "x_max": 3.82437001891562,
+              "x_min": 2.89437001891562
+            }
+          ],
+          "kinds": [],
+          "repeats": 2,
+          "run_half_x": 0.7,
+          "slot": "signage_banner",
+          "spread": 1.4,
+          "suppress": false,
+          "target_h": 1.5
+        }
+      ]
+    },
+    {
+      "id": "egeo",
+      "instances_total": 29,
+      "slots": [
+        {
+          "anchor": {
+            "x": 3.79999995231628,
+            "y": 0.0,
+            "z": -12.039999961853
+          },
+          "back_z": -14.004999961853,
+          "depth": 3.93,
+          "depth_ok": false,
+          "field_law_ok": true,
+          "footprint": "3.96 x 3.7 x 3.93 m - caldera rim with domes",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 3.93,
+            "h": 3.7,
+            "matches": true,
+            "note": "3.96 x 3.7 x 3.93 m - caldera rim with domes",
+            "w": 3.96,
+            "what": "caldera rim with domes"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.074999961853,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 3.79999995231628,
+              "ax_max": 5.77999995231628,
+              "ax_min": 1.81999995231628,
+              "back_z": -14.004999961853,
+              "cx": 5.1062424620707,
+              "cz": -12.039999961853,
+              "front_z": -10.074999961853,
+              "i": 1,
+              "x_max": 7.0862424620707,
+              "x_min": 3.1262424620707
+            }
+          ],
+          "kinds": [
+            "island"
+          ],
+          "repeats": 1,
+          "run_half_x": 0.0,
+          "slot": "hero_landmark",
+          "spread": 0.0,
+          "suppress": true,
+          "target_h": 3.7
+        },
+        {
+          "anchor": {
+            "x": -3.40000009536743,
+            "y": 0.0,
+            "z": -11.0
+          },
+          "back_z": -11.85,
+          "depth": 1.7,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.62 x 2.5 x 1.7 m - chapel door",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.7,
+            "h": 2.5,
+            "matches": true,
+            "note": "1.62 x 2.5 x 1.7 m - chapel door",
+            "w": 1.62,
+            "what": "chapel door"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.15,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -3.40000009536743,
+              "ax_max": -2.59000009536743,
+              "ax_min": -4.21000009536743,
+              "back_z": -11.85,
+              "cx": -4.56874344101691,
+              "cz": -11.0,
+              "front_z": -10.15,
+              "i": 1,
+              "x_max": -3.75874344101691,
+              "x_min": -5.37874344101691
+            }
+          ],
+          "kinds": [],
+          "repeats": 1,
+          "run_half_x": 0.0,
+          "slot": "gate_portal",
+          "spread": 0.0,
+          "suppress": false,
+          "target_h": 2.5
+        },
+        {
+          "anchor": {
+            "x": 7.19999980926514,
+            "y": 0.0,
+            "z": -10.8999996185303
+          },
+          "back_z": -11.1049996185303,
+          "depth": 0.41,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.4 x 1.7 x 0.41 m - wind-light",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.41,
+            "h": 1.7,
+            "matches": true,
+            "note": "0.4 x 1.7 x 0.41 m - wind-light",
+            "w": 0.4,
+            "what": "wind-light"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.6949996185303,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 5.39999980926514,
+              "ax_max": 5.59999980926514,
+              "ax_min": 5.19999980926514,
+              "back_z": -11.1049996185303,
+              "cx": 7.25623912295993,
+              "cz": -10.8999996185303,
+              "front_z": -10.6949996185303,
+              "i": 1,
+              "x_max": 7.45623912295993,
+              "x_min": 7.05623912295993
+            },
+            {
+              "ax": 7.19999980926514,
+              "ax_max": 7.39999980926514,
+              "ax_min": 6.99999980926514,
+              "back_z": -11.1049996185303,
+              "cx": 9.67498558271311,
+              "cz": -10.8999996185303,
+              "front_z": -10.6949996185303,
+              "i": 2,
+              "x_max": 9.87498558271311,
+              "x_min": 9.47498558271311
+            },
+            {
+              "ax": 8.99999980926514,
+              "ax_max": 9.19999980926514,
+              "ax_min": 8.79999980926514,
+              "back_z": -11.1049996185303,
+              "cx": 12.0937320424663,
+              "cz": -10.8999996185303,
+              "front_z": -10.6949996185303,
+              "i": 3,
+              "x_max": 12.2937320424663,
+              "x_min": 11.8937320424663
+            }
+          ],
+          "kinds": [],
+          "repeats": 3,
+          "run_half_x": 1.8,
+          "slot": "light_source",
+          "spread": 1.8,
+          "suppress": false,
+          "target_h": 1.7
+        },
+        {
+          "anchor": {
+            "x": -9.39999961853027,
+            "y": 0.0,
+            "z": -11.3000001907349
+          },
+          "back_z": -11.9200001907349,
+          "depth": 1.24,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "2.13 x 2.2 x 1.24 m - olive and growth clump",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.24,
+            "h": 2.2,
+            "matches": true,
+            "note": "2.13 x 2.2 x 1.24 m - olive and growth clump",
+            "w": 2.13,
+            "what": "olive and growth clump"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.6800001907349,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -10.3999996185303,
+              "ax_max": -9.33499961853027,
+              "ax_min": -11.4649996185303,
+              "back_z": -11.9200001907349,
+              "cx": -13.9749790326414,
+              "cz": -11.3000001907349,
+              "front_z": -10.6800001907349,
+              "i": 1,
+              "x_max": -12.9099790326414,
+              "x_min": -15.0399790326414
+            },
+            {
+              "ax": -8.39999961853027,
+              "ax_max": -7.33499961853027,
+              "ax_min": -9.46499961853027,
+              "back_z": -11.9200001907349,
+              "cx": -11.287482966249,
+              "cz": -11.3000001907349,
+              "front_z": -10.6800001907349,
+              "i": 2,
+              "x_max": -10.222482966249,
+              "x_min": -12.352482966249
+            }
+          ],
+          "kinds": [
+            "bougainvillea"
+          ],
+          "repeats": 2,
+          "run_half_x": 1.0,
+          "slot": "vegetation_cluster",
+          "spread": 2.0,
+          "suppress": true,
+          "target_h": 2.2
+        },
+        {
+          "anchor": {
+            "x": 5.59999990463257,
+            "y": 0.0,
+            "z": -10.6800003051758
+          },
+          "back_z": -11.0950003051758,
+          "depth": 0.83,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.89 x 0.55 x 0.83 m - dry-stone stub",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.83,
+            "h": 0.55,
+            "matches": true,
+            "note": "0.89 x 0.55 x 0.83 m - dry-stone stub",
+            "w": 0.89,
+            "what": "dry-stone stub"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.2650003051758,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 4.39999990463257,
+              "ax_max": 4.84499990463257,
+              "ax_min": 3.95499990463257,
+              "back_z": -11.0950003051758,
+              "cx": 5.91249121791352,
+              "cz": -10.6800003051758,
+              "front_z": -10.2650003051758,
+              "i": 1,
+              "x_max": 6.35749121791352,
+              "x_min": 5.46749121791352
+            },
+            {
+              "ax": 6.79999990463257,
+              "ax_max": 7.24499990463257,
+              "ax_min": 6.35499990463257,
+              "back_z": -11.0950003051758,
+              "cx": 9.13748649758442,
+              "cz": -10.6800003051758,
+              "front_z": -10.2650003051758,
+              "i": 2,
+              "x_max": 9.58248649758442,
+              "x_min": 8.69248649758442
+            }
+          ],
+          "kinds": [],
+          "repeats": 2,
+          "run_half_x": 1.2,
+          "slot": "ground_dressing",
+          "spread": 2.4,
+          "suppress": false,
+          "target_h": 0.55
+        },
+        {
+          "anchor": {
+            "x": -0.800000011920929,
+            "y": 0.0,
+            "z": -10.7600002288818
+          },
+          "back_z": -11.4050002288818,
+          "depth": 1.29,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.89 x 0.95 x 1.29 m - donkey cart",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 1.29,
+            "h": 0.95,
+            "matches": true,
+            "note": "1.89 x 0.95 x 1.29 m - donkey cart",
+            "w": 1.89,
+            "what": "donkey cart"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.1150002288818,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -2.30000001192093,
+              "ax_max": -1.35500001192093,
+              "ax_min": -3.24500001192093,
+              "back_z": -11.4050002288818,
+              "cx": -3.09062049237001,
+              "cz": -10.7600002288818,
+              "front_z": -10.1150002288818,
+              "i": 1,
+              "x_max": -2.14562049237001,
+              "x_min": -4.03562049237001
+            },
+            {
+              "ax": -1.30000001192093,
+              "ax_max": -0.355000011920929,
+              "ax_min": -2.24500001192093,
+              "back_z": -11.4050002288818,
+              "cx": -1.7468724591738,
+              "cz": -10.7600002288818,
+              "front_z": -10.1150002288818,
+              "i": 2,
+              "x_max": -0.801872459173797,
+              "x_min": -2.6918724591738
+            },
+            {
+              "ax": -0.300000011920929,
+              "ax_max": 0.644999988079071,
+              "ax_min": -1.24500001192093,
+              "back_z": -11.4050002288818,
+              "cx": -0.403124425977588,
+              "cz": -10.7600002288818,
+              "front_z": -10.1150002288818,
+              "i": 3,
+              "x_max": 0.541875574022412,
+              "x_min": -1.34812442597759
+            },
+            {
+              "ax": 0.699999988079071,
+              "ax_max": 1.64499998807907,
+              "ax_min": -0.245000011920929,
+              "back_z": -11.4050002288818,
+              "cx": 0.940623607218622,
+              "cz": -10.7600002288818,
+              "front_z": -10.1150002288818,
+              "i": 4,
+              "x_max": 1.88562360721862,
+              "x_min": -0.00437639278137825
+            }
+          ],
+          "kinds": [],
+          "repeats": 4,
+          "run_half_x": 1.5,
+          "slot": "ornament_accent",
+          "spread": 1.0,
+          "suppress": false,
+          "target_h": 0.95
+        },
+        {
+          "anchor": {
+            "x": -6.59999990463257,
+            "y": 0.0,
+            "z": -10.8199996948242
+          },
+          "back_z": -11.0999996948242,
+          "depth": 0.56,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.13 x 2.5 x 0.56 m - whitewashed pier",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.56,
+            "h": 2.5,
+            "matches": true,
+            "note": "1.13 x 2.5 x 0.56 m - whitewashed pier",
+            "w": 1.13,
+            "what": "whitewashed pier"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.5399996948242,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -8.29999990463257,
+              "ax_max": -7.73499990463257,
+              "ax_min": -8.86499990463257,
+              "back_z": -11.0999996948242,
+              "cx": -11.1531085473787,
+              "cz": -10.8199996948242,
+              "front_z": -10.5399996948242,
+              "i": 1,
+              "x_max": -10.5881085473787,
+              "x_min": -11.7181085473787
+            },
+            {
+              "ax": -7.44999990463257,
+              "ax_max": -6.88499990463257,
+              "ax_min": -8.01499990463257,
+              "back_z": -11.0999996948242,
+              "cx": -10.010922719162,
+              "cz": -10.8199996948242,
+              "front_z": -10.5399996948242,
+              "i": 2,
+              "x_max": -9.44592271916196,
+              "x_min": -10.575922719162
+            },
+            {
+              "ax": -6.59999990463257,
+              "ax_max": -6.03499990463257,
+              "ax_min": -7.16499990463257,
+              "back_z": -11.0999996948242,
+              "cx": -8.86873689094518,
+              "cz": -10.8199996948242,
+              "front_z": -10.5399996948242,
+              "i": 3,
+              "x_max": -8.30373689094518,
+              "x_min": -9.43373689094518
+            },
+            {
+              "ax": -5.74999990463257,
+              "ax_max": -5.18499990463257,
+              "ax_min": -6.31499990463257,
+              "back_z": -11.0999996948242,
+              "cx": -7.72655106272841,
+              "cz": -10.8199996948242,
+              "front_z": -10.5399996948242,
+              "i": 4,
+              "x_max": -7.1615510627284,
+              "x_min": -8.29155106272841
+            },
+            {
+              "ax": -4.89999990463257,
+              "ax_max": -4.33499990463257,
+              "ax_min": -5.46499990463257,
+              "back_z": -11.0999996948242,
+              "cx": -6.58436523451163,
+              "cz": -10.8199996948242,
+              "front_z": -10.5399996948242,
+              "i": 5,
+              "x_max": -6.01936523451163,
+              "x_min": -7.14936523451163
+            }
+          ],
+          "kinds": [],
+          "repeats": 5,
+          "run_half_x": 1.7,
+          "slot": "column_pillar",
+          "spread": 0.85,
+          "suppress": false,
+          "target_h": 2.5
+        },
+        {
+          "anchor": {
+            "x": 1.20000004768372,
+            "y": 0.0,
+            "z": -10.5200004577637
+          },
+          "back_z": -10.6450004577637,
+          "depth": 0.25,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.32 x 1.0 x 0.25 m - blue rail",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.25,
+            "h": 1.0,
+            "matches": true,
+            "note": "1.32 x 1.0 x 0.25 m - blue rail",
+            "w": 1.32,
+            "what": "blue rail"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.3950004577637,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -1.92499995231628,
+              "ax_max": -1.26499995231628,
+              "ax_min": -2.58499995231628,
+              "back_z": -10.6450004577637,
+              "cx": -2.5867148998278,
+              "cz": -10.5200004577637,
+              "front_z": -10.3950004577637,
+              "i": 1,
+              "x_max": -1.9267148998278,
+              "x_min": -3.2467148998278
+            },
+            {
+              "ax": -0.674999952316284,
+              "ax_max": -0.0149999523162841,
+              "ax_min": -1.33499995231628,
+              "back_z": -10.6450004577637,
+              "cx": -0.907029858332542,
+              "cz": -10.5200004577637,
+              "front_z": -10.3950004577637,
+              "i": 2,
+              "x_max": -0.247029858332542,
+              "x_min": -1.56702985833254
+            },
+            {
+              "ax": 0.575000047683716,
+              "ax_max": 1.23500004768372,
+              "ax_min": -0.0849999523162842,
+              "back_z": -10.6450004577637,
+              "cx": 0.77265518316272,
+              "cz": -10.5200004577637,
+              "front_z": -10.3950004577637,
+              "i": 3,
+              "x_max": 1.43265518316272,
+              "x_min": 0.11265518316272
+            },
+            {
+              "ax": 1.82500004768372,
+              "ax_max": 2.48500004768372,
+              "ax_min": 1.16500004768372,
+              "back_z": -10.6450004577637,
+              "cx": 2.45234022465798,
+              "cz": -10.5200004577637,
+              "front_z": -10.3950004577637,
+              "i": 4,
+              "x_max": 3.11234022465798,
+              "x_min": 1.79234022465798
+            },
+            {
+              "ax": 3.07500004768372,
+              "ax_max": 3.73500004768372,
+              "ax_min": 2.41500004768372,
+              "back_z": -10.6450004577637,
+              "cx": 4.13202526615324,
+              "cz": -10.5200004577637,
+              "front_z": -10.3950004577637,
+              "i": 5,
+              "x_max": 4.79202526615324,
+              "x_min": 3.47202526615324
+            },
+            {
+              "ax": 4.32500004768372,
+              "ax_max": 4.98500004768372,
+              "ax_min": 3.66500004768372,
+              "back_z": -10.6450004577637,
+              "cx": 5.8117103076485,
+              "cz": -10.5200004577637,
+              "front_z": -10.3950004577637,
+              "i": 6,
+              "x_max": 6.4717103076485,
+              "x_min": 5.1517103076485
+            }
+          ],
+          "kinds": [],
+          "repeats": 6,
+          "run_half_x": 3.125,
+          "slot": "railing_segment",
+          "spread": 1.25,
+          "suppress": false,
+          "target_h": 1.0
+        },
+        {
+          "anchor": {
+            "x": 9.80000019073486,
+            "y": 0.0,
+            "z": -10.8599996566772
+          },
+          "back_z": -11.1349996566772,
+          "depth": 0.55,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "0.52 x 1.0 x 0.55 m - taverna chair",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.55,
+            "h": 1.0,
+            "matches": true,
+            "note": "0.52 x 1.0 x 0.55 m - taverna chair",
+            "w": 0.52,
+            "what": "taverna chair"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.5849996566772,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": 8.30000019073486,
+              "ax_max": 8.56000019073486,
+              "ax_min": 8.04000019073486,
+              "back_z": -11.1349996566772,
+              "cx": 11.1531089318281,
+              "cz": -10.8599996566772,
+              "front_z": -10.5849996566772,
+              "i": 1,
+              "x_max": 11.4131089318281,
+              "x_min": 10.8931089318281
+            },
+            {
+              "ax": 9.80000019073486,
+              "ax_max": 10.0600001907349,
+              "ax_min": 9.54000019073486,
+              "back_z": -11.1349996566772,
+              "cx": 13.1687309816224,
+              "cz": -10.8599996566772,
+              "front_z": -10.5849996566772,
+              "i": 2,
+              "x_max": 13.4287309816224,
+              "x_min": 12.9087309816224
+            },
+            {
+              "ax": 11.3000001907349,
+              "ax_max": 11.5600001907349,
+              "ax_min": 11.0400001907349,
+              "back_z": -11.1349996566772,
+              "cx": 15.1843530314168,
+              "cz": -10.8599996566772,
+              "front_z": -10.5849996566772,
+              "i": 3,
+              "x_max": 15.4443530314168,
+              "x_min": 14.9243530314168
+            }
+          ],
+          "kinds": [],
+          "repeats": 3,
+          "run_half_x": 1.5,
+          "slot": "furniture",
+          "spread": 1.5,
+          "suppress": false,
+          "target_h": 1.0
+        },
+        {
+          "anchor": {
+            "x": -1.89999997615814,
+            "y": 0.0,
+            "z": -10.6999998092651
+          },
+          "back_z": -10.8049998092651,
+          "depth": 0.21,
+          "depth_ok": true,
+          "field_law_ok": true,
+          "footprint": "1.16 x 1.3 x 0.21 m - taverna sign",
+          "footprint_matches_spec": true,
+          "footprint_parsed": {
+            "d": 0.21,
+            "h": 1.3,
+            "matches": true,
+            "note": "1.16 x 1.3 x 0.21 m - taverna sign",
+            "w": 1.16,
+            "what": "taverna sign"
+          },
+          "frame_rect_authored_ok": true,
+          "frame_rect_world_ok": true,
+          "frame_run_ok": true,
+          "front_z": -10.5949998092651,
+          "glass_ok": true,
+          "instances": [
+            {
+              "ax": -2.54999997615814,
+              "ax_max": -1.96999997615814,
+              "ax_min": -3.12999997615814,
+              "back_z": -10.8049998092651,
+              "cx": -3.42655745261288,
+              "cz": -10.6999998092651,
+              "front_z": -10.5949998092651,
+              "i": 1,
+              "x_max": -2.84655745261288,
+              "x_min": -4.00655745261288
+            },
+            {
+              "ax": -1.24999997615814,
+              "ax_max": -0.669999976158142,
+              "ax_min": -1.82999997615814,
+              "back_z": -10.8049998092651,
+              "cx": -1.67968500945781,
+              "cz": -10.6999998092651,
+              "front_z": -10.5949998092651,
+              "i": 2,
+              "x_max": -1.09968500945781,
+              "x_min": -2.25968500945781
+            }
+          ],
+          "kinds": [],
+          "repeats": 2,
+          "run_half_x": 0.65,
+          "slot": "signage_banner",
+          "spread": 1.3,
+          "suppress": false,
+          "target_h": 1.3
+        }
+      ]
+    }
+  ],
+  "constants": {
+    "ARENAS": [
+      "torii",
+      "medina",
+      "carioca",
+      "aurora",
+      "egeo"
+    ],
+    "AUTHORED_HALF_X": 14.35,
+    "DEPTH_BUDGET": 3.26,
+    "FIELD_LAW_Z": -8.0,
+    "GLASS_PLANE_Z": -10.02,
+    "KIT_DIR": "res://assets/arenas/",
+    "PROP_Z": -11.65,
+    "SLOTS": [
+      "hero_landmark",
+      "gate_portal",
+      "light_source",
+      "vegetation_cluster",
+      "ground_dressing",
+      "ornament_accent",
+      "column_pillar",
+      "railing_segment",
+      "furniture",
+      "signage_banner"
+    ]
+  },
+  "court": {
+    "center_line_len_z": 14.3,
+    "court_depth_z": 20.0,
+    "court_len_x": 10.0,
+    "glass_h": 3.0,
+    "half_depth_z": 10.0,
+    "half_len_x": 5.0,
+    "length_m": 20.0,
+    "net_h": 0.95,
+    "service_z": 6.95,
+    "source": "res://game/court.gd",
+    "width_m": 10.0
+  },
+  "frame": {
+    "backdrop_z": -12.0,
+    "half_x": 23.5353262679882,
+    "preset": "default",
+    "prop_half_x": 19.2827842763656,
+    "top": 5.48915899166849,
+    "x_scale": 1.34374803319621
+  },
+  "godot": "4.7.2-stable (official)",
+  "instance_totals": {
+    "aurora": 28,
+    "carioca": 30,
+    "egeo": 29,
+    "medina": 31,
+    "torii": 27
+  },
+  "probe": "res://tests/arena_kit_specs_dump.gd",
+  "project": "/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/godot/"
+}
+SPECS_JSON_END

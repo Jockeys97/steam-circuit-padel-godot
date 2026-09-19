@@ -1,0 +1,47 @@
+{
+  "model": "typesafe/jev-1.13-20260917",
+  "state": "A character-selection screen from a padel game. Six athlete cards in a two-row grid, each card with a portrait, a name, a role word, a description, a special ability and an availability status. It is the \"pick the athlete you play as\" picker.\n",
+  "questions": {
+    "six_cards": {
+      "type": "noul",
+      "instructions": "Does this frame show six athlete cards?",
+      "true": "The frame shows six athlete cards",
+      "false": "The frame does not show six athlete cards"
+    },
+    "bars_read": {
+      "type": "noul",
+      "instructions": "Do the stat bars on the athlete cards read the way the design intends - a five-tick bar whose filled ticks are clearly visible in the theme's accent colour, so a player can compare athletes at a glance?",
+      "true": "The bars read as intended: visible, accent-coloured, comparable five-tick bars",
+      "false": "The bars do not read as intended: not visible as accent-coloured comparable bars"
+    },
+    "clipped": {
+      "type": "noul",
+      "instructions": "Is any athlete card clipped or cut off by the edge of the frame?",
+      "true": "At least one card is clipped by the frame edge",
+      "false": "No card is clipped by the frame edge"
+    },
+    "defect_class": {
+      "type": "choice",
+      "instructions": "Which single defect class best fits the stat-mark row on these cards?",
+      "criteria": {
+        "colour_mismatch": "The ink of the marks does not match the colour the theme prescribes for the bar",
+        "glyph_not_rendering": "The glyphs the bar is made of do not render, so the bar is invisible or empty",
+        "tick_count_wrong": "The number of ticks drawn does not match the number the design calls for",
+        "layout_clipping": "The row is coloured correctly but is clipped by the card or the frame",
+        "none": "No defect: the row is as the design intends",
+        "other": "None of these fit"
+      }
+    },
+    "severity": {
+      "type": "score",
+      "instructions": "How far does this frame deviate from a shippable screen? level 0 = matches, ascending to worst",
+      "criteria": [
+        "No visible deviation",
+        "Cosmetic nit",
+        "Noticeable but tolerable",
+        "Clearly wrong, a player would notice",
+        "Broken: the element does not work as a visual element"
+      ]
+    }
+  }
+}

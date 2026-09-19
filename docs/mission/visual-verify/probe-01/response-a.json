@@ -1,0 +1,50 @@
+{
+  "model": "typesafe/jev-1.13-20260917",
+  "answers": {
+    "six_cards": {
+      "type": "noul",
+      "noul": 0.96
+    },
+    "bars_read": {
+      "type": "noul",
+      "noul": 0.26
+    },
+    "clipped": {
+      "type": "noul",
+      "noul": 0.25
+    },
+    "defect_class": {
+      "type": "choice",
+      "choice": "none",
+      "probabilities": {
+        "other": 0.4,
+        "colour_mismatch": 0,
+        "tick_count_wrong": 0,
+        "layout_clipping": 0,
+        "none": 0.59,
+        "glyph_not_rendering": 0.01
+      },
+      "confidence": 0.49
+    },
+    "severity": {
+      "type": "score",
+      "score": 0.52,
+      "legend": {
+        "0": "No visible deviation",
+        "1": "Cosmetic nit",
+        "2": "Noticeable but tolerable",
+        "3": "Clearly wrong, a player would notice",
+        "4": "Broken: the element does not work as a visual element"
+      },
+      "probabilities": {
+        "0": 0.81,
+        "1": 0.02,
+        "2": 0.06,
+        "3": 0.06,
+        "4": 0.05
+      },
+      "confidence": 0.57
+    }
+  },
+  "cost": 0.00002877
+}

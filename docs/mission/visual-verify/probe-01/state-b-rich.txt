@@ -1,0 +1,25 @@
+FRAME INVENTORY - character-selection screen, 3420x2146 px screenshot. Description only, no verdicts.
+
+HEADER: a back button reading "Back to the team" with a left arrow, then the line "Pick the athlete you play as".
+LAYOUT: a grid of athlete cards, 4 columns. Two rows are populated: 4 cards in the top row, 2 cards in the second row.
+EACH CARD: a portrait image on top, then a dark panel carrying, in order, the athlete name in capitals, a role word, a description sentence, a line beginning with a lightning-bolt symbol and an ability name, then a status word.
+
+Card 1: "THE MAESTRO" / Technique / "Millimetric precision and superior game reading." / Precision Shot / Available
+Card 2: "THE PANTHER" / Speed / "Lightning reflexes and unpredictable net play." / Lightning Dash / Available
+Card 3: "THE STEAMER" / Power / "Devastating smashes and wall shots that break any defense." / Steam Smash / Available
+Card 4: "THE FLAME" / Stamina / "Relentless, recovers every point and wears down opponents." / Steam Shield / Available
+Card 5: "THE ORACLE" / Technique / "Reads every trajectory: top-tier control and vision." / Perfect Vision / (no status word visible)
+Card 6: "THE COLOSSUS" / Power / "Brute force that bends the glass with every impact." / Steam Hammer / (no status word visible)
+
+STAT-MARK ROW: under each description there is a row of small marks.
+- On cards 1-4 the row contains 4 small square/rectangular marks with visible gaps between them. All 4 marks carry the same ink, a light grey, nearest hex #C0C0C0. No mark of any other colour appears in the row.
+- The marks are small relative to the card's text.
+- On cards 5 and 6 no mark row is visible.
+
+CLIPPING: cards 5 and 6 are cut off by the bottom edge of the frame - their status word is not visible and their panel ends at the image boundary. Cards 1-4 are fully inside the frame.
+
+DETERMINISTIC FACTS - read from the port's own source, not from the image:
+- The mark row is drawn as one text label: five glyphs, an optional number of U+25AE followed by U+25AF to make five ticks in total.
+- That label's font colour is overridden from the theme token "stat_bar"; the port's value for that token is #7ee0ff. For rival cards the token is "stat_bar_rival", value #ffb08c.
+- The label has text clipping enabled, and the card container clips its content.
+- On cards 1-4 the description sentence wraps onto a second line.

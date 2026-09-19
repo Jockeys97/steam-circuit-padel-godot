@@ -1,0 +1,150 @@
+{
+  "model": "typesafe/jev-1.13-20260917",
+  "state": "Mission charter being screened for dispatch: /Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot/docs/mission/architecture-deepening/CHARTER.md\nThe mission runs as a CEO-led company; every gate must carry an observable done-condition.\n\nGates, verbatim, in charter order:\n\n[G1] Feedback vocabulary leaves the legacy HUD. Shipping callers and tests use the new module. The hidden legacy HUD no longer exists solely to expose vocabulary.\n[G2] One arena catalog answers selection, lock, demo, and world-arena availability for both legacy and recreated UI paths.\n[G3] Court timing marks move out of `match_controller.gd`. Their geometry, placement, verdict, and report behavior are tested through their interface.\n[G4] Clock ownership and UI mount policy become independent. A real-match test crosses the same recreated UI seam as users.\n[G5] Audio modules share one mixer-contract reader. Playback behavior remains in the existing adapters.\n[G6] Integrated proof passes the scoped suites, main harness, full slice, demo slice, audio suites, UI integration suites, world-arena proof, JS audit, static GDScript checks, and a source-digest check showing frozen paths unchanged.\n[G7] Independent review passes both the mission spec and repository standards. The integrator fixes all P0 and P1 findings and either fixes or records lower-severity findings.\n[G8] The final commit contains only mission changes. Pre-existing untracked UID and debris files remain byte-for-byte untouched and unstaged.",
+  "questions": {
+    "vague|G1": {
+      "type": "noul",
+      "instructions": "Gate G1. Could this gate be claimed done with no checkable proof — is it unfalsifiable as written?",
+      "true": "Unfalsifiable: a captain could report it done in prose and nothing in the wording could contradict the claim",
+      "false": "Falsifiable: the wording names a check, count, command or named artifact that could prove or disprove it"
+    },
+    "class|G1": {
+      "type": "choice",
+      "instructions": "What single kind of evidence would settle gate G1 as written?",
+      "criteria": {
+        "command": "An exit code, test command or command output",
+        "tally": "A numeric tally, threshold or pass count",
+        "artifact": "A named file, hash, count or artifact on disk",
+        "verdict": "A person's review, taste or approval",
+        "none": "Nothing observable in the wording",
+        "other": "None of these fit"
+      }
+    },
+    "vague|G2": {
+      "type": "noul",
+      "instructions": "Gate G2. Could this gate be claimed done with no checkable proof — is it unfalsifiable as written?",
+      "true": "Unfalsifiable: a captain could report it done in prose and nothing in the wording could contradict the claim",
+      "false": "Falsifiable: the wording names a check, count, command or named artifact that could prove or disprove it"
+    },
+    "class|G2": {
+      "type": "choice",
+      "instructions": "What single kind of evidence would settle gate G2 as written?",
+      "criteria": {
+        "command": "An exit code, test command or command output",
+        "tally": "A numeric tally, threshold or pass count",
+        "artifact": "A named file, hash, count or artifact on disk",
+        "verdict": "A person's review, taste or approval",
+        "none": "Nothing observable in the wording",
+        "other": "None of these fit"
+      }
+    },
+    "vague|G3": {
+      "type": "noul",
+      "instructions": "Gate G3. Could this gate be claimed done with no checkable proof — is it unfalsifiable as written?",
+      "true": "Unfalsifiable: a captain could report it done in prose and nothing in the wording could contradict the claim",
+      "false": "Falsifiable: the wording names a check, count, command or named artifact that could prove or disprove it"
+    },
+    "class|G3": {
+      "type": "choice",
+      "instructions": "What single kind of evidence would settle gate G3 as written?",
+      "criteria": {
+        "command": "An exit code, test command or command output",
+        "tally": "A numeric tally, threshold or pass count",
+        "artifact": "A named file, hash, count or artifact on disk",
+        "verdict": "A person's review, taste or approval",
+        "none": "Nothing observable in the wording",
+        "other": "None of these fit"
+      }
+    },
+    "vague|G4": {
+      "type": "noul",
+      "instructions": "Gate G4. Could this gate be claimed done with no checkable proof — is it unfalsifiable as written?",
+      "true": "Unfalsifiable: a captain could report it done in prose and nothing in the wording could contradict the claim",
+      "false": "Falsifiable: the wording names a check, count, command or named artifact that could prove or disprove it"
+    },
+    "class|G4": {
+      "type": "choice",
+      "instructions": "What single kind of evidence would settle gate G4 as written?",
+      "criteria": {
+        "command": "An exit code, test command or command output",
+        "tally": "A numeric tally, threshold or pass count",
+        "artifact": "A named file, hash, count or artifact on disk",
+        "verdict": "A person's review, taste or approval",
+        "none": "Nothing observable in the wording",
+        "other": "None of these fit"
+      }
+    },
+    "vague|G5": {
+      "type": "noul",
+      "instructions": "Gate G5. Could this gate be claimed done with no checkable proof — is it unfalsifiable as written?",
+      "true": "Unfalsifiable: a captain could report it done in prose and nothing in the wording could contradict the claim",
+      "false": "Falsifiable: the wording names a check, count, command or named artifact that could prove or disprove it"
+    },
+    "class|G5": {
+      "type": "choice",
+      "instructions": "What single kind of evidence would settle gate G5 as written?",
+      "criteria": {
+        "command": "An exit code, test command or command output",
+        "tally": "A numeric tally, threshold or pass count",
+        "artifact": "A named file, hash, count or artifact on disk",
+        "verdict": "A person's review, taste or approval",
+        "none": "Nothing observable in the wording",
+        "other": "None of these fit"
+      }
+    },
+    "vague|G6": {
+      "type": "noul",
+      "instructions": "Gate G6. Could this gate be claimed done with no checkable proof — is it unfalsifiable as written?",
+      "true": "Unfalsifiable: a captain could report it done in prose and nothing in the wording could contradict the claim",
+      "false": "Falsifiable: the wording names a check, count, command or named artifact that could prove or disprove it"
+    },
+    "class|G6": {
+      "type": "choice",
+      "instructions": "What single kind of evidence would settle gate G6 as written?",
+      "criteria": {
+        "command": "An exit code, test command or command output",
+        "tally": "A numeric tally, threshold or pass count",
+        "artifact": "A named file, hash, count or artifact on disk",
+        "verdict": "A person's review, taste or approval",
+        "none": "Nothing observable in the wording",
+        "other": "None of these fit"
+      }
+    },
+    "vague|G7": {
+      "type": "noul",
+      "instructions": "Gate G7. Could this gate be claimed done with no checkable proof — is it unfalsifiable as written?",
+      "true": "Unfalsifiable: a captain could report it done in prose and nothing in the wording could contradict the claim",
+      "false": "Falsifiable: the wording names a check, count, command or named artifact that could prove or disprove it"
+    },
+    "class|G7": {
+      "type": "choice",
+      "instructions": "What single kind of evidence would settle gate G7 as written?",
+      "criteria": {
+        "command": "An exit code, test command or command output",
+        "tally": "A numeric tally, threshold or pass count",
+        "artifact": "A named file, hash, count or artifact on disk",
+        "verdict": "A person's review, taste or approval",
+        "none": "Nothing observable in the wording",
+        "other": "None of these fit"
+      }
+    },
+    "vague|G8": {
+      "type": "noul",
+      "instructions": "Gate G8. Could this gate be claimed done with no checkable proof — is it unfalsifiable as written?",
+      "true": "Unfalsifiable: a captain could report it done in prose and nothing in the wording could contradict the claim",
+      "false": "Falsifiable: the wording names a check, count, command or named artifact that could prove or disprove it"
+    },
+    "class|G8": {
+      "type": "choice",
+      "instructions": "What single kind of evidence would settle gate G8 as written?",
+      "criteria": {
+        "command": "An exit code, test command or command output",
+        "tally": "A numeric tally, threshold or pass count",
+        "artifact": "A named file, hash, count or artifact on disk",
+        "verdict": "A person's review, taste or approval",
+        "none": "Nothing observable in the wording",
+        "other": "None of these fit"
+      }
+    }
+  }
+}

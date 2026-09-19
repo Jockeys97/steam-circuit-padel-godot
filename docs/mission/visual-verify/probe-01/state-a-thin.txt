@@ -1,0 +1,1 @@
+A character-selection screen from a padel game. Six athlete cards in a two-row grid, each card with a portrait, a name, a role word, a description, a special ability and an availability status. It is the "pick the athlete you play as" picker.
