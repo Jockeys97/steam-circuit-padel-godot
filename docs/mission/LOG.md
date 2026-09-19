@@ -354,3 +354,14 @@ stays the owner's decision.
   buttons, or an AI fallback for the partner — are recorded for the owner's verdict rather than
   chosen here. Report `evidence/second-player-coop-needs-a-controller.md`; probe + report committed,
   no gameplay change. Spend $0.00008 (one Jev call: 0.76 on the diagnosis, 1.03 on blocking).
+- 2026-09-19 second player, follow-up — the owner said "Not fixed", and instructing him to click the
+  arena screen's players panel was not a fix, so the stored `playerMode` was flipped to `solo` in
+  place (backup `save/prefs.json.bak-20260920-002320`; the file's `balance` is a build tag, not a
+  checksum, so an outside edit is read normally, and the profile's other keys are intact). Proven end
+  to end against the real store with a new `godot/_probe_stored_mode.gd` (PASS 3/3, 0 SCRIPT ERROR):
+  stored `solo` → `ArenaScreen.gd:509` resolves `pending_player_mode=solo` → match `humanMode=solo` →
+  the partner is driven 674 of 900 frames with rallies (longest rally 9), where the pre-flip profile
+  gave 0 frames. The setting's panel is reachable in the screen's scroll under the arena cards. Two
+  unbuilt options stay open for the owner: a second controller for real co-op, or a port extra
+  (keyboard second player, or an AI fallback for the partner with one controller) — both divergences
+  from the frozen reference. Committed the probe + report addendum. Spend $0.

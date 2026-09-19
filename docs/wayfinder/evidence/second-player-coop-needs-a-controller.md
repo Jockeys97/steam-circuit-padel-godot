@@ -87,6 +87,32 @@ Open for the owner's verdict, each a real fork:
 4. **AI fallback** — drive the partner with the simulation's AI when co-op is selected with no second
    controller. A deliberate divergence from the frozen reference: the browser does not do this.
 
+## What was actually done
+
+Telling the owner to click the panel was **not** a fix, and he said so ("Not fixed"). The stored
+`playerMode` was flipped to `solo` in place, with a timestamped backup beside it:
+`…/save/prefs.json.bak-20260920-002320`. The file's `balance` field is a build tag, not a checksum
+(`src/save/save_schema.gd:50` `BALANCE = "b7"`, `src/save/README.md:37-38`), so an edit from outside
+the game is read normally; the write was verified by re-reading the file, and the profile's other keys
+(`pacePreset: brisk`, `controlMode: semi`, lineup, volume, muted) are intact.
+
+`godot/_probe_stored_mode.gd` (new) proves the chain end to end against the real store, with no
+redirect: stored `playerMode=solo` → `ArenaScreen.gd:509` resolves `pending_player_mode=solo` → the
+match runs `humanMode=solo` → the partner is driven for **674 of 900 frames** and rallies happen
+(longest rally 9). PASS 3/3, 0 `SCRIPT ERROR`. The same chain with the pre-flip profile yielded a
+partner driven for **0** frames (the co-op row above).
+
+The panel that owns this setting is reachable — `Frame/Scroll/Body/PlayerModeArea/PlayerModePanel`
+with `PlayerModeButton_solo|coop|pvp` and `PlayerModeHint`, in the arena screen's scroll right below
+the arena cards — so the failure to fix it by instruction was not a hidden control.
+
+Two things the owner may still want, both his call and neither built:
+
+- co-op or versus with a **second controller** attached (the reference's design), or
+- a port extra for one-controller play: the keyboard driving the second player, or an AI fallback for
+  the partner slot when co-op is chosen with no second device. Neither exists in the frozen
+  reference, so both are deliberate divergences.
+
 ## Limitations
 
 - One seed and one 20-second run per mode; the motion numbers are deterministic (the two trees agree
