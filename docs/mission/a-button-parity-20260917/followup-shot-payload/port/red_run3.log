@@ -1,0 +1,2135 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# deferred_shot_payload_test — zero-substep release payload preservation
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] start_match (res://game/match_controller.gd:912)
+              [2] _new_match_node (res://tests/input/deferred_shot_payload_test.gd:61)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:133)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:104)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+ok release frame runs no sub-step (zero-substep setup)
+ok hit is latched, unconsumed, after the release frame
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:111)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+ok neutral frame spends exactly one sub-step
+ok the spent tick saw hit=true
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _drive_ball_to_contact (res://tests/input/deferred_shot_payload_test.gd:119)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:135)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+# trace debug smashPrimed=false swingBuffer=0.000 fallback=false ballz=-1.52 ballY=463.93 playerY=480.00 queuedVariant=auto
+# trace shotType_after_fix_or_before=serve queuedShotVariant_last=auto
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] start_match (res://game/match_controller.gd:912)
+              [2] _new_match_node (res://tests/input/deferred_shot_payload_test.gd:61)
+              [3] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:141)
+              [4] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [5] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'position' with value of type 'Vector3' on a base object of type 'Nil'.
+          at: _sync_views (res://game/match_controller.gd:1250)
+          GDScript backtrace (most recent call first):
+              [0] _sync_views (res://game/match_controller.gd:1250)
+              [1] apply_frame (res://game/match_controller.gd:1012)
+              [2] _contact_bench_scenario (res://tests/input/deferred_shot_payload_test.gd:153)
+              [3] _run (res://tests/input/deferred_shot_payload_test.gd:38)
+              [4] _initialize (res://tests/input/deferred_shot_payload_test.gd:33)
+# trace auto_reference_shotType=smash-flat
+ok requested drive is preserved through the zero-substep frame (result=serve, auto-reference=smash-flat)
+# note queued_shot_payload field not present yet (pre-fix source)
+PASS 5/5
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=280 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=270 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)

@@ -1,0 +1,8 @@
+{"event": "planned", "team": "Reference", "provider": "opencode-go", "model": "deepseek-v4-pro", "mutation": "mission artifacts and isolated scratch only", "launch": 1, "launch_cap": 6}
+{"event": "planned", "team": "Port", "provider": "opencode-go", "model": "deepseek-v4-pro", "mutation": "mission artifacts and isolated scratch only", "launch": 2, "launch_cap": 6}
+{"event": "planned", "team": "Review", "provider": "opencode-go", "model": "deepseek-v4-pro", "mutation": "mission artifacts and isolated scratch only", "launch": 3, "launch_cap": 6}
+{"event": "verified-partial", "batch": "deleg_ed4116b6", "reference": "reproducible; corrupted copy rejected", "port": "PASS 32/32; SCRIPT ERROR 0", "cross_engine": "not yet tested"}
+{"event": "planned", "launch": 4, "team": "Port integration", "provider": "opencode-go", "model": "deepseek-v4-pro", "launch_cap": 6}
+{"event": "dispatched", "launch": 5, "team": "Independent cross-review", "provider": "opencode-go", "model": "deepseek-v4-pro", "batch": "deleg_bc1229c7", "remaining_launches": 1, "integration_certification": "blocked on comparator defects"}
+{"event": "dispatched", "launch": 6, "team": "Port correction", "provider": "opencode-go", "model": "deepseek-v4-pro", "batch": "deleg_183c1c9f", "remaining_launches": 0, "scope": "diagnostic comparator only"}
+{"event": "final-verification", "launches_used": 6, "launch_cap": 6, "self_tests": "8/8 exit0", "integration": "exit0 67 frames 2278 comparisons 14 documented differences", "verdict": "narrow diagnosis verified; full certification incomplete", "residual": "joint missing nested fields falsely accepted", "production_hashes": "unchanged"}

@@ -233,8 +233,12 @@ func _config_defaults() -> void:
 	check_eq("COURT.left is frozen at 80", int(court["left"]), 80)
 	check_eq("COURT.bottom is frozen at 564", int(court["bottom"]), 564)
 	check_eq("SERVICE_LINE_OFFSET is frozen at 126", int(Sim.SERVICE_LINE_OFFSET), 126)
-	check("court presentation is 10 m wide and 20 m long",
-		absf(Court.court_len() - 10.0) < 0.0001 and absf(Court.court_depth() - 20.0) < 0.0001,
+	# The court's width is the owner's feel gate, not a constant of the port: this
+	# check pins the DEPTH (20 m, the real padel length) and reads the width from
+	# `Court.WIDTH_M`, so his pick cannot turn the slice red. The frozen pixel
+	# numbers above are the ones that must never move.
+	check("court presentation is as wide as the declared court and 20 m long",
+		absf(Court.court_len() - Court.WIDTH_M) < 0.0001 and absf(Court.court_depth() - 20.0) < 0.0001,
 		"%f x %f" % [Court.court_len(), Court.court_depth()])
 	_section_done("_config_defaults")
 
@@ -1014,6 +1018,7 @@ func _timing_presentation() -> void:
 
 	# --- the energy bar: under the active athlete, the player's energy ------------
 	node.state.shotRead["profile"] = "control"
+	var energy: Node3D = node.get("_timing_energy")
 	node.state.rallyEnergy = {"player": 0.2, "ai": 1.0}
 	node._sync_views()
 	var low: float = float(node.timing_report()["energy_width"])
@@ -1928,9 +1933,16 @@ func _arena_library() -> void:
 				dressing += 1
 		if dressing != int(info["props"].size()) or dressing == 0:
 			bad_scenery.append("%s: %d scenery nodes for %d props" % [id, dressing, (info["props"] as Array).size()])
-		# The court's ground paint is the arena's own palette floor.
+		# The ground OUTSIDE the cage is the reference's `exteriorFloor` table
+		# (`js/render.js:760-767`), ported as `arena_style.gd`'s `apron` and exposed
+		# as `info()["apron"]` — NOT `palette.floor` darkened, which is what this
+		# expectation used to pin. That derivation was the port's own invention: it
+		# painted the 80 m plane a dead slate (`#323946` measured in a frame) and
+		# lost the warm/cool contrast the reference builds on purpose, so the blue
+		# court reads as the bright focal plane. The assertion is unchanged — only
+		# the expected value moves, to the reference's own authority.
 		var surround := _find(built, "Surround") as MeshInstance3D
-		var expected := Court.palette_color(r, "floor", Color(0.10, 0.22, 0.18)).darkened(0.35)
+		var expected: Color = info["apron"]
 		if surround == null or (surround.material_override as StandardMaterial3D).albedo_color != Color(expected.r, expected.g, expected.b, 1.0):
 			palette_mismatch.append("%s: %s" % [id, str(surround.material_override.albedo_color) if surround != null else "no surround"])
 		built.free()

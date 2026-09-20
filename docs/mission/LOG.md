@@ -299,3 +299,60 @@ stays the owner's decision.
   to `origin/main`; remote read-back verified; no force push; unrelated dirt (`.hermes/`, `art/**`,
   `meshy/**`, generated sidecars, probe files) left untouched. Spend $0.
 - 2026-09-18 fornaio special (Godot-only athlete) — IL FORNAIO rides his own additive path, never the frozen roster: overlay `godot/assets/athletes/specials_catalogue.json` + `godot/src/character/specials.gd`, `Gate.special_athletes()` (full build only, never merged into `selectable_athletes()`), a dedicated `Config` special seat with demo clearing, `SPECIAL (n)` strips in the menu and the characters picker (own node prefixes, so the frozen `PickCard_<id>` / toggle counts are untouched), the `Lineup` pref pool widened to `Gate.roster() + Gate.special_athletes()` so he can be fielded in any of the four slots, portrait copied byte-identical from `meshy/views/fornaio-front.png` (sha256 `78c9f22a9c73f7e857b956cee9d0e5f773578f9ffde8cab0f773be38b2115a18`), `athlete_fornaio_name` added to both locale tables as a marked PORT ADDITION. `Frozen.athletes` is still the original six and `git diff` over `js/`, `frozen/`, `reference_catalogue.json`, `tools/` is zero files — measured, not asserted: `frozen_athletes=6`, `catalogue_entries=26` in the run below. **No Meshy GLB**: no `fornaio.glb` exists, so the on-court body is the MAESTRO mesh as a temporary human stand-in, stated plainly in `docs/wayfinder/evidence/fornaio-special.md`. Engine runs, one at a time on a busy machine (a play session and another lane's runs held the single engine; my runs waited): `tests/fornaio_special_test.gd` full build `PASS 77/77` exit 0, `-- --demo` `PASS 65/65` exit 0 (in demo the strip never builds, the seat refuses him and a forced seat is cleared), plus the UIR-11 `tests/ui/screen_characters_audit.gd` regression `PASS 148/148` exit 0; the menu measurement shows the strip costs 0 px of the setup row's 1056 px budget (row min 1044.0, unchanged). gdlint against a `git show HEAD:` baseline: 0 new findings. Nothing committed and nothing staged for this lane (only the port addition's own files are new; the staged `art/world/*.png` in the index belongs to another lane).
+## 2026-09-17 11:25 CEST — ticket reconciliation: wayfinder map and mission cabinet brought in line with the returns
+
+- The four verified-and-returned tickets are `resolved` in their ticket headers and in
+  the map table: shot-logic-parity (evidence `shot-logic-parity.md`: PASS 675/675,
+  comparator IDENTICAL 35/35 @ 657 fields, tol=0), timing-logic-parity (evidence
+  `timing-logic-parity.md`: PASS 100/100, 17/17 fields × 3,601 ticks IDENTICAL),
+  timing-presentation-3d (evidence `timing-presentation-3d.md`: `_timing_presentation`
+  section, 37 checks), court-width-render (evidence `court-width-render.md`: 1,111
+  checks, three candidates 10.5 / 11.0 / 12.0 m, parity digest unchanged).
+- `timing-label-scale` resolved as superseded by `timing-presentation-3d`: its
+  window-independent-text demand was measured and rejected in favour of
+  reference-proportional sizing.
+- `arena-bleachers` left open: its evidence file does not exist yet (another lane is
+  producing it), so the close-rule is not met; the code is present
+  (`godot/game/arenas/bleachers.gd`).
+- Map validator re-run: `PASS: 0 errors, 0 warnings`. No commits; no `godot/**` edits.
+
+## 2026-09-17 11:42:09 CEST — the stands evidence written (arena-bleachers lane)
+
+- The stands are measured at the shipped config (`sides=2`, `copies_per_side=1`,
+  `scale=3.15`, `cast_shadow=false`, `material=imported`): 2 copies, 919,856
+  triangles, 86.1 % of the scene. Evidence:
+  `docs/wayfinder/evidence/arena-bleachers.md`.
+- Marginal cost (interleaved arms, one session, 8 alternating windows): +5.87 ms
+  engine p50 (+52.6 %), +2.81 ms wall p50 (+42.0 %), −58.2 fps (−37 %). The two
+  `--interleave=0` runs were re-run after the probe's `PROBE_FRAME` label fix and are
+  quoted only as a caveated cross-check (single ~2-second samples on a busy machine).
+- Gates re-run: `court_dimensions_test.gd` 1111 checks / 0 failures, exit 0;
+  `game_slice_test.gd` 325/326 (only red `padel.pck`, by design); parity digest
+  unchanged (`a7136682…`, exit 0). Zero `SCRIPT ERROR`; `glb_loads=1` per boot.
+- Outstanding (ticket stays open): the owner's look verdict, and the missing
+  `godot/assets/bleachers/bleachers.meshy-task.json` — its `taskId`/`consumedCredits`
+  are not known, so it is not created and no Meshy taskId was invented.
+- Map validator re-run: PASS 0 errors / 0 warnings. No commits; no
+  `godot/src/sim/**` edits.
+- 2026-09-17 11:44 CEST — **Owner gates closed on all three presentation changes.** The
+  stands are ratified as shipped (two copies, one per side line, scale 3.15), the court
+  width is ratified at **11.0 m**, and the timing label sizes are approved as they are.
+  Measurement, frames and cost table: `docs/wayfinder/evidence/arena-bleachers.md`.
+  `court-width-render.md` named 10.5 m as the resting value while the code already read
+  11.0 — corrected in three places so the evidence and the code agree.
+- `tools/bleachers_probe.gd`'s `PROBE_FRAME` line assigned two labels to the wrong
+  arguments (`engine_trim80_ms` printed the wall-derived fps, `engine_fps` printed the
+  engine trimmed mean). Labels only, no value changed; the two `--interleave=0` runs were
+  re-measured after the fix and are quoted only as a caveated cross-check.
+- Delegation repaired: `delegation.provider` pointed at `openai-codex`, which was
+  rate-limited and had no fallback chain, so both lanes of the 11:15 dispatch died in ~20 s
+  with zero tree changes. Repointed to the live lane (`opencode-go` / `deepseek-v4-pro`);
+  the three lanes then ran and returned.
+- Push reality, recorded because the handoff's target has moved: `origin/codex/gameplay-and-map`
+  is now `287e499` — this lineage re-committed onto `origin/main` plus one integration commit
+  written while this session ran. It carries `WIDTH_M := 10.0`, `TIMING_ADVICE_PX := 15` and
+  no `bleachers.gd`, so this session's three changes are not on it. Nothing was forced and
+  nothing was merged: the work is committed on `codex/input-bridge-and-slice-s14`, whose
+  lineage diverges from the published one by 14 remote-only commits (mostly re-created SHAs
+  of the same work) and 132 files of content. Integrating the two is a reconciliation job
+  with a full gate re-run, not a push.

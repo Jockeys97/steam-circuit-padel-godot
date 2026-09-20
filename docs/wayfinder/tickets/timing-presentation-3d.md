@@ -1,6 +1,7 @@
 # Timing presentation in 3D — the ring, the words, the bar
 
 - Status: open
+- Status: resolved
 - Type: task
 - Mode: AFK
 - Owner: crew-timinghud

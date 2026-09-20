@@ -60,3 +60,9 @@ godot/=/
 godot/prototypes/roster_review/assets/
 godot/prototypes/roster_review/out/
 godot/prototypes/racket_review/out/
+
+# Meshy GLBs carry their textures INSIDE the binary chunk; Godot's glTF importer
+# also writes each one out beside the file. Nothing reads those copies — they are
+# regenerated on import — and they cost ~8 MB of permanent history per asset wave.
+godot/assets/**/*_[0-9].jpg
+godot/assets/**/*_[0-9].jpg.import

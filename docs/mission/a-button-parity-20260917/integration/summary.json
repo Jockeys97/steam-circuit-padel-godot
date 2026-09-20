@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 3,
+  "fixedStep": "1/120",
+  "import_exit": 0,
+  "js_harness_exit": [
+    0,
+    0
+  ],
+  "godot_harness_exit": [
+    0,
+    0
+  ],
+  "deterministic": true,
+  "total_comparisons": 2278,
+  "expected_frames": 67,
+  "js_frames": 67,
+  "gd_frames": 67,
+  "count_mismatch": false,
+  "frame_count_ok": true,
+  "scenario_ok": true,
+  "total_divergences": 14,
+  "intended_latch_divergences": 14,
+  "unexpected_divergences": 0,
+  "latch_reproduced": true,
+  "red_control_detected": true,
+  "negative_control_not_detected": true,
+  "truncated_output_detected": true,
+  "verdict_exit": 0,
+  "verdict_message": "PASS: input/queue parity + latch divergence reproduced exactly",
+  "first_divergence": {
+    "key": [
+      "zero-substep-latch",
+      2
+    ],
+    "field": "sim.queuedShotPower",
+    "js": "1.000000",
+    "gd": "0.400000"
+  },
+  "first_divergence_by_scenario": {
+    "zero-substep-latch": {
+      "key": [
+        "zero-substep-latch",
+        2
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    }
+  },
+  "latch_evidence": [
+    {
+      "key": [
+        "zero-substep-latch",
+        2
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        2
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.271667"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        3
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        3
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.263333"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        4
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        4
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.255000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        5
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        5
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.246667"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        6
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        6
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.238333"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        7
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        7
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.230000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        8
+      ],
+      "field": "sim.queuedShotPower",
+      "js": "1.000000",
+      "gd": "0.400000"
+    },
+    {
+      "key": [
+        "zero-substep-latch",
+        8
+      ],
+      "field": "sim.playerSwingBuffer",
+      "js": "0.000000",
+      "gd": "0.221667"
+    }
+  ],
+  "artifacts": {
+    "js_trace": "/tmp/padel-a-button-20260917-port/js.trace.txt",
+    "godot_trace": "/tmp/padel-a-button-20260917-port/gd.trace.txt",
+    "corrupt_copy": "/tmp/padel-a-button-20260917-port/gd.corrupt.txt",
+    "corpus": "/Users/alessiofantini/Documents/steam-circuit-padel-godot/docs/mission/a-button-parity-20260917/integration/corpus/production_rate.json"
+  }
+}

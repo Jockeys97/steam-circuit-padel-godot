@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 2,
+  "note": "PRODUCTION-RATE derived corpus. Provenance: reference corpus scenarios.json (schemaVersion 1, dt=1/60). Production fixed step is 1/120 in BOTH engines (js/main.js:1217 FIXED_STEP=1/120; godot match_controller.gd:66 FIXED_STEP=1/120). 1/60 is the REFERENCE corpus tick, never a production fixed tick. Deltas chosen with CLEAR margins so both engines' IEEE doubles agree on the sub-step count: 0.0084 (>1/120) and 0.0168 (>1/60) are full/2-step frames; 0.004 (250 Hz, <1/120) is a sub-step frame. GDScript's decimal->double parser truncates (0.008333333333333333 parses BELOW 1.0/120.0), so exact 1/120 literals are avoided on purpose.",
+  "fixedStep": 0.008333333333333333,
+  "seed": 12345,
+  "source": "derived from reference/corpus/scenarios.json (dt 1/60) -> production rate 1/120",
+  "buttonMap": { "A": 0, "B": 1, "X": 2, "Y": 3, "LB": 4, "RB": 5, "LT": 6, "RT": 7, "dpadUp": 12, "dpadDown": 13, "dpadLeft": 14, "dpadRight": 15 },
+  "axisMap": { "lx": 0, "ly": 1, "rx": 2, "ry": 3, "LT": 4, "RT": 5 },
+  "scenarios": [
+    {
+      "id": "no-input",
+      "description": "No button, neutral sticks, five full-step frames. Baseline: nothing queues.",
+      "frames": [ { "delta": 0.0084, "b": [], "a": [0,0,0,0,0,0], "n": 5 } ]
+    },
+    {
+      "id": "a-tap",
+      "description": "A pressed one full-step frame, released the next. POSITIVE CONTROL: release lands on a 1-substep frame, both engines must queue a drive.",
+      "frames": [
+        { "delta": 0.0084, "b": [0], "a": [0,0,0,0,0,0] },
+        { "delta": 0.0084, "b": [], "a": [0,0,0,0,0,0] },
+        { "delta": 0.0084, "b": [], "a": [0,0,0,0,0,0], "n": 6 }
+      ]
+    },
+    {
+      "id": "a-short-charge",
+      "description": "A held 12 full-step frames, then released. Partial charge accrual.",
+      "frames": [
+        { "delta": 0.0084, "b": [0], "a": [0,0,0,0,0,0], "n": 12 },
+        { "delta": 0.0084, "b": [], "a": [0,0,0,0,0,0] },
+        { "delta": 0.0084, "b": [], "a": [0,0,0,0,0,0], "n": 4 }
+      ]
+    },
+    {
+      "id": "rb-a",
+      "description": "RB + A held together 6 frames, released. technicalModifier -> chiquita.",
+      "frames": [
+        { "delta": 0.0084, "b": [5,0], "a": [0,0,0,0,0,0], "n": 6 },
+        { "delta": 0.0084, "b": [], "a": [0,0,0,0,0,0] },
+        { "delta": 0.0084, "b": [], "a": [0,0,0,0,0,0], "n": 4 }
+      ]
+    },
+    {
+      "id": "left-stick-aim",
+      "description": "A held while left stick pushed; release captures curved aim.",
+      "frames": [
+        { "delta": 0.0084, "b": [0], "a": [-0.8,-0.5,0,0,0,0], "n": 6 },
+        { "delta": 0.0084, "b": [], "a": [0,0,0,0,0,0] },
+        { "delta": 0.0084, "b": [], "a": [0,0,0,0,0,0], "n": 4 }
+      ]
+    },
+    {
+      "id": "hz60-release",
+      "description": "60 Hz render (delta 1/60 = 2 sub-steps per frame). CONTROL: release on a 2-substep frame, both engines queue.",
+      "frames": [
+        { "delta": 0.0168, "b": [0], "a": [0,0,0,0,0,0] },
+        { "delta": 0.0168, "b": [], "a": [0,0,0,0,0,0] },
+        { "delta": 0.0168, "b": [], "a": [0,0,0,0,0,0], "n": 4 }
+      ]
+    },
+    {
+      "id": "zero-substep-latch",
+      "description": "250 Hz render (delta 0.004, shorter than FIXED_STEP): A pressed on frame 0, released on frame 1 — BOTH frames justify ZERO sub-steps. Genuine physical A press/release timeline, NOT hit=true injected. THE DISCRIMINATOR: browser clears the one-shot in getInput() before the accumulator, dropping the release; Godot latches it and delivers it on the next sub-step (frame 2). 144 Hz / 240 Hz follow the same >120 Hz sub-step principle (a release landing on a zero-substep frame).",
+      "frames": [
+        { "delta": 0.004, "b": [0], "a": [0,0,0,0,0,0] },
+        { "delta": 0.004, "b": [], "a": [0,0,0,0,0,0] },
+        { "delta": 0.004, "b": [], "a": [0,0,0,0,0,0] },
+        { "delta": 0.0084, "b": [], "a": [0,0,0,0,0,0], "n": 6 }
+      ]
+    }
+  ]
+}

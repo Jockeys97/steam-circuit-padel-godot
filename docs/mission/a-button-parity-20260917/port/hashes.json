@@ -1,0 +1,26 @@
+{
+  "isolated_project": "/tmp/padel-a-button-20260917-port/godot",
+  "copied_from": "/Users/alessiofantini/Documents/steam-circuit-padel-godot/godot",
+  "note": "sha256 of the ISOLATED COPY; input_map.gd, match_controller.gd and sim.gd match the baseline.json values recorded by the CEO pre-flight (byte-identical copy of the dirty source).",
+  "source_sha256": {
+    "game/input_map.gd": "a1780ce43d2b64da2de8788d45f43b9eb186f6da14e05515669084affbf292af",
+    "game/match_controller.gd": "e1c75caf1625eb00f82ad4e728d039861446bf2669440513f7c81be45185c6d6",
+    "src/sim/sim.gd": "f2d1e7f2023000fdd66bbe0b5c956d0b623217b448792c994ef730993bd7e0c3",
+    "src/sim/state.gd": "85c4482f45a655aad94c8ae5ded02c7c3e55fbd1ce9ef78f5ae39130ad081e33",
+    "src/sim/entities.gd": "dcb61eab3f976d21eba067696d1d3da1900400784d3dcd64f09d093fd58f4cb8",
+    "src/sim/frozen.gd": "3c9db96954cdcab7236b0c488bd1770a2bae71d17ad05d0b5d23177d8c8b7e7c",
+    "game/content_gate.gd": "3709bf2bef355e0538d1fcf9b90ed175dc5599b92722bf3a55c3ed3b847dcf8a",
+    "game/Match.tscn": "da485243c197db7d85d3e1b6c9e5ebe0cd71d3065f6235b397b098e8ece7b568",
+    "game/scripted_player.gd": "4077d2914de61ede0746f48c44693e12b688e3d8352f9d87f1a136e6cba308ce",
+    "project.godot": "3aef17de3f1ff1aa680e23746d3f1f60212b5e9053c4ca05c9e3943cf5635190"
+  },
+  "replay_run": {
+    "verdict": "PASS 32/32",
+    "exit_code": 0,
+    "SCRIPT_ERROR_count": 0,
+    "ERROR_count": 1,
+    "remaining_error": "1 resources still in use at exit (benign engine teardown, not a script/import error)",
+    "seed": 20260917,
+    "log": "/tmp/padel-a-button-20260917-port/run.log"
+  }
+}

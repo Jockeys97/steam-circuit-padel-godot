@@ -1,0 +1,41 @@
+78a79,82
+> ## The fields a deferred `hit` needs replayed with it — the ones `sim.gd`'s
+> ## `queue_paddle_hit`/`update_shot_control` (`sim.gd:2540-2543`, `:2644-2647`)
+> ## actually read off `input` at the consuming tick, beyond the `hit` flag itself.
+> const HIT_PAYLOAD_FIELDS := ["shotVariant", "slice", "aim", "aimY", "analogAim"]
+264a269,276
+> ## The payload fields that ride with a deferred "hit" one-shot (`shotVariant`,
+> ## `slice`, `aim`, `aimY`, `analogAim`): captured at the SAME frame that latches
+> ## `hit` (`latch_one_shots`), because a neutral frame sampled before the latch is
+> ## consumed carries none of these — `input_map.gd:210-228` only fills them on the
+> ## release frame itself. Consumed once alongside `hit` (`_with_queued`), cleared
+> ## wherever `queued_one_shots` is cleared, so a stale payload can never leak into
+> ## the next point or be replayed on a later un-related hit.
+> var queued_hit_payload: Dictionary = {}
+515a528
+> 	queued_hit_payload.clear()
+898a912
+> 	queued_hit_payload.clear()
+967a982
+> 		queued_hit_payload.clear()
+1057a1073,1082
+> 	# The release that arms `hit` is the ONLY frame carrying its shot family/aim
+> 	# (`input_map.gd:210-228`): a neutral frame sampled later, while `hit` is still
+> 	# latched, has none of this. Snapshot it here, at the same instant `hit` is
+> 	# armed, so `_with_queued` can replay the whole request together later.
+> 	if bool(input.get("hit", false)):
+> 		queued_hit_payload.clear()
+> 		for key in HIT_PAYLOAD_FIELDS:
+> 			var value: Variant = input.get(key, null)
+> 			if value != null:
+> 				queued_hit_payload[key] = value
+1065a1091,1097
+> 	# The hit payload rides along with the latched hit only — never overwrites a
+> 	# fresh sample's own shotVariant/aim for a hit that was NOT deferred, and
+> 	# never applies when nothing is actually being replayed from the latch.
+> 	if bool(queued_one_shots.get("hit", false)) and not queued_hit_payload.is_empty():
+> 		for key in HIT_PAYLOAD_FIELDS:
+> 			if queued_hit_payload.has(key):
+> 				out[key] = queued_hit_payload[key]
+2079a2112
+> 	queued_hit_payload.clear()

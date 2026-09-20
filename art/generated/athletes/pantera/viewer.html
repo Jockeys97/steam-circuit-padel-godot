@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pantera — Meshy GLB</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #090d1d; }
+    main { width: min(1100px, 96vw); }
+    h1 { margin: 0 0 .35rem; color: #ff4f83; }
+    p { margin: 0 0 1rem; color: #b8c0db; }
+    #stage { position: relative; height: min(76vh, 760px); overflow: hidden; border: 1px solid #29345f; border-radius: 18px; background: radial-gradient(circle at 50% 18%, #26376e, #0b1027 68%); }
+    canvas { display: block; width: 100%; height: 100%; }
+    #status { position: absolute; left: 1rem; bottom: 1rem; padding: .55rem .8rem; border-radius: 10px; background: #080b18cc; color: #dbe4ff; }
+    .hint { margin-top: .65rem; font-size: .9rem; }
+  </style>
+  <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.166.1/build/three.module.js","three/addons/":"https://unpkg.com/three@0.166.1/examples/jsm/"}}</script>
+</head>
+<body>
+  <main>
+    <h1>Pantera</h1>
+    <p>Modello generato da Meshy — trascina per ruotare, rotella per zoomare.</p>
+    <section id="stage" aria-label="Viewer 3D di Pantera"><canvas id="model"></canvas><div id="status">Caricamento…</div></section>
+    <p class="hint">GLB con texture PBR. Questo primo export è statico: rig e animazioni saranno il pass successivo.</p>
+  </main>
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    const canvas = document.querySelector('#model');
+    const status = document.querySelector('#status');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled = true;
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('#0b1027');
+    const camera = new THREE.PerspectiveCamera(35, 1, .01, 100);
+    camera.position.set(2.8, 1.7, 4.3);
+    const controls = new OrbitControls(camera, canvas);
+    controls.target.set(0, 1.05, 0);
+    controls.enableDamping = true;
+    scene.add(new THREE.HemisphereLight(0xc8d7ff, 0x14101f, 2.2));
+    const key = new THREE.DirectionalLight(0xffffff, 3.2);
+    key.position.set(3, 5, 4); key.castShadow = true; scene.add(key);
+    const rim = new THREE.PointLight(0xff3f7c, 18, 8); rim.position.set(-3, 2.4, -2); scene.add(rim);
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(2.2, 64), new THREE.MeshStandardMaterial({ color: 0x111a39, roughness: .82, metalness: .05 }));
+    floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+
+    new GLTFLoader().load('pantera-source.glb', (gltf) => {
+      const model = gltf.scene;
+      model.traverse((node) => { if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; } });
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      model.position.sub(center);
+      model.position.y += size.y / 2;
+      const scale = 2.15 / Math.max(size.y, 0.001);
+      model.scale.setScalar(scale);
+      scene.add(model);
+      controls.target.set(0, 1.05, 0);
+      status.textContent = 'Modello caricato';
+    }, undefined, (error) => {
+      status.textContent = 'Caricamento non riuscito: usa un server locale';
+      console.error(error);
+    });
+
+    function resize() {
+      const { clientWidth: width, clientHeight: height } = canvas.parentElement;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height; camera.updateProjectionMatrix();
+    }
+    addEventListener('resize', resize); resize();
+    function frame() { controls.update(); renderer.render(scene, camera); requestAnimationFrame(frame); }
+    frame();
+  </script>
+</body>
+</html>

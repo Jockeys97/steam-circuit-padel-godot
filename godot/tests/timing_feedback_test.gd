@@ -687,6 +687,13 @@ func _timing_line(state: State, tick: int) -> String:
 	return "# tm tick=%06d %s" % [tick, " ".join(parts)]
 
 
+## The port stores the mode as an id (`shotMode:<mode>`); the reference stores
+## `t("shotMode" + Capitalized)`. The value compared is the id
+## (`godot/game/hud.gd:526-531` does this derivation for the HUD).
+func _feedback_mode_id(text_id: String) -> String:
+	if text_id.begins_with("shotMode:"):
+		return "shotMode" + text_id.substr(9).capitalize()
+	return text_id
 func _constants_lines() -> Array:
 	var balance: Dictionary = Frozen.balance()
 	var lines: Array = []

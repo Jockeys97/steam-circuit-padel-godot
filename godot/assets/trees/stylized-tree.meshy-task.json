@@ -1,0 +1,21 @@
+{
+  "name": "stylized-tree",
+  "taskId": "01a0b143-465d-74dd-bb19-c2cea0f898a2",
+  "previewTaskId": "01a0b141-e7aa-71ab-a8e0-5ea509f5641a",
+  "status": "SUCCEEDED",
+  "consumedCredits": 15,
+  "source": "meshy text-to-3d, model_type=smart-topology, ai_model=meshy-t2, target_polycount=12000",
+  "measured": {
+    "triangles": 9164,
+    "vertices": 15722,
+    "file_mb": 4.4,
+    "texture": "2048x2048 image/jpeg",
+    "bbox_m": [
+      0.629,
+      1.0,
+      0.641
+    ],
+    "min_y": -0.5
+  },
+  "why": "the owner's downloaded trees were 4.46M and 10.0M triangles and would not simplify below 1.23M (separate leaf islands); smart-topology makes the triangle count the generation budget instead of a decimation target"
+}

@@ -850,3 +850,9 @@ owner taste unapproved. The original review contract is NOT fully complete.**
   review-round2.md,refinement.md,integrator.md,ccl-ledger.jsonl}`; `proof/round2/` (frames +
   `CAPTURE_MANIFEST.md` + logs); run dirs `tools/world-arenas/out/{refinement-01,ceo-final-01}/`.
 - **Next**: owner taste verdict + merge decision — separate approvals; nothing auto-merges.
+## Ticket reconciliation — wayfinder map and mission cabinet (2026-09-17 11:25 CEST)
+
+Five ticket Status headers flipped to `resolved` (map table matching): shot-logic-parity,
+timing-logic-parity, timing-presentation-3d, court-width-render, and timing-label-scale
+(resolved as superseded by timing-presentation-3d). The stands (arena-bleachers) stays
+open — its evidence file is not on disk yet. Map validator PASS 0 errors / 0 warnings.
