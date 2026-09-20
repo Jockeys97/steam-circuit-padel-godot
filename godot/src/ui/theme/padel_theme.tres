@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=43 format=3]
+[gd_resource type="Theme" load_steps=44 format=3]
 
 [ext_resource type="FontFile" path="res://assets/ui/fonts/LilitaOne-Regular.ttf" id="1_display"]
 [ext_resource type="FontFile" path="res://assets/ui/fonts/Nunito-Regular.ttf" id="2_body"]
@@ -378,6 +378,17 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
+[sub_resource type="StyleBoxFlat" id="BoxServeChip"]
+content_margin_left = 24.0
+content_margin_top = 10.0
+content_margin_right = 24.0
+content_margin_bottom = 10.0
+bg_color = Color(0, 0, 0, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [resource]
 default_font = SubResource("FontVariation_Body")
 default_font_size = 16
@@ -459,6 +470,12 @@ Palette/colors/deck_special_fill = Color(0.9372549, 0.56078431, 0.17254902, 1)
 Palette/colors/deck_special_border = Color(0.65882353, 0.30588235, 0.10588235, 1)
 Palette/colors/deck_special_shadow = Color(0.54901961, 0.23529412, 0.08627451, 1)
 Palette/colors/replay_banner = Color(0.02352941, 0.04705882, 0.11764706, 0.42)
+Palette/colors/danger_border = Color(0.47843137, 0.10196078, 0.14117647, 1.0)
+Palette/colors/danger_fill = Color(0.36078431, 0.07843137, 0.10980392, 1.0)
+Palette/colors/danger_fill_hover = Color(0.47843137, 0.10196078, 0.14117647, 1.0)
+Palette/colors/danger_shadow = Color(0.23529412, 0.03137255, 0.04705882, 0.5)
+Palette/colors/overlay_scrim = Color(0.01568627, 0.01568627, 0.05490196, 0.82)
+Palette/colors/segmented_gradient_end = Color(0.08627451, 0.74509804, 0.84313725, 1.0)
 
 Label/fonts/font = SubResource("FontVariation_Body")
 Label/font_sizes/font_size = 16
@@ -651,3 +668,5 @@ SegmentedFlash/styles/pressed = SubResource("BoxSegmentedFlash")
 
 TimerBall/base_type = &"Panel"
 TimerBall/styles/panel = SubResource("BoxTimerBall")
+ServeChip/base_type = &"PanelContainer"
+ServeChip/styles/panel = SubResource("BoxServeChip")
