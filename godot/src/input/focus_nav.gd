@@ -255,7 +255,7 @@ static func is_text_field(target: Dictionary) -> bool:
 		return true
 	# The reference also accepts an `<input type>` in this set, and its empty
 	# string — an `<input>` with no `type` is a text input in HTML.
-	return ["text", "search", "email", "url", "tel", "password", ""].has(String(target.get("input_type", "")))
+	return target.has("input_type") and ["text", "search", "email", "url", "tel", "password", ""].has(String(target["input_type"]))
 
 
 # ---------------------------------------------------------------------------

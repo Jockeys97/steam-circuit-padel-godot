@@ -59,6 +59,34 @@
 ## picker cards. The picker's one delta stays as recorded: the special rides in the body
 ## where the reference puts it in the card's footer; the strip follows the narrative, as
 ## in `js/ui.js:971`.
+##
+## THE VISUAL REPAIR (landed 2026-09-20, wave 4). Four defects the 3D roster work exposed
+## by contrast, each one measured against the reference's own rules rather than a
+## preference:
+##
+##   THE HEADER WAS EMPTY. `index.html:104-110` gives this screen a back control, an `h2`
+##   and a `p`, and the port's scene carried all three nodes with no binding on them —
+##   a styled back button with no word in it and a title block nothing ever wrote to.
+##   They are text bindings now (`_bind_chrome`), so `applyLanguage`'s equivalent
+##   (`refresh_strings`) reaches them like every other node.
+##
+##   THE PORTRAIT WAS A BANNER. `ART_RATIO` carried the MODE card's `3 / 1` from
+##   `styles.css:460` where the athlete card is `3 / 4` (`:347`), so `cover` cropped every
+##   portrait to a slit at eye level. The ratio is the athlete card's own, and the image
+##   is placed by hand to keep the reference's `background-position: center top`
+##   (`_fit_art_image`) — cover, anchored at the top, so the head is never the part that
+##   gets cut.
+##
+##   THE BODY DID NOT STACK. The body was a `MarginContainer` with two children, and a
+##   `MarginContainer` lays every child it is given into the SAME rect: the description
+##   and the two card commands were drawn on top of each other, which is the smeared text
+##   in the report. The blocks are stacked now (`<card>BodyStack`), in the reference's own
+##   order — name, role, description, ability, stat strip, then `Athlete` / `Outfit`.
+##
+##   THE ROLE LABEL SAT ON THE FACE, and the confirm was a full-width shelf.
+##   `.team-slot-wrap` (`styles.css:2966-2977`) puts the label in its own block above the
+##   card; `.athlete-grid__head` (`:2902-2935`) is a bar whose one command is a compact
+##   primary at its far end. Both are read here the way the reference reads them.
 extends "res://src/ui/screens/ScreenContract.gd"
 
 const UiStrings := preload("res://src/ui/UiStrings.gd")
@@ -100,10 +128,51 @@ const GRID_COLUMNS := 4
 const NARROW_COLUMNS := 2
 const GRID_BREAKPOINT := 1050.0
 const CARD_SEPARATION := 20.0
-const ART_RATIO := 3.0
+## `.athlete-card__art { aspect-ratio: 3 / 4 }` (`styles.css:347`), the ATHLETE card's
+## portrait. The `3 / 1` at `styles.css:460` is the MODE card's strip and this constant
+## used to carry it, so the port drew a wide banner where the reference draws a
+## portrait: `cover` then cut every head off at the chin. The value is the reference's
+## own w / h, the same shape `ModesScreen::ART_RATIO` keeps for its card.
+const ART_RATIO := 0.75
 const ART_MIN_HEIGHT := 80.0
+## `.athlete-grid { padding: 32px 64px; max-width: 1200px; margin: 0 auto }`
+## (`styles.css:304-315`): the grid is capped and centred, so a wide window widens the
+## margins instead of stretching four portraits into banners. `ModesScreen` reads its
+## own setup area the same way (`:813`).
+const GRID_MAX_WIDTH := 1200.0
+const GRID_SIDE_PADDING := 64.0
 ## `.athlete-card__body { padding: 18px }`.
 const CARD_PADDING := 18.0
+
+## `.team-slot-wrap { display: flex; flex-direction: column; gap: 8px }`
+## (`styles.css:2966-2975`): the position label is a block of its own ABOVE the card.
+## Inside the card it sat on the portrait, and on the opponent-at-the-net slot — where
+## the label wraps to two lines — it covered the face of the athlete being chosen, which
+## is the reference's own recorded reason for the wrapper.
+const SLOT_WRAP_PREFIX := "TeamSlotWrap_"
+const SLOT_WRAP_GAP := 8.0
+## `.team-slot__tag { min-height: 38px; padding: 5px 12px; border-radius: 12px }`
+## (`styles.css:2979-2995`). The reserved height is what keeps the four cards on one
+## line when two of the labels wrap (the career suffix).
+const SLOT_TAG_MIN_HEIGHT := 38.0
+const SLOT_TAG_PADDING_H := 12.0
+const SLOT_TAG_PADDING_V := 5.0
+const SLOT_TAG_CORNER := 12.0
+const SLOT_TAG_BORDER := 1
+
+## `.athlete-grid__head` (`styles.css:2902-2919`): a full-width bar with its own 64 px
+## side padding and a hairline under it, whose one command (`[data-team-confirm]`) is
+## pushed to the far end (`margin-left: auto`) as a compact primary.
+const HEAD_SIDE_PADDING := 64.0
+const HEAD_BAR_PADDING_V := 11.0
+const HEAD_ACTION_MIN_HEIGHT := 46.0
+const HEAD_HINT_SIZE := 14
+const HEAD_GLASS_ALPHA := 0.72
+const HEAD_RULE_ALPHA := 0.14
+## The card's own portrait node, `<card>ArtImage`: a `TextureRect` the card factory
+## places by hand, because the reference's `background-position: center top` has no
+## Control equivalent (`styles.css:351-353`).
+const ART_IMAGE_SUFFIX := "ArtImage"
 
 ## The frame rules of the two card treatments the theme already names.
 const SELECTED_ALPHA := 1.0
@@ -151,6 +220,24 @@ const OUTFIT_ART_PREFIX := "OutfitArt_"
 const OUTFIT_LINE_PREFIX := "OutfitLine_"
 const OUTFIT_TAG_PREFIX := "OutfitTag_"
 const OUTFIT_FOOTER_PREFIX := "OutfitFooter_"
+## The actions this screen reports to UIR-05's bridge. None of them is a `to-*` edge:
+## each one is a choice the screen has to make before it navigates (the mode screen's
+## own reasoning), so the bridge reports it and the mount hands it back to
+## `activate()` below. The verbs are the reference's own `data-azione` values
+## (`atleta` / `completo`, `js/ui.js:936-939`) and the two header commands.
+const HEAD_ACTION := "head-action"
+const CODE_ACTION := "code-submit"
+const SLOT_ATHLETE_ACTION := "slot-athlete"
+const SLOT_OUTFIT_ACTION := "slot-outfit"
+const PICK_ACTION := "pick"
+const OUTFIT_ACTION := "outfit"
+## The header commands by node name, so one loop registers all three controls and the
+## back control keeps its declared `back` action.
+const HEAD_ACTIONS := {
+	"BackButton": "back",
+	"HeadAction": HEAD_ACTION,
+	"CodeSubmit": CODE_ACTION,
+}
 ## The stat strip: `<prefix><role|id>` is the strip node, `<prefix>label_…` and
 ## `<prefix>bar_…` are its three label/bar pairs. Each inner name carries its suffix,
 ## because `_text_nodes` keys bindings by node name and a picker build can carry up to
@@ -458,9 +545,14 @@ func _build_view() -> void:
 		push_error("CharactersScreen: the scene has no AthleteGrid")
 		return
 	_clear(grid)
+	_clear(_control("SpecialGrid"))
+	_control("SpecialSection").hide()
 	_bindings.clear()
 	_text_nodes.clear()
 	_cards.clear()
+	_bind(_control("BackButton"), "back")
+	_bind(_control("TitleLabel"), "charactersTitle")
+	_bind(_control("SubLabel"), "charactersSub")
 	match _view:
 		VIEW_PICKER:
 			_build_picker()
@@ -479,13 +571,21 @@ func _build_team() -> void:
 		var id := String((athlete as Dictionary).get("id", ""))
 		if id == "":
 			continue
+		# `.team-slot-wrap` (`styles.css:2966-2977`): the position label is a block of its
+		# own ABOVE the card. Inside the card it sat on the portrait, and on the
+		# opponent-at-the-net slot — where it wraps to two lines — it covered the face of
+		# the athlete being chosen, which is the reference's own recorded reason for the
+		# wrapper.
+		var wrap := VBoxContainer.new()
+		wrap.name = SLOT_WRAP_PREFIX + role
+		wrap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		wrap.add_theme_constant_override("separation", int(SLOT_WRAP_GAP))
+		grid.add_child(wrap)
+		var tag := _slot_tag(role)
+		wrap.add_child(tag)
 		var card := _make_card(TEAM_SLOT_PREFIX + role, _art_for(id), "cyan",
-			_select_box() if role == "player" else _plain_box(role in RIVAL_ROLES))
-		var stack := card["stack"] as VBoxContainer
-		var tag := Label.new()
-		tag.name = SLOT_TAG_PREFIX + role
-		tag.theme_type_variation = &"Tag"
-		stack.add_child(tag)
+			_select_box() if role == "player" else _plain_box(role in RIVAL_ROLES),
+			false, wrap)
 		var dictated := _dictated.has(role)
 		# `${etichetta} <em>${slotByCalendar|slotByBracket}</em>` (`js/ui.js:951-955`).
 		if dictated:
@@ -563,19 +663,17 @@ func _build_picker() -> void:
 	# rival slot, so no pick can duplicate him.
 	var specials: Array = Config.selectable_special_athletes()
 	if not specials.is_empty():
-		var head := Label.new()
-		head.name = SPECIAL_HEAD
-		head.theme_type_variation = &"CardTitle"
-		head.text = "SPECIAL"
-		grid.add_child(head)
+		(_control(SPECIAL_HEAD) as Label).text = "SPECIAL"
+		var special_grid := _control("SpecialGrid")
 		for row_in in specials:
 			var row: Dictionary = row_in
 			var id := String(row.get("id", ""))
 			if _picker_role != "player" and id == player_id:
 				continue
 			var active := id == slot_athlete_id(_picker_role)
+			_control("SpecialSection").show()
 			var card := _make_card(SPECIAL_CARD_PREFIX + id, _art_for(id), "gold",
-				_select_box() if active else _plain_box(false))
+				_select_box() if active else _plain_box(false), false, special_grid)
 			var stack := card["stack"] as VBoxContainer
 			var name_label := Label.new()
 			name_label.name = SPECIAL_NAME_PREFIX + id
@@ -638,7 +736,9 @@ func _build_outfits() -> void:
 
 ## The card factory: `PanelDark` (or `PanelCardSelected`) with the art bleeding to the
 ## edges, like the mode cards (`styles.css:323-390`).
-func _make_card(node_name: String, art_path: String, accent_token: String, box: StyleBoxFlat, locked: bool = false) -> Dictionary:
+func _make_card(
+		node_name: String, art_path: String, accent_token: String, box: StyleBoxFlat,
+		locked: bool = false, parent: Control = null) -> Dictionary:
 	var panel := PanelContainer.new()
 	panel.name = node_name
 	panel.set_meta("card_id", node_name)
@@ -655,17 +755,26 @@ func _make_card(node_name: String, art_path: String, accent_token: String, box: 
 	art.name = node_name + "Art"
 	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	art.add_theme_stylebox_override("panel", _art_box(accent_token))
+	# `overflow: hidden` on the card (`styles.css:327`) plus the hand-placed image below:
+	# without the clip the covered portrait would bleed over the card's own body.
+	art.clip_contents = true
 	art.custom_minimum_size = Vector2(0, ART_MIN_HEIGHT)
 	column.add_child(art)
 	if art_path != "":
 		var image := TextureRect.new()
-		image.name = node_name + "ArtImage"
+		image.name = node_name + ART_IMAGE_SUFFIX
 		image.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		# Anchored top-left and sized by `_fit_art_image`, not stretched to the panel: the
+		# reference pins the cover to the TOP of the box (`background-position: center
+		# top`, `styles.css:352`), so a portrait taller than the box loses its feet, never
+		# its face.
+		image.set_anchors_preset(Control.PRESET_TOP_LEFT)
 		image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		image.texture = load(art_path)
+		image.set_meta("portrait_texture", image.texture)
 		art.add_child(image)
+		art.resized.connect(_fit_art_image.bind(art, image))
 	# `.athlete-card__art { margin: -18px -18px 0 }` (`styles.css:460`): the artwork
 	# bleeds to the card's edges and the body carries the padding.
 	var body := MarginContainer.new()
@@ -677,18 +786,56 @@ func _make_card(node_name: String, art_path: String, accent_token: String, box: 
 	body.add_theme_constant_override("margin_top", pad)
 	body.add_theme_constant_override("margin_bottom", pad)
 	column.add_child(body)
+	# The margin box carries the padding; the box inside it carries the ORDER. A
+	# `MarginContainer` lays every child it is given into the SAME content rect, so the
+	# narrative stack and the command row used to be painted on top of one another — the
+	# smeared description in the report. The reference's body is one flow
+	# (`athleteCardMarkup`, `js/ui.js:834-845`: heading, role, description, footer), so the
+	# two blocks are stacked here and the commands land below the stat strip.
+	var inner := VBoxContainer.new()
+	inner.name = node_name + "BodyStack"
+	inner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	inner.add_theme_constant_override("separation", 14)
+	body.add_child(inner)
 	var stack := VBoxContainer.new()
 	stack.name = node_name + "Stack"
 	stack.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	stack.add_theme_constant_override("separation", 4)
-	body.add_child(stack)
+	inner.add_child(stack)
 	var actions := HBoxContainer.new()
 	actions.name = node_name + "Actions"
 	actions.add_theme_constant_override("separation", 8)
-	body.add_child(actions)
-	(_control("AthleteGrid") as GridContainer).add_child(panel)
+	inner.add_child(actions)
+	# `.team-slot-wrap` (`styles.css:2966-2977`): a team slot hands the card the column it
+	# shares with its position label; the picker and the wardrobe keep adding to the grid.
+	var host: Control = parent if parent != null else _control("AthleteGrid")
+	host.add_child(panel)
 	_cards[node_name] = panel
 	return {"panel": panel, "stack": stack, "actions": actions, "art": art}
+
+
+## `background-size: cover` + `background-position: center top` (`styles.css:347-353`) for
+## a `TextureRect`: the scale covers the box, the horizontal centre is kept, and the image
+## is pinned to the top edge instead of being centred — the whole difference between a
+## portrait and a crop of somebody's collar. It reads the box the layout actually gave the
+## art panel, and the panel's own `resized` is what calls it again.
+func _fit_art_image(art: Control, image: TextureRect) -> void:
+	var texture := image.get_meta("portrait_texture") as Texture2D
+	if texture == null:
+		return
+	var box := art.size
+	var source := texture.get_size()
+	if box.x <= 0.0 or box.y <= 0.0 or source.x <= 0.0 or source.y <= 0.0:
+		return
+	# Crop the source, not the Control, so the cover stays inside its parent bounds.
+	var crop_width := minf(source.x, source.y * box.x / box.y)
+	var crop_height := crop_width * box.y / box.x
+	var cropped := AtlasTexture.new()
+	cropped.atlas = texture
+	cropped.region = Rect2((source.x - crop_width) * 0.5, 0.0, crop_width, crop_height)
+	image.texture = cropped
+	image.position = Vector2.ZERO
+	image.size = box
 
 
 func _add_name_line(card: Dictionary, name_prefix: String, role_prefix: String, role: String, athlete_id: String) -> void:
@@ -700,6 +847,10 @@ func _add_name_line(card: Dictionary, name_prefix: String, role_prefix: String, 
 	# (`styles.css:304-340`): a non-wrapping Label clamps the whole grid to its text width
 	# and pushes the screen wider than its frame.
 	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# `<h3 style="color:${color}">` (`js/ui.js:838`): the name wears the athlete's own
+	# accent, the hex the frozen roster carries (`src/sim/frozen/data.json`), not a theme
+	# token — the roster's six are not all palette names.
+	name_label.add_theme_color_override("font_color", _accent_of(athlete_id))
 	stack.add_child(name_label)
 	_bind(name_label, "athlete_%s_name" % athlete_id)
 	var role_label := Label.new()
@@ -729,6 +880,11 @@ func _add_desc_lines(card: Dictionary, desc_prefix: String, special_prefix: Stri
 	special.name = special_prefix + key_suffix
 	special.theme_type_variation = &"CardBody"
 	special.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# `.slot-special { font-weight: 700; color: var(--cyan) }` (`styles.css:3099-3104`) and
+	# `.team-slot--rival .slot-special { color: #ffc09a }` (`:3101-3103`), the palette's
+	# own `rival_soft`.
+	special.add_theme_color_override("font_color",
+		_palette("rival_soft") if role in RIVAL_ROLES else _palette("cyan"))
 	stack.add_child(special)
 	# `⚡ ${t(athlete_<id>_special)}` (`js/ui.js:948`), the glyph from its code point.
 	_bind(special, "athlete_%s_special" % athlete_id, {}, "", "", {}, special_prefix())
@@ -749,13 +905,14 @@ func _add_stat_line(
 	# and bars fade together exactly as the reference's one span does.
 	wrap.modulate = Color(1, 1, 1, STAT_LINE_ALPHA)
 	stack.add_child(wrap)
-	var line := HBoxContainer.new()
-	line.add_theme_constant_override("separation", STAT_LINE_GAP)
+	var line := HFlowContainer.new()
+	line.add_theme_constant_override("h_separation", STAT_LINE_GAP)
 	wrap.add_child(line)
 	for row_in in UiData.stat_rows(_athlete_item(athlete_id)):
 		var row: Dictionary = row_in
 		var key := String(row.get("key", ""))
 		var pair := HBoxContainer.new()
+		pair.custom_minimum_size.x = 84
 		pair.add_theme_constant_override("separation", STAT_PAIR_GAP)
 		line.add_child(pair)
 		var label := Label.new()
@@ -765,13 +922,15 @@ func _add_stat_line(
 		# `.athlete-card__stats` clips inside the card (`styles.css:280-300`): the strip is
 		# one line by construction, so its labels give width back instead of clamping the
 		# grid — the five-tick bars stay whole.
-		label.clip_text = true
+		label.clip_text = false
+		label.custom_minimum_size.x = 26
 		pair.add_child(label)
 		_bind(label, String(row.get("label_key", "")))
 		var bar := Label.new()
 		bar.name = "%sbar_%s_%s" % [prefix, suffix, key]
 		bar.add_theme_font_size_override("font_size", STAT_LABEL_SIZE)
 		bar.clip_text = true
+		bar.custom_minimum_size.x = 50
 		# `.stat-bar { color: #7ee0ff }` / `.team-slot--rival .stat-bar { color: #ffb08c }`
 		# (`styles.css:3026`, `:3030`) — the theme's `stat_bar` and `stat_bar_rival`.
 		var ink := _palette("stat_bar_rival") if rival else _palette("stat_bar")
@@ -799,8 +958,86 @@ func _action_button(node_name: String, key: String) -> Button:
 	# the card instead of clamping the grid to their own text width, which is what keeps
 	# four cards inside a 1152 px frame.
 	button.clip_text = true
+	button.custom_minimum_size.y = 32
+	button.add_theme_font_size_override("font_size", 13)
+	var rival := node_name.contains("opponent")
+	var ink := _palette("rival_soft") if rival else _palette("cyan")
+	if key == "slotChangeOutfit":
+		ink = Color("ffd166")
+	var box := _slot_tag_box("opponent" if rival else "playerMate")
+	box.border_color = Color(ink, 0.5)
+	button.add_theme_stylebox_override("normal", box)
+	button.add_theme_stylebox_override("hover", box)
+	button.add_theme_stylebox_override("pressed", box)
+	button.add_theme_color_override("font_color", ink)
+	button.add_theme_color_override("font_hover_color", ink)
+	button.add_theme_color_override("font_pressed_color", ink)
 	_bind(button, key)
 	return button
+
+
+## `.team-slot__tag` (`styles.css:2979-3000`): the position label as its own block — the
+## theme's `Tag` role for the type, plus the pill the reference draws around it. It wraps
+## like every other label on this screen, because a non-wrapping one would clamp the grid
+## to the width of "OPPONENT AT THE NET" and push the four cards past their frame.
+func _slot_tag(role: String) -> Label:
+	var tag := Label.new()
+	tag.name = SLOT_TAG_PREFIX + role
+	tag.theme_type_variation = &"Tag"
+	tag.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	tag.custom_minimum_size = Vector2(0, SLOT_TAG_MIN_HEIGHT)
+	tag.add_theme_stylebox_override("normal", _slot_tag_box(role))
+	tag.add_theme_color_override("font_color", _slot_tag_ink(role))
+	return tag
+
+
+## The pill's own fill and border, side by side with the reference's two variants
+## (`styles.css:2996-3012`). The player's own slot is the green one — it is the one the
+## reader is choosing for themselves — and both rival slots are the warm one.
+func _slot_tag_box(role: String) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.content_margin_left = SLOT_TAG_PADDING_H
+	box.content_margin_right = SLOT_TAG_PADDING_H
+	box.content_margin_top = SLOT_TAG_PADDING_V
+	box.content_margin_bottom = SLOT_TAG_PADDING_V
+	box.border_width_left = SLOT_TAG_BORDER
+	box.border_width_top = SLOT_TAG_BORDER
+	box.border_width_right = SLOT_TAG_BORDER
+	box.border_width_bottom = SLOT_TAG_BORDER
+	box.corner_radius_top_left = SLOT_TAG_CORNER
+	box.corner_radius_top_right = SLOT_TAG_CORNER
+	box.corner_radius_bottom_right = SLOT_TAG_CORNER
+	box.corner_radius_bottom_left = SLOT_TAG_CORNER
+	if role == "player":
+		box.bg_color = Color(20.0 / 255.0, 60.0 / 255.0, 40.0 / 255.0, 0.86)
+		box.border_color = Color(120.0 / 255.0, 1.0, 190.0 / 255.0, 0.5)
+	elif role in RIVAL_ROLES:
+		box.bg_color = Color(4.0 / 255.0, 10.0 / 255.0, 35.0 / 255.0, 0.82)
+		box.border_color = Color(1.0, 150.0 / 255.0, 110.0 / 255.0, 0.5)
+	else:
+		box.bg_color = Color(4.0 / 255.0, 10.0 / 255.0, 35.0 / 255.0, 0.82)
+		box.border_color = Color(120.0 / 255.0, 200.0 / 255.0, 1.0, 0.45)
+	return box
+
+
+## `.team-slot__tag { color: #9ef8ff }`, `.team-slot-wrap--rival … { color: #ffc09a }`,
+## `.team-slot-wrap--you … { color: #9dffcf }` (`styles.css:2996-3012`).
+func _slot_tag_ink(role: String) -> Color:
+	if role == "player":
+		return Color(157.0 / 255.0, 1.0, 207.0 / 255.0)
+	if role in RIVAL_ROLES:
+		return _palette("rival_soft")
+	return Color(158.0 / 255.0, 248.0 / 255.0, 1.0)
+
+
+## The accent the frozen roster carries for an athlete (`"color"`, the hex the reference
+## paints the card's heading with, `js/ui.js:838`). A Godot-only special has no row there,
+## and a missing accent falls back to the lane's cyan rather than inventing a colour.
+func _accent_of(athlete_id: String) -> Color:
+	var hex := String(_athlete_item(athlete_id).get("color", ""))
+	if hex.is_valid_html_color():
+		return Color(hex)
+	return _palette("cyan")
 
 
 func _wire_team_card(panel: Control, role: String, athlete_id: String, dictated: bool) -> void:
@@ -1205,6 +1442,7 @@ func refresh_strings() -> void:
 			text += String(row.get("joiner", "")) + UiStrings.t(String(row["suffix_key"]), row.get("suffix_params", {}))
 		_set_text(node, text)
 	_refresh_aria()
+	_refresh_head()
 
 
 func _set_text(node: Control, text: String) -> void:
@@ -1360,18 +1598,95 @@ func _register_focus() -> void:
 	for node_name in controls:
 		var control := _control(node_name)
 		if control != null:
-			_focus_specs[node_name] = _focus_spec(node_name, control, "back" if node_name == "BackButton" else "activate")
+			_focus_specs[node_name] = _focus_spec(node_name, control, String(HEAD_ACTIONS.get(node_name, "back")))
 	for card_name in _cards:
 		var card: Control = _cards[card_name]
-		_focus_specs[String(card_name)] = _focus_spec(String(card_name), card, String(card_name))
+		# `collectMenuTargets` (`js/main.js:571-577`): a card that holds its own
+		# buttons is a container, not a target. The four team slots carry Atleta and
+		# Completo, so the card is skipped and those two commands are the targets —
+		# registering the card instead left both commands unreachable with a pad,
+		# which is the report. The picker and the wardrobe keep the card as the
+		# target, exactly as the reference does.
+		var commands := _command_names(String(card_name))
+		_focus_specs[String(card_name)] = _focus_spec(String(card_name), card,
+			_card_action(String(card_name)), {"contains_buttons": not commands.is_empty()})
+		for command in commands:
+			var button := _control(command) as Button
+			if button == null:
+				continue
+			_focus_specs[command] = _focus_spec(command, button, _command_action(command))
 
 
-func _focus_spec(node_name: String, control: Control, action: String) -> Dictionary:
+## The command buttons a card holds, in the reference's own order: Atleta then
+## Completo (`js/ui.js:936-939`). Only the team slots have any; the picker's and the
+## wardrobe's cards are the buttons themselves.
+func _command_names(card_name: String) -> Array:
+	var out: Array = []
+	if not card_name.begins_with(TEAM_SLOT_PREFIX):
+		return out
+	var role := card_name.substr(TEAM_SLOT_PREFIX.length())
+	for prefix in [SLOT_ATHLETE_ACTION_PREFIX, SLOT_OUTFIT_ACTION_PREFIX]:
+		if _control(prefix + role) != null:
+			out.append(prefix + role)
+	return out
+
+
+## The action a card reports when it *is* the target: the picker's choice, the
+## wardrobe's pick, and nothing for a team slot the reference leaves inert (a dictated
+## rival slot with a single outfit has no command and no click handler either —
+## `_wire_team_card`).
+func _card_action(card_name: String) -> String:
+	if card_name.begins_with(PICK_CARD_PREFIX):
+		return "%s:%s" % [PICK_ACTION, card_name.substr(PICK_CARD_PREFIX.length())]
+	if card_name.begins_with(SPECIAL_CARD_PREFIX):
+		return "%s:%s" % [PICK_ACTION, card_name.substr(SPECIAL_CARD_PREFIX.length())]
+	if card_name.begins_with(OUTFIT_CARD_PREFIX):
+		return "%s:%s:%s" % [OUTFIT_ACTION, _outfit_athlete_id, card_name.substr(OUTFIT_CARD_PREFIX.length())]
+	return ""
+
+
+## The action a team slot's command button reports, as `<verb>:<role>`.
+func _command_action(command: String) -> String:
+	if command.begins_with(SLOT_ATHLETE_ACTION_PREFIX):
+		return "%s:%s" % [SLOT_ATHLETE_ACTION, command.substr(SLOT_ATHLETE_ACTION_PREFIX.length())]
+	if command.begins_with(SLOT_OUTFIT_ACTION_PREFIX):
+		return "%s:%s" % [SLOT_OUTFIT_ACTION, command.substr(SLOT_OUTFIT_ACTION_PREFIX.length())]
+	return ""
+
+
+## This screen's activation door for UIR-05's bridge — the same contract
+## `ModesScreen.activate()` documents: an action the bridge does not route (it is not a
+## `to-*` edge) is reported to the mount, which hands it here. Every branch runs the
+## handler the mouse path runs, so the save rules and the locked-content refusals stay
+## in one place.
+func activate(action: String) -> bool:
+	var parts := action.split(":")
+	match String(parts[0]):
+		HEAD_ACTION:
+			_on_head_action()
+			return true
+		CODE_ACTION:
+			_on_code_submit()
+			return true
+		SLOT_ATHLETE_ACTION:
+			return parts.size() == 2 and open_picker(String(parts[1]))
+		SLOT_OUTFIT_ACTION:
+			return parts.size() == 2 and open_outfits(String(parts[1]))
+		PICK_ACTION:
+			return parts.size() == 2 and select_athlete(String(parts[1]))
+		OUTFIT_ACTION:
+			return parts.size() == 3 and equip_outfit(String(parts[1]), String(parts[2]))
+	return false
+
+
+func _focus_spec(node_name: String, control: Control, action: String, extra: Dictionary = {}) -> Dictionary:
+	var opts := {"kind": "card" if control is PanelContainer else "button"}
+	opts.merge(extra)
 	return {
 		"id": "%s/%s" % [SCREEN_ID, node_name],
 		"node": control,
 		"action": action,
-		"opts": {"kind": "card" if control is PanelContainer else "button"},
+		"opts": opts,
 	}
 
 
@@ -1384,9 +1699,16 @@ func focus_controls() -> Array:
 # ---------------------------------------------------------------------------
 
 func _apply_layout() -> void:
+	var area := _control("GridArea") as MarginContainer
+	var padding := maxi(24, int((size.x - GRID_MAX_WIDTH) / 2.0))
+	if size.x < GRID_MAX_WIDTH + GRID_SIDE_PADDING * 2.0:
+		padding = 32 if size.x < GRID_BREAKPOINT else 64
+	area.add_theme_constant_override("margin_left", padding)
+	area.add_theme_constant_override("margin_right", padding)
 	var grid := _control("AthleteGrid") as GridContainer
 	if grid != null:
 		grid.columns = GRID_COLUMNS if size.x >= GRID_BREAKPOINT else NARROW_COLUMNS
+		(_control("SpecialGrid") as GridContainer).columns = grid.columns
 	_update_art_heights()
 
 
@@ -1396,6 +1718,10 @@ func _update_art_heights() -> void:
 		return
 	var gaps := float(maxi(grid.columns - 1, 0)) * CARD_SEPARATION
 	var column_width := (grid.size.x - gaps) / float(maxi(grid.columns, 1))
+	# A single special must retain the same width as a regular roster card.
+	for special_card in _control("SpecialGrid").get_children():
+		(special_card as Control).size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		(special_card as Control).custom_minimum_size.x = maxf(0.0, column_width)
 	for card_name in _cards:
 		var art := _control(String(card_name) + "Art")
 		if art != null:
@@ -1412,6 +1738,17 @@ func _style_chrome() -> void:
 	var sub := _control("SubLabel")
 	if sub != null:
 		sub.theme_type_variation = &"ScreenSubtitle"
+	_control("TitleBlock").size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var action := _control("HeadAction")
+	action.theme_type_variation = &"ButtonPrimary"
+	action.custom_minimum_size.y = HEAD_ACTION_MIN_HEIGHT
+	_control("HeadBack").hide()
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var row := _control("HeadRow")
+	row.add_child(spacer)
+	row.move_child(spacer, 0)
+	row.move_child(action, row.get_child_count() - 1)
 	var head := _control("GridHead") as PanelContainer
 	if head != null:
 		head.add_theme_stylebox_override("panel", _head_box())
@@ -1431,9 +1768,10 @@ func _select_box() -> StyleBoxFlat:
 
 ## `.athlete-grid__head` (`styles.css`, measured): the panel's own dark fill.
 func _head_box() -> StyleBoxFlat:
-	var box := _theme_box("PanelDark")
-	box.content_margin_left = 14.0
-	box.content_margin_right = 14.0
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0.02, 0.03, 0.12, HEAD_GLASS_ALPHA)
+	box.border_width_bottom = 1
+	box.border_color = Color(0.0, 0.8, 1.0, HEAD_RULE_ALPHA)
 	box.content_margin_top = 10.0
 	box.content_margin_bottom = 10.0
 	return box

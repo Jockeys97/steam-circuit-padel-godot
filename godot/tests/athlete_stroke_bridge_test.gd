@@ -12,7 +12,7 @@ const AthletesView := preload("res://game/athletes_view.gd")
 
 const INTENTS := [
 	"serve", "drive", "slice", "lob", "globo", "chiquita", "vibora",
-	"cut-volley", "bandeja", "wall-angle", "smash-flat", "smash-x2", "smash-x3",
+	"volley", "cut-volley", "bandeja", "wall-angle", "smash-flat", "smash-x2", "smash-x3",
 ]
 
 var _checks := 0
@@ -25,7 +25,7 @@ func _initialize() -> void:
 		check(recipe.has("clip"), "%s has a stroke clip" % intent)
 		check(recipe.has("contact_phase"), "%s has a contact phase" % intent)
 		check(recipe.has("speed_scale"), "%s has a stroke speed" % intent)
-		check(recipe["clip"] in [&"drive", &"slice", &"lob", &"serve"],
+		check(recipe["clip"] in [&"drive", &"slice", &"lob", &"serve", &"volley"],
 			"%s resolves to a registered clip" % intent)
 		check(float(recipe["contact_phase"]) > 0.0 and float(recipe["contact_phase"]) < 1.0,
 			"%s contact phase is inside the clip" % intent)

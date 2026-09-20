@@ -122,6 +122,13 @@ func attach(shell: Control, focus: MenuFocus, router: Variant = null) -> void:
 		if mapped != "":
 			dom = mapped
 	_nav.open_screen(dom)
+	_rebind()
+
+
+## Re-reads the shell's controls into the registry. `attach()` and the staleness check
+## below are the only callers: the registry is the bridge's own single ordered list, so
+## it is rebuilt whole rather than patched.
+func _rebind() -> void:
 	var controls: Array = []
 	if _shell.has_method("focus_controls"):
 		controls = _shell.focus_controls()
@@ -130,6 +137,31 @@ func attach(shell: Control, focus: MenuFocus, router: Variant = null) -> void:
 			continue
 		var row: Dictionary = control
 		register(_text(row.get("id")), row.get("node"), _text(row.get("action")), row.get("opts", {}))
+
+
+## Re-reads the shell's controls when the ones the registry holds have been rebuilt.
+##
+## A screen's own view change — the character panel's athlete picker and wardrobe — frees
+## and re-creates every control inside the same mounted screen, so no `screen_changed`
+## fires and `attach()` never runs again. The registry kept the freed nodes, the model's
+## `focus_node()` handed one back, and `apply_focus()` died on a freed instance while the
+## player's focus sat on the athlete panel's own subview. The reference has no such
+## moment to miss: `collectMenuTargets` re-queries the DOM on every frame
+## (`js/main.js:596`), so the port's registry has to follow its shell the same way.
+##
+## Cheap enough for the frame loop: one validity test per registered control, no
+## allocation, and a rebind only when something was actually rebuilt.
+func refresh_if_rebuilt() -> bool:
+	if _shell == null or _focus == null:
+		return false
+	for entry in _registry:
+		var node: Variant = entry["node"]
+		if node == null or not is_instance_valid(node):
+			_registry.clear()
+			_locked.clear()
+			_rebind()
+			return true
+	return false
 
 
 ## Registers one control into the bridge's registry and the model's. `opts` are the

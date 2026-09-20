@@ -461,21 +461,29 @@ func _apply_column_width(centering: MarginContainer, column: VBoxContainer) -> v
 
 ## One segmented control. `label_pattern` is `""` for rows whose labels come from the
 ## difficulty table instead of `drill_<id>_name`.
-func _segment(node_name: String, aria_key: String, rows: Array, name_pattern: String, label_pattern: String, registry: Dictionary, handler: Callable) -> HBoxContainer:
+func _segment(node_name: String, aria_key: String, rows: Array, name_pattern: String, label_pattern: String, registry: Dictionary, handler: Callable) -> Control:
+	var box := PanelContainer.new()
+	box.name = "%sBox" % node_name
+	box.theme_type_variation = &"SegmentedContainer"
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var seg := HBoxContainer.new()
 	seg.name = node_name
 	seg.add_theme_constant_override("separation", 0)
 	seg.tooltip_text = UiStrings.t(aria_key)
 	seg.alignment = BoxContainer.ALIGNMENT_CENTER
+	seg.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_child(seg)
 	for row in rows:
 		var id := String((row as Dictionary).get("id", ""))
 		var button := Button.new()
 		button.name = name_pattern % id
 		button.toggle_mode = true
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.custom_minimum_size = Vector2(0.0, 36.0)
 		button.pressed.connect(handler.bind(id))
 		seg.add_child(button)
 		registry[id] = button
-	return seg
+	return box
 
 
 ## The four boxes (`styles.css:1370-1383`): border `--line`, radius 10, over
@@ -543,6 +551,7 @@ func _court_frame() -> PanelContainer:
 	_label(inner, "CourtCaption")
 	var start_button := Button.new()
 	start_button.name = "StartButton"
+	start_button.theme_type_variation = &"ButtonPrimary"
 	start_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	start_button.pressed.connect(start)
 	inner.add_child(start_button)

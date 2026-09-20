@@ -46,7 +46,7 @@ func _initialize() -> void:
 			var racket := Court.make_racket_view(attachment, "RacketTest", Color.GOLD)
 			racket.position = Vector3(0.0, 0.24, 0.0)
 			check_eq(racket.get_parent(), attachment, "Racket geometry is parented to the hand attachment")
-			check_true(racket.get_node_or_null("Face") != null and racket.get_node_or_null("Grip") != null,
+			check_true(racket.get_node_or_null("SlamRacket") != null,
 				"Hand attachment carries the complete racket geometry")
 		rig.free()
 

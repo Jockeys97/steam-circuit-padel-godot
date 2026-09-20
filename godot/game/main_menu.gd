@@ -111,6 +111,10 @@ var _audio_port: Node = null
 var _refresh_pending := 0
 var _out_name := "menu"
 var _pad_seen := false
+## The seat the menus read, remembered across frames so `selectPrimaryGamepad`'s rule
+## ("the pad somebody touches takes over, the current one is kept while nobody does")
+## has a current to fall back to. `NO_DEVICE` until a pad shows up.
+var _pad_device := InputSource.NO_DEVICE
 ## The column the focus model measures, and the laid-out size it was last refreshed
 ## at. A container sorts at the end of the frame that built it, so the rectangles
 ## `_ready()` refreshes with are the pre-layout ones.
@@ -525,10 +529,12 @@ func _mount_ui_prototype() -> void:
 	_playable = true
 	var bg := ColorRect.new()
 	bg.name = "PrototypeBackground"
-	bg.color = Color(0.043, 0.063, 0.11)
+	var ui_theme := load("res://src/ui/theme/padel_theme.tres") as Theme
+	bg.color = ui_theme.get_color("bg", "Palette") if ui_theme != null else Color(0.027, 0.027, 0.165)
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg)
+	_add_menu_glow(ui_theme)
 	# Loaded, not preloaded: the slice gate counts every object the engine holds at
 	# the end of a run, and a `--ui=legacy` run must not pull twelve screens + theme
 	# in behind its back.
@@ -545,6 +551,13 @@ func _mount_ui_prototype() -> void:
 	set_process_input(true)
 	_bridge = (load("res://src/ui/focus/UiFocusBridge.gd") as GDScript).new()
 	_bridge.range_changed.connect(_on_range_changed)
+	# The bridge reports what it did not route; without these two connections a
+	# reported action went nowhere. That is what made the mode cards, the rungs, the
+	# team slots' Atleta/Completo commands and the arena cards dead to a pad confirm
+	# while the same press with a mouse worked — the screens' own handlers were never
+	# called (`ModesScreen.activate()` documents the door the mount has to use).
+	_bridge.action_requested.connect(_on_action_requested)
+	_bridge.back_requested.connect(_on_back_requested)
 	_router.screen_changed.connect(_on_screen_changed)
 	# UIR-26's keyboard, over everything (z 60 in the reference), bound to the input
 	# lane's own model — the one `menu_nav.confirm()` opens.
@@ -571,6 +584,47 @@ func _mount_ui_prototype() -> void:
 			push_error("main_menu: the router refused to mount the result screen")
 	_on_screen_changed("", String(_router.active_id()))
 	_refresh_pending = 2
+
+
+## `styles.css:24-26` body background: two radial washes over `--bg`. Loaded, not
+## preloaded: `--ui=legacy` never reaches this mount.
+func _add_menu_glow(ui_theme: Theme) -> void:
+	if ui_theme == null:
+		return
+	_add_radial_wash("MenuGlowCyan", ui_theme.get_color("cyan", "Palette"), 0.18, Vector2(0.12, 0.42), Vector2(720, 520))
+	_add_radial_wash("MenuGlowGold", ui_theme.get_color("gold", "Palette"), 0.12, Vector2(0.88, 0.52), Vector2(560, 560))
+
+
+func _add_radial_wash(node_name: String, color: Color, alpha: float, anchor: Vector2, size: Vector2) -> void:
+	var gradient := Gradient.new()
+	gradient.offsets = PackedFloat32Array([0.0, 1.0])
+	gradient.colors = PackedColorArray([
+		Color(color.r, color.g, color.b, alpha),
+		Color(color.r, color.g, color.b, 0.0),
+	])
+	var tex := GradientTexture2D.new()
+	tex.gradient = gradient
+	tex.fill = GradientTexture2D.FILL_RADIAL
+	tex.fill_from = Vector2(0.5, 0.5)
+	tex.fill_to = Vector2(1.0, 0.5)
+	tex.width = int(size.x)
+	tex.height = int(size.y)
+	var wash := TextureRect.new()
+	wash.name = node_name
+	wash.texture = tex
+	wash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	wash.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	wash.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	wash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	wash.anchor_left = clampf(anchor.x - 0.28, 0.0, 1.0)
+	wash.anchor_top = clampf(anchor.y - 0.32, 0.0, 1.0)
+	wash.anchor_right = clampf(anchor.x + 0.28, 0.0, 1.0)
+	wash.anchor_bottom = clampf(anchor.y + 0.32, 0.0, 1.0)
+	wash.offset_left = 0.0
+	wash.offset_top = 0.0
+	wash.offset_right = 0.0
+	wash.offset_bottom = 0.0
+	add_child(wash)
 
 
 ## The stored language, applied at boot: `lang` from the same prefs group the
@@ -627,6 +681,31 @@ func _on_screen_changed(_from_id: String, _to_id: String) -> void:
 	# A freshly mounted screen's containers sort at the end of this frame; the model
 	# is re-measured two frames later, not on the rectangles `_ready()` saw.
 	_refresh_pending = 2
+
+
+## A control the bridge activated but did not route: the action belongs to the screen
+## that reported it (`ModesScreen.activate()` is the door it documents, and the other
+## recreated screens carry the same one). The mount hands it over instead of deciding
+## what a mode card or an Atleta command means. `""` is a target the reference leaves
+## inert — a dictated rival slot with a single outfit is a card with no command and no
+## click handler either — so it is not a gap and is not reported as one.
+func _on_action_requested(action: String) -> void:
+	if action == "":
+		return
+	var screen: Node = _router.active_screen()
+	if screen == null:
+		return
+	if screen.has_method("activate"):
+		screen.call("activate", action)
+		return
+	print("MENU_NAV no activation door for the action '%s' on '%s'" % [action, _router.active_id()])
+
+
+## Back the bridge could not resolve: the root, which the reference's own audit says
+## leads nowhere (`scripts/gamepad-nav-audit.mjs:67-82`), or a screen that declares no
+## return. Reported, never invented — the same rule the ported column states.
+func _on_back_requested(_screen_id: String) -> void:
+	print("MENU_BACK root: nowhere to go (js/main.js:731 is the defect the model refuses)")
 
 
 ## A range the model stepped in place (`UiFocusBridge.range_changed`): the screen owns
@@ -901,6 +980,17 @@ func _pad_connected() -> bool:
 	return not Input.get_connected_joypads().is_empty()
 
 
+## The pad this screen's model reads (`selectPrimaryGamepad`, `js/main.js:265-272`,
+## through the same rule the match's seats use): the pad somebody touches takes over,
+## the current one is kept while nobody does, and a fresh list falls back to its first
+## entry. NOT blindly the first entry of the host's list, which on a two-pad host is
+## not necessarily the one in the player's hands. `NO_DEVICE` stays `NO_DEVICE`: the
+## model reads every axis and button as neutral then.
+func _read_pad_device() -> int:
+	_pad_device = InputSource.select_device(_pad_device)
+	return _pad_device
+
+
 ## Keys the model owns are consumed before the GUI sees them, so Godot's built-in
 ## `ui_*` focus navigation cannot move the same focus a second time. The playable path
 ## dispatches through UIR-05's bridge instead of the model directly: the verdict there
@@ -915,12 +1005,19 @@ func _input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 				_sync_osk()
 		elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
-			# Confirm/cancel are the bridge's; every other pad event is swallowed
-			# anyway, because the model is polled once per frame below (the
-			# reference polls its gamepad in the render loop, `js/main.js:1001-1004`)
-			# and a second, built-in navigation on the same stick would move the
-			# focus the model does not know about.
-			if _bridge.dispatch(event):
+			# The event can precede `Input`'s per-device state by a rendered frame on
+			# macOS. Feed it into the SAME poll model immediately; the later poll then
+			# sees the held state and its edge/repeat bookkeeping prevents a second move.
+			var pad_device := (event as InputEventJoypadButton).device if event is InputEventJoypadButton else (event as InputEventJoypadMotion).device
+			_pad_device = pad_device
+			var result: Dictionary = _focus.handle_pad_event(event, _pad_device)
+			if bool(result.get("focus_moved", false)):
+				_apply_focus()
+			if String(result.get("kind", "")) != "" and _bridge != null:
+				_bridge.act(result)
+				# Only a confirm/back can change the OSK context. Re-applying its empty
+				# target list after a direction clears the navigation model and puts focus
+				# back on the first control, so a card can never stay selected.
 				_sync_osk()
 			get_viewport().set_input_as_handled()
 		return
@@ -956,7 +1053,7 @@ func _process(_delta: float) -> void:
 		_focus.pad_connected(connected)
 	if not connected:
 		return
-	var result: Dictionary = _focus.poll_pad()
+	var result: Dictionary = _focus.poll_pad(_read_pad_device())
 	if String(result.get("dir", "")) != "" and bool(result.get("focus_moved", false)):
 		_apply_focus()
 	if String(result.get("kind", "")) != "":
@@ -968,6 +1065,12 @@ func _process(_delta: float) -> void:
 ## at the end of the frame that built them), a confirm or a back the poll resolved is
 ## applied through the bridge, and the presentation is refreshed when the model moved.
 func _playable_process() -> void:
+	# A screen that rebuilt its own view (the athlete picker, the wardrobe) freed the
+	# controls the bridge registered; re-read them before anything paints, so the frame
+	# never touches a freed node. The new tree sorts at the end of this frame, so the
+	# rectangles are re-measured two frames later, like a screen swap.
+	if _bridge != null and _bridge.refresh_if_rebuilt():
+		_refresh_pending = 2
 	if _refresh_pending > 0:
 		_refresh_pending -= 1
 		if _refresh_pending == 0:
@@ -979,7 +1082,7 @@ func _playable_process() -> void:
 		_focus.pad_connected(connected)
 	if not connected:
 		return
-	var result: Dictionary = _focus.poll_pad()
+	var result: Dictionary = _focus.poll_pad(_read_pad_device())
 	if bool(result.get("focus_moved", false)):
 		_apply_focus()
 	if String(result.get("kind", "")) != "":

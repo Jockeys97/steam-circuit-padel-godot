@@ -1152,6 +1152,24 @@ func _focus_spec(node_name: String, control: Control, action: String) -> Diction
 	}
 
 
+## This screen's activation door for UIR-05's bridge — the same contract
+## `ModesScreen.activate()` documents: an action the bridge does not route (it is not a
+## `to-*` edge) is reported to the mount, which hands it back here. Both branches run
+## the handler the mouse path runs (`_on_card_input` calls `activate_arena`, `_wire`
+## calls `select_player_mode`), so a pad confirm and a click mean the same thing.
+func activate(action: String) -> bool:
+	var parts := action.split(":")
+	if parts.size() != 2:
+		return false
+	match String(parts[0]):
+		"activate":
+			var arena_id := String(parts[1]).trim_prefix(CARD_PREFIX).trim_prefix(WORLD_CARD_PREFIX)
+			return activate_arena(arena_id)
+		"player-mode":
+			return select_player_mode(String(parts[1]))
+	return false
+
+
 func aria_names() -> Dictionary:
 	var out := {}
 	var back := _control("BackButton") as Button

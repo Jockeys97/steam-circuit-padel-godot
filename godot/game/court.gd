@@ -78,10 +78,14 @@ const RACKET_FACE_LEN := 1.35
 const RACKET_THICK := 0.028
 const RACKET_GRIP_W := 0.017
 const RACKET_GRIP_L := 0.13
-## Which head `make_racket_view` builds. `standard` is the shipped procedural ellipse
-## and is also what an empty style means, so every existing caller draws what it drew
-## before; `cornetto` is Fornaio's Il Cornetto (`athletes_view.gd::racket_style_for`).
+## Standard (including empty style) uses the imported Slam model; the procedural
+## ellipse remains a missing-resource fallback. Cornetto is Fornaio's special racket.
 const RACKET_STYLE_STANDARD := &"standard"
+const SLAM_RACKET_PATH := "res://assets/equipment/padel_racket_slam.glb"
+## Meshy export: +Y toward the head, face in XY. Uniform scale retains its proportions;
+## the wrist lands at the centre of the authored grip (source Y = -0.70).
+const SLAM_RACKET_SCALE := 0.225
+const SLAM_RACKET_OFFSET := Vector3(0.0, -0.083, 0.0)
 const RACKET_STYLE_CORNETTO := &"cornetto"
 ## Il Cornetto's head, in metres BEFORE the fit to `2 * RACKET_FACE_R` (`_cornetto_fit`).
 ## The head is a SOLID crescent — a lune, not a ring: the disc of `CORNETTO_OUTER_R` minus
@@ -372,10 +376,8 @@ static func make_athlete(parent: Node3D, base_scene: Node, name: String, tint: C
 
 ## The racket the athlete swings: one local frame, two heads.
 ##
-## `standard` — and an empty `style`, so every pre-existing caller is untouched — is the
-## shipped procedural ellipse: a 0.26 x 0.35 m face (a cylinder scaled along its own long
-## axis, which is how the reference draws it too — an ellipse, `js/render.js:1346`) with a
-## 0.13 m grip below it, in the athlete's tint. `cornetto` is Fornaio's Il Cornetto: a
+## `standard` and empty `style` use the textured Slam GLB, fitted to the same wrist
+## frame without recolouring its materials. `cornetto` is Fornaio's Il Cornetto: a
 ## croissant where the face would be, a beech throat and a rolling-pin handle below it
 ## (`_build_cornetto_head`, `_build_cornetto_grip`).
 ##
@@ -393,9 +395,26 @@ static func make_racket_view(parent: Node3D, name: String, tint: Color,
 		_build_cornetto_head(root)
 		_build_cornetto_grip(root)
 	else:
-		_build_ellipse_racket(root, tint)
+		if not _build_slam_racket(root):
+			_build_ellipse_racket(root, tint)
 	parent.add_child(root)
 	return root
+
+
+static func _build_slam_racket(root: Node3D) -> bool:
+	if not ResourceLoader.exists(SLAM_RACKET_PATH):
+		return false
+	var scene := load(SLAM_RACKET_PATH) as PackedScene
+	if scene == null:
+		return false
+	var model := scene.instantiate() as Node3D
+	if model == null:
+		return false
+	model.name = "SlamRacket"
+	model.scale = Vector3.ONE * SLAM_RACKET_SCALE
+	model.position = SLAM_RACKET_OFFSET
+	root.add_child(model)
+	return true
 
 
 ## The shipped head: the tinted ellipse. Split out of `make_racket_view` when the

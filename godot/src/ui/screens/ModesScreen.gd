@@ -247,6 +247,10 @@ func refresh_data() -> void:
 	_rows = _rows_now()
 	_refresh_cards()
 	_refresh_selection()
+	# The lock state rides the focus registration (`_focus_spec`'s `locked`), and a
+	# career can unlock a mode while this screen is off. Re-reading the rows without
+	# re-registering would leave the model on the locks the screen was built with.
+	_register_focus()
 	refresh_strings()
 	_apply_layout()
 
@@ -774,7 +778,12 @@ func _register_focus() -> void:
 		var card: Control = _cards.get(id, null)
 		if card == null:
 			continue
-		_focus_specs[CARD_PREFIX + id] = _focus_spec(CARD_PREFIX + id, card, "%s:%s" % [SELECT_MODE_ACTION, id])
+		# `collectMenuTargets` refuses `.mode-card--locked` (`js/main.js:571-577`):
+		# a withheld mode stays visible with its own presentation and is NOT a place
+		# the focus may land. Registering it without the flag made it a target that
+		# swallowed a confirm and did nothing.
+		_focus_specs[CARD_PREFIX + id] = _focus_spec(CARD_PREFIX + id, card,
+			"%s:%s" % [SELECT_MODE_ACTION, id], {"locked": bool(row.get("locked", false))})
 	for key in _difficulty_buttons:
 		var button: Button = _difficulty_buttons[key]
 		_focus_specs[DIFFICULTY_PREFIX + key] = _focus_spec(DIFFICULTY_PREFIX + key, button, "%s:%s" % [DIFFICULTY_ACTION, key])
@@ -783,12 +792,14 @@ func _register_focus() -> void:
 		_focus_specs[LENGTH_PREFIX + key] = _focus_spec(LENGTH_PREFIX + key, button, "%s:%s" % [LENGTH_ACTION, key])
 
 
-func _focus_spec(node_name: String, control: Control, action: String) -> Dictionary:
+func _focus_spec(node_name: String, control: Control, action: String, extra: Dictionary = {}) -> Dictionary:
+	var opts := {"kind": "card" if control is PanelContainer else "button"}
+	opts.merge(extra)
 	return {
 		"id": "%s/%s" % [SCREEN_ID, node_name],
 		"node": control,
 		"action": action,
-		"opts": {"kind": "card" if control is PanelContainer else "button"},
+		"opts": opts,
 	}
 
 

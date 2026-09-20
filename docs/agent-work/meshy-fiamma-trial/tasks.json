@@ -1,0 +1,17 @@
+{
+  "rig": {
+    "id": "01a0c025-13e7-77d4-96ac-8508fc33ba91",
+    "status": "SUCCEEDED",
+    "credits": 5
+  },
+  "motion": {
+    "id": "01a0c026-34c3-7399-8acf-a47fd598168f",
+    "status": "SUCCEEDED",
+    "credits": 10
+  },
+  "animation": {
+    "id": "01a0c026-7acf-7435-b63b-d1c4aa154a41",
+    "status": "SUCCEEDED",
+    "credits": 3
+  }
+}

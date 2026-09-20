@@ -43,6 +43,7 @@ const Frozen := preload("res://src/sim/frozen.gd")
 const Locale := preload("res://src/locale/locale.gd")
 const Gate := preload("res://game/content_gate.gd")
 const MenuFocus := preload("res://game/menu_focus.gd")
+const InputSource := preload("res://game/input_map.gd")
 const NavRoutes := preload("res://src/input/nav_routes.gd")
 const Tables := preload("res://src/modes/mode_tables.gd")
 const DrillSession := preload("res://src/modes/drill_session.gd")
@@ -65,6 +66,10 @@ const SCREEN_ID := "screen-modes"
 
 var _mode := "quick"
 var _focus: MenuFocus
+## The seat the rows read, remembered across frames (`selectPrimaryGamepad`'s rule,
+## `js/main.js:265-272`): the pad somebody touches takes over, the current one is kept
+## while nobody does. `NO_DEVICE` until a pad shows up.
+var _pad_device := InputSource.NO_DEVICE
 var _rows: Array[Button] = []
 var _detail: Label
 var _title: Label
@@ -484,6 +489,15 @@ func _register(id: String, node: Control, action: String) -> void:
 	_focus.add(id, node, action)
 
 
+## The pad the rows read (`selectPrimaryGamepad`, `js/main.js:265-272`): the pad
+## somebody touches takes over, the current one is kept while nobody does — never
+## blindly the host's first entry, which is not necessarily the pad in the player's
+## hands. `NO_DEVICE` stays `NO_DEVICE`, and the model reads it as neutral.
+func _read_pad_device() -> int:
+	_pad_device = InputSource.select_device(_pad_device)
+	return _pad_device
+
+
 func _input(event: InputEvent) -> void:
 	if _focus == null:
 		return
@@ -507,7 +521,7 @@ func _process(_delta: float) -> void:
 		_focus.apply_focus()
 	if Input.get_connected_joypads().is_empty():
 		return
-	var result: Dictionary = _focus.poll_pad()
+	var result: Dictionary = _focus.poll_pad(_read_pad_device())
 	if bool(result.get("focus_moved", false)) or String(result.get("kind", "")) != "":
 		_dispatch(result)
 

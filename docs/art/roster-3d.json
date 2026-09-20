@@ -57,11 +57,11 @@
     {
       "id": "maestro",
       "nome": "IL MAESTRO",
-      "stato": "assente",
-      "sorgente": null,
+      "stato": "legacy",
+      "sorgente": "origin/luca-game-mechanics@05ae33d",
       "height_m": 1.8,
-      "glb": null,
-      "note": "Da generare."
+      "glb": "godot/assets/athletes/maestro.glb",
+      "note": "Remesh Meshy 2026-09-20: 12.253 triangoli, rig API a 24 ossa legacy. Clip walk/run API e idle originale di Luca riunite nello stesso GLB. Render e test runtime passati. Outfit non ricolorati. Ricevute in art/generated/athletes/maestro/meshy-12k."
     },
     {
       "id": "pantera",
@@ -84,20 +84,20 @@
     {
       "id": "fiamma",
       "nome": "LA FIAMMA",
-      "stato": "generato",
+      "stato": "in-prova",
       "sorgente": "neon-court-champion",
       "height_m": 1.74,
-      "glb": "art/generated/athletes/fiamma/fiamma-all-animations.glb",
-      "note": "Identita' confermata contro lo sprite assets/athletes/fiamma.webp (canotta lime, gonna blu, coda riccia). 37.327 triangoli: fuori banda, da rimeshare a 12.000 prima di importarla."
+      "glb": "godot/assets/athletes/fiamma.glb",
+      "note": "Integrata con animazioni e materiale originale. Derivata localmente dal source all-animations con glTF Transform 4.5.0 weld + simplify (ratio 0.322, error 0.01). Outfit non ricolorati."
     },
     {
       "id": "oracolo",
       "nome": "L'ORACOLO",
-      "stato": "generato",
+      "stato": "in-prova",
       "sorgente": "violet-arcane-sentinel",
       "height_m": 1.76,
-      "glb": "art/generated/athletes/oracolo/oracolo-all-animations.glb",
-      "note": "Identita' confermata contro lo sprite assets/athletes/oracolo.webp (abito viola con corsetto e stivali alti). 45.406 triangoli, il piu' pesante: da rimeshare a 12.000 prima di importarlo."
+      "glb": "godot/assets/athletes/oracolo.glb",
+      "note": "Integrato con animazioni e materiale originale. Derivato localmente dal source all-animations con glTF Transform 4.5.0 weld + simplify (ratio 0.265, error 0.01). Outfit non ricolorati."
     },
     {
       "id": "colosso",

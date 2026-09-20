@@ -44,16 +44,16 @@ func _initialize() -> void:
 
 	# 1. The default: no style argument at all, which is every pre-existing call site.
 	var plain: Node3D = Court.make_racket_view(holder, "RacketPlain", Color.GOLD)
-	check_true(plain.get_node_or_null("Face") != null, "default build still has the Face")
-	check_true(plain.get_node_or_null("Grip") != null, "default build still has the Grip")
+	check_true(plain.get_node_or_null("SlamRacket") != null, "default build uses the textured Slam racket")
+	check_true(plain.get_node_or_null("Grip") == null, "no procedural grip overlaps the imported grip")
 	check_true(plain.get_node_or_null("CroissantHead") == null, "default build has no croissant")
-	check_eq(_meshes(plain).size(), 2, "default build is still two meshes")
+	check_eq(_meshes(plain).size(), 1, "default build has the authored mesh")
 
 	# 2. An explicit `standard` is the same head as the default.
 	var standard: Node3D = Court.make_racket_view(holder, "RacketStandard", Color.GOLD,
 		Court.RACKET_STYLE_STANDARD)
-	check_true(standard.get_node_or_null("Face") != null, "style `standard` builds the Face")
-	check_true(standard.get_node_or_null("Grip") != null, "style `standard` builds the Grip")
+	check_true(standard.get_node_or_null("SlamRacket") != null, "style standard uses Slam")
+	check_true(standard.get_node_or_null("Grip") == null, "standard has no duplicate grip")
 	check_true(standard.get_node_or_null("CroissantHead") == null, "style `standard` has no croissant")
 
 	# 3. Il Cornetto.

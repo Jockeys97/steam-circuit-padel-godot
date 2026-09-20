@@ -742,8 +742,8 @@ func _refresh_topics() -> void:
 		if button == null:
 			continue
 		var active: bool = String(id) == _topic
-		button.button_pressed = active
-		button.modulate.a = 1.0 if active else 0.62
+		button.set_pressed_no_signal(active)
+		button.theme_type_variation = &"SegmentedActive" if active else &"SegmentedInactive"
 
 
 func _refresh_counter() -> void:
@@ -899,7 +899,7 @@ func _centered_form() -> VBoxContainer:
 	var column := VBoxContainer.new()
 	column.name = "FeedbackForm"
 	column.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	column.add_theme_constant_override("separation", 14)
+	column.add_theme_constant_override("separation", 18)
 	centering.add_child(column)
 	centering.resized.connect(_apply_column_width.bind(centering, column))
 	_apply_column_width(centering, column)
@@ -924,21 +924,33 @@ func _apply_column_width(centering: MarginContainer, column: VBoxContainer) -> v
 func _label(parent: Node, node_name: String) -> Label:
 	var label := Label.new()
 	label.name = node_name
+	label.theme_type_variation = &"LabelSmall"
 	parent.add_child(label)
 	return label
 
 
 func _add_topics(parent: Control) -> void:
 	_label(parent, "TopicLabel")
+	var box := PanelContainer.new()
+	box.name = "TopicsBox"
+	box.theme_type_variation = &"SegmentedContainer"
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	parent.add_child(box)
 	var grid := GridContainer.new()
 	grid.name = "Topics"
 	grid.columns = 3
-	parent.add_child(grid)
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_theme_constant_override("h_separation", 4)
+	grid.add_theme_constant_override("v_separation", 4)
+	box.add_child(grid)
 	for row in topic_rows():
 		var id := String((row as Dictionary).get("id", ""))
 		var button := Button.new()
 		button.name = "Topic_%s" % id
 		button.toggle_mode = true
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.custom_minimum_size = Vector2(0.0, 36.0)
+		button.theme_type_variation = &"SegmentedInactive"
 		button.pressed.connect(select_topic.bind(id))
 		grid.add_child(button)
 		_topic_buttons[id] = button
@@ -951,11 +963,16 @@ func _add_message(parent: Control) -> void:
 	field.custom_minimum_size = Vector2(0.0, 130.0)
 	field.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
 	field.text_changed.connect(_on_message_changed)
+	_style_field(field)
 	parent.add_child(field)
 	_fields[FIELD_MESSAGE] = field
 	var counter := Label.new()
 	counter.name = "Counter"
+	counter.theme_type_variation = &"LabelSmall"
 	counter.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	var muted := _palette("muted")
+	if muted.a > 0.0:
+		counter.add_theme_color_override("font_color", muted)
 	parent.add_child(counter)
 
 
@@ -975,6 +992,7 @@ func _add_contact(parent: Control) -> void:
 	field.name = FIELD_CONTACT
 	field.max_length = MAX_CONTACT
 	field.text_changed.connect(_on_contact_changed)
+	_style_line(field)
 	parent.add_child(field)
 	_fields[FIELD_CONTACT] = field
 
@@ -987,21 +1005,43 @@ func _add_attach(parent: Control) -> void:
 	var check := CheckBox.new()
 	check.name = "AttachCheck"
 	check.button_pressed = true
+	var attach_ink := _palette("text_soft")
+	if attach_ink.a > 0.0:
+		check.add_theme_color_override("font_color", attach_ink)
 	parent.add_child(check)
 
 
 func _add_details(parent: Control) -> void:
+	var details := PanelContainer.new()
+	details.name = "DetailsBox"
+	details.add_theme_stylebox_override("panel", _details_box())
+	details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	parent.add_child(details)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 0)
+	details.add_child(column)
 	var toggle := Button.new()
 	toggle.name = "DetailsToggle"
 	toggle.toggle_mode = true
+	toggle.theme_type_variation = &"ButtonGhost"
+	toggle.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	if theme != null:
+		toggle.add_theme_font_override("font", theme.get_font("font", "LabelSmall"))
+		toggle.add_theme_font_size_override("font_size", theme.get_font_size("font_size", "LabelSmall"))
+		toggle.add_theme_color_override("font_color", _palette("text_soft_2"))
 	toggle.pressed.connect(_on_details_pressed)
-	parent.add_child(toggle)
+	column.add_child(toggle)
 	var view := TextEdit.new()
 	view.name = "DiagView"
 	view.editable = false
 	view.custom_minimum_size = Vector2(0.0, 180.0)
 	view.visible = false
-	parent.add_child(view)
+	_style_field(view)
+	var mono := theme.get_font("font", "Mono") if theme != null else null
+	if mono != null:
+		view.add_theme_font_override("font", mono)
+		view.add_theme_font_size_override("font_size", 12)
+	column.add_child(view)
 
 
 func _on_details_pressed() -> void:
@@ -1015,14 +1055,17 @@ func _add_actions(parent: Control) -> void:
 	parent.add_child(row)
 	var send := Button.new()
 	send.name = "SendButton"
+	send.theme_type_variation = &"ButtonPrimary"
 	send.pressed.connect(submit)
 	row.add_child(send)
 	var copy := Button.new()
 	copy.name = "CopyButton"
+	copy.theme_type_variation = &"ButtonSecondary"
 	copy.pressed.connect(copy_current)
 	row.add_child(copy)
 	var steam := Button.new()
 	steam.name = "SteamButton"
+	steam.theme_type_variation = &"ButtonSecondary"
 	steam.visible = false
 	steam.pressed.connect(open_community)
 	row.add_child(steam)
@@ -1038,12 +1081,19 @@ func _add_manual(parent: Control) -> void:
 	field.name = "ManualField"
 	field.editable = false
 	field.custom_minimum_size = Vector2(0.0, 120.0)
+	_style_field(field)
 	block.add_child(field)
 
 
 func _add_note(parent: Control) -> void:
-	_label(parent, "Note")
-	_label(parent, "Status")
+	var note := _label(parent, "Note")
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	note.theme_type_variation = &"CardBody"
+	var status := _label(parent, "Status")
+	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var green := _palette("green")
+	if green.a > 0.0:
+		status.add_theme_color_override("font_color", green)
 
 
 func _register_focus() -> void:
@@ -1060,3 +1110,61 @@ func _register_focus() -> void:
 
 func _control(node_name: String) -> Control:
 	return find_child(node_name, true, false) as Control
+
+
+func _palette(name: String) -> Color:
+	if theme != null and theme.has_color(name, "Palette"):
+		return theme.get_color(name, "Palette")
+	return Color(0, 0, 0, 0)
+
+
+func _alpha(color: Color, a: float) -> Color:
+	return Color(color.r, color.g, color.b, a)
+
+
+func _field_box() -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = _palette("surface_1")
+	box.border_color = _palette("tab_border")
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(10)
+	box.content_margin_left = 14.0
+	box.content_margin_right = 14.0
+	box.content_margin_top = 12.0
+	box.content_margin_bottom = 12.0
+	return box
+
+
+func _details_box() -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = _alpha(_palette("surface_0"), 0.55)
+	box.border_color = _alpha(_palette("cyan"), 0.18)
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(10)
+	box.content_margin_left = 4.0
+	box.content_margin_right = 4.0
+	box.content_margin_top = 2.0
+	box.content_margin_bottom = 2.0
+	return box
+
+
+func _style_field(field: TextEdit) -> void:
+	var box := _field_box()
+	field.add_theme_stylebox_override("normal", box)
+	field.add_theme_stylebox_override("focus", box)
+	field.add_theme_stylebox_override("read_only", box)
+	var ink := _palette("ink")
+	if ink.a > 0.0:
+		field.add_theme_color_override("font_color", ink)
+		field.add_theme_color_override("caret_color", _palette("cyan"))
+
+
+func _style_line(field: LineEdit) -> void:
+	var box := _field_box()
+	field.add_theme_stylebox_override("normal", box)
+	field.add_theme_stylebox_override("focus", box)
+	field.add_theme_stylebox_override("read_only", box)
+	var ink := _palette("ink")
+	if ink.a > 0.0:
+		field.add_theme_color_override("font_color", ink)
+		field.add_theme_color_override("caret_color", _palette("cyan"))

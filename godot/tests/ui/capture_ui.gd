@@ -119,6 +119,14 @@ func _walk(which: String) -> void:
 				await get_tree().process_frame
 			var file := "ui-%s" % screen_id if state == "default" else "ui-%s-%s" % [screen_id, state]
 			await _capture(file)
+			if state in ["default", "picker-open"] and OS.get_cmdline_user_args().has("--capture-scroll-bottom"):
+				var scroll := screen.find_child("ScreenScroll", true, false) as ScrollContainer
+				if scroll != null:
+					scroll.scroll_vertical = int(scroll.get_v_scroll_bar().max_value)
+					for _i in SETTLE_FRAMES:
+						await get_tree().process_frame
+					await _capture(file + "-scrolled")
+					scroll.scroll_vertical = 0
 	_finish()
 
 

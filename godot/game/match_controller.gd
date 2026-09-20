@@ -103,6 +103,10 @@ const SettingsRows := preload("res://src/ui/components/SettingsRows.gd")
 ## every menu screen (`game/menu_focus.gd` over `src/input/**`), not on Godot's
 ## built-in `ui_*` walk.
 const MenuFocus := preload("res://game/menu_focus.gd")
+## How many frames the card's rows are re-measured for after they are built (see
+## `_rebuild_pause_focus`). Two, because a container sorts on the frame after it
+## becomes visible and a second pass costs nothing while the match is paused.
+const PAUSE_MEASURE_FRAMES := 2
 
 ## `js/main.js:1164-1165`.
 const FIXED_STEP := 1.0 / 120.0
@@ -252,6 +256,8 @@ var _touch_layer: Control = null
 ## because the tab decides which rows exist. Null until the card has been opened.
 var _pause_focus = null
 var _pause_pad_seen := false
+## Frames still owed a re-measure of the card's rows (`_remeasure_pause_focus`).
+var _pause_measure_frames := 0
 var _audio
 ## The stands' crowd, found in the arena after the scenery is built. Presentation
 ## only; null in any build whose arena has no stands.
@@ -873,6 +879,7 @@ func set_match_paused(paused: bool) -> bool:
 			_rebuild_pause_focus()
 		else:
 			_pause_pad_seen = false
+			_pause_measure_frames = 0
 	return _paused
 
 
@@ -888,6 +895,16 @@ func _on_pause_tab_changed(_tab_id: String) -> void:
 ## model decides the geometric moves, and the activation stays the focused Button's
 ## own press — the same split every menu screen uses, so the pad and the arrow keys
 ## behave the same here as everywhere else.
+##
+## THE ROWS ARE MEASURED TOO EARLY HERE, AND THAT IS NOT A DETAIL. This runs on the
+## frame the card opens (and the frame a tab changes), i.e. the frame the card became
+## visible — and a container has not sorted its children yet at that point. Measured
+## on the card's own table, every row reports `P(0,0)` with only its minimum size, so
+## the model's geometry is fiction: `move_focus("down")` finds no candidate at all
+## and `move_focus("right")` hops between the three tabs, whose minimum widths differ.
+## The rows are re-measured once the layout is real (`_remeasure_pause_focus`, armed
+## by the counter below); the build itself stays here, so the focus exists on the same
+## frame the card opens.
 func _rebuild_pause_focus() -> void:
 	if _pause_overlay == null:
 		return
@@ -905,6 +922,49 @@ func _rebuild_pause_focus() -> void:
 		_pause_focus.add(String(entry.get("id", "")), node, String(entry.get("action", "")), entry.get("opts", {}))
 	_pause_focus.refresh()
 	_pause_focus.ensure_focus()
+	_pause_measure_frames = PAUSE_MEASURE_FRAMES
+
+
+## Re-measures the card's rows once the containers have sorted, keeping the focus on
+## the row it was on. `MenuFocus.refresh()` rebuilds the model's target list, and the
+## model's own rule (`focus_nav.gd::ensure_focus`) is that a rebuild which cannot find
+## the old id falls back to the first target — asked here in that order, so a
+## re-measure cannot silently teleport the focus back to the first tab. GEOMETRY ONLY:
+## nothing is painted here, because the group the player opened the card with decides
+## whether a focus ring exists at all (a tab is focused with a pad in hand and not
+## without, `js/main.js:2349` — `PauseOverlay.set_tab`'s own rule).
+func _remeasure_pause_focus() -> void:
+	if _pause_focus == null:
+		return
+	var keep: String = _pause_focus.focus_id()
+	_pause_focus.refresh()
+	if keep != "" and _pause_focus.focusable_ids().has(keep):
+		_pause_focus.menu.nav.set_focus(keep)
+	else:
+		_pause_focus.ensure_focus()
+
+
+## The joypad the card reads: the match's own primary seat, which `_refresh_pads`
+## re-assigns every frame from the pad somebody touches (`js/main.js:780-784`), not a
+## hard-wired pad 0. `NO_DEVICE` (nobody connected) passes through as itself: the
+## model's own reads are neutral then (`menu_focus.gd::_menu_axis`/`_menu_button`).
+func _pause_pad_device() -> int:
+	return 0 if _input_source == null else int(_input_source.device)
+
+
+## The D-pad's four arrows, as the engine's own `ui_*` actions see them: those are the
+## events the model's poll replaces (`MenuFocus.poll_pad`), so the caller swallows
+## them. A/B/X and everything else is NOT this function's business — the focused
+## Button still answers `ui_accept` itself.
+static func _pause_direction_button(event: InputEventJoypadButton) -> bool:
+	return event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down") \
+		or event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right")
+
+
+## B and X, the two buttons the model's own back edge reads (`menu_nav.gd::poll_pad`):
+## the card answers them with the same five-step return ESC walks (`PauseOverlay.back`).
+static func _pause_back_button(event: InputEventJoypadButton) -> bool:
+	return event.button_index == JOY_BUTTON_B or event.button_index == JOY_BUTTON_X
 
 
 ## The pause card's own key navigation, while it is open: the model's four
@@ -1240,7 +1300,13 @@ func _process(delta: float) -> void:
 	# ticked nothing this frame — a paused frame arms nothing (`apply_frame`).
 	if _pause_overlay != null and _pause_overlay.is_open():
 		if _pause_focus != null:
-			var pause_move: Dictionary = _pause_focus.poll_pad()
+			# The rows are measured BEFORE the frame's move is resolved: the first
+			# frames after the card opens are exactly the ones whose geometry is
+			# still at the origin (`_rebuild_pause_focus`).
+			if _pause_measure_frames > 0:
+				_pause_measure_frames -= 1
+				_remeasure_pause_focus()
+			var pause_move: Dictionary = _pause_focus.poll_pad(_pause_pad_device())
 			if bool(pause_move.get("focus_moved", false)):
 				_pause_focus.apply_focus()
 			_apply_pause_range()
@@ -1888,15 +1954,46 @@ func _unhandled_input(event: InputEvent) -> void:
 		toggle_replay()
 
 
-## The pause card's key navigation, on the frame path: consumed here (before the
-## engine's `ui_*` walk) while the card is open, and nowhere else. A key the model
-## does not handle falls through to the engine, so the focused Button still answers
+## The pause card's navigation, on the frame path: consumed here (before the engine's
+## `ui_*` walk) while the card is open, and nowhere else. A key or a button the model
+## does not own falls through to the engine, so the focused Button still answers
 ## confirm and the OS keeps its own bindings.
+##
+## THE PAD'S DIRECTIONS ARE ONE NAVIGATOR, NOT TWO. The card's focus is moved by the
+## model, polled once per frame in `_process` (`MenuFocus.poll_pad` — the stick with
+## the menu's own deadzone, the D-pad and the buttons by the pad the match selected).
+## Godot's built-in walk, though, is driven by the very same events: `ui_up`/`ui_down`/
+## `ui_left`/`ui_right` are built-ins whose defaults carry both the left stick and the
+## D-pad, so without consuming them here one push moves the focus twice — once by the
+## engine's geometry, once by the model's — and the two do not agree. Measured on a
+## probe bed, one stick event and one D-pad press each moved a focused control on their
+## own. `main_menu.gd:963-968` states the same rule for every menu screen and is why
+## this card is the only place the walk used to run.
 func _input(event: InputEvent) -> void:
 	if _pause_overlay == null or not _pause_overlay.is_open():
 		return
 	if _pause_nav(event):
 		get_viewport().set_input_as_handled()
+		return
+	if event is InputEventJoypadMotion:
+		# The CONTROLLER tab's dots take the stick from the event (the overlay's own
+		# `_input` handler); the event is then swallowed so the same motion cannot
+		# also walk the focus, which the model has already done from its own poll.
+		_pause_overlay.handle_joypad_motion(event as InputEventJoypadMotion)
+		get_viewport().set_input_as_handled()
+		return
+	if event is InputEventJoypadButton:
+		var button := event as InputEventJoypadButton
+		if button.pressed and _pause_back_button(button):
+			# The pad's back, on the card's own five-step return: the same rung the
+			# keyboard's ESC and the pad's Start reach (`PauseOverlay.back`).
+			_pause_overlay.back()
+			get_viewport().set_input_as_handled()
+			return
+		if button.pressed and _pause_direction_button(button):
+			# The D-pad: the model's, from its own poll (the button stays held across
+			# frames, which is what the model's first-repeat/next-repeat clock reads).
+			get_viewport().set_input_as_handled()
 
 
 ## Harness entry point: no engine clock, no GLB, no display work. The caller owns

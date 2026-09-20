@@ -294,17 +294,17 @@ func _marks_contract(built: int) -> void:
 	_check("every mark is camera-facing, unshaded, depth-test-free and shadowless",
 		bad.is_empty(), str(bad))
 	var advice := _mark("TimingAdvice") as Label3D
-	_check("the advice word is a camera-facing, depth-test-free label at 1/36 m per pixel",
+	_check("the compact advice word is camera-facing and depth-test-free at 1/60 m per pixel",
 		advice != null and advice.billboard == BaseMaterial3D.BILLBOARD_ENABLED
-			and advice.no_depth_test and advice.font_size == 15
-			and is_equal_approx(advice.pixel_size, 1.0 / 36.0), "")
+			and advice.no_depth_test and advice.font_size == 11
+			and is_equal_approx(advice.pixel_size, 1.0 / 60.0), "")
 	var verdict := _mark("TimingVerdict") as Label3D
 	_check("the verdict's grade line carries the reference's own size and stroke",
-		verdict != null and verdict.font_size == 19 and verdict.outline_size == 7
+		verdict != null and verdict.font_size == 14 and verdict.outline_size == 5
 			and verdict.billboard == BaseMaterial3D.BILLBOARD_ENABLED and verdict.no_depth_test, "")
 	var verdict_mode := _mark("TimingVerdictMode") as Label3D
 	_check("the verdict's mode line is the reference's own second line",
-		verdict_mode != null and verdict_mode.font_size == 12 and verdict_mode.outline_size == 0, "")
+		verdict_mode != null and verdict_mode.font_size == 9 and verdict_mode.outline_size == 0, "")
 	_section_done("_marks_contract")
 
 

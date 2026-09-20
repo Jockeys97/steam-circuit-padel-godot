@@ -112,9 +112,28 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 64
 theme_override_constants/margin_bottom = 48
 
-[node name="AthleteGrid" type="GridContainer" parent="Frame/ScreenScroll/Body/GridArea"]
+[node name="RosterSections" type="VBoxContainer" parent="Frame/ScreenScroll/Body/GridArea"]
+layout_mode = 2
+theme_override_constants/separation = 28
+
+[node name="AthleteGrid" type="GridContainer" parent="Frame/ScreenScroll/Body/GridArea/RosterSections"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 4
+
+[node name="SpecialSection" type="VBoxContainer" parent="Frame/ScreenScroll/Body/GridArea/RosterSections"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="SpecialStripHead" type="Label" parent="Frame/ScreenScroll/Body/GridArea/RosterSections/SpecialSection"]
+layout_mode = 2
+theme_type_variation = &"CardTitle"
+
+[node name="SpecialGrid" type="GridContainer" parent="Frame/ScreenScroll/Body/GridArea/RosterSections/SpecialSection"]
+layout_mode = 2
 theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
 columns = 4

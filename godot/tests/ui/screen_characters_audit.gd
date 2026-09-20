@@ -875,7 +875,16 @@ func _layout(audit: AuditBase) -> void:
 	audit.check_le(widest, FRAME_BIG.x, "characters/nothing_is_wider_than_the_frame")
 	audit.check_gt(widest, 0.0, "characters/the_slots_have_width")
 	var art: Control = screen.find_child("TeamSlot_playerArt", true, false)
-	audit.check_between(art.size.x / maxf(art.size.y, 1.0), 2.7, 3.3, "characters/the_art_keeps_the_reference_aspect")
+	audit.check_between(art.size.x / maxf(art.size.y, 1.0), 0.72, 0.78, "characters/the_art_keeps_the_reference_aspect")
+	audit.check_true(not screen.text_shown("TitleLabel").is_empty(), "characters/header_title_is_bound")
+	audit.check_true(not screen.text_shown("BackButton").is_empty(), "characters/back_text_is_bound")
+	var stack: Control = screen.find_child("TeamSlot_playerStack", true, false)
+	var actions: Control = screen.find_child("TeamSlot_playerActions", true, false)
+	audit.check_true(actions.global_position.y >= stack.global_position.y + stack.size.y, "characters/actions_below_content")
+	var tag: Control = screen.find_child("SlotTag_player", true, false)
+	audit.check_true(tag.global_position.y + tag.size.y <= art.global_position.y, "characters/role_tag_above_portrait")
+	var confirm: Control = screen.find_child("HeadAction", true, false)
+	audit.check_le(confirm.size.x, FRAME_BIG.x * 0.4, "characters/confirm_is_compact")
 	audit.report("1280x720: slot=%.1f grid=%.1f" % [widest, grid.size.x])
 
 	_frame.size = FRAME_SMALL
@@ -889,6 +898,26 @@ func _layout(audit: AuditBase) -> void:
 			widest_small = maxf(widest_small, card.size.x)
 	audit.check_le(widest_small, FRAME_SMALL.x, "characters/nothing_is_wider_than_the_small_frame")
 	audit.report("1024x600: slot=%.1f grid=%.1f" % [widest_small, grid.size.x])
+
+	# Special headings are section chrome, never a cell in the athlete grid.
+	for frame_size in [FRAME_BIG, FRAME_SMALL]:
+		_frame.size = frame_size
+		screen.apply_capture_state("picker-open")
+		for _i in 8:
+			await process_frame
+		var section: Control = screen.find_child("SpecialSection", true, false)
+		var special_grid: GridContainer = screen.find_child("SpecialGrid", true, false)
+		var special_card: Control = screen.find_child("SpecialPickCard_fornaio", true, false)
+		audit.check_eq(special_grid.columns, grid.columns, "characters/special_columns_match_%s" % frame_size.x)
+		if special_card != null:
+			audit.check_true(section.visible, "characters/special_section_visible_%s" % frame_size.x)
+			audit.check_true(section.position.y >= grid.position.y + grid.size.y, "characters/special_below_roster_%s" % frame_size.x)
+			audit.check_true(special_card.get_parent() == special_grid, "characters/special_has_own_grid_%s" % frame_size.x)
+			var expected_width: float = (grid.size.x - (grid.columns - 1) * 20.0) / grid.columns
+			audit.check_between(special_card.size.x, expected_width - 1.0, expected_width + 1.0, "characters/special_card_width_%s" % frame_size.x)
+		screen.apply_capture_state("default")
+		await process_frame
+		audit.check_true(not section.visible and special_grid.get_child_count() == 0, "characters/special_cleared_on_return_%s" % frame_size.x)
 	_frame.size = FRAME_BIG
 	for _i in SETTLE_FRAMES:
 		await process_frame

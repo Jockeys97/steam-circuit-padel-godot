@@ -1812,15 +1812,16 @@ func _visual_contract() -> void:
 	var hands_bad: Array[String] = []
 	for key in ["player", "playerMate", "opponent", "opponentMate"]:
 		var racket: Node3D = node._paddle_views[key]
-		var face: MeshInstance3D = racket.get_node_or_null("Face")
-		var grip: MeshInstance3D = racket.get_node_or_null("Grip")
-		if face == null or grip == null:
-			rackets_bad.append("%s (no face/grip)" % key)
-			continue
-		var cm := face.mesh as CylinderMesh
-		var drawn_width := cm.top_radius * 2.0 if cm != null else -1.0
-		if cm == null or drawn_width > 0.4 or face.scale.y <= 1.0:
-			rackets_bad.append("%s (width %.2f m)" % [key, drawn_width])
+		var meshes := racket.find_children("*", "MeshInstance3D", true, false)
+		var bounds := AABB()
+		var first := true
+		for mesh: MeshInstance3D in meshes:
+			var local := racket.global_transform.affine_inverse() * mesh.global_transform
+			var box := local * mesh.get_aabb()
+			bounds = box if first else bounds.merge(box)
+			first = false
+		if first or bounds.size.x > 0.4 or bounds.size.y < 0.36 or bounds.size.y > 0.52:
+			rackets_bad.append("%s (bounds %s)" % [key, bounds.size])
 		var root: Node3D = node._athlete_roots[key]
 		# GLOBAL positions: with the rigs on court the racket is a CHILD of its rig
 		# (so it inherits the athlete's yaw), and its `position` is therefore local.

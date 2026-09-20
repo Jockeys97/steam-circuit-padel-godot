@@ -1,3 +1,4 @@
+import { planAiContact } from "./ai-contact.js?v=20260920-fluidity-v1";
 import { BALANCE, COURT, EVENT_LINES, ROSTER_AVERAGE } from "./data.js?v=20260910-sprite-gate-v41";
 import { clamp } from "./render.js?v=20260910-sprite-gate-v41";
 import { sfx } from "./audio.js?v=20260910-sprite-gate-v41";
@@ -2475,6 +2476,15 @@ function movePaddleTo(paddle, targetX, targetY, dt) {
   );
 }
 
+function aiContactPlan(state, paddle, ball) {
+  return planAiContact({ x: paddle.x, y: paddle.y, speed: paddle.speed, skill: paddle.skill,
+    width: contactWidth(paddle, ball), depth: paddle.reach * BALANCE.aiDepthReach, reaction: state.aiReactionDelay },
+    { x: ball.x, y: ball.y, z: ball.z, vx: ball.vx, vy: ball.vy, vz: ball.vz,
+      spin: ball.spin, backspin: ball.backspin, topspin: ball.topspin,
+      bounces: ball.bounces.ai, serve: ball.serveInFlight, fault: ball.netFaultOwner != null,
+      incoming: ballPlayableDirection("ai", ball) }, COURT, BALANCE);
+}
+
 function moveOpponentTeam(state, dt) {
   const { ball, opponent, opponentMate } = state;
   const centerX = (COURT.left + COURT.right) / 2;
@@ -2534,6 +2544,10 @@ function moveOpponentTeam(state, dt) {
     state.aiTeamShape = "reset";
   }
 
+  if (defending) {
+    const plan = aiContactPlan(state, primary, ball);
+    if (plan.wait) { primaryTargetX = plan.x; primaryTargetY = plan.y; }
+  }
   const readingIncomingShot = defending && state.aiReceiverLocked && state.aiReactionDelay > 0;
   if (!readingIncomingShot) movePaddleTo(primary, primaryTargetX, primaryTargetY, dt);
   else primary.motion = Math.max(0, primary.motion - dt * 7);
@@ -2596,7 +2610,7 @@ function updateDoublesAI(state, dt) {
     ? [state[state.aiPrimaryKey]]
     : [opponent, opponentMate].sort((a, b) => paddleDistance(a, ball) - paddleDistance(b, ball));
   const responder = defenders.find((paddle) => canHit(paddle, ball));
-  if (responder && controllableHeight && state.aiReactionDelay <= 0) {
+  if (responder && controllableHeight && state.aiReactionDelay <= 0 && !aiContactPlan(state, responder, ball).wait) {
     hitBall(state, responder, 0.88 + ai.skill * 0.12);
   }
 }

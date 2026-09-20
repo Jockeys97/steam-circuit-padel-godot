@@ -873,6 +873,20 @@ static func ai_responder_forecast(paddle: Ent.SimPaddle, ball: Ent.SimBall) -> D
 	}
 
 
+## Pure decision used by movement and the final legal contact gate.
+static func ai_contact_plan(state: State, paddle: Ent.SimPaddle, ball: Ent.SimBall) -> Dictionary:
+	return preload("res://src/sim/ai_contact.gd").plan({
+		"x": paddle.x, "y": paddle.y, "speed": paddle.speed, "skill": paddle.skill,
+		"width": contact_width(paddle, ball), "depth": paddle.reach * float(Frozen.balance()["aiDepthReach"]),
+		"reaction": state.aiReactionDelay,
+	}, {
+		"x": ball.x, "y": ball.y, "z": ball.z, "vx": ball.vx, "vy": ball.vy, "vz": ball.vz,
+		"spin": ball.spin, "backspin": ball.backspin, "topspin": ball.topspin,
+		"bounces": ball.bounces["ai"], "serve": ball.serveInFlight,
+		"fault": ball.netFaultOwner != null, "incoming": ball_playable_direction("ai", ball),
+	}, Frozen.court(), Frozen.balance())
+
+
 static func best_responder(state: State) -> Dictionary:
 	var back := responder_forecast(state.player, state.ball)
 	var net := responder_forecast(state.playerMate, state.ball)
@@ -2399,6 +2413,11 @@ static func move_opponent_team(state: State, dt: float) -> void:
 		support_target_y = float(court["top"]) + 84.0
 		state.aiTeamShape = "reset"
 
+	if defending:
+		var plan := ai_contact_plan(state, primary, ball)
+		if bool(plan["wait"]):
+			primary_target_x = float(plan["x"])
+			primary_target_y = float(plan["y"])
 	var reading_incoming_shot: bool = defending and state.aiReceiverLocked and state.aiReactionDelay > 0.0
 	if not reading_incoming_shot:
 		move_paddle_to(primary, primary_target_x, primary_target_y, dt)
@@ -2501,7 +2520,9 @@ static func update_doubles_ai(state: State, dt: float) -> void:
 			responder = paddle
 			break
 	if responder != null and controllable_height and state.aiReactionDelay <= 0.0:
-		hit_ball(state, responder, 0.88 + float(ai["skill"]) * 0.12)
+		var plan := ai_contact_plan(state, responder, ball)
+		if not bool(plan["wait"]):
+			hit_ball(state, responder, 0.88 + float(ai["skill"]) * 0.12)
 
 
 static func control_paddle_charge(state: State, paddle: Ent.SimPaddle, input: Dictionary, dt: float) -> void:

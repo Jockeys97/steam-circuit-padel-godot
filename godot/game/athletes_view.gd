@@ -64,12 +64,15 @@ var _gait: Dictionary = {}           # role -> StringName, so the clip is set on
 var _swing_seen: Dictionary = {}     # role -> bool
 var _last_stroke: Dictionary = {}    # role -> StringName
 var _colors: Dictionary = {}
-var _racket_on_hand: Dictionary = {} # role -> bool; only standard Mixamo rigs
+var _previous_positions: Dictionary = {}
+var _split_remaining: Dictionary = {}
+var _previous_hitter: String = ""
+var _racket_on_hand: Dictionary = {} # role -> bool; standard and legacy rigs
 
 ## The racket root is the centre of its face. Its grip centre is 0.2405 m below
-## that root (`court.gd::make_racket_view`), so +0.24 along the hand/finger axis
-## puts the exported RightHand bone in the middle of the grip instead of the face.
-const RACKET_HAND_LOCAL := Vector3(0.0, 0.24, 0.0)
+## that root (`court.gd::make_racket_view`). Another 6 cm along the hand axis
+## seats the grip inside the palm rather than centring it on the wrist joint.
+const RACKET_HAND_LOCAL := Vector3(0.0, 0.30, 0.0) # grip centre 6 cm into the palm
 const RACKET_HAND_ROTATION := Vector3.ZERO
 
 
@@ -92,6 +95,8 @@ func spawn(lineup: Dictionary, outfit_map: Dictionary, colors: Dictionary,
 		styles: Dictionary = {}) -> int:
 	var started := Time.get_ticks_msec()
 	_colors = colors
+	_previous_hitter = ""
+	_previous_positions.clear()
 	spawn_rigs = 0
 	for role in ROLES:
 		if not lineup.has(role):
@@ -109,20 +114,27 @@ func spawn(lineup: Dictionary, outfit_map: Dictionary, colors: Dictionary,
 			load_errors += 1
 			continue
 		add_child(rig)
-		# Standard Meshy/Mixamo athletes carry the racket on the actual wrist bone.
-		# The legacy Volpe skeleton is deliberately left on the old body-relative
-		# placement; AthleteRig rejects it rather than guessing across incompatible
-		# units and axes.
+		# Both skeleton families use +Y along the hand. Legacy exports are in cm;
+		# compensate only the internal skeleton scale, preserving athlete scaling.
 		var racket_parent: Node3D = rig
-		var hand_anchor: BoneAttachment3D = rig.make_standard_bone_attachment(
-			&"RightHand", StringName("RacketAnchor_%s" % role))
+		var hand_anchor: BoneAttachment3D = rig.make_hand_attachment(
+			StringName("RacketAnchor_%s" % role))
 		var on_hand := hand_anchor != null
 		if on_hand:
 			racket_parent = hand_anchor
 		var style: StringName = _racket_style(role, athlete_id, styles)
 		var racket := Court.make_racket_view(racket_parent, "Racket_%s" % role, _color_of(role), style)
 		if on_hand:
-			racket.position = RACKET_HAND_LOCAL
+			var skeleton: Skeleton3D = rig.get_skeleton()
+			var chain := Transform3D.IDENTITY
+			var ancestor: Node = skeleton
+			while ancestor != rig and ancestor is Node3D:
+				chain = (ancestor as Node3D).transform * chain
+				ancestor = ancestor.get_parent()
+			var internal_scale := chain.basis.get_scale()
+			var unit_scale := Vector3.ONE / internal_scale
+			racket.scale = unit_scale
+			racket.position = RACKET_HAND_LOCAL * unit_scale
 			racket.rotation_degrees = RACKET_HAND_ROTATION
 		rigs[role] = rig
 		rackets[role] = racket
@@ -133,6 +145,7 @@ func spawn(lineup: Dictionary, outfit_map: Dictionary, colors: Dictionary,
 		_gait[role] = &"idle"
 		_swing_seen[role] = false
 		_last_stroke[role] = &""
+		_split_remaining[role] = 0.0
 		spawn_rigs += 1
 	spawn_ms = float(Time.get_ticks_msec() - started)
 	return spawn_rigs
@@ -177,9 +190,14 @@ func set_outfit(role: String, outfit_id: StringName) -> bool:
 ## Writes this tick's state onto every rig. Reads the sim, allocates nothing in
 ## the steady state (the only allocation is on an outfit change, which is a menu
 ## action, not a tick).
-func sync(state) -> void:
+func sync(state, delta: float = -1.0) -> void:
 	if rigs.is_empty() or state == null:
 		return
+	if delta < 0.0:
+		delta = minf(get_process_delta_time(), 0.05)
+	var hitter := String(state.lastHitterSide) if state.lastHitterSide != null else ""
+	var new_return: bool = hitter != "" and hitter != _previous_hitter and not state.serving
+	_previous_hitter = hitter
 	for role in ROLES:
 		if not rigs.has(role):
 			continue
@@ -190,32 +208,63 @@ func sync(state) -> void:
 		var base_yaw: float = 180.0 if role.begins_with("player") else 0.0
 		var sway: float = sin(float(paddle.runPhase) * 0.8) * 7.0 * float(paddle.motion)
 		rig.set_facing_degrees(base_yaw + sway)
-		_sync_gait(role, rig, paddle)
-		_sync_stroke(role, rig, paddle)
+		var current := Vector2(paddle.x, paddle.y)
+		var movement: Vector2 = current - _previous_positions.get(role, current)
+		_previous_positions[role] = current
+		# Teleports between points are not a running direction.
+		if movement.length() > 30.0: movement = Vector2.ZERO
+		var receiving: bool = (hitter == "ai") if role.begins_with("player") else (hitter == "player")
+		if new_return and receiving:
+			_split_remaining[role] = 0.18
+		_split_remaining[role] = maxf(0.0, float(_split_remaining[role]) - delta)
+		var prepare: bool = not state.serving and (float(paddle.charge) > 0.05 or (receiving and float(paddle.motion) < WALK_MOTION))
+		if not state.serving and role == state.activePlayerKey and float(state.shotCharge) > 0.05:
+			prepare = true
+		_sync_gait(role, rig, paddle, movement, prepare)
+		_sync_stroke(role, rig, paddle, float(state.ball.x))
+		# Small visual split step; never changes the simulated paddle coordinates.
+		var lift := sin(float(_split_remaining[role]) / 0.18 * PI) * 0.025
+		rig.set_split_step_lift(lift if receiving and not state.serving and not rig.is_stroking() else 0.0)
 		_sync_racket(role, paddle)
 
 
-func _sync_gait(role: String, rig: Node3D, paddle) -> void:
+func _sync_gait(role: String, rig: Node3D, paddle, movement := Vector2.ZERO, prepare := false) -> void:
 	var motion := float(paddle.motion)
-	var want: StringName = &"idle"
+	var want: StringName = &"ready"
 	if motion > RUN_MOTION:
 		want = &"run"
 	elif motion > WALK_MOTION:
 		want = &"walk"
+	if motion > WALK_MOTION and movement.length() > 0.01:
+		var forward := -movement.y if role.begins_with("player") else movement.y
+		var lateral := -movement.x if role.begins_with("player") else movement.x
+		if absf(lateral) > absf(forward) * 1.4:
+			want = &"shuffle_left" if lateral < 0.0 else &"shuffle_right"
+		elif forward < -absf(lateral) * 0.75:
+			want = &"backpedal"
+	elif prepare:
+		want = &"prepare"
+	# Motion is the simulation's smoothed activity signal. Only show settling
+	# when translation has stopped; never delay or move the simulated paddle.
+	elif motion > 0.03 and movement.length() < 0.01:
+		want = &"brake"
 	if _gait[role] != want:
 		_gait[role] = want
 		rig.play_locomotion(want)
-	rig.set_locomotion_speed_scale(clampf(motion, 0.25, 2.0))
+	rig.set_locomotion_speed_scale(1.0 if want in [&"idle", &"ready", &"brake", &"prepare"] else clampf(motion, 0.5, 2.0))
 
 
 ## The stroke is a one-shot on the rising edge of `paddle.swing`. `actionIntent`
 ## is the sim's own word for the shot; the mapping onto the rig's four strokes is
 ## this view's, and it is the only place it decides anything.
-func _sync_stroke(role: String, rig: Node3D, paddle) -> void:
+func _sync_stroke(role: String, rig: Node3D, paddle, ball_x: float = NAN) -> void:
 	var swinging := float(paddle.swing) > 0.0
 	if swinging and not _swing_seen[role]:
 		var recipe := stroke_recipe(String(paddle.actionIntent))
 		var stroke: StringName = recipe["clip"]
+		var imported := meshy_stroke_for(String(paddle.actionIntent), role, float(paddle.x), ball_x)
+		if imported in rig.get_stroke_names():
+			stroke = imported
 		var played: bool = rig.play_stroke_at(
 			stroke,
 			float(recipe["contact_phase"]),
@@ -223,7 +272,21 @@ func _sync_stroke(role: String, rig: Node3D, paddle) -> void:
 		) if rig.has_method("play_stroke_at") else rig.play_stroke(stroke)
 		if played:
 			_last_stroke[role] = stroke
-		_swing_seen[role] = swinging
+	_swing_seen[role] = swinging
+
+
+## Presentation only: use contact side, NOT swingSide (human swingSide is aim).
+## A +Z-facing right-handed rig holds its racket on local -X. The near team
+## faces the opposite direction, hence the sign reversal.
+static func meshy_stroke_for(intent: String, role: String, paddle_x: float, ball_x: float) -> StringName:
+	var word := intent.to_lower()
+	if word in ["drive", "safe-drive"]:
+		var local_side := (ball_x - paddle_x) * (-1.0 if role.begins_with("player") else 1.0)
+		return &"meshy_backhand" if is_finite(local_side) and local_side > 6.0 else &"meshy_drive"
+	if word.contains("smash"): return &"meshy_smash"
+	if word.contains("bandeja"): return &"meshy_bandeja"
+	if word == "slice": return &"meshy_slice"
+	return &""
 
 
 ## `actionIntent` (`js/game.js`) -> the rig's own stroke vocabulary
@@ -244,6 +307,10 @@ static func stroke_recipe(intent: String) -> Dictionary:
 	if word.contains("serve"):
 		clip = &"serve"
 		contact_phase = 0.30
+		speed_scale = 1.0
+	elif word == "volley" or word == "cut-volley":
+		clip = &"volley"
+		contact_phase = 0.5
 		speed_scale = 1.0
 	elif word.contains("lob") or word.contains("globo"):
 		clip = &"lob"

@@ -1,0 +1,61 @@
+{
+  "schema": "steam-circuit-padel-pro.coach-contract",
+  "schemaVersion": 1,
+  "what": "The single authoritative contract between the Godot coach adapter and the local loopback bridge in scripts/coach/jev_bridge.mjs. Both sides read THIS file: the adapter builds its candidate list and validates answers against it, the bridge builds the upstream request from it. There is no second copy of the category ids, the counters or the criteria text.",
+  "wire": {
+    "version": 1,
+    "path": "/coach/jev",
+    "maxRequestBytes": 8192,
+    "maxResponseBytes": 65536,
+    "defaultPort": 8787,
+    "portEnv": "COACH_PORT"
+  },
+  "upstream": {
+    "endpoint": "https://api.typesafe.ai/v1/systemone",
+    "model": "jev-latest",
+    "keyEnv": "TYPESAFE_API_KEY",
+    "timeoutMs": 8000,
+    "maxResponseBytes": 262144,
+    "note": "Fixed host, fixed path, no redirects, no automatic retries, no environment override. Docs: https://docs.typesafe.ai/api.md (POST /v1/systemone, model jev-latest, Authorization: Bearer <key>)."
+  },
+  "stats": {
+    "groups": {
+      "pointsWon": ["player", "ai"],
+      "aces": ["player", "ai"],
+      "winners": ["player", "ai"],
+      "errors": ["player", "ai"],
+      "doubleFaults": ["player", "ai"],
+      "smashWinners": ["player", "ai"]
+    },
+    "counters": ["rallyCount", "totalRallyHits", "longestRally"],
+    "maxValue": 9999,
+    "provenance": "Every name here is a key the ported simulation itself increments (godot/src/sim/sim.gd:1972-1987) and the result screen already renders (godot/src/ui/data/UiData.gd::result_view). The coach invents no counter: shot placement, court position and error causes are NOT measured and are never sent.",
+    "aggregation": "player is the aggregate of BOTH players on the human side of the court, so the coach calls these counters 'your side', never one individual's numbers.",
+    "matchWide": "rallyCount, totalRallyHits and longestRally count the WHOLE match, both sides together. They are never presented as your side's own rally numbers; the criteria and the sentences say 'the match' for them.",
+    "smashWinners": "smashWinners is NOT a subset of winners and does not contain it: a smash that wins the point is counted in winners, a smash the opponent fails to return is counted in smashWinners with no winner (godot/src/sim/sim.gd:2406-2413). The two are never added together."
+  },
+  "sufficiency": {
+    "minPointsPlayed": 8,
+    "minRallies": 6,
+    "minCandidates": 2,
+    "note": "Below these floors there is not enough measured match to advise on, and the adapter answers insufficient_data without calling the bridge at all. minCandidates counts DRILLABLE categories only (insufficient_data is appended afterwards and is not one of them), so a real call needs at least two drillable options beside it: one drillable option alone is a coin toss, not a judgment."
+  },
+  "confidenceGate": 0.5,
+  "confidenceGateNote": "Provisional and conservative: applied to TypeSafe's own Choice confidence, which is (options*peak - 1)/(options - 1) (https://docs.typesafe.ai/confidence.md). With the five declared categories a confidence of 0.5 means the chosen option holds at least 0.6 of the distribution; a looser reading of the same question is shown as uncertain rather than presented as advice.",
+  "question": {
+    "id": "coach_focus",
+    "type": "choice",
+    "instructions": {
+      "question": "Which single padel training focus do these measured match counters support best?",
+      "measurements": "Each grouped counter is measured for one side of the court: 'yourSide' is the human side, both players together; 'opponent' is the other pair. rallyCount, totalRallyHits and averageHitsPerRally count the whole match, both sides together, and are never one side's own. smashWinners and winners are separate endings and neither contains the other, so they are never added together. Nothing here records shot placement, court position, or why a ball was missed, so judge only from the numbers given and do not infer a cause.",
+      "rule": "Choose the focus whose own evidence is clearly present in the counters. Choose insufficient_data when no focus is supported by them, or when two focuses are equally supported."
+    },
+    "criteria": {
+      "serve_accuracy": "Serve: this side's own serve outcomes are the counters to weigh. doubleFaults are serve points this side lost; aces are serves the opponent did not return. Judge only these two numbers and the points played.",
+      "shot_accuracy": "Shot accuracy: this side's measured point endings are the counters to weigh, errors against winners. Both are endings the side produced; nothing here records why a ball went out.",
+      "rally_consistency": "Rally consistency: the match's measured rallies are the counters to weigh (averageHitsPerRally over rallyCount, both counted for the whole match), together with this side's errors.",
+      "net_finishing": "Finishing: the ratio of winners to pointsWon for this side is the counter to weigh. This is a count of endings, not a record of where the side was standing.",
+      "insufficient_data": "The measured counters do not describe this match well enough, or do not separate one focus from the others, so no single training focus can be named."
+    }
+  }
+}

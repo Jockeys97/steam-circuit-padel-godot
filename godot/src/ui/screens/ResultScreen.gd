@@ -40,6 +40,10 @@ const UiStrings := preload("res://src/ui/UiStrings.gd")
 const UiData := preload("res://src/ui/data/UiData.gd")
 const DemoGate := preload("res://src/ui/data/DemoGateAdapter.gd")
 const Config := preload("res://game/match_config.gd")
+## The optional coach block (see the file's own header, and `docs/agent-work/jev-coach/`).
+## Loaded here, not preloaded by the router: a screen that never shows a result still
+## carries no coach.
+const CoachPanelScript := preload("res://src/ui/coach/CoachPanel.gd")
 
 const SCREEN_ID := "result"
 
@@ -106,6 +110,11 @@ var _store_kind := CTA_WISHLIST
 var _objective_stars := 0
 var _match_objective: Dictionary = {}
 var _constructed := false
+## The coach block mounted under the card's own content, or null before `_build()`.
+var _coach = null
+## The exercise the coach's last advice links to, kept so the route can be asserted
+## without reading the panel's own nodes (see `_on_coach_drill_requested`).
+var _coach_drill_id: String = ""
 
 
 func _ready() -> void:
@@ -135,7 +144,10 @@ func enter(payload: Dictionary) -> void:
 
 
 func exit() -> void:
-	pass
+	# The coach's own rule: a reply that arrives after the player left is dropped, not
+	# painted (`godot/src/coach/coach_client.gd::cancel`).
+	if _coach != null:
+		_coach.cancel()
 
 
 func capture_states() -> Array[String]:
@@ -274,6 +286,7 @@ func render(payload: Dictionary) -> void:
 	_render_stats()
 	_render_objectives()
 	_render_cta()
+	_render_coach()
 
 
 # ---------------------------------------------------------------------------
@@ -720,8 +733,57 @@ func _build() -> void:
 	card.add_child(_stats_block())
 	card.add_child(_objectives_block())
 	card.add_child(_cta_block())
+	card.add_child(_coach_block())
 	card.add_child(_actions_row())
 	_register_focus()
+
+
+## The optional coach, mounted the way every other block is: one block under the card's
+## own content, with its sentences resolved by the coach's own table and its two controls
+## registered with the shell's focus model so a pad reaches them like any other button.
+func _coach_block() -> Control:
+	var panel = CoachPanelScript.new()
+	_coach = panel
+	panel.drill_requested.connect(_on_coach_drill_requested)
+	_shell.add_focus("CoachAnalyzeButton", _coach.analyze_control(), "coach-analyze", {"kind": "button"})
+	_shell.add_focus("CoachDrillButton", _coach.drill_control(), "coach-drill", {"kind": "button"})
+	return panel
+
+
+## Hand the block this match's own numbers, and whether the run behind it is one press
+## from continuing.
+func _render_coach() -> void:
+	if _coach == null:
+		return
+	_coach.show_result(_payload.get("result", {}), bool(_view.get("continue_pending", false)))
+
+
+## The coach's one route. It opens the EXISTING training screen with the recommended
+## exercise preselected, and it writes nothing: no `Config.pending_mode`, no
+## `Config.pending_exercise`, so a pending career or tournament continuation keeps the
+## run it was waiting for. Starting a drill from there is the drill screen's own,
+## pre-existing entry, exactly as reaching it from the menu is.
+func _on_coach_drill_requested(drill_id: String) -> bool:
+	_coach_drill_id = drill_id
+	var router := _router()
+	if router == null:
+		return false
+	if not bool(router.call("go_to", "drill", {})):
+		return false
+	var screen: Node = router.call("active_screen")
+	if screen != null and screen.has_method("select_exercise"):
+		screen.call("select_exercise", drill_id)
+	return true
+
+
+## The router this screen was mounted by, found the same way `go_to_menu` finds it.
+func _router() -> Node:
+	var node: Node = get_parent()
+	while node != null:
+		if node.has_method("go_to"):
+			return node
+		node = node.get_parent()
+	return null
 
 
 func _apply_column_width(centering: MarginContainer, column: VBoxContainer) -> void:
@@ -957,3 +1019,15 @@ func shown_message() -> String:
 
 func shown_rematch_label() -> String:
 	return (_control("RematchButton") as Button).text
+
+
+## The coach block, for a caller that has to drive its transport or read its state
+## (`godot/tests/ui/result_coach_audit.gd`).
+func coach_panel() -> Node:
+	_ensure()
+	return _coach
+
+
+## The exercise the coach's last press routed to, or "".
+func coach_route() -> String:
+	return _coach_drill_id

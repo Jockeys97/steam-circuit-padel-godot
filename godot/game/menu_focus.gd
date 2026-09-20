@@ -63,6 +63,15 @@ func _init(initial_screen: String = NavRoutes.ROOT_SCREEN) -> void:
 func add(id: String, node: Control, action: String, opts: Dictionary = {}) -> void:
 	if node == null:
 		return
+	# A registered Control IS a focus target — the screen declared it by naming it
+	# here — and `apply_focus()` paints the model's focus with `grab_focus()`. A
+	# `PanelContainer` card defaults to `FOCUS_NONE`, so `grab_focus()` refused it
+	# with the engine's own warning and the focus ring never landed on a mode,
+	# arena or athlete card: the model moved, the player saw nothing. Making the
+	# declaration true is what fixes the visible focus on every screen at once; the
+	# painting itself stays in this one place.
+	if node.focus_mode == Control.FOCUS_NONE:
+		node.focus_mode = Control.FOCUS_ALL
 	var spec := {
 		"id": id,
 		"action": action,
@@ -110,6 +119,18 @@ func action_of(id: String) -> String:
 ## of being restated. `is_visible_in_tree()` is the port's `offsetParent !== null`.
 func _target(spec: Dictionary) -> Dictionary:
 	var node: Control = spec["node"]
+	# A screen that rebuilt its view (the athlete picker, the wardrobe) frees the
+	# controls it replaced. Reading a freed Control is an engine error, not a `false`,
+	# so a dead node is answered here as what it is: not a target. The bridge re-reads
+	# the shell's controls on the same frame (`UiFocusBridge.refresh_if_rebuilt`), so
+	# this is the guard that keeps the frame between the two from throwing.
+	if node == null or not is_instance_valid(node):
+		return {
+			"id": String(spec["id"]), "rect": Rect2(), "kind": String(spec["kind"]),
+			"action": String(spec["action"]), "locked": bool(spec["locked"]),
+			"disabled": true, "hidden": true, "drawn": false,
+			"contains_buttons": bool(spec["contains_buttons"]),
+		}
 	var visible_now := node.is_visible_in_tree()
 	var disabled := bool(spec["disabled"]) or (node is BaseButton and (node as BaseButton).disabled)
 	return {
@@ -152,6 +173,12 @@ const KEY_DIRECTIONS := {
 }
 const KEY_CONFIRM := [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]
 const KEY_BACK := [KEY_ESCAPE]
+
+## `GAMEPAD_MENU_DEADZONE` (`js/main.js:146`), applied per axis by `gamepadAxis`
+## (`js/main.js:243-246`). It is the MENU's own deadzone, not the gameplay one:
+## `menu_nav.direction()` reads any non-zero stick value as a direction, so a stick
+## left un-filtered walks the focus on its own drift and on its own repeat clock.
+const MENU_STICK_DEADZONE := 0.28
 
 
 ## One keyboard event through the model. Returns
@@ -197,20 +224,103 @@ func _nothing() -> Dictionary:
 ## read the stick and the buttons, hand them to the model, get back what happened.
 ## `{dir, focus_moved, scrolled, confirm, back}` plus the model's own verdicts,
 ## already resolved into `{kind, action, target}` where a confirm/back happened.
-func poll_pad() -> Dictionary:
+##
+## `device` is the joypad the CALLER selected (`selectPrimaryGamepad`,
+## `js/main.js:259-272`): the first entry of the host's list is not necessarily the
+## pad in the player's hands, so the device is named from the outside rather than
+## assumed here — the gameplay samplers already pick their own seat the same way
+## (`match_controller._refresh_pads`).
+func poll_pad(device: int = 0) -> Dictionary:
 	_ensure()
-	var state := {
-		"stick_x": Input.get_joy_axis(0, JOY_AXIS_LEFT_X),
-		"stick_y": Input.get_joy_axis(0, JOY_AXIS_LEFT_Y),
-		"right_stick_y": Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y),
+	return step_pad(_pad_state(device))
+
+
+## A physical pad event reaches the focused screen before the next rendered frame.
+## On macOS that event can arrive a frame before `Input` exposes the same value through
+## `get_joy_axis` / `is_joy_button_pressed`; feeding it into this very model makes the
+## menu respond immediately, while the later poll sees the same held state and cannot
+## produce a second confirm or move. This is deliberately NOT UiFocusBridge.dispatch:
+## that owns a separate keyboard-style navigator and was the source of double moves.
+func handle_pad_event(event: InputEvent, device: int = 0) -> Dictionary:
+	_ensure()
+	var state := _pad_state(device)
+	if event is InputEventJoypadMotion:
+		var motion := event as InputEventJoypadMotion
+		match motion.axis:
+			JOY_AXIS_LEFT_X:
+				state["stick_x"] = _menu_value(motion.axis_value)
+			JOY_AXIS_LEFT_Y:
+				state["stick_y"] = _menu_value(motion.axis_value)
+			JOY_AXIS_RIGHT_Y:
+				state["right_stick_y"] = _menu_value(motion.axis_value)
+	elif event is InputEventJoypadButton:
+		var button := event as InputEventJoypadButton
+		var key := _menu_button_key(button.button_index)
+		if key != "":
+			(state["buttons"] as Dictionary)[key] = button.pressed
+	return step_pad(state)
+
+
+func _pad_state(device: int) -> Dictionary:
+	return {
+		"stick_x": _menu_axis(device, JOY_AXIS_LEFT_X),
+		"stick_y": _menu_axis(device, JOY_AXIS_LEFT_Y),
+		"right_stick_y": _menu_axis(device, JOY_AXIS_RIGHT_Y),
+		# The buttons are the model's own names, not Godot's: 0/1/2 are A/B/X and
+		# 12/13/14/15 are the D-pad (`js/main.js:940-951`). Godot's `JoyButton` enum
+		# is one behind the browser's from UP on (11..14) — the trap `project.godot`
+		# spells out at the top of its `[input]` block — so the D-pad is translated
+		# here instead of being renamed in the model.
 		"buttons": {
-			"0": Input.is_joy_button_pressed(0, JOY_BUTTON_A),
-			"1": Input.is_joy_button_pressed(0, JOY_BUTTON_B),
-			"2": Input.is_joy_button_pressed(0, JOY_BUTTON_X),
+			"0": _menu_button(device, JOY_BUTTON_A),
+			"1": _menu_button(device, JOY_BUTTON_B),
+			"2": _menu_button(device, JOY_BUTTON_X),
+			"12": _menu_button(device, JOY_BUTTON_DPAD_UP),
+			"13": _menu_button(device, JOY_BUTTON_DPAD_DOWN),
+			"14": _menu_button(device, JOY_BUTTON_DPAD_LEFT),
+			"15": _menu_button(device, JOY_BUTTON_DPAD_RIGHT),
 		},
 		"now_ms": float(Time.get_ticks_msec()),
 	}
-	return step_pad(state)
+
+
+static func _menu_value(value: float) -> float:
+	return 0.0 if absf(value) < MENU_STICK_DEADZONE else value
+
+
+## `gamepadAxis` (`js/main.js:243-246`): one axis, centred by the menu's own
+## deadzone before the model ever sees it. `NO_DEVICE` — the seat the caller selected
+## when nobody is connected — reads as centred, so a caller may pass its own seat
+## through without asking twice whether a pad exists.
+static func _menu_axis(device: int, axis: JoyAxis) -> float:
+	if device < 0:
+		return 0.0
+	return _menu_value(Input.get_joy_axis(device, axis))
+
+
+## The same for a button: no pad means every button reads released, which is what
+## keeps the model's confirm/back edges quiet rather than stuck down.
+static func _menu_button(device: int, button: JoyButton) -> bool:
+	return device >= 0 and Input.is_joy_button_pressed(device, button)
+
+
+static func _menu_button_key(button: JoyButton) -> String:
+	match button:
+		JOY_BUTTON_A:
+			return "0"
+		JOY_BUTTON_B:
+			return "1"
+		JOY_BUTTON_X:
+			return "2"
+		JOY_BUTTON_DPAD_UP:
+			return "12"
+		JOY_BUTTON_DPAD_DOWN:
+			return "13"
+		JOY_BUTTON_DPAD_LEFT:
+			return "14"
+		JOY_BUTTON_DPAD_RIGHT:
+			return "15"
+	return ""
 
 
 ## The same, with a caller-supplied frame: the slice test drives the pad with
@@ -245,7 +355,10 @@ func pad_connected(connected: bool) -> void:
 ## The Control the model's focus currently names, or null.
 func focus_node() -> Control:
 	_ensure()
-	return _nodes.get(menu.focus_id(), null)
+	var node: Control = _nodes.get(menu.focus_id(), null)
+	# The same guard `_target()` states: a freed Control is not a node to paint on, and
+	# returning it is the engine error a rebuilt view used to raise.
+	return node if node != null and is_instance_valid(node) else null
 
 
 ## The id of the target the model's focus is on, or "". The screen's own report
@@ -299,6 +412,13 @@ func reachable_ids() -> Array:
 	var targets: Array = menu.nav.targets()
 	if targets.is_empty():
 		return []
+	# The walk MOVES the model's focus to ask "can I get there from here", so the
+	# focus the player had is saved first and put back at the end. Without this the
+	# walk left the focus on whatever it visited last: a report or an audit that
+	# asked the reachability question silently teleported the player across the
+	# screen, and `set_focus(menu.nav.focus_id())` restored the value the walk had
+	# already overwritten — a no-op dressed as a restore.
+	var restore: String = menu.nav.focus_id()
 	var start := String(targets[0]["id"])
 	var seen := {start: true}
 	var queue: Array = [start]
@@ -313,7 +433,8 @@ func reachable_ids() -> Array:
 			if not seen.has(next_id):
 				seen[next_id] = true
 				queue.append(next_id)
-	menu.nav.set_focus(menu.nav.focus_id())
+	menu.nav.set_focus(restore)
+	menu.nav.ensure_focus()
 	var out: Array = seen.keys()
 	out.sort()
 	return out

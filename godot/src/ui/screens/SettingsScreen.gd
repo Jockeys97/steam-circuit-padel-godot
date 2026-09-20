@@ -424,26 +424,31 @@ func _group(node_name: String, title_node: String, body: Control) -> VBoxContain
 	group.add_theme_constant_override("separation", 10)
 	var title := Label.new()
 	title.name = title_node
-	title.add_theme_font_size_override("font_size", Rows.TITLE_SIZE + 2)
-	title.modulate.a = 0.8
+	title.theme_type_variation = &"LabelSmall"
 	group.add_child(title)
 	group.add_child(body)
 	return group
 
 
 func _language_body() -> Control:
+	var box := PanelContainer.new()
+	box.name = "LanguageBox"
+	box.theme_type_variation = &"SegmentedContainer"
 	var seg := HBoxContainer.new()
 	seg.name = "LanguageSeg"
 	seg.add_theme_constant_override("separation", 0)
+	box.add_child(seg)
 	for lang in LANGS:
 		var button := Button.new()
 		button.name = "Lang_%s" % lang
 		button.text = lang.to_upper()
 		button.toggle_mode = true
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.custom_minimum_size = Vector2(0.0, 36.0)
 		button.pressed.connect(set_language.bind(lang))
 		seg.add_child(button)
 		_lang_buttons[lang] = button
-	return seg
+	return box
 
 
 func _accessibility_body() -> Control:

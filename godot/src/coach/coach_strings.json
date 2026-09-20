@@ -1,0 +1,50 @@
+{
+  "schema": "steam-circuit-padel-pro.coach-strings",
+  "schemaVersion": 1,
+  "what": "The coach's own player-facing strings, Italian first with an English table, loaded by godot/src/coach/coach_text.gd. They live HERE and not in godot/src/locale/locale_data.gd because that file is generated from the frozen browser reference (js/i18n.js) and verified byte-for-byte by tools/i18n-port/verify-i18n-port.mjs: the reference has no coach, so these ids cannot come from it, and a hand-written key would be dropped by the next regeneration. Same resolution chain as the port's locale layer: requested locale, then the fallback locale, then the id itself.",
+  "locales": ["it", "en"],
+  "fallback": "it",
+  "placeholders": "{name}, the port's own syntax (godot/src/locale/locale.gd::substitute)",
+  "strings": {
+    "it": {
+      "coachTitle": "ALLENATORE JEV",
+      "coachDisclosure": "Facoltativo: Jev legge solo i numeri misurati di questa partita e li manda a TypeSafe dal tuo computer. Niente parte da solo.",
+      "coachAggregate": "I numeri del tuo lato sommano entrambi i giocatori; scambi e media colpi contano tutta la partita.",
+      "coachAnalyze": "Analizza con Jev",
+      "coachLoading": "Jev sta leggendo la partita...",
+      "coachInsufficient": "Questa partita ha troppi pochi numeri misurati per un consiglio: gioca qualche scambio in più e torna qui.",
+      "coachUnavailable": "Jev non risponde: nessuna analisi. Il servizio locale è spento o non raggiungibile.",
+      "coachInvalid": "La risposta di Jev non è verificabile: nessun consiglio.",
+      "coachRetry": "Riprova",
+      "coachUncertain": "Jev ha letto la partita ma non sceglie un esercizio con abbastanza sicurezza: questi sono i numeri, senza consigli.",
+      "coachEvidence": "Il tuo lato: {errors} errori, {winners} vincenti, {aces} ace, {doubleFaults} doppi falli. La partita: {rallies} scambi, {averageRally} colpi di media.",
+      "coachAdviceServe": "Il tuo lato ha messo {aces} ace e {doubleFaults} doppi falli.",
+      "coachAdviceShot": "Il tuo lato ha chiuso {winners} punti con un vincente e ne ha persi {errors} con un errore.",
+      "coachAdviceRally": "Nella partita gli scambi durano in media {averageRally} colpi su {rallies} scambi, con {errors} errori del tuo lato.",
+      "coachAdviceFinish": "Il tuo lato ha chiuso {winners} punti con un vincente su {pointsWon} punti vinti.",
+      "coachExercise": "Esercizio consigliato: {drill}",
+      "coachOpenDrill": "Apri l'allenamento",
+      "coachDrillBlocked": "Il match in attesa non viene toccato: l'allenamento completo si apre dal menu."
+    },
+    "en": {
+      "coachTitle": "JEV COACH",
+      "coachDisclosure": "Optional: Jev reads only the measured numbers of this match and sends them to TypeSafe from your computer. Nothing runs on its own.",
+      "coachAggregate": "Your side's numbers add both players together; rallies and hits per rally count the whole match.",
+      "coachAnalyze": "Analyze with Jev",
+      "coachLoading": "Jev is reading the match...",
+      "coachInsufficient": "This match has too few measured numbers to advise on: play a few more rallies and come back.",
+      "coachUnavailable": "Jev is not answering: no analysis. The local service is off or unreachable.",
+      "coachInvalid": "Jev's answer cannot be verified: no advice.",
+      "coachRetry": "Try again",
+      "coachUncertain": "Jev read the match but will not pick an exercise with enough certainty: here are the numbers, without advice.",
+      "coachEvidence": "Your side: {errors} errors, {winners} winners, {aces} aces, {doubleFaults} double faults. The match: {rallies} rallies, {averageRally} hits per rally.",
+      "coachAdviceServe": "Your side served {aces} aces and {doubleFaults} double faults.",
+      "coachAdviceShot": "Your side closed {winners} points with a winner and lost {errors} to an error.",
+      "coachAdviceRally": "Across the match rallies averaged {averageRally} hits over {rallies} rallies, with {errors} errors from your side.",
+      "coachAdviceFinish": "Your side closed {winners} points with a winner out of {pointsWon} points won.",
+      "coachExercise": "Recommended exercise: {drill}",
+      "coachOpenDrill": "Open the training",
+      "coachDrillBlocked": "The pending match is left untouched: the full training opens from the menu."
+    }
+  }
+}

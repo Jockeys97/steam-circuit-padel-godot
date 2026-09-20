@@ -1,0 +1,58 @@
+{
+  "smash_motion": {
+    "reserved": 10,
+    "request_started": true,
+    "id": "01a0c032-e797-765d-9ac6-38a53c9469fe",
+    "status": "SUCCEEDED",
+    "credits": 10
+  },
+  "smash_animation": {
+    "reserved": 3,
+    "request_started": true,
+    "id": "01a0c033-2deb-72bf-9048-bc785a7cee48",
+    "status": "SUCCEEDED",
+    "credits": 3
+  },
+  "bandeja_motion": {
+    "reserved": 10,
+    "request_started": true,
+    "id": "01a0c033-7393-74d6-81fb-178b8da9d062",
+    "status": "SUCCEEDED",
+    "credits": 10
+  },
+  "bandeja_animation": {
+    "reserved": 3,
+    "request_started": true,
+    "id": "01a0c033-b9ef-756c-a315-3dbe4d76bae1",
+    "status": "SUCCEEDED",
+    "credits": 3
+  },
+  "backhand_motion": {
+    "reserved": 10,
+    "request_started": true,
+    "id": "01a0c033-ff67-73b7-8b36-a2b5a8df8c37",
+    "status": "SUCCEEDED",
+    "credits": 10
+  },
+  "backhand_animation": {
+    "reserved": 3,
+    "request_started": true,
+    "id": "01a0c034-82e6-70e6-b0d0-d14f5e180f6b",
+    "status": "SUCCEEDED",
+    "credits": 3
+  },
+  "slice_motion": {
+    "reserved": 10,
+    "request_started": true,
+    "id": "01a0c034-c88b-70ec-87a7-64e0133ca4e6",
+    "status": "SUCCEEDED",
+    "credits": 10
+  },
+  "slice_animation": {
+    "reserved": 3,
+    "request_started": true,
+    "id": "01a0c035-0f27-7686-8cba-8a702b359d87",
+    "status": "SUCCEEDED",
+    "credits": 3
+  }
+}

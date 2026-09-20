@@ -21,8 +21,9 @@
 ## control as `<screen_id>/back`. `focus_controls()` is what the bridge reads.
 ##
 ## The safe-area margin is `godot/game/hud.gd:75`'s own number, kept as a constant
-## and applied to the layout here, so the later theme pass (UIR-02) has one place to
-## change it.
+## and applied to the layout here. Header type roles (back / title / subtitle) are
+## the theme's own variations, applied once here so every router screen matches the
+## reference chrome (`.btn--ghost`, `.screen-header h2`, `.screen-header p`).
 ##
 ## NODES ARE RESOLVED LAZILY (`_ensure_nodes`), not with `@onready`: a screen enters
 ## the router's host before the host is necessarily inside a tree — that is exactly
@@ -39,6 +40,12 @@ const SAFE_MARGIN := 8.0
 ## The suffix the back control registers under (`"<screen_id>/back"`).
 const BACK_SUFFIX := "back"
 
+## The back control's label, as the reference writes it in its own markup
+## (`index.html:312`: `data-i18n="back"` → IT `← Indietro`, EN `← Back`). The docstring
+## above has always named this id; nothing assigned it, so every screen mounted in this
+## shell showed a styled but wordless back button.
+const BACK_LABEL := "back"
+
 ## The router id this shell belongs to (`""` until `setup()`).
 var screen_id: String = ""
 
@@ -46,6 +53,7 @@ var screen_id: String = ""
 var back_target_id: String = ""
 
 var _margin: MarginContainer
+var _title_row: HBoxContainer
 var _back: Button
 var _title: Label
 var _subtitle: Label
@@ -98,6 +106,7 @@ func set_back_target(target_id: String) -> void:
 	back_target_id = target_id
 	_back.visible = target_id != ""
 	_back.disabled = target_id == ""
+	_apply_back_label()
 	if target_id == "":
 		_focus_specs.erase(BACK_SUFFIX)
 		return
@@ -168,11 +177,40 @@ func _ensure_nodes() -> void:
 	if _back != null:
 		return
 	_margin = $Margin
+	_title_row = $Margin/Rows/TitleRow
 	_back = $Margin/Rows/TitleRow/BackButton
 	_title = $Margin/Rows/TitleRow/TitleBlock/Title
 	_subtitle = $Margin/Rows/TitleRow/TitleBlock/Subtitle
 	_content = $Margin/Rows/Content
 	_apply_safe_area()
+	_style_chrome()
+	_apply_back_label()
+
+
+## Re-reads the label the reference's own markup carries (`index.html:312`). A door a
+## screen calls from its own `refresh_strings()` so a language flip reaches the header:
+## the reference rewrites every `data-i18n` node on `applyLanguage` (`js/ui.js:1667-1673`),
+## header included, while a label written once would keep the language it was built in.
+func refresh_strings() -> void:
+	_ensure_nodes()
+	_apply_back_label()
+
+
+func _apply_back_label() -> void:
+	if _back != null:
+		_back.text = UiStrings.t(BACK_LABEL)
+
+
+## `.screen-header` (`styles.css:280-296`): ghost back, Lilita title, muted subtitle,
+## 24 px gap. Applied here so a screen that never writes `_style_chrome()` still
+## matches the reference instead of falling through to the unstyled Button/Label.
+func _style_chrome() -> void:
+	_title_row.add_theme_constant_override("separation", 24)
+	_back.theme_type_variation = &"ButtonGhost"
+	_title.theme_type_variation = &"ScreenTitle"
+	_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_subtitle.theme_type_variation = &"ScreenSubtitle"
+	_subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 
 func _apply_safe_area() -> void:

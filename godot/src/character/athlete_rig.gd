@@ -105,14 +105,16 @@ const GLB_RUN := "res://assets/athletes/volpe-running.glb"
 ## MUST have an entry here the day it is offered.
 const ATHLETE_GLB := {
 	&"colosso": "res://assets/athletes/colosso.glb",
-	&"maestro": "res://assets/athletes/maestro-rigged.glb",
+	&"maestro": "res://assets/athletes/maestro.glb",
+	&"fiamma": "res://assets/athletes/fiamma.glb",
+	&"oracolo": "res://assets/athletes/oracolo.glb",
 	&"fornaio": "res://assets/athletes/maestro-rigged.glb",
 }
 
 const CLIP_IDLE := &"idle"
 const CLIP_WALK := &"walk"
 const CLIP_RUN := &"run"
-const LOCOMOTION := [CLIP_IDLE, CLIP_WALK, CLIP_RUN]
+const LOCOMOTION := [CLIP_IDLE, CLIP_WALK, CLIP_RUN, &"shuffle_left", &"shuffle_right", &"backpedal", &"prepare", &"ready", &"brake"]
 
 ## Athletes whose rigged base does not carry every locomotion clip: athlete id ->
 ## { clip name -> res:// path of a single-clip companion GLB }. Maestro's rigged
@@ -306,8 +308,154 @@ func _build() -> int:
 	if not lib.has_animation(CLIP_RUN) and _glb_run_path != "":
 		_adopt_clip(lib, _glb_run_path, CLIP_RUN)
 
+	if _athlete_id == &"fiamma":
+		_author_ready_idle(lib)
+	_complete_idle_tracks(lib)
+	_author_footwork(lib)
 	_author_strokes(lib)
+	if _athlete_id in [&"fiamma", &"colosso", &"oracolo", &"maestro", &"fornaio", &"pantera", &"steamer"]:
+		for shot in ["drive", "smash", "bandeja", "backhand", "slice"]:
+			var motion_path := "res://assets/athletes/animations/%s_meshy_%s.tres" % [_athlete_id,shot]
+			if ResourceLoader.exists(motion_path):
+				var motion := load(motion_path) as Animation
+				if motion != null:
+					var clip_name := StringName("meshy_" + shot)
+					lib.add_animation(clip_name, motion)
+					_strokes[clip_name] = motion.length
 	return OK
+
+
+## Imported holds omit constant tracks. Fill those so any stroke can recover
+## to idle without leaving the last shoulder/leg rotation behind.
+func _complete_idle_tracks(lib: AnimationLibrary) -> void:
+	var idle: Animation = lib.get_animation(CLIP_IDLE).duplicate(true)
+	for index in _skeleton.get_bone_count():
+		var path := NodePath("%s:%s" % [_track_prefix, _skeleton.get_bone_name(index)])
+		var rest := _skeleton.get_bone_rest(index)
+		for type in [Animation.TYPE_ROTATION_3D, Animation.TYPE_POSITION_3D, Animation.TYPE_SCALE_3D]:
+			if idle.find_track(path, type) >= 0:
+				continue
+			var track := idle.add_track(type)
+			idle.track_set_path(track, path)
+			for time in [0.0, idle.length]:
+				if type == Animation.TYPE_ROTATION_3D:
+					idle.rotation_track_insert_key(track, time, rest.basis.get_rotation_quaternion())
+				elif type == Animation.TYPE_POSITION_3D:
+					idle.position_track_insert_key(track, time, rest.origin)
+				else:
+					idle.scale_track_insert_key(track, time, rest.basis.get_scale())
+	lib.remove_animation(CLIP_IDLE)
+	lib.add_animation(CLIP_IDLE, idle)
+
+
+## In-place footwork. Feet/hips remain animation-only; no root-motion authority.
+func _author_footwork(lib: AnimationLibrary) -> void:
+	var idle := lib.get_animation(CLIP_IDLE)
+	for name in [&"shuffle_left", &"shuffle_right", &"backpedal", &"prepare", &"ready", &"brake"]:
+		var anim: Animation = idle.duplicate(true)
+		anim.length = 0.64 if name != &"prepare" else 1.2
+		if name == &"ready": anim.length = 2.8
+		if name == &"brake": anim.length = 0.38
+		anim.loop_mode = Animation.LOOP_LINEAR
+		if name == &"brake": anim.loop_mode = Animation.LOOP_NONE
+		# Freeze the underlying idle, including any imported hip translation.
+		for track in anim.get_track_count():
+			var value: Variant = anim.track_get_key_value(track, 0)
+			while anim.track_get_key_count(track) > 0:
+				anim.track_remove_key(track, 0)
+			anim.track_insert_key(track, 0.0, value)
+			anim.track_insert_key(track, anim.length, value)
+		for bone in ["LeftUpLeg", "RightUpLeg", "LeftLeg", "RightLeg", "Spine", "LeftArm", "RightArm", "RightForeArm"]:
+			var path := NodePath("%s:%s" % [_track_prefix, _resolve_bone_name(bone)])
+			var track := anim.find_track(path, Animation.TYPE_ROTATION_3D)
+			if track < 0:
+				continue
+			var neutral: Quaternion = idle.rotation_track_interpolate(track, 0.0)
+			while anim.track_get_key_count(track) > 0:
+				anim.track_remove_key(track, 0)
+			for step in range(9):
+				var phase := float(step) / 8.0
+				var wave := sin(phase * TAU) * (-1.0 if bone.begins_with("Right") else 1.0)
+				var offset := Vector3.ZERO
+				if name == &"brake":
+					var settle := sin(phase * PI)
+					if bone.ends_with("UpLeg"): offset.x = deg_to_rad(-8.0 * settle)
+					elif bone.ends_with("Leg"): offset.x = deg_to_rad(14.0 * settle)
+					elif bone == "Spine": offset.x = deg_to_rad(5.0 * settle)
+					elif bone.ends_with("Arm"): offset.x = deg_to_rad(-4.0 * settle)
+				elif name == &"ready":
+					if bone == "Spine": offset = Vector3(deg_to_rad(sin(phase * TAU) * 1.2), 0, deg_to_rad(wave * 1.5))
+					elif bone.ends_with("UpLeg"): offset.x = deg_to_rad(-3.0 + wave)
+					elif bone.ends_with("Leg"): offset.x = deg_to_rad(5.0 - wave)
+					elif bone == "RightForeArm": offset.z = deg_to_rad(-8.0 + wave)
+				elif name == &"prepare":
+					if bone == "RightArm": offset.x = deg_to_rad(-12.0)
+					if bone == "RightForeArm": offset.z = deg_to_rad(-16.0)
+					if bone == "Spine": offset.x = deg_to_rad(-3.0 + sin(phase * TAU))
+					if bone.ends_with("UpLeg"): offset.x = deg_to_rad(-6.0)
+					elif bone.ends_with("Leg"): offset.x = deg_to_rad(10.0)
+				elif bone.ends_with("UpLeg"):
+					if name == &"backpedal": offset.x = deg_to_rad(-wave * 18.0)
+					else: offset.z = deg_to_rad(wave * (10.0 if name == &"shuffle_left" else -10.0))
+				elif bone.ends_with("Leg"):
+					offset.x = deg_to_rad(maxf(0.0, wave) * 16.0)
+				elif bone == "Spine":
+					offset.z = deg_to_rad(wave * 2.0)
+					offset.x = deg_to_rad(-3.0)
+				elif bone == "RightForeArm":
+					offset.z = deg_to_rad(-12.0)
+				elif bone.ends_with("Arm"):
+					offset.x = deg_to_rad(wave * 4.0)
+				anim.rotation_track_insert_key(track, phase * anim.length, (neutral * Quaternion.from_euler(offset)).normalized())
+		lib.add_animation(name, anim)
+
+
+## The exported restpose is a T-pose, not an idle. Keep its planted lower body
+## and use the athlete's own walking arm rotations for a relaxed ready stance.
+## Breathing is cyclic; no translation/root motion is introduced.
+func _author_ready_idle(lib: AnimationLibrary) -> void:
+	if not lib.has_animation(CLIP_IDLE) or not lib.has_animation(CLIP_WALK):
+		return
+	var idle: Animation = lib.get_animation(CLIP_IDLE).duplicate(true)
+	var walk := lib.get_animation(CLIP_WALK)
+	idle.length = 3.2
+	idle.loop_mode = Animation.LOOP_LINEAR
+	# GLTF import drops constant rest tracks. Explicitly key every bone so idle
+	# also clears rotations/positions left by the preceding run or stroke.
+	for index in _skeleton.get_bone_count():
+		var bone_path := NodePath("%s:%s" % [_track_prefix, _skeleton.get_bone_name(index)])
+		var rest := _skeleton.get_bone_rest(index)
+		for type in [Animation.TYPE_ROTATION_3D, Animation.TYPE_POSITION_3D, Animation.TYPE_SCALE_3D]:
+			if idle.find_track(bone_path, type) >= 0:
+				continue
+			var track := idle.add_track(type)
+			idle.track_set_path(track, bone_path)
+			for time in [0.0, idle.length]:
+				if type == Animation.TYPE_ROTATION_3D:
+					idle.rotation_track_insert_key(track, time, rest.basis.get_rotation_quaternion())
+				elif type == Animation.TYPE_POSITION_3D:
+					idle.position_track_insert_key(track, time, rest.origin)
+				else:
+					idle.scale_track_insert_key(track, time, rest.basis.get_scale())
+	for bone in ["LeftArm", "RightArm", "LeftForeArm", "RightForeArm", "Spine", "Spine1"]:
+		var path := NodePath("%s:%s" % [_track_prefix, _resolve_bone_name(bone)])
+		var ti := idle.find_track(path, Animation.TYPE_ROTATION_3D)
+		if ti < 0:
+			continue
+		var neutral: Quaternion = idle.rotation_track_interpolate(ti, 0.0)
+		var wi := walk.find_track(path, Animation.TYPE_ROTATION_3D)
+		if "Arm" in bone and wi >= 0:
+			neutral = walk.rotation_track_interpolate(wi, 0.0).slerp(
+				walk.rotation_track_interpolate(wi, walk.length * 0.5), 0.5)
+		while idle.track_get_key_count(ti) > 0:
+			idle.track_remove_key(ti, 0)
+		for step in range(9):
+			var phase := float(step) / 8.0
+			var breath := sin(phase * TAU) * deg_to_rad(0.8 if bone.begins_with("Spine") else 0.5)
+			idle.rotation_track_insert_key(ti, phase * idle.length,
+				(neutral * Quaternion(Vector3.RIGHT, breath)).normalized())
+	lib.remove_animation(CLIP_IDLE)
+	lib.add_animation(CLIP_IDLE, idle)
 
 
 ## Loads `path`, lifts its single animation into `lib` under `clip_name`, frees the
@@ -402,6 +550,14 @@ func _find_first(n: Node, cls: String) -> Node:
 # and to measure in a test — they are not a proposed animation style.
 
 const STROKE_SPECS := {
+	&"volley": {
+		"length": 0.36,
+		"keys": {
+			"Spine": [[0.0, [0, 0, 0]], [0.10, [-3, 10, 0]], [0.18, [2, -8, 0]], [0.36, [0, 0, 0]]],
+			"RightArm": [[0.0, [0, 0, 0]], [0.10, [-15, 12, -12]], [0.18, [5, -14, 10]], [0.36, [0, 0, 0]]],
+			"RightForeArm": [[0.0, [0, 0, 0]], [0.10, [0, 0, -20]], [0.18, [0, 0, -8]], [0.36, [0, 0, 0]]],
+		},
+	},
 	&"drive": {
 		"length": 0.62,
 		"keys": {
@@ -454,10 +610,18 @@ const STROKE_SPECS := {
 func _author_strokes(lib: AnimationLibrary) -> void:
 	for name in STROKE_SPECS:
 		var spec: Dictionary = STROKE_SPECS[name]
-		var anim := Animation.new()
+		var anim: Animation = lib.get_animation(CLIP_IDLE).duplicate(true)
 		anim.length = float(spec["length"])
 		anim.loop_mode = Animation.LOOP_NONE
 		anim.step = 0.0
+		# Own a full neutral pose: sparse clips otherwise reset unkeyed limbs to
+		# the imported T-pose when the mixer switches from locomotion.
+		for track in anim.get_track_count():
+			var value: Variant = anim.track_get_key_value(track, 0)
+			while anim.track_get_key_count(track) > 0:
+				anim.track_remove_key(track, 0)
+			anim.track_insert_key(track, 0.0, value)
+			anim.track_insert_key(track, anim.length, value)
 		var tracks := 0
 		for bone_name in (spec["keys"] as Dictionary):
 			var resolved_bone := _resolve_bone_name(String(bone_name))
@@ -466,8 +630,18 @@ func _author_strokes(lib: AnimationLibrary) -> void:
 				push_warning("AthleteRig: stroke '%s' references missing bone '%s'" % [name, bone_name])
 				continue
 			var rest_q: Quaternion = _skeleton.get_bone_rest(bone_idx).basis.get_rotation_quaternion()
-			var ti := anim.add_track(Animation.TYPE_ROTATION_3D)
-			anim.track_set_path(ti, NodePath("%s:%s" % [_track_prefix, resolved_bone]))
+			if lib.has_animation(CLIP_IDLE):
+				var idle := lib.get_animation(CLIP_IDLE)
+				var idle_track := idle.find_track(NodePath("%s:%s" % [_track_prefix, resolved_bone]), Animation.TYPE_ROTATION_3D)
+				if idle_track >= 0:
+					rest_q = idle.rotation_track_interpolate(idle_track, 0.0)
+			var path := NodePath("%s:%s" % [_track_prefix, resolved_bone])
+			var ti := anim.find_track(path, Animation.TYPE_ROTATION_3D)
+			if ti < 0:
+				ti = anim.add_track(Animation.TYPE_ROTATION_3D)
+				anim.track_set_path(ti, path)
+			while anim.track_get_key_count(ti) > 0:
+				anim.track_remove_key(ti, 0)
 			anim.track_set_interpolation_type(ti, Animation.INTERPOLATION_CUBIC)
 			for key in (spec["keys"] as Dictionary)[bone_name]:
 				var t := float(key[0])
@@ -645,6 +819,11 @@ func get_facing_degrees() -> float:
 	return _facing_degrees
 
 
+func set_split_step_lift(metres: float) -> void:
+	if _model_root != null:
+		_model_root.position.y = clampf(metres, 0.0, 0.025)
+
+
 func face_towards(target: Vector3) -> void:
 	var d := target - global_position
 	d.y = 0.0
@@ -663,7 +842,10 @@ func play_locomotion(state: StringName) -> bool:
 	_locomotion = state
 	if _stroke != &"":
 		return true          # a stroke is in flight; it resumes into the new state
-	return play_clip(state)
+	if _anim == null or not _anim.has_animation(state):
+		return false
+	_anim.play(state, 0.10)
+	return true
 
 
 func get_locomotion_state() -> StringName:
@@ -708,7 +890,7 @@ func play_stroke_at(stroke: StringName, contact_phase: float = 0.0,
 	_stroke = stroke
 	_stroke_speed_scale = maxf(speed_scale, 0.05)
 	_anim.speed_scale = _stroke_speed_scale
-	_anim.play(stroke)
+	_anim.play(stroke, 0.0) # Contact is authoritative: never blend away its first pose.
 	var length: float = float(_strokes[stroke])
 	_anim.seek(clampf(contact_phase, 0.0, 1.0) * length, true, true)
 	return true
@@ -754,7 +936,7 @@ func _on_animation_finished(anim_name: StringName) -> void:
 		stroke_finished.emit(anim_name)
 		if _anim != null:
 			_anim.speed_scale = _locomotion_speed_scale
-		play_clip(_locomotion)
+		_anim.play(_locomotion, 0.10)
 
 
 # =========================================================================
@@ -790,13 +972,29 @@ func get_skeleton() -> Skeleton3D:
 	return _skeleton
 
 
+## All shipped rigs expose a right wrist, including the centimetre-based legacy
+## exports. The caller must compensate the skeleton's unit scale for metre props.
+func make_hand_attachment(attachment_name: StringName = &"RacketAnchor") -> BoneAttachment3D:
+	_ensure_built()
+	if _skeleton == null:
+		return null
+	var resolved := _resolve_bone_name("RightHand")
+	if _skeleton.find_bone(resolved) < 0:
+		return null
+	var attachment := BoneAttachment3D.new()
+	attachment.name = String(attachment_name)
+	attachment.bone_name = resolved
+	_skeleton.add_child(attachment)
+	return attachment
+
+
 ## Creates a mount that follows one bone on the frozen 28-joint Mixamo standard.
 ##
 ## This intentionally rejects the 24-joint Volpe fallback even though it also has
 ## a `RightHand`: that export lives under an Armature scaled 0.01 and uses different
 ## bone axes. Silently applying the same racket offset there would make the racket
-## 100x too small or point it through the wrist. Legacy athletes keep the proven
-## body-relative fallback until they are regenerated on the standard skeleton.
+## 100x too small. Kept for standard-only callers; the match uses
+## make_hand_attachment and explicitly compensates the exported unit scale.
 func make_standard_bone_attachment(requested_bone: StringName,
 		attachment_name: StringName = &"BoneAttachment") -> BoneAttachment3D:
 	_ensure_built()

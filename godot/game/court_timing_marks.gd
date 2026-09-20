@@ -156,14 +156,13 @@ const TIMING_ENERGY_H := 0.13
 const TIMING_ADVICE_FONT_PX := 11.0
 const TIMING_ADVICE_BOX_LINES := 20.0 / 11.0
 const TIMING_ADVICE_PAD_LINES := 22.0 / 11.0
-## The three font sizes as integers: the reference's own pixel values read at this
-## frame's scale (11/14/9 * 1280/960 = 14.7 / 18.7 / 12), so `font_size *
-## TIMING_M_PER_PX` is the line height in metres and the word prints at that height
-## in pixels. The rounding is written out because a `const` in this file cannot call
-## `round()`.
-const TIMING_ADVICE_PX := 15
-const TIMING_VERDICT_PX := 19
-const TIMING_VERDICT_MODE_PX := 12
+## Restore the compact reference typography (11/14/9 at 60 reference pixels/m).
+## Keep ring and bar geometry independent from this text-only presentation scale.
+const TIMING_ADVICE_PX := 11
+const TIMING_VERDICT_PX := 14
+const TIMING_VERDICT_MODE_PX := 9
+## Compact world-space lettering, independent of the timing ring/bar scale.
+const TIMING_TEXT_M_PER_PX := 1.0 / 60.0
 ## The verdict over the athlete who hit (`js/render.js:1041-1069`): the grade word
 ## at `700 14px` with a 5 px `rgba(4, 14, 32, 0.9)` stroke, the mode line at
 ## `600 9px` fifteen pixels below it, and the whole thing rising `(0.78 - life) * 18`
@@ -171,7 +170,7 @@ const TIMING_VERDICT_MODE_PX := 12
 const TIMING_VERDICT_FONT_PX := 14.0
 const TIMING_VERDICT_MODE_FONT_PX := 9.0
 ## `p.fillText(feedback.mode, p.x, y + 15)` (`js/render.js:1068`), in metres.
-const TIMING_VERDICT_MODE_DROP := 15.0 * (1280.0 / 960.0) / 36.0
+const TIMING_VERDICT_MODE_DROP := 15.0 * TIMING_TEXT_M_PER_PX
 const TIMING_VERDICT_OUTLINE := Color(0.016, 0.055, 0.125, 0.9)
 ## The 18 px of upward drift over the feedback's 0.78 s life (`js/render.js:1062`),
 ## in metres at the reference's own sprite scale.
@@ -263,15 +262,13 @@ func mount(parent: Node3D) -> int:
 	_energy = _build_mesh("TimingEnergyFill", _bar_mesh(true),
 		_material(Vocabulary.FIELD_ENERGY_TEAL, true, 2))
 
-	# The advice word and its panel (`js/render.js:1730-1750`). The font size is the
-	# reference's own 11 px read at this frame's scale, and `pixel_size` is metres per
-	# screen pixel: font_size * pixel_size is therefore the word's height in metres,
-	# and it prints at 11 * 1280/960 = 15 px on the frame.
+	# Compact advice and panel: 11 reference pixels at 1/60 metre per pixel.
+	# Screen size follows the camera projection, not the viewport's raw pixels.
 	_advice = Label3D.new()
 	_advice.name = "TimingAdvice"
 	_advice.font = ThemeDB.fallback_font
 	_advice.font_size = TIMING_ADVICE_PX
-	_advice.pixel_size = TIMING_M_PER_PX
+	_advice.pixel_size = TIMING_TEXT_M_PER_PX
 	_advice.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	_advice.no_depth_test = true
 	_advice.render_priority = 3
@@ -282,7 +279,7 @@ func mount(parent: Node3D) -> int:
 
 	# The verdict over the athlete who hit (`js/render.js:1041-1069`): the grade word
 	# with the reference's dark stroke, and the mode line under it.
-	_verdict = _verdict_label("TimingVerdict", TIMING_VERDICT_PX, 7)
+	_verdict = _verdict_label("TimingVerdict", TIMING_VERDICT_PX, 5)
 	_verdict_mode = _verdict_label("TimingVerdictMode", TIMING_VERDICT_MODE_PX, 0)
 	return MARK_NAMES.size()
 
@@ -376,14 +373,14 @@ func update(state, finished: bool) -> Dictionary:
 		# (`js/render.js:1735-1742`) measured with the same font the label draws with,
 		# in the reference's own ratios to its font: one line of padding either side
 		# (22/11) in a box 20/11 lines tall. Placed just behind the text.
-		var line_m: float = float(TIMING_ADVICE_PX) * TIMING_M_PER_PX
+		var line_m: float = float(TIMING_ADVICE_PX) * TIMING_TEXT_M_PER_PX
 		var text_px: float = 0.0
 		if _advice.font != null:
 			text_px = _advice.font.get_string_size(
 				word, HORIZONTAL_ALIGNMENT_LEFT, -1, TIMING_ADVICE_PX).x
 		_advice_panel.position = Vector3(at.x, at.y, at.z - 0.01)
 		_advice_panel.scale = Vector3(
-			maxf(0.30, text_px * TIMING_M_PER_PX + line_m * TIMING_ADVICE_PAD_LINES),
+			maxf(line_m * TIMING_ADVICE_BOX_LINES, text_px * TIMING_TEXT_M_PER_PX + line_m * TIMING_ADVICE_PAD_LINES),
 			line_m * TIMING_ADVICE_BOX_LINES, 1.0)
 
 	# --- the energy bar: every frame, under the active athlete ----------------
@@ -506,7 +503,7 @@ func _verdict_label(node_name: String, font_size: int, outline: int) -> Label3D:
 	l.name = node_name
 	l.font = ThemeDB.fallback_font
 	l.font_size = font_size
-	l.pixel_size = TIMING_M_PER_PX
+	l.pixel_size = TIMING_TEXT_M_PER_PX
 	l.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	l.no_depth_test = true
 	l.render_priority = 4
