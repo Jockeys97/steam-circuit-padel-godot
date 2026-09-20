@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=42 format=3]
+[gd_resource type="Theme" load_steps=43 format=3]
 
 [ext_resource type="FontFile" path="res://assets/ui/fonts/LilitaOne-Regular.ttf" id="1_display"]
 [ext_resource type="FontFile" path="res://assets/ui/fonts/Nunito-Regular.ttf" id="2_body"]
@@ -362,6 +362,22 @@ corner_radius_top_right = 19
 corner_radius_bottom_right = 19
 corner_radius_bottom_left = 19
 
+[sub_resource type="StyleBoxFlat" id="BoxFocus"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.08627451, 0.74509805, 0.84313726, 0.09)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.08627451, 0.74509805, 0.84313726, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [resource]
 default_font = SubResource("FontVariation_Body")
 default_font_size = 16
@@ -456,6 +472,7 @@ Button/styles/normal = SubResource("BoxButtonBase")
 Button/styles/hover = SubResource("BoxButtonBase")
 Button/styles/pressed = SubResource("BoxButtonBase")
 Button/styles/disabled = SubResource("BoxButtonDisabled")
+Button/styles/focus = SubResource("BoxFocus")
 
 Panel/styles/panel = SubResource("BoxPanelDark")
 
@@ -531,6 +548,7 @@ ButtonPrimary/styles/normal = SubResource("BoxButtonPrimary")
 ButtonPrimary/styles/hover = SubResource("BoxButtonPrimary")
 ButtonPrimary/styles/pressed = SubResource("BoxButtonPrimary")
 ButtonPrimary/styles/disabled = SubResource("BoxButtonDisabled")
+ButtonPrimary/styles/focus = SubResource("BoxFocus")
 
 ButtonSecondary/base_type = &"Button"
 ButtonSecondary/fonts/font = SubResource("FontVariation_DisplaySecondary")
@@ -543,6 +561,7 @@ ButtonSecondary/styles/normal = SubResource("BoxButtonSecondary")
 ButtonSecondary/styles/hover = SubResource("BoxButtonSecondary")
 ButtonSecondary/styles/pressed = SubResource("BoxButtonSecondary")
 ButtonSecondary/styles/disabled = SubResource("BoxButtonDisabled")
+ButtonSecondary/styles/focus = SubResource("BoxFocus")
 
 ButtonGhost/base_type = &"Button"
 ButtonGhost/fonts/font = SubResource("FontVariation_BodyBoldButton")
@@ -555,6 +574,7 @@ ButtonGhost/styles/normal = SubResource("BoxButtonGhost")
 ButtonGhost/styles/hover = SubResource("BoxButtonGhost")
 ButtonGhost/styles/pressed = SubResource("BoxButtonGhost")
 ButtonGhost/styles/disabled = SubResource("BoxButtonGhost")
+ButtonGhost/styles/focus = SubResource("BoxFocus")
 
 SegmentedInactive/base_type = &"Button"
 SegmentedInactive/fonts/font = SubResource("FontVariation_Segmented")
