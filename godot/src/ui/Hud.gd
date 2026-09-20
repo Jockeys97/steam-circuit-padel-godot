@@ -93,10 +93,19 @@ const MINIMAP_SIZE := Vector2(108.0, 154.0)
 const MINIMAP_BOX := Vector2(86.0, 122.0)
 const MINIMAP_PAD := 6.0
 const MINIMAP_HEADER := 14.0
-const BANNER_TOP := -34.0
-const BANNER_BOTTOM := 34.0
-const BANNER_LEFT := 0.2
-const BANNER_RIGHT := 0.8
+## The serve banner is the reference's own chip, not a band: `.serve-banner`
+## (`styles.css:855-869`) is `top:50% / left:50% / translate(-50%,-50%)` with
+## `padding: 10px 24px`, `border-radius: 8px`, a `rgba(0,0,0,0.72)` plate and **no
+## width** — the browser sizes it to the text. Anchoring it 0.2 -> 0.8 (and -34/+34
+## vertically) around the pause card's stylebox painted a fixed dark panel three times
+## wider and six times taller than the word it carried: measured on the owner's frame
+## the panel was **61.2% x 17.1%** of the window against a text of **17.2% x 2.8%**,
+## which is the "troppo grossa e invasiva" he reported. The plate now hugs its label
+## (`_hug_serve_banner`) and reads **19.5% x 6.7%**, centred, text unchanged.
+##
+## Its padding and colours live in the theme's `ServeChip` variation (the `HudPauseCard`
+## the node used before is a different element: navy, 1 px border, 30/26/30/30 content
+## margins).
 ## `.match-panel` and the panel-state `.match-feed` both sit at a 16 px inset from the
 ## screen's own edges (`screen_boxes["game-panel"]`: screen 90..1190, children
 ## 106..1174); 106 in the raw JSON is page-relative, not screen-relative.
@@ -544,21 +553,41 @@ func _build_minimap() -> void:
 
 
 func _build_serve_banner() -> void:
-	_serve_banner = _panel("ServeBanner", "HudPauseCard")
-	_anchor(_serve_banner, BANNER_LEFT, 0.5)
-	_serve_banner.anchor_right = BANNER_RIGHT
+	_serve_banner = _panel("ServeBanner", "ServeChip")
+	# All four anchors on the screen's centre point: the panel is a chip that grows
+	# from the middle in both directions (`translate(-50%,-50%)`). Its size comes from
+	# its own content — set in `_hug_serve_banner` once the label carries text, because
+	# a container's minimum size is meaningless while the label is still empty.
+	_anchor(_serve_banner, 0.5, 0.5)
+	_serve_banner.anchor_right = 0.5
 	_serve_banner.anchor_bottom = 0.5
-	_offsets(_serve_banner, 0.0, BANNER_TOP, 0.0, BANNER_BOTTOM)
+	_offsets(_serve_banner, 0.0, 0.0, 0.0, 0.0)
 	_serve_banner.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	_serve_banner.grow_vertical = Control.GROW_DIRECTION_BOTH
 	_serve_banner.visible = false
-	var margin := _margin(_serve_banner, PANEL_INSET)
-	var column := _vbox(margin, 0)
-	_serve_label = _label(column, "HudTitle")
+	# The label is the panel's only child: the padding (`padding: 10px 24px`) is the
+	# stylebox's content margin, which PanelContainer applies to the one child it lays
+	# out. A MarginContainer + VBox in between added a second layer of the same numbers
+	# and left the word 24 px left of the chip's centre.
+	_serve_label = _label(_serve_banner, "HudTitle")
 	_serve_label.name = "ServeLabel"
 	_serve_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_serve_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_serve_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# One line, no autowrap: with the box sized from its content, an autowrapping label
+	# reports a minimum width of almost nothing (it is allowed to wrap), so the chip
+	# would collapse and the reference's single-line plate would break into two.
+	_serve_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+
+
+## Sizes the serve banner to the text it carries and keeps it centred: the reference's
+## chip is `translate(-50%,-50%)` with no width, so its box is exactly the label plus
+## `padding: 10px 24px`. Called after the label's text changes, because the minimum size
+## of an empty container is not the minimum size of the plate it will hold.
+func _hug_serve_banner() -> void:
+	if _serve_banner == null or _serve_label == null:
+		return
+	var chip := _serve_banner.get_combined_minimum_size()
+	_offsets(_serve_banner, -chip.x * 0.5, -chip.y * 0.5, chip.x * 0.5, chip.y * 0.5)
 
 
 func _build_bottom_regions() -> void:
@@ -728,6 +757,7 @@ func _apply_view(view: Dictionary) -> void:
 	_serve_label.text = String(view.get("serve_text", ""))
 	_serve_label.add_theme_color_override("font_color",
 		_palette("state_yellow") if bool(view.get("serve_point_style", false)) else _palette("cyan"))
+	_hug_serve_banner()
 	_set_log(view.get("log_lines", []))
 	_minimap.set_points(view.get("map_points", []), _map_colors())
 
@@ -948,14 +978,17 @@ func _action_button(node_name: String, glyph: String) -> Button:
 ## rect. Unanchored, the margin sizes itself to its own minimum — and an autowrapping
 ## label's minimum height is its text wrapped at width 1 — which is how a box used to
 ## end up taller than the card that carries it.
-func _margin(parent: Node, inset: int) -> MarginContainer:
+## `inset` is the vertical padding; `horizontal` defaults to it for the panels that pad
+## evenly. The serve banner is the reference's one asymmetric case (`10px 24px`).
+func _margin(parent: Node, inset: int, horizontal: int = -1) -> MarginContainer:
 	var node := MarginContainer.new()
+	var h: int = inset if horizontal < 0 else horizontal
 	node.name = "Margin"
 	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	node.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	node.add_theme_constant_override("margin_left", inset)
+	node.add_theme_constant_override("margin_left", h)
 	node.add_theme_constant_override("margin_top", inset)
-	node.add_theme_constant_override("margin_right", inset)
+	node.add_theme_constant_override("margin_right", h)
 	node.add_theme_constant_override("margin_bottom", inset)
 	parent.add_child(node)
 	return node

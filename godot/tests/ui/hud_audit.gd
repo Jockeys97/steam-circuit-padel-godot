@@ -46,6 +46,12 @@ const Frozen := preload("res://src/sim/frozen.gd")
 const Config := preload("res://game/match_config.gd")
 const ScriptedPlayer := preload("res://game/scripted_player.gd")
 const MatchTheme := preload("res://src/ui/theme/padel_theme.tres")
+## `UNREADABLE` moved into the shared vocabulary module (`ViewState` reads
+## `Vocabulary.UNREADABLE`); the two checks below still asked the view-model for it,
+## which does not have it, so this whole file failed to PARSE — and a script that does
+## not parse exits 0 and prints nothing but the engine banner, so the audit that guards
+## the HUD had been silently not running. Same constant, reached where it now lives.
+const Vocabulary := preload("res://game/feedback_vocabulary.gd")
 
 const MATCH_SCENE := "res://game/Match.tscn"
 const TICK := 1.0 / 120.0
@@ -305,7 +311,7 @@ func _surface(audit: AuditBase) -> void:
 
 	var expectations := [
 		["ScorePanel", "HudPanel"], ["ModeStrip", "HudPanel"], ["MiniMapPanel", "HudPanel"],
-		["MatchPanel", "HudPanel"], ["ServeBanner", "HudPauseCard"],
+		["MatchPanel", "HudPanel"], ["ServeBanner", "ServeChip"],
 	]
 	var wrong: Array = []
 	for pair in expectations:
@@ -1082,9 +1088,9 @@ func _message_contract(audit: AuditBase) -> void:
 		"hud/the_double_fault_reads_as_the_reference_writes_it")
 	audit.check_eq(ViewState.resolve_message("LET"), UiStrings.t("evLet"),
 		"hud/the_let_event_uses_the_ports_own_key")
-	audit.check_eq(ViewState.resolve_message("serveHint"), ViewState.UNREADABLE,
+	audit.check_eq(ViewState.resolve_message("serveHint"), Vocabulary.UNREADABLE,
 		"hud/a_template_with_unbound_placeholders_is_marked_not_printed")
-	audit.check_eq(ViewState.resolve_message("no_such_key"), ViewState.UNREADABLE,
+	audit.check_eq(ViewState.resolve_message("no_such_key"), Vocabulary.UNREADABLE,
 		"hud/an_unresolvable_id_is_marked_not_printed")
 	audit.check_eq(ViewState.timer_text(0.0), "00:00", "hud/the_timer_starts_at_zero")
 	audit.check_eq(ViewState.timer_text(65.9), "01:05", "hud/the_timer_floors_the_seconds")
