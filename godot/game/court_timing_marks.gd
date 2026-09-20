@@ -207,6 +207,7 @@ var _precision: MeshInstance3D
 var _precision_track: MeshInstance3D
 var _energy: MeshInstance3D
 var _energy_track: MeshInstance3D
+var _other_energy: Dictionary = {}
 ## The verdict over the athlete who hit (`js/render.js:1041-1069`). The mode line is
 ## the reference's own second line (`js/render.js:1066-1068`).
 var _verdict: Label3D
@@ -261,6 +262,20 @@ func mount(parent: Node3D) -> int:
 		_material(Color(0.016, 0.055, 0.125, 0.72), true, 1))
 	_energy = _build_mesh("TimingEnergyFill", _bar_mesh(true),
 		_material(Vocabulary.FIELD_ENERGY_TEAL, true, 2))
+	# Independent meters, allocated once. The active athlete keeps the existing meter.
+	for key in ["player", "playerMate", "opponent", "opponentMate"]:
+		var track := MeshInstance3D.new()
+		track.name = "Stamina_" + key
+		track.mesh = _bar_mesh(false)
+		track.material_override = _material(Color(0.016, 0.055, 0.125, 0.72), true, 1)
+		track.top_level = true
+		_energy_track.add_child(track)
+		var fill := MeshInstance3D.new()
+		fill.mesh = _bar_mesh(true)
+		fill.material_override = _material(Vocabulary.FIELD_ENERGY_TEAL, true, 2)
+		fill.top_level = true
+		track.add_child(fill)
+		_other_energy[key] = [track, fill]
 
 	# Compact advice and panel: 11 reference pixels at 1/60 metre per pixel.
 	# Screen size follows the camera projection, not the viewport's raw pixels.
@@ -317,7 +332,7 @@ func update(state, finished: bool) -> Dictionary:
 	var eta: float = float(eta_raw) if eta_raw != null else 0.0
 	var precision: float = clampf(float(read.get("precision", 0.0)), 0.0, 1.0)
 	var tight: float = clampf(float(read.get("tight", 0.0)), 0.0, 1.0)
-	var energy: float = clampf(float(state.rallyEnergy.get("player", 1.0)), 0.0, 1.0)
+	var energy: float = clampf(active.staminaEnergy, 0.0, 1.0) if active != null else 1.0
 
 	# --- the ring: `1 - read.eta / 0.55`, drawn from the top clockwise ----------
 	var fraction: float = clampf(1.0 - eta / TIMING_ETA_SPAN, 0.0, 1.0)
@@ -396,6 +411,18 @@ func update(state, finished: bool) -> Dictionary:
 		_energy.scale = Vector3(maxf(0.02, TIMING_ENERGY_W * energy), TIMING_ENERGY_H, 1.0)
 		var emat := _energy.material_override as StandardMaterial3D
 		emat.albedo_color = Vocabulary.field_energy_color(energy)
+	for key in _other_energy:
+		var p = state.paddle(key)
+		var track: MeshInstance3D = _other_energy[key][0]
+		var fill: MeshInstance3D = _other_energy[key][1]
+		track.visible = live and p != active
+		if track.visible:
+			var at := Court.world_pos(p.x, p.y, 0.0) + Vector3(0.0, TIMING_ENERGY_HEIGHT, TIMING_FOOT_FORWARD)
+			track.global_position = at
+			track.scale = Vector3(TIMING_ENERGY_W + 0.04, TIMING_ENERGY_H * 2.0, 1.0)
+			fill.global_position = at + Vector3(-TIMING_ENERGY_W * 0.5, 0.0, 0.0)
+			fill.scale = Vector3(maxf(0.02, TIMING_ENERGY_W * p.staminaEnergy), TIMING_ENERGY_H, 1.0)
+			(fill.material_override as StandardMaterial3D).albedo_color = Vocabulary.field_energy_color(p.staminaEnergy)
 
 	# --- the verdict over the athlete who hit ---------------------------------
 	var report_verdict := _place_verdict(state, live)

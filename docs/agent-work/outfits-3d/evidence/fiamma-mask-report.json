@@ -1,0 +1,74 @@
+{
+ "tool": "tools/character/build_fiamma_outfit_mask.py",
+ "glb": "godot/assets/athletes/fiamma.glb",
+ "texture": "godot/assets/athletes/fiamma_texture_0.png",
+ "mask": "godot/assets/athletes/outfits/fiamma/fiamma_region_mask.png",
+ "mask_size": 2048,
+ "edge_soften_px": 1.2,
+ "bone_region": {
+  "mixamorig:Spine": "torso",
+  "mixamorig:Spine1": "torso",
+  "mixamorig:Spine2": "torso",
+  "mixamorig:LeftShoulder": "torso",
+  "mixamorig:RightShoulder": "torso",
+  "mixamorig:Hips": "hip",
+  "mixamorig:LeftUpLeg": "hip",
+  "mixamorig:RightUpLeg": "hip",
+  "mixamorig:LeftFoot": "foot",
+  "mixamorig:RightFoot": "foot",
+  "mixamorig:LeftToeBase": "foot",
+  "mixamorig:RightToeBase": "foot",
+  "mixamorig:LeftToe_End": "foot",
+  "mixamorig:RightToe_End": "foot"
+ },
+ "regions": [
+  "torso",
+  "hip",
+  "foot"
+ ],
+ "coverage_texels": 900821,
+ "coverage_fraction": 0.2148,
+ "protected_texels": 3293483,
+ "family_anchors": {
+  "lime": {
+   "hex": "#b8e828",
+   "srgb": [
+    0.7216,
+    0.9098,
+    0.1569
+   ],
+   "hue_deg": 77.4,
+   "samples": 18592,
+   "modal_hits": 1787
+  },
+  "navy": {
+   "hex": "#081838",
+   "srgb": [
+    0.0314,
+    0.0941,
+    0.2196
+   ],
+   "hue_deg": 219.1,
+   "samples": 22042,
+   "modal_hits": 5430
+  }
+ },
+ "triangles": 24920,
+ "region_triangles": {
+  "torso": 2122,
+  "hip": 1815,
+  "foot": 2421
+ },
+ "protected_triangles": 18562,
+ "straddling_triangles": 126,
+ "region_y_min": {
+  "torso": 0.9699,
+  "hip": 0.3935,
+  "foot": -0.0
+ },
+ "region_y_max": {
+  "torso": 1.4652,
+  "hip": 1.0375,
+  "foot": 0.203
+ }
+}

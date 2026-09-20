@@ -29,6 +29,8 @@
 ## holds no tick constant of its own, exactly like `js/game.js`.
 extends RefCounted
 
+const Stamina := preload("res://src/sim/rally_stamina.gd")
+
 const Ent := preload("res://src/sim/entities.gd")
 const State := preload("res://src/sim/state.gd")
 const Rng := preload("res://src/sim/rng.gd")
@@ -230,7 +232,7 @@ static func computer_profile(state: State, paddle: Ent.SimPaddle) -> Dictionary:
 	return {
 		"skill": clamp(0.6 + (control - 0.9) * 0.34, 0.58, 0.78),
 		"power": float(compagno["stats"]["power"]),
-		"speed": paddle.speed,
+		"speed": paddle.speed * Stamina.speed_factor(paddle.staminaEnergy),
 	}
 
 
@@ -280,6 +282,7 @@ static func capture_replay_frame(state: State) -> void:
 			"x": p.x, "y": p.y, "swing": p.swing, "swingSide": p.swingSide,
 			"motion": p.motion, "charge": p.charge, "runPhase": p.runPhase,
 			"actionPose": p.actionPose, "actionIntent": p.actionIntent, "moveRatio": p.moveRatio,
+			"staminaEnergy": p.staminaEnergy,
 		})
 	state.replayFrames.append(snap)
 	if state.replayFrames.size() > state.replayMax:
@@ -345,6 +348,9 @@ static func create_match_state(mode: String, athlete: Dictionary, arena: Diction
 	state.combo = 1
 	state.rallyHits = 0
 	state.rallyEnergy = {"player": 1.0, "ai": 1.0}
+	for athlete_paddle in [state.player, state.playerMate, state.opponent, state.opponentMate]:
+		if athlete_paddle != null:
+			athlete_paddle.staminaEnergy = 1.0
 	state.rng_state = 0
 	state.rng_calls = 0
 	state.shotFeedback = null
@@ -876,7 +882,7 @@ static func ai_responder_forecast(paddle: Ent.SimPaddle, ball: Ent.SimBall) -> D
 ## Pure decision used by movement and the final legal contact gate.
 static func ai_contact_plan(state: State, paddle: Ent.SimPaddle, ball: Ent.SimBall) -> Dictionary:
 	return preload("res://src/sim/ai_contact.gd").plan({
-		"x": paddle.x, "y": paddle.y, "speed": paddle.speed, "skill": paddle.skill,
+		"x": paddle.x, "y": paddle.y, "speed": paddle.speed * Stamina.speed_factor(paddle.staminaEnergy), "skill": paddle.skill,
 		"width": contact_width(paddle, ball), "depth": paddle.reach * float(Frozen.balance()["aiDepthReach"]),
 		"reaction": state.aiReactionDelay,
 	}, {
@@ -1023,7 +1029,7 @@ static func contextual_perfect_window(state: State, paddle: Ent.SimPaddle, charg
 	var ball := state.ball
 	var side := shot_side(paddle)
 	var moving := clampf(paddle.moveRatio, 0.0, 1.0)
-	var energy := clampf(float(state.rallyEnergy.get(side, 1.0)), 0.0, 1.0)
+	var energy := Stamina.assessment_energy(paddle.staminaEnergy)
 	var glass_ball: bool = ball.postGlassSide != null and String(ball.postGlassSide) == side
 	var power := pow(clampf(charge, 0.0, 1.0), 2.0)
 	return clampf(
@@ -1140,7 +1146,7 @@ static func evaluate_shot_quality(state: State, paddle: Ent.SimPaddle, options: 
 		height = clampf((ball.z - 42.0) / 35.0, 0.2, 1.0)
 	else:
 		height = clampf(1.0 - maxf(0.0, ball.z - 82.0) / 100.0, 0.55, 1.0)
-	var energy: float = clampf(float(state.rallyEnergy.get(side, 1.0)), float(balance["rallyEnergyFloor"]), 1.0)
+	var energy: float = Stamina.assessment_energy(paddle.staminaEnergy)
 	var control: float
 	if paddle.isPlayer:
 		control = clampf(float(athlete_for(state, paddle)["stats"]["control"]) / 1.22, 0.72, 1.05)
@@ -1190,59 +1196,16 @@ static func evaluate_shot_quality(state: State, paddle: Ent.SimPaddle, options: 
 	}
 
 
-static func rally_stamina(state: State, side: String) -> float:
-	var lineup: Dictionary = state.lineup
-	if side != "player":
-		if state.pvp:
-			var pvp_stamina: float = float(state.pvpAthlete["stats"]["stamina"]) if state.pvpAthlete != null else 1.0
-			return clampf(pvp_stamina, 0.7, 1.5)
-		var a: Variant = lineup["opponent"]
-		var b: Variant = lineup["opponentMate"]
-		return clampf(_stamina_media(a, b), 0.7, 1.5)
-	return clampf(_stamina_media(state.athlete, lineup["playerMate"]), 0.7, 1.5)
-
-
-static func _stamina_media(uno: Variant, due: Variant) -> float:
-	var a: Variant = null
-	var b: Variant = null
-	if uno != null:
-		a = uno["stats"].get("stamina", null)
-	if due != null:
-		b = due["stats"].get("stamina", null)
-	if a == null and b == null:
-		return 1.0
-	if a == null:
-		return float(b)
-	if b == null:
-		return float(a)
-	return (float(a) + float(b)) / 2.0
-
-
 static func consume_rally_energy(state: State, paddle: Ent.SimPaddle, assessment: Dictionary, variant: String, slice: bool) -> void:
-	var balance: Dictionary = Frozen.balance()
-	var side := shot_side(paddle)
-	var is_smash: bool = variant == "smash" or variant.begins_with("smash-")
-	var is_lob: bool = variant == "lob" or variant == "defensive-lob"
-	var base_cost: float
-	if variant == "globo":
-		base_cost = float(balance["globoEnergyCost"])
-	elif variant == "chiquita":
-		base_cost = 0.025
-	elif slice:
-		base_cost = 0.035
-	elif is_lob:
-		base_cost = 0.055
-	elif is_smash:
-		base_cost = 0.13
-	else:
-		base_cost = 0.045
-	var power_cost: float = 0.095 if String(assessment["mode"]) == "power" else (0.04 if String(assessment["mode"]) == "balanced" else 0.012)
-	var movement_cost: float = paddle.moveRatio * 0.025
-	state.rallyEnergy[side] = clampf(
-		float(state.rallyEnergy[side]) - (base_cost + power_cost + movement_cost) / rally_stamina(state, side),
-		float(balance["rallyEnergyFloor"]),
-		1.0,
-	)
+	var athlete: Dictionary = athlete_for(state, paddle)
+	var resistance := clampf(float(athlete.get("stats", {}).get("stamina", 1.0)), 0.7, 1.5)
+	paddle.staminaEnergy = clampf(paddle.staminaEnergy - Stamina.shot_cost(variant, slice, String(assessment.get("mode", "control"))) / resistance, Stamina.FLOOR, 1.0)
+	sync_rally_energy(state)
+
+
+static func sync_rally_energy(state: State) -> void:
+	state.rallyEnergy["player"] = state.active_player().staminaEnergy
+	state.rallyEnergy["ai"] = (state.opponent.staminaEnergy + state.opponentMate.staminaEnergy) * 0.5
 
 
 ## `showShotFeedback` (`js/game.js:1055-1076`), minus the localized strings and
@@ -1796,7 +1759,7 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 			report_shot_error(state, paddle, shot_error)
 		if is_special:
 			apply_special(state, aimed_offset, paddle)
-		consume_rally_energy(state, paddle, assessment, shot_variant, slice)
+		consume_rally_energy(state, paddle, assessment, ball.shotType, slice)
 		show_shot_feedback(state, paddle, assessment)
 		if explicit_smash and state.shotFeedback != null:
 			var successful_smash: bool = ball.shotType.begins_with("smash-")
@@ -2023,6 +1986,9 @@ static func score_point(state: State, winner: String, reason: String, kind: Vari
 	state.combo = 1
 	state.rallyHits = 0
 	state.rallyEnergy = {"player": 1.0, "ai": 1.0}
+	for athlete_paddle in [state.player, state.playerMate, state.opponent, state.opponentMate]:
+		if athlete_paddle != null:
+			athlete_paddle.staminaEnergy = 1.0
 	state.shotFeedback = null
 	state.receiverLocked = false
 	state.manualReceiverOverride = false
@@ -2318,11 +2284,11 @@ static func move_computer_paddle(state: State, paddle: Ent.SimPaddle, ball: Ent.
 		target_x = ball.x + (Rng.next_random(state) - 0.5) * (1.0 - accuracy) * 20.0
 	else:
 		target_x = (float(court["left"]) + float(court["right"])) / 2.0
-	paddle.x = clampf(paddle.x + clampf(target_x - paddle.x, -paddle.speed * dt, paddle.speed * dt), float(court["left"]) + paddle.w / 2.0, float(court["right"]) - paddle.w / 2.0)
-	paddle.y = clampf(paddle.y + clampf(target_y - paddle.y, -paddle.speed * 0.56 * dt, paddle.speed * 0.56 * dt), float(bounds["minY"]), float(bounds["maxY"]))
+	paddle.x = clampf(paddle.x + clampf(target_x - paddle.x, -paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * dt, paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * dt), float(court["left"]) + paddle.w / 2.0, float(court["right"]) - paddle.w / 2.0)
+	paddle.y = clampf(paddle.y + clampf(target_y - paddle.y, -paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * 0.56 * dt, paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * 0.56 * dt), float(bounds["minY"]), float(bounds["maxY"]))
 	paddle.motion = 1.0 if absf(paddle.x - start_x) + absf(paddle.y - start_y) > 0.4 else maxf(0.0, paddle.motion - dt * 7.0)
 	paddle.moveRatio = clampf(
-		hypot2(paddle.x - start_x, paddle.y - start_y) / maxf(1.0, paddle.speed * dt),
+		hypot2(paddle.x - start_x, paddle.y - start_y) / maxf(1.0, paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * dt),
 		0.0,
 		1.0,
 	)
@@ -2333,18 +2299,18 @@ static func move_paddle_to(paddle: Ent.SimPaddle, target_x: float, target_y: flo
 	var start_x := paddle.x
 	var start_y := paddle.y
 	paddle.x = clampf(
-		paddle.x + clampf(target_x - paddle.x, -paddle.speed * dt, paddle.speed * dt),
+		paddle.x + clampf(target_x - paddle.x, -paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * dt, paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * dt),
 		float(court["left"]) + paddle.w / 2.0,
 		float(court["right"]) - paddle.w / 2.0,
 	)
 	paddle.y = clampf(
-		paddle.y + clampf(target_y - paddle.y, -paddle.speed * 0.56 * dt, paddle.speed * 0.56 * dt),
+		paddle.y + clampf(target_y - paddle.y, -paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * 0.56 * dt, paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * 0.56 * dt),
 		float(court["top"]) + 42.0,
 		float(court["netY"]) - 42.0,
 	)
 	paddle.motion = 1.0 if absf(paddle.x - start_x) + absf(paddle.y - start_y) > 0.4 else maxf(0.0, paddle.motion - dt * 7.0)
 	paddle.moveRatio = clampf(
-		hypot2(paddle.x - start_x, paddle.y - start_y) / maxf(1.0, paddle.speed * dt),
+		hypot2(paddle.x - start_x, paddle.y - start_y) / maxf(1.0, paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * dt),
 		0.0,
 		1.0,
 	)
@@ -2453,10 +2419,10 @@ static func move_tactical_mate(state: State, mate: Ent.SimPaddle, dt: float) -> 
 	var target := tactical_mate_target(state, mate)
 	var start_x := mate.x
 	var start_y := mate.y
-	mate.x = clampf(mate.x + clampf(float(target["x"]) - mate.x, -mate.speed * dt, mate.speed * dt), float(court["left"]) + mate.w / 2.0, float(court["right"]) - mate.w / 2.0)
-	mate.y = clampf(mate.y + clampf(float(target["y"]) - mate.y, -mate.speed * 0.56 * dt, mate.speed * 0.56 * dt), float(court["netY"]) + 42.0, float(court["bottom"]) - 42.0)
+	mate.x = clampf(mate.x + clampf(float(target["x"]) - mate.x, -mate.speed * Stamina.speed_factor(mate.staminaEnergy) * dt, mate.speed * Stamina.speed_factor(mate.staminaEnergy) * dt), float(court["left"]) + mate.w / 2.0, float(court["right"]) - mate.w / 2.0)
+	mate.y = clampf(mate.y + clampf(float(target["y"]) - mate.y, -mate.speed * Stamina.speed_factor(mate.staminaEnergy) * 0.56 * dt, mate.speed * Stamina.speed_factor(mate.staminaEnergy) * 0.56 * dt), float(court["netY"]) + 42.0, float(court["bottom"]) - 42.0)
 	mate.motion = 1.0 if absf(mate.x - start_x) + absf(mate.y - start_y) > 0.4 else maxf(0.0, mate.motion - dt * 7.0)
-	mate.moveRatio = clampf(hypot2(mate.x - start_x, mate.y - start_y) / maxf(1.0, mate.speed * dt), 0.0, 1.0)
+	mate.moveRatio = clampf(hypot2(mate.x - start_x, mate.y - start_y) / maxf(1.0, mate.speed * Stamina.speed_factor(mate.staminaEnergy) * dt), 0.0, 1.0)
 
 
 static func update_doubles_ai(state: State, dt: float) -> void:
@@ -2476,8 +2442,8 @@ static func update_doubles_ai(state: State, dt: float) -> void:
 			var width: float = float(court["right"]) - float(court["left"])
 			var reception_x: float = float(court["left"]) + width * 0.28 if inactive_team_mate == state.player else float(court["left"]) + width * 0.72
 			var reception_y: float = float(court["bottom"]) - 74.0
-			inactive_team_mate.x += clampf(reception_x - inactive_team_mate.x, -inactive_team_mate.speed * dt, inactive_team_mate.speed * dt)
-			inactive_team_mate.y += clampf(reception_y - inactive_team_mate.y, -inactive_team_mate.speed * 0.56 * dt, inactive_team_mate.speed * 0.56 * dt)
+			inactive_team_mate.x += clampf(reception_x - inactive_team_mate.x, -inactive_team_mate.speed * Stamina.speed_factor(inactive_team_mate.staminaEnergy) * dt, inactive_team_mate.speed * Stamina.speed_factor(inactive_team_mate.staminaEnergy) * dt)
+			inactive_team_mate.y += clampf(reception_y - inactive_team_mate.y, -inactive_team_mate.speed * Stamina.speed_factor(inactive_team_mate.staminaEnergy) * 0.56 * dt, inactive_team_mate.speed * Stamina.speed_factor(inactive_team_mate.staminaEnergy) * 0.56 * dt)
 		else:
 			move_tactical_mate(state, inactive_team_mate, dt)
 	if state.pvp:
@@ -2489,8 +2455,8 @@ static func update_doubles_ai(state: State, dt: float) -> void:
 			var reception_x: float = float(court["left"]) + width * 0.28 if inactive_pvp == opponent else float(court["left"]) + width * 0.72
 			var target_x: float = ball.x if (inactive_pvp == receiver and not ball.serveInFlight) else reception_x
 			var reception_y: float = float(court["top"]) + 74.0
-			inactive_pvp.x += clampf(target_x - inactive_pvp.x, -inactive_pvp.speed * dt, inactive_pvp.speed * dt)
-			inactive_pvp.y += clampf(reception_y - inactive_pvp.y, -inactive_pvp.speed * 0.56 * dt, inactive_pvp.speed * 0.56 * dt)
+			inactive_pvp.x += clampf(target_x - inactive_pvp.x, -inactive_pvp.speed * Stamina.speed_factor(inactive_pvp.staminaEnergy) * dt, inactive_pvp.speed * Stamina.speed_factor(inactive_pvp.staminaEnergy) * dt)
+			inactive_pvp.y += clampf(reception_y - inactive_pvp.y, -inactive_pvp.speed * Stamina.speed_factor(inactive_pvp.staminaEnergy) * 0.56 * dt, inactive_pvp.speed * Stamina.speed_factor(inactive_pvp.staminaEnergy) * 0.56 * dt)
 		else:
 			var pvp_accuracy: float = float(state.pvpAthlete["stats"]["control"]) if state.pvpAthlete != null else float(ai["skill"])
 			move_computer_paddle(state, inactive_pvp, ball, dt, pvp_home_y, pvp_accuracy)
@@ -2502,8 +2468,8 @@ static func update_doubles_ai(state: State, dt: float) -> void:
 			var reception_x: float = float(court["left"]) + width * 0.28 if paddle == opponent else float(court["left"]) + width * 0.72
 			var target_x: float = ball.x if (paddle == receiver and not ball.serveInFlight) else reception_x
 			var reception_y: float = float(court["top"]) + 74.0
-			paddle.x += clampf(target_x - paddle.x, -paddle.speed * dt, paddle.speed * dt)
-			paddle.y += clampf(reception_y - paddle.y, -paddle.speed * 0.56 * dt, paddle.speed * 0.56 * dt)
+			paddle.x += clampf(target_x - paddle.x, -paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * dt, paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * dt)
+			paddle.y += clampf(reception_y - paddle.y, -paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * 0.56 * dt, paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * 0.56 * dt)
 	else:
 		move_opponent_team(state, dt)
 
@@ -2697,8 +2663,8 @@ static func move_human_paddle(state: State, paddle: Ent.SimPaddle, input: Dictio
 	paddle.sprinting = 0.0
 	var start_x := paddle.x
 	var start_y := paddle.y
-	paddle.x += move_x * paddle.speed * movement_multiplier * dt
-	paddle.y += move_y * paddle.speed * 0.68 * movement_multiplier * dt
+	paddle.x += move_x * paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * movement_multiplier * dt
+	paddle.y += move_y * paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * 0.68 * movement_multiplier * dt
 	if paddle.dashTimer > 0.0:
 		paddle.x += move_x * 260.0 * dt
 		paddle.dashTimer -= dt
@@ -2719,7 +2685,7 @@ static func move_human_paddle(state: State, paddle: Ent.SimPaddle, input: Dictio
 	paddle.y = clampf(paddle.y, min_y, max_y)
 	paddle.motion = 1.0 if absf(paddle.x - start_x) + absf(paddle.y - start_y) > 0.4 else maxf(0.0, paddle.motion - dt * 7.0)
 	paddle.moveRatio = clampf(
-		hypot2(paddle.x - start_x, paddle.y - start_y) / maxf(1.0, paddle.speed * dt),
+		hypot2(paddle.x - start_x, paddle.y - start_y) / maxf(1.0, paddle.speed * Stamina.speed_factor(paddle.staminaEnergy) * dt),
 		0.0,
 		1.0,
 	)
@@ -2784,6 +2750,7 @@ static func update_match(state: State, dt_in: float, input: Dictionary, input2: 
 		return state.result
 	# From here on: the simulation. It slows during the hit-stop, while effects,
 	# animations and UI timers above stay at real speed (`js/game.js:3012-3015`).
+	var fatigue_dt := dt if state.hitStop <= 0.0 else 0.0
 	if state.hitStop > 0.0:
 		state.hitStop = maxf(0.0, state.hitStop - dt)
 		dt *= float(balance["hitStopTimeScale"])
@@ -2795,6 +2762,9 @@ static func update_match(state: State, dt_in: float, input: Dictionary, input2: 
 		capture_replay_frame(state)
 		return state.result
 
+	var effort_start := {}
+	for p in [state.player, state.playerMate, state.opponent, state.opponentMate]:
+		effort_start[p.key] = Vector2(p.x, p.y)
 	var player := state.active_player()
 	if state.humanMode == "coop":
 		control_paddle_charge(state, player, input, dt)
@@ -2838,8 +2808,8 @@ static func update_match(state: State, dt_in: float, input: Dictionary, input2: 
 		var movement_multiplier: float = charge_movement * (1.0 - split_step * (1.0 - float(balance["splitStepSpeed"])))
 		player.splitStep = split_step
 		player.sprinting = 0.0
-		player.x += move_x * player.speed * movement_multiplier * dt
-		player.y += move_y * player.speed * 0.68 * movement_multiplier * dt
+		player.x += move_x * player.speed * Stamina.speed_factor(player.staminaEnergy) * movement_multiplier * dt
+		player.y += move_y * player.speed * Stamina.speed_factor(player.staminaEnergy) * 0.68 * movement_multiplier * dt
 		if player.dashTimer > 0.0:
 			player.x += move_x * 260.0 * dt
 			player.dashTimer -= dt
@@ -2848,7 +2818,7 @@ static func update_match(state: State, dt_in: float, input: Dictionary, input2: 
 		player.y = clampf(player.y, player_min_y, float(court["bottom"]) - 42.0)
 		player.motion = 1.0 if absf(player.x - player_start_x) + absf(player.y - player_start_y) > 0.4 else maxf(0.0, player.motion - dt * 7.0)
 		player.moveRatio = clampf(
-			hypot2(player.x - player_start_x, player.y - player_start_y) / maxf(1.0, player.speed * dt),
+			hypot2(player.x - player_start_x, player.y - player_start_y) / maxf(1.0, player.speed * Stamina.speed_factor(player.staminaEnergy) * dt),
 			0.0,
 			1.0,
 		)
@@ -2969,20 +2939,6 @@ static func update_match(state: State, dt_in: float, input: Dictionary, input2: 
 	if state.shieldTimer > 0.0 and ball.vy > 0.0:
 		ball.vy *= 1.0 - dt * 0.55
 	state.shieldTimer = maxf(0.0, state.shieldTimer - dt)
-	var human_sprint_load: float = maxf(state.player.sprinting, state.playerMate.sprinting) if state.humanMode == "coop" else player.sprinting
-	var player_stamina := rally_stamina(state, "player")
-	state.rallyEnergy["player"] = clampf(
-		float(state.rallyEnergy["player"])
-			+ dt * float(balance["rallyEnergyRecovery"]) * (1.0 - player.moveRatio * 0.7) * player_stamina
-			- dt * float(balance["sprintEnergyDrain"]) * clampf(human_sprint_load, 0.0, 1.0) * player.moveRatio / player_stamina,
-		float(balance["rallyEnergyFloor"]),
-		1.0,
-	)
-	state.rallyEnergy["ai"] = clampf(
-		float(state.rallyEnergy["ai"]) + dt * float(balance["rallyEnergyRecovery"]) * 0.72,
-		float(balance["rallyEnergyFloor"]),
-		1.0,
-	)
 
 	update_shot_read(state, state.active_player())
 
@@ -3079,6 +3035,13 @@ static func update_match(state: State, dt_in: float, input: Dictionary, input2: 
 	if handle_walls(state):
 		return state.result
 	update_doubles_ai(state, dt)
+	if state.pointPause <= 0.0 and state.result == null:
+		for p in [state.player, state.playerMate, state.opponent, state.opponentMate]:
+			var distance: float = Vector2(p.x, p.y).distance_to(effort_start[p.key])
+			var movement := clampf(distance / maxf(0.000001, p.speed * dt), 0.0, 1.0)
+			var athlete: Dictionary = athlete_for(state, p)
+			p.staminaEnergy = Stamina.effort_energy(p.staminaEnergy, fatigue_dt, movement, p.sprinting, float(athlete.get("stats", {}).get("stamina", 1.0)))
+		sync_rally_energy(state)
 
 	player.swing = maxf(0.0, player.swing - dt * 5.0)
 	state.playerMate.swing = maxf(0.0, state.playerMate.swing - dt * 5.0)

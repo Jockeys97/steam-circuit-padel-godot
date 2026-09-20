@@ -15,10 +15,11 @@
 ## re-derived from the player's own accepted/rejected outcomes, and until then it errs
 ## towards saying less.
 ##
-## EVERY EXERCISE ID HERE MUST EXIST. `drill_serve`, `drill_smash`, `drill_rally` and
-## `drill_precision` are the frozen drill table's own four ids
-## (`godot/src/modes/data/modes.json`), so the button always opens a drill that exists —
-## the coach test asserts it against `mode_tables.gd::drill_exercises()`.
+## EVERY EXERCISE ID HERE MUST EXIST. `serve`, `smash`, `rally` and `precision` are the
+## frozen drill table's own four ids (`godot/src/modes/data/modes.json`); `return` is the
+## Godot-only fifth exercise `drill_extras.gd` declares. The button always opens a drill
+## that exists — the coach test asserts every one of them against
+## `mode_tables.gd::drill_catalog_ids()`.
 extends RefCounted
 
 const Contract := preload("res://src/coach/coach_contract.gd")
@@ -29,6 +30,7 @@ const Stats := preload("res://src/coach/coach_stats.gd")
 ## the model's answer.
 const ADVICE := {
 	"serve_accuracy": {"advice": "coachAdviceServe", "drill": "serve"},
+	"serve_return": {"advice": "coachAdviceReturn", "drill": "return"},
 	"shot_accuracy": {"advice": "coachAdviceShot", "drill": "precision"},
 	"rally_consistency": {"advice": "coachAdviceRally", "drill": "rally"},
 	"net_finishing": {"advice": "coachAdviceFinish", "drill": "smash"},
@@ -204,6 +206,13 @@ static func advice_params(category_id: String, snapshot_in: Dictionary) -> Dicti
 			return {
 				"doubleFaults": Stats.player_count(snapshot_in, "doubleFaults"),
 				"aces": Stats.player_count(snapshot_in, "aces"),
+			}
+		"serve_return":
+			# The opponent's aces, and only those: the count of serves this side did not
+			# return. No placement, no reaction time, no cause — the match does not
+			# measure any of them.
+			return {
+				"opponentAces": Stats.opponent_count(snapshot_in, "aces"),
 			}
 		"shot_accuracy":
 			return {

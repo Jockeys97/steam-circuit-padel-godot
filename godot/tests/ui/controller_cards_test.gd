@@ -49,6 +49,7 @@ func run() -> void:
 	await _walk_menu()
 	await _walk_modes()
 	await _walk_characters()
+	await _walk_arena()
 	_menu.queue_free()
 	await process_frame
 	print("CONTROLLER_CARDS %s" % ("PASS" if failures == 0 else "FAIL %d" % failures))
@@ -120,17 +121,53 @@ func _walk_modes() -> void:
 	await _dir("down")
 	check(_focus_id().begins_with("modes/ModeCard_"), "a pad down reaches the mode cards")
 	check(_painted() == _focus_id().get_slice("/", 1), "modes paints the focused card, not the control it left")
+	check(_card_uses_controller_highlight(screen, _focus_id()), "controller focus gives the mode card its cyan highlight")
 	var first_card := _focus_id()
 	await _dir("right")
 	check(_focus_id() != first_card, "a pad right walks to the next mode card")
 	check(_painted() == _focus_id().get_slice("/", 1), "modes paints the second card")
+	check(_card_uses_controller_highlight(screen, _focus_id()), "the next mode card keeps the cyan controller highlight")
 	await _dir("left")
 	check(_focus_id() == first_card, "a pad left walks back to the first mode card")
+
+	# The two segmented groups under the cards are their own targets: a pad press on a
+	# format has to write the same preference a click writes (`length:<key>` is the
+	# screen's own action, not a route the bridge owns), and the chosen segment has to
+	# take the active style so the player sees what will be played.
+	check(await _walk_to("modes/LengthButton_games3"), "the pad reaches the 3 games segment")
+	check(_painted() == "LengthButton_games3", "modes paints the focused format segment")
+	await _confirm()
+	check(Config.match_length() == "games3", "a pad confirm on 3 games persists it as the quick-match format")
+	var chosen := _focus().node_of("modes/LengthButton_games3") as Button
+	check(chosen != null and String(chosen.theme_type_variation) == "SegmentedActive",
+		"the chosen format segment takes the active style")
+	var unchosen := _focus().node_of("modes/LengthButton_points11") as Button
+	check(unchosen != null and String(unchosen.theme_type_variation) == "SegmentedInactive",
+		"the format segment the pad left takes the inactive style")
+
+	check(await _walk_to("modes/DiffButton_medium"), "the pad reaches the difficulty segment")
+	await _confirm()
+	check(String(Config.stored_prefs().get("aiDifficulty", "")) == "medium",
+		"a pad confirm on a difficulty rung persists the rung")
+	var medium := _focus().node_of("modes/DiffButton_medium") as Button
+	check(medium != null and String(medium.theme_type_variation) == "SegmentedActive",
+		"the chosen difficulty segment takes the active style")
 
 	# The confirm is the card's own `select_mode`, not a route the bridge guessed: the
 	# mode is written to the session and the screen moves to the character panel.
 	await _confirm()
 	check(_menu._router.active_id() == "characters", "a pad confirm on an unlocked mode card opens the characters screen")
+
+
+func _card_uses_controller_highlight(screen: Node, focus_id: String) -> bool:
+	var card: Control = _focus().node_of(focus_id) as Control
+	if card == null:
+		return false
+	var actual := card.get_theme_stylebox("panel") as StyleBoxFlat
+	var expected := screen._card_box(true) as StyleBoxFlat
+	return actual != null and expected != null \
+		and actual.border_color == expected.border_color \
+		and actual.bg_color == expected.bg_color
 
 
 ## The characters screen: the four slots' Atleta/Outfit commands are the targets (the
@@ -206,6 +243,36 @@ func _walk_characters() -> void:
 	await _frames(4)
 	await _back()
 	check(_menu._router.active_id() == "modes", "the declared back leaves the characters screen for modes")
+
+
+## The arena grid uses cards as the command itself. The stick must be able to
+## reach an offered card and make its cyan focus frame visible before A starts a
+## match; unavailable cards are intentionally skipped by the same model.
+func _walk_arena() -> void:
+	_menu._router.go_to("arena")
+	await _frames(4)
+	var screen := _screen()
+	check(screen != null and screen.screen_id() == "arena", "the arena screen is mounted")
+	check(_focus_id() == "arena/BackButton", "arena opens on the declared back control")
+	await _dir("down")
+	check(_focus_id().begins_with("arena/ArenaCard_") or _focus_id().begins_with("arena/WorldArenaCard_"),
+		"a pad down reaches an offered arena card")
+	check(_painted() == _focus_id().get_slice("/", 1), "arena paints the focused card")
+	check(_card_uses_arena_focus_highlight(screen, _focus_id()), "controller focus gives the arena card its cyan highlight")
+	var focused_id := _focus_id().trim_prefix("arena/ArenaCard_").trim_prefix("arena/WorldArenaCard_")
+	check(screen.arena_card_state(focused_id) == "selectable" or screen.arena_card_state(focused_id) == "in_program",
+		"the controller does not land on an unavailable arena card")
+
+
+func _card_uses_arena_focus_highlight(screen: Node, focus_id: String) -> bool:
+	var card: Control = _focus().node_of(focus_id) as Control
+	if card == null:
+		return false
+	var actual := card.get_theme_stylebox("panel") as StyleBoxFlat
+	var expected := screen._selected_box() as StyleBoxFlat
+	return actual != null and expected != null \
+		and actual.border_color == expected.border_color \
+		and actual.bg_color == expected.bg_color
 
 
 ## The Atleta/Completo commands a slot offers, in the reference's own order.

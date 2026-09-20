@@ -17,6 +17,9 @@
 ##   ModeTables.outfit_by_unlock_key(key) -> Dictionary or {}  (`js/data.js:799-804`)
 ##   ModeTables.drill_exercises() -> Array    DRILL_EXERCISES, `js/drill.js:53-71`
 ##   ModeTables.drill_exercise(id) -> Dictionary    `exerciseById`, `js/drill.js:73-75`
+##   ModeTables.drill_catalog() -> Array      the frozen rows plus the Godot-only ones
+##                                            (`drill_extras.gd`), for the drill screen
+##   ModeTables.drill_catalog_ids() -> Array[String]
 ##   ModeTables.drill_target_r() -> float     TARGET_R, `js/drill.js:20`
 ##   ModeTables.drill_bullseye() -> float     BULLSEYE, `js/drill.js:21`
 ##   ModeTables.drill_squash_flat() -> float  SQUASH_FLAT, `js/drill.js:38`
@@ -38,6 +41,7 @@ extends RefCounted
 
 const DATA_PATH := "res://src/modes/data/modes.json"
 const GENERATOR := "tools/modes-port/extract-modes.mjs"
+const DrillExtras := preload("res://src/modes/drill_extras.gd")
 
 static var _data: Dictionary = {}
 
@@ -124,15 +128,40 @@ static func outfit_by_unlock_key(key: String) -> Dictionary:
 
 
 ## `DRILL_EXERCISES` (`js/drill.js:53-71`): id, feed (`flat` / `lob` / `serve`),
-## `rivals`, `targets`, `kinds`.
+## `rivals`, `targets`, `kinds`. The FROZEN reference's own four rows, and nothing else:
+## this is what the reference has, and what the generated document's drift check covers.
 static func drill_exercises() -> Array:
 	return _require("drill")["exercises"]
 
 
+## Every exercise this build can offer: the frozen table's own rows, then the Godot-only
+## ones (`drill_extras.gd` explains why they are not in the generated document). The
+## frozen list is never edited here and its drift check still has one answer; this is the
+## single place the two are joined, so a caller that lists exercises for a PLAYER asks
+## this one, and a caller that audits the REFERENCE asks `drill_exercises()`.
+static func drill_catalog() -> Array:
+	var out: Array = []
+	for row in drill_exercises():
+		out.append(row)
+	for row in DrillExtras.exercises():
+		out.append(row)
+	return out
+
+
+## The catalog's own ids, in catalog order.
+static func drill_catalog_ids() -> Array[String]:
+	var out: Array[String] = []
+	for row in drill_catalog():
+		out.append(String((row as Dictionary).get("id", "")))
+	return out
+
+
 ## `exerciseById(id)` (`js/drill.js:73-75`): the exercise, falling back to the
-## first one for an unknown id, exactly as the reference does.
+## first one for an unknown id, exactly as the reference does. The search covers the
+## Godot-only rows too, so `return` resolves while an unknown id still falls back to the
+## reference's own first exercise.
 static func drill_exercise(exercise_id: String) -> Dictionary:
-	var exercises: Array = drill_exercises()
+	var exercises: Array = drill_catalog()
 	for exercise in exercises:
 		if String(exercise.get("id", "")) == exercise_id:
 			return exercise

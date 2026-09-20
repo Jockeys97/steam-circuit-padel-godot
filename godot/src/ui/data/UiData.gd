@@ -252,11 +252,14 @@ static func _unlock_bucket(items: Array, career: Dictionary) -> Dictionary:
 
 ## Every drill exercise the frozen tables hold, with its persisted best (0 when never
 ## played). `ModesSave.load_drill_records` is the reader; nothing here writes a record.
+## `Tables.drill_catalog()` is the list: the reference's own four rows plus this build's
+## Godot-only ones, so the record reader and the training screen cannot disagree about
+## which exercises exist.
 static func drill_records(store: RefCounted = null) -> Dictionary:
 	var persisted := ModesSave.load_drill_records(_store(store))
 	var rows: Array[Dictionary] = []
 	var best_total := 0
-	for exercise in Tables.drill_exercises():
+	for exercise in Tables.drill_catalog():
 		var id := _text((exercise as Dictionary).get("id"))
 		var best := _int(persisted.get(id), 0)
 		best_total += best

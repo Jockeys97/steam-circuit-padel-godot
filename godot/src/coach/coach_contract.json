@@ -55,6 +55,7 @@
       "shot_accuracy": "Shot accuracy: this side's measured point endings are the counters to weigh, errors against winners. Both are endings the side produced; nothing here records why a ball went out.",
       "rally_consistency": "Rally consistency: the match's measured rallies are the counters to weigh (averageHitsPerRally over rallyCount, both counted for the whole match), together with this side's errors.",
       "net_finishing": "Finishing: the ratio of winners to pointsWon for this side is the counter to weigh. This is a count of endings, not a record of where the side was standing.",
+      "serve_return": "Returning serve: the opponent's own aces are the counter to weigh. An ace is a serve this side did not return, so a high opponent-ace count is direct evidence that serves went unreturned. Judge only that count and the points played; nothing here records why a serve was not returned, so no cause may be named.",
       "insufficient_data": "The measured counters do not describe this match well enough, or do not separate one focus from the others, so no single training focus can be named."
     }
   }

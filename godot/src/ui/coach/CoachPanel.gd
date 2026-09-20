@@ -34,6 +34,7 @@ extends VBoxContainer
 const CoachAdvice := preload("res://src/coach/coach_advice.gd")
 const CoachClient := preload("res://src/coach/coach_client.gd")
 const CoachText := preload("res://src/coach/coach_text.gd")
+const DrillText := preload("res://src/modes/drill_text.gd")
 const UiStrings := preload("res://src/ui/UiStrings.gd")
 
 ## The exercise button was pressed: the screen owns the route.
@@ -263,7 +264,10 @@ func exercise_lines(drill_id: String) -> String:
 	var advice_id := String(_record.get("advice_id", ""))
 	if advice_id != "":
 		lines.append(CoachText.t(advice_id, _record.get("advice_params", {})))
-	lines.append(CoachText.t("coachExercise", {"drill": UiStrings.t("drill_%s_name" % drill_id)}))
+	# The exercise is named the way the training screen names it: the reference's own
+	# generated table for its four, this build's `drill_strings.json` for the Godot-only
+	# ones (`drill_text.gd` resolves both).
+	lines.append(CoachText.t("coachExercise", {"drill": DrillText.exercise_name(drill_id)}))
 	if _pending_continuation:
 		lines.append(CoachText.t("coachDrillBlocked"))
 	return "\n".join(lines)

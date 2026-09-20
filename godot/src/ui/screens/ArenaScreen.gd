@@ -114,6 +114,10 @@ var _capture_entry_mode: String = ""
 var _bindings: Array[Dictionary] = []
 var _text_nodes: Dictionary = {}
 var _focus_specs: Array[Dictionary] = []
+## The selected arena and the controller's current card are distinct states: a
+## stick move must show where A will act without changing the player's saved
+## arena until they confirm it.
+var _focused_card_id: String = ""
 
 
 func screen_id() -> String:
@@ -610,6 +614,8 @@ func _build_grid() -> void:
 		# (`_card_box_of`), so the card the player picked is the one the selection frame
 		# marks; without it a press read as a no-op (the 2026-09-18 screenshot).
 		card.add_theme_stylebox_override("panel", _card_box_of(id))
+		card.focus_entered.connect(_on_card_focus.bind(id, true))
+		card.focus_exited.connect(_on_card_focus.bind(id, false))
 		grid.add_child(card)
 		var column := VBoxContainer.new()
 		column.name = card.name + "Column"
@@ -739,6 +745,8 @@ func _build_world_card(grid: GridContainer, row: Dictionary) -> void:
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	card.theme_type_variation = &""
 	card.add_theme_stylebox_override("panel", _card_box_of(id))
+	card.focus_entered.connect(_on_card_focus.bind(id, true))
+	card.focus_exited.connect(_on_card_focus.bind(id, false))
 	grid.add_child(card)
 	var column := VBoxContainer.new()
 	column.name = card.name + "Column"
@@ -822,6 +830,17 @@ func _on_card_input(event: InputEvent, arena_id: String) -> void:
 		# A press on an eligible card STARTS (`activate_arena`); a walled card's
 		# press refuses inside the same call, so the handler needs no second rule.
 		activate_arena(arena_id)
+
+
+## `PanelContainer` cards do not paint a native focus state. Keep the focused
+## card separate from `_selected_id`: moving with a controller previews the
+## cyan selection frame, while only a confirm persists and starts that arena.
+func _on_card_focus(arena_id: String, entered: bool) -> void:
+	if entered:
+		_focused_card_id = arena_id
+	elif _focused_card_id == arena_id:
+		_focused_card_id = ""
+	_apply_selection_styles()
 
 
 func _place_overlay(host: Control, overlay_name: String, overlay: Control, visible_now: bool) -> void:
@@ -928,7 +947,7 @@ func _selected_box() -> StyleBoxFlat:
 ## The frame the card wears: the calendar's fixture, or the session's own pick.
 ## Without it a press left the grid looking untouched (the 2026-09-18 screenshot).
 func _card_box_of(arena_id: String) -> StyleBoxFlat:
-	if arena_id == _in_program or arena_id == _selected_id:
+	if arena_id == _in_program or arena_id == _selected_id or arena_id == _focused_card_id:
 		return _selected_box()
 	return _card_box()
 
@@ -1122,10 +1141,11 @@ func _apply_accessibility() -> void:
 	if back != null:
 		_focus_specs.append(_focus_spec("BackButton", back, "back"))
 	for row in _rows:
-		var card := _control(CARD_PREFIX + String((row as Dictionary).get("id", "")))
+		var arena_id := String((row as Dictionary).get("id", ""))
+		var card := _control(CARD_PREFIX + arena_id)
 		if card != null:
 			_focus_specs.append(_focus_spec(CARD_PREFIX + String((row as Dictionary).get("id", "")), card,
-				"activate:" + CARD_PREFIX + String((row as Dictionary).get("id", ""))))
+				"activate:" + CARD_PREFIX + arena_id, _arena_focus_opts(arena_id)))
 	# The world cards are reachable the same way: the ported column registers its
 	# world row in the focus model too (`main_menu.gd`), so a keyboard or pad can
 	# select a world arena on either path.
@@ -1134,7 +1154,7 @@ func _apply_accessibility() -> void:
 		var world_card := _control(WORLD_CARD_PREFIX + world_id)
 		if world_card != null:
 			_focus_specs.append(_focus_spec(WORLD_CARD_PREFIX + world_id, world_card,
-				"activate:" + WORLD_CARD_PREFIX + world_id))
+				"activate:" + WORLD_CARD_PREFIX + world_id, _arena_focus_opts(world_id)))
 	for key in MODE_KEYS:
 		var button := _control(MODE_PREFIX + key)
 		if button != null:
@@ -1143,13 +1163,23 @@ func _apply_accessibility() -> void:
 
 ## UIR-05's bridge reads these shapes: the id it can focus, the node it moves the focus to,
 ## the reference's own action name, and the model's options (`game/menu_focus.gd:60-77`).
-func _focus_spec(node_name: String, control: Control, action: String) -> Dictionary:
+func _focus_spec(node_name: String, control: Control, action: String, extra_opts: Dictionary = {}) -> Dictionary:
+	var opts := {"kind": "card" if control is PanelContainer else "button"}
+	opts.merge(extra_opts)
 	return {
 		"id": "%s/%s" % [SCREEN_ID, node_name],
 		"node": control,
 		"action": action,
-		"opts": {"kind": "card" if control is PanelContainer else "button"},
+		"opts": opts,
 	}
+
+
+## The reference leaves unavailable arena cards on screen but they cannot be
+## activated. Treat them as disabled focus targets too, so the stick never lands
+## on a card where A would knowingly do nothing.
+func _arena_focus_opts(arena_id: String) -> Dictionary:
+	var state := arena_card_state(arena_id)
+	return {"disabled": state == "locked" or state == "out_of_matchday"}
 
 
 ## This screen's activation door for UIR-05's bridge — the same contract

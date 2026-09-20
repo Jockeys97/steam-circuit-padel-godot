@@ -39,6 +39,8 @@ const UiStrings := preload("res://src/ui/UiStrings.gd")
 const UiData := preload("res://src/ui/data/UiData.gd")
 const ModesSave := preload("res://src/modes/modes_save.gd")
 const Tables := preload("res://src/modes/mode_tables.gd")
+const DrillExtras := preload("res://src/modes/drill_extras.gd")
+const DrillText := preload("res://src/modes/drill_text.gd")
 const DrillScoring := preload("res://src/modes/drill_scoring.gd")
 const DrillSession := preload("res://src/modes/drill_session.gd")
 const Config := preload("res://game/match_config.gd")
@@ -125,8 +127,13 @@ func _mount(audit: AuditBase) -> void:
 
 func _exercises(audit: AuditBase) -> void:
 	var screen: Node = _screen()
-	var table: Array = Tables.drill_exercises()
-	audit.check_eq(table.size(), 4, "drill/the_drill_table_lists_four_exercises")
+	# The reference's own table is still its four rows (`Tables.drill_exercises()`); the
+	# screen offers the CATALOG, which appends this build's Godot-only exercise
+	# (`godot/src/modes/drill_extras.gd`, the Jev serve-return ticket's `return`).
+	var table: Array = Tables.drill_catalog()
+	audit.check_eq(Tables.drill_exercises().size(), 4, "drill/the_frozen_table_still_lists_four_exercises")
+	audit.check_eq(table.size(), 5, "drill/the_screen_lists_five_exercises")
+	audit.check_eq(String((table[4] as Dictionary).get("id", "")), DrillExtras.RETURN_ID, "drill/the_fifth_is_the_godot_only_return")
 	var shown: Array = []
 	for row in table:
 		var id := String((row as Dictionary).get("id", ""))
@@ -134,12 +141,12 @@ func _exercises(audit: AuditBase) -> void:
 		shown.append(button.text if button != null else "<missing>")
 	var expected: Array = []
 	for row in table:
-		expected.append(UiStrings.t("drill_%s_name" % String((row as Dictionary).get("id", ""))))
-	audit.check_eq(shown, expected, "drill/the_four_exercise_buttons_show_the_tables_own_names")
+		expected.append(DrillText.exercise_name(String((row as Dictionary).get("id", ""))))
+	audit.check_eq(shown, expected, "drill/the_five_exercise_buttons_show_their_own_names")
 	var order: Array = []
 	for row in table:
 		order.append(String((row as Dictionary).get("id", "")))
-	audit.check_eq(_exercise_ids(screen), order, "drill/the_order_is_the_tables_order")
+	audit.check_eq(_exercise_ids(screen), order, "drill/the_order_is_the_catalogs_order")
 	audit.check_eq(screen.exercise(), String(order[0]), "drill/the_first_exercise_is_the_default")
 	for id in order:
 		audit.check_eq(screen.select_exercise(String(id)), true, "drill/%s_can_be_chosen" % id)
@@ -148,6 +155,12 @@ func _exercises(audit: AuditBase) -> void:
 		audit.check_eq(button.button_pressed, true, "drill/%s_is_the_pressed_segment" % id)
 		audit.check_eq(screen.exercise_desc_key(), "drill_%s_desc" % id, "drill/%s_brings_its_own_subtitle" % id)
 		audit.check_eq(screen.exercise_hint_key(), "drill_%s_hint" % id, "drill/%s_brings_its_own_hint" % id)
+		# Both lines have to RESOLVE, not merely be named: the reference's four come from the
+		# generated table, the Godot-only one from this build's own, and either way the
+		# player must never read a raw id.
+		for lang in ["it", "en"]:
+			audit.check_eq(DrillText.has("drill_%s_desc" % id, String(lang)), true, "drill/%s_has_a_subtitle_in_%s" % [id, String(lang)])
+			audit.check_eq(DrillText.has("drill_%s_hint" % id, String(lang)), true, "drill/%s_has_a_hint_in_%s" % [id, String(lang)])
 	audit.check_eq(screen.select_exercise("bogus"), false, "drill/an_unknown_exercise_is_refused")
 	screen.select_exercise(String(order[0]))
 
@@ -222,10 +235,11 @@ func _session_for(exercise_id: String) -> Variant:
 func _records(audit: AuditBase) -> void:
 	var screen: Node = _screen()
 	var exercise: String = screen.exercise()
-	for row in Tables.drill_exercises():
+	for row in Tables.drill_catalog():
 		var id := String((row as Dictionary).get("id", ""))
 		ModesSave.save_drill_score(_store, id, PLACED_RECORD)
-	audit.check_eq(UiData.drill_records(_store).get("count", 0), 4, "drill/four_records_are_on_disk")
+	audit.check_eq(UiData.drill_records(_store).get("count", 0), 5, "drill/one_record_row_per_catalog_exercise")
+	audit.check_eq(UiData.drill_records(_store).get("count", 0), Tables.drill_catalog().size(), "drill/the_record_rows_follow_the_catalog_size")
 	screen.enter({"router_id": "drill", "back_target": "menu"})
 	await process_frame
 	audit.check_eq(_box_value(screen, "drillBest"), str(PLACED_RECORD), "drill/the_best_box_shows_the_placed_record")
@@ -267,11 +281,11 @@ func _strings(audit: AuditBase) -> void:
 		for lang in Locale.locales():
 			if not Locale.is_resolvable(key, String(lang)):
 				unresolved.append("%s/%s" % [key, lang])
-	for row in Tables.drill_exercises():
+	for row in Tables.drill_catalog():
 		var id := String((row as Dictionary).get("id", ""))
 		for suffix in ["name", "desc", "hint"]:
 			for lang in Locale.locales():
-				if not Locale.is_resolvable("drill_%s_%s" % [id, suffix], String(lang)):
+				if not DrillText.has("drill_%s_%s" % [id, suffix], String(lang)):
 					unresolved.append("drill_%s_%s/%s" % [id, suffix, lang])
 	audit.check_eq(unresolved, [], "drill/every_visible_key_resolves_in_both_locales")
 	var other := ""
@@ -287,10 +301,12 @@ func _strings(audit: AuditBase) -> void:
 	var wrong: Array = []
 	var moved := 0
 	for slot in slots:
-		var expected_text := Locale.resolve(String(slots[slot]), other)
+		# The id is resolved through the DRILL resolver: the reference's own generated table
+		# for four of them, this build's `drill_strings.json` for `return`.
+		var expected_text := DrillText.resolve(String(slots[slot]), other)
 		if String(after[slot]) != expected_text:
 			wrong.append("%s expected <%s> got <%s>" % [slot, expected_text, after[slot]])
-		if Locale.resolve(String(slots[slot]), language_at_start) != expected_text:
+		if DrillText.resolve(String(slots[slot]), language_at_start) != expected_text:
 			moved += 1
 	audit.check_eq(wrong, [], "drill/the_flip_shows_the_other_tables_own_text")
 	audit.check_gt(moved, 0, "drill/the_flip_moved_strings_that_differ")

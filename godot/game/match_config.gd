@@ -192,6 +192,7 @@ static func save_store() -> RefCounted:
 
 ## The three player-switching modes the reference accepts, by its own names.
 const CONTROL_MODES := ["assisted", "semi", "manual"]
+const DEFAULT_MATCH_FORMAT := "points11"
 
 
 ## The switching mode the save holds, validated. An absent or unknown value is
@@ -209,6 +210,37 @@ static func control_mode() -> String:
 		return "semi"
 	var value := String((payload as Dictionary).get("controlMode", "semi"))
 	return value if CONTROL_MODES.has(value) else "semi"
+
+
+## The quick-match format follows `prefs.matchLength`, written by ModesScreen,
+## and validates against the frozen reference table. A missing or stale value uses
+## the browser's own default rather than a guessed fallback.
+static func match_length() -> String:
+	var formats := Frozen.match_formats()
+	var value := String(stored_prefs().get("matchLength", DEFAULT_MATCH_FORMAT))
+	return value if formats.has(value) else DEFAULT_MATCH_FORMAT
+
+
+## Mirrors `Object.assign(matchState, MATCH_FORMATS[ui.matchLength])` exactly:
+## only the selected row's fields are assigned. This is only for quick matches;
+## tournament and career rules remain owned by their session code.
+static func apply_quick_match_format(state: Variant) -> void:
+	if state == null:
+		return
+	var formats := Frozen.match_formats()
+	var format: Dictionary = formats.get(match_length(), formats.get(DEFAULT_MATCH_FORMAT, {}))
+	if format.has("scoring"):
+		state.scoring = String(format["scoring"])
+	if format.has("pointsToWin"):
+		state.pointsToWin = int(format["pointsToWin"])
+	if format.has("gamesToWin"):
+		state.gamesToWin = int(format["gamesToWin"])
+	if format.has("gameMargin"):
+		state.gameMargin = int(format["gameMargin"])
+	if format.has("tieBreakAt"):
+		state.tieBreakAt = format["tieBreakAt"]
+	if format.has("setsToWin"):
+		state.setsToWin = int(format["setsToWin"])
 
 
 ## The options a mode session needs, from the state this config already carries.

@@ -1,0 +1,34 @@
+{
+  "schema": "steam-circuit-padel-pro.drill-extra-strings",
+  "schemaVersion": 1,
+  "what": "The player-facing strings of the Godot-only drill exercises declared in godot/src/modes/drill_extras.gd, Italian first with an English table, resolved by godot/src/modes/drill_text.gd. They live HERE and not in godot/src/locale/locale_data.gd because that file is generated from the frozen browser reference (js/i18n.js) and verified byte-for-byte by tools/i18n-port/verify-i18n-port.mjs: the reference has no fifth exercise, so a hand-written key there would be dropped by the next regeneration. Same resolution chain as the port's locale layer — the reference's own table first, then the requested locale of this file, then its fallback, then the id itself.",
+  "locales": ["it", "en"],
+  "fallback": "it",
+  "placeholders": "{name}, the port's own syntax (godot/src/locale/locale.gd::substitute); no id here needs one",
+  "strings": {
+    "it": {
+      "drill_return_name": "Risposta",
+      "drill_return_desc": "Il servizio lo batte l'avversario: rispondi e manda la palla nella metà avversaria.",
+      "drill_return_hint": "Split-step sul servizio avversario e rispondi: la palla deve rimbalzare nella metà avversaria.",
+      "drillWhyReturnIn": "Risposta dentro: la palla ha passato la rete ed e' rimbalzata nella metà avversaria.",
+      "drillWhyReturnDeep": "Risposta profonda: la palla e' rimbalzata in fondo alla metà avversaria.",
+      "drillWhyAceAgainst": "Ace avversario: il servizio non e' stato risposto.",
+      "drillWhyNoReturn": "Il punto si e' chiuso prima che il tuo lato rispondesse al servizio.",
+      "drillWhyReturnNet": "La risposta non ha passato la rete.",
+      "drillWhyReturnOut": "La risposta ha passato la rete ma e' uscita dal campo avversario.",
+      "drillWhyReturnLost": "La risposta ha passato la rete, ma il punto si e' chiuso prima del rimbalzo."
+    },
+    "en": {
+      "drill_return_name": "Return",
+      "drill_return_desc": "The opponents serve: return it and put the ball in the opponent half.",
+      "drill_return_hint": "Split-step on the opponent's serve and return: the ball must bounce in the opponent half.",
+      "drillWhyReturnIn": "Return in: the ball crossed the net and bounced in the opponent half.",
+      "drillWhyReturnDeep": "Deep return: the ball bounced at the back of the opponent half.",
+      "drillWhyAceAgainst": "Opponent ace: the serve was not returned.",
+      "drillWhyNoReturn": "The point closed before your side returned the serve.",
+      "drillWhyReturnNet": "The return did not clear the net.",
+      "drillWhyReturnOut": "The return cleared the net but went out of the opponent court.",
+      "drillWhyReturnLost": "The return cleared the net, but the point closed before it bounced."
+    }
+  }
+}

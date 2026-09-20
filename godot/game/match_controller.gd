@@ -156,7 +156,7 @@ const REPLAY_STEP := 1.0 / 60.0
 ## and the three state keys the draw reads.
 const REPLAY_PAD_KEYS := ["player", "playerMate", "opponent", "opponentMate"]
 const REPLAY_PAD_FIELDS := ["x", "y", "swing", "swingSide", "motion", "charge",
-	"runPhase", "actionPose", "actionIntent", "moveRatio"]
+	"runPhase", "actionPose", "actionIntent", "moveRatio", "staminaEnergy"]
 const REPLAY_BALL_FIELDS := ["x", "y", "z", "vx", "vy", "vz", "spin", "topspin",
 	"backspin", "shotType", "serveInFlight", "serveTouchedNet", "bouncePulse",
 	"landRing", "hitFlash", "hitPulse", "trail"]
@@ -1139,6 +1139,9 @@ func start_match() -> void:
 	if Config.pending_mode == "quick" and HUMAN_MODES.has(Config.pending_player_mode):
 		human_mode = Config.pending_player_mode
 	state = Sim.create_match_state("quick", Config.athlete(), Config.arena(), Config.tier(), 0, {"humanMode": human_mode})
+	# The setup screen's match-length selection applies only to a quick match;
+	# tournament and career keep the fixed rules their sessions construct.
+	Config.apply_quick_match_format(state)
 	state.rng_state = Config.seed_value
 	state.running = true
 	# The saved switching mode (`js/main.js:1184`,
@@ -2164,6 +2167,9 @@ func _replay_apply(frame: Dictionary) -> Dictionary:
 	for i in REPLAY_PAD_KEYS.size():
 		var pad = state.paddle(String(REPLAY_PAD_KEYS[i]))
 		var entry: Dictionary = pads[i] if i < pads.size() else {}
+		entry = entry.duplicate()
+		if not entry.has("staminaEnergy"):
+			entry["staminaEnergy"] = 1.0
 		var keep := {}
 		for field in REPLAY_PAD_FIELDS:
 			if not entry.has(field):

@@ -37,6 +37,7 @@ extends "res://src/ui/screens/ScreenContract.gd"
 const UiStrings := preload("res://src/ui/UiStrings.gd")
 const UiData := preload("res://src/ui/data/UiData.gd")
 const Tables := preload("res://src/modes/mode_tables.gd")
+const DrillText := preload("res://src/modes/drill_text.gd")
 const DrillScoring := preload("res://src/modes/drill_scoring.gd")
 const DrillSession := preload("res://src/modes/drill_session.gd")
 const Config := preload("res://game/match_config.gd")
@@ -52,7 +53,7 @@ const SCREEN_ID := "drill"
 ## The router's own row for this screen (`ScreenRouter.SCREENS[9]`).
 const DECLARED_BACK := "menu"
 
-const CAPTURE_STATES: Array[String] = ["default", "precision", "smash", "rally", "serve", "hard", "legend"]
+const CAPTURE_STATES: Array[String] = ["default", "precision", "smash", "rally", "serve", "return", "hard", "legend"]
 
 ## The scenario the mode flow loads (`godot/game/ModeScreen.tscn`'s own target).
 const SCENE_PATH := "res://game/Match.tscn"
@@ -130,28 +131,30 @@ func capture_states() -> Array[String]:
 	return CAPTURE_STATES.duplicate()
 
 
-## The four exercises and the two difficulty pins a capture may ask for; anything else
-## is not declared and answers false.
+## Every exercise the catalog carries and the two difficulty pins a capture may ask for;
+## anything else is not declared and answers false.
 func apply_capture_state(state_id: String) -> bool:
 	_ensure()
 	if state_id == "default":
 		select_difficulty(seed_difficulty())
 		select_exercise(first_exercise_id())
 		return true
+	# An exercise capture is any id the catalog holds — the reference's four and the
+	# Godot-only ones — read from the table instead of retyped, so a new exercise cannot
+	# arrive at the screen without its own pin.
+	if exercise_ids().has(state_id):
+		return select_exercise(state_id)
 	match state_id:
-		"precision":
-			return select_exercise("precision")
-		"smash":
-			return select_exercise("smash")
-		"rally":
-			return select_exercise("rally")
-		"serve":
-			return select_exercise("serve")
 		"hard":
 			return select_difficulty("hard")
 		"legend":
 			return select_difficulty("legend")
 	return false
+
+
+## Every exercise id the catalog carries, in order. The pins and the screen both read it.
+func exercise_ids() -> Array[String]:
+	return Tables.drill_catalog_ids()
 
 
 # ---------------------------------------------------------------------------
@@ -169,8 +172,12 @@ func set_store(store_in: RefCounted) -> void:
 		refresh_metrics()
 
 
+## The whole catalog: the frozen reference's own four rows, then the Godot-only ones
+## (`godot/src/modes/drill_extras.gd`). `Tables.drill_exercises()` still answers the
+## reference's own four for anything auditing the reference; this screen offers what the
+## build can actually play.
 func exercise_rows() -> Array:
-	return Tables.drill_exercises()
+	return Tables.drill_catalog()
 
 
 func first_exercise_id() -> String:
@@ -192,6 +199,13 @@ func exercise_desc_key() -> String:
 
 func exercise_hint_key() -> String:
 	return "drill_%s_hint" % _exercise
+
+
+## One exercise's visible name, whichever table owns it: the reference's generated
+## locale table for its own four, this build's `drill_strings.json` for the extras
+## (`drill_text.gd`).
+func exercise_name(drill_id: String) -> String:
+	return DrillText.exercise_name(drill_id)
 
 
 func select_exercise(id: String) -> bool:
@@ -378,13 +392,18 @@ func start_payload() -> Dictionary:
 func refresh_strings() -> void:
 	_ensure()
 	_shell.set_title("drillTitle")
-	_shell.set_subtitle(exercise_desc_key())
-	(_control("Hint") as Label).text = UiStrings.t(exercise_hint_key())
+	# The subtitle and the hint go through `drill_text.gd`, which asks the reference's own
+	# locale table first: the frozen four keep the generated strings, the Godot-only rows
+	# get this build's own (`godot/src/modes/drill_strings.json`).
+	_shell.set_subtitle_text(DrillText.t(exercise_desc_key()))
+	(_control("Hint") as Label).text = DrillText.t(exercise_hint_key())
 	(_control("StartButton") as Button).text = UiStrings.t("training")
 	(_control("CourtCaption") as Label).text = UiStrings.t(arena_name_key())
 	_apply_gate()
 	for id in _exercise_buttons:
-		(_exercise_buttons[id] as Button).text = UiStrings.t("drill_%s_name" % id)
+		# The reference's four come from the generated locale table; the Godot-only ones
+		# from this build's own `drill_strings.json` (`drill_text.gd` resolves both).
+		(_exercise_buttons[id] as Button).text = DrillText.exercise_name(String(id))
 	for id in _difficulty_buttons:
 		(_difficulty_buttons[id] as Button).text = UiStrings.t(String(DIFFICULTY_LABELS[id]))
 	(_metrics_grid as Control).tooltip_text = UiStrings.t("drillExercise")

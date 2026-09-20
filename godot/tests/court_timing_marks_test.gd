@@ -448,15 +448,18 @@ func _placement() -> void:
 	# --- the energy bar's own bands (`js/render.js:1031-1037`) -----------------
 	for band in [[1.0, "56e8d8"], [0.4, "ffd45c"], [0.2, "ff6b64"]]:
 		_state.rallyEnergy = {"player": float(band[0]), "ai": 1.0}
+		_state.active_player().staminaEnergy = float(band[0])
 		_marks.update(_state, false)
 		_check_eq("energy %.2f is the reference's #%s" % [float(band[0]), String(band[1])],
 			_marks.report()["energy_color"], String(band[1]))
 	_state.rallyEnergy = {"player": 0.2, "ai": 1.0}
+	_state.active_player().staminaEnergy = 0.2
 	_marks.update(_state, false)
 	var low_width: float = float(_marks.report()["energy_width"])
 	_check("the energy fill follows the player's own energy",
 		is_equal_approx(low_width, BAR_W * 0.2), str(low_width))
 	_state.rallyEnergy = {"player": 1.0, "ai": 1.0}
+	_state.active_player().staminaEnergy = 1.0
 
 	# --- both follow a switch, like the zone and the pin -----------------------
 	_state.activePlayerKey = "playerMate" if String(_state.activePlayerKey) == "player" else "player"

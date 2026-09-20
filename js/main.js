@@ -1302,7 +1302,7 @@ function gameLoop(now, generation) {
 }
 
 const REPLAY_PAD_KEYS = ["player", "playerMate", "opponent", "opponentMate"];
-const REPLAY_PAD_FIELDS = ["x", "y", "swing", "swingSide", "motion", "charge", "runPhase", "actionPose", "actionIntent", "moveRatio"];
+const REPLAY_PAD_FIELDS = ["x", "y", "swing", "swingSide", "motion", "charge", "runPhase", "actionPose", "actionIntent", "moveRatio", "staminaEnergy"];
 const REPLAY_BALL_FIELDS = ["x", "y", "z", "vx", "vy", "vz", "spin", "topspin", "backspin", "shotType", "serveInFlight", "serveTouchedNet", "bouncePulse", "landRing", "hitFlash", "hitPulse", "trail"];
 
 function stepReplay(dt) {
@@ -1329,7 +1329,7 @@ function applyReplayFrame() {
     const saved = {};
     REPLAY_PAD_FIELDS.forEach((f) => {
       saved[f] = pad[f];
-      pad[f] = s[f];
+      pad[f] = f === "staminaEnergy" ? (s[f] ?? 1) : s[f];
     });
     savedPads.push(saved);
   });
@@ -1913,7 +1913,7 @@ function drawScene(c, cvs, state, now) {
       state.shotCharge,
       smashChargeThreshold,
       smashIntentActive,
-      state.rallyEnergy.player,
+      state[state.activePlayerKey].staminaEnergy ?? 1,
       smashStatus,
     );
     drawTimingHud(c, state, now / 1000);

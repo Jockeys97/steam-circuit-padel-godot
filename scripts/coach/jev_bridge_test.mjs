@@ -80,10 +80,13 @@ function validWire(overrides = {}) {
   stats.rallyCount = 9;
   stats.totalRallyHits = 32;
   stats.longestRally = 7;
+  // The return focus travels the same wire, as one of the contract's own category ids:
+  // adding it needed no fifth field here, only the contract's criteria.
+  if (!("aces" in (overrides.stats ?? {}))) stats.aces.ai = 4;
   return {
     version: contract.wire.version,
     stats,
-    candidates: ["serve_accuracy", "shot_accuracy", "rally_consistency", "insufficient_data"],
+    candidates: ["serve_accuracy", "shot_accuracy", "rally_consistency", "serve_return", "insufficient_data"],
     ...overrides,
   };
 }
@@ -178,6 +181,9 @@ function answerBody(choice, probabilities, confidence) {
 // ---------------------------------------------------------------------------
 
 checkEq("contract/the_categories_are_the_declared_ones", contract.question.criteria.insufficient_data !== undefined, true);
+// The return focus is one of the SAME single contract's categories, so both sides see it
+// without a second list: the bridge validates a `serve_return` candidate like any other.
+checkEq("contract/serve_return_is_a_declared_category", typeof contract.question.criteria.serve_return, "string");
 checkEq("contract/the_question_is_a_choice", contract.question.type, "choice");
 checkEq("contract/the_endpoint_is_the_fixed_typesafe_one", contract.upstream.endpoint, "https://api.typesafe.ai/v1/systemone");
 checkEq("contract/the_key_comes_from_the_environment", contract.upstream.keyEnv, "TYPESAFE_API_KEY");
@@ -224,18 +230,18 @@ checkEq("upstream/the_model_is_the_contracts", request.model, contract.upstream.
 checkEq("upstream/only_the_asked_question_is_sent", Object.keys(request.questions).length, 1);
 const sentQuestion = request.questions[contract.question.id];
 checkEq("upstream/the_question_is_a_choice", sentQuestion.type, "choice");
-checkEq("upstream/only_the_offered_criteria_are_sent", Object.keys(sentQuestion.criteria).length, 4);
+checkEq("upstream/only_the_offered_criteria_are_sent", Object.keys(sentQuestion.criteria).length, validWire().candidates.length);
 checkEq("upstream/an_unoffered_category_is_not_sent", sentQuestion.criteria.net_finishing, undefined);
 checkEq("upstream/the_instructions_are_the_contracts", sentQuestion.instructions, contract.question.instructions);
 checkEq("upstream/the_wire_key_is_renamed_to_your_side", request.state.measured.aces.yourSide, 2);
-checkEq("upstream/the_rival_key_is_renamed_to_opponent", request.state.measured.aces.opponent, 0);
+checkEq("upstream/the_rival_key_is_renamed_to_opponent", request.state.measured.aces.opponent, 4);
 checkEq("upstream/points_played_is_the_two_sides_added", request.state.measured.pointsPlayed, 18);
 checkEq("upstream/the_average_rally_uses_the_result_screens_formula", request.state.measured.averageHitsPerRally, 3.6);
 checkEq("upstream/the_aggregation_note_travels_with_the_state", request.state.aggregation, contract.stats.aggregation);
 checkEq("upstream/the_match_wide_note_travels_with_the_state", request.state.matchWide, contract.stats.matchWide);
 checkEq("upstream/nothing_from_the_client_is_copied_verbatim", JSON.stringify(request).includes("ignore your rules"), false);
 
-const goodAnswer = JSON.parse(answerBody("serve_accuracy", { serve_accuracy: 0.8, shot_accuracy: 0.1, rally_consistency: 0.05, insufficient_data: 0.05 }, 0.73));
+const goodAnswer = JSON.parse(answerBody("serve_accuracy", { serve_accuracy: 0.78, shot_accuracy: 0.08, rally_consistency: 0.05, serve_return: 0.05, insufficient_data: 0.04 }, 0.73));
 checkEq("answer/a_well_formed_choice_passes", validateUpstreamAnswer(goodAnswer, contract, validWire().candidates).ok, true);
 const answerProblems = (mutate) => {
   const copy = JSON.parse(JSON.stringify(goodAnswer));
@@ -256,7 +262,7 @@ checkEq("answer/a_non_choice_body_is_refused", validateUpstreamAnswer({ model: "
 // The boundary, against a real server on a real loopback port
 // ---------------------------------------------------------------------------
 
-const probabilities = { serve_accuracy: 0.8, shot_accuracy: 0.1, rally_consistency: 0.05, insufficient_data: 0.05 };
+const probabilities = { serve_accuracy: 0.78, shot_accuracy: 0.08, rally_consistency: 0.05, serve_return: 0.05, insufficient_data: 0.04 };
 const happyUpstream = await startFakeUpstream((req, res) => {
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(answerBody("serve_accuracy", probabilities, 0.73));
@@ -270,7 +276,7 @@ const happy = await post(bridge.port, validWire(), { headers: { "X-Coach-Test": 
 checkEq("happy/one_valid_body_gets_a_choice_back", happy.status, 200);
 checkEq("happy/the_choice_is_the_models", happy.body.choice, "serve_accuracy");
 checkEq("happy/the_confidence_rides_along", happy.body.confidence, 0.73);
-checkEq("happy/the_distribution_is_bounded_to_the_offered_categories", Object.keys(happy.body.probabilities).length, 4);
+checkEq("happy/the_distribution_is_bounded_to_the_offered_categories", Object.keys(happy.body.probabilities).length, validWire().candidates.length);
 checkEq("happy/the_client_sees_no_cors_header", happy.headers["access-control-allow-origin"], undefined);
 checkEq("happy/the_bridge_called_the_upstream_once", happyUpstream.calls.length, 1);
 checkEq("happy/the_key_rode_in_the_authorization_header", happyUpstream.calls[0].headers.authorization, "Bearer " + key);
@@ -417,7 +423,7 @@ await chatty.close();
 // internally inconsistent and is refused rather than forwarded.
 const notThePeak = await startFakeUpstream((req, res) => {
   res.writeHead(200, { "Content-Type": "application/json" });
-  const spread = { serve_accuracy: 0.1, shot_accuracy: 0.6, rally_consistency: 0.2, insufficient_data: 0.1 };
+  const spread = { serve_accuracy: 0.1, shot_accuracy: 0.55, rally_consistency: 0.2, serve_return: 0.05, insufficient_data: 0.1 };
   res.end(answerBody("serve_accuracy", spread, 0.5));
 });
 const notThePeakBridge = await startBridge({ upstream: notThePeak });
@@ -430,7 +436,7 @@ await notThePeak.close();
 // A tie is still a peak: the highest-probability option chosen among equals is accepted.
 const tie = await startFakeUpstream((req, res) => {
   res.writeHead(200, { "Content-Type": "application/json" });
-  const spread = { serve_accuracy: 0.4, shot_accuracy: 0.4, rally_consistency: 0.1, insufficient_data: 0.1 };
+  const spread = { serve_accuracy: 0.4, shot_accuracy: 0.4, rally_consistency: 0.05, serve_return: 0.05, insufficient_data: 0.1 };
   res.end(answerBody("shot_accuracy", spread, 0.2));
 });
 const tieBridge = await startBridge({ upstream: tie });

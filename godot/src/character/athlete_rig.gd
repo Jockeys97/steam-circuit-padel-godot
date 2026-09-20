@@ -34,6 +34,10 @@ extends Node3D
 ##     get_base_material() -> StandardMaterial3D   # the GLB's own material, for recolour
 ##     note_catalogue_outfit(athlete_id, outfit_id) -> void
 ##     get_catalogue_outfit() -> Dictionary        # {athlete_id, outfit_id} or {}
+##     get_catalogue_surface() -> ShaderMaterial   # the catalogue's masked override, or null
+##     set_catalogue_surface(mat) -> void          # install it on surface 0
+##     restore_base_surface() -> bool              # hand surface 0 back to the GLB look
+##     is_base_surface() -> bool                   # is surface 0 the rig's own base look?
 ##     Do not mix with set_outfit(): both own surface override 0. See
 ##     `src/character/outfit_catalogue.gd`, which drives this path.
 ##
@@ -174,6 +178,10 @@ var _track_prefix: String = "Armature/Skeleton3D"
 
 var _base_material: StandardMaterial3D = null
 var _override: StandardMaterial3D = null
+## The catalogue's own surface override for the masked (per-athlete profile) path.
+## Held here, not rebuilt per selection, so switching outfits reuses one material
+## per rig instead of allocating one each time.
+var _catalogue_surface: ShaderMaterial = null
 var _outfit_cache: Dictionary = {}          # id -> {texture: Texture2D, digest: String}
 var _strokes: Dictionary = {}               # StringName -> length (float)
 var _catalogue_outfit: Dictionary = {}      # {athlete_id, outfit_id}, set by the catalogue
@@ -1069,6 +1077,46 @@ func note_catalogue_outfit(athlete_id: StringName, outfit_id: StringName) -> voi
 
 func get_catalogue_outfit() -> Dictionary:
 	return _catalogue_outfit
+
+
+## The catalogue's masked override for this rig, or null while it has never
+## installed one. The catalogue owns that material; the rig only holds it so a
+## second selection reuses it rather than allocating another (plan acceptance 4:
+## repeated switching must not accumulate materials).
+func get_catalogue_surface() -> ShaderMaterial:
+	return _catalogue_surface
+
+
+## Installs `mat` on surface 0 and remembers it. Passing null forgets it without
+## touching the surface, so `restore_base_surface()` stays the only way back.
+func set_catalogue_surface(mat: ShaderMaterial) -> void:
+	_ensure_built()
+	_catalogue_surface = mat
+	if mat != null and _mesh_instance != null:
+		_mesh_instance.set_surface_override_material(0, mat)
+
+
+## Hands surface 0 back to the rig's own base material — the duplicate of the GLB's
+## material that `set_outfit(&"base")` installs, with the non-glTF metallic/roughness
+## defaults of owner decision 1. This is what makes `base` round-trip: the masked
+## shader is never left on the surface pretending to be a no-op.
+func restore_base_surface() -> bool:
+	_ensure_built()
+	if _mesh_instance == null or _override == null:
+		return false
+	_mesh_instance.set_surface_override_material(0, _override)
+	_outfit = &"base"
+	return true
+
+
+## True when surface 0 carries the rig's own base override, i.e. no catalogue
+## material is in force. The catalogue reads this to prove `base` really restored
+## rather than merely looking restored.
+func is_base_surface() -> bool:
+	_ensure_built()
+	if _mesh_instance == null or _override == null:
+		return false
+	return _mesh_instance.get_surface_override_material(0) == _override
 
 
 func get_load_error() -> int:

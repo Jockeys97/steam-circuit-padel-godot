@@ -17,6 +17,7 @@ class SimPaddle:
 	var w: float = 0.0
 	var h: float = 16.0
 	var speed: float = 0.0
+	var staminaEnergy: float = 1.0
 	var reach: float = 0.0
 	var swing: float = 0.0
 	var swingSide: float = 1.0

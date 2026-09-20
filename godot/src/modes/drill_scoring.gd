@@ -58,12 +58,22 @@ static func score_line(grade: Variant, points: int) -> String:
 
 
 ## `drillMetrics(drill)` (`js/drill.js:474-498`). The branch is on the exercise
-## id, exactly as the reference branches.
+## id, exactly as the reference branches. The `return` branch is the Godot-only
+## exercise's own (`godot/src/modes/drill_extras.gd`); it reuses the reference's
+## own metric ids and value shapes (`drillScore`, `drillBest`, `drillIn` as
+## in/attempts, `drillStreak`), so nothing new has to be localized for it.
 static func metrics(drill) -> Array:
 	var id: String = String(drill.exercise.get("id", ""))
 	var energy: float = 1.0
 	if drill.state != null and drill.state.rallyEnergy is Dictionary:
 		energy = float((drill.state.rallyEnergy as Dictionary).get("player", 1.0))
+	if id == "return":
+		return [
+			{"key": "drillScore", "value": str(drill.score)},
+			{"key": "drillBest", "value": str(drill.best)},
+			{"key": "drillIn", "value": "%d/%d" % [drill.hits, drill.attempts]},
+			{"key": "drillStreak", "value": str(drill.streak)},
+		]
 	if id == "rally":
 		return [
 			{"key": "drillScore", "value": str(drill.score)},

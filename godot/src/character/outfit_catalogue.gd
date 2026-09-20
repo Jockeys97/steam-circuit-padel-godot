@@ -18,6 +18,8 @@ class_name OutfitCatalogue
 ##     OutfitCatalogue.make_material(source_texture) -> ShaderMaterial
 ##     OutfitCatalogue.apply(rig, athlete_id, outfit_id) -> bool
 ##     OutfitCatalogue.read_back(rig) -> Dictionary      # what is on the rig now
+##     OutfitCatalogue.profile(athlete_id) -> Dictionary  # the athlete's masked profile, or {}
+##     OutfitCatalogue.has_profile(athlete_id) -> bool
 ##
 ##   PROVENANCE
 ##     OutfitCatalogue.load_error() -> int               # OK (0) when the JSON parsed
@@ -26,7 +28,7 @@ class_name OutfitCatalogue
 ## ===========================================================================
 ## WHERE THE NUMBERS COME FROM
 ## ===========================================================================
-## Nothing in this file is a hand-typed colour. `res://assets/athletes/
+## The legacy palette is extracted from `res://assets/athletes/
 ## reference_catalogue.json` is produced by
 ## `tools/character/extract_reference_catalogue.py`, which parses the frozen
 ## browser reference `js/data.js` — ATHLETES[] for the roster and ATHLETE_OUTFITS{}
@@ -44,7 +46,8 @@ class_name OutfitCatalogue
 ##     colors[1] -> the #ffc94a family  (trim, collar, wristbands)
 ##
 ## That is the whole mapping. It is positional and uniform across all 26 entries; no
-## per-outfit tuning exists anywhere in this lane.
+## per-outfit tuning exists in the legacy lane. Dedicated profiles below have
+## explicitly authored region targets based on the outfit artwork.
 ##
 ## NOT EXPRESSIBLE ON THIS RIG (reported per entry by `resolve()`, and listed in the
 ## evidence file as owner decisions, rather than quietly faked):
@@ -62,6 +65,19 @@ class_name OutfitCatalogue
 ##     the honest limit of this rig, and it is why `resolve()` returns
 ##     `art_dependent = true` for every non-base entry.
 ##
+## TWO PATHS, ONE DOOR (`apply`)
+## The colour-inferred shader above only ever fit the Volpe placeholder. A Meshy
+## human needs a real garment mask, because their skin is as saturated as their kit.
+## So `apply()` now has three outcomes, in this order:
+##   1. the athlete has an entry in `OUTFIT_PROFILES` (today: fiamma only) -> the
+##      masked path: a region mask authored from the skeleton gates the recolour and
+##      `base` hands the surface back to the rig's own material, untouched;
+##   2. otherwise the rig recolours itself (Volpe) -> the shader above, unchanged;
+##   3. otherwise a dedicated athlete with no profile -> the selection is recorded
+##      and the rig is left exactly as it looks, which is the pre-existing behaviour.
+## Everything `resolve()` returns is identical on all three paths; the catalogue's
+## ids, unlocks and entries are untouched by this.
+##
 ## DERIVED, NOT FROM THE REFERENCE:
 ##   * `protect_sat`, `hue_tol_deg`, `sat_min/val_min/val_max`, `luma_clamp` — the
 ##     measured mask constants of the previous slice, reused unchanged.
@@ -72,6 +88,78 @@ class_name OutfitCatalogue
 
 const DATA_PATH := "res://assets/athletes/reference_catalogue.json"
 const SHADER_PATH := "res://src/character/outfit_recolour.gdshader"
+const REGION_SHADER_PATH := "res://src/character/outfit_region_recolour.gdshader"
+
+## ATHLETE PROFILES — the masked path, for athletes whose body is not the Volpe fox.
+##
+## One entry per athlete, keyed by roster id, and each entry owns:
+##   mask      the explicit UV region mask (R torso, G hip, B foot, A coverage),
+##             authored from the skeleton by tools/character/build_fiamma_outfit_mask.py;
+##   shader    the shader that reads it;
+##   anchor_a  the baked atlas's family A, measured *inside* the mask (lime kit);
+##   anchor_b  the baked atlas's family B, measured inside the mask (navy trim);
+##   outfits   outfit id -> the six targets, one per (region x family). An outfit
+##             absent from this table is `base`: the rig restores its own material.
+##
+## WHERE THE NUMBERS COME FROM, AND WHAT IS A CHOICE
+##   * `anchor_a` / `anchor_b` are MEASURED, not chosen: they are the modal colours
+##     of the two families inside the garment regions, reported by the mask tool in
+##     `docs/agent-work/outfits-3d/evidence/fiamma-mask-report.json` (#b8e828 and
+##     #081838; see the reproducible mask tool's report).
+##   * `circuit` and `signature` are the reference's own two colours for those
+##     entries (`js/data.js` ATHLETE_OUTFITS), placed on the garment piece the 2D
+##     sprite paints them on. Circuit: blue kit, pale-cyan trim. Signature: petrol
+##     kit, lime trim - the "flame" accents of the sprite live in the hem and the
+##     shoe trim, which are exactly the two lower-garment slots.
+##   * `legend` is the one entry the reference cannot express: its record is gold
+##     (#f2a72b) plus ivory (#fff0a7) and the 2D card is black/ivory/gold. The black
+##     is the user-approved third colour for this outfit and is marked `port_only`
+##     below, so nobody later mistakes it for a reference value.
+##   * `base` is absent by design. Restoring the rig's own material is the only way
+##     for base to be parameter-equivalent to the original rather than merely close.
+##
+## Athletes NOT listed here are untouched: the masked path is opt-in per athlete, and
+## a dedicated athlete without a profile keeps its baked look and says so.
+const OUTFIT_PROFILES := {
+	&"fiamma": {
+		"mask": "res://assets/athletes/outfits/fiamma/fiamma_region_mask.png",
+		"shader": REGION_SHADER_PATH,
+		"anchor_a": "#b8e828",
+		"anchor_b": "#081838",
+		"mask_sha256_prefix": "f176618b03f92216",
+		"outfits": {
+			# Reference colors: ["#326dff", "#c8ecff"]. Blue kit, pale-cyan trim; the
+			# skirt stays the navy the model already wears, as the sprite does.
+			&"circuit": {
+				"torso_a": "#326dff", "torso_b": "#c8ecff",
+				"hip_a": "#c8ecff", "hip_b": "#1b2c52",
+				"foot_a": "#2f66e0", "foot_b": "#c8ecff",
+			},
+			# Reference colors: ["#f2a72b", "#fff0a7"]. Gold trim, ivory accents, and
+			# the approved charcoal that the two-colour record has nowhere to put.
+			&"legend": {
+				"torso_a": "#1b1d22", "torso_b": "#f2a72b",
+				"hip_a": "#fff0a7", "hip_b": "#23252b",
+				"foot_a": "#e6a92b", "foot_b": "#fff0a7",
+				"port_only": ["torso_a", "hip_b"],
+			},
+			# Reference colors: ["#087a75", "#adf51e"]. Petrol kit, lime flame accents.
+			&"signature": {
+				"torso_a": "#0b6b62", "torso_b": "#adf51e",
+				"hip_a": "#adf51e", "hip_b": "#0f5f57",
+				"foot_a": "#0b6b62", "foot_b": "#adf51e",
+			},
+		},
+	},
+}
+
+## The six uniform names a profile entry fills, in (region, family) order. Named so
+## the shader and the table cannot drift apart silently.
+const PROFILE_TARGET_UNIFORMS := {
+	"torso_a": "target_torso_a", "torso_b": "target_torso_b",
+	"hip_a": "target_hip_a", "hip_b": "target_hip_b",
+	"foot_a": "target_foot_a", "foot_b": "target_foot_b",
+}
 
 ## GODOT-ONLY SPECIALS (port additions). `reference_catalogue.json` is generated
 ## from the frozen browser reference and holds exactly the six athletes; a special
@@ -102,6 +190,8 @@ const DEFAULT_ROUGHNESS := 0.85
 static var _data: Dictionary = {}
 static var _error: int = ERR_UNCONFIGURED
 static var _shader: Shader = null
+static var _region_shader: Shader = null
+static var _mask_cache: Dictionary = {}     # mask path -> Texture2D (immutable, shared)
 
 
 # =========================================================================
@@ -319,6 +409,15 @@ static func apply(rig: Node, athlete_id: StringName, outfit_id: StringName) -> b
 		return false
 	if rig == null or not rig.has_method("get_mesh_instance"):
 		return false
+	if has_profile(athlete_id) and rig.has_method("get_athlete_asset") and rig.get_athlete_asset() != athlete_id:
+		return false
+	# PATH 1 — the athlete has a mask and a profile. Fiamma, today.
+	if has_profile(athlete_id):
+		return _apply_profile(rig, athlete_id, entry)
+	# PATH 3 — a dedicated athlete with no mask yet. Its baked material is left
+	# exactly as it looks: applying the Volpe atlas to a different texture would
+	# visibly corrupt it, and that is still the honest answer for every athlete
+	# that has not been authored a profile. The selection is recorded either way.
 	# The recolour shader's anchor/mask values were measured against the legacy
 	# Volpe atlas. New Meshy athletes keep their baked material until a dedicated
 	# mask is authored; silently applying the old atlas would damage their look.
@@ -326,6 +425,7 @@ static func apply(rig: Node, athlete_id: StringName, outfit_id: StringName) -> b
 		if rig.has_method("note_catalogue_outfit"):
 			rig.note_catalogue_outfit(athlete_id, outfit_id)
 		return true
+	# PATH 2 — Volpe, through the colour-inferred shader, unchanged.
 	var mi: MeshInstance3D = rig.get_mesh_instance()
 	if mi == null:
 		return false
@@ -348,6 +448,161 @@ static func apply(rig: Node, athlete_id: StringName, outfit_id: StringName) -> b
 	return true
 
 
+# =========================================================================
+# The masked path (athlete profiles)
+# =========================================================================
+
+## The profile an athlete's masked path is driven by, or {} when it has none.
+## A copy, so a caller cannot edit the table through the returned dictionary.
+static func profile(athlete_id: StringName) -> Dictionary:
+	if not OUTFIT_PROFILES.has(athlete_id):
+		return {}
+	return (OUTFIT_PROFILES[athlete_id] as Dictionary).duplicate(true)
+
+
+static func has_profile(athlete_id: StringName) -> bool:
+	return OUTFIT_PROFILES.has(athlete_id)
+
+
+static func region_shader() -> Shader:
+	if _region_shader == null:
+		_region_shader = load(REGION_SHADER_PATH) as Shader
+	return _region_shader
+
+
+## The mask texture a profile names, or null when the file is missing.
+##
+## Read straight off disk with FileAccess + Image, the same way AthleteRig loads an
+## outfit texture: the mask is a data asset, so it must not depend on Godot's
+## importer having run (a headless `--script` run never imports, and a mask that only
+## loads after someone opens the editor is a mask that silently does nothing).
+## Mipmaps are generated here so the shader's `filter_linear_mipmap` hint has them.
+##
+## Cached by path: the mask is immutable and shared by every rig, so two Fiamma rigs
+## cost one texture, not two. The *materials* stay per-rig (see `_apply_profile`).
+static func profile_mask(athlete_id: StringName) -> Texture2D:
+	var prof := profile(athlete_id)
+	if prof.is_empty():
+		return null
+	var path := String(prof.get("mask", ""))
+	if path == "":
+		return null
+	if _mask_cache.has(path):
+		return _mask_cache[path]
+	# Exported games retain imported resources, not necessarily the source PNG.
+	if ResourceLoader.exists(path):
+		var imported := load(path) as Texture2D
+		if imported != null:
+			_mask_cache[path] = imported
+			return imported
+	if not FileAccess.file_exists(path):
+		push_error("OutfitCatalogue: profile mask missing: %s" % path)
+		return null
+	var img := Image.new()
+	if img.load_png_from_buffer(FileAccess.get_file_as_bytes(path)) != OK:
+		push_error("OutfitCatalogue: profile mask is not a readable PNG: %s" % path)
+		return null
+	img.generate_mipmaps()
+	var tex := ImageTexture.create_from_image(img)
+	tex.resource_path = path
+	_mask_cache[path] = tex
+	return tex
+
+
+## The six targets one outfit puts on the profile's shader, keyed by the uniform
+## names in PROFILE_TARGET_UNIFORMS. `{}` for `base` (which restores instead) and for
+## an outfit the profile does not list.
+static func profile_targets(athlete_id: StringName, outfit_id: StringName) -> Dictionary:
+	var prof := profile(athlete_id)
+	if prof.is_empty():
+		return {}
+	var outfits: Dictionary = prof.get("outfits", {})
+	if not outfits.has(outfit_id):
+		return {}
+	var record: Dictionary = outfits[outfit_id]
+	var out := {}
+	for key in PROFILE_TARGET_UNIFORMS:
+		var hex := String(record.get(key, ""))
+		if hex == "":
+			push_error("OutfitCatalogue: profile '%s/%s' is missing '%s'" % [athlete_id, outfit_id, key])
+			return {}
+		out[PROFILE_TARGET_UNIFORMS[key]] = _hex(hex)
+	return out
+
+
+## Which of an outfit's targets are port additions rather than reference colours.
+## Reported so a reviewer can tell the two apart without reading this file's history.
+static func profile_port_only(athlete_id: StringName, outfit_id: StringName) -> Array:
+	var prof := profile(athlete_id)
+	var outfits: Dictionary = prof.get("outfits", {})
+	if not outfits.has(outfit_id):
+		return []
+	return (outfits[outfit_id] as Dictionary).get("port_only", []).duplicate()
+
+
+static func _apply_profile(rig: Node, athlete_id: StringName, entry: Dictionary) -> bool:
+	var outfit_id: StringName = entry["outfit_id"]
+	# `base` is not a target set: it is the absence of one. Handing surface 0 back to
+	# the rig's own material is what makes base round-trip exactly, and the masked
+	# material stays cached on the rig so switching back reuses it.
+	if outfit_id == &"base" or profile_targets(athlete_id, outfit_id).is_empty():
+		if not rig.has_method("restore_base_surface") or not rig.restore_base_surface():
+			return false
+		if rig.has_method("note_catalogue_outfit"):
+			rig.note_catalogue_outfit(athlete_id, outfit_id)
+		return true
+	var mask := profile_mask(athlete_id)
+	if mask == null:
+		return false
+	var targets := profile_targets(athlete_id, outfit_id)
+	if targets.is_empty():
+		push_error("OutfitCatalogue: profile has no targets for '%s/%s'" % [athlete_id, outfit_id])
+		return false
+	var mi: MeshInstance3D = rig.get_mesh_instance()
+	if mi == null:
+		return false
+	var mat: ShaderMaterial = null
+	if rig.has_method("get_catalogue_surface"):
+		mat = rig.get_catalogue_surface()
+	if mat == null or mat.shader != region_shader():
+		var src: Texture2D = null
+		if rig.has_method("get_base_material"):
+			var bm: StandardMaterial3D = rig.get_base_material()
+			if bm != null:
+				src = bm.albedo_texture
+		if src == null:
+			push_error("OutfitCatalogue: rig has no base albedo texture to mask")
+			return false
+		mat = ShaderMaterial.new()
+		mat.shader = region_shader()
+		mat.set_shader_parameter("source_tex", src)
+		mat.set_shader_parameter("region_mask", mask)
+		var prof := profile(athlete_id)
+		mat.set_shader_parameter("anchor_a", _srgb_vec(_hex(String(prof["anchor_a"]))))
+		mat.set_shader_parameter("anchor_b", _srgb_vec(_hex(String(prof["anchor_b"]))))
+		mat.set_shader_parameter("pbr_metallic", DEFAULT_METALLIC)
+		mat.set_shader_parameter("pbr_roughness", DEFAULT_ROUGHNESS)
+		var original: StandardMaterial3D = rig.get_base_material()
+		mat.set_shader_parameter("normal_enabled", original.normal_enabled and original.normal_texture != null)
+		mat.set_shader_parameter("normal_tex", original.normal_texture)
+		mat.set_shader_parameter("normal_scale", original.normal_scale)
+		mat.set_shader_parameter("roughness_enabled", original.roughness_texture != null)
+		mat.set_shader_parameter("roughness_tex", original.roughness_texture)
+		mat.set_shader_parameter("roughness_channel", int(original.roughness_texture_channel))
+	mat.resource_name = "Outfit_%s" % entry["unlock_key"]
+	for uniform in targets:
+		mat.set_shader_parameter(uniform, _srgb_vec(targets[uniform]))
+	# Reinstalls the cached material if something else (a previous `base`) owns the
+	# surface right now. One material per rig, no matter how often it is switched.
+	if rig.has_method("set_catalogue_surface"):
+		rig.set_catalogue_surface(mat)
+	else:
+		mi.set_surface_override_material(0, mat)
+	if rig.has_method("note_catalogue_outfit"):
+		rig.note_catalogue_outfit(athlete_id, outfit_id)
+	return true
+
+
 ## What is on the rig right now, read back off the GPU material rather than from a
 ## cached variable — a test that trusts a cached variable proves nothing.
 static func read_back(rig: Node) -> Dictionary:
@@ -356,13 +611,34 @@ static func read_back(rig: Node) -> Dictionary:
 	var mi: MeshInstance3D = rig.get_mesh_instance()
 	if mi == null:
 		return {}
+	var catalogue_outfit: Dictionary = {}
+	if rig.has_method("get_catalogue_outfit"):
+		catalogue_outfit = rig.get_catalogue_outfit()
+	var profile_id := StringName(catalogue_outfit.get("athlete_id", &""))
+	var selected_id := StringName(catalogue_outfit.get("outfit_id", &"base"))
 	var mat := mi.get_surface_override_material(0) as ShaderMaterial
 	if mat == null:
-		return {"material_class": "none"}
+		# No shader on the surface: either a rig that was never put into an outfit, or
+		# `base` on a profiled athlete, where the rig's own StandardMaterial3D is the
+		# correct answer rather than a missing one.
+		var plain := mi.get_surface_override_material(0)
+		return {
+			"material_class": plain.get_class() if plain != null else "none",
+			"resource_name": plain.resource_name if plain != null else "",
+			"shader_path": "",
+			"profile": String(profile_id) if has_profile(profile_id) else "",
+			"mask": "none",
+			"is_base_surface": rig.is_base_surface() if rig.has_method("is_base_surface") else false,
+			"visual_status": "base" if selected_id == &"base" else "unsupported_preserved_base",
+		}
 	return {
 		"material_class": mat.get_class(),
 		"resource_name": mat.resource_name,
 		"shader_path": mat.shader.resource_path if mat.shader else "",
+		"profile": String(profile_id) if has_profile(profile_id) else "",
+		"mask": "set" if mat.get_shader_parameter("region_mask") != null else "none",
+		"is_base_surface": false,
+		"visual_status": "applied",
 		"target_primary": mat.get_shader_parameter("target_primary"),
 		"target_trim": mat.get_shader_parameter("target_trim"),
 		"anchor_primary": mat.get_shader_parameter("anchor_primary"),

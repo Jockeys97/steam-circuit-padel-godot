@@ -30,6 +30,12 @@
 ##   session.landing  -> Variant         `{x, y}` of the last graded bounce
 ##   session.rally_hits, .best_rally, .last_player_shot, .impact_vz, .squash
 ##   session.serve_attempt, .double_faults, .running
+##   session.return_contact, .return_cleared
+##       The Godot-only `return` exercise's own two measured facts: the human side
+##       touched the serve, and that return cleared the net (`drill_extras.gd`).
+##   session.return_ball_diagnosis() -> String
+##       The measured outcome of the return ball itself, for the audit: `none`,
+##       `cleared`, `over-the-back-wall`, `net-or-short` or `own-half`.
 ##   session.step(dt, input) -> void     one engine tick, `updateDrill`
 ##   session.reset() -> void             `resetDrill`
 ##   session.score_line() -> String      `DrillScoring.score_line`
@@ -50,6 +56,14 @@
 ##   - `pointsToWin` is `Number.MAX_SAFE_INTEGER` (`js/drill.js:97`), so a single
 ##     point cannot end a session. The pointer below is the reference's own
 ##     constant, not a rounder number.
+##
+## THE GODOT-ONLY FIFTH EXERCISE. `return` (`godot/src/modes/drill_extras.gd`) is not in
+## the frozen reference table, so its branch in `step()` is the port's, not a port of
+## anything: the opponents serve (`opponentServe`), the attempt is the human side's return,
+## and it is graded on what the ENGINE measured — the ball clearing the net and bouncing
+## inside the opponents' court. Nothing here infers why a return failed; the diagnosis
+## names the measured outcome (an opponent ace, the net, out, or a point closed before the
+## bounce). The reference's four exercises are untouched by it.
 extends RefCounted
 
 const Sim := preload("res://src/sim/sim.gd")
@@ -96,6 +110,9 @@ var squash: float = 0.0
 var serve_attempt: int = 0
 var double_faults: int = 0
 var running: bool = true
+## The `return` exercise's own two measured facts, reset with every round.
+var return_contact: bool = false
+var return_cleared: bool = false
 
 
 ## `createDrill(exerciseId, athlete, arena, aiProfile, lineup)`
@@ -161,12 +178,13 @@ func athletes_for_display() -> Dictionary:
 func _feed_ball() -> void:
 	var court: Dictionary = Frozen.court()
 	if String(exercise.get("feed", "")) == "serve":
-		# Al servizio la palla la mette in gioco il giocatore: `prepareServe`
-		# ricostruisce la posa e `updateMatch` gestisce carica, fallo e seconda
-		# palla, cosi' l'esercizio usa le regole vere.
-		state.serveSide = "player"
 		state.serveAttempts = 0
 		state.serving = true
+		# Chi batte lo dichiara l'esercizio: al servizio la palla la mette in gioco
+		# il giocatore, alla risposta l'avversario. In entrambi i casi e'
+		# `prepareServe` a costruire la posa e `updateMatch` a gestire carica, fallo
+		# e seconda palla, cosi' l'esercizio usa le regole vere.
+		state.serveSide = "ai" if bool(exercise.get("opponentServe", false)) else "player"
 		Sim.prepare_serve(state)
 		state.lastHitterSide = null
 		landing = null
@@ -221,6 +239,8 @@ func start_round() -> void:
 	impact_vz = 0.0
 	squash = 0.0
 	serve_attempt = 0
+	return_contact = false
+	return_cleared = false
 	_feed_ball()
 
 
@@ -232,6 +252,10 @@ func reset() -> void:
 	landing = null
 	target["active"] = false
 	result_timer = 0.0
+	# The `return` exercise's own two marks are part of the attempt, so they go with the
+	# rest of it.
+	return_contact = false
+	return_cleared = false
 	_place_teams()
 
 
@@ -283,6 +307,7 @@ func step(dt: float, input: Dictionary) -> void:
 	var colpi_prima: int = int(state.rallyHits)
 	var punti_prima: int = int(state.stats["pointsWon"]["player"])
 	var falli_prima: int = int(state.stats["doubleFaults"]["player"])
+	var ace_ai_prima: int = int(state.stats["aces"]["ai"])
 	var z_prima: float = float(state.ball.z)
 	# La velocita' verticale *prima* del passo: dopo l'impatto il motore l'ha
 	# gia' riflessa e attenuata.
@@ -323,6 +348,10 @@ func step(dt: float, input: Dictionary) -> void:
 		elif _punto_chiuso():
 			_consuma_esito()
 			close_attempt(false, 0.0, "drillWhyMissed")
+		return
+
+	if String(exercise.get("id", "")) == "return":
+		_step_return(ace_ai_prima, colpi_prima, z_prima, vz_prima)
 		return
 
 	if String(exercise.get("id", "")) == "serve":
@@ -373,6 +402,91 @@ func step(dt: float, input: Dictionary) -> void:
 	var why_rally: String = "drillWhyRallyShort" if tenuto < 2 \
 		else ("drillWhyDrained" if energia < Frozen.bal("rallyEnergyFloor") + 0.2 else "drillWhyRallyHeld")
 	close_attempt(tenuto >= 4, minf(1.5, 0.25 + float(tenuto) * 0.18), why_rally)
+
+
+## The `return` exercise's branch (`drill_extras.gd`): the opponents served, and the
+## attempt is the human side's return. It succeeds when the return CLEARED THE NET and
+## BOUNCED INSIDE THE OPPONENTS' COURT — both read off the engine's own ball — and fails
+## when the point closed without that bounce. Every diagnosis is a measured fact: an
+## opponent ace (`aces.ai`, counted by the engine), the net (the return never crossed),
+## out (it crossed and left the court), or a point closed before the bounce. No cause is
+## named, because nothing here measures one.
+func _step_return(ace_ai_prima: int, colpi_prima: int, z_prima: float, vz_prima: float) -> void:
+	var ball = state.ball
+	var atterrata: bool = z_prima > 0.0 and float(ball.z) <= 0.0
+	if atterrata:
+		impact_vz = absf(vz_prima)
+		squash = DrillTarget.squash_quality(impact_vz)
+	# Il contatto del lato umano: i colpi di scambio salgono e l'ultimo e' del player.
+	if int(state.rallyHits) > colpi_prima and state.lastHitterSide == "player":
+		return_contact = true
+	# La rete passata va letta sul colpo DEL lato umano: dopo un colpo avversario
+	# `crossedNet` racconta quell'altro tiro, non la risposta.
+	if return_contact and state.lastHitterSide == "player" and bool(ball.crossedNet):
+		return_cleared = true
+	# Il rimbalzo va letto sul marchio che il motore stesso lascia quando la palla
+	# tocca terra (`handle_ground_bounce`): `bounces[side] > 0` e' la stessa cosa,
+	# ma sopravvive a un tick in cui il rimbalzo e' avvenuto dentro un sotto-passo
+	# — che e' esattamente come `bounce`, la funzione condivisa, fa atterrare la
+	# palla.
+	if return_contact and state.lastHitterSide == "player" and _rimbalzo_del_lato("ai"):
+		landing = {"x": float(ball.x), "y": float(ball.y)}
+		if DrillTarget.in_return_zone(float(ball.y)):
+			var graded := DrillTarget.return_depth(float(ball.y))
+			_consuma_esito()
+			close_attempt(true, float(graded["tier"]), String(graded["diagnosis"]))
+			return
+		# Un rimbalzo oltre il vetro di fondo e' fuori dal campo avversario, come dice
+		# il motore: la risposta ha passato la rete ma non e' rimbalzata DENTRO la
+		# meta' avversaria. E' un tentativo mancato e lo diciamo con le parole del
+		# motore, non con una causa inventata.
+		if float(ball.y) < float(Frozen.court()["top"]):
+			_consuma_esito()
+			close_attempt(false, 0.0, "msgOut")
+			return
+		_consuma_esito()
+		close_attempt(false, 0.0, "drillWhyReturnOut" if return_cleared else "drillWhyReturnNet")
+		return
+	if not _punto_chiuso():
+		return
+	var why := "drillWhyNoReturn"
+	if return_contact:
+		why = "drillWhyReturnLost" if return_cleared else "drillWhyReturnNet"
+	elif int(state.stats["aces"]["ai"]) > ace_ai_prima:
+		why = "drillWhyAceAgainst"
+	_consuma_esito()
+	close_attempt(false, 0.0, why)
+
+
+## True when the ball has already touched the ground on this side in the current attempt.
+## The engine writes this itself: `handle_ground_bounce` sets `ball.bounces[side]` (and
+## clears it on every new hit, `godot/src/sim/sim.gd:1851`), so a bounce that happened
+## inside a physics sub-step is still visible on the next drill tick. The drill reads the
+## engine's mark instead of re-deriving the landing from the ball's height, which is the
+## same rule the reference's target exercise uses for its own bounce
+## (`js/drill.js:394` reads the ball at the landing).
+func _rimbalzo_del_lato(side: String) -> bool:
+	if state.ball.bounces is Dictionary:
+		return int((state.ball.bounces as Dictionary).get(side, 0)) > 0
+	return false
+
+
+## What actually happened to the RETURN ball, read off the engine's own marks, for the
+## audit to assert against (`godot/tests/modes/return_drill_audit.gd`). It is a report, not
+## a second grading rule: the attempt was already closed by `_step_return`. `none` means
+## the human side never touched the serve.
+func return_ball_diagnosis() -> String:
+	if not return_contact:
+		return "none"
+	if return_cleared:
+		if float(state.ball.y) < float(Frozen.court()["top"]):
+			return "over-the-back-wall"
+		if DrillTarget.in_return_zone(float(state.ball.y)):
+			return "cleared"
+		return "crossed-and-returned"
+	if _rimbalzo_del_lato("player") or float(state.ball.y) > float(Frozen.court()["netY"]):
+		return "own-half"
+	return "net-or-short"
 
 
 ## `puntoChiuso(state)` (`js/drill.js:316-318`).

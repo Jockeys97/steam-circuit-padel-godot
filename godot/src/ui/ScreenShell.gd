@@ -98,6 +98,16 @@ func set_title_text(text: String) -> void:
 	_title.text = text
 
 
+## A subtitle a screen resolves itself, for a message a table the shell does not read
+## owns — `screen-drill`'s per-exercise line, where the reference's own generated table and
+## this build's extension table share one resolver (`drill_text.gd`). The visible-fallback
+## rule is the same one `set_subtitle()` keeps: an empty string hides the line.
+func set_subtitle_text(text: String) -> void:
+	_ensure_nodes()
+	_subtitle.text = text
+	_subtitle.visible = text != ""
+
+
 ## Shows the back control for a target and registers it under the shell's own naming
 ## (`<screen_id>/back`), or hides it and drops the registration for `""` — the
 ## reference's rule for the root, the field and the result.

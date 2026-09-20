@@ -42,12 +42,17 @@ const Router := preload("res://src/ui/ScreenRouter.gd")
 const ScreenClass := preload("res://src/ui/screens/ResultScreen.gd")
 const ScreenScene := preload("res://src/ui/screens/ResultScreen.tscn")
 const UiStrings := preload("res://src/ui/UiStrings.gd")
+const DrillText := preload("res://src/modes/drill_text.gd")
 
 const FRAME := Vector2(1280, 720)
 const SETTLE_FRAMES := 3
 ## The category the model picks, and the exercise that category links to.
 const SERVE_FOCUS := "serve_accuracy"
 const DRILL_TARGET := "serve"
+## The serve-return ticket's own category and its Godot-only exercise
+## (`docs/agent-work/jev-return/PLAN.md`).
+const RETURN_FOCUS := "serve_return"
+const RETURN_TARGET := "return"
 const PENDING_MODE := "career"
 
 ## A transport the audit drives itself, through the panel's documented seam.
@@ -243,6 +248,40 @@ func _advice(audit: AuditBase) -> void:
 	audit.check_eq(String(Config.pending_mode), PENDING_MODE, "coach/and_the_pending_run_was_not_overwritten")
 	audit.check_eq(String(Config.pending_exercise), "", "coach/nor_the_pending_exercise")
 	audit.report("route: %s -> %s, exercise %s, pending_mode %s" % [DRILL_TARGET, _router.active_id(), String(drill.call("exercise")), String(Config.pending_mode)])
+	Config.pending_mode = ""
+
+	# The serve-return ticket's own path: an opponent-ace-heavy match, a confident
+	# `serve_return` answer, and the route into the FIFTH exercise — while
+	# `pending_mode` / `pending_exercise` are still left exactly as they were.
+	Config.pending_mode = PENDING_MODE
+	Config.pending_exercise = ""
+	_router.go_to("menu")
+	var return_payload := _payload()
+	var return_result: Dictionary = return_payload["result"]
+	var return_stats: Dictionary = return_result["stats"]
+	var return_aces: Dictionary = return_stats["aces"]
+	return_aces["ai"] = 4
+	var return_mounted := await _mount(return_payload)
+	var return_panel: Node = return_mounted[1]
+	var return_poster: RefCounted = return_mounted[2]
+	return_panel.call("press_analyze")
+	var return_offered := _offered(return_panel)
+	audit.check_true(return_offered.has(RETURN_FOCUS), "coach/an_opponent_ace_heavy_match_offers_the_return_focus")
+	return_poster.deliver(0, _reply(return_offered, RETURN_FOCUS, 0.8))
+	await process_frame
+	audit.check_eq(String(return_panel.call("state_id")), "advice", "coach/a_confident_return_answer_becomes_advice")
+	var return_shown := String(return_panel.call("shown_exercise"))
+	audit.check_true(return_shown.contains(CoachText.t("coachAdviceReturn", {"opponentAces": 4})), "coach/the_return_sentence_quotes_the_measured_opponent_aces")
+	audit.check_true(return_shown.contains(DrillText.exercise_name(RETURN_TARGET)), "coach/and_names_the_return_exercise")
+	var return_routed := String(return_panel.call("press_drill"))
+	await process_frame
+	audit.check_eq(return_routed, RETURN_TARGET, "coach/the_button_reports_the_return_exercise")
+	audit.check_eq(_router.active_id(), "drill", "coach/and_opens_the_training_screen")
+	var return_drill: Node = _router.active_screen()
+	audit.check_eq(String(return_drill.call("exercise")), RETURN_TARGET, "coach/with_the_return_exercise_selected")
+	audit.check_eq(String(Config.pending_mode), PENDING_MODE, "coach/and_the_pending_run_is_still_untouched")
+	audit.check_eq(String(Config.pending_exercise), "", "coach/nor_the_pending_exercise")
+	audit.report("return route: %s -> %s, exercise %s" % [RETURN_FOCUS, _router.active_id(), String(return_drill.call("exercise"))])
 	Config.pending_mode = ""
 
 

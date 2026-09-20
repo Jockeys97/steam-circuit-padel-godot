@@ -23,6 +23,12 @@
 ##       multiplier before the grade, `diagnosis` is the message id the HUD shows.
 ##   DrillTarget.in_opponents_half(y) -> bool
 ##       Only a bounce in the opponents' half is a target hit (`js/drill.js:394`).
+##   DrillTarget.in_return_zone(y) -> bool
+##       The Godot-only return exercise's own zone: inside the opponents' court, not
+##       merely past the net (a ball beyond the back wall has NOT landed in it).
+##   DrillTarget.return_depth(y) -> Dictionary
+##       `{in_zone, depth, tier, diagnosis}` for a return that landed in that zone,
+##       measured off the court's own geometry — see the function's own note.
 ##
 ## The grading is continuous, not a threshold: between the two measured squash
 ## references the score slides (`js/drill.js:28-39`), so a badly executed cut
@@ -110,3 +116,38 @@ static func tier(target: Dictionary, squash: float, ball_x: float, ball_y: float
 ## missed attempt, not a target hit.
 static func in_opponents_half(y: float) -> bool:
 	return y < float(Frozen.court()["netY"])
+
+
+## The Godot-only return exercise's landing zone (`drill_extras.gd`): the opponents'
+## COURT, so the net side and the back-wall side are both bounded. `in_opponents_half`
+## alone would call a ball that flew past the back wall a hit; the engine scores that one
+## `msgOut`, so the return drill must not reward it.
+static func in_return_zone(y: float) -> bool:
+	var court: Dictionary = Frozen.court()
+	return y < float(court["netY"]) and y >= float(court["top"])
+
+
+## The measured quality of one return that landed in the opponents' court: how deep it
+## bounced. There is no reference formula to port here — the reference has no return
+## exercise — so this is the Godot-only extension's own scale, and it is READ OFF THE
+## LANDING the engine produced, not judged: `depth` is the fraction of the opponents'
+## half the ball travelled past the net (0 on the net line, 1 on the back wall), and the
+## tier slides with it between `RETURN_TIER_FLOOR` and `RETURN_TIER_CAP`.
+const RETURN_TIER_FLOOR := 0.40
+const RETURN_TIER_CAP := 1.30
+## Beyond this fraction of the half the return counts as deep, which is a fact about where
+## the ball bounced, not a claim about how the player swung.
+const RETURN_DEEP_FRACTION := 0.55
+
+
+static func return_depth(y: float) -> Dictionary:
+	var court: Dictionary = Frozen.court()
+	var span: float = float(court["netY"]) - float(court["top"])
+	var depth: float = 0.0 if span <= 0.0 else clampf((float(court["netY"]) - y) / span, 0.0, 1.0)
+	var tier: float = RETURN_TIER_FLOOR + (RETURN_TIER_CAP - RETURN_TIER_FLOOR) * depth
+	return {
+		"in_zone": in_return_zone(y),
+		"depth": depth,
+		"tier": tier,
+		"diagnosis": "drillWhyReturnDeep" if depth >= RETURN_DEEP_FRACTION else "drillWhyReturnIn",
+	}

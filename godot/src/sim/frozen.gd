@@ -51,6 +51,12 @@ static func roster_average() -> Dictionary:
 static func event_lines() -> Array:
 	return all().get("eventLines", [])
 
+
+## MATCH_FORMATS (`js/data.js:689-698`). The frozen table keeps menu choices
+## data-driven instead of duplicating their values in the match scene.
+static func match_formats() -> Dictionary:
+	return all().get("matchFormats", {})
+
 ## Numeric view of BALANCE. JSON numbers arrive as float; the simulation reads
 ## them as floats everywhere (`js/game.js` does the same — every BALANCE value is
 ## used in a float expression), so one accessor is enough and an unknown key

@@ -132,8 +132,17 @@ func _route_to_the_drill(audit: AuditBase) -> void:
 		var payload: Dictionary = drill.call("start", true)
 		audit.check_eq(String(payload.get("mode", "")), "drill", "route/the_drill_start_names_the_mode")
 		audit.check_eq(String(payload.get("scene", "")), "res://game/Match.tscn", "route/the_drill_start_points_at_the_match_scene")
-		audit.check_eq(Config.pending_mode, "drill", "route/and_writes_the_pending_mode")
-		audit.check_eq(Config.pending_exercise, String(drill.call("exercise")), "route/and_the_chosen_exercise")
+	audit.check_eq(Config.pending_mode, "drill", "route/and_writes_the_pending_mode")
+	audit.check_eq(Config.pending_exercise, String(drill.call("exercise")), "route/and_the_chosen_exercise")
+	# The fifth exercise (the Jev serve-return ticket's Godot-only `return`) rides the same
+	# route as the reference's four: the screen offers it, choosing it is accepted, and the
+	# pending-exercise seam carries the id the mount will boot.
+	audit.check_eq(drill.call("select_exercise", "return"), true, "route/the_godot_only_return_exercise_can_be_chosen")
+	audit.check_eq(String(drill.call("exercise")), "return", "route/and_becomes_the_chosen_exercise")
+	var return_payload: Dictionary = drill.call("start", true)
+	audit.check_eq(String(return_payload.get("exercise", "")), "return", "route/starting_it_carries_the_return_id")
+	audit.check_eq(Config.pending_exercise, "return", "route/and_the_mount_reads_it_as_the_pending_exercise")
+	audit.check_eq(drill.call("select_exercise", String(drill.call("exercise_ids")[0])), true, "route/the_reference_default_can_be_chosen_back")
 	(pair[0] as Node).queue_free()
 	await process_frame
 
@@ -154,6 +163,22 @@ func _drill_boots_a_real_session(audit: AuditBase) -> void:
 	if session != null:
 		audit.check_eq(String(session.get("mode") if session.get("mode") != null else ""), "drill", "drill/and_it_is_the_drill_the_screen_asked_for")
 	audit.check_eq(String(node.state.mode), "drill", "drill/the_state_runs_the_drill_mode")
+	# The mount boots the exercise the seam named, and for `return` that is the
+	# opponents-serving exercise (`godot/src/modes/drill_extras.gd`).
+	Config.pending_mode = "drill"
+	Config.pending_exercise = "return"
+	var return_node: Node = MATCH_SCENE.instantiate()
+	root.add_child(return_node)
+	return_node.harness_mode()
+	for _i in SETTLE_FRAMES:
+		await process_frame
+	var return_session = return_node.get("session")
+	audit.check_true(return_session != null and return_session.get("drill") != null, "drill/the_return_exercise_boots_a_drill_session")
+	if return_session != null and return_session.get("drill") != null:
+		audit.check_eq(String(return_session.drill.exercise.get("id", "")), "return", "drill/and_it_is_the_return_exercise")
+	return_node.queue_free()
+	await process_frame
+	Config.pending_exercise = ""
 	# It ticks: one fixed step with the empty input must advance the clock.
 	var before := int(node.ticks)
 	node.call("tick_fixed", TICK, Sim.empty_input(), Sim.empty_input())

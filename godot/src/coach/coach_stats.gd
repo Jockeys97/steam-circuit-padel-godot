@@ -41,6 +41,13 @@ const MIN_SHOT_EVIDENCE := 3
 ## The points a side must have won before a winners-to-points-won ratio is worth reading.
 const MIN_POINTS_WON := 3
 
+## The return focus needs the OPPONENT's own aces to be worth reading: an ace is a serve
+## this side did not return, so the count is direct evidence — but one or two is a normal
+## part of any match, and advising "train your return" off a single ace would be reading a
+## coincidence as a pattern. The floor is deliberately conservative and explicit; two
+## aces alone leave the focus unoffered.
+const MIN_OPPONENT_ACES := 3
+
 
 ## The snapshot of one result payload. `problems` is audit-facing, never player-facing:
 ## it names a counter the payload could not have carried so a test can prove the
@@ -125,6 +132,10 @@ static func supported(category_id: String, snapshot_in: Dictionary) -> bool:
 	match category_id:
 		"serve_accuracy":
 			return player_count(snapshot_in, "aces") + player_count(snapshot_in, "doubleFaults") >= MIN_SERVE_EVIDENCE
+		"serve_return":
+			# Only the opponent's aces: `aces.ai` is the measured count of serves the human
+			# side never returned. Nothing else in this build measures a return.
+			return opponent_count(snapshot_in, "aces") >= MIN_OPPONENT_ACES
 		"net_finishing":
 			var endings := player_count(snapshot_in, "winners") + player_count(snapshot_in, "errors")
 			return (

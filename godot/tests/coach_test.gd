@@ -4,8 +4,8 @@
 ##       --script res://tests/coach_test.gd
 ##
 ## WHAT IT GATES, and where each answer comes from:
-##   1. THE CONTRACT IS THE ONE THE BRIDGE READS: five declared categories with
-##      `insufficient_data` among them, four of them drillable, the gate and the
+##   1. THE CONTRACT IS THE ONE THE BRIDGE READS: six declared categories with
+##      `insufficient_data` among them, five of them drillable, the gate and the
 ##      sufficiency floors declared, and the wire version and path stated once.
 ##   2. THE SNAPSHOT IS THE MATCH'S OWN NUMBERS. A match the simulation itself stepped
 ##      (`Sim.update_match` with a `ScriptedPlayer`) is turned into a result payload by the
@@ -36,6 +36,7 @@ const CareerRules := preload("res://src/modes/career_rules.gd")
 const CoachText := preload("res://src/coach/coach_text.gd")
 const Config := preload("res://game/match_config.gd")
 const Contract := preload("res://src/coach/coach_contract.gd")
+const DrillText := preload("res://src/modes/drill_text.gd")
 const Locale := preload("res://src/locale/locale.gd")
 const ScreenClass := preload("res://src/ui/screens/ResultScreen.gd")
 const ScriptedPlayer := preload("res://game/scripted_player.gd")
@@ -86,9 +87,10 @@ func _run(audit: AuditBase) -> void:
 func _contract(audit: AuditBase) -> void:
 	audit.check_true(Contract.available(), "coach/the_contract_loads")
 	var ids := Contract.category_ids()
-	audit.check_eq(ids.size(), 5, "coach/five_categories_are_declared")
+	audit.check_eq(ids.size(), 6, "coach/six_categories_are_declared")
 	audit.check_true(ids.has(Contract.INSUFFICIENT), "coach/insufficient_data_is_one_of_them")
-	audit.check_eq(Contract.drill_categories().size(), 4, "coach/four_of_them_can_link_an_exercise")
+	audit.check_true(ids.has("serve_return"), "coach/serve_return_is_one_of_them")
+	audit.check_eq(Contract.drill_categories().size(), 5, "coach/five_of_them_can_link_an_exercise")
 	audit.check_eq(String(Contract.wire().get("path", "")), "/coach/jev", "coach/the_wire_path_is_the_bridge_path")
 	audit.check_eq(int(Contract.wire().get("version", 0)), Contract.WIRE_VERSION, "coach/the_wire_version_is_the_declared_one")
 	audit.check_gt(Contract.confidence_gate(), 0.0, "coach/a_confidence_gate_is_declared")
@@ -118,6 +120,7 @@ func _showable_ids() -> Array:
 		"coachDrillBlocked",
 		Advice.advice_id("serve_accuracy"), Advice.advice_id("shot_accuracy"),
 		Advice.advice_id("rally_consistency"), Advice.advice_id("net_finishing"),
+		Advice.advice_id("serve_return"),
 	]
 
 
@@ -210,7 +213,9 @@ func _coach_scripts() -> Array:
 func _stats(overrides: Dictionary = {}) -> Dictionary:
 	var out := {
 		"pointsWon": {"player": 11, "ai": 7},
-		"aces": {"player": 2, "ai": 1},
+		# The opponent's aces are the return focus's only evidence, so the default fixture
+		# carries a high count the way a match dominated by unreturned serves would.
+		"aces": {"player": 2, "ai": 4},
 		"winners": {"player": 5, "ai": 3},
 		"errors": {"player": 4, "ai": 6},
 		"doubleFaults": {"player": 3, "ai": 1},
@@ -314,6 +319,21 @@ func _support(audit: AuditBase) -> void:
 	audit.check_eq(Stats.supported("serve_accuracy", no_serve), false, "coach/a_match_with_no_serve_outcome_cannot_be_about_the_serve")
 	audit.check_eq(Stats.supported("serve_accuracy", _snapshot({"aces": {"player": 2, "ai": 0}, "doubleFaults": {"player": 0, "ai": 0}})), true, "coach/two_aces_are_enough_serve_evidence")
 
+	# The return focus reads the OPPONENT's aces and nothing else — the measured count of
+	# serves the human side did not return. Zero and "too few to be a pattern" both leave it
+	# unoffered; the floor is the declared, conservative one.
+	var floor := int(Stats.MIN_OPPONENT_ACES)
+	audit.check_eq(Stats.supported("serve_return", _snapshot({"aces": {"player": 6, "ai": 0}})), false, "coach/no_opponent_ace_cannot_be_about_the_return")
+	audit.check_eq(Stats.supported("serve_return", _snapshot({"aces": {"player": 0, "ai": floor - 1}})), false, "coach/too_few_opponent_aces_cannot_be_about_the_return")
+	audit.check_eq(Stats.supported("serve_return", _snapshot({"aces": {"player": 0, "ai": floor}})), true, "coach/the_declared_opponent_ace_floor_is_enough_return_evidence")
+	# The human side's own aces and double faults are the SERVE focus's counters, and they
+	# are not evidence about returning: own aces alone leave the return focus unoffered.
+	audit.check_eq(
+		Stats.supported("serve_return", _snapshot({"aces": {"player": 9, "ai": 0}, "doubleFaults": {"player": 9, "ai": 0}})),
+		false,
+		"coach/your_own_serve_numbers_are_not_return_evidence"
+	)
+
 	audit.check_eq(Stats.supported("rally_consistency", _snapshot({"rallyCount": 3})), false, "coach/a_short_rally_count_cannot_be_about_rallies")
 	audit.check_eq(Stats.supported("rally_consistency", _snapshot({"rallyCount": 9})), true, "coach/nine_rallies_are_enough_rally_evidence")
 	audit.check_eq(Stats.supported("shot_accuracy", _snapshot({"errors": {"player": 0, "ai": 0}, "winners": {"player": 0, "ai": 0}})), false, "coach/a_match_with_no_ending_event_cannot_be_about_accuracy")
@@ -365,6 +385,16 @@ func _drill_ids() -> Array:
 	return out
 
 
+## Every exercise this build can actually play: the reference's four plus the Godot-only
+## ones (`Tables.drill_catalog()`). The coach's advice links a DRILL, so the catalog is
+## what its ids are checked against.
+func _catalog_ids() -> Array:
+	var out: Array = []
+	for row in Tables.drill_catalog():
+		out.append(String((row as Dictionary).get("id", "")))
+	return out
+
+
 func _unique(values: Array) -> Array:
 	var out: Array = []
 	for value in values:
@@ -376,6 +406,9 @@ func _unique(values: Array) -> Array:
 func _mapping(audit: AuditBase) -> void:
 	var drills := _drill_ids()
 	audit.check_eq(drills.size(), 4, "coach/the_frozen_drill_table_has_four_exercises")
+	var catalog := _catalog_ids()
+	audit.check_eq(catalog.size(), 5, "coach/the_catalog_offers_five_exercises")
+	audit.check_true(catalog.has("return"), "coach/the_catalog_carries_the_return_exercise")
 	audit.check_eq(Advice.categories().size(), Contract.drill_categories().size(), "coach/there_is_one_advice_per_drillable_category")
 	var unmapped: Array = []
 	var unknown: Array = []
@@ -384,12 +417,12 @@ func _mapping(audit: AuditBase) -> void:
 		var drill := String(Advice.drill_id(String(id)))
 		if drill == "":
 			unmapped.append(String(id))
-		elif not drills.has(drill):
+		elif not catalog.has(drill):
 			unknown.append("%s -> %s" % [String(id), drill])
 		else:
 			mapped.append(drill)
 	audit.check_eq(unmapped, [], "coach/no_drillable_category_is_left_without_an_exercise")
-	audit.check_eq(unknown, [], "coach/every_advice_links_to_an_exercise_that_exists")
+	audit.check_eq(unknown, [], "coach/every_advice_links_an_exercise_the_build_can_play")
 	audit.check_eq(_unique(mapped).size(), mapped.size(), "coach/two_categories_do_not_share_one_exercise")
 	var without_sentence: Array = []
 	for id in Contract.drill_categories():
@@ -398,9 +431,10 @@ func _mapping(audit: AuditBase) -> void:
 	audit.check_eq(without_sentence, [], "coach/every_category_has_a_sentence")
 	var undescribed: Array = []
 	for id in mapped:
-		# The exercise's own name is the generated locale table's (the drill screen shows
-		# it), not one of the coach's sentences.
-		if not Locale.is_resolvable("drill_%s_name" % String(id), "it") or not Locale.is_resolvable("drill_%s_name" % String(id), "en"):
+		# The exercise's own name: the generated locale table for the reference's four, this
+		# build's own `drill_strings.json` for the Godot-only ones — the same resolver the
+		# drill screen and the coach's exercise line use (`drill_text.gd`).
+		if not DrillText.has("drill_%s_name" % String(id), "it") or not DrillText.has("drill_%s_name" % String(id), "en"):
 			undescribed.append(String(id))
 	audit.check_eq(undescribed, [], "coach/every_linked_exercise_is_named_in_both_tables")
 
@@ -420,6 +454,10 @@ func _mapping(audit: AuditBase) -> void:
 	var serve_params: Dictionary = Advice.advice_params("serve_accuracy", snapshot)
 	audit.check_eq(int(serve_params.get("doubleFaults", -1)), 3, "coach/the_serve_sentence_quotes_the_measured_double_faults")
 	audit.check_eq(int(serve_params.get("aces", -1)), 2, "coach/the_serve_sentence_quotes_the_measured_aces")
+	var return_params: Dictionary = Advice.advice_params("serve_return", snapshot)
+	audit.check_eq(int(return_params.get("opponentAces", -1)), 4, "coach/the_return_sentence_quotes_the_measured_opponent_aces")
+	audit.check_eq(return_params.size(), 1, "coach/the_return_sentence_quotes_only_the_opponent_aces")
+	audit.check_eq(return_params.has("aces"), false, "coach/the_return_sentence_never_quotes_your_own_aces")
 	audit.check_eq(int((Advice.advice_params("net_finishing", snapshot) as Dictionary).get("pointsWon", -1)), 11, "coach/the_finishing_sentence_quotes_the_points_won")
 	audit.check_eq((Advice.advice_params("net_finishing", snapshot) as Dictionary).has("smashWinners"), false, "coach/the_finishing_sentence_never_adds_smash_winners_to_winners")
 	audit.check_eq((Advice.advice_params("shot_accuracy", snapshot) as Dictionary).has("smashWinners"), false, "coach/the_accuracy_sentence_never_adds_smash_winners_to_winners")
@@ -454,6 +492,35 @@ func _answers(audit: AuditBase) -> void:
 	var probabilities: Dictionary = strong.get("probabilities", {})
 	audit.check_eq(probabilities.size(), offered.size(), "coach/the_validated_distribution_is_kept")
 
+	# The return focus end to end: a confident, valid answer becomes measured advice that
+	# quotes the opponent's aces and links the fifth exercise, and an answer under the gate
+	# says nothing about the return.
+	var return_strong := Advice.evaluate(snapshot, _reply("serve_return", offered, 0.8))
+	audit.check_eq(String(return_strong.get("state", "")), Advice.STATE_ADVICE, "coach/a_confident_return_choice_becomes_advice")
+	audit.check_eq(String(return_strong.get("advice_id", "")), "coachAdviceReturn", "coach/the_return_sentence_is_the_returns_own")
+	audit.check_eq(String(return_strong.get("drill_id", "")), "return", "coach/the_return_advice_links_the_return_exercise")
+	var return_params: Dictionary = return_strong.get("advice_params", {})
+	audit.check_eq(int(return_params.get("opponentAces", -1)), 4, "coach/and_quotes_the_measured_opponent_aces")
+
+	var return_weak := Advice.evaluate(snapshot, _reply("serve_return", offered, 0.3))
+	audit.check_eq(String(return_weak.get("state", "")), Advice.STATE_UNCERTAIN, "coach/an_under_gate_return_choice_is_uncertain")
+	audit.check_eq(String(return_weak.get("drill_id", "")), "", "coach/an_uncertain_return_reading_offers_no_exercise")
+	audit.check_eq(String(return_weak.get("advice_id", "")), "", "coach/an_uncertain_return_reading_shows_no_advice")
+
+	# A fixture of an opponent-ace-heavy match whose ONLY measured evidence is the return
+	# focus: rallies alone are kept off the call so this is the coin-toss guard's other side
+	# — exactly two drillable candidates (the return focus among them) and the call is made.
+	var offerable := _snapshot({
+		"aces": {"player": 0, "ai": 5},
+		"doubleFaults": {"player": 0, "ai": 0},
+		"winners": {"player": 0, "ai": 0},
+		"smashWinners": {"player": 0, "ai": 0},
+		"errors": {"player": 0, "ai": 0},
+	})
+	var narrowed: Array = offerable.get("candidates", [])
+	audit.check_true(narrowed.has("serve_return"), "coach/an_opponent_ace_heavy_fixture_offers_the_return_focus")
+	audit.check_eq(bool(offerable.get("sufficient", false)), true, "coach/and_the_call_is_still_askable")
+
 	var weak := Advice.evaluate(snapshot, _reply("serve_accuracy", offered, 0.3))
 	audit.check_eq(String(weak.get("state", "")), Advice.STATE_UNCERTAIN, "coach/a_choice_under_the_gate_is_uncertain")
 	audit.check_eq(String(weak.get("advice_id", "")), "", "coach/an_uncertain_reading_shows_no_advice")
@@ -476,7 +543,8 @@ func _answers(audit: AuditBase) -> void:
 				"serve_accuracy": 0.4,
 				"shot_accuracy": 0.4,
 				"rally_consistency": 0.1,
-				"net_finishing": 0.05,
+				"net_finishing": 0.025,
+				"serve_return": 0.025,
 				"insufficient_data": 0.05,
 			},
 		},

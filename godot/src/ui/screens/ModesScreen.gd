@@ -154,6 +154,14 @@ const FIXTURE_PREFIX := "ModeFixture_"
 const DIFFICULTY_PREFIX := "DiffButton_"
 const LENGTH_PREFIX := "LengthButton_"
 
+## The mode screen owns its header instead of mounting ScreenShell. These are the
+## reference's `data-i18n` bindings for that header, including the back control.
+const HEADER_TEXT_SLOTS := {
+	"BackButton": "back",
+	"TitleLabel": "modesTitle",
+	"SubLabel": "modesSub",
+}
+
 ## `find_child` cannot find the root by name; the aria slot for the screen itself
 ## (`index.html:103`, `data-i18n-aria="ariaSelectModes"`) is addressed as this.
 const ROOT_ALIAS := "Root"
@@ -171,6 +179,9 @@ var _rows: Array[Dictionary] = []
 var _bindings: Array[Dictionary] = []
 var _text_nodes: Dictionary = {}
 var _cards: Dictionary = {}
+## Pointer hover and keyboard/controller focus are two ways of selecting the same
+## card. Keeping the pointer state prevents one from erasing the other's visual.
+var _card_pointer_hover: Dictionary = {}
 var _difficulty_buttons: Dictionary = {}
 var _length_buttons: Dictionary = {}
 var _focus_specs: Dictionary = {}
@@ -178,6 +189,10 @@ var _focus_specs: Dictionary = {}
 
 func _ready() -> void:
 	_style_chrome()
+	for node_name in HEADER_TEXT_SLOTS:
+		var header_node := _control(String(node_name))
+		if header_node != null:
+			_bind(header_node, String(HEADER_TEXT_SLOTS[node_name]))
 	_build_rows()
 	_build_segments()
 	_wire()
@@ -335,6 +350,10 @@ func _make_card(row: Dictionary) -> Control:
 	card.modulate = Color(1, 1, 1, LOCKED_CARD_ALPHA) if locked else Color(1, 1, 1, 1)
 	card.mouse_entered.connect(_on_card_hover.bind(id, true))
 	card.mouse_exited.connect(_on_card_hover.bind(id, false))
+	# PanelContainer has no built-in focused style. Mirror its controller focus into
+	# the same cyan presentation used for a pointer hover.
+	card.focus_entered.connect(_on_card_focus.bind(id))
+	card.focus_exited.connect(_on_card_focus.bind(id))
 	# The reference excludes locked cards from the click wire
 	# (`js/ui.js:1720`, `.mode-card:not(.mode-card--locked)`) — a locked card has no
 	# activation path at all, which is what the audit proves by emitting into it.
@@ -614,6 +633,16 @@ func text_shown(node_name: String) -> String:
 
 
 func refresh_strings() -> void:
+	# This scene owns its header (rather than mounting ScreenShell), including the
+	# back button. `refresh_strings()` can run before `_ready()` in router probes,
+	# so resolve the three labels directly here as well as registering their normal
+	# bindings during construction.
+	for node_name in HEADER_TEXT_SLOTS:
+		var header_node := _control(String(node_name))
+		if header_node is Button:
+			(header_node as Button).text = UiStrings.t(String(HEADER_TEXT_SLOTS[node_name]))
+		elif header_node is Label:
+			(header_node as Label).text = UiStrings.t(String(HEADER_TEXT_SLOTS[node_name]))
 	# The two data-driven bindings first: a card's tag (`available` / the build's
 	# locked key) and the career card's fixture line. Both are re-bound on every
 	# refresh, so a language flip re-resolves them with everything else.
@@ -751,10 +780,22 @@ func _on_card_input(event: InputEvent, mode_id: String) -> void:
 
 
 func _on_card_hover(mode_id: String, entered: bool) -> void:
+	_card_pointer_hover[mode_id] = entered
+	_refresh_card_highlight(mode_id)
+
+
+func _on_card_focus(mode_id: String) -> void:
+	_refresh_card_highlight(mode_id)
+
+
+## The visible selection is active when either navigation method names this card.
+## This is presentation-only: activation remains the bridge -> `select_mode` path.
+func _refresh_card_highlight(mode_id: String) -> void:
 	var card: Control = _cards.get(mode_id, null)
 	if card == null or mode_locked_shown(mode_id):
 		return
-	card.add_theme_stylebox_override("panel", _card_box(entered))
+	var highlighted := card.has_focus() or bool(_card_pointer_hover.get(mode_id, false))
+	card.add_theme_stylebox_override("panel", _card_box(highlighted))
 
 
 # ---------------------------------------------------------------------------

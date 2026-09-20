@@ -1,3 +1,4 @@
+import { STAMINA, staminaSpeed, assessmentEnergy, shotCost, effortEnergy } from "./rally-stamina.js";
 import { planAiContact } from "./ai-contact.js?v=20260920-fluidity-v1";
 import { BALANCE, COURT, EVENT_LINES, ROSTER_AVERAGE } from "./data.js?v=20260910-sprite-gate-v41";
 import { clamp } from "./render.js?v=20260910-sprite-gate-v41";
@@ -69,6 +70,7 @@ export function createPaddle(x, y, isPlayer, profile) {
     shotIntent: "drive",
     splitStep: 0,
     sprinting: 0,
+    staminaEnergy: 1,
   };
 }
 
@@ -359,6 +361,7 @@ function captureReplayFrame(state) {
       x: p.x, y: p.y, swing: p.swing, swingSide: p.swingSide,
       motion: p.motion, charge: p.charge, runPhase: p.runPhase,
       actionPose: p.actionPose, actionIntent: p.actionIntent, moveRatio: p.moveRatio,
+      staminaEnergy: p.staminaEnergy ?? 1,
     })),
   };
   state.replayFrames.push(snap);
@@ -843,7 +846,7 @@ function contextualPerfectWindow(state, paddle, charge = 0) {
   const { ball } = state;
   const side = shotSide(paddle);
   const moving = clamp(paddle.moveRatio ?? paddle.motion ?? 0, 0, 1);
-  const energy = clamp(state.rallyEnergy?.[side] ?? 1, 0, 1);
+  const energy = assessmentEnergy(paddle.staminaEnergy);
   const glassBall = ball.postGlassSide === side;
   const power = clamp(charge, 0, 1) ** 2;
   return clamp(
@@ -965,7 +968,7 @@ function evaluateShotQuality(
   const height = overhead
     ? clamp((ball.z - 42) / 35, 0.2, 1)
     : clamp(1 - Math.max(0, ball.z - 82) / 100, 0.55, 1);
-  const energy = clamp(state.rallyEnergy?.[side] ?? 1, BALANCE.rallyEnergyFloor, 1);
+  const energy = assessmentEnergy(paddle.staminaEnergy);
   const control = paddle.isPlayer
     ? clamp(athleteFor(state, paddle).stats.control / 1.22, 0.72, 1.05)
     : state.pvp && paddle.controlled
@@ -1010,47 +1013,15 @@ function evaluateShotQuality(
   return { quality, timing, timingBias, position, balance, height, energy, aggression, risk, profile, mode, grade };
 }
 
-/**
- * Resistenza dell'atleta al lavoro dello scambio. Prima `stats.stamina` viveva
- * in un solo punto del motore — la ricarica dell'abilita' speciale — e non
- * toccava `rallyEnergy`, che invece governa qualita', finestra di timing e
- * tasso d'errore. Il ruolo "Resistenza" non esisteva meccanicamente.
- */
-function rallyStamina(state, side) {
-  // `rallyEnergy` e' una risorsa di squadra, non di racchetta: si consuma e si
-  // recupera per meta' campo. Con due atleti diversi in coppia la resistenza
-  // che conta e' quindi la media dei due, non quella di chi tira in quel
-  // momento — altrimenti la stessa squadra avrebbe due energie diverse a
-  // seconda di chi ha toccato per ultimo.
-  const media = (uno, due) => {
-    const a = uno?.stats.stamina;
-    const b = due?.stats.stamina;
-    if (a === undefined && b === undefined) return 1;
-    if (a === undefined) return b;
-    if (b === undefined) return a;
-    return (a + b) / 2;
-  };
-  if (side !== "player") {
-    if (state.pvp) return clamp(state.pvpAthlete?.stats.stamina ?? 1, 0.7, 1.5);
-    return clamp(media(state.lineup?.opponent, state.lineup?.opponentMate), 0.7, 1.5);
-  }
-  return clamp(media(state.athlete, state.lineup?.playerMate), 0.7, 1.5);
+function consumeRallyEnergy(state, paddle, assessment, variant, slice) {
+  const resistance = clamp(athleteFor(state, paddle)?.stats?.stamina ?? 1, 0.7, 1.5);
+  paddle.staminaEnergy = clamp((paddle.staminaEnergy ?? 1) - shotCost(variant, slice, assessment.mode) / resistance, STAMINA.floor, 1);
+  syncRallyEnergy(state);
 }
 
-function consumeRallyEnergy(state, paddle, assessment, variant, slice) {
-  const side = shotSide(paddle);
-  const isSmash = variant === "smash" || variant.startsWith("smash-");
-  const isLob = variant === "lob" || variant === "defensive-lob";
-  const baseCost = variant === "globo"
-    ? BALANCE.globoEnergyCost
-    : variant === "chiquita" ? 0.025 : slice ? 0.035 : isLob ? 0.055 : isSmash ? 0.13 : 0.045;
-  const powerCost = assessment.mode === "power" ? 0.095 : assessment.mode === "balanced" ? 0.04 : 0.012;
-  const movementCost = (paddle.moveRatio ?? 0) * 0.025;
-  state.rallyEnergy[side] = clamp(
-    state.rallyEnergy[side] - (baseCost + powerCost + movementCost) / rallyStamina(state, side),
-    BALANCE.rallyEnergyFloor,
-    1,
-  );
+function syncRallyEnergy(state) {
+  state.rallyEnergy.player = activePlayer(state).staminaEnergy ?? 1;
+  state.rallyEnergy.ai = ((state.opponent.staminaEnergy ?? 1) + (state.opponentMate.staminaEnergy ?? 1)) * 0.5;
 }
 
 function showShotFeedback(state, paddle, assessment) {
@@ -1083,7 +1054,7 @@ function computerProfile(state, paddle) {
   return {
     skill: clamp(0.6 + (control - 0.9) * 0.34, 0.58, 0.78),
     power: compagno.stats.power,
-    speed: paddle.speed,
+    speed: paddle.speed * staminaSpeed(paddle.staminaEnergy),
   };
 }
 
@@ -1823,7 +1794,7 @@ export function hitBall(
       reportShotError(state, paddle, shotError);
     }
     if (isSpecial) applySpecial(state, aimedOffset, paddle);
-    consumeRallyEnergy(state, paddle, assessment, shotVariant, slice);
+    consumeRallyEnergy(state, paddle, assessment, ball.shotType, slice);
     showShotFeedback(state, paddle, assessment);
     if (explicitSmash && state.shotFeedback) {
       const successfulSmash = ball.shotType.startsWith("smash-");
@@ -2094,6 +2065,7 @@ function scorePoint(state, winner, reason, kind = null) {
   state.combo = 1;
   state.rallyHits = 0;
   state.rallyEnergy = { player: 1, ai: 1 };
+  for (const p of [state.player, state.playerMate, state.opponent, state.opponentMate]) p.staminaEnergy = 1;
   state.shotFeedback = null;
   state.receiverLocked = false;
   state.manualReceiverOverride = false;
@@ -2441,13 +2413,13 @@ function moveComputerPaddle(state, paddle, ball, dt, homeY, accuracy) {
   const targetX = incoming && ballOnOwnSide
     ? ball.x + (nextRandom(state) - 0.5) * (1 - accuracy) * 20
     : (COURT.left + COURT.right) / 2;
-  paddle.x = clamp(paddle.x + clamp(targetX - paddle.x, -paddle.speed * dt, paddle.speed * dt), COURT.left + paddle.w / 2, COURT.right - paddle.w / 2);
-  paddle.y = clamp(paddle.y + clamp(targetY - paddle.y, -paddle.speed * 0.56 * dt, paddle.speed * 0.56 * dt), minY, maxY);
+  paddle.x = clamp(paddle.x + clamp(targetX - paddle.x, -paddle.speed * staminaSpeed(paddle.staminaEnergy) * dt, paddle.speed * staminaSpeed(paddle.staminaEnergy) * dt), COURT.left + paddle.w / 2, COURT.right - paddle.w / 2);
+  paddle.y = clamp(paddle.y + clamp(targetY - paddle.y, -paddle.speed * staminaSpeed(paddle.staminaEnergy) * 0.56 * dt, paddle.speed * staminaSpeed(paddle.staminaEnergy) * 0.56 * dt), minY, maxY);
   paddle.motion = Math.abs(paddle.x - startX) + Math.abs(paddle.y - startY) > 0.4
     ? 1
     : Math.max(0, paddle.motion - dt * 7);
   paddle.moveRatio = clamp(
-    Math.hypot(paddle.x - startX, paddle.y - startY) / Math.max(1, paddle.speed * dt),
+    Math.hypot(paddle.x - startX, paddle.y - startY) / Math.max(1, paddle.speed * staminaSpeed(paddle.staminaEnergy) * dt),
     0,
     1,
   );
@@ -2457,12 +2429,12 @@ function movePaddleTo(paddle, targetX, targetY, dt) {
   const startX = paddle.x;
   const startY = paddle.y;
   paddle.x = clamp(
-    paddle.x + clamp(targetX - paddle.x, -paddle.speed * dt, paddle.speed * dt),
+    paddle.x + clamp(targetX - paddle.x, -paddle.speed * staminaSpeed(paddle.staminaEnergy) * dt, paddle.speed * staminaSpeed(paddle.staminaEnergy) * dt),
     COURT.left + paddle.w / 2,
     COURT.right - paddle.w / 2,
   );
   paddle.y = clamp(
-    paddle.y + clamp(targetY - paddle.y, -paddle.speed * 0.56 * dt, paddle.speed * 0.56 * dt),
+    paddle.y + clamp(targetY - paddle.y, -paddle.speed * staminaSpeed(paddle.staminaEnergy) * 0.56 * dt, paddle.speed * staminaSpeed(paddle.staminaEnergy) * 0.56 * dt),
     COURT.top + 42,
     COURT.netY - 42,
   );
@@ -2470,14 +2442,14 @@ function movePaddleTo(paddle, targetX, targetY, dt) {
     ? 1
     : Math.max(0, paddle.motion - dt * 7);
   paddle.moveRatio = clamp(
-    Math.hypot(paddle.x - startX, paddle.y - startY) / Math.max(1, paddle.speed * dt),
+    Math.hypot(paddle.x - startX, paddle.y - startY) / Math.max(1, paddle.speed * staminaSpeed(paddle.staminaEnergy) * dt),
     0,
     1,
   );
 }
 
 function aiContactPlan(state, paddle, ball) {
-  return planAiContact({ x: paddle.x, y: paddle.y, speed: paddle.speed, skill: paddle.skill,
+  return planAiContact({ x: paddle.x, y: paddle.y, speed: paddle.speed * staminaSpeed(paddle.staminaEnergy), skill: paddle.skill,
     width: contactWidth(paddle, ball), depth: paddle.reach * BALANCE.aiDepthReach, reaction: state.aiReactionDelay },
     { x: ball.x, y: ball.y, z: ball.z, vx: ball.vx, vy: ball.vy, vz: ball.vz,
       spin: ball.spin, backspin: ball.backspin, topspin: ball.topspin,
@@ -2567,8 +2539,8 @@ function updateDoublesAI(state, dt) {
         ? COURT.left + width * 0.28
         : COURT.left + width * 0.72;
       const receptionY = COURT.bottom - 74;
-      inactiveTeamMate.x += clamp(receptionX - inactiveTeamMate.x, -inactiveTeamMate.speed * dt, inactiveTeamMate.speed * dt);
-      inactiveTeamMate.y += clamp(receptionY - inactiveTeamMate.y, -inactiveTeamMate.speed * 0.56 * dt, inactiveTeamMate.speed * 0.56 * dt);
+      inactiveTeamMate.x += clamp(receptionX - inactiveTeamMate.x, -inactiveTeamMate.speed * staminaSpeed(inactiveTeamMate.staminaEnergy) * dt, inactiveTeamMate.speed * staminaSpeed(inactiveTeamMate.staminaEnergy) * dt);
+      inactiveTeamMate.y += clamp(receptionY - inactiveTeamMate.y, -inactiveTeamMate.speed * staminaSpeed(inactiveTeamMate.staminaEnergy) * 0.56 * dt, inactiveTeamMate.speed * staminaSpeed(inactiveTeamMate.staminaEnergy) * 0.56 * dt);
     } else moveTacticalMate(state, inactiveTeamMate, dt);
   }
   if (state.pvp) {
@@ -2582,8 +2554,8 @@ function updateDoublesAI(state, dt) {
         : COURT.left + width * 0.72;
       const targetX = inactivePvp === receiver && !ball.serveInFlight ? ball.x : receptionX;
       const receptionY = COURT.top + 74;
-      inactivePvp.x += clamp(targetX - inactivePvp.x, -inactivePvp.speed * dt, inactivePvp.speed * dt);
-      inactivePvp.y += clamp(receptionY - inactivePvp.y, -inactivePvp.speed * 0.56 * dt, inactivePvp.speed * 0.56 * dt);
+      inactivePvp.x += clamp(targetX - inactivePvp.x, -inactivePvp.speed * staminaSpeed(inactivePvp.staminaEnergy) * dt, inactivePvp.speed * staminaSpeed(inactivePvp.staminaEnergy) * dt);
+      inactivePvp.y += clamp(receptionY - inactivePvp.y, -inactivePvp.speed * staminaSpeed(inactivePvp.staminaEnergy) * 0.56 * dt, inactivePvp.speed * staminaSpeed(inactivePvp.staminaEnergy) * 0.56 * dt);
     } else {
       moveComputerPaddle(state, inactivePvp, ball, dt, pvpHomeY, state.pvpAthlete?.stats.control ?? ai.skill);
     }
@@ -2598,8 +2570,8 @@ function updateDoublesAI(state, dt) {
         : COURT.left + width * 0.72;
       const targetX = paddle === receiver && !ball.serveInFlight ? ball.x : receptionX;
       const receptionY = COURT.top + 74;
-      paddle.x += clamp(targetX - paddle.x, -paddle.speed * dt, paddle.speed * dt);
-      paddle.y += clamp(receptionY - paddle.y, -paddle.speed * 0.56 * dt, paddle.speed * 0.56 * dt);
+      paddle.x += clamp(targetX - paddle.x, -paddle.speed * staminaSpeed(paddle.staminaEnergy) * dt, paddle.speed * staminaSpeed(paddle.staminaEnergy) * dt);
+      paddle.y += clamp(receptionY - paddle.y, -paddle.speed * staminaSpeed(paddle.staminaEnergy) * 0.56 * dt, paddle.speed * staminaSpeed(paddle.staminaEnergy) * 0.56 * dt);
     });
   } else {
     moveOpponentTeam(state, dt);
@@ -2766,8 +2738,8 @@ function moveHumanPaddle(state, paddle, input, dt) {
   paddle.sprinting = 0;
   const startX = paddle.x;
   const startY = paddle.y;
-  paddle.x += moveX * paddle.speed * movementMultiplier * dt;
-  paddle.y += moveY * paddle.speed * 0.68 * movementMultiplier * dt;
+  paddle.x += moveX * paddle.speed * staminaSpeed(paddle.staminaEnergy) * movementMultiplier * dt;
+  paddle.y += moveY * paddle.speed * staminaSpeed(paddle.staminaEnergy) * 0.68 * movementMultiplier * dt;
   if (paddle.dashTimer > 0) {
     paddle.x += moveX * 260 * dt;
     paddle.dashTimer -= dt;
@@ -2790,7 +2762,7 @@ function moveHumanPaddle(state, paddle, input, dt) {
     ? 1
     : Math.max(0, paddle.motion - dt * 7);
   paddle.moveRatio = clamp(
-    Math.hypot(paddle.x - startX, paddle.y - startY) / Math.max(1, paddle.speed * dt),
+    Math.hypot(paddle.x - startX, paddle.y - startY) / Math.max(1, paddle.speed * staminaSpeed(paddle.staminaEnergy) * dt),
     0,
     1,
   );
@@ -2828,10 +2800,10 @@ function moveTacticalMate(state, mate, dt) {
   const target = tacticalMateTarget(state, mate);
   const startX = mate.x;
   const startY = mate.y;
-  mate.x = clamp(mate.x + clamp(target.x - mate.x, -mate.speed * dt, mate.speed * dt), COURT.left + mate.w / 2, COURT.right - mate.w / 2);
-  mate.y = clamp(mate.y + clamp(target.y - mate.y, -mate.speed * 0.56 * dt, mate.speed * 0.56 * dt), COURT.netY + 42, COURT.bottom - 42);
+  mate.x = clamp(mate.x + clamp(target.x - mate.x, -mate.speed * staminaSpeed(mate.staminaEnergy) * dt, mate.speed * staminaSpeed(mate.staminaEnergy) * dt), COURT.left + mate.w / 2, COURT.right - mate.w / 2);
+  mate.y = clamp(mate.y + clamp(target.y - mate.y, -mate.speed * staminaSpeed(mate.staminaEnergy) * 0.56 * dt, mate.speed * staminaSpeed(mate.staminaEnergy) * 0.56 * dt), COURT.netY + 42, COURT.bottom - 42);
   mate.motion = Math.abs(mate.x - startX) + Math.abs(mate.y - startY) > 0.4 ? 1 : Math.max(0, mate.motion - dt * 7);
-  mate.moveRatio = clamp(Math.hypot(mate.x - startX, mate.y - startY) / Math.max(1, mate.speed * dt), 0, 1);
+  mate.moveRatio = clamp(Math.hypot(mate.x - startX, mate.y - startY) / Math.max(1, mate.speed * staminaSpeed(mate.staminaEnergy) * dt), 0, 1);
 }
 
 function controlPaddleCharge(state, paddle, input, dt) {
@@ -3024,6 +2996,7 @@ export function updateMatch(state, dt, input, input2 = null) {
   }
   // Da qui in poi la simulazione: durante l'hit-stop rallenta, mentre effetti,
   // animazioni e timer di interfaccia sopra restano a velocita' reale.
+  const fatigueDt = state.hitStop > 0 ? 0 : dt;
   if (state.hitStop > 0) {
     state.hitStop = Math.max(0, state.hitStop - dt);
     dt *= BALANCE.hitStopTimeScale;
@@ -3038,6 +3011,7 @@ export function updateMatch(state, dt, input, input2 = null) {
     return state.result;
   }
 
+  const effortStart = new Map([state.player, state.playerMate, state.opponent, state.opponentMate].map(p => [p, { x: p.x, y: p.y }]));
   let player = activePlayer(state);
   if (state.humanMode === "coop") {
     controlPaddleCharge(state, player, input, dt);
@@ -3088,8 +3062,8 @@ export function updateMatch(state, dt, input, input2 = null) {
       * (1 - splitStep * (1 - BALANCE.splitStepSpeed));
     player.splitStep = splitStep;
     player.sprinting = 0;
-    player.x += moveX * player.speed * movementMultiplier * dt;
-    player.y += moveY * player.speed * 0.68 * movementMultiplier * dt;
+    player.x += moveX * player.speed * staminaSpeed(player.staminaEnergy) * movementMultiplier * dt;
+    player.y += moveY * player.speed * staminaSpeed(player.staminaEnergy) * 0.68 * movementMultiplier * dt;
     if (player.dashTimer > 0) {
       player.x += moveX * 260 * dt;
       player.dashTimer -= dt;
@@ -3101,7 +3075,7 @@ export function updateMatch(state, dt, input, input2 = null) {
       ? 1
       : Math.max(0, player.motion - dt * 7);
     player.moveRatio = clamp(
-      Math.hypot(player.x - playerStartX, player.y - playerStartY) / Math.max(1, player.speed * dt),
+      Math.hypot(player.x - playerStartX, player.y - playerStartY) / Math.max(1, player.speed * staminaSpeed(player.staminaEnergy) * dt),
       0,
       1,
     );
@@ -3226,23 +3200,6 @@ export function updateMatch(state, dt, input, input2 = null) {
 
   if (state.shieldTimer > 0 && ball.vy > 0) ball.vy *= 1 - dt * 0.55;
   state.shieldTimer = Math.max(0, state.shieldTimer - dt);
-  const humanSprintLoad = state.humanMode === "coop"
-    ? Math.max(state.player.sprinting ?? 0, state.playerMate.sprinting ?? 0)
-    : player.sprinting ?? 0;
-  const playerStamina = rallyStamina(state, "player");
-  state.rallyEnergy.player = clamp(
-    state.rallyEnergy.player
-      + dt * BALANCE.rallyEnergyRecovery * (1 - player.moveRatio * 0.7) * playerStamina
-      - dt * BALANCE.sprintEnergyDrain * clamp(humanSprintLoad, 0, 1) * player.moveRatio
-        / playerStamina,
-    BALANCE.rallyEnergyFloor,
-    1,
-  );
-  state.rallyEnergy.ai = clamp(
-    state.rallyEnergy.ai + dt * BALANCE.rallyEnergyRecovery * 0.72,
-    BALANCE.rallyEnergyFloor,
-    1,
-  );
 
   updateShotRead(state, activePlayer(state));
 
@@ -3343,6 +3300,13 @@ export function updateMatch(state, dt, input, input2 = null) {
   }
   if (handleWalls(state)) return state.result;
   updateDoublesAI(state, dt);
+  if (state.pointPause <= 0 && !state.result) {
+    for (const [p, start] of effortStart) {
+      const movement = clamp(Math.hypot(p.x - start.x, p.y - start.y) / Math.max(0.000001, p.speed * dt), 0, 1);
+      p.staminaEnergy = effortEnergy(p.staminaEnergy ?? 1, fatigueDt, movement, p.sprinting ?? 0, athleteFor(state, p)?.stats?.stamina ?? 1);
+    }
+    syncRallyEnergy(state);
+  }
 
   player.swing = Math.max(0, player.swing - dt * 5);
   state.playerMate.swing = Math.max(0, state.playerMate.swing - dt * 5);

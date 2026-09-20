@@ -771,8 +771,16 @@ func _on_coach_drill_requested(drill_id: String) -> bool:
 	if not bool(router.call("go_to", "drill", {})):
 		return false
 	var screen: Node = router.call("active_screen")
-	if screen != null and screen.has_method("select_exercise"):
-		screen.call("select_exercise", drill_id)
+	if screen == null or not screen.has_method("select_exercise"):
+		return true
+	# The exercise is chosen by the mounted screen's own recognizer: `return` is one of
+	# the exercises the screen lists (`Tables.drill_catalog()`), so a coach advice for a
+	# category that links it lands on the fifth selector like any other. A refusal is
+	# reported instead of assumed away — the route opened a screen but did not reach the
+	# exercise, and that is the failure mode this reports rather than hides.
+	if not bool(screen.call("select_exercise", drill_id)):
+		push_warning("ResultScreen: the training screen refused the coach's exercise '%s'" % drill_id)
+		return false
 	return true
 
 

@@ -360,8 +360,8 @@ func _objective_rows(career: Dictionary) -> Array:
 
 
 func _col_make_drill(col: VBoxContainer) -> void:
-	col.add_child(_label("ESERCIZI (%d)" % Tables.drill_exercises().size(), 19, Color(1.0, 0.821, 0.4)))
-	var exercises: Array = Tables.drill_exercises()
+	col.add_child(_label("ESERCIZI (%d)" % Tables.drill_catalog().size(), 19, Color(1.0, 0.821, 0.4)))
+	var exercises: Array = Tables.drill_catalog()
 	for exercise in exercises:
 		var id := String(exercise["id"])
 		var kinds: Array = exercise["kinds"]
