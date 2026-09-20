@@ -1,0 +1,40 @@
+# These payloads predate the LFS policy. They stay readable from normal Git until
+# the team performs the separately planned, coordinated history migration.
+#
+# One repository-relative path per line. Do not add new paths: new large assets
+# must be LFS pointers and `npm run assets:verify` enforces that rule.
+art/generated/athletes/colosso/colosso-all-animations.glb
+art/generated/athletes/colosso/colosso-source.glb
+art/generated/athletes/fiamma/fiamma-all-animations.glb
+art/generated/athletes/fiamma/fiamma-source.glb
+art/generated/athletes/oracolo/oracolo-all-animations.glb
+art/generated/athletes/oracolo/oracolo-source.glb
+art/generated/athletes/pantera/pantera-source.glb
+godot/assets/arena/sideline-shelter.glb
+godot/assets/athletes/colosso.glb
+godot/assets/athletes/colosso_normal.png
+godot/assets/athletes/colosso_texture_0.png
+godot/assets/athletes/colosso_texture_0_metallic_roughness.png
+godot/assets/athletes/maestro-idle.glb
+godot/assets/athletes/maestro-idle_texture_0.png
+godot/assets/athletes/maestro-rigged.glb
+godot/assets/athletes/maestro-rigged_texture_0.png
+godot/assets/athletes/maestro-running.glb
+godot/assets/athletes/maestro-running_texture_0.png
+godot/assets/athletes/maestro-walking.glb
+godot/assets/athletes/maestro-walking_texture_0.png
+godot/assets/athletes/outfits/strong-outfit-a.png
+godot/assets/athletes/outfits/strong-outfit-b.png
+godot/assets/athletes/outfits/weak-outfit-a.png
+godot/assets/athletes/outfits/weak-outfit-b.png
+godot/assets/athletes/volpe-rigged.glb
+godot/assets/athletes/volpe-rigged_texture_0.png
+godot/assets/athletes/volpe-running.glb
+godot/assets/athletes/volpe-running_texture_0.png
+godot/assets/athletes/volpe-walking.glb
+godot/assets/athletes/volpe-walking_texture_0.png
+godot/assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb
+meshy/rigged/volpe/volpe-rigged.glb
+meshy/rigged/volpe/volpe-running.glb
+meshy/rigged/volpe/volpe-texture.png
+meshy/rigged/volpe/volpe-walking.glb

@@ -6,6 +6,7 @@
   "description": "Padel arcade steampunk in HTML5 Canvas. Il gioco non ha dipendenze a runtime: gira aprendo index.html da un server statico. Le dipendenze qui sotto servono solo agli script di sviluppo (generazione asset e audit), non finiscono nel pacchetto pubblicato.",
   "scripts": {
     "audit": "node scripts/run-audits.mjs",
+    "assets:verify": "node tools/assets/verify-lfs.mjs",
     "assets:outfits": "node scripts/generate-outfit-assets.mjs",
     "dist": "node scripts/build-dist.mjs",
     "desktop": "npm run dist && tauri build",

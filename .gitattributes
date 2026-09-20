@@ -1,0 +1,41 @@
+# Binary game assets are versioned with Git LFS. Keep the patterns scoped to
+# asset directories so screenshots, documentation and UI images stay normal Git.
+godot/assets/**/*.glb filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.blend filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.fbx filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.png filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.webp filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.tga filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.tif filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.tiff filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.exr filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.wav filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.ogg filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.mp3 filter=lfs diff=lfs merge=lfs -text
+godot/assets/**/*.flac filter=lfs diff=lfs merge=lfs -text
+
+# Authoring originals and Meshy exports do not belong in normal Git history.
+art/generated/**/*.glb filter=lfs diff=lfs merge=lfs -text
+art/generated/**/*.blend filter=lfs diff=lfs merge=lfs -text
+art/generated/**/*.fbx filter=lfs diff=lfs merge=lfs -text
+art/generated/**/*.psd filter=lfs diff=lfs merge=lfs -text
+art/generated/**/*.png filter=lfs diff=lfs merge=lfs -text
+art/generated/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+art/generated/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+art/generated/**/*.webp filter=lfs diff=lfs merge=lfs -text
+art/generated/**/*.tga filter=lfs diff=lfs merge=lfs -text
+art/generated/**/*.tif filter=lfs diff=lfs merge=lfs -text
+art/generated/**/*.tiff filter=lfs diff=lfs merge=lfs -text
+art/generated/**/*.exr filter=lfs diff=lfs merge=lfs -text
+meshy/**/*.glb filter=lfs diff=lfs merge=lfs -text
+meshy/**/*.blend filter=lfs diff=lfs merge=lfs -text
+meshy/**/*.fbx filter=lfs diff=lfs merge=lfs -text
+meshy/**/*.png filter=lfs diff=lfs merge=lfs -text
+meshy/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+meshy/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+meshy/**/*.webp filter=lfs diff=lfs merge=lfs -text
+tools/meshy/output/**/*.glb filter=lfs diff=lfs merge=lfs -text
+tools/meshy/output/**/*.blend filter=lfs diff=lfs merge=lfs -text
+tools/meshy/output/**/*.fbx filter=lfs diff=lfs merge=lfs -text
