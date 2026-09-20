@@ -34,8 +34,8 @@ jobs:
       - name: Installa gli strumenti
         run: npm ci
 
-      - name: Esegui gli audit
-        run: npm run audit
-
       - name: Verifica il contratto degli asset
         run: npm run assets:verify
+
+      - name: Esegui gli audit
+        run: npm run audit
