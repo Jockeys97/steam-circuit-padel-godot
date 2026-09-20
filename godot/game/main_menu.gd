@@ -99,9 +99,13 @@ var _playable := false
 ## declare their controls, the model decides, and the bridge turns a verdict into a
 ## `ScreenRouter.go_to` or one of its two signals.
 var _bridge: RefCounted = null
-## UIR-26's on-screen keyboard, mounted over everything (the recipe in
-## `src/ui/screens/OskPanel.gd`): the panel renders the input lane's own OSK model.
-var _osk_panel: Control = null
+## There is no on-screen keyboard in this mount any more (user decision, 2026-09-17:
+## it came up over the main menu, where the reference has no text field at all). The
+## lane's OSK model is untouched (`src/input/osk.gd`, bound into `menu_nav`) and the
+## panel's own contract is still asserted by `tests/ui/osk_touch_audit.gd`, which
+## mounts it on its own; what is gone is the mount of `OskPanel.tscn` here and the
+## branch that fed it the focus. `_sync_osk()` is what remains: it closes the model
+## the moment the lane opens it and finishes the confirm the lane meant to allow.
 ## The audio module instance the host applies the stored master volume through. Built
 ## once, lazily, by `_apply_stored_audio_prefs()`.
 var _audio_port: Node = null
@@ -546,14 +550,11 @@ func _mount_ui_prototype() -> void:
 	_bridge = (load("res://src/ui/focus/UiFocusBridge.gd") as GDScript).new()
 	_bridge.range_changed.connect(_on_range_changed)
 	_router.screen_changed.connect(_on_screen_changed)
-	# UIR-26's keyboard, over everything (z 60 in the reference), bound to the input
-	# lane's own model — the one `menu_nav.confirm()` opens.
-	var panel_scene := load("res://src/ui/screens/OskPanel.tscn") as PackedScene
-	_osk_panel = panel_scene.instantiate()
-	_osk_panel.name = "OskPanel"
-	add_child(_osk_panel)
-	_osk_panel.bind_model(_focus.menu.osk)
-	_osk_panel.closed.connect(_on_osk_closed)
+	# NO keyboard is mounted over the router (user decision, 2026-09-17). UIR-26's
+	# recipe — `OskPanel.tscn` instantiated here, bound to `_focus.menu.osk`, its
+	# `closed` signal wired to the field hand-off — used to stand on this line. It
+	# is where the panel the player saw over the MENU came from; `_sync_osk()` below
+	# names why the lane opened it there and what replaces the hand-off.
 	# One locale drives the menu and the match HUD (UIR-22): the player's stored
 	# choice is applied once, here, and nothing below switches language behind it.
 	_apply_stored_language()
@@ -652,36 +653,45 @@ func _on_range_changed(id: String, value: float) -> void:
 		screen.call("set_row_value", row_name, value)
 
 
-## The OSK panel follows the input lane's own model: opened/closed/typed state comes
-## from `menu_nav.osk` (never from a second copy), and a screen that owns the field's
-## write takes the value back (`FeedbackScreen.apply_osk_value`).
+## WHY THE KEYBOARD CAME UP OVER THE MENU, and what finishes that confirm now.
+##
+## The lane opens its model on any confirm whose target passes
+## `FocusNav.is_text_field` (`src/input/menu_nav.gd:223`) — and every target passes
+## it. `src/input/focus_nav.gd:251-258` accepts a target whose `input_type` key is
+## absent, because the accepted set contains the empty string (`js/main.js:545-549`:
+## "an `<input>` with no type is a text input"). That rule is about a DOM `<input>`
+## element; a ported target dictionary is not one, and `game/menu_focus.gd::_target()`
+## (:93-105) never emits `input_type` — no screen registers it either — so the menu's
+## buttons were read as text fields too. Confirming an ordinary row with a pad
+## therefore opened the OSK instead of running the row: that is the panel that came
+## up over the menu, and the reason it is gone from this mount rather than restyled.
+##
+## Nothing here renders a keyboard, so the mount closes the model at once and
+## finishes the confirm the way the lane would have with a correct `is_text_field`:
+## the screen's own targets come back first (so the player can navigate away), the
+## field takes the focus, and the target's action is replayed through the bridge — a
+## row routes exactly like a plain confirm, while a genuine text field
+## (`FeedbackScreen` registers the one action `text-field`, `:1053`) has no route to
+## take and simply keeps the focus. The typed-value hand-off
+## (`FeedbackScreen.apply_osk_value`) goes with the keyboard: a model that opens with
+## an empty value must never be written back onto the field.
 func _sync_osk() -> void:
 	if _focus == null:
 		return
 	var osk = _focus.menu.osk
-	if _osk_panel != null:
-		_osk_panel.refresh()
-	if osk == null:
+	if osk == null or not osk.is_open():
 		return
-	if osk.is_open():
-		_focus.menu.set_osk_targets(_osk_panel.osk_key_targets() if _osk_panel != null else [])
-		var screen: Node = _router.active_screen()
-		if screen != null and screen.has_method("apply_osk_value"):
-			screen.apply_osk_value(String(osk.target_id()), String(osk.value()))
-	else:
-		_focus.menu.set_osk_targets([])
-
-
-## The panel's own `done` hand-off (`js/main.js:533-542`): the model closed, the key
-## targets go back to the screen's controls, and the field takes the focus back.
-func _on_osk_closed(target_id: String) -> void:
-	if _focus == null:
-		return
+	var target_id := String(osk.target_id())
+	osk.close()
 	_focus.menu.set_osk_targets([])
-	if _osk_panel != null:
-		_osk_panel.refresh()
-	if target_id != "" and _bridge != null:
-		_bridge.set_focus(target_id)
+	if target_id == "":
+		return
+	_bridge.set_focus(target_id)
+	_bridge.act({
+		"kind": "activate",
+		"target": target_id,
+		"action": _focus.action_of(target_id),
+	})
 
 
 ## The result screen's rematch, and the mode flow's continue: the same fixture when

@@ -356,3 +356,5 @@ stays the owner's decision.
   lineage diverges from the published one by 14 remote-only commits (mostly re-created SHAs
   of the same work) and 132 files of content. Integrating the two is a reconciliation job
   with a full gate re-run, not a push.
+
+- 2026-09-17 17:17 CEST | reconcile | Astra | done | merged 918bfa9 (S14 lineage) into origin/main bcecd9b: 21 conflicts resolved by hand — ratified values win (11 m court, reference-sized timing labels), both sides' logic kept (music seam, arena art, maestro companion clips, play_stroke_at); resolution checks folded from 287e499; the gate sweep is the next lane. | godot/tests/game_slice_test.gd

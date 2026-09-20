@@ -265,9 +265,31 @@ func _rows_now() -> Array[Dictionary]:
 		row["demo_locked"] = demo_locked
 		row["locked"] = locked
 		row["tag_key"] = Gate.locked_key() if locked else "available"
+		row["tag_params"] = {}
+		if id == "career" and not locked:
+			# `updateCareerTag` (`js/main.js:1549-1556`): the career card's tag is the season
+			# counter, and `applyDemoLimits` (`js/ui.js:746-753`) swaps it for the demo's own
+			# word only when the card is demo-locked.
+			row["tag_key"] = "careerTag"
+			row["tag_params"] = _career_tag_params(row)
 		row["tag_ready"] = not locked
 		out.append(row)
 	return out
+
+
+## `careerTag` `{season, match, total}` (`js/main.js:1549-1556`): `match` is the calendar's
+## own 0-based `matchIndex` (the fixture line below is the one that shows `matchIndex + 1`)
+## and the total is the season's own match count.
+func _career_tag_params(row: Dictionary) -> Dictionary:
+	var career: Variant = row.get("career", null)
+	if typeof(career) != TYPE_DICTIONARY:
+		return {}
+	var step: Dictionary = career
+	return {
+		"season": int(step.get("season", 1)),
+		"match": int(step.get("match_index", 0)),
+		"total": int(step.get("matches", 0)),
+	}
 
 
 ## The demo's own lock answer for one id, from the generated table the gate reads.
@@ -430,6 +452,14 @@ func _make_card(row: Dictionary) -> Control:
 
 
 func _build_segments() -> void:
+	# `index.html:137`/`:143`: the two setup groups' own labels, bound like the cards so
+	# a language flip re-resolves them with everything else.
+	var difficulty_label := _control("DifficultyLabel")
+	if difficulty_label != null:
+		_bind(difficulty_label, "difficulty")
+	var length_label := _control("LengthLabel")
+	if length_label != null:
+		_bind(length_label, "matchLength")
 	var difficulty := _control("DifficultySegmented")
 	if difficulty != null:
 		# `.segmented { grid-auto-flow: column }` with four options: one row of four.
@@ -617,8 +647,10 @@ func refresh_strings() -> void:
 		var id := String(row.get("id", ""))
 		var tag_node: Label = _text_nodes.get(TAG_PREFIX + id, null)
 		if tag_node != null:
-			_rebind(tag_node, String(row.get("tag_key", "")))
-			tag_node.text = UiStrings.t(String(row.get("tag_key", "")))
+			var tag_key := String(row.get("tag_key", ""))
+			var tag_params: Dictionary = row.get("tag_params", {})
+			_rebind(tag_node, tag_key, tag_params)
+			tag_node.text = UiStrings.t(tag_key, tag_params)
 			tag_node.theme_type_variation = &"TagReady" if bool(row.get("tag_ready", false)) else &"Tag"
 		var fixture_node: Label = _text_nodes.get(FIXTURE_PREFIX + id, null)
 		if fixture_node != null:
@@ -857,9 +889,12 @@ func _style_chrome() -> void:
 	var title := _control("TitleLabel")
 	if title != null:
 		title.theme_type_variation = &"ScreenTitle"
+		# `index.html:106-108`: the header is the reference's own `modesTitle`/`modesSub`.
+		_bind(title, "modesTitle")
 	var sub := _control("SubLabel")
 	if sub != null:
 		sub.theme_type_variation = &"ScreenSubtitle"
+		_bind(sub, "modesSub")
 	for panel_name in ["DifficultyGroup", "LengthGroup"]:
 		var panel := _control(panel_name)
 		if panel != null:

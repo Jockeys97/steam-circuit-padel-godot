@@ -461,6 +461,7 @@ func _build_view() -> void:
 	_bindings.clear()
 	_text_nodes.clear()
 	_cards.clear()
+	_bind_header()
 	match _view:
 		VIEW_PICKER:
 			_build_picker()
@@ -470,6 +471,19 @@ func _build_view() -> void:
 			_build_team()
 	_register_focus()
 	refresh_strings()
+
+
+## The screen's own header (`index.html:90-95`): `charactersTitle`/`charactersSub`, the two
+## strings the reference resolves on load and re-resolves on `setLanguage`. The grid below
+## is emptied and rebuilt per view; the header is not part of it, so it is bound again on
+## every rebuild rather than once at load.
+func _bind_header() -> void:
+	var title := _control("TitleLabel")
+	if title != null:
+		_bind(title, "charactersTitle")
+	var sub := _control("SubLabel")
+	if sub != null:
+		_bind(sub, "charactersSub")
 
 
 func _build_team() -> void:

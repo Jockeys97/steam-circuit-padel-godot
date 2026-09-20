@@ -1115,6 +1115,62 @@ func _timing_presentation() -> void:
 	# and the completion registered. The early return above (no report) is the only
 	# other exit; without this registration the section always read as thrown
 	# (independent review F-02).
+
+	# --- the reference's proportion, measured at the owner's window ---------------
+	# The ticket's own criterion: at a stated window size the advice's on-screen height
+	# is the reference's proportion. The reference draws the word at 11 px on a canvas
+	# whose ring floats 96 px above the feet (`js/render.js:1657`, `:1730-1750`), and
+	# this port anchors that offset at `ring_height` metres, so 11 px of the ring's 96
+	# is 11/96 of the ring's own height in world metres — a WORLD size, which prints as
+	# the same proportion of the frame at any window (the reference's canvas is scaled
+	# to the window too, `js/render.js:1627`). Measured, not restated: the word's world
+	# height and the ring's own span from the feet, both unprojected through the live
+	# camera, with the frame set to the owner's 1568x881 window.
+	# The two nodes the relation is measured from, reached the way this file reaches
+	# every other mark: through the shell's own seam, never a private variable of the
+	# shell — the timing presentation lives in `godot/game/court_timing_marks.gd` now
+	# and `mount()` hangs its marks on the shell.
+	# The module owns the marks' state; the nodes themselves hang on the shell —
+	# `mount()` is handed the shell — which is where this file reads them.
+	var advice: Label3D = node.get_node_or_null("TimingAdvice") as Label3D
+	var ring: MeshInstance3D = node.get_node_or_null("TimingRing") as MeshInstance3D
+	check("the marks the proportion is measured on are mounted",
+		(advice as Node) != null and (ring as Node) != null, "")
+	var window := node.get_window()
+	var restore: Vector2i = window.size
+	window.size = Vector2i(1568, 881)
+	node._sync_views()
+	var frame: Vector2 = node.get_viewport().get_visible_rect().size
+	var cam: Camera3D = node.get_viewport().get_camera_3d()
+	var word_m: float = float(advice.font_size) * advice.pixel_size if advice != null else 0.0
+	var ring_m: float = float(node.timing_report()["ring_height"])
+	var want_m: float = ring_m * (11.0 / 96.0)
+	var word_px: float = 0.0
+	var ring_px: float = 0.0
+	if cam != null and ring != null:
+		var feet: Vector3 = ring.global_position - Vector3(0.0, ring_m, 0.0)
+		word_px = absf(cam.unproject_position(advice.global_position + Vector3(0.0, word_m, 0.0)).y
+			- cam.unproject_position(advice.global_position).y)
+		ring_px = absf(cam.unproject_position(ring.global_position).y
+			- cam.unproject_position(feet).y)
+	print("# TIMING_LABELS frame=%s word_h=%.4f m reference_h=%.4f m word=%.2f px ring_span=%.2f px ratio=%.4f want=%.4f" % [
+		str(frame), word_m, want_m, word_px, ring_px, word_px / ring_px if ring_px > 0.0 else 0.0,
+		11.0 / 96.0])
+	check("the advice's measured height is the reference's 11 of the ring's 96 px at the owner's 1568x881 window",
+		# (a) the delivered metres against the reference's proportion: ±2% is the
+		# rounding of `font_size` in whole px, and it is what a window-compensated
+		# world size (or the delivered 0.417 m) fails at this window.
+		cam != null and absf(word_m - want_m) <= want_m * 0.02
+			# (b) the same relation MEASURED on the frame's own pixels. ±15%: the word
+			# is read at 2.95 m and the ring over 0-1.60 m from the feet, where this
+			# camera's px/m differs by ~10.6% (measured); a `fixed_size` label would
+			# leave that band at the far side of the court.
+			and ring_px > 0.0
+			and absf(word_px - want_m * (ring_px / ring_m)) <= want_m * (ring_px / ring_m) * 0.15,
+		"frame=%s word=%.4f m -> %.2f px, reference=%.4f m (11/96 of %.2f m), ring span -> %.2f px, ratio=%.4f want=%.4f" % [
+			str(frame), word_m, word_px, want_m, ring_m, ring_px,
+			word_px / ring_px if ring_px > 0.0 else 0.0, 11.0 / 96.0])
+	window.size = restore
 	_drop(node)
 	_section_done("_timing_presentation")
 
@@ -1280,19 +1336,26 @@ func _packed_asset_paths() -> void:
 		not _is_excluded(String(AthleteRig.GLB_WALK), excludes) and not _is_excluded(String(AthleteRig.GLB_RUN), excludes),
 		"%s / %s" % [String(AthleteRig.GLB_WALK), String(AthleteRig.GLB_RUN)])
 	var full_pck := "res://build/linux-x86_64/padel.pck"
-	if not FileAccess.file_exists(full_pck):
-		check("the shipping pack exists (export it before running this test)", false, full_pck)
-	else:
+	# The exported pack is a build artifact: `godot/build/` is gitignored, so a source
+	# checkout has none. A missing pack is therefore not a defect of the checkout and is
+	# not scored — but it is stated, loudly and machine-readably, so nobody reads a green
+	# run as "the packed build was checked". When a pack IS present the checks run and a
+	# broken pack still fails them.
+	if FileAccess.file_exists(full_pck):
+		print("# PACK_MODE full=%s present — the two pack-content checks ran" % full_pck)
 		check("the athlete scene is INSIDE %s (the packaged build can draw the rigs)" % full_pck,
 			_pack_contains(full_pck, Court.GLB_PATH), Court.GLB_PATH)
 		check("no excluded tree is inside %s" % full_pck,
 			not _pack_contains(full_pck, "res://prototypes/"), "res://prototypes/")
+	else:
+		print("# PACK_MODE full=%s absent (source checkout) — pack-content checks not run, not scored" % full_pck)
 	var demo_pck := "res://build/linux-x86_64-demo/padel-demo.pck"
 	if FileAccess.file_exists(demo_pck):
+		print("# PACK_MODE demo=%s present — the pack-content check ran" % demo_pck)
 		check("the demo pack carries the athlete scene too",
 			_pack_contains(demo_pck, Court.GLB_PATH), demo_pck)
 	else:
-		print("# note %s absent: the demo pack was not checked" % demo_pck)
+		print("# PACK_MODE demo=%s absent (source checkout) — pack-content check not run, not scored" % demo_pck)
 	_section_done("_packed_asset_paths")
 
 
@@ -1391,8 +1454,7 @@ func _full_playthrough() -> void:
 	# The reference starts the music with the match (`js/main.js:1211-1212`), re-drives
 	# its intensity from the rally and the scoreboard every frame (`:1273-1279`) and stops
 	# it when the match ends (`:1438`). Until this seam existed the module was tested and
-	# never heard — the one open item the hand-off named. (Restored in the pull wave: the
-	# branch's slice rewrite dropped the whole seam; the runtime is unchanged.)
+	# never heard — the one open item the hand-off named.
 	var audio_node: Node = node.get_node_or_null("MatchAudio")
 	check("the match builds its audio seam", audio_node != null, "MatchAudio")
 	var music: Node = audio_node.get_node_or_null("Music") if audio_node != null else null
@@ -1400,17 +1462,17 @@ func _full_playthrough() -> void:
 	var music_start: Dictionary = audio_node.music_summary() if audio_node != null else {}
 	if audio_node != null:
 		print("# MUSIC_WIRING start playing=%s intensity=%s context=%s bus_gain=%s" % [
-		str(music_start.get("playing")), str(music_start.get("intensity")),
-		str(music_start.get("context")), str(music_start.get("music_bus_gain")),
+			str(music_start.get("playing")), str(music_start.get("intensity")),
+			str(music_start.get("context")), str(music_start.get("music_bus_gain")),
 		])
 		check("the score is running the moment a match starts (js/main.js:1211-1212)",
-		bool(music_start.get("playing", false)), str(music_start.get("playing")))
+			bool(music_start.get("playing", false)), str(music_start.get("playing")))
 		check("the match opens the score at the reference's own 0.12",
-		is_equal_approx(float(music_start.get("intensity", -1.0)), 0.12), str(music_start.get("intensity")))
+			is_equal_approx(float(music_start.get("intensity", -1.0)), 0.12), str(music_start.get("intensity")))
 		check("the score runs in the reference's match context",
-		String(music_start.get("context", "")) == "match", str(music_start.get("context")))
+			String(music_start.get("context", "")) == "match", str(music_start.get("context")))
 		check("the music bus sits at the reference's own gain (js/audio.js:149)",
-		is_equal_approx(float(music_start.get("music_bus_gain", -1.0)), 0.55), str(music_start.get("music_bus_gain")))
+			is_equal_approx(float(music_start.get("music_bus_gain", -1.0)), 0.55), str(music_start.get("music_bus_gain")))
 		# The scheduler runs on the engine's frame clock, so let real frames pass before
 		# claiming it ran: a purely synchronous probe would prove the setters work and
 		# nothing else. This is why this section is in `AWAITED_SECTIONS`.
@@ -1418,8 +1480,8 @@ func _full_playthrough() -> void:
 		await process_frame
 		var after_frames: Dictionary = audio_node.music_summary()
 		check("the score's scheduler ran on the engine's own frames and started voices",
-		int(after_frames.get("voices_started", 0)) > 0,
-		"voices_started=%s" % str(after_frames.get("voices_started")))
+			int(after_frames.get("voices_started", 0)) > 0,
+			"voices_started=%s" % str(after_frames.get("voices_started")))
 
 	var bot := ScriptedPlayer.new()
 	var music_mismatches: Array[String] = []
@@ -1441,13 +1503,13 @@ func _full_playthrough() -> void:
 		music_rally_peak = maxi(music_rally_peak, int(node.state.rallyHits))
 	if music != null:
 		check("the score follows the reference's own intensity formula every tick (js/main.js:1273-1279)",
-		music_mismatches.is_empty(), str(music_mismatches))
+			music_mismatches.is_empty(), str(music_mismatches))
 		check("the intensity actually moved off its start value (the drive is not a constant)",
-		music_peak > 0.12, "peak=%.4f" % music_peak)
+			music_peak > 0.12, "peak=%.4f" % music_peak)
 		check("the score keeps playing through the rally (a point does not stop it)",
-		music_stopped_mid_match == 0, "stopped on %d ticks" % music_stopped_mid_match)
+			music_stopped_mid_match == 0, "stopped on %d ticks" % music_stopped_mid_match)
 		check("a rally long enough to move the tension was actually played",
-		music_rally_peak >= 3, "max rallyHits=%d" % music_rally_peak)
+			music_rally_peak >= 3, "max rallyHits=%d" % music_rally_peak)
 
 	var s: Dictionary = node.summary()
 	print("# PLAYTHROUGH ticks=%d crossings=%d points=%d max_rally=%d result=%s score=%s-%s games=%s sets=%s" % [
@@ -1490,16 +1552,16 @@ func _full_playthrough() -> void:
 	var music_end: Dictionary = audio_node.music_summary() if audio_node != null else {}
 	if audio_node != null:
 		print("# MUSIC_WIRING end playing=%s stops=%s voices_started=%s intensity=%s" % [
-		str(music_end.get("playing")), str(music_end.get("stops")),
-		str(music_end.get("voices_started")), str(music_end.get("intensity")),
+			str(music_end.get("playing")), str(music_end.get("stops")),
+			str(music_end.get("voices_started")), str(music_end.get("intensity")),
 		])
 		check("the score stops when the match ends (js/main.js:1438)",
-		not bool(music_end.get("playing", true)), "playing=%s" % str(music_end.get("playing")))
+			not bool(music_end.get("playing", true)), "playing=%s" % str(music_end.get("playing")))
 		check("the stop was the score's own and happened", int(music_end.get("stops", 0)) >= 1,
-		"stops=%s" % str(music_end.get("stops")))
+			"stops=%s" % str(music_end.get("stops")))
 		check("the score sounded voices during the match (the scheduler ran, not just the setters)",
-		int(music_end.get("voices_started", 0)) > 0,
-		"voices_started=%s" % str(music_end.get("voices_started")))
+			int(music_end.get("voices_started", 0)) > 0,
+			"voices_started=%s" % str(music_end.get("voices_started")))
 	_drop(node)
 	_section_done("_full_playthrough")
 
@@ -1977,16 +2039,15 @@ func _arena_library() -> void:
 	check_eq("the fantasy arenas carry the reference's own gradient stops",
 		[String((storm["sky"] as Array)[0][1]), String((sky[sky.size() - 1])[1])], ["#07142f", "#287eb0"])
 	check_eq("the fantasy arenas carry the reference's own glow colour", String(storm["glow"]), "#79eeff")
-	# Artwork: the reference gives EVERY arena an `image` field (`js/data.js` ARENAS),
-	# reusing two files where it wants the same scene on screen. The port must carry the
-	# same nine mappings — a subset is a gap, not a stylistic choice. (Restored in the
-	# pull wave: the branch rewrite asserted four here; the frozen reference and this
-	# tree's `arena_style.gd` carry nine since 74195c4 — see uir-branch-pull-journal.md.)
+	# Artwork: every arena the reference paints is painted here too. (The reference's
+	# own tree carries nine since the arena-art wave — two of them reuse another
+	# arena's backdrop rather than shipping their own file.)
 	var with_art: Array[String] = []
 	for r in rows:
 		if String(ArenaStyle.artwork_path(String(r["id"]))) != "":
 			with_art.append(String(r["id"]))
-	check_eq("every arena the reference paints is painted here", with_art, Array(want))
+	check_eq("every arena the reference paints is painted here", with_art,
+		["officina", "locomotive", "clockwork", "cattedrale", "forgia", "tempesta", "abissale", "caldera", "orrery"])
 	check_eq("the two arenas that reuse another arena's backdrop reuse it here too",
 		[String(ArenaStyle.artwork_path("cattedrale")).get_file(),
 			String(ArenaStyle.artwork_path("forgia")).get_file()],

@@ -14,17 +14,19 @@
 ##   4. a language flip changes every visible string that the two locale tables actually
 ##      differ on, including the aria names and the toggle's own label
 ##      (`js/main.js:2421`, `js/i18n.js`);
-##   5. the badge follows the build gate and the three declared capture states walk
-##      (`js/ui.js:742-750`);
+##   5. the hero badge line is the reference's static `heroBadge` — always on, in both
+##      languages — beside the tag row's build chip, which follows the build gate, and the
+##      three declared capture states walk (`index.html:49-52`, `:78-80`, `js/ui.js:742-750`);
 ##   6. the screen reports one capture-state walk (`MenuScreen.capture_states()`);
 ##   7. the layout holds at 1280x720 and 1024x600 — no horizontal overflow, the poster
 ##      keeps its 16:9, and the hero's own content fits the frame it is shown in;
 ##   8. UIR-05's bridge can read the screen: nine focusables, and a confirm dispatch on
 ##      the primary button lands on `modes`.
 ##
-## Both runs the ticket asks for share this file: a full build and `-- --demo`. The badge
-## checks branch on `DemoGateAdapter.build()`, so the same audit proves "hidden in a full
-## build" and "shown in a demo" without being told which run it is in.
+## Both runs the ticket asks for share this file: a full build and `-- --demo`. The build
+## chip checks branch on `DemoGateAdapter.build()`, so the same audit proves "hidden in a
+## full build" and "shown in a demo" without being told which run it is in; the hero badge
+## line is checked in both runs and both languages, because it never follows the gate.
 extends SceneTree
 
 const AuditBase := preload("res://src/audits/audit_base.gd")
@@ -227,19 +229,41 @@ func _badge(audit: AuditBase) -> void:
 	var screen: Node = _router.active_screen()
 	var build := DemoGate.build()
 	audit.report("build=%s limited=%s" % [build, str(DemoGate.badge_visible())])
-	var badge: Control = screen.find_child("Badge", true, false)
-	var label: Label = screen.find_child("BadgeLabel", true, false)
+	# The reference's two distinct nodes: the hero badge line (`index.html:49-52`), a
+	# `data-i18n="heroBadge"` label that is never hidden, and the tag row's build chip
+	# (`index.html:78-80`), which only a limited build turns on and writes.
+	var hero_row: Control = screen.find_child("Badge", true, false)
+	var hero_label: Label = screen.find_child("BadgeLabel", true, false)
+	var chip: Label = screen.find_child("BuildBadge", true, false)
+	audit.check_true(hero_row != null and hero_label != null, "menu/the_hero_badge_row_mounts")
+	audit.check_true(chip != null, "menu/the_build_chip_mounts")
 
-	# The live build's own answer, whichever run this is.
+	# The hero badge line: always on, and it carries `heroBadge` in both languages.
+	var language_at_start := Locale.current_lang()
+	audit.check_true(hero_row.visible, "menu/the_hero_badge_row_is_always_visible")
+	var hero_texts := {}
+	for lang in MenuScreenClass.LANGS:
+		Locale.set_lang(String(lang))
+		screen.refresh_strings()
+		hero_texts[String(lang)] = hero_label.text
+		audit.check_eq(hero_label.text, UiStrings.t("heroBadge"), "menu/the_hero_badge_shows_heroBadge_in_%s" % String(lang))
+		audit.check_ne(hero_label.text, "heroBadge", "menu/the_hero_badge_text_is_the_locale_copy_in_%s" % String(lang))
+	audit.check_ne(hero_texts["it"], hero_texts["en"], "menu/the_hero_badge_line_follows_the_language")
+	audit.check_true(hero_row.visible, "menu/the_hero_badge_row_survives_the_language_flip")
+	Locale.set_lang(language_at_start)
+	screen.refresh_strings()
+
+	# The build chip: the live build's own answer, whichever run this is.
 	var expected_visible := DemoGate.badge_visible()
 	audit.check_eq(screen.badge_visible_shown(), expected_visible, "menu/the_badge_follows_the_build_gate")
-	audit.check_eq(badge.visible, expected_visible, "menu/the_badge_row_hides_with_it")
+	audit.check_eq(chip.visible, expected_visible, "menu/the_build_chip_hides_with_the_gate")
 	if expected_visible:
-		audit.check_eq(label.text, UiStrings.t(DemoGate.badge_text_key()), "menu/a_limited_build_shows_its_badge_text")
-		audit.check_true(label.text != DemoGate.badge_text_key(), "menu/the_badge_text_is_a_sentence_not_an_id")
+		audit.check_eq(chip.text, UiStrings.t(DemoGate.badge_text_key()), "menu/a_limited_build_shows_its_badge_text")
+		audit.check_true(chip.text != DemoGate.badge_text_key(), "menu/the_badge_text_is_a_sentence_not_an_id")
 	else:
-		audit.check_eq(label.text, "", "menu/a_full_build_shows_no_badge_text")
+		audit.check_eq(chip.text, "", "menu/a_full_build_shows_no_badge_text")
 	audit.check_eq(screen.badge_key_shown(), DemoGate.badge_text_key(), "menu/the_badge_key_is_the_adapters_answer")
+	audit.check_eq(hero_label.text, UiStrings.t("heroBadge"), "menu/the_gate_does_not_write_the_hero_badge_line")
 
 	# The capture-state walk: default -> demo -> beta -> default.
 	var walk: Array = []
@@ -249,19 +273,23 @@ func _badge(audit: AuditBase) -> void:
 	audit.check_eq(screen.apply_capture_state("nope"), false, "menu/an_undeclared_capture_state_is_refused")
 
 	screen.apply_capture_state("demo")
-	audit.check_true(badge.visible, "menu/the_demo_state_shows_the_badge_row")
+	audit.check_true(chip.visible, "menu/the_demo_state_shows_the_build_chip")
 	audit.check_eq(screen.badge_key_shown(), DemoGate.BADGE_DEMO_KEY, "menu/the_demo_state_pins_the_demo_key")
-	audit.check_eq(label.text, UiStrings.t(DemoGate.BADGE_DEMO_KEY), "menu/the_demo_state_shows_the_demo_text")
+	audit.check_eq(chip.text, UiStrings.t(DemoGate.BADGE_DEMO_KEY), "menu/the_demo_state_shows_the_demo_text")
+	audit.check_eq(hero_label.text, UiStrings.t("heroBadge"), "menu/the_demo_state_leaves_the_hero_badge_line_alone")
 
 	screen.apply_capture_state("beta")
-	audit.check_true(badge.visible, "menu/the_beta_state_shows_the_badge_row")
+	audit.check_true(chip.visible, "menu/the_beta_state_shows_the_build_chip")
 	audit.check_eq(screen.badge_key_shown(), DemoGate.BADGE_BETA_KEY, "menu/the_beta_state_pins_the_beta_key")
-	audit.check_eq(label.text, UiStrings.t(DemoGate.BADGE_BETA_KEY), "menu/the_beta_state_shows_what_that_key_resolves_to")
-	audit.note("the beta badge key is pinned through the adapter; the port's frozen locale table has no `betaBadge`, so the label shows the id — the reference's own visible-fallback behaviour, recorded here for the locale lane")
+	audit.check_eq(chip.text, UiStrings.t(DemoGate.BADGE_BETA_KEY), "menu/the_beta_state_shows_what_that_key_resolves_to")
+	audit.check_eq(hero_label.text, UiStrings.t("heroBadge"), "menu/the_beta_state_leaves_the_hero_badge_line_alone")
+	audit.note("the beta badge key is pinned through the adapter; the port's frozen locale table has no `betaBadge`, so the chip shows the id — the reference's own visible-fallback behaviour, recorded here for the locale lane")
 
 	screen.apply_capture_state("default")
 	audit.check_eq(screen.badge_visible_shown(), expected_visible, "menu/the_default_state_returns_to_the_gate")
 	audit.check_eq(screen.badge_key_shown(), DemoGate.badge_text_key(), "menu/the_default_state_returns_the_key")
+	audit.check_true(hero_row.visible, "menu/the_hero_badge_row_kept_its_own_visibility")
+	audit.check_eq(hero_label.text, UiStrings.t("heroBadge"), "menu/the_hero_badge_line_kept_its_own_text")
 
 
 # ---------------------------------------------------------------------------
@@ -345,7 +373,7 @@ func _layout(audit: AuditBase) -> void:
 	var hero: ScrollContainer = screen.find_child("HeroScroll", true, false)
 	# The band is the reference's own behaviour, measured: the browser's page scrolls
 	# when the viewport is short, so the port may scroll too — but only a sliver. Full
-	# build: 9 px of 422 (2 %); demo build: 35 px (8 %), where the badge row adds a line.
+	# build: 9 px of 422 (2 %); demo build: 35 px (8 %), where the tag row's build chip appears.
 	# The 1280x720 frame, the capture size, does not overflow in either build.
 	audit.check_le(small["content_height"] - small["viewport"], 40.0,
 		"menu/the_smallest_frame_overflows_by_a_scrollable_sliver_at_most")

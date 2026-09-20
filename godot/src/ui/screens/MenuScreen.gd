@@ -12,9 +12,12 @@
 ## the router — screens live under the router's host, so `go_to` is found above this
 ## node and the screen never holds a reference that could be wired to a second router.
 ##
-## THE BADGE IS THE GATE'S, NOT THIS SCREEN'S. `js/ui.js:742-750` writes the badge text
-## from the build's own name and a full build never shows it; `DemoGateAdapter` answers
-## both questions and this screen only renders the answer. The `demo`/`beta` capture
+## THE BUILD CHIP IS THE GATE'S, NOT THIS SCREEN'S. `js/ui.js:742-745` writes the limited
+## build's own key into the tag row's chip (`index.html:80`, `.hero-tags__build`) and a
+## full build never shows it; the hero badge line above the title is the reference's
+## static `heroBadge` (`index.html:49-52`, kept by the ticket's own anatomy) and stays
+## visible in every build. `DemoGateAdapter` answers the chip's two questions — key and
+## visibility — and this screen only renders the answer. The `demo`/`beta` capture
 ## states pin the key through the same adapter (`badge_text_key_for`): the port's build
 ## flag is process-level (`tests/build/BuildFlag.gd` reads OS features and the command
 ## line), so a capture state cannot set it and does not pretend to.
@@ -68,9 +71,11 @@ const ACTION_SLOTS := {
 }
 
 ## The visible text slots: node name -> locale id, the `data-i18n` attributes of
-## `index.html:31-87`. The badge is not here: its text is the gate's answer.
+## `index.html:31-87`. The hero badge line is one of them; the tag row's build chip is
+## not — that text is the gate's answer (`_refresh_badge`).
 const TEXT_SLOTS := {
 	"BrandLabel": "brand",
+	"BadgeLabel": "heroBadge",
 	"Title1": "heroTitle1",
 	"Title2": "heroTitle2",
 	"HeroSub": "heroSub",
@@ -127,6 +132,9 @@ const ACCESSIBILITY_NAME_PROPERTY := "accessibility_name"
 ## file agree on the spellings.
 const BADGE_NODE := "Badge"
 const BADGE_LABEL_NODE := "BadgeLabel"
+## The tag row's build chip (`index.html:80`, `.hero-tags__build`): the node the limited
+## build's own name is written into, and the one a full build keeps hidden.
+const BUILD_BADGE_NODE := "BuildBadge"
 const TOP_NAV_NODE := "TopNav"
 const LANG_NODE := "LangToggle"
 const HINT_PILL_NODE := "HintPill"
@@ -149,6 +157,7 @@ var back_target_id: String = ""
 ## The badge key a capture run pinned (`""` = the live gate's own answer).
 var badge_key_override: String = ""
 
+## The build chip and the label it carries (the same node: `BuildBadge` is a Label).
 var _badge: Control
 var _badge_label: Label
 var _focus_specs: Dictionary = {}
@@ -252,9 +261,12 @@ func toggle_language() -> void:
 
 
 # ---------------------------------------------------------------------------
-# The badge (`js/ui.js:742-750`)
+# The build chip (`js/ui.js:742-750`)
 # ---------------------------------------------------------------------------
 
+## The tag row's chip takes the limited build's own key and is unhidden only where the
+## gate says a limited build is running. The hero badge line above the title is not this
+## one: it is the reference's static `heroBadge`, resolved through `TEXT_SLOTS`.
 func _refresh_badge() -> void:
 	var key := badge_key_shown()
 	var visible := key != "" and (badge_key_override != "" or DemoGate.badge_visible())
@@ -465,8 +477,8 @@ func _style_chrome() -> void:
 			_box(node_name, slot, _nav_button_box(theme, slot != "normal"))
 	for slot in ["normal", "hover", "pressed"]:
 		_box(LANG_NODE, slot, _lang_toggle_box(theme, slot != "normal"))
-	_badge = _control(BADGE_NODE)
-	_badge_label = _control(BADGE_LABEL_NODE) as Label
+	_badge = _control(BUILD_BADGE_NODE)
+	_badge_label = _badge as Label
 	_chrome_fonts(theme)
 	_tags_typography(theme)
 	_caption(theme)

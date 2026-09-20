@@ -1603,6 +1603,8 @@ func timing_report() -> Dictionary:
 	return _timing_marks.report() if _timing_marks != null else {}
 
 
+
+
 # ---------------------------------------------------------------------------
 # Capture harness: same scene, same controller, driven by a fixed tick budget
 # ---------------------------------------------------------------------------

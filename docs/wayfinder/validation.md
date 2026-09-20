@@ -38,7 +38,7 @@ Outfits per athlete: `{'maestro': 5, 'pantera': 5, 'steamer': 5, 'fiamma': 5, 'o
 | parity-gate-definition.md | open | grilling | HITL | unassigned | Godot headless harness, Web build strangler policy |
 | product-scope-and-platforms.md | open | grilling | HITL | unassigned | none |
 | save-and-cloud-format.md | open | grilling | HITL | unassigned | Steamworks integration route |
-| shot-logic-parity.md | open | task | AFK | crew-shotlogic | none |
+| shot-logic-parity.md | resolved | task | AFK | crew-shotlogic | none |
 | simulation-port-boundary.md | resolved | research | AFK | crew-charlie | none |
 | steamworks-integration-route.md | resolved | research | AFK | crew (AFK research session) | none |
 | steamworks-prerequisites.md | open | task | HITL | unassigned | none |
@@ -58,6 +58,7 @@ Outfits per athlete: `{'maestro': 5, 'pantera': 5, 'steamer': 5, 'fiamma': 5, 'o
 
 107 relative links checked across 61 markdown files.
 121 relative links checked across 68 markdown files.
+121 relative links checked across 73 markdown files.
 
 ## Dependency graph
 

@@ -10,7 +10,7 @@
 ## actually mounts, under the build this process actually is (`tests/build/BuildFlag.gd`):
 ## the athletes and arenas a build lists, locks and cannot select (`js/build.js:58-75`,
 ## `js/ui.js:734`), the modes and the pinned difficulty (`js/ui.js:737-770`), the badge
-## (`js/ui.js:742-750`), the result CTA copy (`js/main.js:2392-2420`) and the two
+## and its build chip (`index.html:49-52`, `:78-80`; `js/ui.js:742-750`), the result CTA copy (`js/main.js:2392-2420`) and the two
 ## languages. The exposed / locked / selectable distinction is measured from the rows
 ## the screens render; the rule is not re-derived here.
 ##
@@ -160,19 +160,29 @@ func _go(router: Control, id: String) -> Node:
 func _menu_badge_and_nav(audit: AuditBase, router: Control, demo: bool) -> void:
 	audit.check_eq(String(router.call("active_id")), "menu", "menu/a_boot_lands_on_the_menu")
 	var screen: Node = router.call("active_screen")
-	var badge: Control = screen.find_child("Badge", true, false)
-	var label: Label = screen.find_child("BadgeLabel", true, false)
-	audit.check_true(badge != null and label != null, "menu/the_badge_row_mounts")
+	# The reference's two distinct nodes: the hero badge line (`index.html:49-52`), a
+	# `data-i18n="heroBadge"` label that is never hidden, and the tag row's build chip
+	# (`index.html:78-80`), which only a limited build turns on and writes.
+	var hero_row: Control = screen.find_child("Badge", true, false)
+	var hero_label: Label = screen.find_child("BadgeLabel", true, false)
+	var chip: Label = screen.find_child("BuildBadge", true, false)
+	audit.check_true(hero_row != null and hero_label != null, "menu/the_badge_row_mounts")
+	audit.check_true(chip != null, "menu/the_build_chip_mounts")
+	audit.check_true(hero_row.visible, "menu/the_hero_badge_row_is_always_visible")
+	audit.check_eq(hero_label.text, UiStrings.t("heroBadge"), "menu/the_hero_badge_line_shows_heroBadge")
+	audit.check_ne(hero_label.text, "heroBadge", "menu/the_hero_badge_text_is_the_locale_copy")
 	audit.check_eq(bool(screen.call("badge_visible_shown")), demo, "menu/the_badge_follows_the_build_gate")
+	audit.check_eq(chip.visible, demo, "menu/the_build_chip_follows_the_build_gate")
 	audit.check_eq(String(screen.call("badge_key_shown")), DemoGate.badge_text_key(), "menu/the_badge_key_is_the_adapters_answer")
 	if demo:
 		audit.check_eq(String(screen.call("badge_key_shown")), DemoGate.BADGE_DEMO_KEY, "menu/a_demo_shows_the_demo_key")
-		audit.check_true(badge.visible, "menu/a_demo_shows_the_badge_row")
-		audit.check_eq(label.text, UiStrings.t("demoBadge"), "menu/the_badge_text_is_the_demos_own")
-		audit.check_eq(label.text, "DEMO", "menu/and_it_reads_DEMO")
+		audit.check_true(chip.visible, "menu/a_demo_shows_the_build_chip")
+		audit.check_eq(chip.text, UiStrings.t("demoBadge"), "menu/the_badge_text_is_the_demos_own")
+		audit.check_eq(chip.text, "DEMO", "menu/and_it_reads_DEMO")
 	else:
-		audit.check_true(not badge.visible, "menu/a_full_build_hides_the_badge_row")
-		audit.check_eq(label.text, "", "menu/a_full_build_shows_no_badge_text")
+		audit.check_true(not chip.visible, "menu/a_full_build_hides_the_build_chip")
+		audit.check_eq(chip.text, "", "menu/a_full_build_shows_no_badge_text")
+	audit.check_eq(hero_label.text, UiStrings.t("heroBadge"), "menu/and_the_hero_badge_line_is_still_its_own")
 	# Row 11: the same eight actions and the top-nav buttons in both builds.
 	var actions: Array = Router.to_actions_of("menu")
 	actions.sort()

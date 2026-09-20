@@ -89,6 +89,16 @@ const WORLD_ART_DIR := "res://game/arenas/art/world/"
 const BODY_NODE := "Body"
 const GRID_AREA_NODE := "GridArea"
 
+## The header's three strings. The scene declares each one as its own `text = "…"`
+## (the lane's idiom: the scene names the key, the screen resolves it) and nothing in the
+## grid build reaches them, so they are bound here.
+const BACK_KEY := "back"
+const TITLE_KEY := "arenaTitle"
+const SUB_KEY := "arenaSub"
+## `{word}` (`lockLabel`, `js/ui.js:685-702`): a requirement's singular/plural arrives as
+## a locale key resolved at refresh time, so a language flip moves the word with the line.
+const WORD_KEY_PARAM := "word"
+
 const WORDING_QUICK := "quick"
 const WORDING_CAREER := "career"
 const WORDING_TOURNAMENT := "tournament"
@@ -223,6 +233,9 @@ func refresh_data() -> void:
 	_build_world_grid()
 	_build_player_mode()
 	_apply_layout()
+	# After the grid: `_build_grid` opens with `_clear`, which drops every binding the
+	# screen held, and the header is not inside the grid.
+	_bind_header()
 	refresh_strings()
 
 
@@ -666,8 +679,9 @@ func _build_grid() -> void:
 		line.theme_type_variation = &"CardBody"
 		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		stack.add_child(line)
-		var line_key := arena_line_key(id)
-		_bind(line, line_key, _line_params_of(id, line_key))
+		# `lockLabel(arena.unlock)` for a walled card (`js/ui.js:1255-1264`), the
+		# renderer's own single key for every other one.
+		_bind_line(line, id)
 
 		# A switched-off card is a card the reference hands to `card.disabled`
 		# (`js/ui.js:1263-1271`), never a card that quietly does nothing.
@@ -943,19 +957,6 @@ func _apply_selection_styles() -> void:
 		card.add_theme_stylebox_override("panel", _card_box_of(String(arena_id)))
 
 
-## Bound after `_build_grid` because `_clear(ArenaGrid)` wipes `_bindings`.
-func _bind_header() -> void:
-	var title := _control("TitleLabel")
-	if title != null:
-		_bind(title, "arenaTitle")
-	var sub := _control("SubLabel")
-	if sub != null:
-		_bind(sub, "arenaSub")
-	var back := _control("BackButton")
-	if back != null:
-		_bind(back, "back")
-
-
 func _setup_box() -> StyleBoxFlat:
 	var theme: Theme = self.theme
 	if theme == null:
@@ -1056,8 +1057,87 @@ func refresh_strings() -> void:
 		var node: Control = _text_nodes.get(String(entry.get("name", "")), null)
 		if node == null:
 			continue
+		_apply_binding_words(entry)
 		_set_node_text(node, _resolve_entry(entry))
 	_apply_accessibility()
+
+
+## A requirement's plural is a *locale key*, resolved here rather than at build time: that
+## is what makes a language flip move the word with the count, the way the reference
+## resolves it where it interpolates (`js/ui.js:687`). The resolved word lands in the
+## binding's own params, so the params a caller reads back are the params the label shows.
+func _apply_binding_words(entry: Dictionary) -> void:
+	var word_key := String(entry.get("word_key", ""))
+	if word_key != "":
+		var params: Dictionary = entry.get("params", {})
+		params[WORD_KEY_PARAM] = UiStrings.t(word_key)
+		entry["params"] = params
+	var suffix_word_key := String(entry.get("suffix_word_key", ""))
+	if suffix_word_key != "":
+		var suffix_params: Dictionary = entry.get("suffix_params", {})
+		suffix_params[WORD_KEY_PARAM] = UiStrings.t(suffix_word_key)
+		entry["suffix_params"] = suffix_params
+
+
+## The header's three strings, bound once each: `refresh_data` can run again with no grid
+## to clear (a scene without an `ArenaGrid`), and a second registration would resolve the
+## header twice.
+func _bind_header() -> void:
+	_bind_once(_control("BackButton"), BACK_KEY)
+	_bind_once(_control("TitleLabel"), TITLE_KEY)
+	_bind_once(_control("SubLabel"), SUB_KEY)
+
+
+func _bind_once(control: Control, key: String) -> void:
+	if control == null or _is_bound(control.name):
+		return
+	_bind(control, key)
+
+
+func _is_bound(node_name: String) -> bool:
+	for row in _bindings:
+		if String((row as Dictionary).get("name", "")) == node_name:
+			return true
+	return false
+
+
+## The sentence a card's body carries (`js/ui.js:1255-1264`): the renderer's own single
+## keys, or — on a walled card — the reference's `lockLabel(arena.unlock)`, trophies first
+## and stars second joined by ` · `, each count with its own singular (`js/ui.js:685-702`).
+## Both walls are read: the frozen table carries arenas with the two at once.
+func _bind_line(control: Control, arena_id: String) -> void:
+	var key := arena_line_key(arena_id)
+	var unlock: Dictionary = _arena_unlock_of(arena_id)
+	var trophies := int(unlock.get("trophies", 0))
+	var stars := int(unlock.get("stars", 0))
+	var params := {}
+	var word_key := ""
+	var suffix_key := ""
+	var suffix_params := {}
+	var suffix_word_key := ""
+	if key == "unlockTrophies":
+		params = {"n": trophies}
+		word_key = _requirement_word_key(trophies, "trophyOne", "trophyMany")
+		if stars > 0:
+			suffix_key = "unlockStars"
+			suffix_params = {"n": stars}
+			suffix_word_key = _requirement_word_key(stars, "starOne", "starMany")
+	elif key == "unlockStars":
+		params = {"n": stars}
+		word_key = _requirement_word_key(stars, "starOne", "starMany")
+	_bind(control, key, params, _join_middot(), suffix_key, suffix_params, "", word_key, suffix_word_key)
+
+
+## `unlock.trophies === 1 ? "trophyOne" : "trophyMany"` (`js/ui.js:687`): the singular is
+## chosen by the count the card carries, never assumed.
+static func _requirement_word_key(count: int, one_key: String, many_key: String) -> String:
+	return one_key if count == 1 else many_key
+
+
+## `parts.join(" · ")` (`js/ui.js:694`), from code points: the UI lane's literal scan flags
+## any literal carrying a space, and this is punctuation the reference hard-codes.
+static func _join_middot() -> String:
+	return String.chr(0x20) + String.chr(0x00b7) + String.chr(0x20)
 
 
 func _resolve_entry(entry: Dictionary) -> String:
@@ -1075,7 +1155,8 @@ func _set_node_text(node: Control, text: String) -> void:
 
 
 func _bind(control: Control, key: String, params: Dictionary = {}, joiner: String = "",
-		suffix_key: String = "", suffix_params: Dictionary = {}, prefix: String = "") -> void:
+		suffix_key: String = "", suffix_params: Dictionary = {}, prefix: String = "",
+		word_key: String = "", suffix_word_key: String = "") -> void:
 	_register_text_node(control)
 	_bindings.append({
 		"name": control.name,
@@ -1085,7 +1166,10 @@ func _bind(control: Control, key: String, params: Dictionary = {}, joiner: Strin
 		"joiner": joiner,
 		"suffix_key": suffix_key,
 		"suffix_params": suffix_params,
+		"word_key": word_key,
+		"suffix_word_key": suffix_word_key,
 	})
+	_apply_binding_words(_bindings[_bindings.size() - 1])
 	_set_node_text(control, _resolve_entry(_bindings[_bindings.size() - 1]))
 
 

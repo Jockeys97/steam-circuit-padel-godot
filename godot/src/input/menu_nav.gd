@@ -214,8 +214,10 @@ func focus_id() -> String:
 
 ## Confirming: with the focus on a text field and a pad connected, the on-screen
 ## keyboard opens — a pad player cannot type into a text field any other way
-## (`js/main.js:700-704`). Otherwise the focused target is activated and the
-## caller runs the action.
+## (`activateMenuFocus` in the reference). Otherwise the focused target is activated
+## and the caller runs the action. "Text field" means a target that *declares* one
+## (`FocusNav.is_text_field`: `kind == "text_field"`, or an explicit `input_type`):
+## a menu row declares neither, so confirming it activates it.
 func confirm() -> Dictionary:
 	var target := nav.focus()
 	if target.is_empty():

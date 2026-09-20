@@ -246,16 +246,31 @@ func _adjust_range(target: Dictionary, dir: String) -> void:
 	target["value"] = value
 
 
-## `isTextField` (`js/main.js:545-549`), as the model's kind test: a target whose
-## text is entered with the on-screen keyboard.
+## `isTextField`, as the model's kind test: a target whose text is entered with the
+## on-screen keyboard.
+##
+## The reference asks its question of a DOM element: a textarea, or an `<input>`
+## whose `type` is in the set below. The empty string is in that set because an
+## `<input>` with no `type` attribute *is* a text input in HTML — the attribute has
+## a default and the DOM supplies it.
+##
+## A ported target is a dictionary, and a dictionary has no defaults. A key nobody
+## wrote is absent, and `get("input_type", "")` answers exactly like a target that
+## declared `input_type: ""` on purpose; `game/menu_focus.gd::_target()` never emits
+## the key and no screen registers one. So carrying the empty string over made every
+## menu row a text field, and `MenuNav.confirm()` opened the keyboard on an ordinary
+## row instead of activating it. The reference's table therefore applies only to a
+## target that **declares** `input_type`: absence is not a declaration, an explicit
+## `""` is (that is the `<input>` with no type).
 static func is_text_field(target: Dictionary) -> bool:
 	if target.is_empty():
 		return false
 	if String(target.get("kind", "")) == "text_field":
 		return true
-	# The reference also accepts an `<input type>` in this set, and its empty
-	# string — an `<input>` with no `type` is a text input in HTML.
-	return ["text", "search", "email", "url", "tel", "password", ""].has(String(target.get("input_type", "")))
+	if not target.has("input_type"):
+		return false
+	# The reference's set, applied to the declared type — the empty string included.
+	return ["text", "search", "email", "url", "tel", "password", ""].has(String(target["input_type"]))
 
 
 # ---------------------------------------------------------------------------
