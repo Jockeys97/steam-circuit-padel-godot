@@ -32,6 +32,7 @@ func _initialize() -> void:
 			check(absf(Stamina.effort_energy(row.energy, row.dt, row.movement, row.sprint, row.stamina) - row.next) < 0.00000001, "JS effort parity")
 			check(absf(Stamina.speed_factor(row.energy) - row.speed) < 0.00000001, "JS speed parity")
 			check(absf(Stamina.assessment_energy(row.energy) - row.assessment) < 0.00000001, "JS quality parity")
+			check(absf(Stamina.execution_energy(row.energy, 0.8, row.movement, 0.7, row.sprint, true) - row.execution) < 0.00000001, "JS execution parity")
 	for hz in [30, 60, 120]:
 		var short := scenario(10, hz, "safe-drive", 0.5, 0.0)
 		var long_control := scenario(30, hz, "safe-drive", 0.5, 0.0)
@@ -42,7 +43,7 @@ func _initialize() -> void:
 		print("SCENARIO ", hz, " ", short, " ", long_control, " ", long_smash)
 	for i in 101:
 		var e := float(i) / 100.0
-		check(Stamina.speed_factor(e) >= 0.88 and Stamina.speed_factor(e) <= 1.0, "bounded speed")
+		check(Stamina.speed_factor(e) >= 0.75 and Stamina.speed_factor(e) <= 1.0, "bounded speed")
 		check(is_finite(Stamina.assessment_energy(e)), "finite assessment")
 	check(Stamina.effort_energy(0.5, 1, 0, 0) > 0.5, "idle recovery")
 	check(Stamina.effort_energy(0.5, 1, 1, 1) < Stamina.effort_energy(0.5, 1, 1, 0), "sprint costs more")
@@ -57,17 +58,43 @@ func _initialize() -> void:
 	var initial_x: float = fresh_state.player.x
 	Sim.move_human_paddle(fresh_state, fresh_state.player, move, 1.0 / 60)
 	Sim.move_human_paddle(tired_state, tired_state.player, move, 1.0 / 60)
-	check(absf((tired_state.player.x - initial_x) / (fresh_state.player.x - initial_x) - 0.88) < 0.00001, "actual human speed floor")
+	check(absf((tired_state.player.x - initial_x) / (fresh_state.player.x - initial_x) - 0.75) < 0.00001, "actual human speed floor")
 	fresh_state.ball.x = fresh_state.player.x
 	fresh_state.ball.y = fresh_state.player.y
 	fresh_state.ball.z = 50.0
 	var high = Sim.evaluate_shot_quality(fresh_state, fresh_state.player, {"aiTiming": 0.8})
-	fresh_state.player.staminaEnergy = 0.6
+	fresh_state.player.staminaEnergy = 0.7
 	var threshold = Sim.evaluate_shot_quality(fresh_state, fresh_state.player, {"aiTiming": 0.8})
 	check(high.quality == threshold.quality, "no precision loss above threshold")
 	fresh_state.player.staminaEnergy = 0.15
 	var low = Sim.evaluate_shot_quality(fresh_state, fresh_state.player, {"aiTiming": 0.8})
 	check(low.quality < high.quality and high.quality - low.quality <= 0.05, "bounded existing precision penalty")
+	# Compare actual assessments, not only helper formulas. No fatigue-only RNG.
+	fresh_state.player.moveRatio = 0.0
+	fresh_state.player.splitStep = 0.0
+	var tired_window := Sim.contextual_perfect_window(fresh_state, fresh_state.player, 0.5)
+	var safe_tired = Sim.evaluate_shot_quality(fresh_state, fresh_state.player, {"aiTiming": 1.0, "charge": 0.0})
+	var forced_tired = Sim.evaluate_shot_quality(fresh_state, fresh_state.player, {"aiTiming": 0.6, "charge": 1.0, "variant": "smash"})
+	fresh_state.player.staminaEnergy = 1.0
+	var safe_fresh = Sim.evaluate_shot_quality(fresh_state, fresh_state.player, {"aiTiming": 1.0, "charge": 0.0})
+	var forced_fresh = Sim.evaluate_shot_quality(fresh_state, fresh_state.player, {"aiTiming": 0.6, "charge": 1.0, "variant": "smash"})
+	check(safe_tired.quality == safe_fresh.quality and safe_tired.risk == safe_fresh.risk, "perfect planted control protected")
+	check(forced_tired.risk > forced_fresh.risk and forced_tired.quality < forced_fresh.quality, "forcing tired punished")
+	check(tired_window == Sim.contextual_perfect_window(fresh_state, fresh_state.player, 0.5), "timing window predictable despite fatigue")
+	check(Stamina.execution_energy(0.15, 0.5, 1.0, 1.0, 1.0, false) > Stamina.execution_energy(0.15, 0.5, 1.0, 1.0, 0.0, false), "split step rewards preparation")
+	check(Stamina.speed_factor(0.4) < 0.86, "tired coverage visibly reduced")
+	for charge in [0.0, 0.25, 0.5, 0.75, 1.0]:
+		for movement in [0.0, 0.5, 1.0]:
+			for timing in [0.5, 0.75, 1.0]:
+				fresh_state.player.moveRatio = movement
+				var opts := {"charge": charge, "aiTiming": timing}
+				fresh_state.player.staminaEnergy = 1.0
+				var rested = Sim.evaluate_shot_quality(fresh_state, fresh_state.player, opts)
+				fresh_state.player.staminaEnergy = 0.15
+				var exhausted = Sim.evaluate_shot_quality(fresh_state, fresh_state.player, opts)
+				check(exhausted.quality <= rested.quality and exhausted.risk >= rested.risk, "fatigue monotonic across shot matrix")
+				check(rested.quality - exhausted.quality <= 0.068001, "execution penalty bounded")
+	fresh_state.player.staminaEnergy = 0.15
 	fresh_state.ball.x = -9999
 	check(not Sim.hit_ball(fresh_state, fresh_state.player), "miss does not contact")
 	check(fresh_state.player.staminaEnergy == 0.15, "miss does not consume contact energy")

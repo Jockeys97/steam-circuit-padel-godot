@@ -1,0 +1,185 @@
+[
+ {
+  "file": "model.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/fiamma-model/model.glb",
+  "bytes": 13246904,
+  "glb_version": 2,
+  "bin_chunk_bytes": 13245192,
+  "triangles": 20387,
+  "vertices": 37440,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "Mesh_0",
+    20387
+   ]
+  ],
+  "materials": [
+   "Material_0"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_0",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 3,
+  "textures": 3,
+  "skins": 0,
+  "joints": 0,
+  "animations": [],
+  "nodes": 1,
+  "accessors": 4
+ },
+ {
+  "file": "model.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/pantera-model/model.glb",
+  "bytes": 11437984,
+  "glb_version": 2,
+  "bin_chunk_bytes": 11436272,
+  "triangles": 20726,
+  "vertices": 25955,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "Mesh_0",
+    20726
+   ]
+  ],
+  "materials": [
+   "Material_0"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_0",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 3,
+  "textures": 3,
+  "skins": 0,
+  "joints": 0,
+  "animations": [],
+  "nodes": 1,
+  "accessors": 4
+ },
+ {
+  "file": "model.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/steamer-model/model.glb",
+  "bytes": 12675248,
+  "glb_version": 2,
+  "bin_chunk_bytes": 12673536,
+  "triangles": 20749,
+  "vertices": 27933,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "Mesh_0",
+    20749
+   ]
+  ],
+  "materials": [
+   "Material_0"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_0",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 3,
+  "textures": 3,
+  "skins": 0,
+  "joints": 0,
+  "animations": [],
+  "nodes": 1,
+  "accessors": 4
+ },
+ {
+  "file": "model.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/oracolo-model/model.glb",
+  "bytes": 12139504,
+  "glb_version": 2,
+  "bin_chunk_bytes": 12137792,
+  "triangles": 20505,
+  "vertices": 29771,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "Mesh_0",
+    20505
+   ]
+  ],
+  "materials": [
+   "Material_0"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_0",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 3,
+  "textures": 3,
+  "skins": 0,
+  "joints": 0,
+  "animations": [],
+  "nodes": 1,
+  "accessors": 4
+ },
+ {
+  "file": "model.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/colosso-model/model.glb",
+  "bytes": 12645380,
+  "glb_version": 2,
+  "bin_chunk_bytes": 12643668,
+  "triangles": 20728,
+  "vertices": 28015,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "Mesh_0",
+    20728
+   ]
+  ],
+  "materials": [
+   "Material_0"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_0",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 3,
+  "textures": 3,
+  "skins": 0,
+  "joints": 0,
+  "animations": [],
+  "nodes": 1,
+  "accessors": 4
+ }
+]
+
+SUM triangles across 5 files: 103095
+MAX triangles in a single file: 20749

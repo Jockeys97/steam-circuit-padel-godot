@@ -96,6 +96,16 @@ signal tab_changed(tab_id: String)
 
 ## The three tabs (`index.html:570-572`), in markup order.
 const TAB_MATCH := "match"
+const TAB_CAMERA := "camera"
+const CAMERA_LABELS := {"default": "cameraClassic", "immersive": "cameraImmersive", "courtside": "cameraCourtside", "tactical": "cameraTactical", "broadcast": "cameraBroadcast"}
+var _camera_buttons: Dictionary = {}
+var _camera_preview: SubViewport
+var _preview_camera: Camera3D
+var _camera_description: Label
+var _camera_hint: Label
+var _preview_id := "default"
+var _resume_footer: Button
+const CameraCourt := preload("res://game/court.gd")
 const TAB_CONTROLLER := "controller"
 const TAB_CONTROLS := "controls"
 ## The fourth tab is this bundle's own (`docs/agent-work/ui-visibility-settings/
@@ -104,6 +114,7 @@ const TAB_CONTROLS := "controls"
 const TAB_UI := "ui"
 const TABS := [
 	{"id": TAB_MATCH, "label_id": "tabMatch"},
+	{"id": TAB_CAMERA, "label_id": "tabCamera"},
 	{"id": TAB_CONTROLLER, "label_id": "tabController"},
 	{"id": TAB_CONTROLS, "label_id": "commands"},
 	{"id": TAB_UI, "label_id": "tabUi"},
@@ -114,11 +125,12 @@ const TABS := [
 ## owns the profile; `tests/ui/ui_visibility_audit.gd` asserts the two lists and
 ## `Hud.COMPONENT_IDS` are equal, so a mirror cannot drift silently. The label ids
 ## are the tab's own, like every other string this overlay shows.
-const UI_COMPONENT_IDS := ["score", "time", "map", "guidance", "indicators", "events"]
+const UI_COMPONENT_IDS := ["score", "time", "map", "guidance", "indicators", "events", "preparation"]
 const UI_COMPONENT_LABEL_IDS := {
 	"score": "uiCompScore", "time": "uiCompTime", "map": "uiCompMap",
 	"guidance": "uiCompGuidance", "indicators": "uiCompIndicators",
 	"events": "uiCompEvents",
+	"preparation": "uiCompPreparation",
 }
 const UI_PRESET_IDS := ["all", "essential", "score_only", "clean"]
 const UI_PRESET_LABEL_IDS := {
@@ -463,6 +475,8 @@ func close() -> void:
 	_open = false
 	visible = false
 	reset_quit_confirm()
+	if _camera_preview != null:
+		_camera_preview.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	close_tutorial(false)
 
 
@@ -502,6 +516,13 @@ func set_tab(tab_id: String, focus_tab: bool = false) -> bool:
 	if _tutorial_open:
 		close_tutorial(false)
 	_tab = tab_id
+	if _resume_footer != null:
+		_resume_footer.visible = tab_id != TAB_MATCH
+	if _camera_preview != null:
+		_camera_preview.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	if tab_id == TAB_CAMERA:
+		_refresh_camera_buttons()
+		_preview_camera_choice(Config.camera_preset if CAMERA_LABELS.has(Config.camera_preset) else "default")
 	for id in _panels:
 		var panel: Control = _panels[id]
 		panel.visible = String(id) == tab_id
@@ -989,6 +1010,7 @@ func refresh_strings() -> void:
 				label_id = String(tab["label_id"])
 		(_tabs[id] as Button).text = UiStrings.t(label_id)
 	_continue_button.text = UiStrings.t("continue")
+	_resume_footer.text = UiStrings.t("pauseResumeMatch")
 	_rematch_button.text = UiStrings.t("rematch")
 	_quit_button.text = UiStrings.t(QUIT_CONFIRM_KEY) if _quit_armed else UiStrings.t(QUIT_KEY)
 	_replay_button.text = UiStrings.t("replayBtn")
@@ -996,6 +1018,10 @@ func refresh_strings() -> void:
 	for mode in CONTROL_MODES:
 		if _mode_buttons.has(mode):
 			(_mode_buttons[mode] as Button).text = UiStrings.t(String(CONTROL_MODE_LABELS[mode]))
+	for id in _camera_buttons:
+		(_camera_buttons[id] as Button).text = UiStrings.t(CAMERA_LABELS[id])
+	_refresh_camera_buttons()
+	_refresh_camera_copy()
 	if _ui_title != null:
 		_ui_title.text = UiStrings.t("uiVisibility")
 	if _ui_presets_label != null:
@@ -1145,6 +1171,9 @@ func focus_controls() -> Array:
 			out.append_array(_tutorial.call("focus_controls"))
 		return out
 	match _tab:
+		TAB_CAMERA:
+			for id in CAMERA_LABELS:
+				out.append(_focus_row("camera-" + id, _camera_buttons[id]))
 		TAB_MATCH:
 			out.append(_focus_row(ACTION_RESUME, _continue_button))
 			out.append(_focus_row(ACTION_REPLAY, _replay_button))
@@ -1168,6 +1197,8 @@ func focus_controls() -> Array:
 			for id in UI_COMPONENT_IDS:
 				var row: Control = _ui_toggle_rows.get(id, null)
 				out.append(_focus_row(ACTION_UI_COMPONENT_PREFIX + String(id), Rows.focus_node(row)))
+	if _tab != TAB_MATCH:
+		out.append(_focus_row(ACTION_RESUME, _resume_footer))
 	return out
 
 
@@ -1229,9 +1260,14 @@ func _build() -> void:
 	column.add_child(_title)
 	_build_tabs(column)
 	_build_match_panel(column)
+	_build_camera_panel(column)
 	_build_controller_panel(column)
 	_build_controls_panel(column)
 	_build_ui_panel(column)
+	_resume_footer = _action_button("ResumeFooter", "ButtonPrimary", "pauseResumeMatch")
+	_resume_footer.custom_minimum_size.y = 40
+	_resume_footer.pressed.connect(resume)
+	column.add_child(_resume_footer)
 	resized.connect(_apply_layout)
 
 
@@ -1455,6 +1491,89 @@ func _build_controls_panel(parent: Control) -> void:
 ## in-match shortcut. Every control reads its state from the bound controller and
 ## writes through it — the panel owns no profile of its own, so the tab and the live
 ## HUD cannot disagree.
+func _build_camera_panel(parent: Control) -> void:
+	var panel := HBoxContainer.new()
+	panel.name = "PanelCamera"
+	panel.add_theme_constant_override("separation", 20)
+	parent.add_child(panel)
+	var choices := VBoxContainer.new()
+	choices.custom_minimum_size.x = 210
+	choices.add_theme_constant_override("separation", 8)
+	panel.add_child(choices)
+	for id in CAMERA_LABELS:
+		var button := _action_button("Camera" + String(id).capitalize(), "SegmentedInactive", CAMERA_LABELS[id])
+		button.custom_minimum_size = Vector2(0, 52)
+		button.add_theme_font_size_override("font_size", 18)
+		button.pressed.connect(_select_camera.bind(String(id)))
+		button.focus_entered.connect(_preview_camera_choice.bind(String(id)))
+		button.mouse_entered.connect(_preview_camera_choice.bind(String(id)))
+		choices.add_child(button)
+		_camera_buttons[id] = button
+	var details := VBoxContainer.new()
+	details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	details.add_theme_constant_override("separation", 12)
+	panel.add_child(details)
+	_camera_preview = SubViewport.new()
+	_camera_preview.size = Vector2i(640, 360)
+	_camera_preview.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	_camera_preview.gui_disable_input = true
+	details.add_child(_camera_preview)
+	_preview_camera = Camera3D.new()
+	_camera_preview.add_child(_preview_camera)
+	_preview_camera.current = true
+	var frame := AspectRatioContainer.new()
+	frame.ratio = 16.0 / 9.0
+	frame.custom_minimum_size.y = 200
+	frame.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	details.add_child(frame)
+	var image := TextureRect.new()
+	image.texture = _camera_preview.get_texture()
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	frame.add_child(image)
+	_camera_description = _section_label("CameraDescription", "cameraClassicDesc", 16)
+	_camera_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	details.add_child(_camera_description)
+	_camera_hint = _section_label("CameraHint", "cameraPreviewHint", 13)
+	_camera_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	details.add_child(_camera_hint)
+	_panels[TAB_CAMERA] = panel
+
+
+func _preview_camera_choice(id: String) -> void:
+	if not CAMERA_LABELS.has(id) or _camera_preview == null:
+		return
+	_preview_id = id
+	if _seam is Node3D:
+		_camera_preview.world_3d = (_seam as Node3D).get_world_3d()
+		CameraCourt.apply_camera(_preview_camera, id)
+		if _open and _tab == TAB_CAMERA:
+			_camera_preview.render_target_update_mode = SubViewport.UPDATE_ONCE
+	_refresh_camera_copy()
+
+
+func _refresh_camera_copy() -> void:
+	if _camera_description == null:
+		return
+	_camera_description.text = UiStrings.t(String(CAMERA_LABELS[_preview_id]) + "Desc")
+	_camera_hint.text = UiStrings.t("cameraSelected" if _preview_id == Config.camera_preset else "cameraPreviewHint")
+
+
+func _select_camera(id: String) -> void:
+	if _seam != null and _seam.has_method("set_camera_preset"):
+		_seam.call("set_camera_preset", id)
+	_refresh_camera_buttons()
+	_preview_camera_choice(id)
+
+
+func _refresh_camera_buttons() -> void:
+	for id in _camera_buttons:
+		_style_tab(_camera_buttons[id], id == Config.camera_preset)
+		(_camera_buttons[id] as Button).text = ("✓" + _sp() if id == Config.camera_preset else "") + UiStrings.t(CAMERA_LABELS[id])
+
+
 func _build_ui_panel(parent: Control) -> void:
 	var panel := VBoxContainer.new()
 	panel.name = "PanelUi"
@@ -1675,6 +1794,8 @@ func _apply_layout() -> void:
 		var floor := PANEL_MIN_HEIGHT
 		if _narrow:
 			floor = PANEL_MIN_HEIGHT_NARROW if (id == TAB_MATCH or id == TAB_CONTROLLER) else 0.0
+		if id == TAB_CAMERA:
+			floor = 0.0
 		panel.custom_minimum_size.y = floor
 	var tab_size := 10 if _tight else 12
 	for id in _tabs:

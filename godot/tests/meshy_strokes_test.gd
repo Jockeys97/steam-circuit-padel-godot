@@ -20,6 +20,17 @@ func run():
 	root.add_child(view)
 	view.spawn({"player":{"id":athlete},"opponent":{"id":"maestro"}}, {"player":StringName(outfit)}, {})
 	var rig = view.rigs.player
+	if outfit == "mythic":
+		rig.play_locomotion(&"idle")
+		rig.sample_at(0.45)
+		var idle_skeleton: Skeleton3D = rig.get_skeleton()
+		idle_skeleton.force_update_all_bone_transforms()
+		for side in ["Left", "Right"]:
+			var hand_index := idle_skeleton.find_bone(side + "Hand")
+			var shoulder_index := idle_skeleton.find_bone(side + "Shoulder")
+			var hand_y := idle_skeleton.to_global(idle_skeleton.get_bone_global_pose(hand_index).origin).y
+			var shoulder_y := idle_skeleton.to_global(idle_skeleton.get_bone_global_pose(shoulder_index).origin).y
+			check(shoulder_y - hand_y > 0.30, "Mythic idle lowers " + side + " arm below A-pose")
 	var state = Sim.create_match_state("quick",Frozen.athletes()[0],Frozen.arenas()[0],Frozen.ai_opponents()[0])
 	for entry in [["smash","smash",20.0],["bandeja","bandeja",20.0],["drive","backhand",-20.0],["slice","slice",20.0],["drive","drive",20.0]]:
 		state.player.swing = 0

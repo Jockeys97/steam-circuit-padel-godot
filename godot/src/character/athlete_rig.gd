@@ -118,7 +118,7 @@ const ATHLETE_GLB := {
 const CLIP_IDLE := &"idle"
 const CLIP_WALK := &"walk"
 const CLIP_RUN := &"run"
-const LOCOMOTION := [CLIP_IDLE, CLIP_WALK, CLIP_RUN, &"shuffle_left", &"shuffle_right", &"backpedal", &"prepare", &"ready", &"brake"]
+const LOCOMOTION := [CLIP_IDLE, CLIP_WALK, CLIP_RUN, &"shuffle_left", &"shuffle_right", &"backpedal", &"prepare", &"ready", &"brake", &"split_step", &"recover_left", &"recover_right"]
 
 ## Athletes whose rigged base does not carry every locomotion clip: athlete id ->
 ## { clip name -> res:// path of a single-clip companion GLB }. Maestro's rigged
@@ -167,6 +167,7 @@ var _locomotion: StringName = CLIP_IDLE
 var _stroke: StringName = &""
 var _locomotion_speed_scale: float = 1.0
 var _stroke_speed_scale: float = 1.0
+var _stroke_contact_time: float = 0.0
 var _use_glb_pbr: bool = false
 var _building: bool = false
 var _athlete_id: StringName = &""
@@ -345,7 +346,7 @@ func _build() -> int:
 	if not lib.has_animation(CLIP_RUN) and _glb_run_path != "":
 		_adopt_clip(lib, _glb_run_path, CLIP_RUN)
 
-	if _athlete_id == &"fiamma" or _geometry_outfit != &"base":
+	if _athlete_id in [&"fiamma", &"colosso", &"oracolo"] or _glb_base_path == GLB_BASE or _geometry_outfit != &"base":
 		_author_ready_idle(lib)
 	_complete_idle_tracks(lib)
 	_author_footwork(lib)
@@ -388,13 +389,17 @@ func _complete_idle_tracks(lib: AnimationLibrary) -> void:
 ## In-place footwork. Feet/hips remain animation-only; no root-motion authority.
 func _author_footwork(lib: AnimationLibrary) -> void:
 	var idle := lib.get_animation(CLIP_IDLE)
-	for name in [&"shuffle_left", &"shuffle_right", &"backpedal", &"prepare", &"ready", &"brake"]:
+	for name in [&"shuffle_left", &"shuffle_right", &"backpedal", &"prepare", &"ready", &"brake", &"split_step", &"recover_left", &"recover_right"]:
 		var anim: Animation = idle.duplicate(true)
 		anim.length = 0.64 if name != &"prepare" else 1.2
+		if name == &"backpedal": anim.length = 0.80
 		if name == &"ready": anim.length = 2.8
 		if name == &"brake": anim.length = 0.38
+		if name == &"split_step": anim.length = 0.28
+		if name in [&"recover_left", &"recover_right"]: anim.length = 0.34
 		anim.loop_mode = Animation.LOOP_LINEAR
 		if name == &"brake": anim.loop_mode = Animation.LOOP_NONE
+		if name in [&"split_step", &"recover_left", &"recover_right"]: anim.loop_mode = Animation.LOOP_NONE
 		# Freeze the underlying idle, including any imported hip translation.
 		for track in anim.get_track_count():
 			var value: Variant = anim.track_get_key_value(track, 0)
@@ -402,7 +407,7 @@ func _author_footwork(lib: AnimationLibrary) -> void:
 				anim.track_remove_key(track, 0)
 			anim.track_insert_key(track, 0.0, value)
 			anim.track_insert_key(track, anim.length, value)
-		for bone in ["LeftUpLeg", "RightUpLeg", "LeftLeg", "RightLeg", "Spine", "LeftArm", "RightArm", "RightForeArm"]:
+		for bone in ["LeftUpLeg", "RightUpLeg", "LeftLeg", "RightLeg", "LeftFoot", "RightFoot", "Spine", "LeftArm", "RightArm", "RightForeArm"]:
 			var path := NodePath("%s:%s" % [_track_prefix, _resolve_bone_name(bone)])
 			var track := anim.find_track(path, Animation.TYPE_ROTATION_3D)
 			if track < 0:
@@ -414,7 +419,26 @@ func _author_footwork(lib: AnimationLibrary) -> void:
 				var phase := float(step) / 8.0
 				var wave := sin(phase * TAU) * (-1.0 if bone.begins_with("Right") else 1.0)
 				var offset := Vector3.ZERO
-				if name == &"brake":
+				if name == &"split_step":
+					# Two knee compressions: take-off and soft landing, then neutral.
+					var compress := absf(sin(phase * TAU))
+					if bone.ends_with("UpLeg"):
+						offset.x = deg_to_rad(-9.0 * compress)
+						offset.z = deg_to_rad(sin(phase * PI) * (4.0 if bone.begins_with("Left") else -4.0))
+					elif bone.ends_with("Leg"): offset.x = deg_to_rad(18.0 * compress)
+					elif bone.ends_with("Foot"): offset.x = deg_to_rad(-6.0 * compress)
+					elif bone == "Spine": offset.x = deg_to_rad(-3.0 * compress)
+				elif name in [&"recover_left", &"recover_right"]:
+					# A small alternating balance step, not a second shot or root move.
+					var weight := sin(phase * TAU) * sin(phase * PI)
+					var side := 1.0 if name == &"recover_left" else -1.0
+					var step_weight := maxf(0.0, weight * (1.0 if bone.begins_with("Left") else -1.0))
+					if bone.ends_with("UpLeg"):
+						offset = Vector3(deg_to_rad(-7.0 * step_weight), 0, deg_to_rad(weight * side * 4.0))
+					elif bone.ends_with("Leg"): offset.x = deg_to_rad(16.0 * step_weight)
+					elif bone.ends_with("Foot"): offset.x = deg_to_rad(-5.0 * step_weight)
+					elif bone == "Spine": offset.z = deg_to_rad(-weight * side * 3.0)
+				elif name == &"brake":
 					var settle := sin(phase * PI)
 					if bone.ends_with("UpLeg"): offset.x = deg_to_rad(-8.0 * settle)
 					elif bone.ends_with("Leg"): offset.x = deg_to_rad(14.0 * settle)
@@ -431,11 +455,27 @@ func _author_footwork(lib: AnimationLibrary) -> void:
 					if bone == "Spine": offset.x = deg_to_rad(-3.0 + sin(phase * TAU))
 					if bone.ends_with("UpLeg"): offset.x = deg_to_rad(-6.0)
 					elif bone.ends_with("Leg"): offset.x = deg_to_rad(10.0)
+				elif name == &"backpedal":
+					# Reach behind with an extended leg; bend the opposite knee
+					# for recovery. Keep the chest facing play, without root motion.
+					var recovery := maxf(0.0, wave)
+					if bone.ends_with("UpLeg"):
+						offset.x = deg_to_rad(-8.0 - wave * 30.0)
+					elif bone.ends_with("Leg"):
+						offset.x = deg_to_rad(10.0 + recovery * 42.0)
+					elif bone.ends_with("Foot"):
+						offset.x = deg_to_rad(-5.0 - recovery * 17.0 + maxf(0.0, -wave) * 9.0)
+					elif bone == "Spine":
+						offset = Vector3(deg_to_rad(-5.0), deg_to_rad(wave * 3.0), deg_to_rad(wave * 2.0))
+					elif bone == "RightForeArm": offset.z = deg_to_rad(-12.0)
+					elif bone.ends_with("Arm"): offset.x = deg_to_rad(-wave * 10.0)
 				elif bone.ends_with("UpLeg"):
-					if name == &"backpedal": offset.x = deg_to_rad(-wave * 18.0)
-					else: offset.z = deg_to_rad(wave * (10.0 if name == &"shuffle_left" else -10.0))
+					offset.z = deg_to_rad(wave * (10.0 if name == &"shuffle_left" else -10.0))
+					offset.x = deg_to_rad(-5.0 - maxf(0.0, wave) * 5.0)
 				elif bone.ends_with("Leg"):
-					offset.x = deg_to_rad(maxf(0.0, wave) * 16.0)
+					offset.x = deg_to_rad(8.0 + maxf(0.0, wave) * 20.0)
+				elif bone.ends_with("Foot"):
+					offset.x = deg_to_rad(-maxf(0.0, wave) * 7.0)
 				elif bone == "Spine":
 					offset.z = deg_to_rad(wave * 2.0)
 					offset.x = deg_to_rad(-3.0)
@@ -474,14 +514,20 @@ func _author_ready_idle(lib: AnimationLibrary) -> void:
 					idle.position_track_insert_key(track, time, rest.origin)
 				else:
 					idle.scale_track_insert_key(track, time, rest.basis.get_scale())
-	for bone in ["LeftArm", "RightArm", "LeftForeArm", "RightForeArm", "Spine", "Spine1"]:
+	var ready_bones := ["LeftArm", "RightArm", "LeftForeArm", "RightForeArm", "Spine", "Spine1"]
+	var relax_shoulders := _geometry_outfit != &"base" or _glb_base_path == GLB_BASE or _athlete_id in [&"colosso", &"oracolo"]
+	if relax_shoulders:
+		# This bind pose also raises the shoulder joints. Arms alone leave the
+		# silhouette in an A-pose despite valid forearm animation.
+		ready_bones.append_array(["LeftShoulder", "RightShoulder", "LeftHand", "RightHand"])
+	for bone in ready_bones:
 		var path := NodePath("%s:%s" % [_track_prefix, _resolve_bone_name(bone)])
 		var ti := idle.find_track(path, Animation.TYPE_ROTATION_3D)
 		if ti < 0:
 			continue
 		var neutral: Quaternion = idle.rotation_track_interpolate(ti, 0.0)
 		var wi := walk.find_track(path, Animation.TYPE_ROTATION_3D)
-		if "Arm" in bone and wi >= 0:
+		if ("Arm" in bone or (relax_shoulders and ("Shoulder" in bone or "Hand" in bone))) and wi >= 0:
 			neutral = walk.rotation_track_interpolate(wi, 0.0).slerp(
 				walk.rotation_track_interpolate(wi, walk.length * 0.5), 0.5)
 		while idle.track_get_key_count(ti) > 0:
@@ -856,6 +902,14 @@ func get_facing_degrees() -> float:
 	return _facing_degrees
 
 
+## Whole visual rig (including hand attachments), never the simulated player.
+## Yaw remains owned by facing. Do not layer this tilt onto shot contact poses.
+func set_movement_lean(local_degrees: Vector2) -> void:
+	var lean := local_degrees.limit_length(6.0) if not is_stroking() else Vector2.ZERO
+	rotation_degrees.x = lean.y
+	rotation_degrees.z = -lean.x
+
+
 func set_split_step_lift(metres: float) -> void:
 	if _model_root != null:
 		_model_root.position.y = clampf(metres, 0.0, 0.025)
@@ -918,7 +972,7 @@ func play_stroke(stroke: StringName) -> bool:
 ## same semantic instant as `hit_ball`, while the authored follow-through keeps
 ## playing normally afterwards.
 func play_stroke_at(stroke: StringName, contact_phase: float = 0.0,
-		speed_scale: float = 1.0) -> bool:
+		speed_scale: float = 1.0, low_contact: float = 0.0) -> bool:
 	_ensure_built()
 	if not _strokes.has(stroke):
 		return false
@@ -927,9 +981,80 @@ func play_stroke_at(stroke: StringName, contact_phase: float = 0.0,
 	_stroke = stroke
 	_stroke_speed_scale = maxf(speed_scale, 0.05)
 	_anim.speed_scale = _stroke_speed_scale
-	_anim.play(stroke, 0.0) # Contact is authoritative: never blend away its first pose.
+	var visual_clip := _low_contact_clip(stroke, contact_phase, low_contact)
+	_anim.play(visual_clip, 0.0) # Contact is authoritative: never blend away its first pose.
 	var length: float = float(_strokes[stroke])
-	_anim.seek(clampf(contact_phase, 0.0, 1.0) * length, true, true)
+	_stroke_contact_time = clampf(contact_phase, 0.0, 1.0) * length
+	_anim.seek(_stroke_contact_time, true, true)
+	return true
+
+
+## Per-instance baked adaptation: preserve the source wrist/torso animation,
+## flex the legs and compensate the pelvis to retain the mean foot anchor.
+## Three strengths bound cache size; no cumulative bone overrides each frame.
+func _low_contact_clip(stroke: StringName, contact: float, amount: float) -> StringName:
+	var level := clampi(roundi(amount * 3.0), 0, 3)
+	if level == 0: return stroke
+	var name := StringName("low_contact_%s_%d_%d" % [stroke, level, roundi(contact * 100.0)])
+	if _anim.has_animation(name): return name
+	var bones: Array[int] = []
+	for bone in ["LeftUpLeg", "RightUpLeg", "LeftLeg", "RightLeg", "LeftFoot", "RightFoot", "Hips"]:
+		var index := _skeleton.find_bone(_resolve_bone_name(bone))
+		if index < 0: return stroke
+		bones.append(index)
+	var source := _anim.get_animation(stroke)
+	var adapted: Animation = source.duplicate(true)
+	var tracks: Array[int] = []
+	for i in bones.size():
+		var path := NodePath("%s:%s" % [_track_prefix, _skeleton.get_bone_name(bones[i])])
+		var type := Animation.TYPE_POSITION_3D if i == 6 else Animation.TYPE_ROTATION_3D
+		var track := adapted.find_track(path, type)
+		if track < 0:
+			track = adapted.add_track(type)
+			adapted.track_set_path(track, path)
+		while adapted.track_get_key_count(track): adapted.track_remove_key(track, 0)
+		tracks.append(track)
+	_anim.play(stroke)
+	for step in 25:
+		var phase := float(step) / 24.0
+		var time := phase * source.length
+		_anim.seek(time, true, true)
+		_skeleton.force_update_all_bone_transforms()
+		var feet := (_skeleton.get_bone_global_pose(bones[4]).origin + _skeleton.get_bone_global_pose(bones[5]).origin) * 0.5
+		var weight := smoothstep(0.0, maxf(contact, 0.05), phase) if phase <= contact else 1.0 - smoothstep(contact, 1.0, phase)
+		weight *= float(level) / 3.0
+		for i in 6:
+			var degrees := -18.0 if i < 2 else (36.0 if i < 4 else -18.0)
+			var rotation := (_skeleton.get_bone_pose_rotation(bones[i]) * Quaternion(Vector3.RIGHT, deg_to_rad(degrees) * weight)).normalized()
+			_skeleton.set_bone_pose_rotation(bones[i], rotation)
+			adapted.rotation_track_insert_key(tracks[i], time, rotation)
+		_skeleton.force_update_all_bone_transforms()
+		var moved_feet := (_skeleton.get_bone_global_pose(bones[4]).origin + _skeleton.get_bone_global_pose(bones[5]).origin) * 0.5
+		var parent := _skeleton.get_bone_parent(bones[6])
+		var parent_basis := _skeleton.get_bone_global_pose(parent).basis if parent >= 0 else Basis.IDENTITY
+		var pelvis := _skeleton.get_bone_pose_position(bones[6]) + parent_basis.inverse() * (feet - moved_feet)
+		adapted.position_track_insert_key(tracks[6], time, pelvis)
+	_anim.get_animation_library(&"").add_animation(name, adapted)
+	return name
+
+
+func clear_low_contact() -> void:
+	if _anim != null and String(_anim.current_animation).begins_with("low_contact_") and _stroke != &"":
+		var time := _anim.current_animation_position
+		_anim.play(_stroke, 0.0)
+		_anim.seek(time, true, true)
+
+
+## Presentation-only recovery. Preserve impact and most follow-through, then
+## blend into the already requested gait instead of sliding through a long tail.
+func recover_to_movement() -> bool:
+	if _stroke == &"" or _anim == null or not _locomotion in [&"walk", &"run", &"shuffle_left", &"shuffle_right", &"backpedal"]:
+		return false
+	var length: float = float(_strokes[_stroke])
+	var recovery_time := maxf(length * 0.75, _stroke_contact_time + 0.12 * _stroke_speed_scale)
+	if _anim.current_animation_position < recovery_time:
+		return false
+	_on_animation_finished(_stroke)
 	return true
 
 
@@ -968,6 +1093,8 @@ func sample_at(t: float) -> void:
 
 
 func _on_animation_finished(anim_name: StringName) -> void:
+	if String(anim_name).begins_with("low_contact_"):
+		anim_name = _stroke
 	if _strokes.has(anim_name):
 		_stroke = &""
 		stroke_finished.emit(anim_name)

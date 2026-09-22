@@ -8,6 +8,8 @@ func run():
 	for id in ["maestro", "fiamma", "oracolo", "colosso", "fornaio", "pantera"]:
 		cases.append([id, "base"])
 	cases.append(["maestro", "mythic"])
+	for id in ["fiamma", "pantera", "steamer", "oracolo", "colosso"]:
+		cases.append([id, "mythic"])
 	var poses := 0
 	for entry in cases:
 		var id: String = entry[0]
@@ -19,7 +21,10 @@ func run():
 		var anchor = racket.get_parent()
 		if not anchor is BoneAttachment3D:
 			failures += 1
-		for clip in ["idle", "run", "drive", "volley", "smash"]:
+		var clips := ["idle", "run", "drive", "volley", "smash"]
+		if entry[1] == "mythic":
+			clips.append_array(["meshy_drive", "meshy_smash", "meshy_bandeja", "meshy_backhand", "meshy_slice"])
+		for clip in clips:
 			poses += 1
 			if clip in ["idle", "run"]:
 				rig.play_locomotion(StringName(clip))

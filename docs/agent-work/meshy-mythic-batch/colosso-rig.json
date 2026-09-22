@@ -1,0 +1,36 @@
+{
+  "athlete": "colosso",
+  "stage": "rig",
+  "endpoint": "rigging",
+  "status": "SUCCEEDED",
+  "reservedCredits": 5,
+  "batchCap": 175,
+  "created": "2026-09-22T12:14:53.993Z",
+  "balanceBefore": 445,
+  "settings": {
+    "input_task_id": "01a0c905-c97f-7084-9295-eabb493d75d6",
+    "height_meters": 1.8
+  },
+  "id": "01a0c90a-5a96-734b-a6c4-417cef34fc65",
+  "progress": 100,
+  "credits": 5,
+  "checked": "2026-09-22T12:17:51.667Z",
+  "files": [
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/colosso-rig/model.glb",
+      "bytes": 7383896,
+      "sha256": "f26c8e8b14e7179b54e4aa4cd2698a35e647c4d6fc1096a13ede8057a69bea53"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/colosso-rig/running.glb",
+      "bytes": 7392056,
+      "sha256": "fdccd4d520dc08e4dbfa6e73ace58ed1d932183c4269139662991f9dfc410492"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/colosso-rig/walking.glb",
+      "bytes": 7396676,
+      "sha256": "00be95ac1f20f49c2c1549d3a0a6b31ad90d4fd48a3a7d180f6d97f708c85d00"
+    }
+  ],
+  "downloaded": true
+}

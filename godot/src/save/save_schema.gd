@@ -122,6 +122,7 @@ const CAREER_DEFAULTS: Dictionary = {
 ## Merge semantics match the reference: a *shallow* merge. A stored `lineup`
 ## therefore replaces the default `lineup` whole, exactly as JS spread does.
 const PREFS_DEFAULTS: Dictionary = {
+	"cameraPreset": "default",
 	"athleteId": null, ## js/ui.js:424, null until an athlete is chosen
 	"arenaId": null, ## js/ui.js:425
 	"mode": null, ## js/ui.js:426

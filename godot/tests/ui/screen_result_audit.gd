@@ -34,7 +34,7 @@
 ##  11. the LIVE path: a match the simulation itself stepped renders exactly the
 ##      state's own figures (`result_from_state` + `payload_from_state`), and a render
 ##      touches the store zero times (byte-compared);
-##  12. the ten declared capture states apply.
+##  12. the eleven declared capture states apply.
 ##
 ## CONSTRUCTED vs LIVE. The captures and most payloads here are constructed — the
 ## audit labels them where they appear, and `view()["constructed"]` carries the flag.
@@ -179,6 +179,24 @@ func _titles(audit: AuditBase) -> void:
 	audit.check_eq(_text_of(screen, "Badge"), UiStrings.t("matchOver"), "result/the_badge_says_the_match_is_over")
 	audit.check_eq(screen.shown_rematch_label(), UiStrings.t("rematch"), "result/without_a_continuation_the_action_is_rematch")
 	audit.check_eq(_text_of(screen, "MenuButton"), UiStrings.t("menu"), "result/the_second_action_is_the_menu")
+	var rematch := screen.find_child("RematchButton", true, false) as Button
+	var menu := screen.find_child("MenuButton", true, false) as Button
+	var analyze := screen.find_child("CoachAnalyzeButton", true, false) as Button
+	audit.check_eq(rematch.theme_type_variation, &"ButtonPrimary", "result/rematch_is_the_clear_primary_button")
+	audit.check_eq(menu.theme_type_variation, &"ButtonSecondary", "result/menu_is_a_filled_secondary_button")
+	audit.check_eq(analyze.theme_type_variation, &"ButtonSecondary", "result/jev_analysis_is_a_filled_button")
+	audit.check_ge(rematch.custom_minimum_size.y, 52.0, "result/rematch_is_a_comfortable_controller_target")
+	audit.check_ge(menu.custom_minimum_size.y, 52.0, "result/menu_is_a_comfortable_controller_target")
+	audit.check_ge(analyze.custom_minimum_size.y, 48.0, "result/jev_is_a_comfortable_controller_target")
+	audit.check_eq(rematch.size_flags_horizontal, Control.SIZE_EXPAND_FILL, "result/rematch_fills_its_action_slot")
+	audit.check_eq(menu.size_flags_horizontal, Control.SIZE_EXPAND_FILL, "result/menu_fills_its_action_slot")
+	audit.check_eq(analyze.size_flags_horizontal, Control.SIZE_EXPAND_FILL, "result/jev_fills_its_action_slot")
+	var focus_ids: Array = []
+	for item in screen.focus_controls():
+		focus_ids.append(String((item as Dictionary).get("id", "")))
+	audit.check_true(focus_ids.has(screen.focus_id("CoachAnalyzeButton")), "result/controller_reaches_jev")
+	audit.check_true(focus_ids.has(screen.focus_id("RematchButton")), "result/controller_reaches_rematch")
+	audit.check_true(focus_ids.has(screen.focus_id("MenuButton")), "result/controller_reaches_menu")
 	audit.report("titles: victory/defeat are separate localized states; quick narrative names the arena from Config")
 
 
@@ -660,7 +678,7 @@ func _slots() -> Dictionary:
 func _visible_texts(screen: Node) -> Dictionary:
 	var out := {
 		"badge": _text_of(screen, "Badge"),
-		"title": _text_of(screen, "Title"),
+		"title": _text_of(screen, "ResultTitle"),
 		"rematch": _text_of(screen, "RematchButton"),
 		"menu": _text_of(screen, "MenuButton"),
 		"head_you": _text_of(screen, "HeadYou"),

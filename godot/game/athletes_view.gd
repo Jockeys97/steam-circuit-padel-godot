@@ -65,7 +65,11 @@ var _swing_seen: Dictionary = {}     # role -> bool
 var _last_stroke: Dictionary = {}    # role -> StringName
 var _colors: Dictionary = {}
 var _previous_positions: Dictionary = {}
+var _visual_velocity: Dictionary = {}
+var _visual_lean: Dictionary = {}
 var _split_remaining: Dictionary = {}
+var _recovery_remaining: Dictionary = {}
+var _was_stroking: Dictionary = {}
 var _previous_hitter: String = ""
 var _racket_on_hand: Dictionary = {} # role -> bool; standard and legacy rigs
 
@@ -97,6 +101,10 @@ func spawn(lineup: Dictionary, outfit_map: Dictionary, colors: Dictionary,
 	_colors = colors
 	_previous_hitter = ""
 	_previous_positions.clear()
+	_visual_velocity.clear()
+	_visual_lean.clear()
+	_recovery_remaining.clear()
+	_was_stroking.clear()
 	spawn_rigs = 0
 	for role in ROLES:
 		if not lineup.has(role):
@@ -212,35 +220,59 @@ func sync(state, delta: float = -1.0) -> void:
 		var movement: Vector2 = current - _previous_positions.get(role, current)
 		_previous_positions[role] = current
 		# Teleports between points are not a running direction.
-		if movement.length() > 30.0: movement = Vector2.ZERO
+		var teleported: bool = movement.length() > 30.0
+		var reset_movement: bool = teleported or state.serving
+		if teleported:
+			movement = Vector2.ZERO
+		if reset_movement:
+			_visual_velocity[role] = Vector2.ZERO
+			_visual_lean[role] = Vector2.ZERO
+			rig.clear_low_contact()
 		var receiving: bool = (hitter == "ai") if role.begins_with("player") else (hitter == "player")
-		if new_return and receiving:
-			_split_remaining[role] = 0.18
+		if new_return and receiving and movement.length() < 0.01 and not rig.is_stroking():
+			_split_remaining[role] = 0.28
 		_split_remaining[role] = maxf(0.0, float(_split_remaining[role]) - delta)
+		_recovery_remaining[role] = maxf(0.0, float(_recovery_remaining.get(role, 0.0)) - delta)
+		if _was_stroking.get(role, false) and not rig.is_stroking():
+			_recovery_remaining[role] = 0.34
+		# Moving input wins immediately. No hop while running, no balance step
+		# delaying a new shot, and no stale transient crossing a point reset.
+		if reset_movement or movement.length() > 0.01 or float(paddle.swing) > 0.0:
+			_split_remaining[role] = 0.0
+			_recovery_remaining[role] = 0.0
 		var prepare: bool = not state.serving and (float(paddle.charge) > 0.05 or (receiving and float(paddle.motion) < WALK_MOTION))
 		if not state.serving and role == state.activePlayerKey and float(state.shotCharge) > 0.05:
 			prepare = true
-		_sync_gait(role, rig, paddle, movement, prepare)
-		_sync_stroke(role, rig, paddle, float(state.ball.x))
+		if float(paddle.charge) > 0.05 or (role == state.activePlayerKey and float(state.shotCharge) > 0.05):
+			_split_remaining[role] = 0.0
+			_recovery_remaining[role] = 0.0
+		_sync_gait(role, rig, paddle, movement, prepare, delta)
+		_sync_stroke(role, rig, paddle, float(state.ball.x), float(state.ball.z) if not reset_movement else NAN)
+		_was_stroking[role] = rig.is_stroking()
+		_sync_movement_weight(role, rig, movement, delta, reset_movement)
 		# Small visual split step; never changes the simulated paddle coordinates.
-		var lift := sin(float(_split_remaining[role]) / 0.18 * PI) * 0.025
+		var lift := sin(float(_split_remaining[role]) / 0.28 * PI) * 0.025
 		rig.set_split_step_lift(lift if receiving and not state.serving and not rig.is_stroking() else 0.0)
 		_sync_racket(role, paddle)
 
 
-func _sync_gait(role: String, rig: Node3D, paddle, movement := Vector2.ZERO, prepare := false) -> void:
+func _sync_gait(role: String, rig: Node3D, paddle, movement := Vector2.ZERO, prepare := false, delta: float = 1.0 / 60.0) -> void:
 	var motion := float(paddle.motion)
 	var want: StringName = &"ready"
-	if motion > RUN_MOTION:
+	var moving: bool = movement.length() > 0.01
+	if moving and motion > RUN_MOTION:
 		want = &"run"
-	elif motion > WALK_MOTION:
+	elif moving:
 		want = &"walk"
-	if motion > WALK_MOTION and movement.length() > 0.01:
+	if moving:
 		var forward := -movement.y if role.begins_with("player") else movement.y
 		var lateral := -movement.x if role.begins_with("player") else movement.x
-		if absf(lateral) > absf(forward) * 1.4:
+		# Hysteresis avoids restarting clips at every tiny diagonal stick change.
+		var lateral_threshold := 1.15 if _gait[role] in [&"shuffle_left", &"shuffle_right"] else 1.4
+		var retreat_threshold := 0.6 if _gait[role] == &"backpedal" else 0.75
+		if absf(lateral) > absf(forward) * lateral_threshold:
 			want = &"shuffle_left" if lateral < 0.0 else &"shuffle_right"
-		elif forward < -absf(lateral) * 0.75:
+		elif forward < -absf(lateral) * retreat_threshold:
 			want = &"backpedal"
 	elif prepare:
 		want = &"prepare"
@@ -248,16 +280,54 @@ func _sync_gait(role: String, rig: Node3D, paddle, movement := Vector2.ZERO, pre
 	# when translation has stopped; never delay or move the simulated paddle.
 	elif motion > 0.03 and movement.length() < 0.01:
 		want = &"brake"
+	if not moving and not rig.is_stroking():
+		if float(_split_remaining.get(role, 0.0)) > 0.0:
+			want = &"split_step"
+		elif float(_recovery_remaining.get(role, 0.0)) > 0.0:
+			want = &"recover_left" if "backhand" in String(_last_stroke.get(role, "")) else &"recover_right"
 	if _gait[role] != want:
 		_gait[role] = want
 		rig.play_locomotion(want)
-	rig.set_locomotion_speed_scale(1.0 if want in [&"idle", &"ready", &"brake", &"prepare"] else clampf(motion, 0.5, 2.0))
+	# Cadence follows actual court distance, including stamina-limited movement.
+	# Imported forward running covers more distance per cycle than small shuffles.
+	var speed: float = _movement_velocity(role, movement, delta).length()
+	var reference_speed := 4.2 if want == &"run" else 2.6
+	rig.set_locomotion_speed_scale(1.0 if want in [&"idle", &"ready", &"brake", &"prepare", &"split_step", &"recover_left", &"recover_right"] else clampf(speed / reference_speed, 0.55, 1.8))
+	if movement.length() > 0.01:
+		rig.recover_to_movement()
+
+
+## Metres/second in each team's facing frame; this never feeds the simulation.
+func _movement_velocity(role: String, movement: Vector2, delta: float) -> Vector2:
+	if delta <= 0.0:
+		return Vector2.ZERO
+	var world := Court.world_pos(movement.x, movement.y, 0.0) - Court.world_pos(0.0, 0.0, 0.0)
+	var facing := -1.0 if role.begins_with("player") else 1.0
+	return Vector2(world.x, world.z) * facing / delta
+
+
+func _sync_movement_weight(role: String, rig: Node3D, movement: Vector2, delta: float, reset: bool) -> void:
+	if delta <= 0.0:
+		return
+	var velocity := _movement_velocity(role, movement, delta).limit_length(8.0)
+	var previous: Vector2 = _visual_velocity.get(role, Vector2.ZERO)
+	_visual_velocity[role] = velocity
+	# A short acceleration impulse sells starts/stops and reversals. Exponential
+	# smoothing is frame-rate independent; angles are capped to protect footing.
+	var acceleration := ((velocity - previous) / delta).limit_length(18.0)
+	var target := (velocity * 0.55 + acceleration * 0.22).limit_length(6.0)
+	var lean: Vector2 = _visual_lean.get(role, Vector2.ZERO)
+	lean = lean.lerp(target, 1.0 - exp(-12.0 * delta))
+	if reset or rig.is_stroking():
+		lean = Vector2.ZERO
+	_visual_lean[role] = lean
+	rig.set_movement_lean(lean)
 
 
 ## The stroke is a one-shot on the rising edge of `paddle.swing`. `actionIntent`
 ## is the sim's own word for the shot; the mapping onto the rig's four strokes is
 ## this view's, and it is the only place it decides anything.
-func _sync_stroke(role: String, rig: Node3D, paddle, ball_x: float = NAN) -> void:
+func _sync_stroke(role: String, rig: Node3D, paddle, ball_x: float = NAN, ball_height: float = NAN) -> void:
 	var swinging := float(paddle.swing) > 0.0
 	if swinging and not _swing_seen[role]:
 		var recipe := stroke_recipe(String(paddle.actionIntent))
@@ -269,10 +339,18 @@ func _sync_stroke(role: String, rig: Node3D, paddle, ball_x: float = NAN) -> voi
 			stroke,
 			float(recipe["contact_phase"]),
 			float(recipe["speed_scale"]),
+			low_contact_amount(String(paddle.actionIntent), ball_height),
 		) if rig.has_method("play_stroke_at") else rig.play_stroke(stroke)
 		if played:
 			_last_stroke[role] = stroke
 	_swing_seen[role] = swinging
+
+
+## Height observed on the swing edge, never tracked during follow-through.
+static func low_contact_amount(intent: String, height: float) -> float:
+	if not is_finite(height) or intent.contains("smash") or intent.contains("bandeja") or intent.contains("serve") or intent.contains("vibora"):
+		return 0.0
+	return clampf((38.0 - height) / 30.0, 0.0, 1.0)
 
 
 ## Presentation only: use contact side, NOT swingSide (human swingSide is aim).

@@ -1,0 +1,36 @@
+{
+  "athlete": "steamer",
+  "stage": "rig",
+  "endpoint": "rigging",
+  "status": "SUCCEEDED",
+  "reservedCredits": 5,
+  "batchCap": 175,
+  "created": "2026-09-22T12:14:28.441Z",
+  "balanceBefore": 455,
+  "settings": {
+    "input_task_id": "01a0c905-b891-7750-98c4-dee013101d66",
+    "height_meters": 1.8
+  },
+  "id": "01a0c909-f6cd-7542-af1f-1c01b0ebc5b0",
+  "progress": 100,
+  "credits": 5,
+  "checked": "2026-09-22T12:17:44.343Z",
+  "files": [
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/steamer-rig/model.glb",
+      "bytes": 7469828,
+      "sha256": "c50280b94d4b1dd2fe712de8fb42bb0dd3aa5d9cb1415b21782ad98e4dceed98"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/steamer-rig/running.glb",
+      "bytes": 7477992,
+      "sha256": "58cbe827e21600457aa0de1e7d442e10e7877b7e29914b7bb0e529bd965713b8"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/steamer-rig/walking.glb",
+      "bytes": 7482604,
+      "sha256": "20fab0ccbadbb3706e4d854cb2c016063f64096739bb46a207a2bf50df270397"
+    }
+  ],
+  "downloaded": true
+}

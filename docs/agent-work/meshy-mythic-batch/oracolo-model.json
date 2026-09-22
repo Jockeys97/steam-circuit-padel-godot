@@ -1,0 +1,44 @@
+{
+  "athlete": "oracolo",
+  "stage": "model",
+  "endpoint": "image-to-3d",
+  "status": "SUCCEEDED",
+  "reservedCredits": 30,
+  "batchCap": 175,
+  "created": "2026-09-22T12:09:52.624Z",
+  "balanceBefore": 525,
+  "referenceHash": "c5acb2bfeeef0bef07f02ae8c86895576db4ae87473620da48afacb281b39c22",
+  "settings": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "model_type": "standard",
+    "should_texture": true,
+    "enable_pbr": true,
+    "texture_resolution": "2k",
+    "target_formats": [
+      "glb"
+    ],
+    "pose_mode": "a-pose",
+    "image_enhancement": false,
+    "should_remesh": true,
+    "topology": "triangle",
+    "target_polycount": 20000
+  },
+  "id": "01a0c905-c161-767e-b90e-d75dd7783673",
+  "progress": 100,
+  "credits": 30,
+  "checked": "2026-09-22T12:13:26.560Z",
+  "files": [
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/oracolo-model/model.glb",
+      "bytes": 12139504,
+      "sha256": "b721ea0e8b1b0814765010f66135ff1674ec32255dee45dc735f4bee26707a07"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/oracolo-model/preview.png",
+      "bytes": 81698,
+      "sha256": "3e902e8c0f59e123dd6801127f12f0dd1c668fc4afa09eb0cbf996d341524126"
+    }
+  ],
+  "downloaded": true
+}

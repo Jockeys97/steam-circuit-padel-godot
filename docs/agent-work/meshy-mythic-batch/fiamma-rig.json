@@ -1,0 +1,36 @@
+{
+  "athlete": "fiamma",
+  "stage": "rig",
+  "endpoint": "rigging",
+  "status": "SUCCEEDED",
+  "reservedCredits": 5,
+  "batchCap": 175,
+  "created": "2026-09-22T12:13:56.981Z",
+  "balanceBefore": 465,
+  "settings": {
+    "input_task_id": "01a0c905-a8e9-7617-afa0-362a2de61fa7",
+    "height_meters": 1.8
+  },
+  "id": "01a0c909-7be1-7682-8d01-4a2aaca88ad2",
+  "progress": 100,
+  "credits": 5,
+  "checked": "2026-09-22T12:17:12.343Z",
+  "files": [
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/fiamma-rig/model.glb",
+      "bytes": 7113744,
+      "sha256": "0f2a67db6d574d357e8cca85e8e58446e2f6a599a92eb9135ba3f47f1840638c"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/fiamma-rig/running.glb",
+      "bytes": 7121908,
+      "sha256": "3204799ca258595cafe35fcd2733741c160dac0c995ee72f03cb811edbe67280"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/fiamma-rig/walking.glb",
+      "bytes": 7126524,
+      "sha256": "3bc32c07ac059e9b09eab84d5783b9c9370cfad43324ea98bffedb274f52a8fc"
+    }
+  ],
+  "downloaded": true
+}

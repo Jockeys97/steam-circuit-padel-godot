@@ -43,12 +43,12 @@ const TICK := 1.0 / 120.0
 
 ## The contract's own four maps, written out here as literals: the audit must not
 ## read the table it checks.
-const ALL := {"score": true, "time": true, "map": true, "guidance": true, "indicators": true, "events": true}
-const ESSENTIAL := {"score": true, "time": true, "map": false, "guidance": false, "indicators": true, "events": true}
-const SCORE_ONLY := {"score": true, "time": false, "map": false, "guidance": false, "indicators": false, "events": false}
-const CLEAN := {"score": false, "time": false, "map": false, "guidance": false, "indicators": false, "events": false}
+const ALL := {"score": true, "time": true, "map": true, "guidance": true, "indicators": true, "events": true, "preparation": true}
+const ESSENTIAL := {"score": true, "time": true, "map": false, "guidance": false, "indicators": true, "events": true, "preparation": true}
+const SCORE_ONLY := {"score": true, "time": false, "map": false, "guidance": false, "indicators": false, "events": false, "preparation": false}
+const CLEAN := {"score": false, "time": false, "map": false, "guidance": false, "indicators": false, "events": false, "preparation": false}
 const PRESETS := {"all": ALL, "essential": ESSENTIAL, "score_only": SCORE_ONLY, "clean": CLEAN}
-const COMPONENTS := ["score", "time", "map", "guidance", "indicators", "events"]
+const COMPONENTS := ["score", "time", "map", "guidance", "indicators", "events", "preparation"]
 const BUNDLE_IDS := ["tabUi", "uiVisibility", "uiPresets", "uiPresetAll",
 	"uiPresetEssential", "uiPresetScoreOnly", "uiPresetClean", "uiCompScore",
 	"uiCompTime", "uiCompMap", "uiCompGuidance", "uiCompIndicators", "uiCompEvents",
@@ -260,21 +260,21 @@ func _tab(audit: AuditBase) -> void:
 	audit.check_eq(bool(overlay.call("set_tab", "ui")), true, "tab/the_ui_tab_switches")
 	var panel: Node = overlay.find_child("PanelUi", true, false)
 	audit.check_true(panel != null and bool((panel as Control).visible), "tab/the_ui_panel_is_shown")
-	audit.check_eq((overlay.call("ui_rows") as Dictionary).size(), 6, "tab/the_ui_rows_are_six")
+	audit.check_eq((overlay.call("ui_rows") as Dictionary).size(), 7, "tab/the_ui_rows_are_seven")
 	audit.check_eq((overlay.call("rows") as Dictionary).size(), 3, "tab/the_controller_rows_are_untouched")
 	# The focus order: the four tabs first, then the four presets, then the six toggles.
 	var ids: Array = []
 	for entry in overlay.call("focus_controls"):
 		ids.append(String((entry as Dictionary).get("id", "")))
-	audit.check_eq(ids.size(), 14, "tab/four_tabs_and_ten_ui_controls_are_focusable")
-	audit.check_eq(ids.slice(0, 4), ["pause/tab-match", "pause/tab-controller", "pause/tab-controls", "pause/tab-ui"],
+	audit.check_eq(ids.size(), 17, "tab/five_tabs_eleven_ui_controls_and_resume_are_focusable")
+	audit.check_eq(ids.slice(0, 5), ["pause/tab-match", "pause/tab-camera", "pause/tab-controller", "pause/tab-controls", "pause/tab-ui"],
 		"tab/the_four_tabs_lead_the_focus_order")
-	audit.check_eq(ids.slice(4, 8), ["pause/ui-preset:all", "pause/ui-preset:essential",
+	audit.check_eq(ids.slice(5, 9), ["pause/ui-preset:all", "pause/ui-preset:essential",
 		"pause/ui-preset:score_only", "pause/ui-preset:clean"],
 		"tab/the_four_presets_follow_the_tabs")
-	audit.check_eq(ids.slice(8, 14), ["pause/ui-component:score", "pause/ui-component:time",
+	audit.check_eq(ids.slice(9, 16), ["pause/ui-component:score", "pause/ui-component:time",
 		"pause/ui-component:map", "pause/ui-component:guidance",
-		"pause/ui-component:indicators", "pause/ui-component:events"],
+		"pause/ui-component:indicators", "pause/ui-component:events", "pause/ui-component:preparation"],
 		"tab/the_six_toggles_follow_the_presets")
 	# The controls write through the bound CONTROLLER, not through a copy of their own.
 	var buttons: Dictionary = overlay.call("ui_preset_buttons")

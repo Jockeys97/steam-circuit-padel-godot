@@ -1,0 +1,620 @@
+[
+ {
+  "file": "model.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/fiamma-rig/model.glb",
+  "bytes": 7113744,
+  "glb_version": 2,
+  "bin_chunk_bytes": 7089696,
+  "triangles": 20387,
+  "vertices": 37583,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20387
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|clip0|baselayer",
+    0.3
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 80
+ },
+ {
+  "file": "running.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/fiamma-rig/running.glb",
+  "bytes": 7121908,
+  "glb_version": 2,
+  "bin_chunk_bytes": 7097580,
+  "triangles": 20387,
+  "vertices": 37583,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20387
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|running|baselayer",
+    0.667
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 81
+ },
+ {
+  "file": "walking.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/fiamma-rig/walking.glb",
+  "bytes": 7126524,
+  "glb_version": 2,
+  "bin_chunk_bytes": 7102188,
+  "triangles": 20387,
+  "vertices": 37583,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20387
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|walking_man|baselayer",
+    1.067
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 81
+ },
+ {
+  "file": "model.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/pantera-rig/model.glb",
+  "bytes": 6670044,
+  "glb_version": 2,
+  "bin_chunk_bytes": 6645940,
+  "triangles": 20720,
+  "vertices": 25949,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20720
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|clip0|baselayer",
+    0.3
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 80
+ },
+ {
+  "file": "running.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/pantera-rig/running.glb",
+  "bytes": 6678208,
+  "glb_version": 2,
+  "bin_chunk_bytes": 6653824,
+  "triangles": 20720,
+  "vertices": 25949,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20720
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|running|baselayer",
+    0.667
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 81
+ },
+ {
+  "file": "walking.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/pantera-rig/walking.glb",
+  "bytes": 6682812,
+  "glb_version": 2,
+  "bin_chunk_bytes": 6658432,
+  "triangles": 20720,
+  "vertices": 25949,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20720
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|walking_man|baselayer",
+    1.067
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 81
+ },
+ {
+  "file": "model.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/steamer-rig/model.glb",
+  "bytes": 7469828,
+  "glb_version": 2,
+  "bin_chunk_bytes": 7445908,
+  "triangles": 20749,
+  "vertices": 27945,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20749
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|clip0|baselayer",
+    0.3
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 80
+ },
+ {
+  "file": "running.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/steamer-rig/running.glb",
+  "bytes": 7477992,
+  "glb_version": 2,
+  "bin_chunk_bytes": 7453792,
+  "triangles": 20749,
+  "vertices": 27945,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20749
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|running|baselayer",
+    0.667
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 81
+ },
+ {
+  "file": "walking.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/steamer-rig/walking.glb",
+  "bytes": 7482604,
+  "glb_version": 2,
+  "bin_chunk_bytes": 7458400,
+  "triangles": 20749,
+  "vertices": 27945,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20749
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|walking_man|baselayer",
+    1.067
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 81
+ },
+ {
+  "file": "model.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/oracolo-rig/model.glb",
+  "bytes": 6822780,
+  "glb_version": 2,
+  "bin_chunk_bytes": 6798628,
+  "triangles": 20505,
+  "vertices": 29845,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20505
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|clip0|baselayer",
+    0.3
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 80
+ },
+ {
+  "file": "running.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/oracolo-rig/running.glb",
+  "bytes": 6830948,
+  "glb_version": 2,
+  "bin_chunk_bytes": 6806512,
+  "triangles": 20505,
+  "vertices": 29845,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20505
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|running|baselayer",
+    0.667
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 81
+ },
+ {
+  "file": "walking.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/oracolo-rig/walking.glb",
+  "bytes": 6835556,
+  "glb_version": 2,
+  "bin_chunk_bytes": 6811120,
+  "triangles": 20505,
+  "vertices": 29845,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20505
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|walking_man|baselayer",
+    1.067
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 81
+ },
+ {
+  "file": "model.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/colosso-rig/model.glb",
+  "bytes": 7383896,
+  "glb_version": 2,
+  "bin_chunk_bytes": 7359844,
+  "triangles": 20728,
+  "vertices": 28025,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20728
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|clip0|baselayer",
+    0.3
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 80
+ },
+ {
+  "file": "running.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/colosso-rig/running.glb",
+  "bytes": 7392056,
+  "glb_version": 2,
+  "bin_chunk_bytes": 7367728,
+  "triangles": 20728,
+  "vertices": 28025,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20728
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|running|baselayer",
+    0.667
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 81
+ },
+ {
+  "file": "walking.glb",
+  "path": "/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/meshy-mythic-batch/colosso-rig/walking.glb",
+  "bytes": 7396676,
+  "glb_version": 2,
+  "bin_chunk_bytes": 7372336,
+  "triangles": 20728,
+  "vertices": 28025,
+  "primitives": 1,
+  "per_primitive": [
+   [
+    0,
+    0,
+    "char1",
+    20728
+   ]
+  ],
+  "materials": [
+   "Material_1"
+  ],
+  "material_detail": [
+   {
+    "name": "Material_1",
+    "baseColorTexture": 1,
+    "baseColorFactor": null,
+    "has_vertex_colors": false
+   }
+  ],
+  "images": 1,
+  "textures": 2,
+  "skins": 1,
+  "joints": 24,
+  "animations": [
+   [
+    "Armature|walking_man|baselayer",
+    1.067
+   ]
+  ],
+  "nodes": 26,
+  "accessors": 81
+ }
+]
+
+SUM triangles across 15 files: 309267
+MAX triangles in a single file: 20749

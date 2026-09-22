@@ -1,0 +1,36 @@
+{
+  "athlete": "pantera",
+  "stage": "rig",
+  "endpoint": "rigging",
+  "status": "SUCCEEDED",
+  "reservedCredits": 5,
+  "batchCap": 175,
+  "created": "2026-09-22T12:14:09.356Z",
+  "balanceBefore": 460,
+  "settings": {
+    "input_task_id": "01a0c905-b053-72c4-979a-b51802d0974e",
+    "height_meters": 1.8
+  },
+  "id": "01a0c909-ac38-76ff-83d2-bf8d347291bf",
+  "progress": 100,
+  "credits": 5,
+  "checked": "2026-09-22T12:17:40.116Z",
+  "files": [
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/pantera-rig/model.glb",
+      "bytes": 6670044,
+      "sha256": "4105162983fb489693396da717a855b5a8550a7b0710da951b574837da8d749c"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/pantera-rig/running.glb",
+      "bytes": 6678208,
+      "sha256": "f9382cbb709e5b5a164db674247dfcf3c66d8fb0153867ce8e345e0ab69a1edd"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/pantera-rig/walking.glb",
+      "bytes": 6682812,
+      "sha256": "8ecc5c938ed19576eacc61886776b3cd1633d777c572bba8a75add2e5431f205"
+    }
+  ],
+  "downloaded": true
+}

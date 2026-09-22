@@ -1,24 +1,27 @@
 import assert from 'node:assert/strict';
 import { writeFileSync } from 'node:fs';
-import { fatigue, staminaSpeed, assessmentEnergy, shotCost, effortEnergy } from '../js/rally-stamina.js';
+import { fatigue, staminaSpeed, assessmentEnergy, executionEnergy, shotCost, effortEnergy } from '../js/rally-stamina.js';
 import { createMatchState, updateMatch } from '../js/game.js';
 import { ATHLETES, ARENAS, AI_OPPONENTS } from '../js/data.js';
 
 const cases = [];
 for (const energy of [0.15, 0.3, 0.59, 0.6, 0.8, 1]) {
-  assert.ok(staminaSpeed(energy) >= 0.88 && staminaSpeed(energy) <= 1);
-  if (energy >= 0.6) assert.equal(fatigue(energy), 0);
+  assert.ok(staminaSpeed(energy) >= 0.75 && staminaSpeed(energy) <= 1);
+  if (energy >= 0.7) assert.equal(fatigue(energy), 0);
   for (const dt of [1/30, 1/60, 1/120]) for (const movement of [0, 0.5, 1])
     for (const sprint of [0, 1]) for (const stamina of [0.7, 1, 1.38]) {
       const next = effortEnergy(energy, dt, movement, sprint, stamina);
       assert.ok(next >= 0.15 && next <= 1);
-      cases.push({ energy, dt, movement, sprint, stamina, next, speed: staminaSpeed(energy), assessment: assessmentEnergy(energy) });
+      cases.push({ energy, dt, movement, sprint, stamina, next, speed: staminaSpeed(energy), assessment: assessmentEnergy(energy), execution: executionEnergy(energy, 0.8, movement, 0.7, sprint, true) });
     }
 }
 assert.ok(shotCost('smash-flat') > shotCost('bandeja'));
 assert.ok(shotCost('bandeja') > shotCost('safe-drive'));
 assert.ok(shotCost('vibora') > shotCost('slice', true));
 assert.equal(shotCost('smash-x3', false, 'power'), 0.125);
+assert.equal(executionEnergy(0.15, 0, 0, 1, 0, false), 1);
+assert.ok(executionEnergy(0.15, 1, 1, 0.6, 0, true) < 0.2);
+assert.ok(staminaSpeed(0.4) < 0.86);
 const input = { left:false, right:false, up:false, down:false, moveX:0, moveY:0,
   charging:false, hit:false, slice:false, shotVariant:null, special:false, switchPlayer:false,
   switchDirection:null, aim:0, aimY:0, analogAim:false, splitStep:0, sprint:0,

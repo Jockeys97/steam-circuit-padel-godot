@@ -1,4 +1,5 @@
-import { STAMINA, staminaSpeed, assessmentEnergy, shotCost, effortEnergy } from "./rally-stamina.js";
+import { STAMINA, staminaSpeed, executionEnergy, shotCost, effortEnergy } from "./rally-stamina.js";
+import { courtStyle, coverLane, safeCoverY } from "./court-tactics.js";
 import { planAiContact } from "./ai-contact.js?v=20260920-fluidity-v1";
 import { BALANCE, COURT, EVENT_LINES, ROSTER_AVERAGE } from "./data.js?v=20260910-sprite-gate-v41";
 import { clamp } from "./render.js?v=20260910-sprite-gate-v41";
@@ -503,7 +504,7 @@ function responderForecast(paddle, ball) {
   const contactZ = Math.max(0, ball.z + ball.vz * time - 0.5 * BALANCE.ballGravity * time * time);
   const horizontalReach = contactWidth(paddle, ball);
   const travelDistance = Math.max(0, Math.abs(contactX - paddle.x) - horizontalReach);
-  const travelTime = travelDistance / paddle.speed;
+  const travelTime = travelDistance / Math.max(1, paddle.speed * staminaSpeed(paddle.staminaEnergy));
   const lateBy = Math.max(0, travelTime - time);
   const heightPenalty = contactZ > BALANCE.playableHitHeight
     ? 1.4 + (contactZ - BALANCE.playableHitHeight) / 80
@@ -528,7 +529,7 @@ function aiResponderForecast(paddle, ball) {
   const contactZ = Math.max(0, ball.z + ball.vz * time - 0.5 * BALANCE.ballGravity * time * time);
   const horizontalReach = contactWidth(paddle, ball);
   const travelDistance = Math.max(0, Math.abs(contactX - paddle.x) - horizontalReach);
-  const travelTime = travelDistance / paddle.speed;
+  const travelTime = travelDistance / Math.max(1, paddle.speed * staminaSpeed(paddle.staminaEnergy));
   const lateBy = Math.max(0, travelTime - time);
   const heightPenalty = contactZ > BALANCE.playableHitHeight
     ? 1.4 + (contactZ - BALANCE.playableHitHeight) / 80
@@ -846,13 +847,11 @@ function contextualPerfectWindow(state, paddle, charge = 0) {
   const { ball } = state;
   const side = shotSide(paddle);
   const moving = clamp(paddle.moveRatio ?? paddle.motion ?? 0, 0, 1);
-  const energy = assessmentEnergy(paddle.staminaEnergy);
   const glassBall = ball.postGlassSide === side;
   const power = clamp(charge, 0, 1) ** 2;
   return clamp(
     BALANCE.perfectTimingWindow
       - moving * BALANCE.timingWindowRunPenalty
-      - Math.max(0, 0.65 - energy) * BALANCE.timingWindowEnergyPenalty
       - (glassBall ? BALANCE.timingWindowGlassPenalty : 0)
       - power * BALANCE.timingWindowChargePenalty
       + clamp(paddle.splitStep ?? 0, 0, 1) * BALANCE.timingWindowSplitStepBonus,
@@ -968,7 +967,7 @@ function evaluateShotQuality(
   const height = overhead
     ? clamp((ball.z - 42) / 35, 0.2, 1)
     : clamp(1 - Math.max(0, ball.z - 82) / 100, 0.55, 1);
-  const energy = assessmentEnergy(paddle.staminaEnergy);
+  const energy = executionEnergy(paddle.staminaEnergy, clamp(charge, 0, 1), clamp(paddle.moveRatio, 0, 1), timing, clamp(paddle.splitStep, 0, 1), overhead);
   const control = paddle.isPlayer
     ? clamp(athleteFor(state, paddle).stats.control / 1.22, 0.72, 1.05)
     : state.pvp && paddle.controlled
@@ -1129,6 +1128,7 @@ function attackRead(state, paddle, contactHeight) {
 }
 
 function chooseComputerShot(state, paddle, profile, contactHeight = 0, aiTiming = 1) {
+  const style = courtStyle(athleteFor(state, paddle)?.id ?? '');
   const opponentSide = paddle.isPlayer ? "ai" : "player";
   const opponents = opponentSide === "ai"
     ? [state.opponent, state.opponentMate]
@@ -1153,7 +1153,7 @@ function chooseComputerShot(state, paddle, profile, contactHeight = 0, aiTiming 
   );
   const lobChance = clamp(
     BALANCE.aiLobBase
-      + avanzamento * (BALANCE.aiLobForward + profile.skill * BALANCE.aiLobSkill),
+      + avanzamento * (BALANCE.aiLobForward + profile.skill * BALANCE.aiLobSkill) + style.lob,
     0,
     0.85,
   );
@@ -1164,7 +1164,7 @@ function chooseComputerShot(state, paddle, profile, contactHeight = 0, aiTiming 
   const attack = attackRead(state, paddle, contactHeight);
   const smashChance = clamp(
     0.08 + profile.skill * 0.14
-      + attack * (BALANCE.attackReadSmashGain + profile.skill * BALANCE.attackReadSmashSkillGain),
+      + attack * (BALANCE.attackReadSmashGain + profile.skill * BALANCE.attackReadSmashSkillGain) + style.smash,
     0,
     BALANCE.attackReadSmashCap,
   );
@@ -2507,8 +2507,9 @@ function moveOpponentTeam(state, dt) {
     state.aiTeamShape = "defend";
   } else if (attacking) {
     // Dopo un buon colpo avanzano insieme, mantenendo il centro coperto.
-    primaryTargetY = COURT.netY - 70;
-    supportTargetY = COURT.netY - 78;
+    const style = courtStyle(athleteFor(state, primary)?.id ?? '');
+    primaryTargetY = COURT.netY - style.net_depth;
+    supportTargetY = primaryTargetY - 8;
     state.aiTeamShape = "attack";
   } else {
     primaryTargetY = COURT.top + 92;
@@ -2778,10 +2779,7 @@ function setPlayerTeamTactic(state, tactic) {
 
 function tacticalMateTarget(state, mate) {
   const active = activePlayer(state);
-  const width = COURT.right - COURT.left;
-  const leftLane = COURT.left + width * 0.28;
-  const rightLane = COURT.left + width * 0.72;
-  const oppositeLane = active.x < (COURT.left + COURT.right) / 2 ? rightLane : leftLane;
+  const oppositeLane = coverLane(active.x, mate.x, COURT.left, COURT.right);
   const tactic = state.playerTeamTactic ?? "balanced";
   if (tactic === "attack") return { x: oppositeLane, y: COURT.netY + 78 };
   if (tactic === "defend") return { x: oppositeLane, y: COURT.bottom - 76 };
@@ -2789,15 +2787,17 @@ function tacticalMateTarget(state, mate) {
     const activeAtNet = active.y < COURT.netY + 150;
     return { x: oppositeLane, y: activeAtNet ? COURT.bottom - 92 : COURT.netY + 88 };
   }
-  const incoming = ballPlayableDirection("player", state.ball) && state.ball.y > COURT.netY;
   return {
-    x: incoming ? clamp(state.ball.x < active.x ? rightLane : leftLane, COURT.left + 72, COURT.right - 72) : oppositeLane,
+    x: oppositeLane,
     y: active.y < COURT.netY + 145 ? COURT.netY + 88 : COURT.bottom - 92,
   };
 }
 
 function moveTacticalMate(state, mate, dt) {
   const target = tacticalMateTarget(state, mate);
+  const active = activePlayer(state);
+  target.y = safeCoverY(active.x, active.y, mate.x, mate.y, target.x, target.y, COURT.bottom);
+  if ((mate.x - active.x) * (target.x - active.x) <= 0 && Math.abs(mate.y - active.y) < 64) target.x = mate.x;
   const startX = mate.x;
   const startY = mate.y;
   mate.x = clamp(mate.x + clamp(target.x - mate.x, -mate.speed * staminaSpeed(mate.staminaEnergy) * dt, mate.speed * staminaSpeed(mate.staminaEnergy) * dt), COURT.left + mate.w / 2, COURT.right - mate.w / 2);

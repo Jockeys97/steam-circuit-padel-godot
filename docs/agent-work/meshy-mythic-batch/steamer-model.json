@@ -1,0 +1,44 @@
+{
+  "athlete": "steamer",
+  "stage": "model",
+  "endpoint": "image-to-3d",
+  "status": "SUCCEEDED",
+  "reservedCredits": 30,
+  "batchCap": 175,
+  "created": "2026-09-22T12:09:50.355Z",
+  "balanceBefore": 555,
+  "referenceHash": "edeba3f4f7bea56c72a361eb8719df96d7240fd96956865cd531c6d53e44cf55",
+  "settings": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "model_type": "standard",
+    "should_texture": true,
+    "enable_pbr": true,
+    "texture_resolution": "2k",
+    "target_formats": [
+      "glb"
+    ],
+    "pose_mode": "a-pose",
+    "image_enhancement": false,
+    "should_remesh": true,
+    "topology": "triangle",
+    "target_polycount": 20000
+  },
+  "id": "01a0c905-b891-7750-98c4-dee013101d66",
+  "progress": 100,
+  "credits": 30,
+  "checked": "2026-09-22T12:13:24.308Z",
+  "files": [
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/steamer-model/model.glb",
+      "bytes": 12675248,
+      "sha256": "eba826bd2fa50c822db4067be8c888b026e12c7eedc32fde21895ac223a388cd"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/steamer-model/preview.png",
+      "bytes": 111277,
+      "sha256": "97badd49d8cee61b107615aa3ccdce14b690269c39f8ac0c0d5736677e22fe0f"
+    }
+  ],
+  "downloaded": true
+}

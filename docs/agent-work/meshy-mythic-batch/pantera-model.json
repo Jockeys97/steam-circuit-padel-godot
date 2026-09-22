@@ -1,0 +1,44 @@
+{
+  "athlete": "pantera",
+  "stage": "model",
+  "endpoint": "image-to-3d",
+  "status": "SUCCEEDED",
+  "reservedCredits": 30,
+  "batchCap": 175,
+  "created": "2026-09-22T12:09:48.257Z",
+  "balanceBefore": 585,
+  "referenceHash": "0f72eed1de156e0af89c1a83c5c35bf8506e7d527978f0ef5d5bbe3a380dab14",
+  "settings": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "model_type": "standard",
+    "should_texture": true,
+    "enable_pbr": true,
+    "texture_resolution": "2k",
+    "target_formats": [
+      "glb"
+    ],
+    "pose_mode": "a-pose",
+    "image_enhancement": false,
+    "should_remesh": true,
+    "topology": "triangle",
+    "target_polycount": 20000
+  },
+  "id": "01a0c905-b053-72c4-979a-b51802d0974e",
+  "progress": 100,
+  "credits": 30,
+  "checked": "2026-09-22T12:13:21.994Z",
+  "files": [
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/pantera-model/model.glb",
+      "bytes": 11437984,
+      "sha256": "2300aab05f708f5a26ec6c578059ceea0f41224ece5c2471019a5a649c08667f"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/pantera-model/preview.png",
+      "bytes": 104753,
+      "sha256": "1fa7ff30285356013f7233e45e4f3f3287b9d7b77d7cfb50e0192fcb6cc62030"
+    }
+  ],
+  "downloaded": true
+}

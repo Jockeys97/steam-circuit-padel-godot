@@ -70,6 +70,8 @@ func run() -> void:
 	if "--capture" in OS.get_cmdline_user_args():
 		root.size = Vector2i(1400, 700)
 		var clips := [&"ready", &"shuffle_left", &"brake", &"backpedal", &"prepare", &"volley"]
+		if "--split-recovery" in OS.get_cmdline_user_args():
+			clips = [&"ready", &"split_step", &"recover_left", &"recover_right", &"backpedal", &"prepare"]
 		for i in clips.size():
 			var rig = Spawn.make(&"fiamma", &"base")
 			root.add_child(rig)

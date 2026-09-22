@@ -190,7 +190,7 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 		container.position = Vector3(float(prop.get("x", 0.0)) * x_scale, 0.0, float(prop.get("z", -7.65)) - 4.0)
 		container.set_meta("kind", kind)
 		root.add_child(container)
-		if skipped.has(kind):
+		if skipped.has(kind) or id in ["officina","locomotive","clockwork"]:
 			continue
 		_build_prop(container, prop, ctx)
 
@@ -220,6 +220,24 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 	# The trees' shared scene is cached across the prop loop (one read, N draws);
 	# drop it now so no Resource outlives this arena in a `static var`.
 	Trees.release()
+	if id in ["officina","locomotive","clockwork"]:
+		# Pilot replacement is presentation-only and local to this arena.
+		for child in root.get_children():
+			if String(child.name).begins_with("Backdrop") or String(child.name).begins_with("Dressing_"):
+				(child as Node3D).hide()
+		if id == "officina":
+			preload("res://game/arenas/steam_workshop.gd").build(root)
+		else:
+			var hall := preload("res://game/arenas/heritage_hall.gd").new()
+			root.add_child(hall)
+			hall.assemble(id,root)
+		var surround := parent.get_node_or_null("Surround") as MeshInstance3D
+		if surround != null:
+			var workshop_floor := ShaderMaterial.new()
+			workshop_floor.shader = preload("res://game/arenas/workshop_surface.gdshader")
+			workshop_floor.set_shader_parameter("tint",Color("20262d"))
+			workshop_floor.set_shader_parameter("floor_tiles",true)
+			surround.material_override = workshop_floor
 	return root
 
 
@@ -238,6 +256,10 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 ## math is the same projection `Camera3D` performs for a pitched camera with no
 ## roll (see the evidence file for the derivation and the round-trip check).
 static func band(preset: String, z: float, aspect := 16.0 / 9.0) -> Dictionary:
+	# Selectable match views move only the camera. Keep authored scenery identical
+	# whether the view was selected mid-match or restored from preferences.
+	if preset in ["immersive", "tactical", "broadcast", "courtside"]:
+		preset = "default"
 	var cfg: Dictionary = Court.CAMERAS.get(preset, Court.CAMERAS["default"])
 	var cam_pos: Vector3 = cfg["pos"]
 	var th := deg_to_rad(float(cfg["pitch_deg"]))

@@ -86,6 +86,7 @@ const SEAM_FUNCTIONS := [
 ## The eleven marks, in build order: the names the shell's scene carried before this
 ## extraction. The tree did not move, the owner did.
 const MARK_NAMES := [
+	"ShotPreparationArc",
 	"TimingRingTrack", "TimingRing", "TimingWindow",
 	"TimingPrecisionBar", "TimingPrecisionFill",
 	"TimingEnergyBar", "TimingEnergyFill",

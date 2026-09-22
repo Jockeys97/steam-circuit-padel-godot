@@ -604,12 +604,10 @@ func select_player_mode(mode: String) -> bool:
 	return true
 
 
-## `.segmented button`'s three states, one box each (`styles.css:2220-2252`): the chip
-## asleep is transparent with the reference's muted ink, the chip under the POINTER takes
-## `background: rgba(0, 229, 255, 0.1); color: #cfe9f7` (`:2238-2241`), and the chosen one
-## keeps the accent and its glow (`:2248-2252`). Handing `hover` the same box as `normal`
-## — what this function used to do — made the lightest of the three invisible under the
-## pointer, which is the defect this replaces.
+## The three options share one framed rail. Idle choices stay transparent, hover adds a
+## soft cyan wash, and the selected mode becomes a filled cyan segment with dark ink and
+## its own glow. Pointer and controller focus therefore describe the same choice without
+## changing the saved mode until confirm.
 func refresh_selection() -> void:
 	var current := player_mode()
 	for key in MODE_KEYS:
@@ -617,20 +615,23 @@ func refresh_selection() -> void:
 		if button == null:
 			continue
 		var active := String(key) == current
+		button.theme_type_variation = &"SegmentedActive" if active else &"SegmentedInactive"
 		button.add_theme_stylebox_override("normal", _active_segment_box() if active else _inactive_segment_box())
 		button.add_theme_stylebox_override("hover", _active_segment_box() if active else _segment_hover_box())
 		button.add_theme_stylebox_override("pressed", _active_segment_box() if active else _segment_hover_box())
 		if active:
-			# `.segmented button.is-active` fixes the ink in every state (`:2248-2252`):
-			# the reference's `:hover:not(.is-active)` rule cannot reach the chosen chip,
-			# so no override of this button's own colour is left behind.
-			button.remove_theme_color_override("font_hover_color")
-			button.remove_theme_color_override("font_pressed_color")
+			# The filled segment keeps dark ink through every pointer state.
+			if theme != null and theme.has_color("surface_0", "Palette"):
+				var active_ink := theme.get_color("surface_0", "Palette")
+				button.add_theme_color_override("font_color", active_ink)
+				button.add_theme_color_override("font_hover_color", active_ink)
+				button.add_theme_color_override("font_pressed_color", active_ink)
 		else:
-			# `.segmented button { color: #809bb6 }` is the theme's own; only the ink
-			# under the pointer moves (`:2231`, `:2240`).
+			# Idle ink stays muted and becomes brighter under the pointer.
 			button.add_theme_color_override("font_hover_color", Color(SEGMENT_HOVER_INK))
 			button.add_theme_color_override("font_pressed_color", Color(SEGMENT_HOVER_INK))
+			if theme != null and theme.has_color("tab_text_idle", "Palette"):
+				button.add_theme_color_override("font_color", theme.get_color("tab_text_idle", "Palette"))
 
 
 func player_mode_shown(mode: String) -> String:
@@ -662,7 +663,16 @@ func apply_capture_state(state: String) -> bool:
 	refresh_data()
 	if state == "player-mode-coop":
 		select_player_mode("coop")
+		_scroll_player_mode_capture()
 	return true
+
+
+func _scroll_player_mode_capture() -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var scroll := _control("Scroll") as ScrollContainer
+	if scroll != null:
+		scroll.scroll_vertical = int(scroll.get_v_scroll_bar().max_value)
 
 
 # ---------------------------------------------------------------------------
@@ -1126,13 +1136,24 @@ func _build_player_mode() -> void:
 	var label := _control("PlayerModeLabel") as Label
 	if label != null:
 		_bind(label, "playerMode")
+		label.add_theme_font_size_override("font_size", 16)
+		if theme != null and theme.has_color("text_soft_2", "Palette"):
+			label.add_theme_color_override("font_color", theme.get_color("text_soft_2", "Palette"))
+	var icon := _control("PlayerModeIcon") as Label
+	if icon != null:
+		icon.text = "🎮"
+		icon.add_theme_font_size_override("font_size", 18)
+		if theme != null and theme.has_color("cyan", "Palette"):
+			icon.add_theme_color_override("font_color", theme.get_color("cyan", "Palette"))
 	var hint := _control("PlayerModeHint") as Label
 	if hint != null:
 		_bind(hint, hint_key())
+		hint.add_theme_font_size_override("font_size", 15)
 	for key in MODE_KEYS:
 		var button := _control(MODE_PREFIX + key) as Button
 		if button != null:
 			_bind(button, String(MODE_KEYS[key]))
+			button.add_theme_font_size_override("font_size", 16)
 	refresh_selection()
 
 
@@ -1144,6 +1165,25 @@ func _style_chrome() -> void:
 	var panel := _control("PlayerModePanel") as PanelContainer
 	if panel != null:
 		panel.add_theme_stylebox_override("panel", _setup_box())
+	var hint_panel := _control("PlayerModeHintPanel") as PanelContainer
+	if hint_panel != null:
+		hint_panel.add_theme_stylebox_override("panel", _player_mode_hint_box())
+	var hint_accent := _control("PlayerModeHintAccent") as ColorRect
+	if hint_accent != null and theme != null and theme.has_color("cyan", "Palette"):
+		hint_accent.color = theme.get_color("cyan", "Palette")
+
+
+func _player_mode_hint_box() -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.content_margin_left = 12.0
+	box.content_margin_top = 8.0
+	box.content_margin_right = 14.0
+	box.content_margin_bottom = 8.0
+	box.set_corner_radius_all(6)
+	if theme != null and theme.has_color("surface_0", "Palette"):
+		var surface := theme.get_color("surface_0", "Palette")
+		box.bg_color = Color(surface.r, surface.g, surface.b, 0.72)
+	return box
 
 
 func _theme_box(variation: String) -> StyleBoxFlat:
@@ -1284,41 +1324,25 @@ func _preview_box(accent_hex: String) -> StyleBoxFlat:
 func _active_segment_box() -> StyleBoxFlat:
 	var theme: Theme = self.theme
 	var box := StyleBoxFlat.new()
-	# A `StyleBoxFlat` starts at `bg_color = Color(0.6, 0.6, 0.6)` with `draw_center` on,
-	# so a segment that only wants a bottom border must clear the fill or it paints an
-	# opaque grey slab (`styles.css` .segmented button: background none).
-	box.bg_color = Color(0.0, 0.0, 0.0, 0.0)
-	if theme != null and theme.has_color("cyan", "Palette"):
-		box.border_color = theme.get_color("cyan", "Palette")
+	box.bg_color = Color(0.13333334, 0.83529413, 0.93333334, 1.0)
+	if theme != null and theme.has_color("segmented_gradient_start", "Palette"):
+		box.bg_color = theme.get_color("segmented_gradient_start", "Palette")
 	box.set_corner_radius_all(8)
-	box.border_width_bottom = 2
-	# `.segmented button.is-active { box-shadow: 0 0 16px rgba(22, 190, 215, 0.42) ... }`
-	# (`styles.css:2248-2252`): the chosen chip is the only lit one, and the tween-less
-	# `StyleBoxFlat` is where a shadow belongs. The box draws no fill, so the shadow
-	# reads as the glow the reference draws around it.
+	# The chosen chip is the only lit one; the tween-less StyleBoxFlat owns the glow.
 	box.shadow_color = SEGMENT_GLOW_COLOR
 	box.shadow_size = int(SEGMENT_GLOW_SIZE)
 	return box
 
 
 func _inactive_segment_box() -> StyleBoxFlat:
-	var theme: Theme = self.theme
 	var box := StyleBoxFlat.new()
 	box.bg_color = Color(0.0, 0.0, 0.0, 0.0)
-	if theme != null and theme.has_color("line", "Palette"):
-		box.border_color = theme.get_color("line", "Palette")
 	box.set_corner_radius_all(8)
-	box.border_width_bottom = 1
 	return box
 
 
-## `.segmented button:hover:not(.is-active) { background: rgba(0, 229, 255, 0.1) }`
-## (`styles.css:2238-2241`) over the reference's `.segmented button { transition:
-## background 0.18s ease, color 0.18s ease, transform 0.18s ease }` (`:2235`): the chip
-## under the pointer is a FILL over the idle border, not the idle box again — the pair the
-## theme already carries as `BoxSegmentedIdleHover` (`padel_theme.tres:166-175`). The ink
-## that goes with it is `#cfe9f7` and is set by `refresh_selection`, next to the state it
-## belongs to.
+## A non-selected option gets a restrained cyan wash under pointer or focus. The ink that
+## goes with it is set by refresh_selection, next to the state it belongs to.
 func _segment_hover_box() -> StyleBoxFlat:
 	var theme: Theme = self.theme
 	var box := _inactive_segment_box()

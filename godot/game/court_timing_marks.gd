@@ -59,6 +59,7 @@ const Vocabulary := preload("res://game/feedback_vocabulary.gd")
 ## Every mark `mount()` builds, in build order. The names are the ones the shell's
 ## scene carried before this extraction: the tree is unchanged, only its builder is.
 const MARK_NAMES := [
+	"ShotPreparationArc",
 	"TimingRingTrack", "TimingRing", "TimingWindow",
 	"TimingPrecisionBar", "TimingPrecisionFill",
 	"TimingEnergyBar", "TimingEnergyFill",
@@ -222,6 +223,15 @@ var _fill_segments: int = 0
 var _fill_extent: float = 0.0
 ## Set only by the capture's A/B frame: every timing mark off, for the same tick.
 var _muted: bool = false
+var preparation_enabled: bool = true:
+	set(value):
+		preparation_enabled = value
+		if not value and _preparation != null:
+			_preparation.visible = false
+			preparation_report = {"visible": false}
+var _preparation: MeshInstance3D
+var _preparation_band := -1
+var preparation_report: Dictionary = {}
 
 
 # ---------------------------------------------------------------------------
@@ -233,6 +243,7 @@ var _muted: bool = false
 ## shell's own scene build, at the point the marks were always added.
 func mount(parent: Node3D) -> int:
 	_parent = parent
+	_preparation = _build_mesh("ShotPreparationArc", null, _material(Color.WHITE, true, 3))
 	var opaque := Color(1.0, 1.0, 1.0, 1.0)
 	# The track the coloured arc fills along: `ctx.arc(0, 0, r, 0, PI*1.85)` stroked
 	# in `rgba(255,255,255,0.22)` (`js/render.js:1664-1668`).
@@ -301,6 +312,33 @@ func mount(parent: Node3D) -> int:
 
 ## The marks this module built and placed, in build order — the module's own
 ## statement of what it owns, for the scene proof and the tests. Never the nodes.
+## Instantaneous execution assessment, not a predicted landing point or guarantee.
+## Uses the same pure assessment as contact resolution; never consumes RNG.
+func _update_preparation(state, live: bool, assessment: Dictionary) -> void:
+	_preparation.visible = false
+	preparation_report = {"visible": false}
+	if not live or not preparation_enabled:
+		return
+	var p = state.active_player()
+	var feedback: Variant = state.shotFeedback
+	var flash: bool = feedback != null and feedback.get("paddleKey", "") == p.key and feedback.get("grade", "") == "perfect" and float(feedback.get("life", 0.0)) > 0.60
+	var preparing: bool = state.shotCharge > TIMING_CHARGE_FLOOR and bool(state.shotRead.get("active", false))
+	if (not preparing and not flash) or assessment.is_empty():
+		return
+	var risk: float = float(assessment.risk)
+	var band: int = 0 if risk < 0.15 else (1 if risk < 0.35 else 2)
+	if flash:
+		band = 3
+	if band != _preparation_band:
+		_preparation_band = band
+		var radius: float = [0.30, 0.43, 0.56, 0.30][band]
+		var sweep: float = [1.25, 1.65, 2.1, 1.25][band]
+		var color: Color = [Color("72eedc"), Color("b9e1f0"), Color("ffbd60"), Color.WHITE][band]
+		_preparation.mesh = _arc_mesh(radius, 0.075, sweep, color, false, -sweep * 0.5)
+	_preparation.position = Court.world_pos(p.x, p.y, 0.0) + Vector3(0.0, 0.35, 0.0)
+	_preparation.visible = true
+	preparation_report = {"visible": true, "band": band, "risk": risk, "quality": assessment.quality, "flash": flash}
+
 func mark_names() -> PackedStringArray:
 	return PackedStringArray(MARK_NAMES)
 
@@ -308,12 +346,13 @@ func mark_names() -> PackedStringArray:
 ## The timing presentation, from the live state, once per frame. One place decides
 ## what is drawn and where; the nodes only follow, and the frame's own numbers are
 ## left in the report for the tests, the shell's capture lines and the evidence.
-func update(state, finished: bool) -> Dictionary:
+func update(state, finished: bool, preparation: Dictionary = {}) -> Dictionary:
 	if _ring == null:
 		return report()
 	var read: Dictionary = state.shotRead
 	var active = state.active_player()
 	var live: bool = bool(state.running) and not finished and active != null
+	_update_preparation(state, live and not state.paused and not state.serving and state.pointPause <= 0.0, preparation)
 	# `js/render.js:1656`: `(state.shotCharge ?? 0) > 0.05 && read?.active`.
 	var charging: bool = (float(state.shotCharge) > TIMING_CHARGE_FLOOR
 		and bool(read.get("active", false)))
@@ -585,15 +624,15 @@ func _material(base: Color, use_vertex_color: bool, priority: int) -> StandardMa
 ##
 ## `gradient` colours each vertex from the reference's own four stops sampled at the
 ## vertex's local x projection (`js/render.js:1669-1674`).
-func _arc_mesh(radius: float, width: float, sweep: float, base: Color, gradient: bool) -> ArrayMesh:
+func _arc_mesh(radius: float, width: float, sweep: float, base: Color, gradient: bool, start: float = 0.0) -> ArrayMesh:
 	var segments: int = _arc_segments(sweep)
 	var inner := radius - width * 0.5
 	var outer := radius + width * 0.5
 	var verts := PackedVector3Array()
 	var cols := PackedColorArray()
 	for i in segments:
-		var a0 := sweep * float(i) / float(segments)
-		var a1 := sweep * float(i + 1) / float(segments)
+		var a0 := start + sweep * float(i) / float(segments)
+		var a1 := start + sweep * float(i + 1) / float(segments)
 		var d0 := Vector2(sin(a0), cos(a0))
 		var d1 := Vector2(sin(a1), cos(a1))
 		var c0: Color = _gradient(sin(a0)) if gradient else base

@@ -135,6 +135,10 @@ const HAND_SWING_LIFT := 0.22
 ## build's opening composition and is the provisional match camera; "playable" is
 ## the behind-the-baseline variant the spike also rendered.
 const CAMERAS := {
+	"courtside": {"pos": Vector3(0, 4.5, 17), "look_at": Vector3(0, 1, -1), "fov": 50.0},
+	"immersive": {"pos": Vector3(0, 9, 21), "look_at": Vector3(0, 0, 0), "fov": 50.0},
+	"tactical": {"pos": Vector3(0, 31, 5), "look_at": Vector3.ZERO, "fov": 48.0},
+	"broadcast": {"pos": Vector3(19, 22, 25), "look_at": Vector3.ZERO, "fov": 36.0},
 	"default": {
 		"pos": Vector3(0.0, 20.0, 27.5),
 		"pitch_deg": -36.0274,
@@ -296,18 +300,22 @@ static func build_court(parent: Node3D, arena: Dictionary) -> void:
 
 
 static func build_camera(parent: Node3D, preset: String) -> Camera3D:
-	var cfg: Dictionary = CAMERAS.get(preset, CAMERAS["default"])
 	var cam := Camera3D.new()
 	cam.name = "MatchCam"
-	cam.fov = float(cfg["fov"])
 	parent.add_child(cam)
+	apply_camera(cam, preset)
+	cam.current = true
+	return cam
+
+
+static func apply_camera(cam: Camera3D, preset: String) -> void:
+	var cfg: Dictionary = CAMERAS.get(preset, CAMERAS["default"])
+	cam.fov = float(cfg["fov"])
 	cam.position = cfg["pos"]
-	if preset == "playable":
+	if preset in ["playable", "immersive", "tactical", "broadcast", "courtside"]:
 		cam.look_at(cfg["look_at"], Vector3.UP)
 	else:
 		cam.rotation_degrees = Vector3(float(cfg["pitch_deg"]), 0.0, 0.0)
-	cam.current = true
-	return cam
 
 
 ## One GLB load; every athlete is a `duplicate()` of that scene graph, so the

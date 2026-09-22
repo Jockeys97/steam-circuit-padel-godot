@@ -244,7 +244,7 @@ func _tabs(audit: AuditBase) -> void:
 			panels.append(tab)
 	audit.check_eq(panels, ["ui"], "pause/exactly_one_panel_is_visible")
 	audit.check_eq(_overlay.set_tab("match"), true, "pause/back_to_the_match_tab")
-	audit.check_eq(_overlay.focus_controls().size(), 8, "pause/four_tabs_and_four_actions_are_focusable")
+	audit.check_eq(_overlay.focus_controls().size(), 9, "pause/five_tabs_and_four_actions_are_focusable")
 	var focus_ids: Array = []
 	for entry in _overlay.focus_controls():
 		focus_ids.append(String((entry as Dictionary).get("id", "")))
@@ -266,12 +266,12 @@ func _ui_tab(audit: AuditBase) -> void:
 	for id in ["all", "essential", "score_only", "clean"]:
 		audit.check_true(presets.get(id) is Button, "pause/ui/the_preset_%s_is_a_button" % id)
 	var ui_rows: Dictionary = _overlay.ui_rows()
-	audit.check_eq(ui_rows.size(), 6, "pause/ui/the_tab_builds_six_toggle_rows")
+	audit.check_eq(ui_rows.size(), 7, "pause/ui/the_tab_builds_seven_toggle_rows")
 	for id in ["score", "time", "map", "guidance", "indicators", "events"]:
 		audit.check_true(ui_rows.get(id) is RowsClass.ToggleRow, "pause/ui/the_toggle_%s_is_a_toggle_row" % id)
 	audit.check_eq(_overlay.rows().size(), 3, "pause/ui/the_controller_rows_table_is_unchanged")
 	var focus: Array = _overlay.focus_controls()
-	audit.check_eq(focus.size(), 14, "pause/ui/four_tabs_plus_four_presets_plus_six_toggles_are_focusable")
+	audit.check_eq(focus.size(), OverlayClass.TABS.size() + presets.size() + ui_rows.size() + 1, "pause/ui/tabs_presets_toggles_and_resume_are_focusable")
 	var ids: Array = []
 	for entry in focus:
 		ids.append(String((entry as Dictionary).get("id", "")))
@@ -472,7 +472,7 @@ func _controller_rows(audit: AuditBase) -> void:
 	audit.check_eq(_overlay.mode_button("semi").theme_type_variation, &"SegmentedActive", "pause/the_strip_follows_the_foreign_write")
 	audit.check_eq(is_equal_approx(_overlay.deadzone(), 0.11), true, "pause/a_foreign_deadzone_write_is_read_back")
 	audit.check_eq(is_equal_approx(deadzone_row.value(), 0.11), true, "pause/the_row_shows_the_foreign_deadzone")
-	audit.check_eq(_overlay.focus_controls().size(), 10, "pause/the_controller_tab_exposes_three_modes_three_rows_and_the_fourth_tab")
+	audit.check_eq(_overlay.focus_controls().size(), 12, "pause/the_controller_tab_exposes_modes_rows_tabs_and_resume")
 
 
 func _pref(key: String) -> Variant:
@@ -678,7 +678,7 @@ func _strings(audit: AuditBase) -> void:
 			still_wrong.append(String(id))
 	audit.check_eq(still_wrong, [], "pause/the_flip_back_restores_every_slot")
 	audit.check_eq(_overlay.set_language("xx"), false, "pause/an_unknown_locale_is_refused")
-	audit.check_eq(_overlay.focus_controls().size(), 8, "pause/the_match_tab_is_still_focusable_after_the_flip")
+	audit.check_eq(_overlay.focus_controls().size(), 9, "pause/the_match_tab_is_still_focusable_after_the_flip")
 	audit.report("language flip: %d of %d visible slots differ between tables" % [moved, before.size()])
 	_overlay.close()
 

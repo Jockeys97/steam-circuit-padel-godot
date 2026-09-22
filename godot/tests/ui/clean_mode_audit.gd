@@ -15,9 +15,8 @@
 ##      mouse cannot eat it: the event is pushed through the viewport's own pipeline
 ##      (and is deliberately NOT answered when delivered to `_unhandled_input`, the
 ##      post-GUI phase a `MOUSE_FILTER_STOP` control would have cut off);
-##   3. the pad's `JOY_BUTTON_START` and `JOY_BUTTON_BACK` each toggle, and — the
-##      point of consuming them — neither press pauses: Start is `padel_pause`'s own
-##      pad binding, so an unconsumed press would open the pause card instead;
+##   3. Options/Menu pauses and resumes without changing HUD visibility;
+##      View toggles the HUD without pausing;
 ##   4. the layer boundary holds: clean mode hides the shipping HUD, the legacy HUD,
 ##      the mode strip, the active ring/pin, the drill target and the timing marks,
 ##      and leaves the pause card, the replay overlay and the touch layer alone;
@@ -112,14 +111,17 @@ func _shipping(audit: AuditBase) -> void:
 	audit.check_eq(bool(node.call("is_hud_hidden")), false,
 		"double_click/the_gesture_is_not_answered_post_gui_in_unhandled_input")
 
-	# 3. The pad's two buttons, and the consumption that keeps Start from pausing.
+	# Options/Menu pauses without changing HUD; View still toggles the HUD.
+	node.call("set_hud_hidden", true)
 	node.call("_input", _pad_button(JOY_BUTTON_START))
-	audit.check_eq(bool(node.call("is_hud_hidden")), true, "pad/start_hides_the_hud")
-	audit.check_eq(bool(node.call("is_paused")), false, "pad/start_does_not_pause")
-	audit.check_eq(bool(node.get_node("HudLayer/PauseOverlay").call("is_open")), false,
-		"pad/start_does_not_open_the_card")
+	audit.check_eq(bool(node.call("is_hud_hidden")), true, "pad/start_preserves_hidden_hud")
+	audit.check_eq(bool(node.call("is_paused")), true, "pad/start_pauses")
+	audit.check_eq(bool(node.get_node("HudLayer/PauseOverlay").call("is_open")), true,
+		"pad/start_opens_the_card")
 	node.call("_input", _pad_button(JOY_BUTTON_START))
-	audit.check_eq(bool(node.call("is_hud_hidden")), false, "pad/a_second_start_shows_the_hud")
+	audit.check_eq(bool(node.call("is_paused")), false, "pad/a_second_start_resumes")
+	audit.check_eq(bool(node.call("is_hud_hidden")), true, "pad/resume_preserves_hidden_hud")
+	node.call("set_hud_hidden", false)
 	node.call("_input", _pad_button(JOY_BUTTON_BACK))
 	audit.check_eq(bool(node.call("is_hud_hidden")), true, "pad/back_hides_the_hud")
 	audit.check_eq(bool(node.call("is_paused")), false, "pad/back_does_not_pause")
@@ -295,11 +297,11 @@ func _nodes_hidden(hud: Node) -> bool:
 
 
 func _all_on() -> Dictionary:
-	return {"score": true, "time": true, "map": true, "guidance": true, "indicators": true, "events": true}
+	return {"score": true, "time": true, "map": true, "guidance": true, "indicators": true, "events": true, "preparation": true}
 
 
 func _all_off() -> Dictionary:
-	return {"score": false, "time": false, "map": false, "guidance": false, "indicators": false, "events": false}
+	return {"score": false, "time": false, "map": false, "guidance": false, "indicators": false, "events": false, "preparation": false}
 
 
 func _new_match(harness: bool, legacy: bool) -> Node:

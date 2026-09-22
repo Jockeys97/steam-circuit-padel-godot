@@ -28,11 +28,12 @@ User approved promotion on 2026-09-22. Canonical branch verified:
 5. Wardrobe match, screen characters, racket and relevant stroke regressions pass.
 6. No commit, push, paid calls or changes to player progression.
 
-## Preflight blocker
+## Preflight blocker (resolved)
 
 No implementation edits made for this request. Astra–Flash skill static doctor
 reported static-ready but runtime_verified=false and a non-Astra root route.
 Optional local router catalogue GET failed with HTTPError. No inference request
 or child launched; no private URL or credentials recorded. Resolve routing or
 obtain an explicit direct/no-delegation instruction before implementation under
-the repository orchestration policy.
+the repository orchestration policy. The user subsequently explicitly requested
+direct implementation, completed on 2026-09-22; see RUNTIME-INTEGRATION.md.

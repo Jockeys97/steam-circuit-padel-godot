@@ -94,7 +94,7 @@ horizontal_scroll_mode = 0
 [node name="Hero" type="HBoxContainer" parent="Frame/HeroArea/HeroScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 48
+theme_override_constants/separation = 28
 
 [node name="HeroCopy" type="VBoxContainer" parent="Frame/HeroArea/HeroScroll/Hero"]
 layout_mode = 2
@@ -117,7 +117,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="BadgeGap" type="Control" parent="Frame/HeroArea/HeroScroll/Hero/HeroCopy"]
-custom_minimum_size = Vector2(0, 24)
+custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
 [node name="Title1" type="Label" parent="Frame/HeroArea/HeroScroll/Hero/HeroCopy"]
@@ -160,7 +160,7 @@ size_flags_horizontal = 3
 autowrap_mode = 3
 
 [node name="HintGap" type="Control" parent="Frame/HeroArea/HeroScroll/Hero/HeroCopy"]
-custom_minimum_size = Vector2(0, 52)
+custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
 [node name="HeroActions" type="HFlowContainer" parent="Frame/HeroArea/HeroScroll/Hero/HeroCopy"]

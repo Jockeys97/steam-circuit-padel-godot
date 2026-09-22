@@ -74,7 +74,6 @@ const TEXT_SLOTS := {
 	"Title1": "heroTitle1",
 	"Title2": "heroTitle2",
 	"HeroSub": "heroSub",
-	"HintLabel": "heroPadNote",
 	"PlayButton": "playNow",
 	"DrillButton": "training",
 	"HelpButton": "howTo",
@@ -152,10 +151,30 @@ var badge_key_override: String = ""
 var _badge: Control
 var _badge_label: Label
 var _focus_specs: Dictionary = {}
+static var _remembered_control := "PlayButton"
+var _description: Label
+var _selected_control := "PlayButton"
+var _device_hint := "menuKeysHint"
+const Legend := preload("res://src/ui/components/ControlLegend.gd")
 
 
 func _ready() -> void:
 	_style_chrome()
+	_description = Label.new()
+	_description.name = "SelectionDescription"
+	_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_description.custom_minimum_size.y = 44
+	_description.add_theme_font_size_override("font_size", 16)
+	var copy := _control("HeroCopy")
+	var gap := Control.new()
+	gap.custom_minimum_size.y = 10
+	copy.add_child(gap)
+	copy.add_child(_description)
+	_control("HintLabel").add_theme_font_size_override("font_size", 14)
+	_selected_control = _remembered_control
+	if not Input.get_connected_joypads().is_empty():
+		_set_pad_hint(Input.get_connected_joypads()[0])
+	Input.joy_connection_changed.connect(_on_pad_connection)
 	_wire_actions()
 	resized.connect(_apply_title_clamp)
 	var preview := _control("HeroPreview")
@@ -234,6 +253,50 @@ func refresh_strings() -> void:
 		toggle.text = next_lang_label()
 	_refresh_badge()
 	_refresh_aria()
+	_refresh_context()
+
+
+func preferred_focus_id() -> String:
+	return SCREEN_ID + "/" + _remembered_control
+
+
+func _show_context(control_name: String, remember: bool = false) -> void:
+	_selected_control = control_name
+	if remember:
+		_remembered_control = control_name
+	_refresh_context()
+
+
+func _refresh_context() -> void:
+	if _description == null:
+		return
+	_description.text = UiStrings.t("menuDesc" + _selected_control)
+	(_control("HintLabel") as Label).text = UiStrings.t("heroPadNote") + "\n" + UiStrings.t(_device_hint)
+	(_control("HintIcon") as Label).text = "🎮" if _device_hint != "menuKeysHint" else "⌨"
+
+
+func _set_pad_hint(device: int) -> void:
+	var layout := Legend.detect_device_layout(Input.get_joy_name(device))
+	_device_hint = "menuPadPsHint" if layout == "playstation" else ("menuPadXboxHint" if layout == "xbox" else "menuPadHint")
+	_refresh_context()
+
+
+func _on_pad_connection(device: int, connected: bool) -> void:
+	if connected:
+		_set_pad_hint(device)
+	elif Input.get_connected_joypads().is_empty():
+		_device_hint = "menuKeysHint"
+		_refresh_context()
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventJoypadButton and event.pressed:
+		_set_pad_hint(event.device)
+	elif event is InputEventJoypadMotion and absf(event.axis_value) > 0.3:
+		_set_pad_hint(event.device)
+	elif (event is InputEventKey and event.pressed) or event is InputEventMouseButton:
+		_device_hint = "menuKeysHint"
+		_refresh_context()
 
 
 ## The label the toggle shows: the language a press switches TO — the reference's own
@@ -283,9 +346,13 @@ func _wire_actions() -> void:
 		if button == null:
 			continue
 		button.pressed.connect(route_action.bind(String(action)))
+		button.focus_entered.connect(_show_context.bind(String(ACTION_SLOTS[action]), true))
+		button.mouse_entered.connect(_show_context.bind(String(ACTION_SLOTS[action])))
 	var toggle := _control(LANG_NODE) as Button
 	if toggle != null:
 		toggle.pressed.connect(toggle_language)
+		toggle.focus_entered.connect(_show_context.bind(LANG_NODE, true))
+		toggle.mouse_entered.connect(_show_context.bind(LANG_NODE))
 	_register_focus()
 
 
@@ -293,6 +360,8 @@ func _wire_actions() -> void:
 ## (`ScreenRouter` mounts screens under its host); a press with no router above is
 ## reported, not swallowed.
 func route_action(action: String) -> bool:
+	if ACTION_SLOTS.has(action):
+		_remembered_control = String(ACTION_SLOTS[action])
 	var target := String(ACTION_TARGETS.get(action, ""))
 	if target == "":
 		push_error("MenuScreen.route_action: '%s' is not one of this screen's actions" % action)
@@ -323,6 +392,13 @@ func _register_focus() -> void:
 
 
 func _focus_spec(node_name: String, control: Control, action: String) -> Dictionary:
+	var ring := StyleBoxFlat.new()
+	ring.draw_center = false
+	ring.border_color = Color("#7ef3ff")
+	ring.set_border_width_all(3)
+	ring.set_corner_radius_all(8)
+	ring.set_expand_margin_all(3)
+	control.add_theme_stylebox_override("focus", ring)
 	return {
 		"id": "%s/%s" % [SCREEN_ID, node_name],
 		"node": control,

@@ -50,7 +50,8 @@ func run() -> void:
 		check(colosso.play_clip(&"run"), "Colosso keeps original running animation")
 		colosso.free()
 	check(screen.equip_outfit("maestro", "mythic"), "Maestro mythic can be equipped when unlocked")
-	check(not screen.equip_outfit("fiamma", "mythic"), "unavailable mythic cannot pretend to equip")
+	check(screen.equip_outfit("fiamma", "mythic"), "Fiamma mythic is now supported")
+	check(screen.equip_outfit("fiamma", "signature"), "restore fixture signature for teammate")
 	Save.save_pref(Config.save_store(), "lineup", {"playerMate": "fiamma", "opponent": "oracolo", "opponentMate": "colosso"})
 	Lineup.set_pref_source(Config.stored_prefs())
 	Config.athlete_index = 0

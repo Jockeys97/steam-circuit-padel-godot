@@ -1,0 +1,36 @@
+{
+  "athlete": "oracolo",
+  "stage": "rig",
+  "endpoint": "rigging",
+  "status": "SUCCEEDED",
+  "reservedCredits": 5,
+  "batchCap": 175,
+  "created": "2026-09-22T12:14:41.476Z",
+  "balanceBefore": 450,
+  "settings": {
+    "input_task_id": "01a0c905-c161-767e-b90e-d75dd7783673",
+    "height_meters": 1.8
+  },
+  "id": "01a0c90a-29b4-763f-8973-7c18054b0409",
+  "progress": 100,
+  "credits": 5,
+  "checked": "2026-09-22T12:17:48.096Z",
+  "files": [
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/oracolo-rig/model.glb",
+      "bytes": 6822780,
+      "sha256": "23e9d59c79e81ef19c0e76761c0ca8d7444b89749efe80d72278a40d7cbf7d42"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/oracolo-rig/running.glb",
+      "bytes": 6830948,
+      "sha256": "cbc632b1512c27057b4d7ec4e812099101057557b32d621f6458b0bb3545d4d8"
+    },
+    {
+      "path": "docs/agent-work/meshy-mythic-batch/oracolo-rig/walking.glb",
+      "bytes": 6835556,
+      "sha256": "ef1db40e7cf3f1a0a8843ce6b2d345885d2d539c3c24d8c33dcdb1f3d0528f2a"
+    }
+  ],
+  "downloaded": true
+}

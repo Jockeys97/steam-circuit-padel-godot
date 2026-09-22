@@ -99,9 +99,12 @@ var _playable := false
 ## declare their controls, the model decides, and the bridge turns a verdict into a
 ## `ScreenRouter.go_to` or one of its two signals.
 var _bridge: RefCounted = null
+var _restore_menu_focus: String = ""
 ## UIR-26's on-screen keyboard, mounted over everything (the recipe in
 ## `src/ui/screens/OskPanel.gd`): the panel renders the input lane's own OSK model.
 var _osk_panel: Control = null
+var _jukebox_overlay: Control = null
+var _jukebox_button: Button = null
 ## The audio module instance the host applies the stored master volume through. Built
 ## once, lazily, by `_apply_stored_audio_prefs()`.
 var _audio_port: Node = null
@@ -567,6 +570,7 @@ func _mount_ui_prototype() -> void:
 	add_child(_osk_panel)
 	_osk_panel.bind_model(_focus.menu.osk)
 	_osk_panel.closed.connect(_on_osk_closed)
+	_create_jukebox_button()
 	# One locale drives the menu and the match HUD (UIR-22): the player's stored
 	# choice is applied once, here, and nothing below switches language behind it.
 	_apply_stored_language()
@@ -627,6 +631,48 @@ func _add_radial_wash(node_name: String, color: Color, alpha: float, anchor: Vec
 	add_child(wash)
 
 
+func _create_jukebox_button() -> void:
+	if _jukebox_button != null:
+		return
+	_jukebox_button = Button.new()
+	_jukebox_button.name = "JukeboxLaunchButton"
+	_jukebox_button.text = "🎵 Jukebox [J]"
+	var theme_res = load("res://src/ui/theme/padel_theme.tres")
+	if theme_res is Theme:
+		_jukebox_button.theme = theme_res
+	_jukebox_button.theme_type_variation = &"SegmentedInactive"
+	_jukebox_button.custom_minimum_size = Vector2(130, 36)
+	_jukebox_button.anchor_left = 1.0
+	_jukebox_button.anchor_top = 0.0
+	_jukebox_button.anchor_right = 1.0
+	_jukebox_button.anchor_bottom = 0.0
+	# Separated to the left of the 3 top nav buttons (Profile, Settings, Lang)
+	_jukebox_button.offset_left = -370
+	_jukebox_button.offset_top = 15
+	_jukebox_button.offset_right = -230
+	_jukebox_button.offset_bottom = 51
+	_jukebox_button.z_index = 50
+	_jukebox_button.pressed.connect(toggle_jukebox)
+	add_child(_jukebox_button)
+
+
+func toggle_jukebox() -> void:
+	if _jukebox_overlay != null and is_instance_valid(_jukebox_overlay):
+		_jukebox_overlay.queue_free()
+		_jukebox_overlay = null
+		return
+	var scene := load("res://src/ui/jukebox/JukeboxScreen.tscn") as PackedScene
+	if scene != null:
+		_jukebox_overlay = scene.instantiate()
+		_jukebox_overlay.z_index = 100
+		_jukebox_overlay.closed.connect(func():
+			if _jukebox_overlay != null and is_instance_valid(_jukebox_overlay):
+				_jukebox_overlay.queue_free()
+				_jukebox_overlay = null
+		)
+		add_child(_jukebox_overlay)
+
+
 ## The stored language, applied at boot: `lang` from the same prefs group the
 ## settings screen writes, over `Locale`'s own default. Nothing here invents a
 ## language — `Locale.set_lang` refuses anything but the reference's two tables.
@@ -672,12 +718,15 @@ func _on_screen_changed(_from_id: String, _to_id: String) -> void:
 		return
 	if screen.has_method("set_store"):
 		screen.set_store(Config.save_store())
+	_restore_menu_focus = String(screen.call("preferred_focus_id")) if screen.has_method("preferred_focus_id") else ""
 	_bridge.attach(screen as Control, _focus, _router)
 	# The result screen's rematch is the host's decision: the screen reports the
 	# request and names its label, and the mount owns the mode.
 	if screen.has_signal("rematch_requested") and not screen.is_connected("rematch_requested", _on_rematch_requested):
 		screen.connect("rematch_requested", _on_rematch_requested)
 	_sync_osk()
+	if _jukebox_button != null:
+		_jukebox_button.visible = (_to_id == "menu")
 	# A freshly mounted screen's containers sort at the end of this frame; the model
 	# is re-measured two frames later, not on the rectangles `_ready()` saw.
 	_refresh_pending = 2
@@ -999,6 +1048,10 @@ func _read_pad_device() -> int:
 func _input(event: InputEvent) -> void:
 	if _capture or _focus == null:
 		return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_J:
+		toggle_jukebox()
+		get_viewport().set_input_as_handled()
+		return
 	if _playable:
 		if event is InputEventKey:
 			if _bridge.dispatch(event):
@@ -1075,6 +1128,9 @@ func _playable_process() -> void:
 		_refresh_pending -= 1
 		if _refresh_pending == 0:
 			_focus.refresh()
+			if _restore_menu_focus != "":
+				_bridge.set_focus(_restore_menu_focus)
+				_restore_menu_focus = ""
 			_apply_focus()
 	var connected := _pad_connected()
 	if connected != _pad_seen:

@@ -418,6 +418,22 @@ func _player_mode(audit: AuditBase) -> void:
 	var cyan: Color = theme.get_color("cyan", "Palette") if theme != null and theme.has_color("cyan", "Palette") else Color.BLACK
 	var solo_button := screen.find_child(ArenaScreenClass.MODE_PREFIX + "solo", true, false) as Button
 	var coop_button := screen.find_child(ArenaScreenClass.MODE_PREFIX + "coop", true, false) as Button
+	var pvp_button := screen.find_child(ArenaScreenClass.MODE_PREFIX + "pvp", true, false) as Button
+	var segment_frame := screen.find_child("PlayerModeSegmentFrame", true, false) as PanelContainer
+	var hint_panel := screen.find_child("PlayerModeHintPanel", true, false) as PanelContainer
+	var hint_accent := screen.find_child("PlayerModeHintAccent", true, false) as ColorRect
+	audit.check_true(segment_frame != null, "arena/the_three_options_share_one_segmented_frame")
+	audit.check_true(hint_panel != null and hint_accent != null, "arena/the_explanation_has_its_own_accented_row")
+	audit.check_eq(solo_button.size_flags_horizontal, Control.SIZE_EXPAND_FILL, "arena/the_solo_segment_expands_evenly")
+	audit.check_eq(coop_button.size_flags_horizontal, Control.SIZE_EXPAND_FILL, "arena/the_coop_segment_expands_evenly")
+	audit.check_eq(pvp_button.size_flags_horizontal, Control.SIZE_EXPAND_FILL, "arena/the_versus_segment_expands_evenly")
+	audit.check_ge(solo_button.custom_minimum_size.y, 54.0, "arena/the_segments_are_comfortable_controller_targets")
+	audit.check_eq(solo_button.get_node_or_null(solo_button.focus_neighbor_right), coop_button,
+		"arena/controller_right_moves_from_solo_to_coop")
+	audit.check_eq(coop_button.get_node_or_null(coop_button.focus_neighbor_right), pvp_button,
+		"arena/controller_right_moves_from_coop_to_versus")
+	audit.check_eq(pvp_button.get_node_or_null(pvp_button.focus_neighbor_right), solo_button,
+		"arena/controller_navigation_wraps_to_solo")
 	var solo_before := solo_button.get_theme_stylebox("normal")
 	audit.check_eq(String(ModesSave.profile(Config.save_store()).get("prefs", {}).get("playerMode", "")), "solo",
 		"arena/the_reference_keeps_the_player_mode_in_the_preferences")
@@ -427,7 +443,10 @@ func _player_mode(audit: AuditBase) -> void:
 		"arena/the_choice_is_persisted_through_the_save")
 	audit.check_true(coop_button.get_theme_stylebox("normal") != solo_before, "arena/the_active_segment_is_the_chosen_one")
 	var coop_box := coop_button.get_theme_stylebox("normal") as StyleBoxFlat
-	audit.check_eq(coop_box.border_color, cyan, "arena/the_active_segment_carries_the_accent_token")
+	audit.check_true(coop_box.bg_color.a > 0.9, "arena/the_active_segment_is_a_filled_cyan_choice")
+	audit.check_eq(coop_button.theme_type_variation, &"SegmentedActive", "arena/the_active_segment_uses_the_active_theme")
+	audit.check_eq(solo_button.theme_type_variation, &"SegmentedInactive", "arena/the_idle_segment_uses_the_inactive_theme")
+	audit.check_eq(hint_accent.color, cyan, "arena/the_explanation_rail_carries_the_accent_token")
 	audit.check_eq(screen.select_player_mode("pvp"), true, "arena/the_local_versus_option_is_selectable")
 	audit.check_eq(String(ModesSave.profile(Config.save_store()).get("prefs", {}).get("playerMode", "")), "pvp",
 		"arena/the_versus_choice_is_persisted")

@@ -69,7 +69,7 @@ func _ensure() -> void:
 		return
 	_built = true
 	name = "Coach"
-	add_theme_constant_override("separation", 6)
+	add_theme_constant_override("separation", 9)
 	_client = CoachClient.new()
 	_client.name = "CoachClient"
 	add_child(_client)
@@ -77,22 +77,33 @@ func _ensure() -> void:
 	if _poster != null:
 		_client.set_poster(_poster)
 	_title = _label(self, "CoachTitle")
+	_title.add_theme_font_size_override("font_size", 17)
+	if theme != null and theme.has_color("text_soft_2", "Palette"):
+		_title.add_theme_color_override("font_color", theme.get_color("text_soft_2", "Palette"))
 	_disclosure = _label(self, "CoachDisclosure")
+	_disclosure.modulate.a = 0.78
 	_aggregate = _label(self, "CoachAggregate")
+	_aggregate.modulate.a = 0.72
 	_status = _label(self, "CoachStatus")
 	_evidence = _label(self, "CoachEvidence")
 	_exercise = _label(self, "CoachExercise")
 	var row := HBoxContainer.new()
 	row.name = "CoachActions"
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 10)
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_theme_constant_override("separation", 12)
 	add_child(row)
 	_analyze = Button.new()
 	_analyze.name = "CoachAnalyzeButton"
+	_analyze.theme_type_variation = &"ButtonSecondary"
+	_analyze.custom_minimum_size.y = 50.0
+	_analyze.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_analyze.pressed.connect(press_analyze)
 	row.add_child(_analyze)
 	_drill = Button.new()
 	_drill.name = "CoachDrillButton"
+	_drill.theme_type_variation = &"ButtonPrimary"
+	_drill.custom_minimum_size.y = 50.0
+	_drill.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_drill.pressed.connect(press_drill)
 	row.add_child(_drill)
 

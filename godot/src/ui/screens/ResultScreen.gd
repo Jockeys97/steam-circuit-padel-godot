@@ -27,7 +27,7 @@
 ## queue — the save lane records a match in `mode_session.gd`, before this screen is
 ## shown, and the audit asserts the store's bytes are untouched by a render.
 ##
-## CAPTURE STATES. Ten, each one a constructed payload: three score shapes, both
+## CAPTURE STATES. Eleven, each one a constructed payload: three score shapes, both
 ## outcomes, a career promotion, a tournament continuation, and the two limited-build
 ## calls to action. A capture never claims a live result — the audit labels them.
 ##
@@ -53,6 +53,7 @@ const DECLARED_BACK := ""
 
 const CAPTURE_STATES: Array[String] = [
 	"default",
+	"win-actions",
 	"win-points",
 	"loss-points",
 	"win-set",
@@ -85,7 +86,8 @@ const CTA_WISHLIST := "wishlist"
 const CTA_FOLLOW := "follow"
 
 ## `.result-card` (`styles.css:1099-1108`): 520 px wide, radius 16, the panel fill.
-const CARD_WIDTH := 520.0
+const CARD_WIDTH := 620.0
+const ACTION_HEIGHT := 54.0
 ## The four stat rows and the two score figures the reference lays out.
 const STAT_ROWS := 4
 const STAT_FIGURES := 2
@@ -154,14 +156,24 @@ func capture_states() -> Array[String]:
 	return CAPTURE_STATES.duplicate()
 
 
-## The ten declared states, each a constructed payload (see `_capture_payload`).
+## The eleven declared states, each a constructed payload (see `_capture_payload`).
 func apply_capture_state(state_id: String) -> bool:
 	_ensure()
 	if not CAPTURE_STATES.has(state_id):
 		return false
 	_constructed = true
 	render(_capture_payload(state_id))
+	if state_id == "win-actions":
+		_scroll_actions_capture()
 	return true
+
+
+func _scroll_actions_capture() -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var scroll := _control("ScreenScroll") as ScrollContainer
+	if scroll != null:
+		scroll.scroll_vertical = int(scroll.get_v_scroll_bar().max_value)
 
 
 # ---------------------------------------------------------------------------
@@ -418,7 +430,11 @@ func go_to_menu() -> bool:
 
 func _render_texts() -> void:
 	(_control("Badge") as Label).text = UiStrings.t("matchOver")
-	(_control("Title") as Label).text = UiStrings.t(title_key())
+	var title := _control("ResultTitle") as Label
+	title.text = UiStrings.t(title_key())
+	if theme != null:
+		title.add_theme_color_override("font_color", theme.get_color("win_green", "Palette") \
+			if bool(_view.get("won", false)) else theme.get_color("loss_red", "Palette"))
 	(_control("Message") as Label).text = message_text()
 	(_control("ScoreYouLabel") as Label).text = UiStrings.t("statYou")
 	(_control("ScoreOppLabel") as Label).text = UiStrings.t("statOpp")
@@ -431,8 +447,13 @@ func _render_texts() -> void:
 
 func _render_scores() -> void:
 	var numbers := score_numbers()
-	(_control("ScorePlayer") as Label).text = str(numbers[0])
-	(_control("ScoreAi") as Label).text = str(numbers[1])
+	var player := _control("ScorePlayer") as Label
+	var opponent := _control("ScoreAi") as Label
+	player.text = str(numbers[0])
+	opponent.text = str(numbers[1])
+	if theme != null:
+		player.add_theme_color_override("font_color", theme.get_color("cyan", "Palette"))
+		opponent.add_theme_color_override("font_color", theme.get_color("rival", "Palette"))
 
 
 ## The four compared rows and the two foot figures (`renderMatchStats`,
@@ -574,6 +595,8 @@ func _render_cta() -> void:
 func _capture_payload(state_id: String) -> Dictionary:
 	var base := _base_capture()
 	match state_id:
+		"win-actions":
+			base["result"] = _capture_result(11, 7, 11, true)
 		"win-points":
 			base["result"] = _capture_result(11, 7, 11, true)
 		"loss-points":
@@ -637,6 +660,8 @@ func _capture_result(player: int, ai: int, points_to_win: int, won: bool) -> Dic
 			"aces": {"player": 2, "ai": 1},
 			"winners": {"player": 5, "ai": 3},
 			"errors": {"player": 4, "ai": 6},
+			"doubleFaults": {"player": 1, "ai": 0},
+			"smashWinners": {"player": 2, "ai": 1},
 			"rallyCount": 9,
 			"totalRallyHits": 32,
 			"longestRally": 7,
@@ -698,7 +723,7 @@ func _build() -> void:
 	# card is taller than the shell at the compact frames, so the column rides a scroll
 	# container — the same shape the history and profile bodies use.
 	var scroll := ScrollContainer.new()
-	scroll.name = "ResultScroll"
+	scroll.name = "ScreenScroll"
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -722,15 +747,18 @@ func _build() -> void:
 	column.add_child(panel)
 	var card := VBoxContainer.new()
 	card.name = "CardBody"
-	card.add_theme_constant_override("separation", 10)
+	card.add_theme_constant_override("separation", 16)
 	card.alignment = BoxContainer.ALIGNMENT_CENTER
 	panel.add_child(card)
-	_label(card, "Badge")
-	_label(card, "Title")
+	card.add_child(_badge_pill())
+	var title := _label(card, "ResultTitle")
+	title.add_theme_font_size_override("font_size", 42)
 	var message := _label(card, "Message")
 	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	card.add_child(_scores_row())
-	card.add_child(_stats_block())
+	message.add_theme_font_size_override("font_size", 17)
+	message.modulate.a = 0.82
+	card.add_child(_score_panel())
+	card.add_child(_stats_panel())
 	card.add_child(_objectives_block())
 	card.add_child(_cta_block())
 	card.add_child(_coach_block())
@@ -742,12 +770,16 @@ func _build() -> void:
 ## own content, with its sentences resolved by the coach's own table and its two controls
 ## registered with the shell's focus model so a pad reaches them like any other button.
 func _coach_block() -> Control:
+	var wrapper := PanelContainer.new()
+	wrapper.name = "CoachCard"
+	wrapper.add_theme_stylebox_override("panel", _section_style(true))
 	var panel = CoachPanelScript.new()
 	_coach = panel
 	panel.drill_requested.connect(_on_coach_drill_requested)
+	wrapper.add_child(panel)
 	_shell.add_focus("CoachAnalyzeButton", _coach.analyze_control(), "coach-analyze", {"kind": "button"})
 	_shell.add_focus("CoachDrillButton", _coach.drill_control(), "coach-drill", {"kind": "button"})
-	return panel
+	return wrapper
 
 
 ## Hand the block this match's own numbers, and whether the run behind it is one press
@@ -816,14 +848,59 @@ func _card_style() -> StyleBoxFlat:
 	if theme == null:
 		return box
 	box.bg_color = theme.get_color("panel", "Palette")
-	box.border_color = theme.get_color("line", "Palette")
+	var cyan := theme.get_color("cyan", "Palette")
+	box.border_color = Color(cyan.r, cyan.g, cyan.b, 0.24)
 	box.set_border_width_all(1)
 	box.set_corner_radius_all(16)
 	box.content_margin_left = 32.0
 	box.content_margin_right = 32.0
 	box.content_margin_top = 28.0
 	box.content_margin_bottom = 28.0
+	box.shadow_color = Color(0.0, 0.0, 0.0, 0.38)
+	box.shadow_size = 24
+	box.shadow_offset = Vector2(0, 10)
 	return box
+
+
+func _section_style(accented: bool = false) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	var theme_now: Theme = self.theme
+	if theme_now == null:
+		return box
+	var surface := theme_now.get_color("surface_0", "Palette")
+	box.bg_color = Color(surface.r, surface.g, surface.b, 0.68)
+	var border := theme_now.get_color("cyan", "Palette") if accented else theme_now.get_color("line", "Palette")
+	box.border_color = Color(border.r, border.g, border.b, 0.30 if accented else border.a)
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(12)
+	box.content_margin_left = 18.0
+	box.content_margin_right = 18.0
+	box.content_margin_top = 14.0
+	box.content_margin_bottom = 14.0
+	return box
+
+
+func _badge_pill() -> Control:
+	var pill := PanelContainer.new()
+	pill.name = "BadgePill"
+	pill.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var style := StyleBoxFlat.new()
+	if theme != null:
+		var cyan := theme.get_color("cyan", "Palette")
+		style.bg_color = Color(cyan.r, cyan.g, cyan.b, 0.12)
+		style.border_color = Color(cyan.r, cyan.g, cyan.b, 0.65)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(999)
+	style.content_margin_left = 16.0
+	style.content_margin_right = 16.0
+	style.content_margin_top = 6.0
+	style.content_margin_bottom = 6.0
+	pill.add_theme_stylebox_override("panel", style)
+	var badge := _label(pill, "Badge")
+	badge.add_theme_font_size_override("font_size", 13)
+	if theme != null:
+		badge.add_theme_color_override("font_color", theme.get_color("text_soft_2", "Palette"))
+	return pill
 
 
 func _label(parent: Node, node_name: String) -> Label:
@@ -860,6 +937,14 @@ func _scores_row() -> HBoxContainer:
 	return row
 
 
+func _score_panel() -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.name = "ScorePanel"
+	panel.add_theme_stylebox_override("panel", _section_style())
+	panel.add_child(_scores_row())
+	return panel
+
+
 ## `.result-stats` (`styles.css:1143-1188`): the two-sided head, four rows, the foot.
 func _stats_block() -> VBoxContainer:
 	var block := VBoxContainer.new()
@@ -885,6 +970,14 @@ func _stats_block() -> VBoxContainer:
 		foot.add_child(label)
 	block.add_child(foot)
 	return block
+
+
+func _stats_panel() -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.name = "StatsPanel"
+	panel.add_theme_stylebox_override("panel", _section_style())
+	panel.add_child(_stats_block())
+	return panel
 
 
 func _stat_row(index: int) -> HBoxContainer:
@@ -917,6 +1010,8 @@ func _cta_block() -> VBoxContainer:
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var button := Button.new()
 	button.name = "CtaButton"
+	button.theme_type_variation = &"ButtonSecondary"
+	button.custom_minimum_size.y = 48.0
 	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	button.pressed.connect(_on_cta_pressed)
 	block.add_child(button)
@@ -933,14 +1028,20 @@ func _on_cta_pressed() -> void:
 func _actions_row() -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.name = "Actions"
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 10)
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_theme_constant_override("separation", 12)
 	var rematch_button := Button.new()
 	rematch_button.name = "RematchButton"
+	rematch_button.theme_type_variation = &"ButtonPrimary"
+	rematch_button.custom_minimum_size.y = ACTION_HEIGHT
+	rematch_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rematch_button.pressed.connect(rematch)
 	row.add_child(rematch_button)
 	var menu := Button.new()
 	menu.name = "MenuButton"
+	menu.theme_type_variation = &"ButtonSecondary"
+	menu.custom_minimum_size.y = ACTION_HEIGHT
+	menu.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	menu.pressed.connect(go_to_menu)
 	row.add_child(menu)
 	return row
@@ -1018,7 +1119,7 @@ func objectives_visible() -> bool:
 
 
 func shown_title() -> String:
-	return (_control("Title") as Label).text
+	return (_control("ResultTitle") as Label).text
 
 
 func shown_message() -> String:

@@ -2,8 +2,8 @@
 extends RefCounted
 
 const FLOOR := 0.15
-const THRESHOLD := 0.60
-const MAX_SLOW := 0.12
+const THRESHOLD := 0.70
+const MAX_SLOW := 0.25
 
 static func fatigue(energy: float = 1.0) -> float:
 	var t := clampf((THRESHOLD - energy) / (THRESHOLD - FLOOR), 0.0, 1.0)
@@ -14,6 +14,11 @@ static func speed_factor(energy: float = 1.0) -> float:
 
 static func assessment_energy(energy: float = 1.0) -> float:
 	return 1.0 - 0.60 * fatigue(energy)
+
+## Preserve well-timed, planted control shots; fatigue magnifies execution demands.
+static func execution_energy(energy: float, charge: float, moving: float, timing: float, split: float, overhead: bool) -> float:
+	var demand := clampf(charge * charge * 0.40 + moving * (1.0 - split) * 0.30 + (1.0 - timing) * 0.80 + (0.15 if overhead else 0.0), 0.0, 1.0)
+	return 1.0 - 0.85 * fatigue(energy) * demand
 
 static func shot_cost(variant: String = "", slice: bool = false, mode: String = "control") -> float:
 	var cost := 0.04
@@ -33,6 +38,6 @@ static func effort_energy(energy: float, dt: float, movement: float, sprint: flo
 	var m := clampf(movement, 0.0, 1.0)
 	var s := clampf(sprint, 0.0, 1.0)
 	var resistance := clampf(stamina, 0.7, 1.5)
-	var recovery := 0.008 * (1.0 - m) * resistance
+	var recovery := 0.004 * (1.0 - m) * resistance
 	var drain := (0.002 + 0.008 * m + 0.016 * m * s) / resistance
 	return clampf(energy + dt * (recovery - drain), FLOOR, 1.0)

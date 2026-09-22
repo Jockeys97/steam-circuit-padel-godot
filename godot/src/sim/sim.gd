@@ -30,6 +30,7 @@
 extends RefCounted
 
 const Stamina := preload("res://src/sim/rally_stamina.gd")
+const Tactics := preload("res://src/sim/court_tactics.gd")
 
 const Ent := preload("res://src/sim/entities.gd")
 const State := preload("res://src/sim/state.gd")
@@ -844,7 +845,7 @@ static func responder_forecast(paddle: Ent.SimPaddle, ball: Ent.SimBall) -> Dict
 	var contact_z: float = maxf(0.0, ball.z + ball.vz * time - 0.5 * float(balance["ballGravity"]) * time * time)
 	var horizontal_reach := contact_width(paddle, ball)
 	var travel_distance: float = maxf(0.0, absf(contact_x - paddle.x) - horizontal_reach)
-	var travel_time: float = travel_distance / paddle.speed
+	var travel_time: float = travel_distance / maxf(1.0, paddle.speed * Stamina.speed_factor(paddle.staminaEnergy))
 	var late_by: float = maxf(0.0, travel_time - time)
 	var playable_height: float = float(balance["playableHitHeight"])
 	var height_penalty: float = 1.4 + (contact_z - playable_height) / 80.0 if contact_z > playable_height else 0.0
@@ -868,7 +869,7 @@ static func ai_responder_forecast(paddle: Ent.SimPaddle, ball: Ent.SimBall) -> D
 	var contact_z: float = maxf(0.0, ball.z + ball.vz * time - 0.5 * float(balance["ballGravity"]) * time * time)
 	var horizontal_reach := contact_width(paddle, ball)
 	var travel_distance: float = maxf(0.0, absf(contact_x - paddle.x) - horizontal_reach)
-	var travel_time: float = travel_distance / paddle.speed
+	var travel_time: float = travel_distance / maxf(1.0, paddle.speed * Stamina.speed_factor(paddle.staminaEnergy))
 	var late_by: float = maxf(0.0, travel_time - time)
 	var playable_height: float = float(balance["playableHitHeight"])
 	var height_penalty: float = 1.4 + (contact_z - playable_height) / 80.0 if contact_z > playable_height else 0.0
@@ -1029,13 +1030,11 @@ static func contextual_perfect_window(state: State, paddle: Ent.SimPaddle, charg
 	var ball := state.ball
 	var side := shot_side(paddle)
 	var moving := clampf(paddle.moveRatio, 0.0, 1.0)
-	var energy := Stamina.assessment_energy(paddle.staminaEnergy)
 	var glass_ball: bool = ball.postGlassSide != null and String(ball.postGlassSide) == side
 	var power := pow(clampf(charge, 0.0, 1.0), 2.0)
 	return clampf(
 		float(balance["perfectTimingWindow"])
 			- moving * float(balance["timingWindowRunPenalty"])
-			- maxf(0.0, 0.65 - energy) * float(balance["timingWindowEnergyPenalty"])
 			- (float(balance["timingWindowGlassPenalty"]) if glass_ball else 0.0)
 			- power * float(balance["timingWindowChargePenalty"])
 			+ clampf(paddle.splitStep, 0.0, 1.0) * float(balance["timingWindowSplitStepBonus"]),
@@ -1077,6 +1076,21 @@ static func update_shot_read(state: State, paddle: Ent.SimPaddle) -> void:
 	var high_ball: bool = ball.z >= float(balance["smashMinHeight"])
 	var opponents_forward := opponents_near_net("ai", [state.opponent, state.opponentMate])
 	var advice := "read"
+	var gravity: float = float(balance["ballGravity"])
+	var ground_time := (ball.vz + sqrt(maxf(0.0, ball.vz * ball.vz + 2.0 * gravity * ball.z))) / gravity
+	var drag_rate := -60.0 * log(float(balance["airDrag"]))
+	var flight_distance := (1.0 - exp(-drag_rate * ground_time)) / drag_rate if drag_rate > 0.0001 else ground_time
+	var landing_y := ball.y + ball.vy * flight_distance
+	# A deep lob earns time to advance, not a speed/precision bonus. Only cue it
+	# once the ball actually pushed the pair back and remains above their reach.
+	if not incoming and not state.serving and state.lastHitterSide == "player" \
+			and ball.shotType in ["lob", "defensive-lob", "globo"] \
+			and ball.y < float(court["netY"]) and ball.vy < 0.0 \
+			and ball.z > float(balance["playableHitHeight"]) + 30.0 \
+			and landing_y > float(court["top"]) + 30.0 and landing_y < float(court["netY"]) - 160.0 \
+			and maxf(state.opponent.y, state.opponentMate.y) < float(court["netY"]) - 145.0 \
+			and paddle.y > float(court["netY"]) + 110.0:
+		advice = "advance"
 	if incoming:
 		if near_glass and ball.z < 62.0:
 			advice = "lob" if opponents_forward else "chiquita"
@@ -1088,6 +1102,15 @@ static func update_shot_read(state: State, paddle: Ent.SimPaddle) -> void:
 			advice = "lob"
 		else:
 			advice = "drive"
+		# Show a placement opportunity only for a reachable short reply and a
+		# genuinely uncovered lane. Never aim or hit on the player's behalf.
+		var open_lane := maxf(minf(state.opponent.x, state.opponentMate.x) - float(court["left"]), float(court["right"]) - maxf(state.opponent.x, state.opponentMate.x))
+		if advice == "drive" and near_net and eta != null and float(eta) >= 0.0 and float(eta) < 0.9 \
+				and bool(responder_forecast(paddle, ball)["reachable"]) \
+				and ball.z < 42.0 and hypot2(ball.vx, ball.vy) < 330.0 \
+				and landing_y > float(court["netY"]) + 42.0 and landing_y < float(court["netY"]) + 155.0 \
+				and open_lane > (float(court["right"]) - float(court["left"])) * 0.34:
+			advice = "space"
 	var perfect_window := contextual_perfect_window(state, paddle, state.shotCharge)
 	var moving := clampf(paddle.moveRatio, 0.0, 1.0)
 	var profile := shot_profile(state.shotCharge, state.shotAim, clampf(1.0 - moving * 0.25, 0.0, 1.0))
@@ -1146,7 +1169,7 @@ static func evaluate_shot_quality(state: State, paddle: Ent.SimPaddle, options: 
 		height = clampf((ball.z - 42.0) / 35.0, 0.2, 1.0)
 	else:
 		height = clampf(1.0 - maxf(0.0, ball.z - 82.0) / 100.0, 0.55, 1.0)
-	var energy: float = Stamina.assessment_energy(paddle.staminaEnergy)
+	var energy: float = Stamina.execution_energy(paddle.staminaEnergy, clampf(charge, 0.0, 1.0), clampf(paddle.moveRatio, 0.0, 1.0), timing, clampf(paddle.splitStep, 0.0, 1.0), overhead)
 	var control: float
 	if paddle.isPlayer:
 		control = clampf(float(athlete_for(state, paddle)["stats"]["control"]) / 1.22, 0.72, 1.05)
@@ -1266,6 +1289,7 @@ static func attack_read(state: State, paddle: Ent.SimPaddle, contact_height: flo
 
 
 static func choose_computer_shot(state: State, paddle: Ent.SimPaddle, profile: Dictionary, contact_height: float = 0.0, ai_timing: float = 1.0) -> Dictionary:
+	var style := Tactics.style(String(athlete_for(state, paddle).get("id", "")))
 	var balance: Dictionary = Frozen.balance()
 	var court: Dictionary = Frozen.court()
 	var opponent_side := "ai" if paddle.isPlayer else "player"
@@ -1282,7 +1306,7 @@ static func choose_computer_shot(state: State, paddle: Ent.SimPaddle, profile: D
 		float(balance["aiLobPressure"]) if pressured else 0.0,
 	)
 	var lob_chance: float = clampf(
-		float(balance["aiLobBase"]) + avanzamento * (float(balance["aiLobForward"]) + float(profile["skill"]) * float(balance["aiLobSkill"])),
+		float(balance["aiLobBase"]) + avanzamento * (float(balance["aiLobForward"]) + float(profile["skill"]) * float(balance["aiLobSkill"])) + float(style.lob),
 		0.0,
 		0.85,
 	)
@@ -1290,7 +1314,7 @@ static func choose_computer_shot(state: State, paddle: Ent.SimPaddle, profile: D
 	var overhead_ready: bool = at_net and contact_height >= 58.0 and state.rallyHits > 0
 	var attack := attack_read(state, paddle, contact_height)
 	var smash_chance: float = clampf(
-		0.08 + float(profile["skill"]) * 0.14 + attack * (float(balance["attackReadSmashGain"]) + float(profile["skill"]) * float(balance["attackReadSmashSkillGain"])),
+		0.08 + float(profile["skill"]) * 0.14 + attack * (float(balance["attackReadSmashGain"]) + float(profile["skill"]) * float(balance["attackReadSmashSkillGain"])) + float(style.smash),
 		0.0,
 		float(balance["attackReadSmashCap"]),
 	)
@@ -1320,6 +1344,14 @@ static func choose_computer_shot(state: State, paddle: Ent.SimPaddle, profile: D
 		"drive": {"depth": 168.0, "lateral": 126.0, "margin": 84.0, "flightTime": 0.98},
 	}
 	var setup: Dictionary = shot_setups.get(kind, shot_setups["drive"])
+	# Preserve lob, smash defence and comfortable volleys. A genuine low,
+	# stretched drive becomes a playable block, not a forced miss or a free point.
+	var containment := 0.0
+	if kind == "drive" and at_net and not returning_smash:
+		containment = Tactics.containment(contact_height, absf(state.ball.x - paddle.x) / maxf(1.0, contact_width(paddle, state.ball)), paddle.moveRatio, float(profile["skill"]))
+		setup = setup.duplicate()
+		setup["depth"] = lerpf(float(setup["depth"]), 120.0, containment)
+		setup["flightTime"] = lerpf(float(setup["flightTime"]), 1.12, containment)
 	var ampiezza: float = float(balance["aiAimWidthBase"]) + float(profile["skill"]) * float(balance["aiAimWidthSkill"])
 	var x: float = clampf(
 		center_x + side_bias * float(setup["lateral"]) * ampiezza + (Rng.next_random(state) - 0.5) * accuracy_error,
@@ -1331,6 +1363,7 @@ static func choose_computer_shot(state: State, paddle: Ent.SimPaddle, profile: D
 		"x": x,
 		"y": target_y_for_side(opponent_side, float(setup["depth"])),
 		"flightTime": float(setup["flightTime"]) * (1.06 - float(profile["skill"]) * 0.08),
+		"containment": containment,
 	}
 
 
@@ -2371,8 +2404,9 @@ static func move_opponent_team(state: State, dt: float) -> void:
 			support_target_x = (center_x + court_width * 0.24) if primary_target_x < center_x else (center_x - court_width * 0.24)
 		state.aiTeamShape = "defend"
 	elif attacking:
-		primary_target_y = float(court["netY"]) - 70.0
-		support_target_y = float(court["netY"]) - 78.0
+		var style := Tactics.style(String(athlete_for(state, primary).get("id", "")))
+		primary_target_y = float(court["netY"]) - float(style.net_depth)
+		support_target_y = primary_target_y - 8.0
 		state.aiTeamShape = "attack"
 	else:
 		primary_target_y = float(court["top"]) + 92.0
@@ -2395,10 +2429,7 @@ static func move_opponent_team(state: State, dt: float) -> void:
 static func tactical_mate_target(state: State, mate: Ent.SimPaddle) -> Dictionary:
 	var court: Dictionary = Frozen.court()
 	var active := state.active_player()
-	var width: float = float(court["right"]) - float(court["left"])
-	var left_lane: float = float(court["left"]) + width * 0.28
-	var right_lane: float = float(court["left"]) + width * 0.72
-	var opposite_lane: float = right_lane if active.x < (float(court["left"]) + float(court["right"])) / 2.0 else left_lane
+	var opposite_lane: float = Tactics.cover_lane(active.x, mate.x, float(court["left"]), float(court["right"]))
 	var tactic: String = state.playerTeamTactic
 	if tactic == "attack":
 		return {"x": opposite_lane, "y": float(court["netY"]) + 78.0}
@@ -2407,9 +2438,8 @@ static func tactical_mate_target(state: State, mate: Ent.SimPaddle) -> Dictionar
 	if tactic == "staggered":
 		var active_at_net: bool = active.y < float(court["netY"]) + 150.0
 		return {"x": opposite_lane, "y": (float(court["bottom"]) - 92.0) if active_at_net else (float(court["netY"]) + 88.0)}
-	var incoming: bool = ball_playable_direction("player", state.ball) and state.ball.y > float(court["netY"])
 	return {
-		"x": clampf(right_lane if state.ball.x < active.x else left_lane, float(court["left"]) + 72.0, float(court["right"]) - 72.0) if incoming else opposite_lane,
+		"x": opposite_lane,
 		"y": (float(court["netY"]) + 88.0) if active.y < float(court["netY"]) + 145.0 else (float(court["bottom"]) - 92.0),
 	}
 
@@ -2417,6 +2447,10 @@ static func tactical_mate_target(state: State, mate: Ent.SimPaddle) -> Dictionar
 static func move_tactical_mate(state: State, mate: Ent.SimPaddle, dt: float) -> void:
 	var court: Dictionary = Frozen.court()
 	var target := tactical_mate_target(state, mate)
+	var active := state.active_player()
+	target.y = Tactics.safe_cover_y(active.x, active.y, mate.x, mate.y, target.x, target.y, float(court["bottom"]))
+	if (mate.x - active.x) * (float(target.x) - active.x) <= 0.0 and absf(mate.y - active.y) < 64.0:
+		target.x = mate.x # Create room in depth before crossing the human's lane.
 	var start_x := mate.x
 	var start_y := mate.y
 	mate.x = clampf(mate.x + clampf(float(target["x"]) - mate.x, -mate.speed * Stamina.speed_factor(mate.staminaEnergy) * dt, mate.speed * Stamina.speed_factor(mate.staminaEnergy) * dt), float(court["left"]) + mate.w / 2.0, float(court["right"]) - mate.w / 2.0)
@@ -2764,7 +2798,8 @@ static func update_match(state: State, dt_in: float, input: Dictionary, input2: 
 
 	var effort_start := {}
 	for p in [state.player, state.playerMate, state.opponent, state.opponentMate]:
-		effort_start[p.key] = Vector2(p.x, p.y)
+		# Preserve double precision like the JS simulation; Vector2 rounds to float32.
+		effort_start[p.key] = [p.x, p.y]
 	var player := state.active_player()
 	if state.humanMode == "coop":
 		control_paddle_charge(state, player, input, dt)
@@ -3037,7 +3072,7 @@ static func update_match(state: State, dt_in: float, input: Dictionary, input2: 
 	update_doubles_ai(state, dt)
 	if state.pointPause <= 0.0 and state.result == null:
 		for p in [state.player, state.playerMate, state.opponent, state.opponentMate]:
-			var distance: float = Vector2(p.x, p.y).distance_to(effort_start[p.key])
+			var distance: float = hypot2(p.x - float(effort_start[p.key][0]), p.y - float(effort_start[p.key][1]))
 			var movement := clampf(distance / maxf(0.000001, p.speed * dt), 0.0, 1.0)
 			var athlete: Dictionary = athlete_for(state, p)
 			p.staminaEnergy = Stamina.effort_energy(p.staminaEnergy, fatigue_dt, movement, p.sprinting, float(athlete.get("stats", {}).get("stamina", 1.0)))

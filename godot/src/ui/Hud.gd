@@ -164,7 +164,7 @@ const CAPTURE_STATES := [
 ## `indicators` names the world-space marks and the timing presentation, which
 ## the controller owns; a profile that turns it off hides nothing here and is
 ## reported, never silently dropped.
-const COMPONENT_IDS := ["score", "time", "map", "guidance", "indicators", "events"]
+const COMPONENT_IDS := ["score", "time", "map", "guidance", "indicators", "events", "preparation"]
 
 var _frame := DESIGN_FRAME
 var _frame_ok := true

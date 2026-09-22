@@ -88,31 +88,73 @@ layout_mode = 2
 
 [node name="PlayerModeColumn" type="VBoxContainer" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel"]
 layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PlayerModeHeader" type="HBoxContainer" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn"]
+layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="PlayerModeLabel" type="Label" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn"]
+[node name="PlayerModeIcon" type="Label" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeHeader"]
 layout_mode = 2
+theme_type_variation = &"LabelSmall"
+
+[node name="PlayerModeLabel" type="Label" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_type_variation = &"LabelSmall"
 text = "playerMode"
 
-[node name="PlayerModeRow" type="HBoxContainer" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn"]
+[node name="PlayerModeSegmentFrame" type="PanelContainer" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_type_variation = &"SegmentedContainer"
 
-[node name="PlayerModeButton_solo" type="Button" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeRow"]
+[node name="PlayerModeRow" type="HBoxContainer" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeSegmentFrame"]
 layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="PlayerModeButton_solo" type="Button" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeSegmentFrame/PlayerModeRow"]
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SegmentedInactive"
+focus_neighbor_left = NodePath("../PlayerModeButton_pvp")
+focus_neighbor_right = NodePath("../PlayerModeButton_coop")
 text = "pmSolo"
 
-[node name="PlayerModeButton_coop" type="Button" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeRow"]
+[node name="PlayerModeButton_coop" type="Button" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeSegmentFrame/PlayerModeRow"]
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SegmentedInactive"
+focus_neighbor_left = NodePath("../PlayerModeButton_solo")
+focus_neighbor_right = NodePath("../PlayerModeButton_pvp")
 text = "pmCoop"
 
-[node name="PlayerModeButton_pvp" type="Button" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeRow"]
+[node name="PlayerModeButton_pvp" type="Button" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeSegmentFrame/PlayerModeRow"]
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SegmentedInactive"
+focus_neighbor_left = NodePath("../PlayerModeButton_coop")
+focus_neighbor_right = NodePath("../PlayerModeButton_solo")
 text = "pmPvp"
 
-[node name="PlayerModeHint" type="Label" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn"]
+[node name="PlayerModeHintPanel" type="PanelContainer" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn"]
 layout_mode = 2
+
+[node name="PlayerModeHintRow" type="HBoxContainer" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeHintPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PlayerModeHintAccent" type="ColorRect" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeHintPanel/PlayerModeHintRow"]
+custom_minimum_size = Vector2(4, 48)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="PlayerModeHint" type="Label" parent="Frame/Scroll/Body/PlayerModeArea/PlayerModePanel/PlayerModeColumn/PlayerModeHintPanel/PlayerModeHintRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_type_variation = &"LabelSmall"
 autowrap_mode = 2
+vertical_alignment = 1
 text = "pmHint"

@@ -223,25 +223,25 @@ var pace_factor: float = 1.0
 ## The six stable component ids, in the contract's own order. `src/ui/Hud.gd`
 ## mirrors this list (`Hud.COMPONENT_IDS`) and `tests/ui/ui_visibility_audit.gd`
 ## asserts the two are equal, so the HUD cannot drift from the owner.
-const UI_COMPONENTS := ["score", "time", "map", "guidance", "indicators", "events"]
+const UI_COMPONENTS := ["score", "time", "map", "guidance", "indicators", "events", "preparation"]
 
 ## The four presets, as exact maps over `UI_COMPONENTS`.
 const UI_PRESET_MAPS := {
 	"all": {
 		"score": true, "time": true, "map": true,
-		"guidance": true, "indicators": true, "events": true,
+		"guidance": true, "indicators": true, "events": true, "preparation": true,
 	},
 	"essential": {
 		"score": true, "time": true, "map": false,
-		"guidance": false, "indicators": true, "events": true,
+		"guidance": false, "indicators": true, "events": true, "preparation": true,
 	},
 	"score_only": {
 		"score": true, "time": false, "map": false,
-		"guidance": false, "indicators": false, "events": false,
+		"guidance": false, "indicators": false, "events": false, "preparation": false,
 	},
 	"clean": {
 		"score": false, "time": false, "map": false,
-		"guidance": false, "indicators": false, "events": false,
+		"guidance": false, "indicators": false, "events": false, "preparation": false,
 	},
 }
 ## The presets in the order the pause tab lists them.
@@ -257,6 +257,7 @@ const UI_COMPONENT_LABELS := {
 	"score": "uiCompScore", "time": "uiCompTime", "map": "uiCompMap",
 	"guidance": "uiCompGuidance", "indicators": "uiCompIndicators",
 	"events": "uiCompEvents",
+	"preparation": "uiCompPreparation",
 }
 ## The hint's own geometry: 24 px above the frame's bottom edge, centred.
 const UI_HINT_BOTTOM := 24.0
@@ -417,7 +418,9 @@ func _ready() -> void:
 	# question, asked once, and the clock (`engine_driven`) is not part of it
 	# (architecture-deepening gate 4).
 	_ui_new = (not ui_legacy) and _arg(args, "--ui=", "new") != "legacy"
-	var camera := _arg(args, "--camera=", Config.camera_preset)
+	var camera := _arg(args, "--camera=", String(Config.stored_prefs().get("cameraPreset", "default")))
+	if not Court.CAMERAS.has(camera):
+		camera = "default"
 	var tier := _arg(args, "--tier=", "")
 	var athlete := _arg(args, "--athlete=", "")
 	var arena_arg := _arg(args, "--arena=", "")
@@ -730,7 +733,9 @@ func _build_scene() -> void:
 	sm.radius = Court.BALL_R
 	sm.height = Court.BALL_R * 2.0
 	_ball_view.mesh = sm
-	_ball_view.material_override = Court.material(Color(0.98, 0.90, 0.16), 0.4)
+	var ball_material := ShaderMaterial.new()
+	ball_material.shader = preload("res://game/ball_readable.gdshader")
+	_ball_view.material_override = ball_material
 	add_child(_ball_view)
 
 	_land_ring = MeshInstance3D.new()
@@ -1553,7 +1558,16 @@ func tick_fixed(dt: float, input: Dictionary, input2: Dictionary) -> Variant:
 	# does keep. Presentation only — nothing it does is read back here.
 	if _crowd != null:
 		_crowd.observe(state, ticks)
+	var train := _depot_train()
+	if train != null:
+		if ticks == 1: train.reset_schedule()
+		train.step(dt, float(state.pointPause) > 0.0, state.result != null)
 	return result
+
+
+func _depot_train() -> Node3D:
+	if _arena_root == null: return null
+	return _arena_root.get_node_or_null("Scenery/LocomotiveDepot/PassingTrain") as Node3D
 
 
 func _points_total() -> int:
@@ -1696,6 +1710,10 @@ func _sync_ball_cues(ball) -> void:
 
 
 func _sync_views() -> void:
+	var train := _depot_train()
+	if train != null:
+		var muted: bool = _audio == null or _audio.port == null or _audio.port.is_muted()
+		train.sync_audio(_paused or _replay_active, muted)
 	if state == null:
 		return
 	# UIR-22: the views only exist when the models were loaded — `harness_mode()` and
@@ -1759,7 +1777,10 @@ func _sync_views() -> void:
 	# same live state. Placed BEFORE the athletes' early return below, so a frame with
 	# rigs (the playable build) syncs it exactly as a frame without them does.
 	if _timing_marks != null:
-		_timing_marks.update(state, finished)
+		var preparation := Sim.evaluate_shot_quality(state, state.active_player(), {
+			"charge": state.shotCharge, "aim": state.shotAim, "variant": state.shotIntent,
+		})
+		_timing_marks.update(state, finished, preparation)
 
 	# The four athletes. The rigs own their own position, facing, gait, stroke and
 	# racket (`game/athletes_view.gd`); only the capsule fallback is moved here.
@@ -2118,11 +2139,19 @@ func _unhandled_input(event: InputEvent) -> void:
 ## own. `main_menu.gd:963-968` states the same rule for every menu screen and is why
 ## this card is the only place the walk used to run.
 func _input(event: InputEvent) -> void:
+	# Options (PS5) / Menu (Xbox) always use the pause route, even with HUD hidden.
+	if state != null and event is InputEventJoypadButton and event.pressed and event.button_index == JOY_BUTTON_START:
+		var pause_event := InputEventAction.new()
+		pause_event.action = &"padel_pause"
+		pause_event.pressed = true
+		_unhandled_input(pause_event)
+		get_viewport().set_input_as_handled()
+		return
 	# Clean mode rides the PRE-GUI path. A left double-click over any HUD control with
 	# `MOUSE_FILTER_STOP` is consumed by that control before `_unhandled_input` ever
 	# runs, so the gesture has to be answered here, before the engine's GUI walk.
 	# `_clean_mode_event` returns false while the pause card is open, so the card keeps
-	# every press it owns; the event is consumed here so a pad Start/Back cannot also
+	# every press it owns; the event is consumed here so a pad View cannot also
 	# reach the InputMap's `padel_pause` below (`_unhandled_input`).
 	if state != null and _clean_mode_event(event):
 		get_viewport().set_input_as_handled()
@@ -2205,6 +2234,15 @@ func is_hud_hidden() -> bool:
 
 ## The profile in force, one entry per `UI_COMPONENTS` entry. A copy: the caller
 ## reads it, it does not write through it (`set_ui_component` is the door).
+func set_camera_preset(id: String) -> bool:
+	if id not in ["default", "immersive", "tactical", "broadcast", "courtside"] or _cam == null:
+		return false
+	Court.apply_camera(_cam, id)
+	Config.camera_preset = id
+	ModesSave.save_pref(Config.save_store(), "cameraPreset", id)
+	return true
+
+
 func ui_visibility_snapshot() -> Dictionary:
 	var out := {}
 	for id in UI_COMPONENTS:
@@ -2278,7 +2316,7 @@ func set_hud_hidden(hidden: bool) -> bool:
 	return _hud_hidden
 
 
-## The toggle the left double-click and the pad's Start/Back ride. Returns the new
+## The toggle the left double-click and the pad's View ride. Returns the new
 ## state.
 func toggle_hud_hidden() -> bool:
 	return set_hud_hidden(not _hud_hidden)
@@ -2362,6 +2400,7 @@ func _apply_hud_visibility() -> void:
 	# A/B capture flips.
 	if _timing_marks != null:
 		_timing_marks.set_muted(not _ui_component_on("indicators"))
+		_timing_marks.preparation_enabled = _ui_component_on("preparation")
 	# The hint's visibility is a function of the profile and the card, so it is
 	# re-derived on every pass that repaints the surfaces (one writer, no drift).
 	_apply_ui_hint()
@@ -2429,12 +2468,8 @@ func _build_restore_hint() -> Control:
 	return root
 
 
-## True when `event` is a clean-view toggle gesture and it was applied. The two pad
-## buttons are the ones the contract names (`JOY_BUTTON_START`, `JOY_BUTTON_BACK`),
-## read directly rather than through the InputMap: the pad's Start is ALSO
-## `padel_pause`'s own binding, and this rung has to answer the same press the pause
-## rung would, so the event is consumed here and the pause never runs. A press while
-## the pause card is open belongs to the card and is left alone.
+## Double-click and View toggle clean mode. Options/Menu belongs to pause.
+## A press while the pause card is open belongs to the card and is left alone.
 func _clean_mode_event(event: InputEvent) -> bool:
 	if _pause_overlay != null and _pause_overlay.is_open():
 		return false
@@ -2446,8 +2481,7 @@ func _clean_mode_event(event: InputEvent) -> bool:
 		return false
 	if event is InputEventJoypadButton:
 		var button := event as InputEventJoypadButton
-		if button.pressed and (button.button_index == JOY_BUTTON_START
-				or button.button_index == JOY_BUTTON_BACK):
+		if button.pressed and button.button_index == JOY_BUTTON_BACK:
 			toggle_hud_hidden()
 			return true
 	return false

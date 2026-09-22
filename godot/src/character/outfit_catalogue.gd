@@ -112,7 +112,7 @@ static func _apply_texture_outfit(rig: Node, athlete_id: StringName, outfit_id: 
 		var path: String = TEXTURE_OUTFITS[athlete_id].get(outfit_id, "")
 		if path.is_empty():
 			return false
-		var mat: StandardMaterial3D = rig.get_meta("outfit_texture_material", null)
+		var mat: StandardMaterial3D = rig.get_meta("outfit_texture_material") if rig.has_meta("outfit_texture_material") else null
 		if mat == null or mat.get_meta("outfit_texture_path", "") != path:
 			var source: StandardMaterial3D = rig.get_base_material()
 			var texture := load(path) as Texture2D
