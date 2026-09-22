@@ -956,12 +956,14 @@ const LOOK_BONES := [["Spine", 0.18], ["Spine01", 0.18], ["Spine02", 0.18], ["ne
 ## Hard limit of the look yaw, degrees either side of the rig's facing.
 const LOOK_MAX_DEGREES := 55.0
 ## Most of a backswing: the contact frame still has a pose to swing into.
-const ANTICIPATION_MAX := 0.85
-## A preparation frame must put the racket behind the athlete's torso plane or
-## above his ready hand by this much (in body lengths) before the wind-up is
-## shown at all: below it there is no honest preparation in the clip, and no
-## wind-up beats the pose that reads as the athlete shielding himself.
-const PREP_MIN_SCORE := 0.15
+const ANTICIPATION_MAX := 0.60
+## How far the racket must go, in body lengths, for a clip frame to count as a
+## preparation: behind the torso plane (PREP_MIN_BACK) or above the shoulder
+## (PREP_MIN_ABOVE, and then it must not sit further forward than PREP_MAX_FRONT,
+## which is what makes an arm held out at chest height a shield, not a wind-up).
+const PREP_MIN_BACK := 0.10
+const PREP_MIN_ABOVE := 0.10
+const PREP_MAX_FRONT := 0.10
 ## The knee flexion a low-contact adaptation may reach in total (the clip's own
 ## stance plus what this adds). A padel player on a low ball bends to roughly
 ## 50-60 deg; measured before this bound: 100-110 deg on every groundstroke.
@@ -1070,20 +1072,33 @@ func _prep_pose_for(stroke: StringName, contact_phase: float = 0.5) -> Dictionar
 	var ready_hand := _ready_hand_local()
 	if ready_hand == Vector3.ZERO:
 		ready_hand = hand0
+	# A frame only counts as a preparation if it does one of two things, measured
+	# on the athlete's own skeleton:
+	#   * takes the racket BEHIND the torso plane (z <= -PREP_MIN_BACK), or
+	#   * lifts it ABOVE THE SHOULDER without pushing it in front of the torso
+	#     (an overhead wind-up). The second condition is what rejects the arm
+	#     extended forward at chest height — the pose that reads as the athlete
+	#     protecting himself with the racket, which the authored placeholder
+	#     clips hold on every frame.
 	var best_t := 0.0
 	var best_score := -INF
 	for step in 25:
 		var t := contact * float(step) / 24.0
 		var hand := _hand_local_at(anim, t)
 		var behind: float = -hand.z / scale
-		var raised: float = 0.6 * (hand.y - ready_hand.y) / scale
-		var score: float = maxf(behind, raised)
+		var score := -INF
+		if behind >= PREP_MIN_BACK:
+			score = behind
+		if hand.z <= PREP_MAX_FRONT:
+			var above: float = (hand.y - _bone_local_at(anim, t, "RightShoulder").y) / scale
+			if above >= PREP_MIN_ABOVE:
+				score = maxf(score, 0.6 * above)
 		if score > best_score:
 			best_score = score
 			best_t = t
-	if best_score < PREP_MIN_SCORE:
+	if best_score <= 0.0:
 		_prep_cache[key] = pose
-		_prep_meta[key] = {"t": best_t, "z": 0.0, "y": 0.0, "score": best_score, "bones": 0}
+		_prep_meta[key] = {"t": best_t, "z": 0.0, "y": 0.0, "raised": 0.0, "score": best_score, "bones": 0}
 		return pose
 	for index in tracks:
 		var track: int = tracks[index]
@@ -1130,9 +1145,15 @@ func _ready_hand_local() -> Vector3:
 ## own (metres on a Meshy export, centimetres on the legacy Volpe one), which is
 ## why every use of it normalises by `_hand_local_at(anim, 0.0).length()`.
 func _hand_local_at(anim: Animation, t: float) -> Vector3:
+	return _bone_local_at(anim, t, "RightHand")
+
+
+## Same forward kinematics, for any bone of the arm chain (the shoulder line is
+## what tells an overhead wind-up from an arm held out in front of the chest).
+func _bone_local_at(anim: Animation, t: float, bone_name: String) -> Vector3:
 	if _skeleton == null:
 		return Vector3.ZERO
-	var hand := _skeleton.find_bone(_resolve_bone_name("RightHand"))
+	var hand := _skeleton.find_bone(_resolve_bone_name(bone_name))
 	if hand < 0:
 		return Vector3.ZERO
 	var chain: Array[int] = []

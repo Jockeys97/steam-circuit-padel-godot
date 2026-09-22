@@ -8,7 +8,7 @@ extends SceneTree
 ##     --script res://game/tools/bend_frames.gd -- --out=/tmp/bend
 const Spawn = preload("res://src/character/athlete_spawn.gd")
 const ATHLETE := &"fiamma"
-const STROKE := &"meshy_drive"
+var STROKE := &"meshy_drive"   # --stroke=<clip> to render another stroke
 
 
 func _initialize() -> void:
@@ -60,6 +60,8 @@ func run() -> void:
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--out="):
 			out = a.substr(6)
+		elif a.begins_with("--stroke="):
+			STROKE = StringName(a.substr(9))
 	DirAccess.make_dir_recursive_absolute(out)
 	root.size = Vector2i(1400, 760)
 	_light()
@@ -107,12 +109,12 @@ func run() -> void:
 		r._anim.pause()
 	for i in 2:
 		await process_frame
-	b2.set_anticipation(STROKE, 0.85, 0.34)
+	b2.set_anticipation(STROKE, 1.0, 0.34)   # the rig caps this at ANTICIPATION_MAX
 	for i in 2:
 		await process_frame
 	_label("caricamento: spento", Vector3(-0.75, 2.0, 0))
-	_label("caricamento: acceso (0.85)", Vector3(0.75, 2.0, 0))
+	_label("caricamento: acceso", Vector3(0.75, 2.0, 0))
 	_camera(3.2)
-	await _save("%s/windup-off-vs-on.png" % out)
+	await _save("%s/windup-%s-off-vs-on.png" % [out, String(STROKE).trim_prefix("meshy_")])
 	print("BEND_FRAMES_DONE")
 	quit(0)

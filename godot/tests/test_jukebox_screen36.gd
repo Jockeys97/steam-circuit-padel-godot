@@ -13,7 +13,7 @@ func _initialize() -> void:
 		
 	var track_count: int = juke._track_buttons.size()
 	print("Track buttons count: %d" % track_count)
-	assert(track_count == 42, "Jukebox should display exactly 42 tracks, got %d" % track_count)
+	assert(track_count == 47, "Jukebox should display exactly 47 tracks, got %d" % track_count)
 	
 	# Find the index of ost_sawano_titan_breach
 	var all_ids := SoundtrackManager.all_track_ids()
@@ -48,6 +48,24 @@ func _initialize() -> void:
 		juke._on_play_pressed()
 		assert(juke._manager.current_track_id() == vox_id, "Current track must match %s" % vox_id)
 		print("Verified Vocal Anthem: %s -> %s" % [vox_id, juke._now_playing_label.text])
+
+	# Test Dragon Ball GT Tracks (including the 2 sung vocal anthems)
+	var dbgt_targets := [
+		"ost_dbgt_dan_dan_vocal",
+		"ost_dbgt_dont_you_see_vocal",
+		"ost_dbgt_grand_tour",
+		"ost_dbgt_super_saiyan_4",
+		"ost_dbgt_sabitsuita_machine_gun"
+	]
+	for db_id in dbgt_targets:
+		var db_idx := all_ids.find(db_id)
+		assert(db_idx != -1, "%s must be present in all_track_ids" % db_id)
+		juke._select_track(db_idx)
+		assert(juke._category_badge.text == "[ DRAGON BALL GT / 90S ANIME ]", "Badge must be DRAGON BALL GT / 90S ANIME")
+		assert(juke._status_badge.text.contains("✔"), "%s audio file must be present on disk" % db_id)
+		juke._on_play_pressed()
+		assert(juke._manager.current_track_id() == db_id, "Current track must match %s" % db_id)
+		print("Verified Dragon Ball GT OST: %s -> %s" % [db_id, juke._now_playing_label.text])
 	
 	# Ensure Track 16 (ost_sawano_counterattack) is still present and working
 	var k21_orig_idx := all_ids.find("ost_sawano_counterattack")
@@ -57,5 +75,5 @@ func _initialize() -> void:
 	assert(juke._manager.current_track_id() == "ost_sawano_counterattack", "Track 16 must play properly")
 	
 	juke._on_stop_pressed()
-	print("All Jukebox 42-track and Sawano Vocal Anthems verified successfully!")
+	print("All Jukebox 47-track and Dragon Ball GT features verified successfully!")
 	quit(0)

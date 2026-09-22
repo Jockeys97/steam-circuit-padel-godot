@@ -19,9 +19,9 @@ func _initialize() -> void:
 func _run() -> void:
 	print("[soundtrack_manager_test] Starting verification suite...")
 
-	# 1. Catalog integrity & count (42 OST tracks: 22 standard + 8 epic + 12 Sawano Titan)
+	# 1. Catalog integrity & count (47 OST tracks: 22 standard + 8 epic + 12 Sawano Titan + 5 DBGT)
 	var all_tracks := SoundtrackManager.all_track_ids()
-	_assert_eq(all_tracks.size(), 42, "Catalog contains exactly 42 distinct OST track IDs")
+	_assert_eq(all_tracks.size(), 47, "Catalog contains exactly 47 distinct OST track IDs")
 
 	# 2. Frozen 9 Arena Mappings
 	_assert_eq(SoundtrackManager.track_id_for_arena("officina"), "ost_officina", "Arena officina maps to ost_officina")
@@ -76,6 +76,13 @@ func _run() -> void:
 	_assert_eq(SoundtrackManager.track_id_for_context("colossal_smash_vocal"), "ost_sawano_colossal_smash_vocal", "Context colossal_smash_vocal maps to ost_sawano_colossal_smash_vocal")
 	_assert_eq(SoundtrackManager.track_id_for_context("barricades"), "ost_sawano_barricades", "Context barricades maps to ost_sawano_barricades")
 	_assert_eq(SoundtrackManager.track_id_for_context("barricades_vocal"), "ost_sawano_barricades_vocal", "Context barricades_vocal maps to ost_sawano_barricades_vocal")
+
+	# 5d. Dragon Ball GT / 90s Anime Suite Context Mappings (2 Sung Vocal Anthems + 3 Instrumentals)
+	_assert_eq(SoundtrackManager.track_id_for_context("dbgt_dan_dan_vocal"), "ost_dbgt_dan_dan_vocal", "Context dbgt_dan_dan_vocal maps to ost_dbgt_dan_dan_vocal")
+	_assert_eq(SoundtrackManager.track_id_for_context("dbgt_dont_you_see_vocal"), "ost_dbgt_dont_you_see_vocal", "Context dbgt_dont_you_see_vocal maps to ost_dbgt_dont_you_see_vocal")
+	_assert_eq(SoundtrackManager.track_id_for_context("dbgt_grand_tour"), "ost_dbgt_grand_tour", "Context dbgt_grand_tour maps to ost_dbgt_grand_tour")
+	_assert_eq(SoundtrackManager.track_id_for_context("dbgt_super_saiyan_4"), "ost_dbgt_super_saiyan_4", "Context dbgt_super_saiyan_4 maps to ost_dbgt_super_saiyan_4")
+	_assert_eq(SoundtrackManager.track_id_for_context("dbgt_sabitsuita_machine_gun"), "ost_dbgt_sabitsuita_machine_gun", "Context dbgt_sabitsuita_machine_gun maps to ost_dbgt_sabitsuita_machine_gun")
 
 	# 6. Candidate Paths Formatting
 	var paths := SoundtrackManager.candidate_paths("ost_officina")

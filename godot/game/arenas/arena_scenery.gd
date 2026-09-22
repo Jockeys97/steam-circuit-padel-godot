@@ -220,6 +220,13 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 	# The trees' shared scene is cached across the prop loop (one read, N draws);
 	# drop it now so no Resource outlives this arena in a `static var`.
 	Trees.release()
+	if id in ["torii", "medina", "carioca", "aurora"]:
+		# These outdoor arenas already have a continuous panorama sky in ArenaLook.
+		# The old camera-sized painting masks it and exposes rectangular edges when
+		# the match camera moves. Retain the actual 3D dressing and kit assets.
+		for child in root.get_children():
+			if String(child.name).begins_with("Backdrop"):
+				(child as Node3D).hide()
 	if id == "egeo":
 		preload("res://game/arenas/egeo_environment.gd").build(root)
 	if id in ["officina","locomotive","clockwork"]:
@@ -470,6 +477,17 @@ static func _sky_color(ctx: Dictionary, y: float) -> Color:
 ## the quad would draw opaque over the sky.
 static func _alpha_quad(parent: Node3D, name: String, size: Vector2, pos: Vector3,
 		texture: Texture2D, alpha := 1.0) -> MeshInstance3D:
+	# Fade the ribbon's lateral edges as well as its authored vertical gradient.
+	# A small, build-time texture avoids hard rectangles without a frame callback.
+	var source := texture.get_image()
+	var soft := Image.create_empty(64, source.get_height(), false, Image.FORMAT_RGBA8)
+	for y in soft.get_height():
+		for x in soft.get_width():
+			var u := float(x) / float(soft.get_width() - 1)
+			var color := source.get_pixel(0, y)
+			color.a *= smoothstep(0.0, 0.2, u) * smoothstep(0.0, 0.2, 1.0 - u)
+			soft.set_pixel(x, y, color)
+	texture = ImageTexture.create_from_image(soft)
 	var mi := CourtBuilder.textured_quad(parent, name, size, pos, texture)
 	var mat := mi.material_override as StandardMaterial3D
 	if mat != null:

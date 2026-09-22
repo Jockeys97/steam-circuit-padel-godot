@@ -60,7 +60,7 @@ func _build_ui() -> void:
 	add_child(_shell)
 	_shell.setup("jukebox")
 	_shell.set_title_text("JUKEBOX & SOUND TEST")
-	_shell.set_subtitle_text("Colonna sonora originale — 42 tracce (Standard, Epiche e Suite Sawano Titan)")
+	_shell.set_subtitle_text("Colonna sonora originale — 47 tracce (Standard, Epiche, Suite Sawano e Dragon Ball GT)")
 	_shell.set_back_target("menu")
 
 	var back_btn: Button = _shell.back_control()
@@ -309,6 +309,8 @@ func _select_track(idx: int) -> void:
 	_category_badge.text = "[ %s ]" % cat_str.to_upper()
 	if cat_str.begins_with("Sawano"):
 		_category_badge.add_theme_color_override("font_color", Color(1.0, 0.28, 0.35))
+	elif cat_str.begins_with("Dragon Ball"):
+		_category_badge.add_theme_color_override("font_color", Color(1.0, 0.55, 0.1)) # Iconic Dragon Ball Orange
 	elif cat_str.begins_with("Epico"):
 		_category_badge.add_theme_color_override("font_color", Color(1.0, 0.82, 0.2))
 	else:

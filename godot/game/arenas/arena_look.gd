@@ -349,6 +349,9 @@ static func apply(env: Environment, sun: DirectionalLight3D, fill: DirectionalLi
 	fill.light_color = rig["fill_color"]
 	fill.light_energy = float(rig["fill_energy"])
 	fill.shadow_enabled = false
+	if id in ["torii", "medina", "carioca", "aurora"]:
+		# Keep depth haze on scenery, not on the now fully exposed sky panorama.
+		env.fog_sky_affect = 0.0
 	if id == "egeo":
 		var sky_material := ProceduralSkyMaterial.new()
 		sky_material.sky_top_color = Color("287dc0")

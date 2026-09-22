@@ -2,7 +2,7 @@ extends Node
 ## soundtrack_manager.gd — Complete OST and Dynamic Music Manager for Steam Circuit Padel Pro.
 ##
 ## WHAT IT DOES:
-##   Manages playback and smooth crossfades for the 42 orchestral/steampunk OST tracks.
+##   Manages playback and smooth crossfades for the 47 orchestral/steampunk OST tracks.
 ##   Resolves arena and menu contexts to track IDs, streams audio files from
 ##   `res://assets/audio/music/`, and routes audio directly to the engine's `Music` bus.
 ##
@@ -68,9 +68,15 @@ const CONTEXT_TRACK_MAP := {
 	"colossal_smash_vocal": "ost_sawano_colossal_smash_vocal",
 	"barricades": "ost_sawano_barricades",
 	"barricades_vocal": "ost_sawano_barricades_vocal",
+	# 5 Dragon Ball GT / 90s Anime Suite (2 Sung Vocal Anthems + 3 Instrumentals)
+	"dbgt_dan_dan_vocal": "ost_dbgt_dan_dan_vocal",
+	"dbgt_dont_you_see_vocal": "ost_dbgt_dont_you_see_vocal",
+	"dbgt_grand_tour": "ost_dbgt_grand_tour",
+	"dbgt_super_saiyan_4": "ost_dbgt_super_saiyan_4",
+	"dbgt_sabitsuita_machine_gun": "ost_dbgt_sabitsuita_machine_gun",
 }
 
-## Complete metadata dictionary for all 42 OST tracks (22 Standard + 8 Epic/Anime + 12 Sawano/Titan)
+## Complete metadata dictionary for all 47 OST tracks (22 Standard + 8 Epic/Anime + 12 Sawano + 5 DBGT)
 const TRACK_METADATA := {
 	"ost_menu": {
 		"id": "ost_menu",
@@ -494,6 +500,57 @@ const TRACK_METADATA := {
 		"style": "Inno J-Rock anime shonen cantato con battiti di mani, slap bass e ritornello a due voci",
 		"prompt": "Joyful and electrifying Hiroyuki Sawano J-Rock anime vocal anthem (style of Barricades and Zero Eclipse). Energetic spoken shout intro with clapping hands, punchy slap bassline, sunny dual male/female vocal chorus singing in thirds, and triumphant stadium victory celebration."
 	},
+	# 5 Dragon Ball GT / 90s Anime Suite Tracks
+	"ost_dbgt_dan_dan_vocal": {
+		"id": "ost_dbgt_dan_dan_vocal",
+		"title": "DAN DAN Kokoro Hikareteku (Bit by Bit)",
+		"scene": "Opening Shonen GT & Inno J-Pop Cantato",
+		"category": "Dragon Ball GT / 90s Anime",
+		"bpm": 132,
+		"key": "C major",
+		"style": "Inno J-Pop leggendario interamente cantato, chitarre acustiche a 16esimi, piano Rhodes DX7 e ottoni solari",
+		"prompt": "Legendary 90s anime J-Pop opening theme in the unmistakable style of Dan Dan Kokoro Hikareteku (Field of View / ZARD). Melodic Japanese singing vocals, shimmering 16th-note acoustic guitar strumming, bright DX7 electric piano chords, punchy brass hits, upbeat rock drums, joyful nostalgic anime melody."
+	},
+	"ost_dbgt_dont_you_see_vocal": {
+		"id": "ost_dbgt_dont_you_see_vocal",
+		"title": "Don't You See! (Memories in the Sky)",
+		"scene": "Ending Melodica & Ballata J-Rock",
+		"category": "Dragon Ball GT / 90s Anime",
+		"bpm": 118,
+		"key": "E major",
+		"style": "Ballata J-Rock nostalgica cantata con voce femminile, piano Rhodes, basso fretless e chitarre sognanti",
+		"prompt": "Emotional 90s anime J-Rock ballad in the style of Don't You See! by ZARD (Dragon Ball GT ending). Expressive melodic female singing vocals, warm Rhodes electric piano, melodic chorused bassline, gentle rock drum groove, soaring electric guitar solo, heartfelt sunset anime nostalgia."
+	},
+	"ost_dbgt_grand_tour": {
+		"id": "ost_dbgt_grand_tour",
+		"title": "G.T. Grand Tour Odyssey",
+		"scene": "Viaggio Spaziale & Esplorazione Cosmica",
+		"category": "Dragon Ball GT / 90s Anime",
+		"bpm": 140,
+		"key": "D major",
+		"style": "Synth-rock d'avventura spaziale con arpeggiatori cosmici, impulsi Dragon Radar e fanfara di chitarre",
+		"prompt": "90s cosmic anime synth-rock adventure theme for Dragon Ball GT space exploration. Pumping analog synth arpeggios, electronic Dragon Radar bleep pulses, driving four-on-the-floor beat, soaring heroic lead guitar melody, brass accents, galactic journey."
+	},
+	"ost_dbgt_super_saiyan_4": {
+		"id": "ost_dbgt_super_saiyan_4",
+		"title": "Primal Awakening: Super Saiyan 4",
+		"scene": "Trasformazione Scimmione Dorato & Risveglio Supremo",
+		"category": "Dragon Ball GT / 90s Anime",
+		"bpm": 156,
+		"key": "D minor",
+		"style": "Heavy rock sinfonico tellurico con flauto Shakuhachi, riff pesanti, doppia cassa e ottoni guerrieri",
+		"prompt": "Epic primal transformation battle theme for Super Saiyan 4 (Dragon Ball GT). Haunting solo Japanese bamboo flute (Shakuhachi) intro, exploding into thunderous heavy metal guitar riffs in D minor, double-kick rock drums, orchestral brass power stabs, unstoppable primal warrior power."
+	},
+	"ost_dbgt_sabitsuita_machine_gun": {
+		"id": "ost_dbgt_sabitsuita_machine_gun",
+		"title": "Rusting Machine Gun (90s Heartbeat)",
+		"scene": "Ending Shonen Spensierata & Rivincita",
+		"category": "Dragon Ball GT / 90s Anime",
+		"bpm": 168,
+		"key": "G major",
+		"style": "Pop-punk anime anni '90 veloce e spensierato con chitarre in levare, rullante incalzante e melodia allegra",
+		"prompt": "High-tempo 90s anime pop-punk ending theme in the style of Sabitsuita Machine Gun (WANDS). Upbeat staccato guitar skank intro, driving skate-punk drum beat at 168 BPM, melodic walking bassline, bright distorted power chords, euphoric shonen anime celebration."
+	},
 }
 
 const SUPPORTED_EXTENSIONS := [".ogg", ".mp3", ".wav"]
@@ -533,7 +590,7 @@ func _setup_players() -> void:
 	add_child(_player_b)
 
 
-## Returns all 42 registered OST track IDs.
+## Returns all 47 registered OST track IDs.
 static func all_track_ids() -> PackedStringArray:
 	var out := PackedStringArray()
 	for k in CONTEXT_TRACK_MAP:
