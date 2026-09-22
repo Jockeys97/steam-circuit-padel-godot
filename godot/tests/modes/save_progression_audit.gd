@@ -19,6 +19,8 @@
 ##     `athleteWins` — the finding `modes_save.gd` states);
 ##   - `is_unlocked` still answers correctly on a RELOADED career, so the persist
 ##     layer is not just storing bytes;
+##   - the shared end-of-match outfit path persists challenge wins and athlete
+##     victories outside career too, matching the browser's pre-mode branch;
 ##   - the drill record writes only on improvement (`js/ui.js:219-230`) and the
 ##     session's best follows the persisted record (`js/main.js:2122-2124`);
 ##   - the history is newest-first and capped at 20 (`js/ui.js:1551`);
@@ -35,8 +37,14 @@ const ModesSave := preload("res://src/modes/modes_save.gd")
 const CareerProgress := preload("res://src/modes/career_progress.gd")
 const CareerRules := preload("res://src/modes/career_rules.gd")
 const Tables := preload("res://src/modes/mode_tables.gd")
+const Frozen := preload("res://src/sim/frozen.gd")
+const Sim := preload("res://src/sim/sim.gd")
+const ModeSession := preload("res://game/mode_session.gd")
+const MatchController := preload("res://game/match_controller.gd")
+const Config := preload("res://game/match_config.gd")
 
 const DIR := "user://modes-port-audit"
+const TOURNAMENT_DIR := "user://modes-port-audit-tournament"
 
 
 ## The only fields `ModesSave.drill_record_after` reads from a session. The real
@@ -108,6 +116,82 @@ static func run(audit: AuditBase) -> void:
 	audit.check_eq(int(reloaded_older["stars"]), 4, "save_progression/partial_save_keeps_its_stars")
 	audit.check_true(reloaded_older.has("matchIndex"), "save_progression/partial_save_gains_defaults")
 
+	# --- outfit challenges in every match mode -------------------------------
+	# The browser evaluates these before branching into quick/tournament/career.
+	# Stage a fresh career, then use the helper called by the quick and tournament
+	# completion paths. A strong won match must both unlock and increment wins.
+	ModesSave.save_career(store, CareerProgress.empty_career())
+	var match_stats := {
+		"pointsWon": {"player": 20, "ai": 4},
+		"aces": {"player": 8, "ai": 0},
+		"winners": {"player": 20, "ai": 1},
+		"errors": {"player": 0, "ai": 8},
+		"doubleFaults": {"player": 0, "ai": 2},
+		"smashWinners": {"player": 12, "ai": 0},
+		"rallyCount": 8,
+		"totalRallyHits": 120,
+		"longestRally": 30,
+	}
+	var every_mode_award := ModesSave.award_match_outfits(
+		store, "maestro", match_stats, true, 0.95
+	)
+	var awarded_outfits: Array = every_mode_award.get("outfits", [])
+	var after_match := ModesSave.load_career(store)
+	audit.check_gt(awarded_outfits.size(), 0, "save_progression/non_career_match_can_unlock_outfits")
+	audit.check_eq(int((after_match.get("athleteWins", {}) as Dictionary).get("maestro", 0)), 1,
+		"save_progression/non_career_win_increments_athlete_wins")
+	var persisted_wins: Dictionary = after_match.get("outfitsWon", {})
+	var all_awards_persisted := true
+	for earned_outfit in awarded_outfits:
+		all_awards_persisted = all_awards_persisted and bool(persisted_wins.get(String((earned_outfit as Dictionary).get("unlockKey", "")), false))
+	audit.check_true(all_awards_persisted, "save_progression/non_career_outfit_awards_survive_reload")
+	audit.check_true(not (every_mode_award.get("saved", {}) as Dictionary).is_empty(),
+		"save_progression/non_career_progress_writes_through_save_store")
+
+	# The actual quick-match seam caches the award, so opening/rendering the result
+	# more than once cannot turn one victory into two.
+	var old_save_dir := Config.save_dir
+	Config.save_dir = DIR
+	var quick := MatchController.new()
+	quick.state = Sim.create_match_state(
+		"quick", Frozen.athletes()[3], Frozen.arenas()[0], Frozen.ai_opponents()[3]
+	)
+	quick.state.stats = match_stats.duplicate(true)
+	quick.state.result = {"winner": "player"}
+	var quick_first: Dictionary = quick._finish_quick_outfits()
+	var quick_second: Dictionary = quick._finish_quick_outfits()
+	var after_quick := ModesSave.load_career(store)
+	audit.check_gt((quick_first.get("outfits", []) as Array).size(), 0,
+		"save_progression/quick_match_completion_unlocks_outfits")
+	audit.check_eq(JSON.stringify(quick_second), JSON.stringify(quick_first),
+		"save_progression/quick_match_award_is_idempotent")
+	audit.check_eq(int((after_quick.get("athleteWins", {}) as Dictionary).get("fiamma", 0)), 1,
+		"save_progression/quick_match_counts_one_athlete_win")
+	quick.free()
+	Config.save_dir = old_save_dir
+
+	# Tournament uses the same shared award before advancing its bracket.
+	var tournament_store := Store.new(TOURNAMENT_DIR)
+	var tournament = ModeSession.start("tournament", tournament_store, {
+		"athlete": Frozen.athletes()[1],
+		"arenas": Frozen.arenas(),
+		"round": 0,
+		"seed": 20260920,
+	})
+	audit.check_true(tournament != null, "save_progression/tournament_session_starts_for_outfit_parity")
+	if tournament != null:
+		tournament.state.stats = match_stats.duplicate(true)
+		tournament.state.result = {"winner": "player"}
+		var tournament_first: Dictionary = tournament.finish()
+		var tournament_second: Dictionary = tournament.finish()
+		var after_tournament := ModesSave.load_career(tournament_store)
+		audit.check_gt((tournament_first.get("outfits", []) as Array).size(), 0,
+			"save_progression/tournament_completion_unlocks_outfits")
+		audit.check_eq(JSON.stringify(tournament_second), JSON.stringify(tournament_first),
+			"save_progression/tournament_award_is_idempotent")
+		audit.check_eq(int((after_tournament.get("athleteWins", {}) as Dictionary).get("pantera", 0)), 1,
+			"save_progression/tournament_counts_one_athlete_win")
+
 	# --- the drill record, improvement only -----------------------------------
 	audit.check_eq(ModesSave.drill_best(store, "precision"), 0, "save_progression/no_drill_record_yet")
 	var first := ModesSave.save_drill_score(store, "precision", 10)
@@ -177,9 +261,10 @@ static func _fake_session(exercise_id: String, score: int) -> FakeSession:
 
 
 static func _cleanup() -> void:
-	var dir := DirAccess.open(DIR)
-	if dir == null:
-		return
-	for file in dir.get_files():
-		dir.remove(file)
-	DirAccess.remove_absolute(DIR)
+	for path in [DIR, TOURNAMENT_DIR]:
+		var dir := DirAccess.open(path)
+		if dir == null:
+			continue
+		for file in dir.get_files():
+			dir.remove(file)
+		DirAccess.remove_absolute(path)

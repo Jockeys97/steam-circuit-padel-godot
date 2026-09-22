@@ -1,0 +1,121 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok menu/the_router_still_carries_thirteen_ids
+ok menu/the_menu_id_is_one_of_them
+ok menu/the_reference_lists_the_profile_action
+ok menu/the_reference_lists_the_settings_action
+ok menu/all_thirteen_slots_register
+ok menu/the_menu_scene_registers_under_the_menu_id
+ERROR: ScreenRouter.register: 'nope' is not one of the thirteen reference screens
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] register (res://src/ui/ScreenRouter.gd:143)
+       [1] _mount (res://tests/ui/screen_menu_audit.gd:111)
+       [2] _run (res://tests/ui/screen_menu_audit.gd:84)
+ok menu/register_refuses_an_id_outside_the_table
+# note expected engine lines in this audit's log, all deliberate: one `ERROR: ScreenRouter.register: 'nope' is not one of the thirteen reference screens` from the refusal check above; the engine's script-error count for this run must still read zero
+ok menu/go_to_mounts_the_menu
+ok menu/the_menu_is_the_active_screen
+ok menu/one_screen_is_mounted
+ok menu/the_mounted_screen_exists
+ok menu/the_mounted_scene_carries_MenuScreen_gd
+ok menu/the_scene_mounts_the_theme
+ok menu/the_screen_reports_its_own_id
+ok menu/the_menu_declares_no_return
+ok menu/the_screen_kept_the_router_fact
+ok menu/the_screen_declares_the_three_capture_states
+ok menu/the_run_starts_in_the_default_language
+ok menu/every_visible_key_resolves_in_both_locales
+ok menu/every_slot_shows_the_current_locale_text
+ok menu/the_brand_resolves_through_the_seam
+ok menu/the_toggle_offers_the_other_language_by_default
+ok menu/the_toggle_switches_the_session_language
+ok menu/the_toggle_now_offers_the_language_it_left
+ok menu/the_flip_moves_every_slot_whose_two_translations_differ
+ok menu/the_flip_moved_strings
+# report language flip: moved=10 identical_in_both_locales=3 slots=13
+ok menu/the_aria_names_follow_the_language
+ok menu/the_profile_tooltip_is_the_reference_title
+ok menu/the_four_aria_names_are_declared
+ok menu/the_screen_has_a_screen_reader_name
+# report aria path: engine exposes accessibility_name=true
+ok menu/the_second_press_returns_to_the_run_language
+ok menu/the_toggle_label_returns_with_it
+# report build=full limited=false
+ok menu/the_badge_follows_the_build_gate
+ok menu/the_badge_row_hides_with_it
+ok menu/a_full_build_shows_no_badge_text
+ok menu/the_badge_key_is_the_adapters_answer
+ok menu/every_declared_capture_state_applies
+ok menu/an_undeclared_capture_state_is_refused
+ok menu/the_demo_state_shows_the_badge_row
+ok menu/the_demo_state_pins_the_demo_key
+ok menu/the_demo_state_shows_the_demo_text
+ok menu/the_beta_state_shows_the_badge_row
+ok menu/the_beta_state_pins_the_beta_key
+ok menu/the_beta_state_shows_what_that_key_resolves_to
+# note the beta badge key is pinned through the adapter; the port's frozen locale table has no `betaBadge`, so the label shows the id — the reference's own visible-fallback behaviour, recorded here for the locale lane
+ok menu/the_default_state_returns_to_the_gate
+ok menu/the_default_state_returns_the_key
+ok menu/modes_routes_to_modes
+ok menu/modes_mounts_exactly_one_screen
+ok menu/drill_routes_to_drill
+ok menu/drill_mounts_exactly_one_screen
+ok menu/help_routes_to_help
+ok menu/help_mounts_exactly_one_screen
+ok menu/history_routes_to_history
+ok menu/history_mounts_exactly_one_screen
+ok menu/challenges_routes_to_challenges
+ok menu/challenges_mounts_exactly_one_screen
+ok menu/feedback_routes_to_feedback
+ok menu/feedback_mounts_exactly_one_screen
+ok menu/profile_routes_to_profile
+ok menu/profile_mounts_exactly_one_screen
+ok menu/settings_routes_to_settings
+ok menu/settings_mounts_exactly_one_screen
+ok menu/profile_is_a_separate_destination
+ok menu/profile_lands_on_profile
+ok menu/settings_is_a_separate_destination
+ok menu/settings_lands_on_settings
+ok menu/the_menu_has_no_declared_back_edge
+ok menu/the_screen_fills_the_frame
+# report 1280x720: content=445.0 viewport=542.0 poster=1.78 scroll=0 widest=564.0
+ok menu/nothing_is_wider_than_the_frame
+ok menu/the_poster_keeps_the_reference_aspect
+ok menu/the_title_is_the_theme_size_at_1280
+ok menu/at_1280x720_the_hero_fits_without_scrolling
+ok menu/at_1280x720_the_hero_sits_at_the_top
+# report 1280x720 caption [P: (977.0, 356.0), S: (217.0, 92.0)] in poster [P: (676.0, 162.0), S: (540.0, 304.0)]
+# report 1280x720 caption line CaptionLine1 text [P: (977.0, 383.0), S: (217.0, 37.0)]
+# report 1280x720 caption line CaptionLine2 text [P: (977.0, 420.0), S: (217.0, 28.0)]
+ok menu/the_caption_stays_inside_its_poster_at_1280x720
+ok menu/the_theme_carries_the_chrome_tokens
+ok menu/the_top_bar_carries_a_composed_box
+ok menu/the_top_bar_box_reads_the_palette_token
+# report 1024x600: content=431.0 viewport=422.0 poster=1.78 scroll=0 widest=449.0 title=51
+ok menu/nothing_is_wider_than_the_small_frame
+ok menu/the_title_clamp_speaks_below_1280
+ok menu/the_smallest_frame_overflows_by_a_scrollable_sliver_at_most
+# report 1024x600 scroll range: 0..9 px
+ok menu/the_scroll_offset_round_trips
+ok menu/and_that_sliver_is_all_that_is_hidden
+# report 1024x600 caption [P: (713.0, 298.0), S: (217.0, 92.0)] in poster [P: (561.0, 188.0), S: (391.0, 220.0)]
+# report 1024x600 caption line CaptionLine1 text [P: (713.0, 325.0), S: (217.0, 37.0)]
+# report 1024x600 caption line CaptionLine2 text [P: (713.0, 362.0), S: (217.0, 28.0)]
+ok menu/the_caption_stays_inside_its_poster_at_1024x600
+ok menu/the_literal_scan_flags_prose_and_ignores_developer_text
+ok menu/the_screen_source_is_readable
+ok menu/MenuScreen_gd_carries_no_prose_literal
+ok menu/the_scene_carries_exactly_the_documented_literals
+# note scene literals: ["Alpha 0.2", "PADEL PRO", "STEAM CIRCUIT", "⚙️", "🎮", "👤"] — the caption (index.html:72-73, aria-hidden, no data-i18n), the reference's own Alpha 0.2 tag (index.html:83) and the three emoji glyphs (index.html:41-42, :58)
+ok menu/the_screen_registers_nine_focusables
+ok menu/the_primary_button_is_registered
+ok menu/the_language_toggle_is_registered
+ok menu/the_menu_registers_no_back_control
+ok menu/the_bridge_reads_the_nine_controls
+ok menu/the_bridge_can_focus_the_primary_button
+ok menu/a_confirm_dispatch_is_handled
+ok menu/the_confirm_dispatch_on_play_lands_on_modes
+ok menu/the_toggle_reaches_the_focus_model
+ok menu/a_second_mount_is_told_its_own_id
+PASS 97/97

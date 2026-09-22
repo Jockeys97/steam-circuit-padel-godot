@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PHYSICAL_DEVICES []
+PASS default playable menu mounted
+PASS raw stick event moves the model immediately
+PASS raw A enters modes immediately
+PASS a held A event does not activate twice
+PASS held A does not activate the next screen

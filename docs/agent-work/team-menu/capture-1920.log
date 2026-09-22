@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M4
+
+CAPTURE_UI_START which=characters seed=20260916 tier=3 frame=(1280.0, 720.0)
+ok harness/the_host_mounted_a_router
+SCREENS registered=["menu","characters","modes","arena","help","history","challenges","profile","feedback","drill","settings","result"] pending=["game"]
+ok screen/characters/mounted
+STATES screen=characters states=["default","picker-open","outfit-open","locked-athlete","demo-locked"]
+ok capture/ui-characters
+ok ui-characters path=res://game/out/ui-characters.png size=1920x1080 colours=150
+ok capture/ui-characters-scrolled
+ok ui-characters-scrolled path=res://game/out/ui-characters-scrolled.png size=1920x1080 colours=128
+ok capture/ui-characters-picker-open
+ok ui-characters-picker-open path=res://game/out/ui-characters-picker-open.png size=1920x1080 colours=141
+ok capture/ui-characters-outfit-open
+ok ui-characters-outfit-open path=res://game/out/ui-characters-outfit-open.png size=1920x1080 colours=149
+ok capture/ui-characters-locked-athlete
+ok ui-characters-locked-athlete path=res://game/out/ui-characters-locked-athlete.png size=1920x1080 colours=141
+ok capture/ui-characters-demo-locked
+ok ui-characters-demo-locked path=res://game/out/ui-characters-demo-locked.png size=1920x1080 colours=150
+# refused=[]
+# blank=[]
+# saved=["res://game/out/ui-characters.png","res://game/out/ui-characters-scrolled.png","res://game/out/ui-characters-picker-open.png","res://game/out/ui-characters-outfit-open.png","res://game/out/ui-characters-locked-athlete.png","res://game/out/ui-characters-demo-locked.png"]
+PASS 8/8

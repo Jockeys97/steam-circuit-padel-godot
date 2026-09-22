@@ -536,6 +536,7 @@ const TABLES := {
 		"serveOrdSecond": "Seconda",
 		"serveSliceSuffix": " in slice",
 		"serveHint": "{ordinal} di servizio dal basso{suffix}: cerca il diagonale.",
+		"outfitUnavailable3d": "Aspetto 3D non ancora disponibile",
 		"gamepadConnected": "Controller connesso",
 		"gamepadDisconnected": "Controller non connesso",
 		"muteOn": "Audio attivato",
@@ -737,6 +738,26 @@ const TABLES := {
 		# `tools/i18n-port/verify-i18n-port.mjs` reports it by name, and
 		# `docs/wayfinder/evidence/fornaio-special.md` records the consequence.
 		"athlete_fornaio_name": "IL FORNAIO",
+		# PORT ADDITION — NOT FROM `js/i18n.js`. The in-match UI visibility tab and
+		# its restore hint are Godot-only surfaces (the reference has no such tab),
+		# so these ids are a DELIBERATE drift from the generated tables for the same
+		# reason as the entry above; the bundle is
+		# `docs/agent-work/ui-visibility-settings/PLAN.md`.
+		"tabUi": "INTERFACCIA",
+		"uiVisibility": "VISIBILITÀ",
+		"uiPresets": "PRESET",
+		"uiPresetAll": "TUTTO",
+		"uiPresetEssential": "ESSENZIALE",
+		"uiPresetScoreOnly": "SOLO PUNTEGGIO",
+		"uiPresetClean": "PULITO",
+		"uiCompScore": "PUNTEGGIO",
+		"uiCompTime": "TIMER",
+		"uiCompMap": "MINIMAPPA",
+		"uiCompGuidance": "SUGGERIMENTI",
+		"uiCompIndicators": "INDICATORI",
+		"uiCompEvents": "EVENTI",
+		"uiHintRestore": "Doppio clic · Options / View — Mostra UI",
+		"uiShortcutNote": "Doppio clic o Options / View per nascondere o mostrare l'interfaccia durante il match.",
 	},
 	"en": {
 		"brand": "STEAM CIRCUIT PADEL PRO",
@@ -1232,6 +1253,7 @@ const TABLES := {
 		"serveOrdSecond": "Second",
 		"serveSliceSuffix": " with slice",
 		"serveHint": "{ordinal} serve from below{suffix}: aim for the diagonal.",
+		"outfitUnavailable3d": "3D appearance not available yet",
 		"gamepadConnected": "Gamepad connected",
 		"gamepadDisconnected": "No gamepad connected",
 		"muteOn": "Sound on",
@@ -1429,5 +1451,21 @@ const TABLES := {
 		"ariaDrillCourt": "Training court",
 		# PORT ADDITION — see the note at the end of the "it" table above.
 		"athlete_fornaio_name": "THE BAKER",
+		# PORT ADDITION — see the note at the end of the "it" table above.
+		"tabUi": "UI",
+		"uiVisibility": "VISIBILITY",
+		"uiPresets": "PRESETS",
+		"uiPresetAll": "ALL",
+		"uiPresetEssential": "ESSENTIAL",
+		"uiPresetScoreOnly": "SCORE ONLY",
+		"uiPresetClean": "CLEAN",
+		"uiCompScore": "SCORE",
+		"uiCompTime": "TIMER",
+		"uiCompMap": "MINI-MAP",
+		"uiCompGuidance": "GUIDANCE",
+		"uiCompIndicators": "INDICATORS",
+		"uiCompEvents": "EVENTS",
+		"uiHintRestore": "Double-click · Options / View — Show UI",
+		"uiShortcutNote": "Double-click or Options / View to hide or show the interface during the match.",
 	},
 }

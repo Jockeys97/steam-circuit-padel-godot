@@ -1,0 +1,23 @@
+extends SceneTree
+## TEMPORARY: headless check that both region masks are IMPORTED resources.
+## Deleted after the run; output quoted in MAESTRO-INTEGRATION.md.
+const Catalogue := preload("res://src/character/outfit_catalogue.gd")
+
+func _initialize() -> void:
+	var bad := 0
+	for athlete in ["fiamma", "maestro"]:
+		var prof := Catalogue.profile(StringName(athlete))
+		var path := String(prof.get("mask", ""))
+		var exists := ResourceLoader.exists(path)
+		var tex: Texture2D = load(path) as Texture2D
+		var has_import := FileAccess.file_exists(path + ".import")
+		var handed: Texture2D = Catalogue.profile_mask(StringName(athlete))
+		print("MASK athlete=%s exists=%s has_import=%s class=%s size=%s handed_to_shader=%s sha_prefix_declared=%s path=%s"
+			% [athlete, str(exists), str(has_import),
+				tex.get_class() if tex != null else "null",
+				"%dx%d" % [tex.get_width(), tex.get_height()] if tex != null else "-",
+				str(handed != null), String(prof.get("mask_sha256_prefix", "")), path])
+		if not exists or not has_import or tex == null or handed == null:
+			bad += 1
+	print("MASKS_OK" if bad == 0 else "MASKS_FAILED=%d" % bad)
+	quit(0 if bad == 0 else 1)

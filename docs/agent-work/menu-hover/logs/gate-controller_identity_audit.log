@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS Xbox names select the Xbox layout
+PASS XInput names select the Xbox layout
+PASS DualSense names select the PlayStation layout
+PASS Sony PS5 names select the PlayStation layout
+PASS unknown families use the generic layout
+PASS a disconnected controller uses the generic layout
+PASS the live-name door reports PlayStation
+PASS the live-name door swaps the legend
+PASS PlayStation face and pause caps are visible
+PASS the overlay records a connected controller
+PASS the overlay records the selected Godot device
+PASS the overlay classifies the selected controller
+PASS the pause legend follows Xbox live
+PASS switching active controller updates identity and family
+PASS switching active controller updates every visible cap
+PASS switching active controller updates the visible artwork
+PASS disconnect clears the connected state
+PASS disconnect clears the selected identity
+PASS disconnect switches the guide to the generic fallback
+PASS disconnect updates the visible artwork
+CONTROLLER_IDENTITY PASS

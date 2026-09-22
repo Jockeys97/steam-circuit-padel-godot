@@ -1,0 +1,146 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok data/the_constructed_career_writes_through_the_public_seam
+ok data/the_seam_reads_the_career_it_wrote
+ok data/profile_summary_wins_is_the_saved_value
+ok data/profile_summary_losses_is_the_saved_value
+ok data/profile_summary_carries_the_trophy_count_the_reference_labels_seasons
+ok data/profile_summary_stars_is_the_saved_value
+ok data/profile_summary_total_is_wins_plus_losses
+ok data/the_win_rate_is_the_reference_formula_round_wins_over_total
+ok data/profile_summary_carries_the_calendar_season
+ok data/profile_summary_carries_the_calendar_match_index
+ok data/a_different_store_is_read_afresh
+ok data/the_first_store_still_reads_its_own_values
+ok data/three_recorded_matches_read_back_three_rows
+ok data/history_is_newest_first
+ok data/a_won_match_reads_as_a_win
+ok data/a_lost_match_reads_as_a_loss
+ok data/the_score_line_is_carried
+ok data/the_points_to_win_figure_is_carried
+ok data/a_won_tournament_match_counts_as_a_trophy
+ok data/the_stored_trophy_flag_is_carried
+ok data/a_lost_match_is_not_a_trophy
+ok data/the_human_mode_id_is_carried
+ok data/the_opponent_id_is_carried
+ok data/the_athlete_id_is_carried
+ok data/history_summary_counts_the_two_wins
+ok data/history_summary_counts_the_one_loss
+ok data/trophies_count_the_flag_and_the_won_tournament
+ok data/history_summary_counts_the_rows
+ok data/the_history_labels_the_screen_uses_resolve
+ok data/the_season_offers_at_least_one_objective
+ok data/the_objective_rows_are_the_seam_rows
+ok data/every_objective_label_key_resolves
+ok data/every_objective_row_carries_an_int_progress_target_and_a_bool_done
+ok data/the_character_bucket_is_the_frozen_unlockable_count
+ok data/the_arena_bucket_is_the_frozen_unlockable_count
+ok data/the_outfit_bucket_is_the_challenge_gated_count
+ok data/the_summary_total_is_the_three_buckets
+ok data/the_done_count_is_the_seams_own_answer
+ok data/the_done_count_cannot_exceed_the_total
+ok data/the_summary_key_is_the_reference_key
+ok data/the_summary_key_resolves
+# report unlocks done=4/28 (characters 2, arenas 6, outfits 20)
+ok data/a_career_with_nothing_behind_it_unlocks_nothing
+ok data/two_trophies_and_twelve_stars_unlock_more_than_nothing
+ok data/the_total_does_not_move_with_the_career
+ok data/a_career_with_nothing_behind_it_fields_the_four_unconditioned_athletes
+ok data/two_trophies_and_twelve_stars_unlock_both_gated_athletes
+ok data/the_career_unlocks_exactly_the_two_gated_athletes
+FAIL data/one_drill_row_per_frozen_exercise: expected 4, got 5
+ok data/the_saved_drill_best_is_read_back
+ok data/a_played_exercise_reports_as_played
+ok data/the_best_total_sums_the_records
+ok data/an_exercise_never_played_reads_zero_and_unplayed
+ok data/one_athlete_row_per_frozen_athlete
+ok data/every_athlete_locale_key_resolves
+ok data/every_athlete_art_path_points_at_a_file_that_exists
+ok data/every_athlete_locked_flag_is_the_build_and_career_rule
+# report athlete art present 6/6
+ok data/one_arena_row_per_frozen_arena
+ok data/every_arena_locale_key_resolves
+ok data/every_arena_art_path_points_at_a_file_that_exists
+ok data/every_arena_locked_flag_is_the_build_and_career_rule
+# report arena art present 7/9
+ok data/the_reference_has_three_mode_cards
+ok data/the_mode_rows_are_in_the_reference_order
+ok data/every_mode_locale_key_resolves
+ok data/the_quick_card_locked_flag_is_the_build_answer
+ok data/the_career_card_locked_flag_is_the_build_answer
+ok data/the_career_card_carries_the_calendar_length
+ok data/the_career_card_carries_the_calendar_arena
+ok data/the_career_card_carries_the_calendar_rival
+ok data/the_career_card_carries_the_calendar_season
+ok data/the_career_card_carries_the_calendar_match_index
+ok data/the_art_convention_is_the_declared_namespace
+ok data/the_quick_mode_art_stem_is_quick_match
+ok data/an_arena_with_no_art_name_answers_empty
+ok data/an_unknown_mode_answers_empty
+ok data/an_arena_without_ui_art_has_no_candidate_path
+# report art names known: arenas=7/9 modes=3
+ok data/the_lineup_fills_the_team_mate_slot
+ok data/the_lineup_fills_the_opponent_slot
+ok data/the_lineup_fills_the_second_opponent_slot
+ok data/the_three_slots_name_three_different_athletes
+ok data/the_player_is_not_also_on_court_twice
+ok data/the_team_mate_is_a_frozen_athlete
+ok data/a_saved_lineup_slot_is_honoured
+ok data/a_saved_opponent_slot_is_honoured
+ok data/an_unknown_saved_id_is_not_fielded
+ok data/an_unknown_saved_id_falls_back_to_a_real_athlete
+ok data/the_saved_language_is_read
+ok data/the_saved_reduce_motion_flag_is_read
+ok data/the_saved_volume_is_read
+ok data/an_untouched_pref_reads_the_schema_default
+ok data/the_vibration_default_survives
+ok data/the_control_mode_default_survives
+ok data/the_tournament_round_default_survives
+ok data/the_score_line_reaches_the_view
+ok data/the_win_flag_reaches_the_view
+ok data/the_view_carries_the_four_compared_rows
+ok data/every_result_stat_label_key_resolves
+ok data/more_points_reads_as_better_for_the_player
+ok data/more_winners_reads_as_better_for_the_player
+ok data/fewer_errors_reads_as_better_for_the_player
+ok data/equal_figures_read_as_a_tie
+ok data/the_longest_rally_figure_reaches_the_view
+ok data/the_average_rally_is_hits_over_rallies
+ok data/the_view_carries_the_season_objectives
+ok data/a_career_that_won_no_outfit_carries_no_outfit_row
+ok data/the_frozen_outfit_table_offers_a_challenge_outfit
+ok data/a_won_outfit_reads_back_as_one_row
+ok data/the_won_outfit_keeps_its_unlock_key
+ok data/the_won_outfit_names_its_athlete
+ok data/the_won_outfit_name_key_resolves
+ok data/the_reference_has_six_feedback_topics
+ok data/the_topic_ids_are_the_reference_data_values
+ok data/every_feedback_topic_label_resolves
+ok data/the_adapter_reports_the_build_the_flag_reports
+ok data/the_build_label_is_the_ported_flag_label
+ok data/the_badge_visibility_follows_the_demo_flag
+ok data/the_adapter_exposes_what_the_gate_exposes
+ok data/the_adapter_exposes_the_arenas_the_gate_exposes
+ok data/the_adapter_exposes_the_modes_the_gate_exposes
+ok data/the_full_athlete_list_is_the_frozen_table
+ok data/the_full_arena_list_is_the_frozen_table
+ok data/a_full_build_exposes_the_whole_roster
+ok data/a_full_build_exposes_every_arena
+ok data/a_full_build_exposes_every_mode
+ok data/a_full_build_allows_every_tier
+ok data/a_full_build_locks_no_athlete
+ok data/a_full_build_locks_no_mode
+ok data/an_unknown_id_is_locked_only_in_a_demo
+ok data/an_unknown_kind_locks_nothing
+# report build=full athletes=6 arenas=9 modes=3 difficulty_allowed=medium:true legend:true
+ok data/the_source_scan_finds_the_adapter_files
+ok data/no_adapter_calls_the_locale_seam
+ok data/no_adapter_writes_through_the_save_contract
+# report adapter source scan files=3 locale_hits=0 write_hits=0 markers=13
+# note constructed state: the career, history, drill records and prefs above were written through the public seams into user://uir04-data-audit and removed at the end; the real user:// profile was never written
+# note the reference's third build label (`js/build.js` BUILD === beta, `js/ui.js:745`) has no port equivalent — `godot/tests/build/BuildFlag.gd` is one boolean, so `build()` answers demo|full and `betaBadge` is unreachable here: a finding for UIR-23, not a defect to fix in this ticket
+# note art paths are UIR-01's namespace (`godot/assets/ui/**`); this audit asserts that a non-empty path exists and never that an asset which has not landed is there, so a missing asset reads as an empty path
+FAIL 130/131
+FAIL 130/131
+# first failure FAIL data/one_drill_row_per_frozen_exercise: expected 4, got 5
+# first failure FAIL data/one_drill_row_per_frozen_exercise: expected 4, got 5

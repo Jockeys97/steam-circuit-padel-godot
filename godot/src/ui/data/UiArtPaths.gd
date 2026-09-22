@@ -77,6 +77,14 @@ static func path_for(kind: String, id: String) -> String:
 
 
 ## The ids of `kind` this table knows a name for, whether or not the file exists.
+static func outfit_path_for(athlete_id: String, outfit_id: String) -> String:
+	if outfit_id != "base" and athlete_id.is_valid_identifier() and outfit_id.is_valid_identifier():
+		var candidate := "%s/outfits/%s/%s-preview.webp" % [ROOT, athlete_id, outfit_id]
+		if ResourceLoader.exists(candidate):
+			return candidate
+	return path_for("athletes", athlete_id)
+
+
 static func named_ids(kind: String) -> Array:
 	match kind:
 		"arenas":

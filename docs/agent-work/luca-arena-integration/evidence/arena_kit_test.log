@@ -1,0 +1,461 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# arena-kit intake suite — godot 4.7.2-stable (official), repo /Users/alessiofantini/Documents/steam-circuit-padel-11m
+ok spec/the_spec_table_covers_the_five_world_arenas
+ok spec/the_slot_set_is_the_frozen_ten_in_order
+ok spec/every_slot_name_is_unique
+ok spec/every_arena_carries_exactly_the_ten_frozen_slots
+ok spec/every_anchor_is_a_ground_contact
+ok spec/every_target_height_is_metres_inside_the_built_band
+ok spec/repeat_count_and_spread_agree
+ok spec/every_repeat_run_stays_inside_the_authored_half_span
+ok spec/every_slot_carries_a_footprint_note
+ok spec/every_footprint_clears_the_field_law_plane_z_minus_8
+ok spec/every_footprint_clears_the_measured_glass_plane
+ok spec/every_footprint_fits_the_depth_budget
+ok spec/suppress_is_on_exactly_where_a_slot_has_a_procedural_counterpart (16 slots)
+ok spec/every_suppress_target_is_a_real_prop_kind
+# disk state: 50 GLB file(s) under godot/assets/arenas/ -> KITTED
+ok state/slot_report_lists_all_ten_slots_in_order_with_their_path_and_status
+ok state/has_kit_agrees_with_the_files_on_disk
+ok regression/the_recorded_baseline_is_readable (run/tmp/arena-kit/baseline.json)
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=143 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=282 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=116 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=251 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=107 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=268 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=147 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=264 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=102 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=256 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=107 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=251 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=105 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=251 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=107 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=250 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=105 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=250 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=105 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=249 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok regression/with_suppression_off_every_arena_digest_equals_the_recorded_baseline
+ok regression/the_digest_walk_records_the_recorded_line_count
+ok regression/mesh_scenery_and_dressing_counts_are_unchanged_once_the_kit_is_subtracted
+ok regression/the_digest_is_deterministic_inside_the_run
+ok regression/new_geometry_in_the_tree_is_exactly_the_kit_subtree
+FAIL regression/the_field_law_still_holds: expected true, got ["torii: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "medina: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "carioca: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "aurora: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "egeo: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]"]
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=102 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=252 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok torii/hero_landmark/the_shared_material_policy_corrects_the_meshy_defaults
+ok torii/hero_landmark/the_policy_keeps_each_models_own_colour (1/1 surfaces)
+ok torii/hero_landmark/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok torii/hero_landmark/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok torii/gate_portal/the_shared_material_policy_corrects_the_meshy_defaults
+ok torii/gate_portal/the_policy_keeps_each_models_own_colour (1/1 surfaces)
+ok torii/gate_portal/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok torii/gate_portal/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok torii/light_source/the_shared_material_policy_corrects_the_meshy_defaults
+ok torii/light_source/the_policy_keeps_each_models_own_colour (3/3 surfaces)
+ok torii/light_source/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok torii/light_source/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok torii/vegetation_cluster/the_shared_material_policy_corrects_the_meshy_defaults
+ok torii/vegetation_cluster/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok torii/vegetation_cluster/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok torii/vegetation_cluster/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok torii/ground_dressing/the_shared_material_policy_corrects_the_meshy_defaults
+ok torii/ground_dressing/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok torii/ground_dressing/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok torii/ground_dressing/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok torii/ornament_accent/the_shared_material_policy_corrects_the_meshy_defaults
+ok torii/ornament_accent/the_policy_keeps_each_models_own_colour (4/4 surfaces)
+ok torii/ornament_accent/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok torii/ornament_accent/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok torii/column_pillar/the_shared_material_policy_corrects_the_meshy_defaults
+ok torii/column_pillar/the_policy_keeps_each_models_own_colour (4/4 surfaces)
+ok torii/column_pillar/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok torii/column_pillar/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok torii/railing_segment/the_shared_material_policy_corrects_the_meshy_defaults
+ok torii/railing_segment/the_policy_keeps_each_models_own_colour (6/6 surfaces)
+ok torii/railing_segment/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok torii/railing_segment/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok torii/furniture/the_shared_material_policy_corrects_the_meshy_defaults
+ok torii/furniture/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok torii/furniture/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok torii/furniture/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok torii/signage_banner/the_shared_material_policy_corrects_the_meshy_defaults
+ok torii/signage_banner/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok torii/signage_banner/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok torii/signage_banner/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=104 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=249 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=106 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=254 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok medina/hero_landmark/the_shared_material_policy_corrects_the_meshy_defaults
+ok medina/hero_landmark/the_policy_keeps_each_models_own_colour (1/1 surfaces)
+ok medina/hero_landmark/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok medina/hero_landmark/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok medina/gate_portal/the_shared_material_policy_corrects_the_meshy_defaults
+ok medina/gate_portal/the_policy_keeps_each_models_own_colour (1/1 surfaces)
+ok medina/gate_portal/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok medina/gate_portal/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok medina/light_source/the_shared_material_policy_corrects_the_meshy_defaults
+ok medina/light_source/the_policy_keeps_each_models_own_colour (4/4 surfaces)
+ok medina/light_source/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok medina/light_source/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok medina/vegetation_cluster/the_shared_material_policy_corrects_the_meshy_defaults
+ok medina/vegetation_cluster/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok medina/vegetation_cluster/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok medina/vegetation_cluster/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok medina/ground_dressing/the_shared_material_policy_corrects_the_meshy_defaults
+ok medina/ground_dressing/the_policy_keeps_each_models_own_colour (3/3 surfaces)
+ok medina/ground_dressing/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok medina/ground_dressing/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok medina/ornament_accent/the_shared_material_policy_corrects_the_meshy_defaults
+ok medina/ornament_accent/the_policy_keeps_each_models_own_colour (4/4 surfaces)
+ok medina/ornament_accent/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok medina/ornament_accent/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok medina/column_pillar/the_shared_material_policy_corrects_the_meshy_defaults
+ok medina/column_pillar/the_policy_keeps_each_models_own_colour (5/5 surfaces)
+ok medina/column_pillar/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok medina/column_pillar/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok medina/railing_segment/the_shared_material_policy_corrects_the_meshy_defaults
+ok medina/railing_segment/the_policy_keeps_each_models_own_colour (6/6 surfaces)
+ok medina/railing_segment/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok medina/railing_segment/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok medina/furniture/the_shared_material_policy_corrects_the_meshy_defaults
+ok medina/furniture/the_policy_keeps_each_models_own_colour (3/3 surfaces)
+ok medina/furniture/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok medina/furniture/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok medina/signage_banner/the_shared_material_policy_corrects_the_meshy_defaults
+ok medina/signage_banner/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok medina/signage_banner/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok medina/signage_banner/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=109 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=254 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=108 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=254 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok carioca/hero_landmark/the_shared_material_policy_corrects_the_meshy_defaults
+ok carioca/hero_landmark/the_policy_keeps_each_models_own_colour (1/1 surfaces)
+ok carioca/hero_landmark/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok carioca/hero_landmark/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok carioca/gate_portal/the_shared_material_policy_corrects_the_meshy_defaults
+ok carioca/gate_portal/the_policy_keeps_each_models_own_colour (1/1 surfaces)
+ok carioca/gate_portal/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok carioca/gate_portal/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok carioca/light_source/the_shared_material_policy_corrects_the_meshy_defaults
+ok carioca/light_source/the_policy_keeps_each_models_own_colour (3/3 surfaces)
+ok carioca/light_source/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok carioca/light_source/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok carioca/vegetation_cluster/the_shared_material_policy_corrects_the_meshy_defaults
+ok carioca/vegetation_cluster/the_policy_keeps_each_models_own_colour (3/3 surfaces)
+ok carioca/vegetation_cluster/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok carioca/vegetation_cluster/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok carioca/ground_dressing/the_shared_material_policy_corrects_the_meshy_defaults
+ok carioca/ground_dressing/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok carioca/ground_dressing/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok carioca/ground_dressing/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok carioca/ornament_accent/the_shared_material_policy_corrects_the_meshy_defaults
+ok carioca/ornament_accent/the_policy_keeps_each_models_own_colour (4/4 surfaces)
+ok carioca/ornament_accent/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok carioca/ornament_accent/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok carioca/column_pillar/the_shared_material_policy_corrects_the_meshy_defaults
+ok carioca/column_pillar/the_policy_keeps_each_models_own_colour (4/4 surfaces)
+ok carioca/column_pillar/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok carioca/column_pillar/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok carioca/railing_segment/the_shared_material_policy_corrects_the_meshy_defaults
+ok carioca/railing_segment/the_policy_keeps_each_models_own_colour (6/6 surfaces)
+ok carioca/railing_segment/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok carioca/railing_segment/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok carioca/furniture/the_shared_material_policy_corrects_the_meshy_defaults
+ok carioca/furniture/the_policy_keeps_each_models_own_colour (3/3 surfaces)
+ok carioca/furniture/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok carioca/furniture/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok carioca/signage_banner/the_shared_material_policy_corrects_the_meshy_defaults
+ok carioca/signage_banner/the_policy_keeps_each_models_own_colour (3/3 surfaces)
+ok carioca/signage_banner/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok carioca/signage_banner/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=105 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=253 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=107 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=249 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok aurora/hero_landmark/the_shared_material_policy_corrects_the_meshy_defaults
+ok aurora/hero_landmark/the_policy_keeps_each_models_own_colour (1/1 surfaces)
+ok aurora/hero_landmark/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok aurora/hero_landmark/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok aurora/gate_portal/the_shared_material_policy_corrects_the_meshy_defaults
+ok aurora/gate_portal/the_policy_keeps_each_models_own_colour (1/1 surfaces)
+ok aurora/gate_portal/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok aurora/gate_portal/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok aurora/light_source/the_shared_material_policy_corrects_the_meshy_defaults
+ok aurora/light_source/the_policy_keeps_each_models_own_colour (4/4 surfaces)
+ok aurora/light_source/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok aurora/light_source/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok aurora/vegetation_cluster/the_shared_material_policy_corrects_the_meshy_defaults
+ok aurora/vegetation_cluster/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok aurora/vegetation_cluster/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok aurora/vegetation_cluster/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok aurora/ground_dressing/the_shared_material_policy_corrects_the_meshy_defaults
+ok aurora/ground_dressing/the_policy_keeps_each_models_own_colour (3/3 surfaces)
+ok aurora/ground_dressing/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok aurora/ground_dressing/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok aurora/ornament_accent/the_shared_material_policy_corrects_the_meshy_defaults
+ok aurora/ornament_accent/the_policy_keeps_each_models_own_colour (4/4 surfaces)
+ok aurora/ornament_accent/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok aurora/ornament_accent/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok aurora/column_pillar/the_shared_material_policy_corrects_the_meshy_defaults
+ok aurora/column_pillar/the_policy_keeps_each_models_own_colour (4/4 surfaces)
+ok aurora/column_pillar/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok aurora/column_pillar/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok aurora/railing_segment/the_shared_material_policy_corrects_the_meshy_defaults
+ok aurora/railing_segment/the_policy_keeps_each_models_own_colour (5/5 surfaces)
+ok aurora/railing_segment/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok aurora/railing_segment/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok aurora/furniture/the_shared_material_policy_corrects_the_meshy_defaults
+ok aurora/furniture/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok aurora/furniture/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok aurora/furniture/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok aurora/signage_banner/the_shared_material_policy_corrects_the_meshy_defaults
+ok aurora/signage_banner/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok aurora/signage_banner/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok aurora/signage_banner/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=105 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=249 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=105 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=250 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok egeo/hero_landmark/the_shared_material_policy_corrects_the_meshy_defaults
+ok egeo/hero_landmark/the_policy_keeps_each_models_own_colour (1/1 surfaces)
+ok egeo/hero_landmark/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok egeo/hero_landmark/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok egeo/gate_portal/the_shared_material_policy_corrects_the_meshy_defaults
+ok egeo/gate_portal/the_policy_keeps_each_models_own_colour (1/1 surfaces)
+ok egeo/gate_portal/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok egeo/gate_portal/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok egeo/light_source/the_shared_material_policy_corrects_the_meshy_defaults
+ok egeo/light_source/the_policy_keeps_each_models_own_colour (3/3 surfaces)
+ok egeo/light_source/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok egeo/light_source/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok egeo/vegetation_cluster/the_shared_material_policy_corrects_the_meshy_defaults
+ok egeo/vegetation_cluster/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok egeo/vegetation_cluster/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok egeo/vegetation_cluster/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok egeo/ground_dressing/the_shared_material_policy_corrects_the_meshy_defaults
+ok egeo/ground_dressing/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok egeo/ground_dressing/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok egeo/ground_dressing/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok egeo/ornament_accent/the_shared_material_policy_corrects_the_meshy_defaults
+ok egeo/ornament_accent/the_policy_keeps_each_models_own_colour (4/4 surfaces)
+ok egeo/ornament_accent/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok egeo/ornament_accent/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok egeo/column_pillar/the_shared_material_policy_corrects_the_meshy_defaults
+ok egeo/column_pillar/the_policy_keeps_each_models_own_colour (5/5 surfaces)
+ok egeo/column_pillar/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok egeo/column_pillar/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok egeo/railing_segment/the_shared_material_policy_corrects_the_meshy_defaults
+ok egeo/railing_segment/the_policy_keeps_each_models_own_colour (6/6 surfaces)
+ok egeo/railing_segment/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok egeo/railing_segment/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok egeo/furniture/the_shared_material_policy_corrects_the_meshy_defaults
+ok egeo/furniture/the_policy_keeps_each_models_own_colour (3/3 surfaces)
+ok egeo/furniture/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok egeo/furniture/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+ok egeo/signage_banner/the_shared_material_policy_corrects_the_meshy_defaults
+ok egeo/signage_banner/the_policy_keeps_each_models_own_colour (2/2 surfaces)
+ok egeo/signage_banner/one_material_instance_per_surface_is_shared_across_the_repeats (1 materials well shared)
+ok egeo/signage_banner/no_collision_no_light_no_unmeasurable_asset_class_on_the_slot
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=104 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=250 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+# mount contract: 50 slot(s) with a file, 0 without
+ok mount/slot_report_marks_the_same_slots_loaded_as_have_a_file
+ok mount/every_slot_with_a_file_is_mounted_and_none_without_one
+ok mount/every_mounted_slot_is_named_Slot_<slot>
+ok mount/every_mounted_slot_records_its_asset_path
+ok mount/every_mounted_slot_stands_at_its_spec_anchor
+ok mount/the_declared_repeat_count_is_mounted
+ok mount/every_repeat_is_placed_on_the_declared_spread
+ok mount/every_piece_measures_the_spec_target_height
+ok mount/every_piece_is_bottom_origin_and_z_centred_on_its_slot_anchor
+ok mount/every_declared_depth_is_the_measured_mesh_depth (spec honest, 2 dp)
+ok mount/every_mounted_box_sits_on_its_repeat_offset (x centre within 0.10 m of the plan)
+ok mount/every_piece_fits_the_depth_budget
+ok mount/every_piece_stays_behind_the_measured_glass_plane
+ok mount/every_piece_stays_inside_the_authored_half_span
+ok mount/no_mounted_piece_is_half_cropped_by_the_default_camera
+ok mount/no_mounted_piece_covers_the_court (all above the rear baseline's own screen row)
+FAIL mount/a_built_arena_keeps_the_field_law_with_the_kit_mounted: expected true, got ["torii: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "medina: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "carioca: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "aurora: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "egeo: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]"]
+ok mount/under_another_camera_preset_the_anchor_follows_the_presets_x_scale
+NOTE fixture/ the tiny-prop drop is skipped: torii/light_source holds a real asset
+NOTE fixture/ the repo-GLB drop is skipped: torii/hero_landmark holds a real asset
+# suppression: 16 slot(s) stand over a procedural counterpart, 34 slot(s) have none (kinds [])
+ok suppress/every_slot_that_doubles_is_covered (kind for kind, per arena)
+ok suppress/the_suppressed_kind_lists_are_exactly_the_expected_ones
+ok suppress/a_slot_with_no_procedural_counterpart_never_suppresses (kinds [])
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=107 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=250 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=109 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=250 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=105 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=250 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=109 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=250 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=108 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=251 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=110 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=250 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=105 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=252 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=111 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=251 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=105 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=250 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=109 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=249 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok suppress/the_procedural_prop_is_still_built_when_the_flag_is_off
+ok suppress/with_the_table_in_force_only_the_suppressed_kinds_lose_their_geometry
+ok suppress/one_Dressing_container_per_authored_prop_in_both_states
+ok suppress/the_override_clears_back_to_the_frozen_table
+ok clean/every_staged_fixture_is_removed (0)
+ok clean/the_on_disk_glb_set_is_exactly_what_the_run_found (50 files)
+ok clean/every_slot_report_is_back_to_the_state_the_run_found
+ok clean/the_per_arena_drop_folders_and_their_readmes_survive
+FAIL 250/252 first=FAIL regression/the_field_law_still_holds: expected true, got ["torii: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "medina: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "carioca: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "aurora: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]", "egeo: [\"field law: Bleachers/Mesh reaches z -3.00\", \"field law: Bleachers/Mesh reaches z 3.00\", \"field law: ArenaProps/Mesh reaches z 3.45\", \"field law: ArenaProps/Mesh reaches z -3.45\", \"field law: ArenaProps/Mesh reaches z 8.01\", \"field law: ArenaProps/Mesh reaches z -3.45\"]"]
+# 2 note(s) this run
+ERROR: Pages in use exist at exit in PagedAllocator: N20RasterizerSceneDummy21GeometryInstanceDummyE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: 550 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 50 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 50 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 150 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 50 RID allocations of type 'N17RendererSceneCull8InstanceE' were leaked at exit.

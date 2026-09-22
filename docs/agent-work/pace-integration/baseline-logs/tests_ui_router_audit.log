@@ -1,0 +1,127 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok router/the_router_knows_exactly_thirteen_screens
+ok router/the_ids_are_nav_routes_screen_ids_without_the_dom_prefix
+ok router/the_ids_are_the_registry_keys_of_js_ui_js_444
+ok router/every_reference_screen_exists_in_the_router
+ok router/the_router_invents_no_screen
+ok router/the_dom_anchors_are_the_reference_ids_in_document_order
+ok router/every_dom_anchor_maps_back_to_its_own_id
+ok router/an_unknown_dom_anchor_resolves_to_nothing
+ok router/an_unknown_id_has_no_dom_anchor
+ok router/every_back_target_matches_the_reference
+ok router/only_the_root_the_field_and_the_result_declare_no_return
+ok router/ten_screens_declare_a_return
+ok router/the_root_declares_no_return
+ok router/every_to_action_matches_the_reference
+ok router/the_result_carries_the_to_menu_action
+ok router/the_field_carries_no_to_action
+ok router/an_unknown_id_carries_no_action
+ok router/a_fresh_router_mounts_nothing
+ok router/a_fresh_router_has_no_active_id
+ok router/nothing_is_registered_before_a_screen_registers_itself
+WARNING: ScreenRouter.go_to: screen "menu" is not registered; staying on ""
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] go_to (res://src/ui/ScreenRouter.gd:170)
+         [1] _mount_on_a_bare_router (res://tests/ui/router_audit.gd:190)
+         [2] _run (res://tests/ui/router_audit.gd:93)
+         [3] _initialize (res://tests/ui/router_audit.gd:87)
+ok router/go_to_refuses_before_any_screen_is_registered
+ok router/all_thirteen_screens_register_their_scene
+ok router/registered_ids_lists_the_thirteen_in_document_order
+ERROR: ScreenRouter.register: 'nope' is not one of the thirteen reference screens
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] register (res://src/ui/ScreenRouter.gd:143)
+       [1] _mount_on_a_bare_router (res://tests/ui/router_audit.gd:198)
+       [2] _run (res://tests/ui/router_audit.gd:93)
+       [3] _initialize (res://tests/ui/router_audit.gd:87)
+ok router/register_refuses_an_id_outside_the_table
+ERROR: ScreenRouter.register: 'menu' was handed a null scene
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] register (res://src/ui/ScreenRouter.gd:146)
+       [1] _mount_on_a_bare_router (res://tests/ui/router_audit.gd:199)
+       [2] _run (res://tests/ui/router_audit.gd:93)
+       [3] _initialize (res://tests/ui/router_audit.gd:87)
+ok router/register_refuses_a_null_scene
+ok router/go_to_mounts_the_screen_it_names_and_only_that_one
+ok router/the_outgoing_screen_leaves_the_tree_before_the_next_enters
+ok router/exactly_one_screen_is_mounted_after_thirteen_transitions
+ok router/the_last_transition_stands
+ok router/every_transition_emits_screen_changed_once
+ok router/the_first_transition_reports_an_empty_from_id
+ok router/the_second_reports_the_screen_it_left
+ok router/the_screen_is_told_the_id_it_was_mounted_under
+ok router/the_result_is_told_it_has_no_back_target
+ok router/a_screen_mounted_by_id_is_told_its_own_id
+ok router/a_screen_is_told_its_declared_back_target
+WARNING: ScreenRouter.go_to: screen "nope" is not registered; staying on "modes"
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] go_to (res://src/ui/ScreenRouter.gd:170)
+         [1] _mount_on_a_bare_router (res://tests/ui/router_audit.gd:246)
+         [2] _run (res://tests/ui/router_audit.gd:93)
+         [3] _initialize (res://tests/ui/router_audit.gd:87)
+ok router/go_to_an_unregistered_id_refuses
+WARNING: ScreenRouter.go_to: screen "screen-menu" is not registered; staying on "modes"
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] go_to (res://src/ui/ScreenRouter.gd:170)
+         [1] _mount_on_a_bare_router (res://tests/ui/router_audit.gd:247)
+         [2] _run (res://tests/ui/router_audit.gd:93)
+         [3] _initialize (res://tests/ui/router_audit.gd:87)
+ok router/go_to_refuses_a_dom_id_instead_of_a_router_id
+ok router/an_unknown_id_leaves_the_active_id_alone
+ok router/an_unknown_id_does_not_remount_the_screen
+ok router/a_refused_transition_emits_nothing
+# note expected engine lines in this audit's log, all deliberate: four `WARNING: ScreenRouter.go_to: screen "…" is not registered` refusals and two `ERROR: ScreenRouter.register: …` refusals; the engine's own error/script-error count for this run must still read zero real faults
+ok router/the_screen_shell_scene_loads
+ok router/the_shell_reports_the_id_it_was_set_up_with
+ok router/the_title_resolves_through_the_locale_seam
+ok router/the_modes_title_is_a_sentence_and_not_an_id
+ok router/the_subtitle_resolves_through_the_locale_seam
+ok router/a_declared_subtitle_is_shown
+ok router/the_back_control_shows_where_a_return_is_declared
+ok router/the_shell_registers_its_back_control
+ok router/the_back_control_is_named_screen_id_slash_back
+ok router/the_shell_owns_the_back_control_id
+ok router/the_back_control_carries_the_back_action
+ok router/the_shell_applies_the_safe_area_margin_from_its_own_constant
+ok router/a_screen_control_adds_one_registration
+ok router/a_content_control_registers_under_the_shell_naming
+ok router/registering_the_same_suffix_twice_replaces_it
+ok router/the_back_control_hides_where_the_reference_declares_no_return
+ok router/hiding_the_back_control_drops_its_registration
+ok router/re_declaring_the_back_target_registers_it_again
+ok router/every_screen_lays_out_inside_the_frame_it_is_mounted_in
+ok router/one_screen_is_mounted_at_a_time_in_a_live_frame
+ok router/the_placeholder_reports_the_id_it_was_handed
+ok router/the_placeholder_says_what_it_is
+ok router/a_screen_declares_one_capture_state_by_default
+ok router/the_default_capture_state_is_named_default
+ok router/the_default_capture_state_is_not_applied_by_the_base_class
+ok router/an_unknown_capture_state_is_refused
+ok router/the_placeholder_builds_its_shell
+ok router/ui_strings_falls_back_to_the_id_itself
+ok router/ui_strings_reports_an_unresolvable_id
+ok router/the_back_label_id_resolves
+ok router/the_modes_title_id_resolves
+ok router/the_back_label_is_a_sentence_and_not_an_id
+ok router/the_router_source_can_be_read
+ok router/the_router_does_not_load_the_reference_inventory
+ok router/the_router_names_the_reference_inventory_it_is_compared_against
+ok router/the_freeze_note_is_in_the_header
+ok router/ui_strings_owns_no_table
+ok router/ui_strings_does_not_re_declare_the_locale_list
+ok router/ui_strings_delegates_to_the_locale_seam
+ok router/the_contract_cites_the_show_screen_body
+ok router/the_contract_cites_the_blank_page_fix
+ok router/the_literal_scan_flags_prose_and_ignores_developer_text
+ok router/the_scan_finds_the_ui_lane_scripts
+ok router/no_user_facing_literal_lives_in_godot_src_ui
+ok router/the_scan_read_every_ui_script_except_the_exemptions
+# report literal scan scanned=33 files offenders=0 exemptions=1 whitelist=1
+# note the scan's rule: a string literal containing a space, outside a comment and not on a push_error/push_warning/printerr/assert line, is prose; the whitelist above is the only exception
+PASS 86/86

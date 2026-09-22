@@ -2,8 +2,8 @@
 ## `.controls-guide__legend` (`index.html:243-257` for help, `:641-668` for the pause
 ## overlay's COMANDI tab).
 ##
-## WHAT THIS COMPONENT IS. One vertical structure — an optional controller artwork
-## figure over the legend's rows — generated from data, never hand-copied prose:
+## WHAT THIS COMPONENT IS. One responsive structure — an optional controller artwork
+## figure above or beside the legend's rows — generated from data, never hand-copied prose:
 ##
 ##   [Visual]  the `.controls-guide__visual` figure (`index.html:223-224`, `:642-645`):
 ##             the controller image with its `data-controller-caption` line
@@ -30,11 +30,10 @@
 ## reference swaps the artwork, its caption and the thirteen caps when the connected
 ## pad's name matches xbox / playstation / generic, keyed positionally by row index.
 ## `set_device_layout(type)` reproduces exactly that, from the same three key sets,
-## with `xbox` as the default (the reference's static default, `index.html:224`). The
-## port has NO connected-pad-name seam (`gamepadconnected` / `detectControllerLayout`
-## has no ported equivalent — recorded in `evidence/uir-13-screen-help.log`), so
-## nothing calls this yet; a caller with a layout name (a future input-lane seam, or a
-## capture) gets the reference's swap.
+## with `xbox` as the default (the reference's static default, `index.html:224`).
+## `detect_device_layout(name)` ports the reference's live name classifier; the match
+## feeds it the selected Godot joypad name whenever a pad connects, disconnects or a
+## different connected pad becomes active.
 ##
 ## THE TUTORIAL LINK (`index.html:655-659`; only the pause consumer passes it). With
 ## `opts.tutorial_link = true` the smash row (label `smashLbl`) renders as the
@@ -129,6 +128,8 @@ var _palette_misses: Array = []
 ##   tutorial_link   bool, default false — render the smash row as the tutorial link
 ##   columns         int, default 2 — the row grid's columns
 ##   visual          bool, default true — show the artwork figure above the rows
+##   side_by_side    bool, default false — place artwork and rows next to each other
+##                    like the in-match pause guide in the 2D reference
 ##   row_min_height  float, default 55 — the reference's per-row min-height
 ##
 ## Callers that want the reference's own thirteen rows use `reference_rows()`.
@@ -180,6 +181,28 @@ func set_device_layout(type: String) -> bool:
 	_layout = type
 	_apply_layout()
 	return true
+
+
+## `detectControllerLayout(id)` (`js/main.js:396-404`), kept pure so callers and
+## audits can classify the exact string returned by `Input.get_joy_name(device)`.
+## Empty and unknown names deliberately fall through to `generic`, like the 2D game.
+static func detect_device_layout(device_name: String) -> String:
+	var value := device_name.to_lower()
+	if value.contains("xbox") or value.contains("xinput") or value.contains("microsoft"):
+		return "xbox"
+	if value.contains("playstation") or value.contains("dualshock") \
+			or value.contains("dualsense") or value.contains("sony") \
+			or value.contains("ps3") or value.contains("ps4") or value.contains("ps5"):
+		return "playstation"
+	return "generic"
+
+
+## Convenience door for the runtime: classification and visual swap remain one
+## operation, so artwork, caption and all thirteen caps cannot drift apart.
+func set_device_name(device_name: String) -> String:
+	var layout := detect_device_layout(device_name)
+	set_device_layout(layout)
+	return layout
 
 
 func device_layout() -> String:
@@ -253,6 +276,20 @@ func tutorial_link_enabled() -> bool:
 	return bool(_opts.get("tutorial_link", false)) and tutorial_row_index() >= 0
 
 
+## The pause overlay uses the reference's desktop `.controls-guide` two-column
+## composition and collapses it below the same 760 px breakpoint. Rebuilding is
+## safe: the public signal remains on this component and the rows are data-driven.
+func set_side_by_side(enabled: bool) -> void:
+	if bool(_opts.get("side_by_side", false)) == enabled:
+		return
+	_opts["side_by_side"] = enabled
+	_build()
+
+
+func side_by_side() -> bool:
+	return bool(_opts.get("side_by_side", false))
+
+
 ## The tutorial link button, or null when this legend shows no link.
 func tutorial_button() -> Button:
 	return _tutorial_button
@@ -308,13 +345,24 @@ func _build() -> void:
 	_art = null
 	_caption = null
 	add_theme_constant_override("separation", 14)
+	var host: Control = self
+	if side_by_side():
+		var split := HBoxContainer.new()
+		split.name = "LegendSplit"
+		split.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		split.add_theme_constant_override("separation", 28)
+		add_child(split)
+		host = split
 	if bool(_opts.get("visual", true)):
-		_build_visual()
+		_build_visual(host)
 	_grid = GridContainer.new()
 	_grid.name = ROWS_NODE
 	_grid.columns = int(_opts.get("columns", DEFAULT_COLUMNS))
 	_grid.add_theme_constant_override("h_separation", 18)
-	add_child(_grid)
+	if side_by_side():
+		_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_grid.size_flags_stretch_ratio = 1.05
+	host.add_child(_grid)
 	var link_index := tutorial_row_index() if tutorial_link_enabled() else -1
 	for index in _rows.size():
 		_grid.add_child(_build_row(index, index == link_index))
@@ -324,10 +372,14 @@ func _build() -> void:
 
 ## `.controls-guide__visual` (`styles.css:1648-1669`): the image in a 1 px `#28567d`
 ## box over `#061426`, then the caption line under it.
-func _build_visual() -> void:
+func _build_visual(parent: Control) -> void:
 	_visual = VBoxContainer.new()
 	_visual.name = VISUAL_NODE
 	_visual.add_theme_constant_override("separation", 9)
+	if side_by_side():
+		_visual.alignment = BoxContainer.ALIGNMENT_CENTER
+		_visual.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_visual.size_flags_stretch_ratio = 0.95
 	_art = TextureRect.new()
 	_art.name = ART_NODE
 	_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -340,7 +392,7 @@ func _build_visual() -> void:
 	_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_caption.add_theme_color_override("font_color", _palette("stat_muted"))
 	_visual.add_child(_caption)
-	add_child(_visual)
+	parent.add_child(_visual)
 
 
 ## `.controls-guide__visual img { aspect-ratio: 3 / 2 }` (`styles.css:1652-1657`): the
@@ -418,6 +470,7 @@ func _build_row(row_index: int, as_tutorial_link: bool) -> Control:
 		line.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		line.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.custom_minimum_size.y = float(_opts.get("row_min_height", DEFAULT_ROW_MIN_HEIGHT))
+	root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_row_nodes.append({"root": root, "kbd": kbd, "label": label, "desc": desc})
 	return root
 

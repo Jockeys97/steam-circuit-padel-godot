@@ -36,6 +36,9 @@
 ##   ModesSave.tournament_round(store) -> int
 ##   ModesSave.save_tournament_round(store, round) -> Dictionary
 ##   ModesSave.save_pref(store, key, value) -> Dictionary
+##   ModesSave.award_match_outfits(store, athlete_id, stats, won, ai_skill)
+##       evaluates and persists the outfit challenges after any completed match;
+##       this is the shared quick/tournament counterpart of the career finish path.
 ##   ModesSave.profile(store) -> Dictionary                  all five groups
 ##   ModesSave.CAREER_FIELDS -> Array
 ##       The career payload's field list (`js/ui.js:12-36` plus the two the
@@ -89,6 +92,28 @@ static func load_career(store) -> Dictionary:
 ## the `career` group.
 static func save_career(store, career: Dictionary) -> Dictionary:
 	return store.write_group("career", career)
+
+
+## The browser calls `awardOutfitChallenges` before branching by mode
+## (`js/main.js:1472`): quick matches and tournament rounds therefore contribute
+## to the same outfit progress as career matches.  Career mode keeps the mutation
+## inside its larger atomic progression step; the two other match paths use this
+## helper so the lazy `outfitsWon` / `athleteWins` fields are persisted identically.
+static func award_match_outfits(store, athlete_id: String, stats: Dictionary, won: bool, ai_skill: float) -> Dictionary:
+	var career := load_career(store)
+	var outfits := CareerProgress.award_outfit_challenges(
+		career, athlete_id, stats, won, ai_skill
+	)
+	var write: Dictionary = {}
+	# A win always changes athleteWins, even when it unlocks no outfit yet. A loss
+	# only needs a write when a stat-based challenge was completed.
+	if won or not outfits.is_empty():
+		write = save_career(store, career)
+	return {
+		"career": career,
+		"outfits": outfits,
+		"saved": write,
+	}
 
 
 # ---------------------------------------------------------------------------

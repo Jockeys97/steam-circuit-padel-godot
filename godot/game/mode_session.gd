@@ -285,7 +285,8 @@ func match_winner() -> String:
 ##
 ##   drill      — `ModesSave.drill_record_after` (`js/main.js:2122-2124`, which is
 ##                `saveDrillRecord`'s improvement-only rule);
-##   tournament — `TournamentRules.advance` (`js/main.js:1479-1490`) and
+##   tournament — the mode-independent outfit challenges, then
+##                `TournamentRules.advance` (`js/main.js:1479-1490`) and
 ##                `ModesSave.save_tournament_round`, plus the history entry
 ##                (`js/ui.js:1557-1561`);
 ##   career     — `preMatchTrophy`, `awardObjectives`, `awardOutfitChallenges`,
@@ -326,6 +327,10 @@ func _finish_drill() -> Dictionary:
 
 
 func _finish_tournament(won: bool) -> Dictionary:
+	var outfit_award := ModesSave.award_match_outfits(
+		store, String(athlete.get("id", "")), state.stats, won,
+		float(ai.get("skill", 0.0))
+	)
 	var trophy: bool = CareerProgress.pre_match_trophy({}, "tournament", won, round)
 	var advanced: Dictionary = TournamentRules.advance(round, won)
 	saved = ModesSave.save_tournament_round(store, int(advanced["round"]))
@@ -342,6 +347,8 @@ func _finish_tournament(won: bool) -> Dictionary:
 		"round": played_round,
 		"won": won,
 		"trophy": trophy,
+		"outfits": outfit_award.get("outfits", []),
+		"career_save": outfit_award.get("saved", {}),
 		"advanced": advanced,
 		"next_round": int(advanced["round"]),
 		"next_fixture": TournamentRules.fixture(int(advanced["round"]), arenas),

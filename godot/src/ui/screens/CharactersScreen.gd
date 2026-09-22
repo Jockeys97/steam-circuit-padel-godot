@@ -87,6 +87,16 @@
 ##   `.team-slot-wrap` (`styles.css:2966-2977`) puts the label in its own block above the
 ##   card; `.athlete-grid__head` (`:2902-2935`) is a bar whose one command is a compact
 ##   primary at its far end. Both are read here the way the reference reads them.
+##
+## THE HOVER STATES MOVE (wave 5). The reference's cards are CSS transitions and the port
+## drew them as two frames: nothing on this screen animated, so a card under the pointer
+## only changed colour. Every rule the reference animates is ported as motion here —
+## `_lift_to` tweens the card's own `position.y` by the reference's own distance and clock
+## (`styles.css:332`, `:335-340`, `:3040-3042`), the chosen card's halo is the box's
+## `shadow_size`/`shadow_color` (`:342-345`), and the wardrobe's fill and 2 px ring are
+## read off `:452-453`. The `--dettata` exception is preserved: a slot the calendar or the
+## bracket fills does not move. A card is lit while the POINTER or the PAD holds it, so
+## the mouse and a controller produce the same frame (`_hovered_card`/`_focused_card`).
 extends "res://src/ui/screens/ScreenContract.gd"
 
 const UiStrings := preload("res://src/ui/UiStrings.gd")
@@ -101,7 +111,10 @@ const Config := preload("res://game/match_config.gd")
 const Gate := preload("res://game/content_gate.gd")
 const Lineup := preload("res://game/lineup.gd")
 const AthleteSpawn := preload("res://src/character/athlete_spawn.gd")
+const OutfitCatalogue := preload("res://src/character/outfit_catalogue.gd")
 const Frozen := preload("res://src/sim/frozen.gd")
+const CardFocusRing := preload("res://src/ui/components/CardFocusRing.gd")
+const UiMotionPolicy := preload("res://src/ui/accessibility/UiMotionPolicy.gd")
 
 const SCREEN_ID := "characters"
 const BACK_TARGET_ID := "modes"
@@ -118,7 +131,9 @@ const LOCK_DEMO := "demo"
 
 const CAPTURE_STATES: Array[String] = ["default", "picker-open", "outfit-open", "locked-athlete", "demo-locked"]
 
-## `js/ui.js:703-704`.
+## `js/ui.js:703-704`. Two doors share them: three activations on a locked athlete
+## card, and three activations on the title's last word — "Team" in "YOUR TEAM" —
+## which is the wardrobe's own hidden entry to the same code prompt.
 const UNLOCK_TAPS := 3
 const UNLOCK_TAP_WINDOW := 1400
 
@@ -177,6 +192,46 @@ const ART_IMAGE_SUFFIX := "ArtImage"
 ## The frame rules of the two card treatments the theme already names.
 const SELECTED_ALPHA := 1.0
 const LOCKED_CARD_ALPHA := 0.55
+
+## `.athlete-card:hover { transform: translateY(-3px) }` (`styles.css:335-340`) over the
+## card's own `transition: transform 0.15s ease` (`:332`). The team slot's own rule rides
+## 2 px (`:3040-3042`).
+const CARD_LIFT := 3.0
+const SLOT_LIFT := 2.0
+const LIFT_SECONDS := 0.15
+## How far off the captured rest Y a card may sit before this screen reads the position as
+## the container's own rather than one of its tweens (`_rest_y_of`): a container writes
+## whole pixels, a tween writes fractions, and the smallest lift is 2 px.
+const LIFT_EPSILON := 0.5
+## The halo `.athlete-card--selected` wears (`styles.css:342-345`): `0 0 0 1px var(--cyan)`
+## is the box's own cyan border — one `StyleBoxFlat` carries ONE shadow — and
+## `0 12px 40px rgba(0, 229, 255, 0.18)` is the glow, at 16 px of blur, because
+## `shadow_size` is a radius drawn on both sides of the box and the grid leaves 20 px
+## between two cards.
+const HALO_SIZE := 16
+const HALO_ALPHA := 0.18
+## `.wardrobe-kit:hover:not(.is-locked), .wardrobe-kit.is-selected { background:
+## rgba(18, 49, 93, 0.98) }` and the picked kit's `inset 0 0 0 2px var(--cyan)`
+## (`styles.css:452-453`). The ring is the box's own border: CSS insets it, Godot has no
+## inset shadow, and 2 px of cyan reads the same against the card's dark fill.
+const KIT_FILL := Color(18.0 / 255.0, 49.0 / 255.0, 93.0 / 255.0, 0.98)
+const KIT_RING := 2
+
+## The three families the reference treats differently (`styles.css:335-340`,
+## `:3040-3042`, `:452-453`), read off a card's own name (`_card_kind`): the athlete card
+## rides 3 px, the team slot 2 px, and the wardrobe kit changes its fill and does not move.
+const KIND_SLOT := "slot"
+const KIND_ATHLETE := "athlete"
+const KIND_KIT := "kit"
+## The state a card carries between the frame `_make_card` hands it and the frame
+## `_refresh_card_style` resolves on the next pointer or focus edge.
+const CARD_SELECTED_META := "card_selected"
+const CARD_LOCKED_META := "card_locked"
+## `.team-slot--dettata:hover { transform: none }` (`styles.css:3114-3116`): the slot the
+## calendar or the bracket fills is looked at, not taken, so it must not move.
+const CARD_DICTATED_META := "card_dictated"
+## The meta a lifted card carries: its rest Y, the offset in flight, the tween carrying it.
+const LIFT_META := "card_lift"
 
 ## `statLine`'s own measurements (`js/ui.js:814-828`, `styles.css:3016-3024`):
 ## `.stat-line { gap: 4px 10px; font-size: 0.72rem; letter-spacing: 0.06em;
@@ -275,6 +330,10 @@ var _outfit_athlete_id: String = ""
 var _outfit_role: String = "player"
 var _unlock_taps: int = 0
 var _unlock_tap_time: int = 0
+## The title door counts on its own, so taps spent on a card and taps spent on the
+## title can never add up to an activation the player did not make.
+var _title_taps: int = 0
+var _title_tap_time: int = 0
 var _code_open: bool = false
 var _code_wrong: bool = false
 
@@ -286,6 +345,21 @@ var _bindings: Array[Dictionary] = []
 var _text_nodes: Dictionary = {}
 var _cards: Dictionary = {}
 var _focus_specs: Dictionary = {}
+## The card the POINTER is over and the card the PAD holds. Two holders of ONE visual
+## state: the reference has a single `:hover` (`styles.css:335-340`), and the focus model
+## hands a card the same focus a controller moves (`game/menu_focus.gd:73`), so the mouse
+## and a pad resolve to the same frame and the same lift.
+var _hovered_card: String = ""
+var _focused_card: String = ""
+## One re-capture of the captured rest Y at a time (`_refresh_card_lifts`): a resize
+## arrives as several `resized` signals through the frame's containers.
+var _lift_refresh_queued: bool = false
+## The port's one door for "may this animation run" (`UiMotionPolicy`), hydrated from the
+## same saved prefs the settings screen reads (`SettingsScreen._stored_prefs`,
+## `ModesSave.profile`): `body.reduce-motion` switches the reference's keyframes off
+## (`styles.css:2748-2758`) and leaves `.menu-focus` at full width. The pad's ring asks
+## this before it pulses.
+var _motion: UiMotionPolicy = null
 
 
 func _ready() -> void:
@@ -296,6 +370,10 @@ func _ready() -> void:
 	var grid := _control("AthleteGrid")
 	if grid != null:
 		grid.resized.connect(_update_art_heights)
+		# The grid is the truth about where a card rests: a relayout re-reads the captured
+		# Y (`_refresh_card_lifts`), so a card that is lifted while the window changes
+		# size comes back to the row it is actually drawn in.
+		grid.resized.connect(_refresh_card_lifts)
 	_apply_layout()
 
 
@@ -365,6 +443,7 @@ func apply_capture_state(state_id: String) -> bool:
 
 func refresh_data() -> void:
 	var store := Config.save_store()
+	_hydrate_motion(store)
 	_career = ModesSave.load_career(store)
 	_rows = _rows_now(store)
 	_dictated = _dictated_now()
@@ -550,6 +629,11 @@ func _build_view() -> void:
 	_bindings.clear()
 	_text_nodes.clear()
 	_cards.clear()
+	# A rebuild drops every card node, so whatever the pointer or the pad was holding is
+	# gone; the two holders must not survive into the new nodes that reuse the old names
+	# and leave a card lit that nothing is over any more. The next edge lights the new one.
+	_hovered_card = ""
+	_focused_card = ""
 	_bind(_control("BackButton"), "back")
 	_bind(_control("TitleLabel"), "charactersTitle")
 	_bind(_control("SubLabel"), "charactersSub")
@@ -583,10 +667,18 @@ func _build_team() -> void:
 		grid.add_child(wrap)
 		var tag := _slot_tag(role)
 		wrap.add_child(tag)
-		var card := _make_card(TEAM_SLOT_PREFIX + role, _art_for(id), "cyan",
-			_select_box() if role == "player" else _plain_box(role in RIVAL_ROLES),
-			false, wrap)
+		# The narrative already names the equipped outfit; the portrait must come from
+		# that same saved id as well. `outfit_path_for` falls back to the athlete's base
+		# art when an optional preview is absent, so a stale save never draws a blank card.
+		var outfit_id := equipped_outfit_id(id)
+		var card := _make_card(TEAM_SLOT_PREFIX + role,
+			UiArt.outfit_path_for(id, outfit_id), "cyan",
+			role == "player", false, wrap)
 		var dictated := _dictated.has(role)
+		# `.team-slot--dettata:hover { transform: none }` (`styles.css:3114-3116`): the
+		# calendar's slot is looked at, not taken, so it is the one card on this screen
+		# that must not move.
+		card["panel"].set_meta(CARD_DICTATED_META, dictated)
 		# `${etichetta} <em>${slotByCalendar|slotByBracket}</em>` (`js/ui.js:951-955`).
 		if dictated:
 			_bind(tag, String(SLOT_LABEL_KEYS.get(role, "slotYou")), {}, _join_space(),
@@ -605,6 +697,17 @@ func _build_team() -> void:
 		if ModeTables.outfits_for_athlete(id).size() > 1:
 			actions.add_child(_action_button(SLOT_OUTFIT_ACTION_PREFIX + role, "slotChangeOutfit"))
 		_wire_team_card(card["panel"], role, id, dictated)
+		# `.team-slot:hover` (`styles.css:3040-3042`) fires for the pointer anywhere inside
+		# the slot, its own commands included — and the pad reaches those commands rather
+		# than the slot itself (`src/input/focus_nav.gd:111`: a card that holds its own
+		# buttons is a container, not a target), so their focus lights the slot exactly as
+		# the pointer does.
+		for command in _command_names(TEAM_SLOT_PREFIX + role):
+			var command_button := _control(String(command)) as Button
+			if command_button == null:
+				continue
+			command_button.focus_entered.connect(_on_card_focus_change.bind(TEAM_SLOT_PREFIX + role, true))
+			command_button.focus_exited.connect(_on_card_focus_change.bind(TEAM_SLOT_PREFIX + role, false))
 
 
 func _build_picker() -> void:
@@ -619,7 +722,7 @@ func _build_picker() -> void:
 		var locked := bool(row.get("locked", false))
 		var active := id == slot_athlete_id(_picker_role)
 		var card := _make_card(PICK_CARD_PREFIX + id, String(row.get("art_path", "")), "cyan",
-			_select_box() if active else _plain_box(false), locked)
+			active, locked)
 		var stack := card["stack"] as VBoxContainer
 		_add_name_line(card, PICK_NAME_PREFIX, PICK_ROLE_PREFIX, "", id)
 		_add_desc_lines(card, PICK_DESC_PREFIX, PICK_SPECIAL_PREFIX, "", id)
@@ -673,7 +776,7 @@ func _build_picker() -> void:
 			var active := id == slot_athlete_id(_picker_role)
 			_control("SpecialSection").show()
 			var card := _make_card(SPECIAL_CARD_PREFIX + id, _art_for(id), "gold",
-				_select_box() if active else _plain_box(false), false, special_grid)
+				active, false, special_grid)
 			var stack := card["stack"] as VBoxContainer
 			var name_label := Label.new()
 			name_label.name = SPECIAL_NAME_PREFIX + id
@@ -691,9 +794,10 @@ func _build_outfits() -> void:
 		var outfit: Dictionary = outfit_in
 		var outfit_id := String(outfit.get("id", ""))
 		var unlocked := _outfit_unlocked(outfit)
+		var supported := OutfitCatalogue.is_renderable(StringName(athlete_id), StringName(outfit_id))
 		var equipped := equipped_outfit_id(athlete_id) == outfit_id
-		var card := _make_card(OUTFIT_CARD_PREFIX + outfit_id, _art_for(athlete_id), "gold",
-			_select_box() if equipped else _plain_box(false), not unlocked)
+		var card := _make_card(OUTFIT_CARD_PREFIX + outfit_id, UiArt.outfit_path_for(athlete_id, outfit_id), "gold",
+			equipped, not unlocked)
 		var stack := card["stack"] as VBoxContainer
 		var name_label := Label.new()
 		name_label.name = OUTFIT_NAME_PREFIX + outfit_id
@@ -713,7 +817,14 @@ func _build_outfits() -> void:
 		# `athleteCardMarkup(art, color, name, role, body, footer, locked)`, `js/ui.js:889-901`:
 		# the body is the state (equipped / available / the challenge / the wall), the
 		# footer is the action, and a challenge-locked outfit carries no footer at all.
-		if not unlocked:
+		if not supported:
+			var challenge: Variant = outfit.get("challenge", null)
+			if not unlocked and challenge is Dictionary and not challenge.is_empty():
+				_bind_parts(line, _challenge_label_parts(challenge))
+			else:
+				line.visible = false
+			_bind(tag, "outfitUnavailable3d")
+		elif not unlocked:
 			var challenge: Variant = outfit.get("challenge", null)
 			if challenge is Dictionary and not (challenge as Dictionary).is_empty():
 				line.add_theme_color_override("font_color", _palette("rival_soft"))
@@ -730,22 +841,39 @@ func _build_outfits() -> void:
 			footer.theme_type_variation = &"CardBody"
 			stack.add_child(footer)
 			_bind(footer, "outfitPick", {}, "", "", {}, _play_prefix())
-		if unlocked:
+		if unlocked and supported:
 			_wire_outfit_card(card["panel"], athlete_id, outfit_id)
 
 
 ## The card factory: `PanelDark` (or `PanelCardSelected`) with the art bleeding to the
-## edges, like the mode cards (`styles.css:323-390`).
+## edges, like the mode cards (`styles.css:323-390`). The frame is resolved here and NOT
+## handed in (`_card_box_for`): the frame a card is drawn in and the frame it must come
+## back to when the pointer leaves are the same question, and two sources for it let the
+## hover state of a card disagree with the box it started in.
 func _make_card(
-		node_name: String, art_path: String, accent_token: String, box: StyleBoxFlat,
+		node_name: String, art_path: String, accent_token: String, selected: bool,
 		locked: bool = false, parent: Control = null) -> Dictionary:
 	var panel := PanelContainer.new()
 	panel.name = node_name
 	panel.set_meta("card_id", node_name)
-	panel.add_theme_stylebox_override("panel", box)
+	panel.set_meta(CARD_SELECTED_META, selected)
+	panel.set_meta(CARD_LOCKED_META, locked)
+	panel.add_theme_stylebox_override("panel", _card_box_for(node_name, selected, false))
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.modulate = Color(1, 1, 1, LOCKED_CARD_ALPHA) if locked else Color(1, 1, 1, SELECTED_ALPHA)
 	panel.mouse_default_cursor_shape = Control.CURSOR_FORBIDDEN if locked else Control.CURSOR_POINTING_HAND
+	# `.wardrobe-kit.is-locked { cursor: not-allowed }` is the ONE card rule with a lock
+	# exclusion (`styles.css:454`): a locked kit does not react to the pointer at all,
+	# while a locked athlete card still rides up like any other (`.athlete-card:hover`,
+	# `:335-340`, carries no `:not()`).
+	var inert := _card_kind(node_name) == KIND_KIT and locked
+	if not inert:
+		panel.mouse_entered.connect(_on_card_pointer.bind(node_name, true))
+		panel.mouse_exited.connect(_on_card_pointer.bind(node_name, false))
+		# The pad lands on the same card through the focus model, so it must produce the
+		# same frame (`game/menu_focus.gd:73` makes a registered card focusable).
+		panel.focus_entered.connect(_on_card_focus_change.bind(node_name, true))
+		panel.focus_exited.connect(_on_card_focus_change.bind(node_name, false))
 	var column := VBoxContainer.new()
 	column.name = node_name + "Column"
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -810,6 +938,11 @@ func _make_card(
 	# shares with its position label; the picker and the wardrobe keep adding to the grid.
 	var host: Control = parent if parent != null else _control("AthleteGrid")
 	host.add_child(panel)
+	# `js/main.js:2579-2588` gives the card under the pointer `.menu-focus` whenever a pad
+	# is connected, and the focus model gives the pad's own card the same class: the ring
+	# is the PAD's presentation and it is drawn on top of the card's frame, not instead of
+	# it, so the soft `:hover` border, the lift and the ring can all be true at once.
+	CardFocusRing.attach(panel)
 	_cards[node_name] = panel
 	return {"panel": panel, "stack": stack, "actions": actions, "art": art}
 
@@ -1067,6 +1200,209 @@ func _on_card_input(event: InputEvent, act: Callable) -> void:
 
 
 # ---------------------------------------------------------------------------
+# The card's own motion (`styles.css:332`, `:335-340`, `:3040-3042`)
+#
+# A card is a child of a container (`AthleteGrid`, or the `TeamSlotWrap_<role>` column a
+# slot shares with its label) and a container owns its children's positions: the
+# reference's `transform: translateY(-Npx)` has no equivalent that survives a relayout on
+# its own. So the Y the layout gives a card at rest is CAPTURED and re-read whenever the
+# container re-lays the card out (`_refresh_card_lifts`, wired to the screen's and the
+# grid's own `resized`), and every move starts from that rest Y — offsets are never
+# accumulated on top of each other.
+# ---------------------------------------------------------------------------
+
+
+## The family a card belongs to, from its own name. The reference gives each one its own
+## rule and its own distance, so the name is the one fact both the frame and the lift need
+## (`styles.css:335-340`, `:3040-3042`, `:452-453`).
+func _card_kind(node_name: String) -> String:
+	if node_name.begins_with(TEAM_SLOT_PREFIX):
+		return KIND_SLOT
+	if node_name.begins_with(OUTFIT_CARD_PREFIX):
+		return KIND_KIT
+	return KIND_ATHLETE
+
+
+## `.team-slot--rival` (`styles.css:3033-3034`): the role in the card's own name says
+## whether it is one of the two rival slots.
+func _card_is_rival(node_name: String) -> bool:
+	return _card_kind(node_name) == KIND_SLOT and RIVAL_ROLES.has(node_name.substr(TEAM_SLOT_PREFIX.length()))
+
+
+## `.athlete-card:hover` rides 3 px, `.team-slot:hover` 2 px (`styles.css:335-340`,
+## `:3040-3042`); `.wardrobe-kit` has no `transform` in its rules at all (`:452-453`).
+func _lift_amount_of(node_name: String) -> float:
+	match _card_kind(node_name):
+		KIND_SLOT:
+			return SLOT_LIFT
+		KIND_ATHLETE:
+			return CARD_LIFT
+	return 0.0
+
+
+## The pointer is the second holder of the lit state (`_hovered_card`): both it and the pad
+## go through `_refresh_card_style`, so the frame and the lift resolve in one place and
+## the two can never disagree.
+func _on_card_pointer(card_name: String, entered: bool) -> void:
+	if entered:
+		_hovered_card = card_name
+	elif _hovered_card == card_name:
+		_hovered_card = ""
+	_refresh_card_style(card_name)
+
+
+func _on_card_focus_change(card_name: String, entered: bool) -> void:
+	if entered:
+		_focused_card = card_name
+	elif _focused_card == card_name:
+		_focused_card = ""
+	_refresh_card_style(card_name)
+
+
+func _card_lit(card_name: String) -> bool:
+	return card_name == _hovered_card or card_name == _focused_card
+
+
+## One card's frame and one card's offset, from the card's own state: the chosen card
+## wins, the lit state sits under it, the plain frame below both
+## (`styles.css:342-345`, `:335-340`, `:452-453`).
+func _refresh_card_style(card_name: String) -> void:
+	var card: Control = _cards.get(card_name, null)
+	if card == null:
+		return
+	var lit := _card_lit(card_name)
+	card.add_theme_stylebox_override("panel", _card_box_for(card_name, bool(card.get_meta(CARD_SELECTED_META, false)), lit))
+	_lift_to(card, _lift_offset_of(card_name, lit))
+	# The PAD's own presentation, on top of the frame above: `.menu-focus`'s 3 px cyan
+	# ring 3 px outside the card (`styles.css:733-738`). A pointer hover alone never
+	# lights it, so the card the controller holds stays distinguishable from the card the
+	# mouse happens to be over — the two are separate rules in the reference too.
+	CardFocusRing.set_focused(card, card_name == _focused_card, _motion)
+
+
+## The motion policy the ring asks before it pulses: `UiMotionPolicy` over the saved
+## prefs, the same store `SettingsScreen._stored_prefs` reads. Hydrated on
+## `refresh_data()` (the screen's own re-entry point), so a toggle in the settings screen
+## is live the next time this screen is entered.
+func _hydrate_motion(store: RefCounted) -> void:
+	if _motion == null:
+		_motion = UiMotionPolicy.new()
+	_motion.apply_prefs(ModesSave.profile(store).get("prefs", {}))
+
+
+## `.team-slot--dettata:hover { transform: none }` (`styles.css:3114-3116`) is the
+## reference's own exception and it is kept: the slot the calendar or the bracket fills is
+## looked at, not taken, so it does not move — while still being lit like any other card,
+## because the exception cancels the transform alone.
+func _lift_offset_of(card_name: String, lit: bool) -> float:
+	if not lit:
+		return 0.0
+	var card: Control = _cards.get(card_name, null)
+	if card != null and bool(card.get_meta(CARD_DICTATED_META, false)):
+		return 0.0
+	return -_lift_amount_of(card_name)
+
+
+## The card's own record: the Y the layout gives it at rest, how far it currently sits
+## from that Y, and the tween carrying it. Kept on the node itself, so a card the view
+## rebuilds takes its stale record with it.
+func _lift_state(card: Control) -> Dictionary:
+	if not card.has_meta(LIFT_META):
+		card.set_meta(LIFT_META, {"base_y": INF, "applied": 0.0, "tween": null})
+	return card.get_meta(LIFT_META)
+
+
+## The Y the container gives this card at rest. A container writes its children's positions
+## when it sorts, so a position that is not where this screen last put the card IS the
+## container's own answer: the base follows it there and the offset in flight is dropped
+## rather than added to it. Otherwise the base is recovered from the offset, which holds
+## even for a card caught half way through its own tween.
+func _rest_y_of(card: Control) -> float:
+	var state := _lift_state(card)
+	var base := float(state["base_y"])
+	var applied := float(state["applied"])
+	if not is_finite(base) or absf(card.position.y - (base + applied)) > LIFT_EPSILON:
+		base = card.position.y
+		state["applied"] = 0.0
+	state["base_y"] = base
+	return base
+
+
+## Moves a card `offset` px off its rest Y over the reference's own 0.15 s, replacing any
+## tween still in flight: a pointer crossing four cards quickly used to leave each one
+## wherever its own tween happened to be. Driven by `tween_method` rather than
+## `tween_property` so the record above is written by the same hand that moves the card.
+func _lift_to(card: Control, offset: float) -> void:
+	var state := _lift_state(card)
+	var base := _rest_y_of(card)
+	var target := base + offset
+	_kill_lift(state)
+	if is_zero_approx(card.position.y - target):
+		_lift_step(target, card)
+		return
+	var tween: Tween = card.create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_OUT)
+	tween.tween_method(_lift_step.bind(card), card.position.y, target, LIFT_SECONDS)
+	state["tween"] = tween
+
+
+func _lift_step(y: float, card: Control) -> void:
+	var state := _lift_state(card)
+	card.position.y = y
+	state["applied"] = y - float(state["base_y"])
+
+
+func _kill_lift(state: Dictionary) -> void:
+	var tween: Tween = state.get("tween", null)
+	state["tween"] = null
+	if tween != null and tween.is_valid():
+		tween.kill()
+
+
+## Schedules the re-capture a relayout needs. A container sorts its children DEFERRED and
+## queues that sort from the very notification that resized it, so a capture taken in this
+## frame would read the row the cards are LEAVING: the re-capture waits one frame, by
+## which time every sort this resize queued has run. One capture is queued at a time — a
+## resize arrives as several `resized` signals through the frame's containers.
+func _refresh_card_lifts() -> void:
+	if _lift_refresh_queued:
+		return
+	_lift_refresh_queued = true
+	_after_sort.call_deferred()
+
+
+func _after_sort() -> void:
+	if not is_inside_tree():
+		_lift_refresh_queued = false
+		return
+	await get_tree().process_frame
+	_lift_refresh_queued = false
+	if not is_inside_tree():
+		return
+	_recapture_card_lifts()
+
+
+## Re-reads every card's rest Y and re-applies the offset it owes, without animation: after
+## a relayout the container's own positions are the truth, and a tween started under the
+## old layout would land on a Y nothing stands on any more.
+func _recapture_card_lifts() -> void:
+	if not is_inside_tree():
+		return
+	for card_name in _cards.keys():
+		var card: Control = _cards[card_name]
+		if card == null or not is_instance_valid(card):
+			continue
+		var state := _lift_state(card)
+		var base := _rest_y_of(card)
+		_kill_lift(state)
+		state["base_y"] = base
+		var lit := _card_lit(String(card_name))
+		state["applied"] = _lift_offset_of(String(card_name), lit)
+		card.position.y = base + float(state["applied"])
+
+
+# ---------------------------------------------------------------------------
 # The reference's own actions
 # ---------------------------------------------------------------------------
 
@@ -1210,6 +1546,8 @@ func _select_special(athlete_id: String) -> bool:
 func equip_outfit(athlete_id: String, outfit_id: String) -> bool:
 	if athlete_id == "" or outfit_id == "":
 		return false
+	if not OutfitCatalogue.is_renderable(StringName(athlete_id), StringName(outfit_id)):
+		return false
 	var outfit := _outfit_of(athlete_id, outfit_id)
 	if outfit.is_empty() or not _outfit_unlocked(outfit):
 		return false
@@ -1255,10 +1593,76 @@ func unlock_tap(athlete_id: String) -> bool:
 	if _unlock_taps < UNLOCK_TAPS:
 		return false
 	_unlock_taps = 0
+	_open_code_entry()
+	return true
+
+
+## The title's last word, measured inside the label: `Label` has no per-word API, so
+## the span comes from the font — the prefix before the last space sets the left edge,
+## the word itself the right one, and the glyph line the vertical one. An empty rect
+## means there is nothing to aim at.
+##
+## "YOUR TEAM" aims at "Team", which is the word the wardrobe's door is named after;
+## the rule is the last word rather than a literal, so a locale whose title does not
+## end in "Team" still has a door instead of a dead string.
+func title_word_rect() -> Rect2:
+	var label := _control("TitleLabel") as Label
+	if label == null:
+		return Rect2()
+	var text := label.text.strip_edges()
+	# `split()` with no delimiter breaks on whitespace, so the last word needs no
+	# separator literal in this source (the screen is allowed none).
+	var words := text.split()
+	if words.is_empty():
+		return Rect2()
+	var word := String(words[words.size() - 1])
+	if word.is_empty():
+		return Rect2()
+	var prefix := text.substr(0, text.length() - word.length())
+	var font := label.get_theme_font("font")
+	var size := label.get_theme_font_size("font_size")
+	if font == null or size <= 0:
+		return Rect2()
+	var left := font.get_string_size(prefix, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+	var width := font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+	# A test mounts the screen without laying it out, so the label may still be zero
+	# high; the glyph line is the floor and the label's own height the ceiling.
+	var height := maxf(label.size.y, font.get_height(size))
+	return Rect2(Vector2(left, 0.0), Vector2(width, height))
+
+
+## One activation on the title's last word. Returns true when this is the activation
+## that opens the code entry. A point outside the word is ignored, so the door is the
+## word and not the whole title.
+func title_door_tap(at: Vector2) -> bool:
+	if not title_word_rect().has_point(at):
+		return false
+	var now := Time.get_ticks_msec()
+	_title_taps = 1 if now - _title_tap_time > UNLOCK_TAP_WINDOW else _title_taps + 1
+	_title_tap_time = now
+	if _title_taps < UNLOCK_TAPS:
+		return false
+	_title_taps = 0
+	_open_code_entry()
+	return true
+
+
+## The one place the code entry opens, so both doors present it identically.
+func _open_code_entry() -> void:
 	_code_open = true
 	_code_wrong = false
 	_refresh_head()
-	return true
+	var input := _control("UnlockCodeInput") as LineEdit
+	if input != null:
+		input.text = ""
+		input.call_deferred("grab_focus")
+
+
+func _on_title_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse := event as InputEventMouseButton
+		if mouse.button_index == MOUSE_BUTTON_LEFT and mouse.pressed:
+			title_door_tap(mouse.position)
 
 
 ## The code entry's one door. `ok` (and the career's `unlockAll` is saved), `wrong`
@@ -1367,6 +1771,19 @@ func _on_code_submit() -> void:
 	if input == null:
 		return
 	submit_unlock_code(input.text)
+
+
+## `LineEdit.text_submitted` is the keyboard's submit edge. The visible button and
+## Enter share the same validation door so typing the code never requires moving the
+## focus away from the field first.
+func _on_code_text_submitted(code: String) -> void:
+	# `text_submitted` is emitted during Control's GUI-input pass. Stop this same Enter
+	# here, before the success rebuild hides the field: otherwise `_unhandled_input`
+	# sees it afterwards and activates the newly exposed Back/Head command as well.
+	var viewport := get_viewport()
+	if viewport != null:
+		viewport.set_input_as_handled()
+	submit_unlock_code(code)
 
 
 # ---------------------------------------------------------------------------
@@ -1586,9 +2003,18 @@ func _wire() -> void:
 	var submit := _control("CodeSubmit") as Button
 	if submit != null:
 		submit.pressed.connect(_on_code_submit)
+	var code_input := _control("UnlockCodeInput") as LineEdit
+	if code_input != null:
+		code_input.text_submitted.connect(_on_code_text_submitted)
 	var back_id := _control("HeadBack") as Button
 	if back_id != null:
 		back_id.pressed.connect(close_subview)
+	var title := _control("TitleLabel") as Label
+	if title != null:
+		# A `Label` ignores the mouse by default, so the door needs the filter raised
+		# before `gui_input` can ever fire.
+		title.mouse_filter = Control.MOUSE_FILTER_STOP
+		title.gui_input.connect(_on_title_input)
 	_register_focus()
 
 
@@ -1709,6 +2135,9 @@ func _apply_layout() -> void:
 	if grid != null:
 		grid.columns = GRID_COLUMNS if size.x >= GRID_BREAKPOINT else NARROW_COLUMNS
 		(_control("SpecialGrid") as GridContainer).columns = grid.columns
+	# A relayout moves every card: the rest Y captured for the lift (`_lift_to`) is re-read
+	# once the containers have sorted (`_refresh_card_lifts`).
+	_refresh_card_lifts()
 	_update_art_heights()
 
 
@@ -1762,8 +2191,66 @@ func _plain_box(rival: bool) -> StyleBoxFlat:
 	return _theme_box("PanelDark")
 
 
+## `.athlete-card--selected` (`styles.css:342-345`): the cyan border AND the halo
+## `0 0 0 1px var(--cyan)` / `0 12px 40px rgba(0, 229, 255, 0.18)`.
 func _select_box() -> StyleBoxFlat:
-	return _theme_box("PanelCardSelected")
+	var box := _theme_box("PanelCardSelected")
+	_add_halo(box)
+	return box
+
+
+## `.athlete-card:hover`'s border (`styles.css:335-340`): the cyan at 0.35 the theme
+## already carries as `PanelCardHover` (`padel_theme.tres:206-220`), for the card the
+## pointer or the pad holds one state below the chosen one.
+func _hover_box() -> StyleBoxFlat:
+	return _theme_box("PanelCardHover")
+
+
+## `.wardrobe-kit:hover:not(.is-locked), .wardrobe-kit.is-selected { background:
+## rgba(18, 49, 93, 0.98) }` and `.wardrobe-kit.is-selected { box-shadow: inset 0 0 0 2px
+## var(--cyan) }` (`styles.css:452-453`). The ring is the box's own 2 px border rather
+## than an inset shadow, which Godot does not have; no other card on this screen carries
+## one, so the picked kit is readable at a glance.
+func _kit_box(selected: bool, lit: bool) -> StyleBoxFlat:
+	var box := _plain_box(false)
+	if selected:
+		box.bg_color = KIT_FILL
+		box.border_color = _palette("cyan")
+		box.border_width_left = KIT_RING
+		box.border_width_top = KIT_RING
+		box.border_width_right = KIT_RING
+		box.border_width_bottom = KIT_RING
+	elif lit:
+		box.bg_color = KIT_FILL
+	return box
+
+
+## The halo `.athlete-card--selected` wears (`styles.css:342-345`). One `StyleBoxFlat`
+## carries ONE shadow and the reference stacks two (`0 0 0 1px var(--cyan)` over
+## `0 12px 40px rgba(0, 229, 255, 0.18)`), so the 1 px ring stays the box's own cyan border
+## and the shadow is the glow.
+func _add_halo(box: StyleBoxFlat) -> void:
+	var theme_now: Theme = self.theme
+	if theme_now == null or not theme_now.has_color("cyan", "Palette"):
+		return
+	box.shadow_color = Color(theme_now.get_color("cyan", "Palette"), HALO_ALPHA)
+	box.shadow_size = int(HALO_SIZE)
+	box.shadow_offset = Vector2(0.0, 4.0)
+
+
+## The frame one card wears, in the reference's own order: the chosen card first
+## (`styles.css:342-345`), the card the pointer or the pad holds under it (`:335-340` for
+## the athlete card's lightened border, `:3040-3042` for the team slot, whose rule moves
+## it and paints nothing), the plain frame below both. The wardrobe kit is its own case
+## (`:452-453`).
+func _card_box_for(node_name: String, selected: bool, lit: bool) -> StyleBoxFlat:
+	if _card_kind(node_name) == KIND_KIT:
+		return _kit_box(selected, lit)
+	if selected:
+		return _select_box()
+	if lit and _card_kind(node_name) == KIND_ATHLETE:
+		return _hover_box()
+	return _plain_box(_card_is_rival(node_name))
 
 
 ## `.athlete-grid__head` (`styles.css`, measured): the panel's own dark fill.

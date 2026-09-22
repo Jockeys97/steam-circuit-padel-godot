@@ -18,6 +18,8 @@ func run():
 		quit(1)
 		return
 	var athlete := StringName(args[2]) if args.size() > 2 else &"fiamma"
+	var outfit := StringName(args[3]) if args.size() > 3 else &"base"
+	var output_id := String(athlete) if outfit == &"base" else "%s_%s" % [athlete, outfit]
 	var source_contact: float = float(args[1]) if args.size() > 1 and args[1] != "auto" else {"smash":1.0,"bandeja":1.15,"backhand":1.25,"slice":1.1}.get(stroke,1.5)
 	var doc := GLTFDocument.new()
 	var state := GLTFState.new()
@@ -31,7 +33,7 @@ func run():
 	root.add_child(source)
 	var src: Skeleton3D = find_type(source,"Skeleton3D")
 	var player: AnimationPlayer = find_type(source,"AnimationPlayer")
-	var rig = Spawn.make(athlete, &"base")
+	var rig = Spawn.make(athlete, outfit)
 	if rig == null:
 		quit(1)
 		return
@@ -105,7 +107,7 @@ func run():
 				clip.rotation_track_insert_key(tracks[i],t,q)
 			globals[i] = parent_q*q
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://assets/athletes/animations"))
-	var err := ResourceSaver.save(clip,"res://assets/athletes/animations/%s_meshy_%s.tres" % [athlete,stroke])
+	var err := ResourceSaver.save(clip,"res://assets/athletes/animations/%s_meshy_%s.tres" % [output_id,stroke])
 	print("MESHY_BAKE athlete=",athlete," mapped=",mapping.size()," length=",clip.length," save=",err)
 	source.free()
 	rig.free()

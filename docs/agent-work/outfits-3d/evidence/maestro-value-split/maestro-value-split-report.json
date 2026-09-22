@@ -1,0 +1,549 @@
+{
+ "tool": "tools/character/measure_maestro_value_split.py",
+ "texture": "godot/assets/athletes/maestro_texture_0.png",
+ "texture_sha256_prefix": "95360e8b41611448",
+ "mask": "godot/assets/athletes/outfits/maestro/maestro_region_mask.png",
+ "mask_sha256_prefix": "dc39e62c92bc5b8e",
+ "anchors": {
+  "a_dark": "#102040",
+  "b_light": "#68a8c8"
+ },
+ "effective_constants": {
+  "shader_defaults_on_the_masked_path": {
+   "hue_tol_deg": 42.0,
+   "sat_min": 0.25,
+   "val_min": 0.06,
+   "val_max": 0.99
+  },
+  "mask_defaults_assumed_by_the_mask_lane": {
+   "hue_tol_deg": 45.0,
+   "sat_min": 0.18,
+   "val_min": 0.02,
+   "val_max": 0.98
+  },
+  "note": "outfit_catalogue.gd::_apply_profile does not push MASK_DEFAULTS, so a profile material runs on the shader's declared defaults. Both are measured so the difference cannot silently change the verdict."
+ },
+ "masked_texels": 1518775,
+ "recolourable_texels": 994860,
+ "recolourable_rule": "inside the mask AND sat >= sat_min(0.25) AND hue in [150,270)",
+ "value_histogram_0.01": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  4,
+  13,
+  10,
+  44,
+  385,
+  2337,
+  3544,
+  9149,
+  9950,
+  22617,
+  14028,
+  17144,
+  26026,
+  29298,
+  67782,
+  62526,
+  158496,
+  139076,
+  180894,
+  48106,
+  34752,
+  32413,
+  14030,
+  16515,
+  8926,
+  10391,
+  3831,
+  7493,
+  4343,
+  5999,
+  2232,
+  4442,
+  3763,
+  1635,
+  2617,
+  1716,
+  2287,
+  1437,
+  2145,
+  1141,
+  1700,
+  1516,
+  923,
+  1416,
+  882,
+  1053,
+  594,
+  902,
+  512,
+  861,
+  434,
+  524,
+  514,
+  320,
+  435,
+  276,
+  337,
+  176,
+  337,
+  289,
+  363,
+  326,
+  259,
+  448,
+  350,
+  722,
+  787,
+  4206,
+  5187,
+  14674,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "split": {
+  "measured_discontinuity": 0.76,
+  "density_jump_top3": [
+   {
+    "at": 0.76,
+    "ratio": 5.344,
+    "below": 787,
+    "above": 4206
+   },
+   {
+    "at": 0.78,
+    "ratio": 2.829,
+    "below": 5187,
+    "above": 14674
+   },
+   {
+    "at": 0.74,
+    "ratio": 2.063,
+    "below": 350,
+    "above": 722
+   }
+  ],
+  "dark_family_texels": 969284,
+  "light_family_texels": 24067,
+  "edge_band_texels": 1509,
+  "edge_band_adjacent_to_light_within_5px": 1391,
+  "edge_band_adjacency_share": 0.9218,
+  "mid_0.45_to_split_texels": 22757,
+  "mid_0.45_to_split_adjacent_share": 0.1202,
+  "light_components_ge_64px": [
+   {
+    "size": 3471,
+    "bbox_xywh": [
+     1175,
+     1666,
+     113,
+     53
+    ],
+    "bbox_fill": 0.5796
+   },
+   {
+    "size": 3468,
+    "bbox_xywh": [
+     764,
+     278,
+     111,
+     52
+    ],
+    "bbox_fill": 0.6008
+   },
+   {
+    "size": 3290,
+    "bbox_xywh": [
+     1568,
+     1445,
+     88,
+     97
+    ],
+    "bbox_fill": 0.3854
+   },
+   {
+    "size": 2554,
+    "bbox_xywh": [
+     418,
+     1027,
+     81,
+     91
+    ],
+    "bbox_fill": 0.3465
+   },
+   {
+    "size": 2453,
+    "bbox_xywh": [
+     415,
+     1856,
+     66,
+     55
+    ],
+    "bbox_fill": 0.6758
+   },
+   {
+    "size": 1404,
+    "bbox_xywh": [
+     1326,
+     694,
+     20,
+     139
+    ],
+    "bbox_fill": 0.505
+   },
+   {
+    "size": 1147,
+    "bbox_xywh": [
+     1126,
+     1843,
+     65,
+     54
+    ],
+    "bbox_fill": 0.3268
+   },
+   {
+    "size": 845,
+    "bbox_xywh": [
+     225,
+     1173,
+     19,
+     78
+    ],
+    "bbox_fill": 0.5702
+   }
+  ],
+  "light_components_total": 89
+ },
+ "gate": {
+  "band_a": [
+   0.0,
+   0.74
+  ],
+  "band_b": [
+   0.76,
+   1.0
+  ],
+  "feather": 0.01,
+  "ramps_meet_at": 0.75,
+  "dead_zone": [
+   0.75,
+   0.75
+  ],
+  "recolourable_texels_left_orphan_by_the_gate": 103,
+  "share_of_mask_left_orphan": 6.8e-05,
+  "texels_matching_neither_anchor_gt0_today": 524321,
+  "texels_matching_neither_anchor_gt0_gated": 524424,
+  "dark_band_upper_alternatives": [
+   {
+    "band_a_upper": 0.6,
+    "orphan_texels": 5199,
+    "orphan_components": 503,
+    "largest_orphan_component": 469,
+    "median_orphan_component": 2,
+    "orphan_speckles_le_4px": 370
+   },
+   {
+    "band_a_upper": 0.65,
+    "orphan_texels": 3349,
+    "orphan_components": 475,
+    "largest_orphan_component": 401,
+    "median_orphan_component": 2,
+    "orphan_speckles_le_4px": 380
+   },
+   {
+    "band_a_upper": 0.7,
+    "orphan_texels": 1882,
+    "orphan_components": 535,
+    "largest_orphan_component": 82,
+    "median_orphan_component": 1,
+    "orphan_speckles_le_4px": 455
+   },
+   {
+    "band_a_upper": 0.72,
+    "orphan_texels": 1175,
+    "orphan_components": 510,
+    "largest_orphan_component": 49,
+    "median_orphan_component": 1,
+    "orphan_speckles_le_4px": 470
+   },
+   {
+    "band_a_upper": 0.74,
+    "orphan_texels": 103,
+    "orphan_components": 12,
+    "largest_orphan_component": 36,
+    "median_orphan_component": 2,
+    "orphan_speckles_le_4px": 9
+   }
+  ],
+  "alternatives_note": "cutting the dark band lower orphans isolated texels of the garment's own baked shading, which would read as speckles (a preserved navy texel inside a recoloured jersey)."
+ },
+ "shader_behaviour": {
+  "today_hue_only_shader_defaults": {
+   "texels_family_a_gt_0.5": 979916,
+   "texels_family_b_gt_0.5": 974801,
+   "texels_both_gt_0.5": 973915,
+   "share_both_gt_0.5": 0.6413,
+   "texels_both_gt_0.0": 991474,
+   "texels_neither_gt_0.5": 537973,
+   "share_neither_gt_0.5": 0.3542,
+   "per_region_gt_0.5": {
+    "torso": {
+     "a": 202667,
+     "b": 201559,
+     "both": 201412,
+     "neither": 41426,
+     "masked": 244240
+    },
+    "hip": {
+     "a": 280934,
+     "b": 279888,
+     "both": 279788,
+     "neither": 54646,
+     "masked": 335680
+    },
+    "foot": {
+     "a": 496575,
+     "b": 493620,
+     "both": 492981,
+     "neither": 441570,
+     "masked": 938784
+    }
+   }
+  },
+  "with_value_gate_shader_defaults": {
+   "texels_family_a_gt_0.5": 954562,
+   "texels_family_b_gt_0.5": 24556,
+   "texels_both_gt_0.5": 0,
+   "share_both_gt_0.5": 0.0,
+   "texels_both_gt_0.0": 0,
+   "texels_neither_gt_0.5": 539657,
+   "share_neither_gt_0.5": 0.3553,
+   "per_region_gt_0.5": {
+    "torso": {
+     "a": 198858,
+     "b": 3596,
+     "both": 0,
+     "neither": 41786,
+     "masked": 244240
+    },
+    "hip": {
+     "a": 259371,
+     "b": 20980,
+     "both": 0,
+     "neither": 55329,
+     "masked": 335680
+    },
+    "foot": {
+     "a": 496574,
+     "b": 0,
+     "both": 0,
+     "neither": 442210,
+     "masked": 938784
+    }
+   }
+  },
+  "today_hue_only_mask_lane_constants": {
+   "texels_family_a_gt_0.5": 995004,
+   "texels_family_b_gt_0.5": 988953,
+   "texels_both_gt_0.5": 988162,
+   "share_both_gt_0.5": 0.6506,
+   "texels_both_gt_0.0": 1006168,
+   "texels_neither_gt_0.5": 522980,
+   "share_neither_gt_0.5": 0.3443,
+   "per_region_gt_0.5": {
+    "torso": {
+     "a": 203834,
+     "b": 202522,
+     "both": 202403,
+     "neither": 40287,
+     "masked": 244240
+    },
+    "hip": {
+     "a": 281698,
+     "b": 280569,
+     "both": 280516,
+     "neither": 53929,
+     "masked": 335680
+    },
+    "foot": {
+     "a": 509717,
+     "b": 506113,
+     "both": 505494,
+     "neither": 428448,
+     "masked": 938784
+    }
+   }
+  }
+ },
+ "slots_after_gate": {
+  "torso_a": {
+   "region": "torso",
+   "family": "a",
+   "texels_movable": 200325,
+   "movable_gt_0.5": 198858,
+   "share_of_region": 0.8202,
+   "baked_modal_hex": "#102040",
+   "per_outfit": {
+    "circuit": {
+     "target_hex": "#315cff",
+     "delta_e76_target_vs_baked": 80.0
+    },
+    "legend": {
+     "target_hex": "#fff0a3",
+     "delta_e76_target_vs_baked": 102.9
+    },
+    "signature": {
+     "target_hex": "#03c7ed",
+     "delta_e76_target_vs_baked": 70.6
+    }
+   }
+  },
+  "torso_b": {
+   "region": "torso",
+   "family": "b",
+   "texels_movable": 3673,
+   "movable_gt_0.5": 3596,
+   "share_of_region": 0.015,
+   "baked_modal_hex": "#68a8c0",
+   "per_outfit": {
+    "circuit": {
+     "target_hex": "#1c335a",
+     "delta_e76_target_vs_baked": 48.8
+    },
+    "legend": {
+     "target_hex": "#5a471b",
+     "delta_e76_target_vs_baked": 60.9
+    },
+    "signature": {
+     "target_hex": "#195466",
+     "delta_e76_target_vs_baked": 32.8
+    }
+   }
+  },
+  "hip_a": {
+   "region": "hip",
+   "family": "a",
+   "texels_movable": 260622,
+   "movable_gt_0.5": 259371,
+   "share_of_region": 0.7764,
+   "baked_modal_hex": "#102040",
+   "per_outfit": {
+    "circuit": {
+     "target_hex": "#315cff",
+     "delta_e76_target_vs_baked": 80.0
+    },
+    "legend": {
+     "target_hex": "#59471c",
+     "delta_e76_target_vs_baked": 53.9
+    },
+    "signature": {
+     "target_hex": "#154959",
+     "delta_e76_target_vs_baked": 24.5
+    }
+   }
+  },
+  "hip_b": {
+   "region": "hip",
+   "family": "b",
+   "texels_movable": 21201,
+   "movable_gt_0.5": 20980,
+   "share_of_region": 0.0632,
+   "baked_modal_hex": "#68a8c8",
+   "per_outfit": {
+    "circuit": {
+     "target_hex": "#9ef8ff",
+     "delta_e76_target_vs_baked": 31.6
+    },
+    "legend": {
+     "target_hex": "#fff0a3",
+     "delta_e76_target_vs_baked": 68.3
+    },
+    "signature": {
+     "target_hex": "#162f61",
+     "delta_e76_target_vs_baked": 51.4
+    }
+   }
+  },
+  "foot_a": {
+   "region": "foot",
+   "family": "a",
+   "texels_movable": 508780,
+   "movable_gt_0.5": 496574,
+   "share_of_region": 0.542,
+   "baked_modal_hex": "#102840",
+   "per_outfit": {
+    "circuit": {
+     "target_hex": "#183567",
+     "delta_e76_target_vs_baked": 18.3
+    },
+    "legend": {
+     "target_hex": "#fef4d5",
+     "delta_e76_target_vs_baked": 87.7
+    },
+    "signature": {
+     "target_hex": "#165568",
+     "delta_e76_target_vs_baked": 21.8
+    }
+   }
+  },
+  "foot_b": {
+   "region": "foot",
+   "family": "b",
+   "texels_movable": 0,
+   "movable_gt_0.5": 0,
+   "share_of_region": 0.0,
+   "baked_modal_hex": null,
+   "per_outfit": {
+    "circuit": {
+     "target_hex": "#9ef8ff",
+     "delta_e76_target_vs_baked": null
+    },
+    "legend": {
+     "target_hex": "#5a4617",
+     "delta_e76_target_vs_baked": null
+    },
+    "signature": {
+     "target_hex": "#17c8fe",
+     "delta_e76_target_vs_baked": null
+    }
+   }
+  }
+ },
+ "neutral_texels_never_recolourable": {
+  "texels": 461245,
+  "share_of_mask": 0.3037,
+  "by_region": {
+   "torso": 34104,
+   "hip": 1453,
+   "foot": 425393
+  },
+  "rule": "sat < sat_min(0.25) or value outside [val_min 0.06, val_max 0.99]"
+ }
+}

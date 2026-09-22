@@ -1,0 +1,104 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# FIT_REPORT · Godot 4.7.2-stable (official) · preset=default · band=1.92 m (glass -10.02 - margin 0.05 -> wall -12.00)
+FIT_ROW torii/hero_landmark raw_h=1.000 raw_d=0.390 raw_cx=+0.000 ideal_h=4.00 was_d=1.56 -> target_h=4.00 depth=1.56 scale=4.0000 anchor_z=-11.2107 was_z=-11.221
+SPEC_ROW torii/hero_landmark anchor Vector3(-3.2000, 0.0, -11.2107) target_h 4.00 depth 1.56 footprint "1.52 x 4.00 x 1.56 m - pagoda mass on the left of the band"
+FIT_ROW torii/gate_portal raw_h=0.938 raw_d=0.179 raw_cx=+0.000 ideal_h=2.60 was_d=0.50 -> target_h=2.60 depth=0.50 scale=2.7733 anchor_z=-11.1000 was_z=-11.100
+SPEC_ROW torii/gate_portal anchor Vector3(4.0000, 0.0, -11.1000) target_h 2.60 depth 0.50 footprint "2.77 x 2.60 x 0.50 m - vermillion gate, opening on the anchor"
+FIT_ROW torii/light_source raw_h=1.000 raw_d=0.502 raw_cx=+0.001 ideal_h=1.15 was_d=0.58 -> target_h=1.15 depth=0.58 scale=1.1500 anchor_z=-11.0500 was_z=-11.050
+SPEC_ROW torii/light_source anchor Vector3(-8.4000, 0.0, -11.0500) target_h 1.15 depth 0.58 footprint "0.58 x 1.15 x 0.58 m - stone lantern on a post"
+FIT_ROW torii/vegetation_cluster raw_h=0.963 raw_d=0.480 raw_cx=+0.000 ideal_h=2.60 was_d=1.30 -> target_h=2.60 depth=1.30 scale=2.7002 anchor_z=-11.3413 was_z=-11.351
+SPEC_ROW torii/vegetation_cluster anchor Vector3(-10.2000, 0.0, -11.3413) target_h 2.60 depth 1.30 footprint "2.70 x 2.60 x 1.30 m - cherry cluster, seams hidden"
+FIT_ROW torii/ground_dressing raw_h=0.406 raw_d=0.926 raw_cx=+0.000 ideal_h=0.55 was_d=1.25 -> target_h=0.55 depth=1.25 scale=1.3538 anchor_z=-10.7500 was_z=-10.750
+SPEC_ROW torii/ground_dressing anchor Vector3(6.6000, 0.0, -10.7500) target_h 0.55 depth 1.25 footprint "1.35 x 0.55 x 1.25 m - raked gravel mound"
+FIT_ROW torii/ornament_accent raw_h=1.000 raw_d=0.811 raw_cx=+0.001 ideal_h=0.90 was_d=0.73 -> target_h=0.90 depth=0.73 scale=0.9000 anchor_z=-10.9000 was_z=-10.900
+SPEC_ROW torii/ornament_accent anchor Vector3(0.8000, 0.0, -10.9000) target_h 0.90 depth 0.73 footprint "0.76 x 0.90 x 0.73 m - shrine panel"
+FIT_ROW torii/column_pillar raw_h=1.000 raw_d=0.161 raw_cx=-0.000 ideal_h=2.60 was_d=0.42 -> target_h=2.60 depth=0.42 scale=2.6000 anchor_z=-10.9500 was_z=-10.950
+SPEC_ROW torii/column_pillar anchor Vector3(9.6000, 0.0, -10.9500) target_h 2.60 depth 0.42 footprint "0.56 x 2.60 x 0.42 m - vermillion post"
+FIT_ROW torii/railing_segment raw_h=0.646 raw_d=0.159 raw_cx=+0.000 ideal_h=1.05 was_d=0.26 -> target_h=1.05 depth=0.26 scale=1.6242 anchor_z=-10.7000 was_z=-10.700
+SPEC_ROW torii/railing_segment anchor Vector3(-6.2000, 0.0, -10.7000) target_h 1.05 depth 0.26 footprint "1.62 x 1.05 x 0.26 m - wooden rail tile"
+FIT_ROW torii/furniture raw_h=0.314 raw_d=0.293 raw_cx=+0.000 ideal_h=0.95 was_d=0.89 -> target_h=0.95 depth=0.89 scale=3.0211 anchor_z=-10.8000 was_z=-10.800
+SPEC_ROW torii/furniture anchor Vector3(2.6000, 0.0, -10.8000) target_h 0.95 depth 0.89 footprint "3.02 x 0.95 x 0.89 m - bench"
+FIT_ROW torii/signage_banner raw_h=1.000 raw_d=0.258 raw_cx=+0.001 ideal_h=1.40 was_d=0.36 -> target_h=1.40 depth=0.36 scale=1.4000 anchor_z=-10.9200 was_z=-10.920
+SPEC_ROW torii/signage_banner anchor Vector3(-1.4000, 0.0, -10.9200) target_h 1.40 depth 0.36 footprint "0.86 x 1.40 x 0.36 m - noren panel"
+FIT_ROW medina/hero_landmark raw_h=1.000 raw_d=0.186 raw_cx=+0.000 ideal_h=3.90 was_d=0.72 -> target_h=3.90 depth=0.72 scale=3.9000 anchor_z=-11.3500 was_z=-11.350
+SPEC_ROW medina/hero_landmark anchor Vector3(-4.2000, 0.0, -11.3500) target_h 3.90 depth 0.72 footprint "0.73 x 3.90 x 0.72 m - minaret shaft and balcony"
+FIT_ROW medina/gate_portal raw_h=1.000 raw_d=0.244 raw_cx=+0.002 ideal_h=2.80 was_d=0.68 -> target_h=2.80 depth=0.68 scale=2.8000 anchor_z=-11.1500 was_z=-11.150
+SPEC_ROW medina/gate_portal anchor Vector3(3.6000, 0.0, -11.1500) target_h 2.80 depth 0.68 footprint "2.37 x 2.80 x 0.68 m - horseshoe arch"
+FIT_ROW medina/light_source raw_h=1.000 raw_d=0.295 raw_cx=+0.000 ideal_h=1.30 was_d=0.38 -> target_h=1.30 depth=0.38 scale=1.3000 anchor_z=-11.0000 was_z=-11.000
+SPEC_ROW medina/light_source anchor Vector3(-7.8000, 0.0, -11.0000) target_h 1.30 depth 0.38 footprint "0.44 x 1.30 x 0.38 m - brass lantern"
+FIT_ROW medina/vegetation_cluster raw_h=1.000 raw_d=0.406 raw_cx=+0.002 ideal_h=2.70 was_d=1.10 -> target_h=2.70 depth=1.10 scale=2.7000 anchor_z=-11.4416 was_z=-11.452
+SPEC_ROW medina/vegetation_cluster anchor Vector3(-10.6000, 0.0, -11.4416) target_h 2.70 depth 1.10 footprint "2.13 x 2.70 x 1.10 m - palm cluster"
+FIT_ROW medina/ground_dressing raw_h=0.795 raw_d=1.000 raw_cx=+0.000 ideal_h=0.60 was_d=0.75 -> target_h=0.60 depth=0.75 scale=0.7548 anchor_z=-10.7000 was_z=-10.700
+SPEC_ROW medina/ground_dressing anchor Vector3(5.8000, 0.0, -10.7000) target_h 0.60 depth 0.75 footprint "0.70 x 0.60 x 0.75 m - pottery and kerb strip"
+FIT_ROW medina/ornament_accent raw_h=0.411 raw_d=1.000 raw_cx=+0.000 ideal_h=0.79 was_d=1.92 -> target_h=0.78 depth=1.90 scale=1.8972 anchor_z=-11.0392 was_z=-11.039 BANDED
+SPEC_ROW medina/ornament_accent anchor Vector3(0.4000, 0.0, -11.0392) target_h 0.78 depth 1.90 footprint "1.90 x 0.78 x 1.90 m - zellige panel"
+FIT_ROW medina/column_pillar raw_h=1.000 raw_d=0.153 raw_cx=+0.000 ideal_h=2.70 was_d=0.41 -> target_h=2.70 depth=0.41 scale=2.7000 anchor_z=-10.9000 was_z=-10.900
+SPEC_ROW medina/column_pillar anchor Vector3(8.8000, 0.0, -10.9000) target_h 2.70 depth 0.41 footprint "0.83 x 2.70 x 0.41 m - zellige column"
+FIT_ROW medina/railing_segment raw_h=0.676 raw_d=0.132 raw_cx=+0.000 ideal_h=1.15 was_d=0.23 -> target_h=1.15 depth=0.23 scale=1.7017 anchor_z=-10.6500 was_z=-10.650
+SPEC_ROW medina/railing_segment anchor Vector3(-5.6000, 0.0, -10.6500) target_h 1.15 depth 0.23 footprint "1.70 x 1.15 x 0.23 m - iron grille"
+FIT_ROW medina/furniture raw_h=0.670 raw_d=1.000 raw_cx=+0.000 ideal_h=0.95 was_d=1.42 -> target_h=0.95 depth=1.42 scale=1.4181 anchor_z=-10.7800 was_z=-10.780
+SPEC_ROW medina/furniture anchor Vector3(2.2000, 0.0, -10.7800) target_h 0.95 depth 1.42 footprint "1.42 x 0.95 x 1.42 m - divan"
+FIT_ROW medina/signage_banner raw_h=0.570 raw_d=0.539 raw_cx=+0.000 ideal_h=1.30 was_d=1.23 -> target_h=1.30 depth=1.23 scale=2.2795 anchor_z=-10.8800 was_z=-10.880
+SPEC_ROW medina/signage_banner anchor Vector3(-1.6000, 0.0, -10.8800) target_h 1.30 depth 1.23 footprint "2.28 x 1.30 x 1.23 m - awning sign"
+FIT_ROW carioca/hero_landmark raw_h=0.971 raw_d=1.000 raw_cx=+0.000 ideal_h=1.87 was_d=1.93 -> target_h=1.86 depth=1.92 scale=1.9161 anchor_z=-11.0319 was_z=-11.037 BANDED
+SPEC_ROW carioca/hero_landmark anchor Vector3(4.6000, 0.0, -11.0319) target_h 1.86 depth 1.92 footprint "1.92 x 1.86 x 1.92 m - sugarloaf mass"
+FIT_ROW carioca/gate_portal raw_h=0.936 raw_d=0.235 raw_cx=+0.000 ideal_h=2.40 was_d=0.60 -> target_h=2.40 depth=0.60 scale=2.5653 anchor_z=-11.1000 was_z=-11.100
+SPEC_ROW carioca/gate_portal anchor Vector3(-4.0000, 0.0, -11.1000) target_h 2.40 depth 0.60 footprint "2.57 x 2.40 x 0.60 m - quay arch"
+FIT_ROW carioca/light_source raw_h=0.541 raw_d=0.137 raw_cx=+0.000 ideal_h=1.50 was_d=0.38 -> target_h=1.50 depth=0.38 scale=2.7726 anchor_z=-10.9500 was_z=-10.950
+SPEC_ROW carioca/light_source anchor Vector3(7.6000, 0.0, -10.9500) target_h 1.50 depth 0.38 footprint "2.77 x 1.50 x 0.38 m - festoon post"
+FIT_ROW carioca/vegetation_cluster raw_h=1.000 raw_d=0.633 raw_cx=+0.001 ideal_h=2.50 was_d=1.58 -> target_h=2.50 depth=1.58 scale=2.5000 anchor_z=-11.1990 was_z=-11.209
+SPEC_ROW carioca/vegetation_cluster anchor Vector3(-9.8000, 0.0, -11.1990) target_h 2.50 depth 1.58 footprint "2.40 x 2.50 x 1.58 m - banana and tree-fern clump"
+FIT_ROW carioca/ground_dressing raw_h=0.570 raw_d=0.955 raw_cx=+0.000 ideal_h=0.50 was_d=0.84 -> target_h=0.50 depth=0.84 scale=0.8767 anchor_z=-10.7000 was_z=-10.700
+SPEC_ROW carioca/ground_dressing anchor Vector3(4.2000, 0.0, -10.7000) target_h 0.50 depth 0.84 footprint "0.88 x 0.50 x 0.84 m - beach boulders"
+FIT_ROW carioca/ornament_accent raw_h=0.235 raw_d=1.000 raw_cx=+0.000 ideal_h=0.45 was_d=1.92 -> target_h=0.45 depth=1.92 scale=1.9160 anchor_z=-11.0320 was_z=-11.042
+SPEC_ROW carioca/ornament_accent anchor Vector3(-1.0000, 0.0, -11.0320) target_h 0.45 depth 1.92 footprint "1.92 x 0.45 x 1.92 m - capoeira ring brass"
+FIT_ROW carioca/column_pillar raw_h=1.000 raw_d=0.169 raw_cx=-0.000 ideal_h=2.60 was_d=0.44 -> target_h=2.60 depth=0.44 scale=2.6000 anchor_z=-10.8500 was_z=-10.850
+SPEC_ROW carioca/column_pillar anchor Vector3(-7.2000, 0.0, -10.8500) target_h 2.60 depth 0.44 footprint "0.49 x 2.60 x 0.44 m - painted mast"
+FIT_ROW carioca/railing_segment raw_h=0.664 raw_d=0.190 raw_cx=+0.000 ideal_h=1.00 was_d=0.29 -> target_h=1.00 depth=0.29 scale=1.5059 anchor_z=-10.5500 was_z=-10.550
+SPEC_ROW carioca/railing_segment anchor Vector3(1.4000, 0.0, -10.5500) target_h 1.00 depth 0.29 footprint "1.51 x 1.00 x 0.29 m - quay rope rail"
+FIT_ROW carioca/furniture raw_h=0.859 raw_d=1.000 raw_cx=+0.001 ideal_h=0.90 was_d=1.05 -> target_h=0.90 depth=1.05 scale=1.0473 anchor_z=-10.8500 was_z=-10.850
+SPEC_ROW carioca/furniture anchor Vector3(9.4000, 0.0, -10.8500) target_h 0.90 depth 1.05 footprint "0.80 x 0.90 x 1.05 m - deck chair"
+FIT_ROW carioca/signage_banner raw_h=1.000 raw_d=0.075 raw_cx=+0.000 ideal_h=1.20 was_d=0.09 -> target_h=1.20 depth=0.09 scale=1.2000 anchor_z=-10.8000 was_z=-10.800
+SPEC_ROW carioca/signage_banner anchor Vector3(-2.4000, 0.0, -10.8000) target_h 1.20 depth 0.09 footprint "0.78 x 1.20 x 0.09 m - bandeira"
+FIT_ROW aurora/hero_landmark raw_h=1.000 raw_d=0.961 raw_cx=+0.000 ideal_h=2.00 was_d=1.92 -> target_h=1.99 depth=1.91 scale=1.9900 anchor_z=-11.0339 was_z=-11.039 BANDED
+SPEC_ROW aurora/hero_landmark anchor Vector3(-5.0000, 0.0, -11.0339) target_h 1.99 depth 1.91 footprint "1.99 x 1.99 x 1.91 m - ice spire"
+FIT_ROW aurora/gate_portal raw_h=1.000 raw_d=0.781 raw_cx=-0.001 ideal_h=2.20 was_d=1.72 -> target_h=2.20 depth=1.72 scale=2.2000 anchor_z=-11.0500 was_z=-11.050
+SPEC_ROW aurora/gate_portal anchor Vector3(3.2000, 0.0, -11.0500) target_h 2.20 depth 1.72 footprint "1.70 x 2.20 x 1.72 m - cairn marker"
+FIT_ROW aurora/light_source raw_h=0.842 raw_d=1.000 raw_cx=+0.000 ideal_h=1.60 was_d=1.90 -> target_h=1.60 depth=1.90 scale=1.9007 anchor_z=-11.0300 was_z=-11.030
+SPEC_ROW aurora/light_source anchor Vector3(-8.8000, 0.0, -11.0300) target_h 1.60 depth 1.90 footprint "1.90 x 1.60 x 1.90 m - brazier"
+FIT_ROW aurora/vegetation_cluster raw_h=0.807 raw_d=1.000 raw_cx=+0.000 ideal_h=1.55 was_d=1.92 -> target_h=1.54 depth=1.91 scale=1.9092 anchor_z=-11.0354 was_z=-11.039 BANDED
+SPEC_ROW aurora/vegetation_cluster anchor Vector3(8.6000, 0.0, -11.0354) target_h 1.54 depth 1.91 footprint "1.91 x 1.54 x 1.91 m - moss-rock tuft"
+FIT_ROW aurora/ground_dressing raw_h=1.000 raw_d=0.844 raw_cx=-0.001 ideal_h=0.70 was_d=0.59 -> target_h=0.70 depth=0.59 scale=0.7000 anchor_z=-10.6500 was_z=-10.650
+SPEC_ROW aurora/ground_dressing anchor Vector3(-2.8000, 0.0, -10.6500) target_h 0.70 depth 0.59 footprint "0.66 x 0.70 x 0.59 m - basalt shards"
+FIT_ROW aurora/ornament_accent raw_h=1.000 raw_d=0.131 raw_cx=+0.000 ideal_h=1.10 was_d=0.14 -> target_h=1.10 depth=0.14 scale=1.1000 anchor_z=-10.7800 was_z=-10.780
+SPEC_ROW aurora/ornament_accent anchor Vector3(0.6000, 0.0, -10.7800) target_h 1.10 depth 0.14 footprint "0.44 x 1.10 x 0.14 m - runestone"
+FIT_ROW aurora/column_pillar raw_h=1.000 raw_d=0.421 raw_cx=+0.000 ideal_h=2.80 was_d=1.18 -> target_h=2.80 depth=1.18 scale=2.8000 anchor_z=-10.8800 was_z=-10.880
+SPEC_ROW aurora/column_pillar anchor Vector3(5.4000, 0.0, -10.8800) target_h 2.80 depth 1.18 footprint "1.25 x 2.80 x 1.18 m - basalt prism"
+FIT_ROW aurora/railing_segment raw_h=0.807 raw_d=0.192 raw_cx=+0.000 ideal_h=0.95 was_d=0.23 -> target_h=0.95 depth=0.23 scale=1.1777 anchor_z=-10.5000 was_z=-10.500
+SPEC_ROW aurora/railing_segment anchor Vector3(-3.6000, 0.0, -10.5000) target_h 0.95 depth 0.23 footprint "1.18 x 0.95 x 0.23 m - driftwood fence"
+FIT_ROW aurora/furniture raw_h=0.351 raw_d=1.000 raw_cx=-0.182 ideal_h=0.67 was_d=1.91 -> target_h=0.67 depth=1.91 scale=1.9111 anchor_z=-11.0345 was_z=-11.045
+SPEC_ROW aurora/furniture anchor Vector3(10.2000, 0.0, -11.0345) target_h 0.67 depth 1.91 footprint "1.19 x 0.67 x 1.91 m - sled bench"
+FIT_ROW aurora/signage_banner raw_h=1.000 raw_d=0.072 raw_cx=+0.001 ideal_h=1.50 was_d=0.11 -> target_h=1.50 depth=0.11 scale=1.5000 anchor_z=-10.7200 was_z=-10.720
+SPEC_ROW aurora/signage_banner anchor Vector3(1.8000, 0.0, -10.7200) target_h 1.50 depth 0.11 footprint "0.93 x 1.50 x 0.11 m - pennant"
+FIT_ROW egeo/hero_landmark raw_h=0.934 raw_d=0.992 raw_cx=+0.000 ideal_h=1.81 was_d=1.92 -> target_h=1.80 depth=1.91 scale=1.9280 anchor_z=-11.0335 was_z=-11.038 BANDED
+SPEC_ROW egeo/hero_landmark anchor Vector3(3.8000, 0.0, -11.0335) target_h 1.80 depth 1.91 footprint "1.93 x 1.80 x 1.91 m - caldera rim with domes"
+FIT_ROW egeo/gate_portal raw_h=1.000 raw_d=0.680 raw_cx=+0.001 ideal_h=2.50 was_d=1.70 -> target_h=2.50 depth=1.70 scale=2.5000 anchor_z=-11.0000 was_z=-11.000
+SPEC_ROW egeo/gate_portal anchor Vector3(-3.4000, 0.0, -11.0000) target_h 2.50 depth 1.70 footprint "1.62 x 2.50 x 1.70 m - chapel door"
+FIT_ROW egeo/light_source raw_h=1.000 raw_d=0.240 raw_cx=-0.000 ideal_h=1.70 was_d=0.41 -> target_h=1.70 depth=0.41 scale=1.7000 anchor_z=-10.9000 was_z=-10.900
+SPEC_ROW egeo/light_source anchor Vector3(7.2000, 0.0, -10.9000) target_h 1.70 depth 0.41 footprint "0.40 x 1.70 x 0.41 m - wind-light"
+FIT_ROW egeo/vegetation_cluster raw_h=1.000 raw_d=0.562 raw_cx=+0.002 ideal_h=2.20 was_d=1.24 -> target_h=2.20 depth=1.24 scale=2.2000 anchor_z=-11.3000 was_z=-11.300
+SPEC_ROW egeo/vegetation_cluster anchor Vector3(-9.4000, 0.0, -11.3000) target_h 2.20 depth 1.24 footprint "2.13 x 2.20 x 1.24 m - olive and growth clump"
+FIT_ROW egeo/ground_dressing raw_h=0.619 raw_d=0.930 raw_cx=+0.000 ideal_h=0.55 was_d=0.83 -> target_h=0.55 depth=0.83 scale=0.8883 anchor_z=-10.6800 was_z=-10.680
+SPEC_ROW egeo/ground_dressing anchor Vector3(5.6000, 0.0, -10.6800) target_h 0.55 depth 0.83 footprint "0.89 x 0.55 x 0.83 m - dry-stone stub"
+FIT_ROW egeo/ornament_accent raw_h=0.502 raw_d=0.680 raw_cx=+0.000 ideal_h=0.95 was_d=1.29 -> target_h=0.95 depth=1.29 scale=1.8926 anchor_z=-10.7600 was_z=-10.760
+SPEC_ROW egeo/ornament_accent anchor Vector3(-0.8000, 0.0, -10.7600) target_h 0.95 depth 1.29 footprint "1.89 x 0.95 x 1.29 m - donkey cart"
+FIT_ROW egeo/column_pillar raw_h=1.000 raw_d=0.224 raw_cx=+0.000 ideal_h=2.50 was_d=0.56 -> target_h=2.50 depth=0.56 scale=2.5000 anchor_z=-10.8200 was_z=-10.820
+SPEC_ROW egeo/column_pillar anchor Vector3(-6.6000, 0.0, -10.8200) target_h 2.50 depth 0.56 footprint "1.13 x 2.50 x 0.56 m - whitewashed pier"
+FIT_ROW egeo/railing_segment raw_h=0.758 raw_d=0.187 raw_cx=+0.000 ideal_h=1.00 was_d=0.25 -> target_h=1.00 depth=0.25 scale=1.3196 anchor_z=-10.5200 was_z=-10.520
+SPEC_ROW egeo/railing_segment anchor Vector3(1.2000, 0.0, -10.5200) target_h 1.00 depth 0.25 footprint "1.32 x 1.00 x 0.25 m - blue rail"
+FIT_ROW egeo/furniture raw_h=1.000 raw_d=0.551 raw_cx=+0.004 ideal_h=1.00 was_d=0.55 -> target_h=1.00 depth=0.55 scale=1.0000 anchor_z=-10.8600 was_z=-10.860
+SPEC_ROW egeo/furniture anchor Vector3(9.8000, 0.0, -10.8600) target_h 1.00 depth 0.55 footprint "0.52 x 1.00 x 0.55 m - taverna chair"
+FIT_ROW egeo/signage_banner raw_h=1.000 raw_d=0.158 raw_cx=+0.001 ideal_h=1.30 was_d=0.21 -> target_h=1.30 depth=0.21 scale=1.3000 anchor_z=-10.7000 was_z=-10.700
+SPEC_ROW egeo/signage_banner anchor Vector3(-1.9000, 0.0, -10.7000) target_h 1.30 depth 0.21 footprint "1.16 x 1.30 x 0.21 m - taverna sign"
+# emit: 50 slot(s), 5 fitted to the band

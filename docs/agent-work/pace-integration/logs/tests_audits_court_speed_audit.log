@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok court_speed/frozen_base_paddle_speed_matches_reference
+ok court_speed/frozen_athlete_maestro_speed_matches_reference
+ok court_speed/frozen_athlete_pantera_speed_matches_reference
+ok court_speed/frozen_athlete_steamer_speed_matches_reference
+ok court_speed/frozen_athlete_fiamma_speed_matches_reference
+ok court_speed/frozen_athlete_oracolo_speed_matches_reference
+ok court_speed/frozen_athlete_colosso_speed_matches_reference
+ok court_speed/frozen_ai_rivale_speed_matches_reference
+ok court_speed/frozen_ai_rivale_skill_matches_reference
+ok court_speed/frozen_ai_ingegnere_speed_matches_reference
+ok court_speed/frozen_ai_ingegnere_skill_matches_reference
+ok court_speed/frozen_ai_campione_speed_matches_reference
+ok court_speed/frozen_ai_campione_skill_matches_reference
+ok court_speed/frozen_ai_leggenda_speed_matches_reference
+ok court_speed/frozen_ai_leggenda_skill_matches_reference
+ok court_speed/bench_drive_charge1.35_ball_flew
+ok court_speed/bench_smash_charge1.35_ball_flew
+ok court_speed/bench_drive_charge0.80_ball_flew
+# report ball(driveSoft=211.6 driveFull=520.4 smash=580.2) athletes(slow=291.6 median=304.3 fast=412.1) ai(easy=280.9 hard=378.1)
+# report ratios(driveFull/median=1.71 smash/median=1.91)
+ok court_speed/full_drive_beats_median_athlete
+ok court_speed/smash_beats_median_athlete
+ok court_speed/smash_is_the_fastest_shot
+ok court_speed/no_athlete_outruns_a_full_drive
+ok court_speed/soft_drive_is_reachable
+ok court_speed/easiest_ai_slower_than_slowest_athlete
+ok court_speed/hardest_ai_beats_median_athlete
+PASS 25/25

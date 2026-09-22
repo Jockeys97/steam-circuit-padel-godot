@@ -1,0 +1,879 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M4
+
+# WORLD_ARENAS_CAPTURE · Godot 4.7.2-stable (official) · field-law z=-8.0 · presets=["default", "wide", "playable"]
+# display=macOS adapter=Apple M4 api=4.1 Metal - 90.5 size=(1280, 720) out=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures targets=["torii", "medina", "carioca", "aurora", "egeo"] presets=["default"]
+ok the display server is not headless (a dummy driver renders blank frames)
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=121 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=272 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture default/torii: every glass pane and scenery mesh is visible at capture time
+ok capture default/torii: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture default/torii: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/torii: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture default/torii: the frame is non-vacuous (1474 colours on a 64x36 grid)
+ok capture default/torii: all court corners + side/rear glass extents inside the frame
+ok capture default/torii: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures/default/arena-torii.png)
+CAPTURE_RECORD preset=default arena=torii png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures/default/arena-torii.png px=1280x720 colours=1474 min_margin=55.1px(court_corner_left_near) sha256=6399653f22192024676c4bd48f500806593517be238f62f13dd4dcd7a4e53de7
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=124 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=275 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture default/medina: every glass pane and scenery mesh is visible at capture time
+ok capture default/medina: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture default/medina: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/medina: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture default/medina: the frame is non-vacuous (1542 colours on a 64x36 grid)
+ok capture default/medina: all court corners + side/rear glass extents inside the frame
+ok capture default/medina: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures/default/arena-medina.png)
+CAPTURE_RECORD preset=default arena=medina png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures/default/arena-medina.png px=1280x720 colours=1542 min_margin=55.1px(court_corner_left_near) sha256=2849fbff6da0770579c957a9955bbe5c30c5934629b88738d5b43bd444671b54
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=124 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=274 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture default/carioca: every glass pane and scenery mesh is visible at capture time
+ok capture default/carioca: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture default/carioca: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/carioca: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture default/carioca: the frame is non-vacuous (724 colours on a 64x36 grid)
+ok capture default/carioca: all court corners + side/rear glass extents inside the frame
+ok capture default/carioca: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures/default/arena-carioca.png)
+CAPTURE_RECORD preset=default arena=carioca png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures/default/arena-carioca.png px=1280x720 colours=724 min_margin=55.1px(court_corner_left_near) sha256=4a003a7e75165a5d7a2cd068c45f9e5f6983559cfdd0199b34c4aa5fd93e4f7f
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=121 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=276 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture default/aurora: every glass pane and scenery mesh is visible at capture time
+ok capture default/aurora: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture default/aurora: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/aurora: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture default/aurora: the frame is non-vacuous (871 colours on a 64x36 grid)
+ok capture default/aurora: all court corners + side/rear glass extents inside the frame
+ok capture default/aurora: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures/default/arena-aurora.png)
+CAPTURE_RECORD preset=default arena=aurora png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures/default/arena-aurora.png px=1280x720 colours=871 min_margin=55.1px(court_corner_left_near) sha256=e3a1fd606eb5c824dc1e7408a643ed234fd0c6d8e9db053ab8c3e492895e30d7
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=122 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=284 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture default/egeo: every glass pane and scenery mesh is visible at capture time
+ok capture default/egeo: rear pane alpha is the arena's own (0.380), side walls at 0.340
+ok capture default/egeo: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/egeo: capture size is the documented 1280x720 (run with --resolution 1280x720)
+ok capture default/egeo: the frame is non-vacuous (1061 colours on a 64x36 grid)
+ok capture default/egeo: all court corners + side/rear glass extents inside the frame
+ok capture default/egeo: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures/default/arena-egeo.png)
+CAPTURE_RECORD preset=default arena=egeo png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures/default/arena-egeo.png px=1280x720 colours=1061 min_margin=55.1px(court_corner_left_near) sha256=5129668860f0bdb54cadf70b5c4f4bcefb0a0f2a281c081c6dee1c0be30f2ba6
+ok preset default: the captured arenas render differently (5 captures, 5 distinct signatures)
+ok every capture was written and recorded
+ok captures.json written (5 records)
+CAPTURE_SUMMARY captures=5 log=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/luca-arena-integration/evidence/captures/captures.json
+PASS 39/39
+ERROR: Pages in use exist at exit in PagedAllocator: N20RasterizerSceneGLES323GeometryInstanceSurfaceE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: Pages in use exist at exit in PagedAllocator: N20RasterizerSceneGLES321GeometryInstanceGLES3E
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+ERROR: 1 shaders of type SceneShaderGLES3 were never freed
+   at: ~ShaderGLES3 (drivers/gles3/shader_gles3.cpp:838)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+ERROR: Texture with GL ID of 26: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 27: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 28: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 29: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 30: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 31: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 32: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 33: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 34: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 35: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 36: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 37: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 38: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 39: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 40: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 41: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 42: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 43: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 44: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 45: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 46: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 47: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 48: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 49: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 50: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 51: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 52: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 53: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 54: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 55: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 58: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 59: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 60: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 61: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 62: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 63: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 64: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 65: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 67: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 68: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 79: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 80: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 81: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 82: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 83: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 84: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 85: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 86: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 87: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 88: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 89: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 90: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 91: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 92: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 93: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 94: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 95: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 96: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 97: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 98: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 101: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 102: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 103: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 104: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 105: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 106: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 107: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 108: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 109: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 110: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 111: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 112: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 113: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 114: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 115: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 116: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 117: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 118: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 119: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 120: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 121: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 122: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 123: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 124: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 125: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 126: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 127: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 128: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 129: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 130: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 135: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 136: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 137: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 138: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 139: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 140: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 141: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 142: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 143: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 144: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 145: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 146: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 147: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 148: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 149: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 150: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 151: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 152: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 153: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 154: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 155: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 156: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 157: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 158: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 159: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 160: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 161: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 162: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 163: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 164: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 166: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 167: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 168: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 169: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 170: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 171: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 172: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 173: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 174: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 175: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 176: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 177: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 178: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 179: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 180: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 181: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 182: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 183: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 184: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 185: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 186: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 187: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 188: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 189: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 190: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 191: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 192: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 193: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 194: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Texture with GL ID of 195: leaked 16777215 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:82)
+ERROR: Buffer with GL ID of 382: leaked 62304 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 383: leaked 20768 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 384: leaked 23976 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 505: leaked 52068 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 506: leaked 17356 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 507: leaked 25836 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 510: leaked 54528 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 511: leaked 18176 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 512: leaked 24996 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 516: leaked 54672 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 517: leaked 18224 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 518: leaked 24948 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 521: leaked 54384 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 522: leaked 18128 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 523: leaked 25698 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 526: leaked 51984 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 527: leaked 17328 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 528: leaked 21678 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 531: leaked 54984 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 532: leaked 18328 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 533: leaked 26268 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 536: leaked 63096 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 537: leaked 21032 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 538: leaked 24912 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 541: leaked 57936 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 542: leaked 19312 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 543: leaked 24960 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 546: leaked 62184 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 547: leaked 20728 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 548: leaked 26592 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 464: leaked 49884 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 465: leaked 16628 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 466: leaked 24270 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 659: leaked 58836 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 660: leaked 19612 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 661: leaked 24720 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 664: leaked 47796 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 665: leaked 15932 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 666: leaked 23886 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 670: leaked 52980 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 671: leaked 17660 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 672: leaked 25356 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 675: leaked 49572 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 676: leaked 16524 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 677: leaked 26592 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 680: leaked 57144 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 681: leaked 19048 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 682: leaked 25806 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 685: leaked 53652 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 686: leaked 17884 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 687: leaked 25680 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 690: leaked 52128 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 691: leaked 17376 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 692: leaked 25026 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 695: leaked 52500 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 696: leaked 17500 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 697: leaked 25362 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 700: leaked 53772 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 701: leaked 17924 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 702: leaked 25092 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 431: leaked 51288 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 432: leaked 17096 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 433: leaked 21906 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 619: leaked 58020 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 620: leaked 19340 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 621: leaked 23910 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 624: leaked 45024 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 625: leaked 15008 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 626: leaked 25818 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 630: leaked 57948 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 631: leaked 19316 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 632: leaked 25404 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 635: leaked 54720 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 636: leaked 18240 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 637: leaked 25890 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 640: leaked 47916 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 641: leaked 15972 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 642: leaked 25392 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 645: leaked 61800 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 646: leaked 20600 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 647: leaked 26388 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 650: leaked 48288 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 651: leaked 16096 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 652: leaked 24978 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 655: leaked 63024 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 656: leaked 21008 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 657: leaked 26016 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 706: leaked 59184 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 707: leaked 19728 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 708: leaked 26220 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 490: leaked 66816 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 491: leaked 22272 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 492: leaked 24528 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 783: leaked 47340 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 784: leaked 15780 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 785: leaked 26388 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 788: leaked 53220 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 789: leaked 17740 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 790: leaked 25416 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 794: leaked 49764 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 795: leaked 16588 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 796: leaked 24378 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 799: leaked 54996 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 800: leaked 18332 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 801: leaked 25908 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 806: leaked 43344 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 807: leaked 14448 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 808: leaked 20898 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 811: leaked 32268 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 812: leaked 10756 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 813: leaked 25428 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 816: leaked 51108 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 817: leaked 17036 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 818: leaked 23250 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 821: leaked 51744 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 822: leaked 17248 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 823: leaked 25200 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 826: leaked 40500 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 827: leaked 13500 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 828: leaked 24954 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 416: leaked 57456 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 417: leaked 19152 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 418: leaked 21834 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 607: leaked 60852 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 608: leaked 20284 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 609: leaked 25992 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 612: leaked 53112 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 613: leaked 17704 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 614: leaked 26244 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 618: leaked 50688 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 711: leaked 16896 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 712: leaked 25092 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 715: leaked 42000 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 716: leaked 14000 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 717: leaked 20268 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 720: leaked 56508 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 721: leaked 18836 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 722: leaked 24534 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 725: leaked 45444 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 726: leaked 15148 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 727: leaked 26004 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 730: leaked 68088 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 731: leaked 22696 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 732: leaked 26196 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 735: leaked 51000 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 736: leaked 17000 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 737: leaked 23292 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 740: leaked 50472 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 741: leaked 16824 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+ERROR: Buffer with GL ID of 742: leaked 24096 bytes.
+   at: ~Utilities (drivers/gles3/storage/utilities.cpp:113)
+WARNING: 350 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 50 RID allocations of type 'N5GLES34MeshE' were leaked at exit.
+ERROR: 50 RID allocations of type 'N5GLES38MaterialE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N5GLES36ShaderE' were leaked at exit.
+ERROR: 150 RID allocations of type 'N5GLES37TextureE' were leaked at exit.
+ERROR: 50 RID allocations of type 'N17RendererSceneCull8InstanceE' were leaked at exit.

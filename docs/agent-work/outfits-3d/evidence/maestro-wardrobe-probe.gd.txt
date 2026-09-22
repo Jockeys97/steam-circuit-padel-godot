@@ -1,0 +1,219 @@
+extends SceneTree
+## TEMPORARY verification probe for the Maestro wardrobe -> save -> match path.
+##
+## This file is NOT a deliverable: it is created for one run, its output is
+## captured into docs/agent-work/outfits-3d/MAESTRO-INTEGRATION.md, and it is
+## deleted again (the lane's file scope allows only the match-capture test to be
+## added). The script text is reproduced in that document so the run stays
+## reproducible.
+##
+##   GODOT_SILENCE_ROOT_WARNING=1 /Applications/Godot.app/Contents/MacOS/Godot \
+##     --headless --path godot --script res://tests/_maestro_wardrobe_probe.gd
+##
+## Everything happens on an ISOLATED store (`user://maestro-wardrobe-probe`); the
+## real profile under `user://save` is snapshotted before and after and must be
+## byte-for-byte untouched.
+
+const Router := preload("res://src/ui/ScreenRouter.gd")
+const CharactersScene := preload("res://src/ui/screens/CharactersScreen.tscn")
+const PlaceholderScene := preload("res://src/ui/PlaceholderScreen.tscn")
+const Config := preload("res://game/match_config.gd")
+const ModeTables := preload("res://src/modes/mode_tables.gd")
+const ModesSave := preload("res://src/modes/modes_save.gd")
+const CareerRules := preload("res://src/modes/career_rules.gd")
+const CareerProgress := preload("res://src/modes/career_progress.gd")
+const Schema := preload("res://src/save/save_schema.gd")
+const Store := preload("res://src/save/save_store.gd")
+
+const DIR := "user://maestro-wardrobe-probe"
+const FIAMMA_DIR := "user://maestro-wardrobe-probe-fiamma"
+const ATHLETE := "maestro"
+const VARIANTS := ["circuit", "legend", "signature"]
+
+## The same "strong won match" fixture `save_progression_audit.gd` uses.
+const STRONG := {
+	"pointsWon": {"player": 20, "ai": 4},
+	"aces": {"player": 8, "ai": 0},
+	"winners": {"player": 20, "ai": 1},
+	"errors": {"player": 0, "ai": 8},
+	"doubleFaults": {"player": 0, "ai": 2},
+	"smashWinners": {"player": 12, "ai": 0},
+	"rallyCount": 8,
+	"totalRallyHits": 120,
+	"longestRally": 30,
+}
+
+var _router: Control
+var _frame: Control
+var _checks := 0
+var _failures := 0
+
+
+func _initialize() -> void:
+	call_deferred("run")
+
+
+func check(condition: bool, what: String) -> void:
+	_checks += 1
+	if condition:
+		print("ok   %s" % what)
+		return
+	_failures += 1
+	printerr("FAIL %s" % what)
+
+
+func report(text: String) -> void:
+	print("MEASURED %s" % text)
+
+
+func run() -> void:
+	_cleanup()
+	Config.save_dir = DIR
+	var real_before := _snapshot(Schema.SAVE_DIR)
+
+	_frame = Control.new()
+	_frame.size = Vector2(1280, 720)
+	root.add_child(_frame)
+	_router = Router.new()
+	_frame.add_child(_router)
+	for id in Router.ids():
+		_router.register(String(id), PlaceholderScene)
+	check(_router.register("characters", CharactersScene), "the real CharactersScreen scene registers")
+
+	var store := Config.save_store()
+	ModesSave.save_career(store, CareerProgress.empty_career())
+
+	# --- 1. the wardrobe opens on Maestro and lists his variants --------------
+	var screen: Node = await _mount()
+	check(String(Config.athlete().get("id", "")) == ATHLETE,
+		"the session athlete is %s (the roster's index 0)" % ATHLETE)
+	var outfits: Array = ModeTables.outfits_for_athlete(ATHLETE)
+	var ids: Array = []
+	for outfit in outfits:
+		ids.append(String((outfit as Dictionary).get("id", "")))
+	report("maestro outfits = %s" % JSON.stringify(ids))
+	check(outfits.size() > 1, "the maestro athlete has a wardrobe")
+	check(screen.open_outfits("player"), "the wardrobe opens for the player slot")
+	check(String(screen.outfit_athlete_id()) == ATHLETE,
+		"the open wardrobe belongs to maestro (got '%s')" % screen.outfit_athlete_id())
+	check(String(screen.view()) == "outfits", "the wardrobe is the active view")
+
+	# --- 2. the three variants are shown, locked, on a fresh career ----------
+	var career := ModesSave.load_career(store)
+	for variant in VARIANTS:
+		check(screen.find_child("OutfitCard_%s" % variant, true, false) != null,
+			"the wardrobe shows a card for '%s'" % variant)
+		var record := ModeTables.outfit_by_unlock_key("%s:%s" % [ATHLETE, variant])
+		check(not record.is_empty(), "'%s' exists in the reference table" % variant)
+		check(not CareerRules.is_unlocked(record, career),
+			"'%s' starts LOCKED on a fresh career" % variant)
+		check(record.get("challenge") != null, "'%s' carries a challenge" % variant)
+		check(screen.equip_outfit(ATHLETE, variant) == false,
+			"a locked '%s' cannot be equipped" % variant)
+		var line: Label = screen.find_child("OutfitLine_%s" % variant, true, false)
+		check(line != null and line.text != "", "'%s' shows its challenge line" % variant)
+
+	# --- 3. the unlock path: the SAME shared award Fiamma uses ----------------
+	var maestro_award: Dictionary = ModesSave.award_match_outfits(store, ATHLETE, STRONG, true, 0.95)
+	var maestro_keys: Array = []
+	for entry in (maestro_award.get("outfits", []) as Array):
+		maestro_keys.append(String((entry as Dictionary).get("unlockKey", "")))
+	report("award_match_outfits(maestro) unlocked = %s" % JSON.stringify(maestro_keys))
+
+	var fiamma_store := Store.new(FIAMMA_DIR)
+	ModesSave.save_career(fiamma_store, CareerProgress.empty_career())
+	ModesSave.award_match_outfits(fiamma_store, "fiamma", STRONG, true, 0.95)
+	var fiamma_career := ModesSave.load_career(fiamma_store)
+	var fiamma_keys: Array = []
+	for variant in VARIANTS:
+		if bool((fiamma_career.get("outfitsWon", {}) as Dictionary).get("fiamma:%s" % variant, false)):
+			fiamma_keys.append("fiamma:%s" % variant)
+	report("the same match won for fiamma = %s" % JSON.stringify(fiamma_keys))
+
+	for variant in VARIANTS:
+		check(maestro_keys.has("%s:%s" % [ATHLETE, variant]),
+			"the shared award unlocks maestro:%s" % variant)
+		check(fiamma_keys.has("fiamma:%s" % variant),
+			"the same award unlocks fiamma:%s (parity)" % variant)
+
+	var after_award := ModesSave.load_career(store)
+	check(int((after_award.get("athleteWins", {}) as Dictionary).get(ATHLETE, 0)) == 1,
+		"the match counts one maestro win")
+
+	# --- 4. now unlocked: selectable, and the choice persists in the save -----
+	screen = await _mount()
+	check(screen.open_outfits("player"), "the wardrobe reopens after the unlock")
+	for variant in VARIANTS:
+		var record := ModeTables.outfit_by_unlock_key("%s:%s" % [ATHLETE, variant])
+		check(CareerRules.is_unlocked(record, after_award), "'%s' is unlocked now" % variant)
+		# `equip_outfit` hands the screen back to the team panel, so the wardrobe
+		# is reopened for each variant rather than checked once.
+		if String(screen.view()) != "outfits":
+			screen.open_outfits("player")
+		check(screen.find_child("OutfitFooter_%s" % variant, true, false) != null,
+			"'%s' now offers its pick action" % variant)
+		check(screen.equip_outfit(ATHLETE, variant), "'%s' can be equipped" % variant)
+		var reloaded := ModesSave.load_career(store)
+		var worn: Dictionary = reloaded.get("equippedOutfits", {})
+		check(String(worn.get(ATHLETE, "")) == variant,
+			"equipping '%s' is written to career.equippedOutfits" % variant)
+		check(String(screen.equipped_outfit_id(ATHLETE)) == variant,
+			"the screen reports '%s' as equipped" % variant)
+
+	# --- 5. the choice survives a fresh mount ---------------------------------
+	var last: String = VARIANTS[VARIANTS.size() - 1]
+	screen = await _mount()
+	check(String(screen.equipped_outfit_id(ATHLETE)) == last,
+		"a fresh mount still reports '%s' as equipped (got '%s')" % [last, screen.equipped_outfit_id(ATHLETE)])
+	screen.open_outfits("player")
+	var equipped_card: Control = screen.find_child("OutfitCard_%s" % last, true, false)
+	check(equipped_card != null, "the equipped card exists after the remount")
+	if equipped_card != null:
+		var box := equipped_card.get_theme_stylebox("panel") as StyleBoxFlat
+		check(box != null and box.border_color == screen.theme.get_color("cyan", "Palette"),
+			"the equipped card wears the selected frame after the remount")
+
+	# --- 6. the real profile was never touched --------------------------------
+	var real_after := _snapshot(Schema.SAVE_DIR)
+	check(JSON.stringify(real_before) == JSON.stringify(real_after),
+		"the real profile under user://save is untouched")
+	report("real profile before = %s" % JSON.stringify(real_before))
+	report("real profile after  = %s" % JSON.stringify(real_after))
+
+	_cleanup()
+	if _failures == 0:
+		print("MAESTRO_WARDROBE_PASS checks=%d" % _checks)
+		quit(0)
+		return
+	printerr("MAESTRO_WARDROBE_FAIL failures=%d of %d" % [_failures, _checks])
+	quit(1)
+
+
+func _mount() -> Node:
+	_router.go_to("characters")
+	for _i in 3:
+		await process_frame
+	return _router.active_screen()
+
+
+## name -> byte length for every file under `path`, so a rewrite is visible.
+func _snapshot(path: String) -> Dictionary:
+	var out: Dictionary = {}
+	var dir := DirAccess.open(path)
+	if dir == null:
+		return out
+	for file in dir.get_files():
+		var handle := FileAccess.open(path.path_join(file), FileAccess.READ)
+		out[file] = handle.get_length() if handle != null else -1
+	return out
+
+
+func _cleanup() -> void:
+	Config.save_dir = ""
+	for path in [DIR, FIAMMA_DIR]:
+		var dir := DirAccess.open(path)
+		if dir == null:
+			continue
+		for file in dir.get_files():
+			dir.remove(file)
+		DirAccess.remove_absolute(path)

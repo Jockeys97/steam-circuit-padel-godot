@@ -157,6 +157,16 @@ Il validatore le riporta e non le fa fallire, perché sono registrate come `lega
 
 ## 8. Stati del registro
 
+### Variante outfit Maestro Mythic (2026-09-22)
+
+Integrazione giocabile richiesta dall'utente, non promozione del modello base:
+`godot/assets/athletes/outfits/maestro/mythic/`. Mantiene l'id `maestro` e usa
+24 ossa Meshy legacy, 20.543 triangoli e texture 2K. È una variante **in prova**:
+il lieve superamento della banda e il rig legacy restano dichiarati, non si
+alza il budget globale. Le animazioni dei colpi sono retargettate appositamente;
+non usa la maschera UV del Maestro base. Il registro degli atleti base resta
+invariato. Provenienza: `docs/agent-work/meshy-outfit-trial/REPORT.md`.
+
 | Stato | Significato | Il validatore |
 |---|---|---|
 | `approvato` | è l'asset di gioco di quell'atleta | **esige** lo standard |

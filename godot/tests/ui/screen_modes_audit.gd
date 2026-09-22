@@ -10,7 +10,10 @@
 ##   3. the two setup segments: four difficulty rungs (`index.html:136-139`, the
 ##      gate's `DIFFICULTY_TIERS`) and six match formats (`js/data.js:689-698`);
 ##      a choice persists through the reference's own carrier (prefs) and moves the
-##      session's selection (`js/main.js:2541-2556`, `:2276-2277`);
+##      session's selection (`js/main.js:2541-2556`, `:2276-2277`). The row's third
+##      group is the port's own (the game-pace rung), and this audit only has to see
+##      its five rungs reach the bridge like every other control —
+##      `tests/pace_screen_test.gd` owns the rungs' behaviour and the clock they set;
 ##   4. a press on a mode card performs `js/ui.js:1720-1729`: pending mode set, the
 ##      choice persisted, tournament's round reset, the route to `characters`;
 ##   5. the demo run's own presentation: exactly one difficulty enabled and visible,
@@ -48,6 +51,7 @@ const Config := preload("res://game/match_config.gd")
 const Gate := preload("res://game/content_gate.gd")
 const ModesSave := preload("res://src/modes/modes_save.gd")
 const ModeTables := preload("res://src/modes/mode_tables.gd")
+const Pace := preload("res://src/sim/pace.gd")
 
 const SCREEN_PATH := "res://src/ui/screens/ModesScreen.gd"
 const SCENE_PATH := "res://src/ui/screens/ModesScreen.tscn"
@@ -549,6 +553,8 @@ func _check_bindings(audit: AuditBase, screen: Node, lang: String) -> void:
 		var expected := UiStrings.t(String(row.get("key", "")), row.get("params", {}))
 		if String(row.get("suffix_key", "")) != "":
 			expected += String(row.get("joiner", "")) + UiStrings.t(String(row["suffix_key"]), row.get("suffix_params", {}))
+		if String(row.get("name", "")) in ["DifficultyLabel", "LengthLabel"]:
+			expected = expected.to_upper()
 		var shown := String(screen.text_shown(String(row.get("name", ""))))
 		if shown != expected:
 			wrong.append("%s: %s != %s" % [row.get("name", ""), shown, expected])
@@ -613,7 +619,7 @@ func _bridge(audit: AuditBase) -> void:
 	var ids: Array = []
 	for spec in specs:
 		ids.append(String((spec as Dictionary).get("id", "")))
-	audit.check_eq(specs.size(), 14, "modes/the_screen_registers_fourteen_focusables")
+	audit.check_eq(specs.size(), 19, "modes/the_screen_registers_nineteen_focusables")
 	audit.check_true(ids.has("modes/BackButton"), "modes/the_back_control_is_registered")
 	audit.check_true(ids.has("modes/%squick" % ModesScreenClass.CARD_PREFIX), "modes/the_quick_card_is_registered")
 	var actions: Array = []
@@ -622,11 +628,18 @@ func _bridge(audit: AuditBase) -> void:
 	audit.check_true(actions.has("select-mode:quick"), "modes/the_card_reports_its_own_action")
 	audit.check_true(actions.has("difficulty:easy"), "modes/a_rung_reports_its_own_action")
 	audit.check_true(actions.has("length:points11"), "modes/a_format_reports_its_own_action")
+	# The port's own pace rungs ride the same door; `tests/pace_screen_test.gd` owns
+	# their behaviour, this audit only has to see them like any other control.
+	var pace_actions := 0
+	for id in Pace.ids():
+		if actions.has("pace:%s" % String(id)):
+			pace_actions += 1
+	audit.check_eq(pace_actions, Pace.ids().size(), "modes/every_pace_rung_reports_its_own_action")
 
 	var focus: RefCounted = MenuFocus.new()
 	var bridge: RefCounted = Bridge.new()
 	bridge.attach(screen, focus, _router)
-	audit.check_eq(bridge.ids().size(), 14, "modes/the_bridge_reads_the_fourteen_controls")
+	audit.check_eq(bridge.ids().size(), 19, "modes/the_bridge_reads_the_nineteen_controls")
 	audit.check_true(bridge.set_focus("modes/BackButton"), "modes/the_bridge_can_focus_the_back_control")
 	var event := InputEventKey.new()
 	event.keycode = KEY_ENTER

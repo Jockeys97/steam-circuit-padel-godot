@@ -1,0 +1,1120 @@
+{
+ "sheets": {
+  "idle": {
+   "base_path": "assets/sprites/oracolo-idle-consistent-v2.webp",
+   "sig_path": "assets/outfits/oracolo/signature/idle-v2.webp",
+   "rows": [
+    {
+     "band": 0.0,
+     "base_skin_pct": 11.2,
+     "sig_skin_pct": 12.1,
+     "d_skin_pct": 0.9,
+     "base_woh": 0.3019,
+     "sig_woh": 0.2923,
+     "d_woh_pct": -3.2
+    },
+    {
+     "band": 0.05,
+     "base_skin_pct": 14.9,
+     "sig_skin_pct": 14.9,
+     "d_skin_pct": 0.0,
+     "base_woh": 0.3662,
+     "sig_woh": 0.3635,
+     "d_woh_pct": -0.7
+    },
+    {
+     "band": 0.1,
+     "base_skin_pct": 19.1,
+     "sig_skin_pct": 18.9,
+     "d_skin_pct": -0.2,
+     "base_woh": 0.3816,
+     "sig_woh": 0.3804,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.15000000000000002,
+     "base_skin_pct": 30.3,
+     "sig_skin_pct": 29.8,
+     "d_skin_pct": -0.5,
+     "base_woh": 0.4293,
+     "sig_woh": 0.4297,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.2,
+     "base_skin_pct": 25.7,
+     "sig_skin_pct": 25.6,
+     "d_skin_pct": -0.1,
+     "base_woh": 0.5843,
+     "sig_woh": 0.5829,
+     "d_woh_pct": -0.2
+    },
+    {
+     "band": 0.25,
+     "base_skin_pct": 33.2,
+     "sig_skin_pct": 33.3,
+     "d_skin_pct": 0.1,
+     "base_woh": 0.587,
+     "sig_woh": 0.5852,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.30000000000000004,
+     "base_skin_pct": 26.6,
+     "sig_skin_pct": 27.4,
+     "d_skin_pct": 0.8,
+     "base_woh": 0.5707,
+     "sig_woh": 0.571,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.35000000000000003,
+     "base_skin_pct": 25.8,
+     "sig_skin_pct": 26.0,
+     "d_skin_pct": 0.2,
+     "base_woh": 0.5507,
+     "sig_woh": 0.5496,
+     "d_woh_pct": -0.2
+    },
+    {
+     "band": 0.4,
+     "base_skin_pct": 26.6,
+     "sig_skin_pct": 26.5,
+     "d_skin_pct": -0.1,
+     "base_woh": 0.4588,
+     "sig_woh": 0.4573,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.45,
+     "base_skin_pct": 25.8,
+     "sig_skin_pct": 26.2,
+     "d_skin_pct": 0.4,
+     "base_woh": 0.4631,
+     "sig_woh": 0.4588,
+     "d_woh_pct": -0.9
+    },
+    {
+     "band": 0.5,
+     "base_skin_pct": 11.1,
+     "sig_skin_pct": 10.9,
+     "d_skin_pct": -0.2,
+     "base_woh": 0.3859,
+     "sig_woh": 0.3807,
+     "d_woh_pct": -1.3
+    },
+    {
+     "band": 0.55,
+     "base_skin_pct": 35.0,
+     "sig_skin_pct": 34.6,
+     "d_skin_pct": -0.4,
+     "base_woh": 0.3962,
+     "sig_woh": 0.3911,
+     "d_woh_pct": -1.3
+    },
+    {
+     "band": 0.6000000000000001,
+     "base_skin_pct": 54.3,
+     "sig_skin_pct": 54.0,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.4213,
+     "sig_woh": 0.4189,
+     "d_woh_pct": -0.6
+    },
+    {
+     "band": 0.65,
+     "base_skin_pct": 59.2,
+     "sig_skin_pct": 58.6,
+     "d_skin_pct": -0.6,
+     "base_woh": 0.4426,
+     "sig_woh": 0.4402,
+     "d_woh_pct": -0.5
+    },
+    {
+     "band": 0.7000000000000001,
+     "base_skin_pct": 59.4,
+     "sig_skin_pct": 58.9,
+     "d_skin_pct": -0.5,
+     "base_woh": 0.4847,
+     "sig_woh": 0.4825,
+     "d_woh_pct": -0.5
+    },
+    {
+     "band": 0.75,
+     "base_skin_pct": 65.1,
+     "sig_skin_pct": 64.8,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.4952,
+     "sig_woh": 0.4922,
+     "d_woh_pct": -0.6
+    },
+    {
+     "band": 0.8,
+     "base_skin_pct": 34.9,
+     "sig_skin_pct": 36.7,
+     "d_skin_pct": 1.8,
+     "base_woh": 0.5148,
+     "sig_woh": 0.515,
+     "d_woh_pct": 0.0
+    },
+    {
+     "band": 0.8500000000000001,
+     "base_skin_pct": 11.2,
+     "sig_skin_pct": 10.1,
+     "d_skin_pct": -1.1,
+     "base_woh": 0.5635,
+     "sig_woh": 0.5615,
+     "d_woh_pct": -0.4
+    },
+    {
+     "band": 0.9,
+     "base_skin_pct": 21.1,
+     "sig_skin_pct": 22.6,
+     "d_skin_pct": 1.5,
+     "base_woh": 0.6179,
+     "sig_woh": 0.6114,
+     "d_woh_pct": -1.1
+    },
+    {
+     "band": 0.9500000000000001,
+     "base_skin_pct": 28.7,
+     "sig_skin_pct": 29.5,
+     "d_skin_pct": 0.8,
+     "base_woh": 0.6419,
+     "sig_woh": 0.6421,
+     "d_woh_pct": 0.0
+    }
+   ]
+  },
+  "action": {
+   "base_path": "assets/sprites/oracolo-action-unique.webp",
+   "sig_path": "assets/outfits/oracolo/signature/action.webp",
+   "rows": [
+    {
+     "band": 0.0,
+     "base_skin_pct": 10.4,
+     "sig_skin_pct": 10.5,
+     "d_skin_pct": 0.1,
+     "base_woh": 0.3009,
+     "sig_woh": 0.2955,
+     "d_woh_pct": -1.8
+    },
+    {
+     "band": 0.05,
+     "base_skin_pct": 13.8,
+     "sig_skin_pct": 13.0,
+     "d_skin_pct": -0.8,
+     "base_woh": 0.3663,
+     "sig_woh": 0.3656,
+     "d_woh_pct": -0.2
+    },
+    {
+     "band": 0.1,
+     "base_skin_pct": 19.2,
+     "sig_skin_pct": 18.9,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.3991,
+     "sig_woh": 0.3761,
+     "d_woh_pct": -5.8
+    },
+    {
+     "band": 0.15000000000000002,
+     "base_skin_pct": 30.3,
+     "sig_skin_pct": 29.3,
+     "d_skin_pct": -1.0,
+     "base_woh": 0.4147,
+     "sig_woh": 0.4158,
+     "d_woh_pct": 0.3
+    },
+    {
+     "band": 0.2,
+     "base_skin_pct": 23.5,
+     "sig_skin_pct": 23.4,
+     "d_skin_pct": -0.1,
+     "base_woh": 0.5441,
+     "sig_woh": 0.4525,
+     "d_woh_pct": -16.8
+    },
+    {
+     "band": 0.25,
+     "base_skin_pct": 32.7,
+     "sig_skin_pct": 32.4,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.5445,
+     "sig_woh": 0.5451,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.30000000000000004,
+     "base_skin_pct": 24.7,
+     "sig_skin_pct": 24.4,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.532,
+     "sig_woh": 0.5341,
+     "d_woh_pct": 0.4
+    },
+    {
+     "band": 0.35000000000000003,
+     "base_skin_pct": 23.9,
+     "sig_skin_pct": 24.4,
+     "d_skin_pct": 0.5,
+     "base_woh": 0.4789,
+     "sig_woh": 0.479,
+     "d_woh_pct": 0.0
+    },
+    {
+     "band": 0.4,
+     "base_skin_pct": 27.4,
+     "sig_skin_pct": 27.3,
+     "d_skin_pct": -0.1,
+     "base_woh": 0.5,
+     "sig_woh": 0.5007,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.45,
+     "base_skin_pct": 25.8,
+     "sig_skin_pct": 25.9,
+     "d_skin_pct": 0.1,
+     "base_woh": 0.446,
+     "sig_woh": 0.447,
+     "d_woh_pct": 0.2
+    },
+    {
+     "band": 0.5,
+     "base_skin_pct": 12.6,
+     "sig_skin_pct": 12.2,
+     "d_skin_pct": -0.4,
+     "base_woh": 0.3866,
+     "sig_woh": 0.3854,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.55,
+     "base_skin_pct": 38.7,
+     "sig_skin_pct": 37.6,
+     "d_skin_pct": -1.1,
+     "base_woh": 0.4,
+     "sig_woh": 0.4,
+     "d_woh_pct": 0.0
+    },
+    {
+     "band": 0.6000000000000001,
+     "base_skin_pct": 56.0,
+     "sig_skin_pct": 56.2,
+     "d_skin_pct": 0.2,
+     "base_woh": 0.42,
+     "sig_woh": 0.42,
+     "d_woh_pct": 0.0
+    },
+    {
+     "band": 0.65,
+     "base_skin_pct": 58.0,
+     "sig_skin_pct": 57.5,
+     "d_skin_pct": -0.5,
+     "base_woh": 0.4411,
+     "sig_woh": 0.4407,
+     "d_woh_pct": -0.1
+    },
+    {
+     "band": 0.7000000000000001,
+     "base_skin_pct": 61.3,
+     "sig_skin_pct": 61.2,
+     "d_skin_pct": -0.1,
+     "base_woh": 0.4847,
+     "sig_woh": 0.4818,
+     "d_woh_pct": -0.6
+    },
+    {
+     "band": 0.75,
+     "base_skin_pct": 64.1,
+     "sig_skin_pct": 63.9,
+     "d_skin_pct": -0.2,
+     "base_woh": 0.5192,
+     "sig_woh": 0.5196,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.8,
+     "base_skin_pct": 29.8,
+     "sig_skin_pct": 31.1,
+     "d_skin_pct": 1.3,
+     "base_woh": 0.539,
+     "sig_woh": 0.5397,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.8500000000000001,
+     "base_skin_pct": 13.1,
+     "sig_skin_pct": 12.7,
+     "d_skin_pct": -0.4,
+     "base_woh": 0.5506,
+     "sig_woh": 0.5511,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.9,
+     "base_skin_pct": 19.7,
+     "sig_skin_pct": 19.1,
+     "d_skin_pct": -0.6,
+     "base_woh": 0.593,
+     "sig_woh": 0.5935,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.9500000000000001,
+     "base_skin_pct": 28.8,
+     "sig_skin_pct": 27.7,
+     "d_skin_pct": -1.1,
+     "base_woh": 0.6507,
+     "sig_woh": 0.6512,
+     "d_woh_pct": 0.1
+    }
+   ]
+  },
+  "run": {
+   "base_path": "assets/sprites/oracolo-run-unique.webp",
+   "sig_path": "assets/outfits/oracolo/signature/run.webp",
+   "rows": [
+    {
+     "band": 0.0,
+     "base_skin_pct": 0.9,
+     "sig_skin_pct": 1.1,
+     "d_skin_pct": 0.2,
+     "base_woh": 0.2715,
+     "sig_woh": 0.2643,
+     "d_woh_pct": -2.7
+    },
+    {
+     "band": 0.05,
+     "base_skin_pct": 6.6,
+     "sig_skin_pct": 6.4,
+     "d_skin_pct": -0.2,
+     "base_woh": 0.3464,
+     "sig_woh": 0.3446,
+     "d_woh_pct": -0.5
+    },
+    {
+     "band": 0.1,
+     "base_skin_pct": 20.1,
+     "sig_skin_pct": 19.6,
+     "d_skin_pct": -0.5,
+     "base_woh": 0.4242,
+     "sig_woh": 0.4211,
+     "d_woh_pct": -0.7
+    },
+    {
+     "band": 0.15000000000000002,
+     "base_skin_pct": 25.4,
+     "sig_skin_pct": 25.1,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.4359,
+     "sig_woh": 0.4335,
+     "d_woh_pct": -0.6
+    },
+    {
+     "band": 0.2,
+     "base_skin_pct": 21.9,
+     "sig_skin_pct": 22.0,
+     "d_skin_pct": 0.1,
+     "base_woh": 0.4059,
+     "sig_woh": 0.4031,
+     "d_woh_pct": -0.7
+    },
+    {
+     "band": 0.25,
+     "base_skin_pct": 42.0,
+     "sig_skin_pct": 41.4,
+     "d_skin_pct": -0.6,
+     "base_woh": 0.2958,
+     "sig_woh": 0.29,
+     "d_woh_pct": -2.0
+    },
+    {
+     "band": 0.30000000000000004,
+     "base_skin_pct": 38.4,
+     "sig_skin_pct": 37.6,
+     "d_skin_pct": -0.8,
+     "base_woh": 0.4223,
+     "sig_woh": 0.4083,
+     "d_woh_pct": -3.3
+    },
+    {
+     "band": 0.35000000000000003,
+     "base_skin_pct": 17.7,
+     "sig_skin_pct": 17.8,
+     "d_skin_pct": 0.1,
+     "base_woh": 0.4499,
+     "sig_woh": 0.4493,
+     "d_woh_pct": -0.1
+    },
+    {
+     "band": 0.4,
+     "base_skin_pct": 24.4,
+     "sig_skin_pct": 24.9,
+     "d_skin_pct": 0.5,
+     "base_woh": 0.4501,
+     "sig_woh": 0.4514,
+     "d_woh_pct": 0.3
+    },
+    {
+     "band": 0.45,
+     "base_skin_pct": 32.4,
+     "sig_skin_pct": 30.9,
+     "d_skin_pct": -1.5,
+     "base_woh": 0.4797,
+     "sig_woh": 0.479,
+     "d_woh_pct": -0.1
+    },
+    {
+     "band": 0.5,
+     "base_skin_pct": 14.2,
+     "sig_skin_pct": 14.5,
+     "d_skin_pct": 0.3,
+     "base_woh": 0.3882,
+     "sig_woh": 0.3805,
+     "d_woh_pct": -2.0
+    },
+    {
+     "band": 0.55,
+     "base_skin_pct": 15.1,
+     "sig_skin_pct": 15.5,
+     "d_skin_pct": 0.4,
+     "base_woh": 0.3291,
+     "sig_woh": 0.3275,
+     "d_woh_pct": -0.5
+    },
+    {
+     "band": 0.6000000000000001,
+     "base_skin_pct": 49.1,
+     "sig_skin_pct": 49.0,
+     "d_skin_pct": -0.1,
+     "base_woh": 0.3319,
+     "sig_woh": 0.3291,
+     "d_woh_pct": -0.8
+    },
+    {
+     "band": 0.65,
+     "base_skin_pct": 51.5,
+     "sig_skin_pct": 51.6,
+     "d_skin_pct": 0.1,
+     "base_woh": 0.4155,
+     "sig_woh": 0.4106,
+     "d_woh_pct": -1.2
+    },
+    {
+     "band": 0.7000000000000001,
+     "base_skin_pct": 42.9,
+     "sig_skin_pct": 43.6,
+     "d_skin_pct": 0.7,
+     "base_woh": 0.5032,
+     "sig_woh": 0.4883,
+     "d_woh_pct": -3.0
+    },
+    {
+     "band": 0.75,
+     "base_skin_pct": 15.9,
+     "sig_skin_pct": 15.3,
+     "d_skin_pct": -0.6,
+     "base_woh": 0.4896,
+     "sig_woh": 0.4879,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.8,
+     "base_skin_pct": 9.3,
+     "sig_skin_pct": 7.5,
+     "d_skin_pct": -1.8,
+     "base_woh": 0.4163,
+     "sig_woh": 0.4152,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.8500000000000001,
+     "base_skin_pct": 7.4,
+     "sig_skin_pct": 7.2,
+     "d_skin_pct": -0.2,
+     "base_woh": 0.4085,
+     "sig_woh": 0.406,
+     "d_woh_pct": -0.6
+    },
+    {
+     "band": 0.9,
+     "base_skin_pct": 16.3,
+     "sig_skin_pct": 17.0,
+     "d_skin_pct": 0.7,
+     "base_woh": 0.3092,
+     "sig_woh": 0.3084,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.9500000000000001,
+     "base_skin_pct": 21.8,
+     "sig_skin_pct": 22.2,
+     "d_skin_pct": 0.4,
+     "base_woh": 0.1541,
+     "sig_woh": 0.1535,
+     "d_woh_pct": -0.4
+    }
+   ]
+  },
+  "back-idle": {
+   "base_path": "assets/sprites/back/oracolo-idle-consistent-v2.webp",
+   "sig_path": "assets/outfits/oracolo/signature/back-idle-v2.webp",
+   "rows": [
+    {
+     "band": 0.0,
+     "base_skin_pct": 6.1,
+     "sig_skin_pct": 7.0,
+     "d_skin_pct": 0.9,
+     "base_woh": 0.1977,
+     "sig_woh": 0.1956,
+     "d_woh_pct": -1.1
+    },
+    {
+     "band": 0.05,
+     "base_skin_pct": 12.3,
+     "sig_skin_pct": 12.0,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.2638,
+     "sig_woh": 0.2622,
+     "d_woh_pct": -0.6
+    },
+    {
+     "band": 0.1,
+     "base_skin_pct": 19.0,
+     "sig_skin_pct": 18.2,
+     "d_skin_pct": -0.8,
+     "base_woh": 0.3452,
+     "sig_woh": 0.3458,
+     "d_woh_pct": 0.2
+    },
+    {
+     "band": 0.15000000000000002,
+     "base_skin_pct": 28.6,
+     "sig_skin_pct": 28.8,
+     "d_skin_pct": 0.2,
+     "base_woh": 0.4427,
+     "sig_woh": 0.4418,
+     "d_woh_pct": -0.2
+    },
+    {
+     "band": 0.2,
+     "base_skin_pct": 35.6,
+     "sig_skin_pct": 34.8,
+     "d_skin_pct": -0.8,
+     "base_woh": 0.4785,
+     "sig_woh": 0.4758,
+     "d_woh_pct": -0.6
+    },
+    {
+     "band": 0.25,
+     "base_skin_pct": 40.0,
+     "sig_skin_pct": 40.6,
+     "d_skin_pct": 0.6,
+     "base_woh": 0.434,
+     "sig_woh": 0.4331,
+     "d_woh_pct": -0.2
+    },
+    {
+     "band": 0.30000000000000004,
+     "base_skin_pct": 36.2,
+     "sig_skin_pct": 35.3,
+     "d_skin_pct": -0.9,
+     "base_woh": 0.3755,
+     "sig_woh": 0.3742,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.35000000000000003,
+     "base_skin_pct": 47.3,
+     "sig_skin_pct": 47.5,
+     "d_skin_pct": 0.2,
+     "base_woh": 0.3192,
+     "sig_woh": 0.3173,
+     "d_woh_pct": -0.6
+    },
+    {
+     "band": 0.4,
+     "base_skin_pct": 33.3,
+     "sig_skin_pct": 33.2,
+     "d_skin_pct": -0.1,
+     "base_woh": 0.3234,
+     "sig_woh": 0.3217,
+     "d_woh_pct": -0.5
+    },
+    {
+     "band": 0.45,
+     "base_skin_pct": 20.5,
+     "sig_skin_pct": 20.2,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.3277,
+     "sig_woh": 0.3285,
+     "d_woh_pct": 0.2
+    },
+    {
+     "band": 0.5,
+     "base_skin_pct": 33.9,
+     "sig_skin_pct": 33.4,
+     "d_skin_pct": -0.5,
+     "base_woh": 0.3461,
+     "sig_woh": 0.3459,
+     "d_woh_pct": -0.1
+    },
+    {
+     "band": 0.55,
+     "base_skin_pct": 71.5,
+     "sig_skin_pct": 72.2,
+     "d_skin_pct": 0.7,
+     "base_woh": 0.3302,
+     "sig_woh": 0.3297,
+     "d_woh_pct": -0.2
+    },
+    {
+     "band": 0.6000000000000001,
+     "base_skin_pct": 97.0,
+     "sig_skin_pct": 97.2,
+     "d_skin_pct": 0.2,
+     "base_woh": 0.287,
+     "sig_woh": 0.2844,
+     "d_woh_pct": -0.9
+    },
+    {
+     "band": 0.65,
+     "base_skin_pct": 92.3,
+     "sig_skin_pct": 91.6,
+     "d_skin_pct": -0.7,
+     "base_woh": 0.3178,
+     "sig_woh": 0.3174,
+     "d_woh_pct": -0.1
+    },
+    {
+     "band": 0.7000000000000001,
+     "base_skin_pct": 83.4,
+     "sig_skin_pct": 82.9,
+     "d_skin_pct": -0.5,
+     "base_woh": 0.3515,
+     "sig_woh": 0.3504,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.75,
+     "base_skin_pct": 72.8,
+     "sig_skin_pct": 72.5,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.354,
+     "sig_woh": 0.3513,
+     "d_woh_pct": -0.8
+    },
+    {
+     "band": 0.8,
+     "base_skin_pct": 34.9,
+     "sig_skin_pct": 35.1,
+     "d_skin_pct": 0.2,
+     "base_woh": 0.3298,
+     "sig_woh": 0.327,
+     "d_woh_pct": -0.8
+    },
+    {
+     "band": 0.8500000000000001,
+     "base_skin_pct": 8.2,
+     "sig_skin_pct": 7.8,
+     "d_skin_pct": -0.4,
+     "base_woh": 0.421,
+     "sig_woh": 0.4181,
+     "d_woh_pct": -0.7
+    },
+    {
+     "band": 0.9,
+     "base_skin_pct": 9.7,
+     "sig_skin_pct": 10.8,
+     "d_skin_pct": 1.1,
+     "base_woh": 0.4245,
+     "sig_woh": 0.4229,
+     "d_woh_pct": -0.4
+    },
+    {
+     "band": 0.9500000000000001,
+     "base_skin_pct": 29.1,
+     "sig_skin_pct": 28.1,
+     "d_skin_pct": -1.0,
+     "base_woh": 0.3088,
+     "sig_woh": 0.3086,
+     "d_woh_pct": -0.1
+    }
+   ]
+  },
+  "back-action": {
+   "base_path": "assets/sprites/back/oracolo-action-unique.webp",
+   "sig_path": "assets/outfits/oracolo/signature/back-action.webp",
+   "rows": [
+    {
+     "band": 0.0,
+     "base_skin_pct": 6.0,
+     "sig_skin_pct": 5.5,
+     "d_skin_pct": -0.5,
+     "base_woh": 0.1965,
+     "sig_woh": 0.1957,
+     "d_woh_pct": -0.4
+    },
+    {
+     "band": 0.05,
+     "base_skin_pct": 12.2,
+     "sig_skin_pct": 11.9,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.2636,
+     "sig_woh": 0.2612,
+     "d_woh_pct": -0.9
+    },
+    {
+     "band": 0.1,
+     "base_skin_pct": 19.2,
+     "sig_skin_pct": 19.6,
+     "d_skin_pct": 0.4,
+     "base_woh": 0.3476,
+     "sig_woh": 0.3467,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.15000000000000002,
+     "base_skin_pct": 29.3,
+     "sig_skin_pct": 28.6,
+     "d_skin_pct": -0.7,
+     "base_woh": 0.4432,
+     "sig_woh": 0.4257,
+     "d_woh_pct": -3.9
+    },
+    {
+     "band": 0.2,
+     "base_skin_pct": 35.0,
+     "sig_skin_pct": 34.7,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.4788,
+     "sig_woh": 0.4768,
+     "d_woh_pct": -0.4
+    },
+    {
+     "band": 0.25,
+     "base_skin_pct": 38.5,
+     "sig_skin_pct": 38.9,
+     "d_skin_pct": 0.4,
+     "base_woh": 0.4332,
+     "sig_woh": 0.4336,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.30000000000000004,
+     "base_skin_pct": 34.9,
+     "sig_skin_pct": 34.6,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.3751,
+     "sig_woh": 0.3757,
+     "d_woh_pct": 0.2
+    },
+    {
+     "band": 0.35000000000000003,
+     "base_skin_pct": 46.7,
+     "sig_skin_pct": 46.2,
+     "d_skin_pct": -0.5,
+     "base_woh": 0.319,
+     "sig_woh": 0.3145,
+     "d_woh_pct": -1.4
+    },
+    {
+     "band": 0.4,
+     "base_skin_pct": 30.8,
+     "sig_skin_pct": 29.9,
+     "d_skin_pct": -0.9,
+     "base_woh": 0.3234,
+     "sig_woh": 0.3197,
+     "d_woh_pct": -1.1
+    },
+    {
+     "band": 0.45,
+     "base_skin_pct": 19.3,
+     "sig_skin_pct": 20.2,
+     "d_skin_pct": 0.9,
+     "base_woh": 0.3296,
+     "sig_woh": 0.3223,
+     "d_woh_pct": -2.2
+    },
+    {
+     "band": 0.5,
+     "base_skin_pct": 30.6,
+     "sig_skin_pct": 30.5,
+     "d_skin_pct": -0.1,
+     "base_woh": 0.3454,
+     "sig_woh": 0.3454,
+     "d_woh_pct": 0.0
+    },
+    {
+     "band": 0.55,
+     "base_skin_pct": 72.4,
+     "sig_skin_pct": 72.1,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.3296,
+     "sig_woh": 0.3311,
+     "d_woh_pct": 0.5
+    },
+    {
+     "band": 0.6000000000000001,
+     "base_skin_pct": 97.8,
+     "sig_skin_pct": 97.6,
+     "d_skin_pct": -0.2,
+     "base_woh": 0.2684,
+     "sig_woh": 0.269,
+     "d_woh_pct": 0.2
+    },
+    {
+     "band": 0.65,
+     "base_skin_pct": 93.9,
+     "sig_skin_pct": 94.5,
+     "d_skin_pct": 0.6,
+     "base_woh": 0.3181,
+     "sig_woh": 0.3214,
+     "d_woh_pct": 1.0
+    },
+    {
+     "band": 0.7000000000000001,
+     "base_skin_pct": 85.8,
+     "sig_skin_pct": 85.5,
+     "d_skin_pct": -0.3,
+     "base_woh": 0.3515,
+     "sig_woh": 0.3533,
+     "d_woh_pct": 0.5
+    },
+    {
+     "band": 0.75,
+     "base_skin_pct": 76.9,
+     "sig_skin_pct": 77.3,
+     "d_skin_pct": 0.4,
+     "base_woh": 0.353,
+     "sig_woh": 0.3688,
+     "d_woh_pct": 4.5
+    },
+    {
+     "band": 0.8,
+     "base_skin_pct": 40.1,
+     "sig_skin_pct": 40.0,
+     "d_skin_pct": -0.1,
+     "base_woh": 0.3278,
+     "sig_woh": 0.3286,
+     "d_woh_pct": 0.2
+    },
+    {
+     "band": 0.8500000000000001,
+     "base_skin_pct": 7.7,
+     "sig_skin_pct": 8.1,
+     "d_skin_pct": 0.4,
+     "base_woh": 0.4213,
+     "sig_woh": 0.4202,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.9,
+     "base_skin_pct": 10.4,
+     "sig_skin_pct": 10.7,
+     "d_skin_pct": 0.3,
+     "base_woh": 0.4249,
+     "sig_woh": 0.4252,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.9500000000000001,
+     "base_skin_pct": 25.5,
+     "sig_skin_pct": 24.0,
+     "d_skin_pct": -1.5,
+     "base_woh": 0.309,
+     "sig_woh": 0.3099,
+     "d_woh_pct": 0.3
+    }
+   ]
+  },
+  "back-run": {
+   "base_path": "assets/sprites/back/oracolo-run-unique.webp",
+   "sig_path": "assets/outfits/oracolo/signature/back-run.webp",
+   "rows": [
+    {
+     "band": 0.0,
+     "base_skin_pct": 3.5,
+     "sig_skin_pct": 2.6,
+     "d_skin_pct": -0.9,
+     "base_woh": 0.1637,
+     "sig_woh": 0.156,
+     "d_woh_pct": -4.7
+    },
+    {
+     "band": 0.05,
+     "base_skin_pct": 5.5,
+     "sig_skin_pct": 5.5,
+     "d_skin_pct": 0.0,
+     "base_woh": 0.2487,
+     "sig_woh": 0.2481,
+     "d_woh_pct": -0.2
+    },
+    {
+     "band": 0.1,
+     "base_skin_pct": 12.5,
+     "sig_skin_pct": 11.9,
+     "d_skin_pct": -0.6,
+     "base_woh": 0.2849,
+     "sig_woh": 0.2856,
+     "d_woh_pct": 0.2
+    },
+    {
+     "band": 0.15000000000000002,
+     "base_skin_pct": 21.4,
+     "sig_skin_pct": 21.2,
+     "d_skin_pct": -0.2,
+     "base_woh": 0.3212,
+     "sig_woh": 0.3173,
+     "d_woh_pct": -1.2
+    },
+    {
+     "band": 0.2,
+     "base_skin_pct": 38.0,
+     "sig_skin_pct": 36.5,
+     "d_skin_pct": -1.5,
+     "base_woh": 0.3751,
+     "sig_woh": 0.3753,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.25,
+     "base_skin_pct": 36.9,
+     "sig_skin_pct": 37.7,
+     "d_skin_pct": 0.8,
+     "base_woh": 0.4627,
+     "sig_woh": 0.4615,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.30000000000000004,
+     "base_skin_pct": 33.0,
+     "sig_skin_pct": 31.7,
+     "d_skin_pct": -1.3,
+     "base_woh": 0.456,
+     "sig_woh": 0.4563,
+     "d_woh_pct": 0.1
+    },
+    {
+     "band": 0.35000000000000003,
+     "base_skin_pct": 31.9,
+     "sig_skin_pct": 33.5,
+     "d_skin_pct": 1.6,
+     "base_woh": 0.4104,
+     "sig_woh": 0.4084,
+     "d_woh_pct": -0.5
+    },
+    {
+     "band": 0.4,
+     "base_skin_pct": 12.9,
+     "sig_skin_pct": 11.9,
+     "d_skin_pct": -1.0,
+     "base_woh": 0.3693,
+     "sig_woh": 0.3686,
+     "d_woh_pct": -0.2
+    },
+    {
+     "band": 0.45,
+     "base_skin_pct": 11.0,
+     "sig_skin_pct": 12.1,
+     "d_skin_pct": 1.1,
+     "base_woh": 0.3476,
+     "sig_woh": 0.3473,
+     "d_woh_pct": -0.1
+    },
+    {
+     "band": 0.5,
+     "base_skin_pct": 33.5,
+     "sig_skin_pct": 32.1,
+     "d_skin_pct": -1.4,
+     "base_woh": 0.2924,
+     "sig_woh": 0.2944,
+     "d_woh_pct": 0.7
+    },
+    {
+     "band": 0.55,
+     "base_skin_pct": 92.3,
+     "sig_skin_pct": 92.5,
+     "d_skin_pct": 0.2,
+     "base_woh": 0.234,
+     "sig_woh": 0.2311,
+     "d_woh_pct": -1.2
+    },
+    {
+     "band": 0.6000000000000001,
+     "base_skin_pct": 89.3,
+     "sig_skin_pct": 90.1,
+     "d_skin_pct": 0.8,
+     "base_woh": 0.2132,
+     "sig_woh": 0.2164,
+     "d_woh_pct": 1.5
+    },
+    {
+     "band": 0.65,
+     "base_skin_pct": 62.6,
+     "sig_skin_pct": 63.8,
+     "d_skin_pct": 1.2,
+     "base_woh": 0.254,
+     "sig_woh": 0.2533,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.7000000000000001,
+     "base_skin_pct": 51.9,
+     "sig_skin_pct": 51.9,
+     "d_skin_pct": 0.0,
+     "base_woh": 0.254,
+     "sig_woh": 0.2504,
+     "d_woh_pct": -1.4
+    },
+    {
+     "band": 0.75,
+     "base_skin_pct": 62.0,
+     "sig_skin_pct": 61.3,
+     "d_skin_pct": -0.7,
+     "base_woh": 0.2377,
+     "sig_woh": 0.2372,
+     "d_woh_pct": -0.2
+    },
+    {
+     "band": 0.8,
+     "base_skin_pct": 56.5,
+     "sig_skin_pct": 56.9,
+     "d_skin_pct": 0.4,
+     "base_woh": 0.2213,
+     "sig_woh": 0.2232,
+     "d_woh_pct": 0.9
+    },
+    {
+     "band": 0.8500000000000001,
+     "base_skin_pct": 5.6,
+     "sig_skin_pct": 6.7,
+     "d_skin_pct": 1.1,
+     "base_woh": 0.1082,
+     "sig_woh": 0.1057,
+     "d_woh_pct": -2.3
+    },
+    {
+     "band": 0.9,
+     "base_skin_pct": 12.2,
+     "sig_skin_pct": 11.2,
+     "d_skin_pct": -1.0,
+     "base_woh": 0.1356,
+     "sig_woh": 0.1352,
+     "d_woh_pct": -0.3
+    },
+    {
+     "band": 0.9500000000000001,
+     "base_skin_pct": 9.8,
+     "sig_skin_pct": 10.4,
+     "d_skin_pct": 0.6,
+     "base_woh": 0.1432,
+     "sig_woh": 0.1097,
+     "d_woh_pct": -23.4
+    }
+   ]
+  }
+ }
+}

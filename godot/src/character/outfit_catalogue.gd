@@ -69,7 +69,7 @@ class_name OutfitCatalogue
 ## The colour-inferred shader above only ever fit the Volpe placeholder. A Meshy
 ## human needs a real garment mask, because their skin is as saturated as their kit.
 ## So `apply()` now has three outcomes, in this order:
-##   1. the athlete has an entry in `OUTFIT_PROFILES` (today: fiamma only) -> the
+##   1. the athlete has an entry in `OUTFIT_PROFILES` (today: fiamma, maestro) -> the
 ##      masked path: a region mask authored from the skeleton gates the recolour and
 ##      `base` hands the surface back to the rig's own material, untouched;
 ##   2. otherwise the rig recolours itself (Volpe) -> the shader above, unchanged;
@@ -89,6 +89,43 @@ class_name OutfitCatalogue
 const DATA_PATH := "res://assets/athletes/reference_catalogue.json"
 const SHADER_PATH := "res://src/character/outfit_recolour.gdshader"
 const REGION_SHADER_PATH := "res://src/character/outfit_region_recolour.gdshader"
+const OutfitGeometry := preload("res://src/character/outfit_geometry.gd")
+## Meshy retexture candidates promoted after original-UV and rendered review.
+## Keep the original skinned GLB; only its atlas changes.
+const TEXTURE_OUTFITS := {
+	&"colosso": {&"signature": "res://assets/athletes/outfits/colosso/signature_albedo.png"},
+}
+
+static func is_renderable(athlete_id: StringName, outfit_id: StringName) -> bool:
+	return has_outfit(athlete_id, outfit_id) and (outfit_id == &"base" or \
+		not OutfitGeometry.variant(athlete_id, outfit_id).is_empty() or \
+		TEXTURE_OUTFITS.get(athlete_id, {}).has(outfit_id) or \
+		not profile_targets(athlete_id, outfit_id).is_empty())
+
+static func _apply_texture_outfit(rig: Node, athlete_id: StringName, outfit_id: StringName) -> bool:
+	if not rig.has_method("get_athlete_asset") or rig.get_athlete_asset() != athlete_id:
+		return false
+	if outfit_id == &"base":
+		if not rig.restore_base_surface():
+			return false
+	else:
+		var path: String = TEXTURE_OUTFITS[athlete_id].get(outfit_id, "")
+		if path.is_empty():
+			return false
+		var mat: StandardMaterial3D = rig.get_meta("outfit_texture_material", null)
+		if mat == null or mat.get_meta("outfit_texture_path", "") != path:
+			var source: StandardMaterial3D = rig.get_base_material()
+			var texture := load(path) as Texture2D
+			if source == null or texture == null:
+				return false
+			mat = source.duplicate() as StandardMaterial3D
+			mat.albedo_texture = texture
+			mat.resource_name = "outfit_%s_%s" % [athlete_id, outfit_id]
+			mat.set_meta("outfit_texture_path", path)
+			rig.set_meta("outfit_texture_material", mat)
+		rig.get_mesh_instance().set_surface_override_material(0, mat)
+	rig.note_catalogue_outfit(athlete_id, outfit_id)
+	return true
 
 ## ATHLETE PROFILES — the masked path, for athletes whose body is not the Volpe fox.
 ##
@@ -98,6 +135,9 @@ const REGION_SHADER_PATH := "res://src/character/outfit_region_recolour.gdshader
 ##   shader    the shader that reads it;
 ##   anchor_a  the baked atlas's family A, measured *inside* the mask (lime kit);
 ##   anchor_b  the baked atlas's family B, measured inside the mask (navy trim);
+##   value_gate  OPTIONAL. A per-family VALUE band for the shader's family test, for
+##             an atlas whose two families share one hue band and cannot be told
+##             apart by hue at all (Maestro). Absent = the hue-only path, unchanged;
 ##   outfits   outfit id -> the six targets, one per (region x family). An outfit
 ##             absent from this table is `base`: the rig restores its own material.
 ##
@@ -120,7 +160,38 @@ const REGION_SHADER_PATH := "res://src/character/outfit_region_recolour.gdshader
 ##
 ## Athletes NOT listed here are untouched: the masked path is opt-in per athlete, and
 ## a dedicated athlete without a profile keeps its baked look and says so.
+##
+## MAESTRO is the second profile and the first one that needs a VALUE gate. Its two
+## atlas families are 20.0 deg apart in hue (#102040 navy, #68a8c8 sky) under a 42 deg
+## tolerance, so the hue test alone accepts both families for 973,915 of the mask's
+## 1,518,775 texels and the six slots collapse onto one colour per region. The two
+## families are far apart in VALUE, and the split is measured on the atlas, not
+## chosen: a 5.34x density jump at value 0.76 (the accent's painted edge), with the
+## navy kit and its baked shading below 0.74 and the accent above 0.76. Consequences
+## that the numbers state plainly and a reviewer should not have to rediscover:
+##   * with the gate, 0 texels answer to both families (was 973,915);
+##   * the accent is 24,067 texels and lives in the hip (21,201) and the torso
+##     (3,673) - so `torso_b` moves 1.5% of the torso and `hip_b` 6.3% of the hip;
+##   * `foot_b` moves NOTHING on any outfit: the shoe accent in this atlas is
+##     desaturated white/grey, which `sat_min` rejects. It is inert by measurement.
+## Report: docs/agent-work/outfits-3d/evidence/maestro-value-split/.
 const OUTFIT_PROFILES := {
+	# One violet family across the whole fabric. Identical targets avoid a false
+	# waist seam; using violet for BOTH anchors excludes the skin-matching magenta.
+	# Signature is the only non-mythic variant in the actual 2D Oracolo catalogue.
+	&"oracolo": {
+		"mask": "res://assets/athletes/outfits/oracolo/oracolo_region_mask.png",
+		"shader": REGION_SHADER_PATH,
+		"anchor_a": "#301850", "anchor_b": "#301850",
+		"mask_sha256_prefix": "35f0456418571d65",
+		"outfits": {
+			&"signature": {
+				"torso_a": "#38216f", "torso_b": "#38216f",
+				"hip_a": "#38216f", "hip_b": "#38216f",
+				"foot_a": "#38216f", "foot_b": "#38216f",
+			},
+		},
+	},
 	&"fiamma": {
 		"mask": "res://assets/athletes/outfits/fiamma/fiamma_region_mask.png",
 		"shader": REGION_SHADER_PATH,
@@ -151,6 +222,78 @@ const OUTFIT_PROFILES := {
 			},
 		},
 	},
+	# MAESTRO — measured from the in-field 2D sprites, not from the cards.
+	# Tool: tools/character/measure_maestro_palette.py. Report and per-sheet numbers:
+	# docs/agent-work/outfits-3d/evidence/maestro-palette/.
+	# Slots marked "source" are js/data.js ATHLETE_OUTFITS.maestro values placed on the
+	# region the sprite paints that colour in; "measured" slots are the modal colour of
+	# that region and family in the sprite; the single "port" slot is listed in
+	# `port_only` and is a deliberate deviation from BOTH, taken to separate circuit from
+	# signature (their measured shorts sit at dE76 22.2 at equal value).
+	&"maestro": {
+		"mask": "res://assets/athletes/outfits/maestro/maestro_region_mask.png",
+		# anchors and prefix: MEASURED by tools/character/build_maestro_outfit_mask.py and
+		# quoted from docs/agent-work/outfits-3d/evidence/maestro-mask-report.json.
+		"shader": REGION_SHADER_PATH,
+		"anchor_a": "#102040",             # navy, hue 217.1 deg, 54088 samples
+		"anchor_b": "#68a8c8",             # sky,  hue 196.5 deg, 2563 samples
+		"mask_sha256_prefix": "dc39e62c92bc5b8e",
+		# THE VALUE GATE, because the hue test cannot work on this atlas. The two
+		# anchors are 20.0 deg apart under a 42 deg tolerance, so the hue test accepts
+		# 973,915 masked texels for BOTH families at once and the six targets collapse
+		# onto one colour per region (measured, see
+		# docs/agent-work/outfits-3d/evidence/maestro-value-split/). The two families are
+		# far apart in value instead, and that is where the split is measured:
+		#   band_a [0.0, 0.74]  the navy kit and its baked shading   969,284 texels
+		#   band_b [0.76, 1.0]  the sky-blue accent                   24,067 texels
+		# The split sits on the atlas's only density discontinuity (a 5.34x jump at
+		# value 0.76) and the two 0.01-wide ramps meet at 0.75, the accent's own
+		# antialiased edge: 0 recolourable texels are orphaned, and the 103 texels that
+		# do stay baked are bright texels whose hue (238.5-259.1 deg) neither anchor
+		# claims. Measured by tools/character/measure_maestro_value_split.py.
+		"value_gate": {
+			"band_a": [0.0, 0.74],
+			"band_b": [0.76, 1.0],
+			"feather": 0.01,
+		},
+		"outfits": {
+			# Reference colors: ["#315cff", "#9ef8ff"]. Sprite: a royal-blue kit with a
+			# navy panel and white side stripes, navy shoes, white sole.
+			&"circuit": {
+				"torso_a": "#315cff", "torso_b": "#1c335a",
+				"hip_a": "#315cff", "hip_b": "#9ef8ff",
+				"foot_a": "#183567", "foot_b": "#9ef8ff",
+				"port_only": ["hip_a"],
+			},
+			# Reference colors: ["#d5a62a", "#fff0a3"]. Sprite: an ivory kit with a DARK
+			# antique-gold trim and shorts (the sprite shades the declared gold to val
+			# 0.35; this profile keeps the sprite, so the outfit reads dark), ivory shoes
+			# with a dark-gold accent.
+			&"legend": {
+				"torso_a": "#fff0a3", "torso_b": "#5a471b",
+				"hip_a": "#59471c", "hip_b": "#fff0a3",
+				"foot_a": "#fef4d5", "foot_b": "#5a4617",
+			},
+			# Reference colors: ["#03c7ed", "#162f61"]. Sprite: a cyan kit with a
+			# dark-teal panel, dark-teal shorts, dark-teal shoes with a cyan accent. The
+			# navy trim is what keeps this outfit legible next to circuit.
+			&"signature": {
+				"torso_a": "#03c7ed", "torso_b": "#195466",
+				"hip_a": "#154959", "hip_b": "#162f61",
+				"foot_a": "#165568", "foot_b": "#17c8fe",
+			},
+		},
+	},
+}
+
+## The value gate a profile does not declare: disabled, with bands so wide they
+## cannot clip anything. Written into every profile material so a cached material
+## can never carry a stale gate.
+const VALUE_GATE_DEFAULT := {
+	"enabled": false,
+	"band_a": [0.0, 1.0],
+	"band_b": [0.0, 1.0],
+	"feather": 0.05,
 }
 
 ## The six uniform names a profile entry fills, in (region, family) order. Named so
@@ -409,6 +552,22 @@ static func apply(rig: Node, athlete_id: StringName, outfit_id: StringName) -> b
 		return false
 	if rig == null or not rig.has_method("get_mesh_instance"):
 		return false
+	var geometry := OutfitGeometry.variant(athlete_id, outfit_id)
+	var current_geometry: StringName = rig.get_geometry_outfit() if rig.has_method("get_geometry_outfit") else &"base"
+	if not geometry.is_empty() or current_geometry != &"base":
+		# Geometry changes require a new rig; never recolour a foreign atlas or
+		# invalidate a live hand attachment by silently replacing the skeleton.
+		if geometry.is_empty() or current_geometry != outfit_id or rig.get_athlete_asset() != athlete_id:
+			return false
+		if not rig.restore_base_surface():
+			return false
+		rig.note_catalogue_outfit(athlete_id, outfit_id)
+		return true
+	if TEXTURE_OUTFITS.has(athlete_id):
+		if outfit_id == &"base" or TEXTURE_OUTFITS[athlete_id].has(outfit_id):
+			return _apply_texture_outfit(rig, athlete_id, outfit_id)
+		# A stale unsupported selection must not leave the previous texture active.
+		rig.restore_base_surface()
 	if has_profile(athlete_id) and rig.has_method("get_athlete_asset") and rig.get_athlete_asset() != athlete_id:
 		return false
 	# PATH 1 — the athlete has a mask and a profile. Fiamma, today.
@@ -540,6 +699,38 @@ static func profile_port_only(athlete_id: StringName, outfit_id: StringName) -> 
 	return (outfits[outfit_id] as Dictionary).get("port_only", []).duplicate()
 
 
+## The value gate a profile drives the shader's family test with, in the shader's own
+## terms: `enabled`, the two `band_*` value ranges and the `feather` of each ramp.
+## A profile that does not declare one gets VALUE_GATE_DEFAULT, i.e. disabled - and a
+## disabled gate is exactly the shipped hue-only behaviour, because the shader
+## multiplies the family weight by 1.0 and never reads the bands.
+static func profile_value_gate(athlete_id: StringName) -> Dictionary:
+	var out := VALUE_GATE_DEFAULT.duplicate(true)
+	var prof := profile(athlete_id)
+	var gate: Dictionary = prof.get("value_gate", {})
+	if gate.is_empty():
+		return out
+	out["enabled"] = true
+	for key in ["band_a", "band_b"]:
+		var band: Array = gate.get(key, [])
+		if band.size() != 2:
+			push_error("OutfitCatalogue: profile '%s' value_gate.%s must be [low, high]" % [athlete_id, key])
+			return VALUE_GATE_DEFAULT.duplicate(true)
+		out[key] = [float(band[0]), float(band[1])]
+	if gate.has("feather"):
+		out["feather"] = float(gate["feather"])
+	return out
+
+
+static func _apply_value_gate(mat: ShaderMaterial, gate: Dictionary) -> void:
+	var band_a: Array = gate["band_a"]
+	var band_b: Array = gate["band_b"]
+	mat.set_shader_parameter("value_gate_enabled", bool(gate["enabled"]))
+	mat.set_shader_parameter("value_band_a", Vector2(band_a[0], band_a[1]))
+	mat.set_shader_parameter("value_band_b", Vector2(band_b[0], band_b[1]))
+	mat.set_shader_parameter("value_band_feather", float(gate["feather"]))
+
+
 static func _apply_profile(rig: Node, athlete_id: StringName, entry: Dictionary) -> bool:
 	var outfit_id: StringName = entry["outfit_id"]
 	# `base` is not a target set: it is the absence of one. Handing surface 0 back to
@@ -589,6 +780,9 @@ static func _apply_profile(rig: Node, athlete_id: StringName, entry: Dictionary)
 		mat.set_shader_parameter("roughness_enabled", original.roughness_texture != null)
 		mat.set_shader_parameter("roughness_tex", original.roughness_texture)
 		mat.set_shader_parameter("roughness_channel", int(original.roughness_texture_channel))
+	# Every apply writes the gate, not only the first: a cached material can then
+	# never carry a gate that belongs to another profile.
+	_apply_value_gate(mat, profile_value_gate(athlete_id))
 	mat.resource_name = "Outfit_%s" % entry["unlock_key"]
 	for uniform in targets:
 		mat.set_shader_parameter(uniform, _srgb_vec(targets[uniform]))
@@ -616,6 +810,9 @@ static func read_back(rig: Node) -> Dictionary:
 		catalogue_outfit = rig.get_catalogue_outfit()
 	var profile_id := StringName(catalogue_outfit.get("athlete_id", &""))
 	var selected_id := StringName(catalogue_outfit.get("outfit_id", &"base"))
+	if rig.has_method("get_geometry_outfit") and rig.get_geometry_outfit() != &"base":
+		return {"visual_status": "applied", "geometry_outfit": rig.get_geometry_outfit(),
+			"asset_glb": rig.get_athlete_glb_path(), "profile": String(profile_id), "mask": "none"}
 	var mat := mi.get_surface_override_material(0) as ShaderMaterial
 	if mat == null:
 		# No shader on the surface: either a rig that was never put into an outfit, or
@@ -629,7 +826,9 @@ static func read_back(rig: Node) -> Dictionary:
 			"profile": String(profile_id) if has_profile(profile_id) else "",
 			"mask": "none",
 			"is_base_surface": rig.is_base_surface() if rig.has_method("is_base_surface") else false,
-			"visual_status": "base" if selected_id == &"base" else "unsupported_preserved_base",
+			"visual_status": "base" if selected_id == &"base" else (
+				"applied" if plain != null and plain.get_meta("outfit_texture_path", "") ==
+				TEXTURE_OUTFITS.get(profile_id, {}).get(selected_id, "missing") else "unsupported_preserved_base"),
 		}
 	return {
 		"material_class": mat.get_class(),

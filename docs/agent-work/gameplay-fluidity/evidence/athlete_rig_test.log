@@ -1,0 +1,45 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok rig scene instantiates
+ok rig exposes get_load_error()
+ok rig GLB load error is OK
+ok rig exposes a Skeleton3D
+ok joint count is 24
+ok joint names and order match the GLB rig
+ok triangle count is 31325
+ok mesh has exactly one surface
+ok locomotion state 'idle' is registered
+ok locomotion state 'walk' is registered
+ok locomotion state 'run' is registered
+ok clip 'walk' moves the skeleton over time (max joint delta 0.432208 > 0.0100)
+ok clip 'run' moves the skeleton over time (max joint delta 0.614344 > 0.0100)
+ok padel stroke 'drive' is registered
+ok at least three padel strokes are authored
+ok stroke 'volley' moves the skeleton over time (max joint delta 0.162473 > 0.0100)
+ok stroke 'drive' moves the skeleton over time (max joint delta 0.478775 > 0.0100)
+ok stroke 'slice' moves the skeleton over time (max joint delta 0.386936 > 0.0100)
+ok stroke 'lob' moves the skeleton over time (max joint delta 0.549082 > 0.0100)
+ok stroke 'serve' moves the skeleton over time (max joint delta 0.513735 > 0.0100)
+ok at least three outfits are registered (base + 2)
+ok outfit 'base' is registered
+ok set_outfit('base') succeeds
+ok base outfit goes through a surface override (not the shared GLB material)
+ok set_outfit('base') succeeds
+ok get_material_state() reports outfit 'base'
+ok set_outfit('glacier') succeeds
+ok get_material_state() reports outfit 'glacier'
+ok set_outfit('vermilion') succeeds
+ok get_material_state() reports outfit 'vermilion'
+ok set_outfit('midnight_violet') succeeds
+ok get_material_state() reports outfit 'midnight_violet'
+ok set_outfit('ember') succeeds
+ok get_material_state() reports outfit 'ember'
+ok each outfit yields distinct material parameters (5 distinct of 5 outfits)
+ok an unknown outfit id is rejected
+ok set_facing_degrees(90) reads back 90
+ok set_facing_degrees(180) reads back 180
+ok get_pose() returns a 'bones' entry
+ok get_pose() reports 24 joints
+ok get_pose() reports the current clip
+ok get_pose() reports the current clip time
+PASS 42/42

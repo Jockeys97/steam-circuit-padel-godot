@@ -1,0 +1,6 @@
+{"seed":12345,"ticks":12000,"resultTick":null,"aiContacts":21,"aiVolleys":5,"aiBounced":16,"aiServeReturns":9,"aiMaxContactZ":74,"longestRally":5,"points":"0-0"}
+{"seed":999,"ticks":12000,"resultTick":null,"aiContacts":25,"aiVolleys":7,"aiBounced":18,"aiServeReturns":13,"aiMaxContactZ":74,"longestRally":9,"points":"3-4"}
+{"seed":2024,"ticks":12000,"resultTick":null,"aiContacts":22,"aiVolleys":11,"aiBounced":11,"aiServeReturns":8,"aiMaxContactZ":74,"longestRally":5,"points":"0-3"}
+{"seed":424242,"ticks":12000,"resultTick":null,"aiContacts":26,"aiVolleys":8,"aiBounced":18,"aiServeReturns":12,"aiMaxContactZ":74,"longestRally":9,"points":"1-2"}
+{"seed":7,"ticks":12000,"resultTick":null,"aiContacts":24,"aiVolleys":9,"aiBounced":15,"aiServeReturns":9,"aiMaxContactZ":74,"longestRally":8,"points":"0-3"}
+{"totals":{"aiContacts":118,"aiVolleys":40,"aiBounced":78,"aiServeReturns":51}}

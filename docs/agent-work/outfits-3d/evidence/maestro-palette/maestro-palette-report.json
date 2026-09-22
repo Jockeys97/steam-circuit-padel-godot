@@ -1,0 +1,7325 @@
+{
+  "_tool": "tools/character/measure_maestro_palette.py",
+  "method": {
+    "alpha_min": 200,
+    "bands_of_body_bbox_height": {
+      "torso": [
+        0.12,
+        0.48
+      ],
+      "hip": [
+        0.48,
+        0.66
+      ],
+      "foot": [
+        0.9,
+        1.0
+      ]
+    },
+    "extra_bands_not_rig_regions": {
+      "socks": [
+        0.82,
+        0.9
+      ]
+    },
+    "change_eps_255": 16,
+    "family_convention": "a = larger cluster (dominant garment mass), b = trim",
+    "heuristics": {
+      "skin": "hue 9-38 deg and sat > 0.30 (declared port heuristic); declared Maestro skin #c98258",
+      "hair": "max-channel distance <= 48/255 from declared hair #241b19",
+      "racket": "largest 8-connected gold blob (hue 40-62, sat>0.6, val>200/255), closed 9px then dilated 11px"
+    }
+  },
+  "source_colours_declared": {
+    "base": [
+      "#08bfe8",
+      "#f4fbff"
+    ],
+    "circuit": [
+      "#315cff",
+      "#9ef8ff"
+    ],
+    "legend": [
+      "#d5a62a",
+      "#fff0a3"
+    ],
+    "signature": [
+      "#03c7ed",
+      "#162f61"
+    ],
+    "mythic": [
+      "#172f67",
+      "#f5f1df"
+    ],
+    "_visual": {
+      "skin": "#c98258",
+      "hair": "#241b19",
+      "kit": "#08bfe8",
+      "secondary": "#102d68",
+      "accent": "#f4fbff",
+      "shoes": "#123f78",
+      "headband": "#f4fbff"
+    }
+  },
+  "baked_atlas_inventory": {
+    "path": "godot/assets/athletes/maestro_texture_0.png",
+    "size": [
+      2048,
+      2048
+    ],
+    "total_px": 4194304,
+    "classes": {
+      "navy_hue195_265": {
+        "pixels": 1708697,
+        "share_pct": 40.7,
+        "median_hex": "#132544"
+      },
+      "warm_hue_lt45_or_gt265": {
+        "pixels": 1305493,
+        "share_pct": 31.1,
+        "median_hex": "#5c3b35"
+      },
+      "desaturated_grey": {
+        "pixels": 824976,
+        "share_pct": 19.7,
+        "median_hex": "#c3c3c3"
+      },
+      "near_black": {
+        "pixels": 193760,
+        "share_pct": 4.6,
+        "median_hex": "#000000"
+      }
+    },
+    "navy_modes": [
+      {
+        "hex": "#142444",
+        "share_pct": 16.9
+      },
+      {
+        "hex": "#041c44",
+        "share_pct": 11.0
+      },
+      {
+        "hex": "#142c44",
+        "share_pct": 6.8
+      },
+      {
+        "hex": "#041c3c",
+        "share_pct": 6.5
+      },
+      {
+        "hex": "#1c2c44",
+        "share_pct": 4.4
+      }
+    ],
+    "saturated_hue_bands_pct": {
+      "0-30": 39.3,
+      "30-60": 0.1,
+      "60-90": 0.0,
+      "90-120": 0.0,
+      "120-150": 0.0,
+      "150-180": 0.0,
+      "180-210": 4.1,
+      "210-240": 52.4,
+      "240-270": 0.7,
+      "270-300": 0.2,
+      "300-330": 0.4,
+      "330-360": 2.9
+    },
+    "note": "the two saturated clusters are navy and skin/hair; there is no cyan hue and no second saturated garment hue, and a desaturated grey cannot be a family because the shader's family test needs sat > sat_min. Anchors and coverage must come from the mask tool, not from here."
+  },
+  "mask_lane_cross_check": {
+    "report": "docs/agent-work/outfits-3d/evidence/maestro-mask-report.json",
+    "present": true,
+    "tool": "tools/character/build_maestro_outfit_mask.py",
+    "mask": "godot/assets/athletes/outfits/maestro/maestro_region_mask.png",
+    "coverage_fraction": 0.362,
+    "family_anchors": {
+      "navy": {
+        "hex": "#102040",
+        "hue_deg": 217.1,
+        "samples": 54088,
+        "modal_hits": 10335
+      },
+      "sky": {
+        "hex": "#68a8c8",
+        "hue_deg": 196.5,
+        "samples": 2563,
+        "modal_hits": 557
+      }
+    },
+    "family_test": {
+      "anchor_hue_deg": {
+        "navy": 220.0,
+        "sky": 200.0
+      },
+      "hue_separation_deg": 20.0,
+      "hue_tol_deg_effective": 45.0,
+      "sat_min_effective": 0.18,
+      "hits": {
+        "navy": 1127490,
+        "sky": 1114593
+      },
+      "texels_matching_both_anchors": 1114473,
+      "hue_test_separates_the_two_families": false
+    },
+    "classes_by_region": {
+      "torso": {
+        "navy": 197794,
+        "neutral": 32337,
+        "other": 2542,
+        "sky": 7336,
+        "skin": 4231
+      },
+      "hip": {
+        "navy": 253682,
+        "skin": 51759,
+        "neutral": 615,
+        "sky": 28727,
+        "other": 897
+      },
+      "foot": {
+        "neutral": 409697,
+        "navy": 510487,
+        "skin": 4253,
+        "sky": 12763,
+        "other": 1584
+      }
+    },
+    "mask_sha256_prefix_live": "dc39e62c92bc5b8e",
+    "note": "read-only. The mask lane owns this file; a regenerated mask changes the sha256 prefix, which is why it is re-hashed here instead of trusted."
+  },
+  "card_check": {
+    "base_card": "assets/athletes/maestro.webp",
+    "base_card_size": [
+      1086,
+      1448
+    ],
+    "per_outfit": {
+      "circuit": {
+        "path": "assets/outfits/maestro/circuit-preview.webp",
+        "size": [
+          560,
+          747
+        ],
+        "pct_pixels_over_16_255": 97.0,
+        "mean_abs_255": 106.3
+      },
+      "legend": {
+        "path": "assets/outfits/maestro/legend-preview.webp",
+        "size": [
+          560,
+          747
+        ],
+        "pct_pixels_over_16_255": 96.0,
+        "mean_abs_255": 99.9
+      },
+      "signature": {
+        "path": "assets/outfits/maestro/signature-preview.webp",
+        "size": [
+          560,
+          747
+        ],
+        "pct_pixels_over_16_255": 9.6,
+        "mean_abs_255": 10.4
+      }
+    },
+    "note": "a preview card that differs from the base card over most of its area is a different illustration, not a recolour; the in-field sprite is the reference for this document."
+  },
+  "frame_grid_check": [
+    {
+      "sheet": "idle",
+      "which": "base",
+      "path": "assets/sprites/maestro.webp",
+      "size": [
+        1192,
+        476
+      ],
+      "frames": 4,
+      "frame_w": 298.0,
+      "boundary_deviation_px": [
+        3.0,
+        0.0,
+        17.0
+      ],
+      "boundary_on_gap": false
+    },
+    {
+      "sheet": "idle",
+      "which": "outfit",
+      "path": "assets/outfits/maestro/circuit/idle.webp",
+      "size": [
+        716,
+        286
+      ],
+      "frames": 4,
+      "frame_w": 179.0,
+      "boundary_deviation_px": [
+        2.0,
+        0.0,
+        11.0
+      ],
+      "boundary_on_gap": false
+    },
+    {
+      "sheet": "action",
+      "which": "base",
+      "path": "assets/sprites/maestro-action.webp",
+      "size": [
+        1192,
+        476
+      ],
+      "frames": 4,
+      "frame_w": 298.0,
+      "boundary_deviation_px": [
+        0.0,
+        2.0,
+        2.0
+      ],
+      "boundary_on_gap": false
+    },
+    {
+      "sheet": "action",
+      "which": "outfit",
+      "path": "assets/outfits/maestro/circuit/action.webp",
+      "size": [
+        716,
+        286
+      ],
+      "frames": 4,
+      "frame_w": 179.0,
+      "boundary_deviation_px": [
+        0.0,
+        1.0,
+        1.0
+      ],
+      "boundary_on_gap": false
+    },
+    {
+      "sheet": "run",
+      "which": "base",
+      "path": "assets/sprites/maestro-run-v3.webp",
+      "size": [
+        1760,
+        263
+      ],
+      "frames": 8,
+      "frame_w": 220.0,
+      "boundary_deviation_px": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "boundary_on_gap": true
+    },
+    {
+      "sheet": "run",
+      "which": "outfit",
+      "path": "assets/outfits/maestro/circuit/run.webp",
+      "size": [
+        1056,
+        158
+      ],
+      "frames": 8,
+      "frame_w": 132.0,
+      "boundary_deviation_px": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "boundary_on_gap": true
+    },
+    {
+      "sheet": "back-idle",
+      "which": "base",
+      "path": "assets/sprites/back/maestro.webp",
+      "size": [
+        1192,
+        476
+      ],
+      "frames": 4,
+      "frame_w": 298.0,
+      "boundary_deviation_px": [
+        0.0,
+        0.0,
+        18.0
+      ],
+      "boundary_on_gap": false
+    },
+    {
+      "sheet": "back-idle",
+      "which": "outfit",
+      "path": "assets/outfits/maestro/circuit/back-idle.webp",
+      "size": [
+        716,
+        286
+      ],
+      "frames": 4,
+      "frame_w": 179.0,
+      "boundary_deviation_px": [
+        0.0,
+        0.0,
+        11.0
+      ],
+      "boundary_on_gap": false
+    },
+    {
+      "sheet": "back-action",
+      "which": "base",
+      "path": "assets/sprites/back/maestro-action.webp",
+      "size": [
+        1192,
+        476
+      ],
+      "frames": 4,
+      "frame_w": 298.0,
+      "boundary_deviation_px": [
+        0.0,
+        8.0,
+        0.0
+      ],
+      "boundary_on_gap": false
+    },
+    {
+      "sheet": "back-action",
+      "which": "outfit",
+      "path": "assets/outfits/maestro/circuit/back-action.webp",
+      "size": [
+        716,
+        286
+      ],
+      "frames": 4,
+      "frame_w": 179.0,
+      "boundary_deviation_px": [
+        0.0,
+        4.0,
+        0.0
+      ],
+      "boundary_on_gap": false
+    },
+    {
+      "sheet": "back-run",
+      "which": "base",
+      "path": "assets/sprites/back/maestro-run-v3.webp",
+      "size": [
+        1424,
+        305
+      ],
+      "frames": 8,
+      "frame_w": 178.0,
+      "boundary_deviation_px": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "boundary_on_gap": true
+    },
+    {
+      "sheet": "back-run",
+      "which": "outfit",
+      "path": "assets/outfits/maestro/circuit/back-run.webp",
+      "size": [
+        856,
+        183
+      ],
+      "frames": 8,
+      "frame_w": 107.0,
+      "boundary_deviation_px": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "boundary_on_gap": true
+    }
+  ],
+  "sheet_bleed": {
+    "per_frame": [
+      {
+        "sheet": "idle",
+        "outfit": "base",
+        "frame": 0,
+        "own_span": [
+          26,
+          250
+        ],
+        "dropped_px": 22
+      },
+      {
+        "sheet": "idle",
+        "outfit": "base",
+        "frame": 1,
+        "own_span": [
+          0,
+          273
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "idle",
+        "outfit": "base",
+        "frame": 2,
+        "own_span": [
+          21,
+          256
+        ],
+        "dropped_px": 624
+      },
+      {
+        "sheet": "idle",
+        "outfit": "base",
+        "frame": 3,
+        "own_span": [
+          0,
+          264
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "idle",
+        "outfit": "circuit",
+        "frame": 0,
+        "own_span": [
+          16,
+          150
+        ],
+        "dropped_px": 9
+      },
+      {
+        "sheet": "idle",
+        "outfit": "circuit",
+        "frame": 1,
+        "own_span": [
+          0,
+          164
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "idle",
+        "outfit": "circuit",
+        "frame": 2,
+        "own_span": [
+          13,
+          154
+        ],
+        "dropped_px": 226
+      },
+      {
+        "sheet": "idle",
+        "outfit": "circuit",
+        "frame": 3,
+        "own_span": [
+          0,
+          158
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "idle",
+        "outfit": "legend",
+        "frame": 0,
+        "own_span": [
+          16,
+          150
+        ],
+        "dropped_px": 9
+      },
+      {
+        "sheet": "idle",
+        "outfit": "legend",
+        "frame": 1,
+        "own_span": [
+          0,
+          164
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "idle",
+        "outfit": "legend",
+        "frame": 2,
+        "own_span": [
+          13,
+          154
+        ],
+        "dropped_px": 226
+      },
+      {
+        "sheet": "idle",
+        "outfit": "legend",
+        "frame": 3,
+        "own_span": [
+          0,
+          158
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "idle",
+        "outfit": "signature",
+        "frame": 0,
+        "own_span": [
+          16,
+          150
+        ],
+        "dropped_px": 9
+      },
+      {
+        "sheet": "idle",
+        "outfit": "signature",
+        "frame": 1,
+        "own_span": [
+          0,
+          164
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "idle",
+        "outfit": "signature",
+        "frame": 2,
+        "own_span": [
+          13,
+          154
+        ],
+        "dropped_px": 226
+      },
+      {
+        "sheet": "idle",
+        "outfit": "signature",
+        "frame": 3,
+        "own_span": [
+          0,
+          158
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "action",
+        "outfit": "base",
+        "frame": 0,
+        "own_span": [
+          24,
+          280
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "action",
+        "outfit": "base",
+        "frame": 1,
+        "own_span": [
+          7,
+          298
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "action",
+        "outfit": "base",
+        "frame": 2,
+        "own_span": [
+          17,
+          298
+        ],
+        "dropped_px": 8
+      },
+      {
+        "sheet": "action",
+        "outfit": "base",
+        "frame": 3,
+        "own_span": [
+          44,
+          265
+        ],
+        "dropped_px": 15
+      },
+      {
+        "sheet": "action",
+        "outfit": "circuit",
+        "frame": 0,
+        "own_span": [
+          14,
+          168
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "action",
+        "outfit": "circuit",
+        "frame": 1,
+        "own_span": [
+          4,
+          179
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "action",
+        "outfit": "circuit",
+        "frame": 2,
+        "own_span": [
+          10,
+          179
+        ],
+        "dropped_px": 2
+      },
+      {
+        "sheet": "action",
+        "outfit": "circuit",
+        "frame": 3,
+        "own_span": [
+          26,
+          159
+        ],
+        "dropped_px": 3
+      },
+      {
+        "sheet": "action",
+        "outfit": "legend",
+        "frame": 0,
+        "own_span": [
+          14,
+          168
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "action",
+        "outfit": "legend",
+        "frame": 1,
+        "own_span": [
+          4,
+          179
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "action",
+        "outfit": "legend",
+        "frame": 2,
+        "own_span": [
+          10,
+          179
+        ],
+        "dropped_px": 2
+      },
+      {
+        "sheet": "action",
+        "outfit": "legend",
+        "frame": 3,
+        "own_span": [
+          26,
+          159
+        ],
+        "dropped_px": 3
+      },
+      {
+        "sheet": "action",
+        "outfit": "signature",
+        "frame": 0,
+        "own_span": [
+          14,
+          168
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "action",
+        "outfit": "signature",
+        "frame": 1,
+        "own_span": [
+          4,
+          179
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "action",
+        "outfit": "signature",
+        "frame": 2,
+        "own_span": [
+          10,
+          179
+        ],
+        "dropped_px": 2
+      },
+      {
+        "sheet": "action",
+        "outfit": "signature",
+        "frame": 3,
+        "own_span": [
+          26,
+          159
+        ],
+        "dropped_px": 3
+      },
+      {
+        "sheet": "run",
+        "outfit": "base",
+        "frame": 0,
+        "own_span": [
+          24,
+          196
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "base",
+        "frame": 1,
+        "own_span": [
+          48,
+          172
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "base",
+        "frame": 2,
+        "own_span": [
+          18,
+          201
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "base",
+        "frame": 3,
+        "own_span": [
+          30,
+          189
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "base",
+        "frame": 4,
+        "own_span": [
+          15,
+          204
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "base",
+        "frame": 5,
+        "own_span": [
+          38,
+          182
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "base",
+        "frame": 6,
+        "own_span": [
+          9,
+          211
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "base",
+        "frame": 7,
+        "own_span": [
+          23,
+          196
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "circuit",
+        "frame": 0,
+        "own_span": [
+          13,
+          117
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "circuit",
+        "frame": 1,
+        "own_span": [
+          28,
+          102
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "circuit",
+        "frame": 2,
+        "own_span": [
+          10,
+          120
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "circuit",
+        "frame": 3,
+        "own_span": [
+          17,
+          113
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "circuit",
+        "frame": 4,
+        "own_span": [
+          9,
+          122
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "circuit",
+        "frame": 5,
+        "own_span": [
+          22,
+          109
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "circuit",
+        "frame": 6,
+        "own_span": [
+          5,
+          127
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "circuit",
+        "frame": 7,
+        "own_span": [
+          14,
+          118
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "legend",
+        "frame": 0,
+        "own_span": [
+          13,
+          117
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "legend",
+        "frame": 1,
+        "own_span": [
+          28,
+          102
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "legend",
+        "frame": 2,
+        "own_span": [
+          10,
+          120
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "legend",
+        "frame": 3,
+        "own_span": [
+          17,
+          113
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "legend",
+        "frame": 4,
+        "own_span": [
+          9,
+          122
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "legend",
+        "frame": 5,
+        "own_span": [
+          22,
+          109
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "legend",
+        "frame": 6,
+        "own_span": [
+          5,
+          127
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "legend",
+        "frame": 7,
+        "own_span": [
+          14,
+          118
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "signature",
+        "frame": 0,
+        "own_span": [
+          13,
+          117
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "signature",
+        "frame": 1,
+        "own_span": [
+          28,
+          102
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "signature",
+        "frame": 2,
+        "own_span": [
+          10,
+          120
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "signature",
+        "frame": 3,
+        "own_span": [
+          17,
+          113
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "signature",
+        "frame": 4,
+        "own_span": [
+          9,
+          122
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "signature",
+        "frame": 5,
+        "own_span": [
+          22,
+          109
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "signature",
+        "frame": 6,
+        "own_span": [
+          5,
+          127
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "run",
+        "outfit": "signature",
+        "frame": 7,
+        "own_span": [
+          14,
+          118
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "base",
+        "frame": 0,
+        "own_span": [
+          34,
+          236
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "base",
+        "frame": 1,
+        "own_span": [
+          70,
+          273
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "base",
+        "frame": 2,
+        "own_span": [
+          31,
+          229
+        ],
+        "dropped_px": 802
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "base",
+        "frame": 3,
+        "own_span": [
+          0,
+          274
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "circuit",
+        "frame": 0,
+        "own_span": [
+          20,
+          142
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "circuit",
+        "frame": 1,
+        "own_span": [
+          42,
+          164
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "circuit",
+        "frame": 2,
+        "own_span": [
+          19,
+          138
+        ],
+        "dropped_px": 287
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "circuit",
+        "frame": 3,
+        "own_span": [
+          0,
+          165
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "legend",
+        "frame": 0,
+        "own_span": [
+          20,
+          142
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "legend",
+        "frame": 1,
+        "own_span": [
+          42,
+          164
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "legend",
+        "frame": 2,
+        "own_span": [
+          19,
+          138
+        ],
+        "dropped_px": 287
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "legend",
+        "frame": 3,
+        "own_span": [
+          0,
+          165
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "signature",
+        "frame": 0,
+        "own_span": [
+          20,
+          142
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "signature",
+        "frame": 1,
+        "own_span": [
+          42,
+          164
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "signature",
+        "frame": 2,
+        "own_span": [
+          19,
+          138
+        ],
+        "dropped_px": 287
+      },
+      {
+        "sheet": "back-idle",
+        "outfit": "signature",
+        "frame": 3,
+        "own_span": [
+          0,
+          165
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "base",
+        "frame": 0,
+        "own_span": [
+          40,
+          249
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "base",
+        "frame": 1,
+        "own_span": [
+          59,
+          298
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "base",
+        "frame": 2,
+        "own_span": [
+          19,
+          287
+        ],
+        "dropped_px": 180
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "base",
+        "frame": 3,
+        "own_span": [
+          8,
+          247
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "circuit",
+        "frame": 0,
+        "own_span": [
+          25,
+          150
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "circuit",
+        "frame": 1,
+        "own_span": [
+          35,
+          179
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "circuit",
+        "frame": 2,
+        "own_span": [
+          11,
+          172
+        ],
+        "dropped_px": 65
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "circuit",
+        "frame": 3,
+        "own_span": [
+          5,
+          148
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "legend",
+        "frame": 0,
+        "own_span": [
+          25,
+          150
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "legend",
+        "frame": 1,
+        "own_span": [
+          35,
+          179
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "legend",
+        "frame": 2,
+        "own_span": [
+          11,
+          172
+        ],
+        "dropped_px": 65
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "legend",
+        "frame": 3,
+        "own_span": [
+          5,
+          148
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "signature",
+        "frame": 0,
+        "own_span": [
+          25,
+          150
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "signature",
+        "frame": 1,
+        "own_span": [
+          35,
+          179
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "signature",
+        "frame": 2,
+        "own_span": [
+          11,
+          172
+        ],
+        "dropped_px": 65
+      },
+      {
+        "sheet": "back-action",
+        "outfit": "signature",
+        "frame": 3,
+        "own_span": [
+          5,
+          148
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "base",
+        "frame": 0,
+        "own_span": [
+          16,
+          162
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "base",
+        "frame": 1,
+        "own_span": [
+          31,
+          147
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "base",
+        "frame": 2,
+        "own_span": [
+          20,
+          158
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "base",
+        "frame": 3,
+        "own_span": [
+          9,
+          169
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "base",
+        "frame": 4,
+        "own_span": [
+          16,
+          162
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "base",
+        "frame": 5,
+        "own_span": [
+          23,
+          155
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "base",
+        "frame": 6,
+        "own_span": [
+          20,
+          158
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "base",
+        "frame": 7,
+        "own_span": [
+          11,
+          166
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "circuit",
+        "frame": 0,
+        "own_span": [
+          10,
+          97
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "circuit",
+        "frame": 1,
+        "own_span": [
+          19,
+          88
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "circuit",
+        "frame": 2,
+        "own_span": [
+          13,
+          94
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "circuit",
+        "frame": 3,
+        "own_span": [
+          5,
+          102
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "circuit",
+        "frame": 4,
+        "own_span": [
+          10,
+          97
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "circuit",
+        "frame": 5,
+        "own_span": [
+          14,
+          93
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "circuit",
+        "frame": 6,
+        "own_span": [
+          12,
+          94
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "circuit",
+        "frame": 7,
+        "own_span": [
+          7,
+          100
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "legend",
+        "frame": 0,
+        "own_span": [
+          10,
+          97
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "legend",
+        "frame": 1,
+        "own_span": [
+          19,
+          88
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "legend",
+        "frame": 2,
+        "own_span": [
+          13,
+          94
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "legend",
+        "frame": 3,
+        "own_span": [
+          5,
+          102
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "legend",
+        "frame": 4,
+        "own_span": [
+          10,
+          97
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "legend",
+        "frame": 5,
+        "own_span": [
+          14,
+          93
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "legend",
+        "frame": 6,
+        "own_span": [
+          12,
+          94
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "legend",
+        "frame": 7,
+        "own_span": [
+          7,
+          100
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "signature",
+        "frame": 0,
+        "own_span": [
+          10,
+          97
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "signature",
+        "frame": 1,
+        "own_span": [
+          19,
+          88
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "signature",
+        "frame": 2,
+        "own_span": [
+          13,
+          94
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "signature",
+        "frame": 3,
+        "own_span": [
+          5,
+          102
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "signature",
+        "frame": 4,
+        "own_span": [
+          10,
+          97
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "signature",
+        "frame": 5,
+        "own_span": [
+          14,
+          93
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "signature",
+        "frame": 6,
+        "own_span": [
+          12,
+          94
+        ],
+        "dropped_px": 0
+      },
+      {
+        "sheet": "back-run",
+        "outfit": "signature",
+        "frame": 7,
+        "own_span": [
+          7,
+          100
+        ],
+        "dropped_px": 0
+      }
+    ],
+    "total_dropped_px": 3427,
+    "note": "columns belonging to a neighbouring figure's ink on the four-frame sheets; excluded from the colour measurement"
+  },
+  "bands_sheet_policy": {
+    "hip": [
+      "run",
+      "back-run"
+    ]
+  },
+  "measured_palette": {
+    "base": {
+      "foot": {
+        "pixels": 35386,
+        "modes": [
+          {
+            "hex": "#072658",
+            "count": 2732,
+            "share_pct": 7.72
+          },
+          {
+            "hex": "#092a66",
+            "count": 2064,
+            "share_pct": 5.83
+          },
+          {
+            "hex": "#fbf9f8",
+            "count": 1939,
+            "share_pct": 5.48
+          },
+          {
+            "hex": "#043569",
+            "count": 1263,
+            "share_pct": 3.57
+          },
+          {
+            "hex": "#034887",
+            "count": 1117,
+            "share_pct": 3.16
+          },
+          {
+            "hex": "#053976",
+            "count": 1068,
+            "share_pct": 3.02
+          },
+          {
+            "hex": "#025798",
+            "count": 992,
+            "share_pct": 2.8
+          },
+          {
+            "hex": "#e9e7e7",
+            "count": 917,
+            "share_pct": 2.59
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#072658",
+            "mode_srgb": [
+              7,
+              38,
+              88
+            ],
+            "mode_count": 2732,
+            "mean_hex": "#115089",
+            "srgb": [
+              17,
+              80,
+              137
+            ],
+            "count": 26929,
+            "share_pct": 76.1,
+            "hue_deg": 217.4,
+            "sat": 0.918,
+            "val": 0.347,
+            "spread_255": 32.0
+          },
+          {
+            "family": "b",
+            "mode_hex": "#fbf9f8",
+            "mode_srgb": [
+              251,
+              249,
+              248
+            ],
+            "mode_count": 1939,
+            "mean_hex": "#d2d9df",
+            "srgb": [
+              210,
+              217,
+              223
+            ],
+            "count": 8457,
+            "share_pct": 23.9,
+            "hue_deg": 29.4,
+            "sat": 0.01,
+            "val": 0.983,
+            "spread_255": 27.1
+          }
+        ]
+      },
+      "hip": {
+        "pixels": 53118,
+        "modes": [
+          {
+            "hex": "#0d2359",
+            "count": 9222,
+            "share_pct": 17.36
+          },
+          {
+            "hex": "#12255a",
+            "count": 8695,
+            "share_pct": 16.37
+          },
+          {
+            "hex": "#122a64",
+            "count": 6387,
+            "share_pct": 12.02
+          },
+          {
+            "hex": "#0c2968",
+            "count": 5567,
+            "share_pct": 10.48
+          },
+          {
+            "hex": "#081d54",
+            "count": 5520,
+            "share_pct": 10.39
+          },
+          {
+            "hex": "#071a4c",
+            "count": 4337,
+            "share_pct": 8.16
+          },
+          {
+            "hex": "#fcfbfb",
+            "count": 1568,
+            "share_pct": 2.95
+          },
+          {
+            "hex": "#133276",
+            "count": 1344,
+            "share_pct": 2.53
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#0d2359",
+            "mode_srgb": [
+              13,
+              35,
+              89
+            ],
+            "mode_count": 9222,
+            "mean_hex": "#0f265e",
+            "srgb": [
+              15,
+              38,
+              94
+            ],
+            "count": 46042,
+            "share_pct": 86.7,
+            "hue_deg": 222.5,
+            "sat": 0.859,
+            "val": 0.348,
+            "spread_255": 7.2
+          },
+          {
+            "family": "b",
+            "mode_hex": "#fcfbfb",
+            "mode_srgb": [
+              252,
+              251,
+              251
+            ],
+            "mode_count": 1568,
+            "mean_hex": "#91d1e8",
+            "srgb": [
+              145,
+              209,
+              232
+            ],
+            "count": 7076,
+            "share_pct": 13.3,
+            "hue_deg": 45.9,
+            "sat": 0.003,
+            "val": 0.987,
+            "spread_255": 47.2
+          }
+        ]
+      },
+      "socks": {
+        "pixels": 24289,
+        "modes": [
+          {
+            "hex": "#faf9f7",
+            "count": 4148,
+            "share_pct": 17.08
+          },
+          {
+            "hex": "#eae8e6",
+            "count": 1492,
+            "share_pct": 6.14
+          },
+          {
+            "hex": "#f3ecea",
+            "count": 1032,
+            "share_pct": 4.25
+          },
+          {
+            "hex": "#f6f2ed",
+            "count": 765,
+            "share_pct": 3.15
+          },
+          {
+            "hex": "#d9d6d7",
+            "count": 696,
+            "share_pct": 2.87
+          },
+          {
+            "hex": "#082658",
+            "count": 659,
+            "share_pct": 2.71
+          },
+          {
+            "hex": "#c9c6c8",
+            "count": 588,
+            "share_pct": 2.42
+          },
+          {
+            "hex": "#035798",
+            "count": 540,
+            "share_pct": 2.22
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#faf9f7",
+            "mode_srgb": [
+              250,
+              249,
+              247
+            ],
+            "mode_count": 4148,
+            "mean_hex": "#dee2e5",
+            "srgb": [
+              222,
+              226,
+              229
+            ],
+            "count": 13659,
+            "share_pct": 56.2,
+            "hue_deg": 37.9,
+            "sat": 0.01,
+            "val": 0.98,
+            "spread_255": 21.7
+          },
+          {
+            "family": "b",
+            "mode_hex": "#082658",
+            "mode_srgb": [
+              8,
+              38,
+              88
+            ],
+            "mode_count": 659,
+            "mean_hex": "#196298",
+            "srgb": [
+              25,
+              98,
+              152
+            ],
+            "count": 10630,
+            "share_pct": 43.8,
+            "hue_deg": 217.9,
+            "sat": 0.907,
+            "val": 0.346,
+            "spread_255": 37.8
+          }
+        ]
+      },
+      "torso": {
+        "pixels": 196522,
+        "modes": [
+          {
+            "hex": "#02c8fc",
+            "count": 30191,
+            "share_pct": 15.36
+          },
+          {
+            "hex": "#162a65",
+            "count": 20276,
+            "share_pct": 10.32
+          },
+          {
+            "hex": "#01d3fe",
+            "count": 18228,
+            "share_pct": 9.28
+          },
+          {
+            "hex": "#fafafa",
+            "count": 11898,
+            "share_pct": 6.05
+          },
+          {
+            "hex": "#02baf9",
+            "count": 11659,
+            "share_pct": 5.93
+          },
+          {
+            "hex": "#0c2359",
+            "count": 10365,
+            "share_pct": 5.27
+          },
+          {
+            "hex": "#12255a",
+            "count": 9075,
+            "share_pct": 4.62
+          },
+          {
+            "hex": "#081d54",
+            "count": 6657,
+            "share_pct": 3.39
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#02c8fc",
+            "mode_srgb": [
+              2,
+              200,
+              252
+            ],
+            "mode_count": 30191,
+            "mean_hex": "#42c9ef",
+            "srgb": [
+              66,
+              201,
+              239
+            ],
+            "count": 111295,
+            "share_pct": 56.6,
+            "hue_deg": 192.5,
+            "sat": 0.993,
+            "val": 0.99,
+            "spread_255": 42.4
+          },
+          {
+            "family": "b",
+            "mode_hex": "#162a65",
+            "mode_srgb": [
+              22,
+              42,
+              101
+            ],
+            "mode_count": 20276,
+            "mean_hex": "#192f62",
+            "srgb": [
+              25,
+              47,
+              98
+            ],
+            "count": 85227,
+            "share_pct": 43.4,
+            "hue_deg": 224.6,
+            "sat": 0.786,
+            "val": 0.398,
+            "spread_255": 15.8
+          }
+        ]
+      }
+    },
+    "circuit": {
+      "foot": {
+        "pixels": 14075,
+        "modes": [
+          {
+            "hex": "#183567",
+            "count": 1215,
+            "share_pct": 8.63
+          },
+          {
+            "hex": "#142c57",
+            "count": 837,
+            "share_pct": 5.95
+          },
+          {
+            "hex": "#fbfaf8",
+            "count": 749,
+            "share_pct": 5.32
+          },
+          {
+            "hex": "#163a77",
+            "count": 709,
+            "share_pct": 5.04
+          },
+          {
+            "hex": "#2a77fb",
+            "count": 670,
+            "share_pct": 4.76
+          },
+          {
+            "hex": "#1a325b",
+            "count": 443,
+            "share_pct": 3.15
+          },
+          {
+            "hex": "#1a4795",
+            "count": 396,
+            "share_pct": 2.81
+          },
+          {
+            "hex": "#e9e7e7",
+            "count": 383,
+            "share_pct": 2.72
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#183567",
+            "mode_srgb": [
+              24,
+              53,
+              103
+            ],
+            "mode_count": 1215,
+            "mean_hex": "#28498b",
+            "srgb": [
+              40,
+              73,
+              139
+            ],
+            "count": 10435,
+            "share_pct": 74.1,
+            "hue_deg": 218.0,
+            "sat": 0.769,
+            "val": 0.405,
+            "spread_255": 29.6
+          },
+          {
+            "family": "b",
+            "mode_hex": "#fbfaf8",
+            "mode_srgb": [
+              251,
+              250,
+              248
+            ],
+            "mode_count": 749,
+            "mean_hex": "#d1d3dd",
+            "srgb": [
+              209,
+              211,
+              221
+            ],
+            "count": 3640,
+            "share_pct": 25.9,
+            "hue_deg": 31.8,
+            "sat": 0.01,
+            "val": 0.983,
+            "spread_255": 29.2
+          }
+        ]
+      },
+      "hip": {
+        "pixels": 19859,
+        "modes": [
+          {
+            "hex": "#1c325a",
+            "count": 5135,
+            "share_pct": 25.86
+          },
+          {
+            "hex": "#162d54",
+            "count": 3152,
+            "share_pct": 15.87
+          },
+          {
+            "hex": "#1c3766",
+            "count": 3090,
+            "share_pct": 15.56
+          },
+          {
+            "hex": "#14294c",
+            "count": 1799,
+            "share_pct": 9.06
+          },
+          {
+            "hex": "#213b67",
+            "count": 756,
+            "share_pct": 3.81
+          },
+          {
+            "hex": "#fcfbfb",
+            "count": 558,
+            "share_pct": 2.81
+          },
+          {
+            "hex": "#2b78fd",
+            "count": 393,
+            "share_pct": 1.98
+          },
+          {
+            "hex": "#234277",
+            "count": 380,
+            "share_pct": 1.91
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#1c325a",
+            "mode_srgb": [
+              28,
+              50,
+              90
+            ],
+            "mode_count": 5135,
+            "mean_hex": "#20355b",
+            "srgb": [
+              32,
+              53,
+              91
+            ],
+            "count": 17105,
+            "share_pct": 86.1,
+            "hue_deg": 217.9,
+            "sat": 0.693,
+            "val": 0.352,
+            "spread_255": 10.5
+          },
+          {
+            "family": "b",
+            "mode_hex": "#fcfbfb",
+            "mode_srgb": [
+              252,
+              251,
+              251
+            ],
+            "mode_count": 558,
+            "mean_hex": "#a1b3e7",
+            "srgb": [
+              161,
+              179,
+              231
+            ],
+            "count": 2754,
+            "share_pct": 13.9,
+            "hue_deg": 34.5,
+            "sat": 0.004,
+            "val": 0.987,
+            "spread_255": 50.9
+          }
+        ]
+      },
+      "socks": {
+        "pixels": 9378,
+        "modes": [
+          {
+            "hex": "#faf9f7",
+            "count": 1527,
+            "share_pct": 16.28
+          },
+          {
+            "hex": "#eae8e7",
+            "count": 548,
+            "share_pct": 5.84
+          },
+          {
+            "hex": "#f3ecea",
+            "count": 367,
+            "share_pct": 3.91
+          },
+          {
+            "hex": "#f7f2ed",
+            "count": 278,
+            "share_pct": 2.96
+          },
+          {
+            "hex": "#d9d6d7",
+            "count": 260,
+            "share_pct": 2.77
+          },
+          {
+            "hex": "#183567",
+            "count": 248,
+            "share_pct": 2.64
+          },
+          {
+            "hex": "#c9c6c8",
+            "count": 241,
+            "share_pct": 2.57
+          },
+          {
+            "hex": "#142d56",
+            "count": 195,
+            "share_pct": 2.08
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#faf9f7",
+            "mode_srgb": [
+              250,
+              249,
+              247
+            ],
+            "mode_count": 1527,
+            "mean_hex": "#dcdee4",
+            "srgb": [
+              220,
+              222,
+              228
+            ],
+            "count": 5238,
+            "share_pct": 55.9,
+            "hue_deg": 39.3,
+            "sat": 0.01,
+            "val": 0.98,
+            "spread_255": 23.9
+          },
+          {
+            "family": "b",
+            "mode_hex": "#183567",
+            "mode_srgb": [
+              24,
+              53,
+              103
+            ],
+            "mode_count": 248,
+            "mean_hex": "#385697",
+            "srgb": [
+              56,
+              86,
+              151
+            ],
+            "count": 4140,
+            "share_pct": 44.1,
+            "hue_deg": 218.0,
+            "sat": 0.767,
+            "val": 0.404,
+            "spread_255": 37.1
+          }
+        ]
+      },
+      "torso": {
+        "pixels": 75299,
+        "modes": [
+          {
+            "hex": "#2a78fe",
+            "count": 24225,
+            "share_pct": 32.17
+          },
+          {
+            "hex": "#1c335a",
+            "count": 5799,
+            "share_pct": 7.7
+          },
+          {
+            "hex": "#243c65",
+            "count": 4701,
+            "share_pct": 6.24
+          },
+          {
+            "hex": "#fafafa",
+            "count": 4307,
+            "share_pct": 5.72
+          },
+          {
+            "hex": "#1c3766",
+            "count": 3924,
+            "share_pct": 5.21
+          },
+          {
+            "hex": "#162d54",
+            "count": 3680,
+            "share_pct": 4.89
+          },
+          {
+            "hex": "#14294c",
+            "count": 2421,
+            "share_pct": 3.22
+          },
+          {
+            "hex": "#29416c",
+            "count": 2141,
+            "share_pct": 2.84
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#2a78fe",
+            "mode_srgb": [
+              42,
+              120,
+              254
+            ],
+            "mode_count": 24225,
+            "mean_hex": "#6094f1",
+            "srgb": [
+              96,
+              148,
+              241
+            ],
+            "count": 42434,
+            "share_pct": 56.4,
+            "hue_deg": 218.1,
+            "sat": 0.835,
+            "val": 0.998,
+            "spread_255": 44.3
+          },
+          {
+            "family": "b",
+            "mode_hex": "#1c335a",
+            "mode_srgb": [
+              28,
+              51,
+              90
+            ],
+            "mode_count": 5799,
+            "mean_hex": "#293c5e",
+            "srgb": [
+              41,
+              60,
+              94
+            ],
+            "count": 32865,
+            "share_pct": 43.6,
+            "hue_deg": 218.0,
+            "sat": 0.694,
+            "val": 0.355,
+            "spread_255": 16.6
+          }
+        ]
+      }
+    },
+    "legend": {
+      "foot": {
+        "pixels": 12813,
+        "modes": [
+          {
+            "hex": "#5a4617",
+            "count": 1069,
+            "share_pct": 8.34
+          },
+          {
+            "hex": "#fef4d5",
+            "count": 804,
+            "share_pct": 6.27
+          },
+          {
+            "hex": "#fbfaf8",
+            "count": 746,
+            "share_pct": 5.82
+          },
+          {
+            "hex": "#634d17",
+            "count": 679,
+            "share_pct": 5.3
+          },
+          {
+            "hex": "#87661a",
+            "count": 593,
+            "share_pct": 4.63
+          },
+          {
+            "hex": "#775a18",
+            "count": 557,
+            "share_pct": 4.35
+          },
+          {
+            "hex": "#6b5219",
+            "count": 529,
+            "share_pct": 4.13
+          },
+          {
+            "hex": "#695525",
+            "count": 417,
+            "share_pct": 3.25
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#fef4d5",
+            "mode_srgb": [
+              254,
+              244,
+              213
+            ],
+            "mode_count": 804,
+            "mean_hex": "#dad5ca",
+            "srgb": [
+              218,
+              213,
+              202
+            ],
+            "count": 6549,
+            "share_pct": 51.1,
+            "hue_deg": 45.4,
+            "sat": 0.161,
+            "val": 0.997,
+            "spread_255": 26.3
+          },
+          {
+            "family": "b",
+            "mode_hex": "#5a4617",
+            "mode_srgb": [
+              90,
+              70,
+              23
+            ],
+            "mode_count": 1069,
+            "mean_hex": "#70562c",
+            "srgb": [
+              112,
+              86,
+              44
+            ],
+            "count": 6264,
+            "share_pct": 48.9,
+            "hue_deg": 42.1,
+            "sat": 0.747,
+            "val": 0.354,
+            "spread_255": 20.5
+          }
+        ]
+      },
+      "hip": {
+        "pixels": 14099,
+        "modes": [
+          {
+            "hex": "#59471c",
+            "count": 5250,
+            "share_pct": 37.24
+          },
+          {
+            "hex": "#6a531d",
+            "count": 1107,
+            "share_pct": 7.85
+          },
+          {
+            "hex": "#634d1b",
+            "count": 1032,
+            "share_pct": 7.32
+          },
+          {
+            "hex": "#6a5522",
+            "count": 942,
+            "share_pct": 6.68
+          },
+          {
+            "hex": "#fff5d6",
+            "count": 888,
+            "share_pct": 6.3
+          },
+          {
+            "hex": "#5c4a21",
+            "count": 649,
+            "share_pct": 4.6
+          },
+          {
+            "hex": "#fcfbfb",
+            "count": 558,
+            "share_pct": 3.96
+          },
+          {
+            "hex": "#735b23",
+            "count": 433,
+            "share_pct": 3.07
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#59471c",
+            "mode_srgb": [
+              89,
+              71,
+              28
+            ],
+            "mode_count": 5250,
+            "mean_hex": "#624d24",
+            "srgb": [
+              98,
+              77,
+              36
+            ],
+            "count": 11467,
+            "share_pct": 81.3,
+            "hue_deg": 42.2,
+            "sat": 0.691,
+            "val": 0.35,
+            "spread_255": 11.0
+          },
+          {
+            "family": "b",
+            "mode_hex": "#fff5d6",
+            "mode_srgb": [
+              255,
+              245,
+              214
+            ],
+            "mode_count": 888,
+            "mean_hex": "#ebe4db",
+            "srgb": [
+              235,
+              228,
+              219
+            ],
+            "count": 2632,
+            "share_pct": 18.7,
+            "hue_deg": 45.4,
+            "sat": 0.161,
+            "val": 0.999,
+            "spread_255": 23.3
+          }
+        ]
+      },
+      "socks": {
+        "pixels": 9044,
+        "modes": [
+          {
+            "hex": "#faf9f7",
+            "count": 1527,
+            "share_pct": 16.88
+          },
+          {
+            "hex": "#fff5d6",
+            "count": 668,
+            "share_pct": 7.39
+          },
+          {
+            "hex": "#eae8e7",
+            "count": 548,
+            "share_pct": 6.06
+          },
+          {
+            "hex": "#f3ecea",
+            "count": 367,
+            "share_pct": 4.06
+          },
+          {
+            "hex": "#f7f2ed",
+            "count": 278,
+            "share_pct": 3.07
+          },
+          {
+            "hex": "#d9d6d7",
+            "count": 260,
+            "share_pct": 2.87
+          },
+          {
+            "hex": "#c8c6c8",
+            "count": 241,
+            "share_pct": 2.66
+          },
+          {
+            "hex": "#5a4617",
+            "count": 229,
+            "share_pct": 2.53
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#faf9f7",
+            "mode_srgb": [
+              250,
+              249,
+              247
+            ],
+            "mode_count": 1527,
+            "mean_hex": "#e2ded7",
+            "srgb": [
+              226,
+              222,
+              215
+            ],
+            "count": 6830,
+            "share_pct": 75.5,
+            "hue_deg": 39.3,
+            "sat": 0.01,
+            "val": 0.98,
+            "spread_255": 24.0
+          },
+          {
+            "family": "b",
+            "mode_hex": "#5a4617",
+            "mode_srgb": [
+              90,
+              70,
+              23
+            ],
+            "mode_count": 229,
+            "mean_hex": "#765d3e",
+            "srgb": [
+              118,
+              93,
+              62
+            ],
+            "count": 2214,
+            "share_pct": 24.5,
+            "hue_deg": 42.1,
+            "sat": 0.744,
+            "val": 0.354,
+            "spread_255": 28.3
+          }
+        ]
+      },
+      "torso": {
+        "pixels": 68572,
+        "modes": [
+          {
+            "hex": "#fff5d6",
+            "count": 26443,
+            "share_pct": 38.56
+          },
+          {
+            "hex": "#5a471b",
+            "count": 6416,
+            "share_pct": 9.36
+          },
+          {
+            "hex": "#685527",
+            "count": 6101,
+            "share_pct": 8.9
+          },
+          {
+            "hex": "#fafafa",
+            "count": 4308,
+            "share_pct": 6.28
+          },
+          {
+            "hex": "#5c4b22",
+            "count": 2206,
+            "share_pct": 3.22
+          },
+          {
+            "hex": "#614e23",
+            "count": 1448,
+            "share_pct": 2.11
+          },
+          {
+            "hex": "#6a531c",
+            "count": 1352,
+            "share_pct": 1.97
+          },
+          {
+            "hex": "#624d1b",
+            "count": 1265,
+            "share_pct": 1.84
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#fff5d6",
+            "mode_srgb": [
+              255,
+              245,
+              214
+            ],
+            "mode_count": 26443,
+            "mean_hex": "#f3ecd5",
+            "srgb": [
+              243,
+              236,
+              213
+            ],
+            "count": 42010,
+            "share_pct": 61.3,
+            "hue_deg": 45.4,
+            "sat": 0.161,
+            "val": 1.0,
+            "spread_255": 14.6
+          },
+          {
+            "family": "b",
+            "mode_hex": "#5a471b",
+            "mode_srgb": [
+              90,
+              71,
+              27
+            ],
+            "mode_count": 6416,
+            "mean_hex": "#68542b",
+            "srgb": [
+              104,
+              84,
+              43
+            ],
+            "count": 26562,
+            "share_pct": 38.7,
+            "hue_deg": 42.2,
+            "sat": 0.695,
+            "val": 0.352,
+            "spread_255": 15.3
+          }
+        ]
+      }
+    },
+    "signature": {
+      "foot": {
+        "pixels": 14020,
+        "modes": [
+          {
+            "hex": "#17c8fe",
+            "count": 1013,
+            "share_pct": 7.23
+          },
+          {
+            "hex": "#165568",
+            "count": 858,
+            "share_pct": 6.12
+          },
+          {
+            "hex": "#0b4658",
+            "count": 789,
+            "share_pct": 5.63
+          },
+          {
+            "hex": "#fbf9f8",
+            "count": 718,
+            "share_pct": 5.12
+          },
+          {
+            "hex": "#144859",
+            "count": 554,
+            "share_pct": 3.95
+          },
+          {
+            "hex": "#0b546a",
+            "count": 446,
+            "share_pct": 3.18
+          },
+          {
+            "hex": "#0c6a87",
+            "count": 435,
+            "share_pct": 3.1
+          },
+          {
+            "hex": "#0d7797",
+            "count": 404,
+            "share_pct": 2.88
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#165568",
+            "mode_srgb": [
+              22,
+              85,
+              104
+            ],
+            "mode_count": 858,
+            "mean_hex": "#1d627d",
+            "srgb": [
+              29,
+              98,
+              125
+            ],
+            "count": 8647,
+            "share_pct": 61.7,
+            "hue_deg": 194.0,
+            "sat": 0.79,
+            "val": 0.409,
+            "spread_255": 25.5
+          },
+          {
+            "family": "b",
+            "mode_hex": "#17c8fe",
+            "mode_srgb": [
+              23,
+              200,
+              254
+            ],
+            "mode_count": 1013,
+            "mean_hex": "#98cfe4",
+            "srgb": [
+              152,
+              207,
+              228
+            ],
+            "count": 5373,
+            "share_pct": 38.3,
+            "hue_deg": 194.0,
+            "sat": 0.91,
+            "val": 0.996,
+            "spread_255": 41.9
+          }
+        ]
+      },
+      "hip": {
+        "pixels": 20438,
+        "modes": [
+          {
+            "hex": "#154959",
+            "count": 6215,
+            "share_pct": 30.41
+          },
+          {
+            "hex": "#175467",
+            "count": 4102,
+            "share_pct": 20.07
+          },
+          {
+            "hex": "#0c4456",
+            "count": 1681,
+            "share_pct": 8.22
+          },
+          {
+            "hex": "#0b3d4c",
+            "count": 1051,
+            "share_pct": 5.14
+          },
+          {
+            "hex": "#175d72",
+            "count": 942,
+            "share_pct": 4.61
+          },
+          {
+            "hex": "#1a6278",
+            "count": 689,
+            "share_pct": 3.37
+          },
+          {
+            "hex": "#164f60",
+            "count": 636,
+            "share_pct": 3.11
+          },
+          {
+            "hex": "#fcfbfb",
+            "count": 558,
+            "share_pct": 2.73
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#154959",
+            "mode_srgb": [
+              21,
+              73,
+              89
+            ],
+            "mode_count": 6215,
+            "mean_hex": "#1b4e5e",
+            "srgb": [
+              27,
+              78,
+              94
+            ],
+            "count": 17721,
+            "share_pct": 86.7,
+            "hue_deg": 194.2,
+            "sat": 0.766,
+            "val": 0.351,
+            "spread_255": 11.6
+          },
+          {
+            "family": "b",
+            "mode_hex": "#fcfbfb",
+            "mode_srgb": [
+              252,
+              251,
+              251
+            ],
+            "mode_count": 558,
+            "mean_hex": "#99d2eb",
+            "srgb": [
+              153,
+              210,
+              235
+            ],
+            "count": 2717,
+            "share_pct": 13.3,
+            "hue_deg": 34.5,
+            "sat": 0.004,
+            "val": 0.987,
+            "spread_255": 45.0
+          }
+        ]
+      },
+      "socks": {
+        "pixels": 9349,
+        "modes": [
+          {
+            "hex": "#faf9f7",
+            "count": 1492,
+            "share_pct": 15.96
+          },
+          {
+            "hex": "#eae8e7",
+            "count": 545,
+            "share_pct": 5.83
+          },
+          {
+            "hex": "#f3ecea",
+            "count": 366,
+            "share_pct": 3.91
+          },
+          {
+            "hex": "#17c8fe",
+            "count": 303,
+            "share_pct": 3.24
+          },
+          {
+            "hex": "#f7f2ed",
+            "count": 276,
+            "share_pct": 2.95
+          },
+          {
+            "hex": "#d9d6d7",
+            "count": 259,
+            "share_pct": 2.77
+          },
+          {
+            "hex": "#c9c6c8",
+            "count": 239,
+            "share_pct": 2.56
+          },
+          {
+            "hex": "#80e1ff",
+            "count": 220,
+            "share_pct": 2.35
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#faf9f7",
+            "mode_srgb": [
+              250,
+              249,
+              247
+            ],
+            "mode_count": 1492,
+            "mean_hex": "#dae1e5",
+            "srgb": [
+              218,
+              225,
+              229
+            ],
+            "count": 5277,
+            "share_pct": 56.4,
+            "hue_deg": 39.1,
+            "sat": 0.01,
+            "val": 0.98,
+            "spread_255": 23.3
+          },
+          {
+            "family": "b",
+            "mode_hex": "#17c8fe",
+            "mode_srgb": [
+              23,
+              200,
+              254
+            ],
+            "mode_count": 303,
+            "mean_hex": "#2e7e9b",
+            "srgb": [
+              46,
+              126,
+              155
+            ],
+            "count": 4072,
+            "share_pct": 43.6,
+            "hue_deg": 194.0,
+            "sat": 0.908,
+            "val": 0.995,
+            "spread_255": 43.4
+          }
+        ]
+      },
+      "torso": {
+        "pixels": 76573,
+        "modes": [
+          {
+            "hex": "#16c8ff",
+            "count": 26094,
+            "share_pct": 34.08
+          },
+          {
+            "hex": "#195466",
+            "count": 7408,
+            "share_pct": 9.67
+          },
+          {
+            "hex": "#154959",
+            "count": 6475,
+            "share_pct": 8.46
+          },
+          {
+            "hex": "#fafafa",
+            "count": 4311,
+            "share_pct": 5.63
+          },
+          {
+            "hex": "#225a6b",
+            "count": 3238,
+            "share_pct": 4.23
+          },
+          {
+            "hex": "#0c4456",
+            "count": 2386,
+            "share_pct": 3.12
+          },
+          {
+            "hex": "#0b3d4c",
+            "count": 1431,
+            "share_pct": 1.87
+          },
+          {
+            "hex": "#256375",
+            "count": 1361,
+            "share_pct": 1.78
+          }
+        ],
+        "clusters": [
+          {
+            "family": "a",
+            "mode_hex": "#16c8ff",
+            "mode_srgb": [
+              22,
+              200,
+              255
+            ],
+            "mode_count": 26094,
+            "mean_hex": "#51cef4",
+            "srgb": [
+              81,
+              206,
+              244
+            ],
+            "count": 42153,
+            "share_pct": 55.0,
+            "hue_deg": 194.0,
+            "sat": 0.915,
+            "val": 0.999,
+            "spread_255": 36.8
+          },
+          {
+            "family": "b",
+            "mode_hex": "#195466",
+            "mode_srgb": [
+              25,
+              84,
+              102
+            ],
+            "mode_count": 7408,
+            "mean_hex": "#285660",
+            "srgb": [
+              40,
+              86,
+              96
+            ],
+            "count": 34420,
+            "share_pct": 45.0,
+            "hue_deg": 194.0,
+            "sat": 0.753,
+            "val": 0.4,
+            "spread_255": 20.3
+          }
+        ]
+      }
+    }
+  },
+  "measured_palette_per_sheet": {
+    "action": {
+      "base": {
+        "foot": {
+          "pixels": 6809,
+          "modes": [
+            {
+              "hex": "#082559",
+              "count": 657,
+              "share_pct": 9.65
+            },
+            {
+              "hex": "#0a2a66",
+              "count": 650,
+              "share_pct": 9.55
+            },
+            {
+              "hex": "#fcfaf9",
+              "count": 440,
+              "share_pct": 6.46
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 15386,
+          "modes": [
+            {
+              "hex": "#0d2459",
+              "count": 4572,
+              "share_pct": 29.72
+            },
+            {
+              "hex": "#122a64",
+              "count": 3462,
+              "share_pct": 22.5
+            },
+            {
+              "hex": "#11275c",
+              "count": 1679,
+              "share_pct": 10.91
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 4163,
+          "modes": [
+            {
+              "hex": "#fcfaf7",
+              "count": 857,
+              "share_pct": 20.59
+            },
+            {
+              "hex": "#f4ebe8",
+              "count": 274,
+              "share_pct": 6.58
+            },
+            {
+              "hex": "#f8f3ec",
+              "count": 210,
+              "share_pct": 5.04
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 28759,
+          "modes": [
+            {
+              "hex": "#01cafd",
+              "count": 4466,
+              "share_pct": 15.53
+            },
+            {
+              "hex": "#0c245a",
+              "count": 3867,
+              "share_pct": 13.45
+            },
+            {
+              "hex": "#fbfaf9",
+              "count": 2072,
+              "share_pct": 7.2
+            }
+          ]
+        }
+      },
+      "circuit": {
+        "foot": {
+          "pixels": 2738,
+          "modes": [
+            {
+              "hex": "#1a3667",
+              "count": 270,
+              "share_pct": 9.86
+            },
+            {
+              "hex": "#142c56",
+              "count": 208,
+              "share_pct": 7.6
+            },
+            {
+              "hex": "#fcfaf9",
+              "count": 166,
+              "share_pct": 6.06
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 6498,
+          "modes": [
+            {
+              "hex": "#1b335b",
+              "count": 1956,
+              "share_pct": 30.1
+            },
+            {
+              "hex": "#162d54",
+              "count": 888,
+              "share_pct": 13.67
+            },
+            {
+              "hex": "#1d3762",
+              "count": 847,
+              "share_pct": 13.03
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1834,
+          "modes": [
+            {
+              "hex": "#fcfaf7",
+              "count": 320,
+              "share_pct": 17.45
+            },
+            {
+              "hex": "#f4ece8",
+              "count": 107,
+              "share_pct": 5.83
+            },
+            {
+              "hex": "#f9f3ec",
+              "count": 68,
+              "share_pct": 3.71
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 13310,
+          "modes": [
+            {
+              "hex": "#2a78fe",
+              "count": 2963,
+              "share_pct": 22.26
+            },
+            {
+              "hex": "#1a325c",
+              "count": 1138,
+              "share_pct": 8.55
+            },
+            {
+              "hex": "#152d55",
+              "count": 928,
+              "share_pct": 6.97
+            }
+          ]
+        }
+      },
+      "legend": {
+        "foot": {
+          "pixels": 2456,
+          "modes": [
+            {
+              "hex": "#5a4617",
+              "count": 221,
+              "share_pct": 9.0
+            },
+            {
+              "hex": "#fcfaf9",
+              "count": 166,
+              "share_pct": 6.76
+            },
+            {
+              "hex": "#fef5d6",
+              "count": 152,
+              "share_pct": 6.19
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 5155,
+          "modes": [
+            {
+              "hex": "#5a481c",
+              "count": 2317,
+              "share_pct": 44.95
+            },
+            {
+              "hex": "#614d1e",
+              "count": 284,
+              "share_pct": 5.51
+            },
+            {
+              "hex": "#fff5d6",
+              "count": 268,
+              "share_pct": 5.2
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1775,
+          "modes": [
+            {
+              "hex": "#fcfaf7",
+              "count": 320,
+              "share_pct": 18.03
+            },
+            {
+              "hex": "#fff5d6",
+              "count": 130,
+              "share_pct": 7.32
+            },
+            {
+              "hex": "#f4ece8",
+              "count": 107,
+              "share_pct": 6.03
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 11895,
+          "modes": [
+            {
+              "hex": "#fff5d6",
+              "count": 3288,
+              "share_pct": 27.64
+            },
+            {
+              "hex": "#5a471b",
+              "count": 1657,
+              "share_pct": 13.93
+            },
+            {
+              "hex": "#fbfbf9",
+              "count": 746,
+              "share_pct": 6.27
+            }
+          ]
+        }
+      },
+      "signature": {
+        "foot": {
+          "pixels": 2766,
+          "modes": [
+            {
+              "hex": "#155669",
+              "count": 231,
+              "share_pct": 8.35
+            },
+            {
+              "hex": "#0c4658",
+              "count": 206,
+              "share_pct": 7.45
+            },
+            {
+              "hex": "#18c8fe",
+              "count": 177,
+              "share_pct": 6.4
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 6625,
+          "modes": [
+            {
+              "hex": "#144a5a",
+              "count": 1770,
+              "share_pct": 26.72
+            },
+            {
+              "hex": "#185365",
+              "count": 1766,
+              "share_pct": 26.66
+            },
+            {
+              "hex": "#0d4455",
+              "count": 413,
+              "share_pct": 6.23
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1847,
+          "modes": [
+            {
+              "hex": "#fcfaf7",
+              "count": 320,
+              "share_pct": 17.33
+            },
+            {
+              "hex": "#f4ece8",
+              "count": 107,
+              "share_pct": 5.79
+            },
+            {
+              "hex": "#f9f3ec",
+              "count": 68,
+              "share_pct": 3.68
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 13465,
+          "modes": [
+            {
+              "hex": "#16c8ff",
+              "count": 3310,
+              "share_pct": 24.58
+            },
+            {
+              "hex": "#175466",
+              "count": 1287,
+              "share_pct": 9.56
+            },
+            {
+              "hex": "#134a5b",
+              "count": 1135,
+              "share_pct": 8.43
+            }
+          ]
+        }
+      }
+    },
+    "back-action": {
+      "base": {
+        "foot": {
+          "pixels": 6168,
+          "modes": [
+            {
+              "hex": "#fafaf8",
+              "count": 472,
+              "share_pct": 7.65
+            },
+            {
+              "hex": "#034887",
+              "count": 415,
+              "share_pct": 6.73
+            },
+            {
+              "hex": "#043569",
+              "count": 330,
+              "share_pct": 5.35
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 14013,
+          "modes": [
+            {
+              "hex": "#0b2969",
+              "count": 4423,
+              "share_pct": 31.56
+            },
+            {
+              "hex": "#041c56",
+              "count": 1528,
+              "share_pct": 10.9
+            },
+            {
+              "hex": "#133277",
+              "count": 1296,
+              "share_pct": 9.25
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 4278,
+          "modes": [
+            {
+              "hex": "#fafaf8",
+              "count": 697,
+              "share_pct": 16.29
+            },
+            {
+              "hex": "#c7c6c8",
+              "count": 201,
+              "share_pct": 4.7
+            },
+            {
+              "hex": "#e9e9e7",
+              "count": 179,
+              "share_pct": 4.18
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 30453,
+          "modes": [
+            {
+              "hex": "#01d2fe",
+              "count": 5088,
+              "share_pct": 16.71
+            },
+            {
+              "hex": "#01cbfc",
+              "count": 4310,
+              "share_pct": 14.15
+            },
+            {
+              "hex": "#0a2869",
+              "count": 3358,
+              "share_pct": 11.03
+            }
+          ]
+        }
+      },
+      "circuit": {
+        "foot": {
+          "pixels": 2336,
+          "modes": [
+            {
+              "hex": "#173a77",
+              "count": 211,
+              "share_pct": 9.03
+            },
+            {
+              "hex": "#163468",
+              "count": 201,
+              "share_pct": 8.6
+            },
+            {
+              "hex": "#fafaf8",
+              "count": 177,
+              "share_pct": 7.58
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 5041,
+          "modes": [
+            {
+              "hex": "#1b3769",
+              "count": 1916,
+              "share_pct": 38.01
+            },
+            {
+              "hex": "#122b57",
+              "count": 589,
+              "share_pct": 11.68
+            },
+            {
+              "hex": "#234277",
+              "count": 363,
+              "share_pct": 7.2
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1553,
+          "modes": [
+            {
+              "hex": "#fafaf8",
+              "count": 244,
+              "share_pct": 15.71
+            },
+            {
+              "hex": "#c7c6c8",
+              "count": 75,
+              "share_pct": 4.83
+            },
+            {
+              "hex": "#eae9e8",
+              "count": 64,
+              "share_pct": 4.12
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 11224,
+          "modes": [
+            {
+              "hex": "#2a78ff",
+              "count": 4183,
+              "share_pct": 37.27
+            },
+            {
+              "hex": "#1a3769",
+              "count": 1623,
+              "share_pct": 14.46
+            },
+            {
+              "hex": "#fafbfb",
+              "count": 584,
+              "share_pct": 5.2
+            }
+          ]
+        }
+      },
+      "legend": {
+        "foot": {
+          "pixels": 2222,
+          "modes": [
+            {
+              "hex": "#87661b",
+              "count": 187,
+              "share_pct": 8.42
+            },
+            {
+              "hex": "#fafaf8",
+              "count": 177,
+              "share_pct": 7.97
+            },
+            {
+              "hex": "#765a18",
+              "count": 167,
+              "share_pct": 7.52
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 4309,
+          "modes": [
+            {
+              "hex": "#6a531d",
+              "count": 1065,
+              "share_pct": 24.72
+            },
+            {
+              "hex": "#634d1a",
+              "count": 696,
+              "share_pct": 16.15
+            },
+            {
+              "hex": "#6c5622",
+              "count": 667,
+              "share_pct": 15.48
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1509,
+          "modes": [
+            {
+              "hex": "#fafaf8",
+              "count": 244,
+              "share_pct": 16.17
+            },
+            {
+              "hex": "#fff5d6",
+              "count": 136,
+              "share_pct": 9.01
+            },
+            {
+              "hex": "#c7c6c8",
+              "count": 75,
+              "share_pct": 4.97
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 10735,
+          "modes": [
+            {
+              "hex": "#fff5d6",
+              "count": 4434,
+              "share_pct": 41.3
+            },
+            {
+              "hex": "#6b531d",
+              "count": 1117,
+              "share_pct": 10.41
+            },
+            {
+              "hex": "#735b23",
+              "count": 704,
+              "share_pct": 6.56
+            }
+          ]
+        }
+      },
+      "signature": {
+        "foot": {
+          "pixels": 2348,
+          "modes": [
+            {
+              "hex": "#17c8fe",
+              "count": 179,
+              "share_pct": 7.62
+            },
+            {
+              "hex": "#fafaf8",
+              "count": 177,
+              "share_pct": 7.54
+            },
+            {
+              "hex": "#0d6a87",
+              "count": 110,
+              "share_pct": 4.68
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 5127,
+          "modes": [
+            {
+              "hex": "#14576b",
+              "count": 1253,
+              "share_pct": 24.44
+            },
+            {
+              "hex": "#175d72",
+              "count": 909,
+              "share_pct": 17.73
+            },
+            {
+              "hex": "#0b4658",
+              "count": 738,
+              "share_pct": 14.39
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1556,
+          "modes": [
+            {
+              "hex": "#fafaf8",
+              "count": 244,
+              "share_pct": 15.68
+            },
+            {
+              "hex": "#18c8fd",
+              "count": 77,
+              "share_pct": 4.95
+            },
+            {
+              "hex": "#c7c6c8",
+              "count": 75,
+              "share_pct": 4.82
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 11280,
+          "modes": [
+            {
+              "hex": "#16c8ff",
+              "count": 4433,
+              "share_pct": 39.3
+            },
+            {
+              "hex": "#1a6379",
+              "count": 1014,
+              "share_pct": 8.99
+            },
+            {
+              "hex": "#165d72",
+              "count": 984,
+              "share_pct": 8.72
+            }
+          ]
+        }
+      }
+    },
+    "back-idle": {
+      "base": {
+        "foot": {
+          "pixels": 5705,
+          "modes": [
+            {
+              "hex": "#072757",
+              "count": 402,
+              "share_pct": 7.05
+            },
+            {
+              "hex": "#faf7f5",
+              "count": 320,
+              "share_pct": 5.61
+            },
+            {
+              "hex": "#e9e7e7",
+              "count": 315,
+              "share_pct": 5.52
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 12966,
+          "modes": [
+            {
+              "hex": "#0a1d55",
+              "count": 2675,
+              "share_pct": 20.63
+            },
+            {
+              "hex": "#0d225a",
+              "count": 2368,
+              "share_pct": 18.26
+            },
+            {
+              "hex": "#12245c",
+              "count": 2169,
+              "share_pct": 16.73
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 3686,
+          "modes": [
+            {
+              "hex": "#f8f7f5",
+              "count": 600,
+              "share_pct": 16.28
+            },
+            {
+              "hex": "#ebe7e7",
+              "count": 404,
+              "share_pct": 10.96
+            },
+            {
+              "hex": "#f2edeb",
+              "count": 240,
+              "share_pct": 6.51
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 37573,
+          "modes": [
+            {
+              "hex": "#132763",
+              "count": 6715,
+              "share_pct": 17.87
+            },
+            {
+              "hex": "#02c2fd",
+              "count": 5537,
+              "share_pct": 14.74
+            },
+            {
+              "hex": "#02bbfb",
+              "count": 5535,
+              "share_pct": 14.73
+            }
+          ]
+        }
+      },
+      "circuit": {
+        "foot": {
+          "pixels": 2165,
+          "modes": [
+            {
+              "hex": "#2a77fb",
+              "count": 175,
+              "share_pct": 8.08
+            },
+            {
+              "hex": "#e9e7e7",
+              "count": 127,
+              "share_pct": 5.87
+            },
+            {
+              "hex": "#f9f7f5",
+              "count": 119,
+              "share_pct": 5.5
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 4551,
+          "modes": [
+            {
+              "hex": "#1c335a",
+              "count": 1599,
+              "share_pct": 35.14
+            },
+            {
+              "hex": "#162d54",
+              "count": 969,
+              "share_pct": 21.29
+            },
+            {
+              "hex": "#13284c",
+              "count": 637,
+              "share_pct": 14.0
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1361,
+          "modes": [
+            {
+              "hex": "#f8f7f5",
+              "count": 223,
+              "share_pct": 16.39
+            },
+            {
+              "hex": "#ebe8e7",
+              "count": 148,
+              "share_pct": 10.87
+            },
+            {
+              "hex": "#f2edeb",
+              "count": 78,
+              "share_pct": 5.73
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 13730,
+          "modes": [
+            {
+              "hex": "#2a78fe",
+              "count": 4752,
+              "share_pct": 34.61
+            },
+            {
+              "hex": "#1c335c",
+              "count": 2480,
+              "share_pct": 18.06
+            },
+            {
+              "hex": "#162d54",
+              "count": 1096,
+              "share_pct": 7.98
+            }
+          ]
+        }
+      },
+      "legend": {
+        "foot": {
+          "pixels": 1961,
+          "modes": [
+            {
+              "hex": "#fef4d5",
+              "count": 182,
+              "share_pct": 9.28
+            },
+            {
+              "hex": "#5a4616",
+              "count": 143,
+              "share_pct": 7.29
+            },
+            {
+              "hex": "#e9e7e7",
+              "count": 127,
+              "share_pct": 6.48
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 2961,
+          "modes": [
+            {
+              "hex": "#59471c",
+              "count": 1708,
+              "share_pct": 57.68
+            },
+            {
+              "hex": "#5d4b21",
+              "count": 324,
+              "share_pct": 10.94
+            },
+            {
+              "hex": "#614e21",
+              "count": 168,
+              "share_pct": 5.67
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1314,
+          "modes": [
+            {
+              "hex": "#f8f7f5",
+              "count": 223,
+              "share_pct": 16.97
+            },
+            {
+              "hex": "#ebe8e7",
+              "count": 148,
+              "share_pct": 11.26
+            },
+            {
+              "hex": "#fff5d6",
+              "count": 104,
+              "share_pct": 7.91
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 12099,
+          "modes": [
+            {
+              "hex": "#fff5d6",
+              "count": 4968,
+              "share_pct": 41.06
+            },
+            {
+              "hex": "#5a481c",
+              "count": 2813,
+              "share_pct": 23.25
+            },
+            {
+              "hex": "#5d4b21",
+              "count": 762,
+              "share_pct": 6.3
+            }
+          ]
+        }
+      },
+      "signature": {
+        "foot": {
+          "pixels": 2190,
+          "modes": [
+            {
+              "hex": "#17c8fe",
+              "count": 246,
+              "share_pct": 11.23
+            },
+            {
+              "hex": "#154858",
+              "count": 128,
+              "share_pct": 5.84
+            },
+            {
+              "hex": "#e9e7e7",
+              "count": 127,
+              "share_pct": 5.8
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 4775,
+          "modes": [
+            {
+              "hex": "#144a5b",
+              "count": 1901,
+              "share_pct": 39.81
+            },
+            {
+              "hex": "#1a5364",
+              "count": 940,
+              "share_pct": 19.69
+            },
+            {
+              "hex": "#0e4354",
+              "count": 473,
+              "share_pct": 9.91
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1368,
+          "modes": [
+            {
+              "hex": "#f8f7f5",
+              "count": 223,
+              "share_pct": 16.3
+            },
+            {
+              "hex": "#ebe8e7",
+              "count": 148,
+              "share_pct": 10.82
+            },
+            {
+              "hex": "#f2edeb",
+              "count": 78,
+              "share_pct": 5.7
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 13888,
+          "modes": [
+            {
+              "hex": "#16c9ff",
+              "count": 5026,
+              "share_pct": 36.19
+            },
+            {
+              "hex": "#195364",
+              "count": 2864,
+              "share_pct": 20.62
+            },
+            {
+              "hex": "#144a5b",
+              "count": 1866,
+              "share_pct": 13.44
+            }
+          ]
+        }
+      }
+    },
+    "back-run": {
+      "base": {
+        "foot": {
+          "pixels": 5372,
+          "modes": [
+            {
+              "hex": "#023569",
+              "count": 376,
+              "share_pct": 7.0
+            },
+            {
+              "hex": "#014987",
+              "count": 323,
+              "share_pct": 6.01
+            },
+            {
+              "hex": "#025698",
+              "count": 295,
+              "share_pct": 5.49
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 14339,
+          "modes": [
+            {
+              "hex": "#162b65",
+              "count": 3177,
+              "share_pct": 22.16
+            },
+            {
+              "hex": "#13265b",
+              "count": 2037,
+              "share_pct": 14.21
+            },
+            {
+              "hex": "#0d2256",
+              "count": 1573,
+              "share_pct": 10.97
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 4888,
+          "modes": [
+            {
+              "hex": "#faf9f7",
+              "count": 494,
+              "share_pct": 10.11
+            },
+            {
+              "hex": "#025698",
+              "count": 305,
+              "share_pct": 6.24
+            },
+            {
+              "hex": "#014887",
+              "count": 248,
+              "share_pct": 5.07
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 51658,
+          "modes": [
+            {
+              "hex": "#192c67",
+              "count": 10765,
+              "share_pct": 20.84
+            },
+            {
+              "hex": "#01cbfc",
+              "count": 7881,
+              "share_pct": 15.26
+            },
+            {
+              "hex": "#01d2fe",
+              "count": 6392,
+              "share_pct": 12.37
+            }
+          ]
+        }
+      },
+      "circuit": {
+        "foot": {
+          "pixels": 2307,
+          "modes": [
+            {
+              "hex": "#143977",
+              "count": 174,
+              "share_pct": 7.54
+            },
+            {
+              "hex": "#143369",
+              "count": 149,
+              "share_pct": 6.46
+            },
+            {
+              "hex": "#194695",
+              "count": 104,
+              "share_pct": 4.51
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 5225,
+          "modes": [
+            {
+              "hex": "#243c65",
+              "count": 907,
+              "share_pct": 17.36
+            },
+            {
+              "hex": "#1c335a",
+              "count": 828,
+              "share_pct": 15.85
+            },
+            {
+              "hex": "#152a4c",
+              "count": 566,
+              "share_pct": 10.83
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1849,
+          "modes": [
+            {
+              "hex": "#faf9f7",
+              "count": 189,
+              "share_pct": 10.22
+            },
+            {
+              "hex": "#194795",
+              "count": 111,
+              "share_pct": 6.0
+            },
+            {
+              "hex": "#1e56b7",
+              "count": 101,
+              "share_pct": 5.46
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 19686,
+          "modes": [
+            {
+              "hex": "#2a78ff",
+              "count": 5896,
+              "share_pct": 29.95
+            },
+            {
+              "hex": "#253c65",
+              "count": 3606,
+              "share_pct": 18.32
+            },
+            {
+              "hex": "#29416c",
+              "count": 2120,
+              "share_pct": 10.77
+            }
+          ]
+        }
+      },
+      "legend": {
+        "foot": {
+          "pixels": 2157,
+          "modes": [
+            {
+              "hex": "#876619",
+              "count": 160,
+              "share_pct": 7.42
+            },
+            {
+              "hex": "#775a17",
+              "count": 139,
+              "share_pct": 6.44
+            },
+            {
+              "hex": "#644c14",
+              "count": 105,
+              "share_pct": 4.87
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 4022,
+          "modes": [
+            {
+              "hex": "#695528",
+              "count": 1236,
+              "share_pct": 30.73
+            },
+            {
+              "hex": "#59471d",
+              "count": 637,
+              "share_pct": 15.84
+            },
+            {
+              "hex": "#5c4b22",
+              "count": 495,
+              "share_pct": 12.31
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1802,
+          "modes": [
+            {
+              "hex": "#faf9f7",
+              "count": 189,
+              "share_pct": 10.49
+            },
+            {
+              "hex": "#fff5d6",
+              "count": 134,
+              "share_pct": 7.44
+            },
+            {
+              "hex": "#876619",
+              "count": 121,
+              "share_pct": 6.71
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 18759,
+          "modes": [
+            {
+              "hex": "#fff5d6",
+              "count": 6529,
+              "share_pct": 34.8
+            },
+            {
+              "hex": "#685528",
+              "count": 4978,
+              "share_pct": 26.54
+            },
+            {
+              "hex": "#5c4b23",
+              "count": 1222,
+              "share_pct": 6.51
+            }
+          ]
+        }
+      },
+      "signature": {
+        "foot": {
+          "pixels": 2327,
+          "modes": [
+            {
+              "hex": "#0c6a87",
+              "count": 150,
+              "share_pct": 6.45
+            },
+            {
+              "hex": "#0d7798",
+              "count": 116,
+              "share_pct": 4.98
+            },
+            {
+              "hex": "#0a546b",
+              "count": 108,
+              "share_pct": 4.64
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 5347,
+          "modes": [
+            {
+              "hex": "#154858",
+              "count": 1327,
+              "share_pct": 24.82
+            },
+            {
+              "hex": "#1c5465",
+              "count": 954,
+              "share_pct": 17.84
+            },
+            {
+              "hex": "#225a6b",
+              "count": 592,
+              "share_pct": 11.07
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1855,
+          "modes": [
+            {
+              "hex": "#faf9f7",
+              "count": 189,
+              "share_pct": 10.19
+            },
+            {
+              "hex": "#0d7898",
+              "count": 117,
+              "share_pct": 6.31
+            },
+            {
+              "hex": "#ebe9e6",
+              "count": 93,
+              "share_pct": 5.01
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 19793,
+          "modes": [
+            {
+              "hex": "#15c8ff",
+              "count": 6178,
+              "share_pct": 31.21
+            },
+            {
+              "hex": "#225a6b",
+              "count": 3162,
+              "share_pct": 15.98
+            },
+            {
+              "hex": "#1d5566",
+              "count": 2101,
+              "share_pct": 10.61
+            }
+          ]
+        }
+      }
+    },
+    "idle": {
+      "base": {
+        "foot": {
+          "pixels": 6442,
+          "modes": [
+            {
+              "hex": "#092659",
+              "count": 920,
+              "share_pct": 14.28
+            },
+            {
+              "hex": "#0b2b64",
+              "count": 526,
+              "share_pct": 8.17
+            },
+            {
+              "hex": "#14336a",
+              "count": 255,
+              "share_pct": 3.96
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 10753,
+          "modes": [
+            {
+              "hex": "#122458",
+              "count": 4813,
+              "share_pct": 44.76
+            },
+            {
+              "hex": "#0e2255",
+              "count": 1519,
+              "share_pct": 14.13
+            },
+            {
+              "hex": "#0b1c4d",
+              "count": 1109,
+              "share_pct": 10.31
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 4003,
+          "modes": [
+            {
+              "hex": "#f9f7f6",
+              "count": 633,
+              "share_pct": 15.81
+            },
+            {
+              "hex": "#f3edeb",
+              "count": 375,
+              "share_pct": 9.37
+            },
+            {
+              "hex": "#ebe6e5",
+              "count": 334,
+              "share_pct": 8.34
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 25229,
+          "modes": [
+            {
+              "hex": "#02c6fd",
+              "count": 5195,
+              "share_pct": 20.59
+            },
+            {
+              "hex": "#122458",
+              "count": 3065,
+              "share_pct": 12.15
+            },
+            {
+              "hex": "#fbfaf9",
+              "count": 2147,
+              "share_pct": 8.51
+            }
+          ]
+        }
+      },
+      "circuit": {
+        "foot": {
+          "pixels": 2397,
+          "modes": [
+            {
+              "hex": "#193566",
+              "count": 287,
+              "share_pct": 11.97
+            },
+            {
+              "hex": "#142c56",
+              "count": 248,
+              "share_pct": 10.35
+            },
+            {
+              "hex": "#19325c",
+              "count": 177,
+              "share_pct": 7.38
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 3769,
+          "modes": [
+            {
+              "hex": "#1c3257",
+              "count": 1467,
+              "share_pct": 38.92
+            },
+            {
+              "hex": "#192e52",
+              "count": 706,
+              "share_pct": 18.73
+            },
+            {
+              "hex": "#172b4d",
+              "count": 631,
+              "share_pct": 16.74
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1442,
+          "modes": [
+            {
+              "hex": "#f9f7f6",
+              "count": 225,
+              "share_pct": 15.6
+            },
+            {
+              "hex": "#f3edea",
+              "count": 127,
+              "share_pct": 8.81
+            },
+            {
+              "hex": "#ebe7e5",
+              "count": 118,
+              "share_pct": 8.18
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 9326,
+          "modes": [
+            {
+              "hex": "#2a78fe",
+              "count": 2865,
+              "share_pct": 30.72
+            },
+            {
+              "hex": "#1c3257",
+              "count": 1026,
+              "share_pct": 11.0
+            },
+            {
+              "hex": "#fbfaf9",
+              "count": 777,
+              "share_pct": 8.33
+            }
+          ]
+        }
+      },
+      "legend": {
+        "foot": {
+          "pixels": 2043,
+          "modes": [
+            {
+              "hex": "#5a4718",
+              "count": 332,
+              "share_pct": 16.25
+            },
+            {
+              "hex": "#634d19",
+              "count": 165,
+              "share_pct": 8.08
+            },
+            {
+              "hex": "#695424",
+              "count": 122,
+              "share_pct": 5.97
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 1674,
+          "modes": [
+            {
+              "hex": "#57461d",
+              "count": 695,
+              "share_pct": 41.52
+            },
+            {
+              "hex": "#fff5d6",
+              "count": 272,
+              "share_pct": 16.25
+            },
+            {
+              "hex": "#fcfbf9",
+              "count": 192,
+              "share_pct": 11.47
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1354,
+          "modes": [
+            {
+              "hex": "#f9f7f6",
+              "count": 225,
+              "share_pct": 16.62
+            },
+            {
+              "hex": "#f3edea",
+              "count": 127,
+              "share_pct": 9.38
+            },
+            {
+              "hex": "#ebe7e5",
+              "count": 118,
+              "share_pct": 8.71
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 7466,
+          "modes": [
+            {
+              "hex": "#fff5d6",
+              "count": 3106,
+              "share_pct": 41.6
+            },
+            {
+              "hex": "#fbfaf9",
+              "count": 777,
+              "share_pct": 10.41
+            },
+            {
+              "hex": "#57461c",
+              "count": 574,
+              "share_pct": 7.69
+            }
+          ]
+        }
+      },
+      "signature": {
+        "foot": {
+          "pixels": 2438,
+          "modes": [
+            {
+              "hex": "#165568",
+              "count": 293,
+              "share_pct": 12.02
+            },
+            {
+              "hex": "#0c4557",
+              "count": 216,
+              "share_pct": 8.86
+            },
+            {
+              "hex": "#13495a",
+              "count": 196,
+              "share_pct": 8.04
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 3911,
+          "modes": [
+            {
+              "hex": "#164858",
+              "count": 2478,
+              "share_pct": 63.36
+            },
+            {
+              "hex": "#fcfbf9",
+              "count": 192,
+              "share_pct": 4.91
+            },
+            {
+              "hex": "#17c9ff",
+              "count": 157,
+              "share_pct": 4.01
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1452,
+          "modes": [
+            {
+              "hex": "#f9f7f6",
+              "count": 225,
+              "share_pct": 15.5
+            },
+            {
+              "hex": "#f3edea",
+              "count": 127,
+              "share_pct": 8.75
+            },
+            {
+              "hex": "#ebe7e5",
+              "count": 118,
+              "share_pct": 8.13
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 9580,
+          "modes": [
+            {
+              "hex": "#16c8ff",
+              "count": 3268,
+              "share_pct": 34.11
+            },
+            {
+              "hex": "#164858",
+              "count": 1815,
+              "share_pct": 18.95
+            },
+            {
+              "hex": "#fbfaf9",
+              "count": 777,
+              "share_pct": 8.11
+            }
+          ]
+        }
+      }
+    },
+    "run": {
+      "base": {
+        "foot": {
+          "pixels": 4890,
+          "modes": [
+            {
+              "hex": "#0a2867",
+              "count": 506,
+              "share_pct": 10.35
+            },
+            {
+              "hex": "#fbfbfb",
+              "count": 309,
+              "share_pct": 6.32
+            },
+            {
+              "hex": "#08235a",
+              "count": 249,
+              "share_pct": 5.09
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 9864,
+          "modes": [
+            {
+              "hex": "#142b68",
+              "count": 1984,
+              "share_pct": 20.11
+            },
+            {
+              "hex": "#0b2359",
+              "count": 968,
+              "share_pct": 9.81
+            },
+            {
+              "hex": "#1a3475",
+              "count": 902,
+              "share_pct": 9.14
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 3271,
+          "modes": [
+            {
+              "hex": "#fafafa",
+              "count": 867,
+              "share_pct": 26.51
+            },
+            {
+              "hex": "#e8e8e8",
+              "count": 198,
+              "share_pct": 6.05
+            },
+            {
+              "hex": "#d8d7d8",
+              "count": 111,
+              "share_pct": 3.39
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 22850,
+          "modes": [
+            {
+              "hex": "#01d6fd",
+              "count": 5128,
+              "share_pct": 22.44
+            },
+            {
+              "hex": "#02c9fb",
+              "count": 2802,
+              "share_pct": 12.26
+            },
+            {
+              "hex": "#fafafa",
+              "count": 2411,
+              "share_pct": 10.55
+            }
+          ]
+        }
+      },
+      "circuit": {
+        "foot": {
+          "pixels": 2132,
+          "modes": [
+            {
+              "hex": "#193667",
+              "count": 229,
+              "share_pct": 10.74
+            },
+            {
+              "hex": "#fcfcfb",
+              "count": 131,
+              "share_pct": 6.14
+            },
+            {
+              "hex": "#142d57",
+              "count": 115,
+              "share_pct": 5.39
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 3634,
+          "modes": [
+            {
+              "hex": "#233c68",
+              "count": 565,
+              "share_pct": 15.55
+            },
+            {
+              "hex": "#1b335b",
+              "count": 378,
+              "share_pct": 10.4
+            },
+            {
+              "hex": "#284474",
+              "count": 284,
+              "share_pct": 7.82
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1339,
+          "modes": [
+            {
+              "hex": "#fafbfa",
+              "count": 326,
+              "share_pct": 24.35
+            },
+            {
+              "hex": "#e8e7e8",
+              "count": 74,
+              "share_pct": 5.53
+            },
+            {
+              "hex": "#85b1ff",
+              "count": 48,
+              "share_pct": 3.58
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 8023,
+          "modes": [
+            {
+              "hex": "#2a78ff",
+              "count": 3566,
+              "share_pct": 44.45
+            },
+            {
+              "hex": "#fafafa",
+              "count": 860,
+              "share_pct": 10.72
+            },
+            {
+              "hex": "#142c55",
+              "count": 227,
+              "share_pct": 2.83
+            }
+          ]
+        }
+      },
+      "legend": {
+        "foot": {
+          "pixels": 1974,
+          "modes": [
+            {
+              "hex": "#5b4617",
+              "count": 146,
+              "share_pct": 7.4
+            },
+            {
+              "hex": "#fff5d6",
+              "count": 132,
+              "share_pct": 6.69
+            },
+            {
+              "hex": "#fcfcfb",
+              "count": 131,
+              "share_pct": 6.64
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 3149,
+          "modes": [
+            {
+              "hex": "#695425",
+              "count": 671,
+              "share_pct": 21.31
+            },
+            {
+              "hex": "#5a471b",
+              "count": 483,
+              "share_pct": 15.34
+            },
+            {
+              "hex": "#fff5d6",
+              "count": 358,
+              "share_pct": 11.37
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1290,
+          "modes": [
+            {
+              "hex": "#fafbfa",
+              "count": 326,
+              "share_pct": 25.27
+            },
+            {
+              "hex": "#fef4d5",
+              "count": 110,
+              "share_pct": 8.53
+            },
+            {
+              "hex": "#e8e7e8",
+              "count": 74,
+              "share_pct": 5.74
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 7618,
+          "modes": [
+            {
+              "hex": "#fff5d6",
+              "count": 4118,
+              "share_pct": 54.06
+            },
+            {
+              "hex": "#fafafa",
+              "count": 860,
+              "share_pct": 11.29
+            },
+            {
+              "hex": "#594618",
+              "count": 232,
+              "share_pct": 3.05
+            }
+          ]
+        }
+      },
+      "signature": {
+        "foot": {
+          "pixels": 1951,
+          "modes": [
+            {
+              "hex": "#155669",
+              "count": 173,
+              "share_pct": 8.87
+            },
+            {
+              "hex": "#18c8fe",
+              "count": 124,
+              "share_pct": 6.36
+            },
+            {
+              "hex": "#fcfcfb",
+              "count": 100,
+              "share_pct": 5.13
+            }
+          ]
+        },
+        "hip": {
+          "pixels": 3714,
+          "modes": [
+            {
+              "hex": "#1a5668",
+              "count": 806,
+              "share_pct": 21.7
+            },
+            {
+              "hex": "#14495a",
+              "count": 376,
+              "share_pct": 10.12
+            },
+            {
+              "hex": "#236477",
+              "count": 257,
+              "share_pct": 6.92
+            }
+          ]
+        },
+        "socks": {
+          "pixels": 1271,
+          "modes": [
+            {
+              "hex": "#fafbfa",
+              "count": 291,
+              "share_pct": 22.9
+            },
+            {
+              "hex": "#e8e8e8",
+              "count": 71,
+              "share_pct": 5.59
+            },
+            {
+              "hex": "#80e1ff",
+              "count": 53,
+              "share_pct": 4.17
+            }
+          ]
+        },
+        "torso": {
+          "pixels": 8567,
+          "modes": [
+            {
+              "hex": "#16c8ff",
+              "count": 3879,
+              "share_pct": 45.28
+            },
+            {
+              "hex": "#fafafa",
+              "count": 864,
+              "share_pct": 10.09
+            },
+            {
+              "hex": "#0b4556",
+              "count": 236,
+              "share_pct": 2.75
+            }
+          ]
+        }
+      }
+    }
+  },
+  "slot_proposal": {
+    "circuit": {
+      "torso_a": {
+        "hex": "#315cff",
+        "origin": "source",
+        "measured_mode": "#2a78fe",
+        "measured_share_pct": 56.4,
+        "reason": "torso_a carries the outfit's identity; the measured #2a78fe is the declared #315cff in the same hue family (dHue 9.6 deg <= 12 deg), only the 2D shading differs (val 1.00 vs 1.00), so the authored value takes the slot"
+      },
+      "torso_b": {
+        "hex": "#1c335a",
+        "origin": "sprite",
+        "measured_mode": "#1c335a",
+        "measured_share_pct": 43.6,
+        "reason": "measured modal colour of the region (#1c335a, 43.6% of the region's garment pixels); the reference declares no colour for this region/family"
+      },
+      "hip_a": {
+        "hex": "#315cff",
+        "origin": "port",
+        "measured_mode": "#1c325a",
+        "measured_share_pct": 86.1,
+        "reason": "PORT: the measured shorts #1c325a sit dE76 22.2 from signature's #154959 (same value, 24.6 deg of hue), which is the closest the two outfits get in any region. Substituted with circuit's own declared primary #315cff: the hip separation rises to dE76 90.6 and the outfit reads blue from the waist down. Deviation from the sprite is real and deliberate -- the sprite paints these shorts navy. Revert to #1c325a for strict sprite fidelity.",
+        "would_have_been": "#1c325a"
+      },
+      "hip_b": {
+        "hex": "#9ef8ff",
+        "origin": "source",
+        "measured_mode": "#fcfbfb",
+        "measured_share_pct": 13.9,
+        "reason": "sprite paints this trim as the base's white (#fcfbfb, sat 0.004); that white is identical in base/circuit/signature, so it carries no outfit information, and the declared second colour #9ef8ff is itself a colour (sat 0.380), so it takes the slot"
+      },
+      "foot_a": {
+        "hex": "#183567",
+        "origin": "sprite",
+        "measured_mode": "#183567",
+        "measured_share_pct": 74.1,
+        "reason": "measured modal colour of the region (#183567, 74.1% of the region's garment pixels); the reference declares no colour for this region/family"
+      },
+      "foot_b": {
+        "hex": "#9ef8ff",
+        "origin": "source",
+        "measured_mode": "#fbfaf8",
+        "measured_share_pct": 25.9,
+        "reason": "sprite paints this trim as the base's white (#fbfaf8, sat 0.012); that white is identical in base/circuit/signature, so it carries no outfit information, and the declared second colour #9ef8ff is itself a colour (sat 0.380), so it takes the slot"
+      }
+    },
+    "legend": {
+      "torso_a": {
+        "hex": "#fff0a3",
+        "origin": "source",
+        "measured_mode": "#fff5d6",
+        "measured_share_pct": 61.3,
+        "reason": "torso_a carries the outfit's identity; the measured #fff5d6 is the declared #fff0a3 in the same hue family (dHue 4.9 deg <= 12 deg), only the 2D shading differs (val 1.00 vs 1.00), so the authored value takes the slot"
+      },
+      "torso_b": {
+        "hex": "#5a471b",
+        "origin": "sprite",
+        "measured_mode": "#5a471b",
+        "measured_share_pct": 38.7,
+        "reason": "measured modal colour of the region (#5a471b, 38.7% of the region's garment pixels); the reference declares no colour for this region/family"
+      },
+      "hip_a": {
+        "hex": "#59471c",
+        "origin": "sprite",
+        "measured_mode": "#59471c",
+        "measured_share_pct": 81.3,
+        "reason": "measured modal colour of the region (#59471c, 81.3% of the region's garment pixels); the reference declares no colour for this region/family"
+      },
+      "hip_b": {
+        "hex": "#fff0a3",
+        "origin": "source",
+        "measured_mode": "#fff5d6",
+        "measured_share_pct": 18.7,
+        "reason": "sprite paints this trim as the base's white (#fff5d6, sat 0.161); that white is identical in base/circuit/signature, so it carries no outfit information, and the declared second colour #fff0a3 is itself a colour (sat 0.361), so it takes the slot"
+      },
+      "foot_a": {
+        "hex": "#fef4d5",
+        "origin": "sprite",
+        "measured_mode": "#fef4d5",
+        "measured_share_pct": 51.1,
+        "reason": "measured modal colour of the region (#fef4d5, 51.1% of the region's garment pixels); the reference declares no colour for this region/family"
+      },
+      "foot_b": {
+        "hex": "#5a4617",
+        "origin": "sprite",
+        "measured_mode": "#5a4617",
+        "measured_share_pct": 48.9,
+        "reason": "measured modal colour of the region (#5a4617, 48.9% of the region's garment pixels); the reference declares no colour for this region/family"
+      }
+    },
+    "signature": {
+      "torso_a": {
+        "hex": "#03c7ed",
+        "origin": "source",
+        "measured_mode": "#16c8ff",
+        "measured_share_pct": 55.0,
+        "reason": "torso_a carries the outfit's identity; the measured #16c8ff is the declared #03c7ed in the same hue family (dHue 4.4 deg <= 12 deg), only the 2D shading differs (val 1.00 vs 0.93), so the authored value takes the slot"
+      },
+      "torso_b": {
+        "hex": "#195466",
+        "origin": "sprite",
+        "measured_mode": "#195466",
+        "measured_share_pct": 45.0,
+        "reason": "measured modal colour of the region (#195466, 45.0% of the region's garment pixels); the reference declares no colour for this region/family"
+      },
+      "hip_a": {
+        "hex": "#154959",
+        "origin": "sprite",
+        "measured_mode": "#154959",
+        "measured_share_pct": 86.7,
+        "reason": "measured modal colour of the region (#154959, 86.7% of the region's garment pixels); the reference declares no colour for this region/family"
+      },
+      "hip_b": {
+        "hex": "#162f61",
+        "origin": "source",
+        "measured_mode": "#fcfbfb",
+        "measured_share_pct": 13.3,
+        "reason": "sprite paints this trim as the base's white (#fcfbfb, sat 0.004); that white is identical in base/circuit/signature, so it carries no outfit information, and the declared second colour #162f61 is itself a colour (sat 0.773), so it takes the slot"
+      },
+      "foot_a": {
+        "hex": "#165568",
+        "origin": "sprite",
+        "measured_mode": "#165568",
+        "measured_share_pct": 61.7,
+        "reason": "measured modal colour of the region (#165568, 61.7% of the region's garment pixels); the reference declares no colour for this region/family"
+      },
+      "foot_b": {
+        "hex": "#17c8fe",
+        "origin": "sprite",
+        "measured_mode": "#17c8fe",
+        "measured_share_pct": 38.3,
+        "reason": "measured modal colour of the region (#17c8fe, 38.3% of the region's garment pixels); the reference declares no colour for this region/family"
+      }
+    }
+  },
+  "separation_proposal": {
+    "per_slot": {
+      "torso_a": {
+        "circuit": "#315cff",
+        "signature": "#03c7ed",
+        "de76_measured_modes": 62.4,
+        "de76_proposed_slots": 93.8
+      },
+      "torso_b": {
+        "circuit": "#1c335a",
+        "signature": "#195466",
+        "de76_measured_modes": 23.3,
+        "de76_proposed_slots": 23.3
+      },
+      "hip_a": {
+        "circuit": "#315cff",
+        "signature": "#154959",
+        "de76_measured_modes": 22.2,
+        "de76_proposed_slots": 90.6
+      },
+      "hip_b": {
+        "circuit": "#9ef8ff",
+        "signature": "#162f61",
+        "de76_measured_modes": 0.0,
+        "de76_proposed_slots": 82.8
+      },
+      "foot_a": {
+        "circuit": "#183567",
+        "signature": "#165568",
+        "de76_measured_modes": 28.3,
+        "de76_proposed_slots": 28.3
+      },
+      "foot_b": {
+        "circuit": "#9ef8ff",
+        "signature": "#17c8fe",
+        "de76_measured_modes": 50.3,
+        "de76_proposed_slots": 31.3
+      }
+    },
+    "mass_weighted": {
+      "torso_a": {
+        "weight_pct": 38.4,
+        "de76_measured": 62.4,
+        "de76_proposed": 93.8
+      },
+      "torso_b": {
+        "weight_pct": 30.5,
+        "de76_measured": 23.3,
+        "de76_proposed": 23.3
+      },
+      "hip_a": {
+        "weight_pct": 15.8,
+        "de76_measured": 22.2,
+        "de76_proposed": 90.6
+      },
+      "hip_b": {
+        "weight_pct": 2.5,
+        "de76_measured": 0.0,
+        "de76_proposed": 82.8
+      },
+      "foot_a": {
+        "weight_pct": 8.7,
+        "de76_measured": 28.3,
+        "de76_proposed": 28.3
+      },
+      "foot_b": {
+        "weight_pct": 4.1,
+        "de76_measured": 50.3,
+        "de76_proposed": 31.3
+      }
+    },
+    "mass_weighted_de76_measured": 39.1,
+    "mass_weighted_de76_proposed": 63.3,
+    "weight_note": "weights are measured pixel shares of each region x family, averaged over circuit and signature; a proxy for match-distance legibility, not a perceptual model"
+  },
+  "distance_from_base": {
+    "circuit": {
+      "torso_a": {
+        "base_mode": "#02c8fc",
+        "outfit_mode": "#2a78fe",
+        "de76": 64.3,
+        "dhue_deg": 25.4,
+        "sats": [
+          0.992,
+          0.835
+        ],
+        "dval": 0.008
+      },
+      "torso_b": {
+        "base_mode": "#162a65",
+        "outfit_mode": "#1c335a",
+        "de76": 15.0,
+        "dhue_deg": 7.1,
+        "sats": [
+          0.782,
+          0.689
+        ],
+        "dval": 0.043
+      },
+      "hip_a": {
+        "base_mode": "#0d2359",
+        "outfit_mode": "#1c325a",
+        "de76": 12.9,
+        "dhue_deg": 3.9,
+        "sats": [
+          0.854,
+          0.689
+        ],
+        "dval": 0.004
+      },
+      "hip_b": {
+        "base_mode": "#fcfbfb",
+        "outfit_mode": "#fcfbfb",
+        "de76": 0.0,
+        "dhue_deg": null,
+        "sats": [
+          0.004,
+          0.004
+        ],
+        "dval": 0.0
+      },
+      "foot_a": {
+        "base_mode": "#072658",
+        "outfit_mode": "#183567",
+        "de76": 7.0,
+        "dhue_deg": 0.9,
+        "sats": [
+          0.92,
+          0.767
+        ],
+        "dval": 0.059
+      },
+      "foot_b": {
+        "base_mode": "#fbf9f8",
+        "outfit_mode": "#fbfaf8",
+        "de76": 0.7,
+        "dhue_deg": null,
+        "sats": [
+          0.012,
+          0.012
+        ],
+        "dval": 0.0
+      }
+    },
+    "legend": {
+      "torso_a": {
+        "base_mode": "#02c8fc",
+        "outfit_mode": "#fff5d6",
+        "de76": 61.3,
+        "dhue_deg": 147.1,
+        "sats": [
+          0.992,
+          0.161
+        ],
+        "dval": 0.012
+      },
+      "torso_b": {
+        "base_mode": "#162a65",
+        "outfit_mode": "#5a471b",
+        "de76": 68.2,
+        "dhue_deg": 182.9,
+        "sats": [
+          0.782,
+          0.7
+        ],
+        "dval": 0.043
+      },
+      "hip_a": {
+        "base_mode": "#0d2359",
+        "outfit_mode": "#59471c",
+        "de76": 66.1,
+        "dhue_deg": 180.3,
+        "sats": [
+          0.854,
+          0.685
+        ],
+        "dval": 0.0
+      },
+      "hip_b": {
+        "base_mode": "#fcfbfb",
+        "outfit_mode": "#fff5d6",
+        "de76": 16.3,
+        "dhue_deg": null,
+        "sats": [
+          0.004,
+          0.161
+        ],
+        "dval": 0.012
+      },
+      "foot_a": {
+        "base_mode": "#072658",
+        "outfit_mode": "#fef4d5",
+        "de76": 94.9,
+        "dhue_deg": 171.7,
+        "sats": [
+          0.92,
+          0.161
+        ],
+        "dval": 0.651
+      },
+      "foot_b": {
+        "base_mode": "#fbf9f8",
+        "outfit_mode": "#5a4617",
+        "de76": 73.5,
+        "dhue_deg": null,
+        "sats": [
+          0.012,
+          0.744
+        ],
+        "dval": 0.631
+      }
+    },
+    "signature": {
+      "torso_a": {
+        "base_mode": "#02c8fc",
+        "outfit_mode": "#16c8ff",
+        "de76": 2.0,
+        "dhue_deg": 1.7,
+        "sats": [
+          0.992,
+          0.914
+        ],
+        "dval": 0.012
+      },
+      "torso_b": {
+        "base_mode": "#162a65",
+        "outfit_mode": "#195466",
+        "de76": 37.4,
+        "dhue_deg": 30.8,
+        "sats": [
+          0.782,
+          0.755
+        ],
+        "dval": 0.004
+      },
+      "hip_a": {
+        "base_mode": "#0d2359",
+        "outfit_mode": "#154959",
+        "de76": 35.0,
+        "dhue_deg": 28.5,
+        "sats": [
+          0.854,
+          0.764
+        ],
+        "dval": 0.0
+      },
+      "hip_b": {
+        "base_mode": "#fcfbfb",
+        "outfit_mode": "#fcfbfb",
+        "de76": 0.0,
+        "dhue_deg": null,
+        "sats": [
+          0.004,
+          0.004
+        ],
+        "dval": 0.0
+      },
+      "foot_a": {
+        "base_mode": "#072658",
+        "outfit_mode": "#165568",
+        "de76": 33.3,
+        "dhue_deg": 23.1,
+        "sats": [
+          0.92,
+          0.788
+        ],
+        "dval": 0.063
+      },
+      "foot_b": {
+        "base_mode": "#fbf9f8",
+        "outfit_mode": "#17c8fe",
+        "de76": 50.1,
+        "dhue_deg": null,
+        "sats": [
+          0.012,
+          0.909
+        ],
+        "dval": 0.012
+      }
+    }
+  },
+  "circuit_vs_signature": {
+    "colour_distance": {
+      "torso_a": {
+        "circuit_mode": "#2a78fe",
+        "signature_mode": "#16c8ff",
+        "circuit_share_pct": 56.4,
+        "signature_share_pct": 55.0,
+        "de76": 62.4,
+        "dhue_deg": 23.8,
+        "sats": [
+          0.835,
+          0.914
+        ],
+        "dval": 0.004
+      },
+      "torso_b": {
+        "circuit_mode": "#1c335a",
+        "signature_mode": "#195466",
+        "circuit_share_pct": 43.6,
+        "signature_share_pct": 45.0,
+        "de76": 23.3,
+        "dhue_deg": 23.7,
+        "sats": [
+          0.689,
+          0.755
+        ],
+        "dval": 0.047
+      },
+      "hip_a": {
+        "circuit_mode": "#1c325a",
+        "signature_mode": "#154959",
+        "circuit_share_pct": 86.1,
+        "signature_share_pct": 86.7,
+        "de76": 22.2,
+        "dhue_deg": 24.6,
+        "sats": [
+          0.689,
+          0.764
+        ],
+        "dval": 0.004
+      },
+      "hip_b": {
+        "circuit_mode": "#fcfbfb",
+        "signature_mode": "#fcfbfb",
+        "circuit_share_pct": 13.9,
+        "signature_share_pct": 13.3,
+        "de76": 0.0,
+        "dhue_deg": null,
+        "sats": [
+          0.004,
+          0.004
+        ],
+        "dval": 0.0
+      },
+      "foot_a": {
+        "circuit_mode": "#183567",
+        "signature_mode": "#165568",
+        "circuit_share_pct": 74.1,
+        "signature_share_pct": 61.7,
+        "de76": 28.3,
+        "dhue_deg": 24.1,
+        "sats": [
+          0.767,
+          0.788
+        ],
+        "dval": 0.004
+      },
+      "foot_b": {
+        "circuit_mode": "#fbfaf8",
+        "signature_mode": "#17c8fe",
+        "circuit_share_pct": 25.9,
+        "signature_share_pct": 38.3,
+        "de76": 50.3,
+        "dhue_deg": null,
+        "sats": [
+          0.012,
+          0.909
+        ],
+        "dval": 0.012
+      }
+    },
+    "pixel_changes": [
+      {
+        "sheet": "idle",
+        "frame": 0,
+        "body_px": 11218,
+        "changed_px": 4048,
+        "changed_pct_of_body": 36.08,
+        "changed_pct_of_frame": 7.91,
+        "changed_pct_torso": 40.9,
+        "changed_pct_hip": 45.06,
+        "changed_pct_foot": 64.37,
+        "changed_pct_socks": 22.93
+      },
+      {
+        "sheet": "idle",
+        "frame": 1,
+        "body_px": 11416,
+        "changed_px": 4289,
+        "changed_pct_of_body": 37.57,
+        "changed_pct_of_frame": 8.38,
+        "changed_pct_torso": 53.27,
+        "changed_pct_hip": 25.79,
+        "changed_pct_foot": 71.1,
+        "changed_pct_socks": 35.85
+      },
+      {
+        "sheet": "idle",
+        "frame": 2,
+        "body_px": 12034,
+        "changed_px": 4972,
+        "changed_pct_of_body": 41.32,
+        "changed_pct_of_frame": 9.71,
+        "changed_pct_torso": 42.58,
+        "changed_pct_hip": 71.12,
+        "changed_pct_foot": 64.27,
+        "changed_pct_socks": 21.92
+      },
+      {
+        "sheet": "idle",
+        "frame": 3,
+        "body_px": 10922,
+        "changed_px": 4449,
+        "changed_pct_of_body": 40.73,
+        "changed_pct_of_frame": 8.69,
+        "changed_pct_torso": 45.16,
+        "changed_pct_hip": 63.73,
+        "changed_pct_foot": 67.64,
+        "changed_pct_socks": 29.35
+      },
+      {
+        "sheet": "action",
+        "frame": 0,
+        "body_px": 10212,
+        "changed_px": 5361,
+        "changed_pct_of_body": 52.5,
+        "changed_pct_of_frame": 10.47,
+        "changed_pct_torso": 58.67,
+        "changed_pct_hip": 77.06,
+        "changed_pct_foot": 65.28,
+        "changed_pct_socks": 25.52
+      },
+      {
+        "sheet": "action",
+        "frame": 1,
+        "body_px": 9888,
+        "changed_px": 4786,
+        "changed_pct_of_body": 48.4,
+        "changed_pct_of_frame": 9.35,
+        "changed_pct_torso": 47.16,
+        "changed_pct_hip": 73.2,
+        "changed_pct_foot": 57.08,
+        "changed_pct_socks": 14.87
+      },
+      {
+        "sheet": "action",
+        "frame": 2,
+        "body_px": 10460,
+        "changed_px": 5386,
+        "changed_pct_of_body": 51.49,
+        "changed_pct_of_frame": 10.52,
+        "changed_pct_torso": 50.96,
+        "changed_pct_hip": 80.45,
+        "changed_pct_foot": 59.22,
+        "changed_pct_socks": 14.31
+      },
+      {
+        "sheet": "action",
+        "frame": 3,
+        "body_px": 9420,
+        "changed_px": 3843,
+        "changed_pct_of_body": 40.8,
+        "changed_pct_of_frame": 7.51,
+        "changed_pct_torso": 48.73,
+        "changed_pct_hip": 46.43,
+        "changed_pct_foot": 59.46,
+        "changed_pct_socks": 24.61
+      },
+      {
+        "sheet": "run",
+        "frame": 0,
+        "body_px": 4297,
+        "changed_px": 1506,
+        "changed_pct_of_body": 35.05,
+        "changed_pct_of_frame": 7.22,
+        "changed_pct_torso": 37.41,
+        "changed_pct_hip": 50.63,
+        "changed_pct_foot": 55.28,
+        "changed_pct_socks": 29.58
+      },
+      {
+        "sheet": "run",
+        "frame": 1,
+        "body_px": 3708,
+        "changed_px": 1229,
+        "changed_pct_of_body": 33.14,
+        "changed_pct_of_frame": 5.89,
+        "changed_pct_torso": 36.6,
+        "changed_pct_hip": 45.05,
+        "changed_pct_foot": 70.79,
+        "changed_pct_socks": 41.0
+      },
+      {
+        "sheet": "run",
+        "frame": 2,
+        "body_px": 4207,
+        "changed_px": 1525,
+        "changed_pct_of_body": 36.25,
+        "changed_pct_of_frame": 7.31,
+        "changed_pct_torso": 37.39,
+        "changed_pct_hip": 52.13,
+        "changed_pct_foot": 64.68,
+        "changed_pct_socks": 37.28
+      },
+      {
+        "sheet": "run",
+        "frame": 3,
+        "body_px": 3926,
+        "changed_px": 1251,
+        "changed_pct_of_body": 31.86,
+        "changed_pct_of_frame": 6.0,
+        "changed_pct_torso": 36.94,
+        "changed_pct_hip": 38.6,
+        "changed_pct_foot": 58.82,
+        "changed_pct_socks": 19.05
+      },
+      {
+        "sheet": "run",
+        "frame": 4,
+        "body_px": 5713,
+        "changed_px": 2019,
+        "changed_pct_of_body": 35.34,
+        "changed_pct_of_frame": 9.68,
+        "changed_pct_torso": 37.72,
+        "changed_pct_hip": 53.06,
+        "changed_pct_foot": 57.74,
+        "changed_pct_socks": 25.6
+      },
+      {
+        "sheet": "run",
+        "frame": 5,
+        "body_px": 5080,
+        "changed_px": 1702,
+        "changed_pct_of_body": 33.5,
+        "changed_pct_of_frame": 8.16,
+        "changed_pct_torso": 37.97,
+        "changed_pct_hip": 43.48,
+        "changed_pct_foot": 69.58,
+        "changed_pct_socks": 35.9
+      },
+      {
+        "sheet": "run",
+        "frame": 6,
+        "body_px": 5633,
+        "changed_px": 2062,
+        "changed_pct_of_body": 36.61,
+        "changed_pct_of_frame": 9.89,
+        "changed_pct_torso": 38.42,
+        "changed_pct_hip": 54.87,
+        "changed_pct_foot": 59.27,
+        "changed_pct_socks": 33.33
+      },
+      {
+        "sheet": "run",
+        "frame": 7,
+        "body_px": 5301,
+        "changed_px": 1771,
+        "changed_pct_of_body": 33.41,
+        "changed_pct_of_frame": 8.49,
+        "changed_pct_torso": 38.11,
+        "changed_pct_hip": 45.28,
+        "changed_pct_foot": 58.28,
+        "changed_pct_socks": 12.0
+      },
+      {
+        "sheet": "back-idle",
+        "frame": 0,
+        "body_px": 10233,
+        "changed_px": 5437,
+        "changed_pct_of_body": 53.13,
+        "changed_pct_of_frame": 10.62,
+        "changed_pct_torso": 65.35,
+        "changed_pct_hip": 74.1,
+        "changed_pct_foot": 53.87,
+        "changed_pct_socks": 12.76
+      },
+      {
+        "sheet": "back-idle",
+        "frame": 1,
+        "body_px": 9437,
+        "changed_px": 4901,
+        "changed_pct_of_body": 51.93,
+        "changed_pct_of_frame": 9.57,
+        "changed_pct_torso": 66.34,
+        "changed_pct_hip": 41.22,
+        "changed_pct_foot": 78.77,
+        "changed_pct_socks": 67.23
+      },
+      {
+        "sheet": "back-idle",
+        "frame": 2,
+        "body_px": 10664,
+        "changed_px": 5779,
+        "changed_pct_of_body": 54.19,
+        "changed_pct_of_frame": 11.29,
+        "changed_pct_torso": 66.93,
+        "changed_pct_hip": 79.14,
+        "changed_pct_foot": 67.67,
+        "changed_pct_socks": 35.99
+      },
+      {
+        "sheet": "back-idle",
+        "frame": 3,
+        "body_px": 10019,
+        "changed_px": 5237,
+        "changed_pct_of_body": 52.27,
+        "changed_pct_of_frame": 10.23,
+        "changed_pct_torso": 65.57,
+        "changed_pct_hip": 72.62,
+        "changed_pct_foot": 63.87,
+        "changed_pct_socks": 46.36
+      },
+      {
+        "sheet": "back-action",
+        "frame": 0,
+        "body_px": 10070,
+        "changed_px": 4946,
+        "changed_pct_of_body": 49.12,
+        "changed_pct_of_frame": 9.66,
+        "changed_pct_torso": 51.57,
+        "changed_pct_hip": 72.64,
+        "changed_pct_foot": 58.03,
+        "changed_pct_socks": 15.43
+      },
+      {
+        "sheet": "back-action",
+        "frame": 1,
+        "body_px": 8845,
+        "changed_px": 4467,
+        "changed_pct_of_body": 50.5,
+        "changed_pct_of_frame": 8.73,
+        "changed_pct_torso": 64.35,
+        "changed_pct_hip": 45.79,
+        "changed_pct_foot": 66.16,
+        "changed_pct_socks": 53.49
+      },
+      {
+        "sheet": "back-action",
+        "frame": 2,
+        "body_px": 10119,
+        "changed_px": 5120,
+        "changed_pct_of_body": 50.6,
+        "changed_pct_of_frame": 10.0,
+        "changed_pct_torso": 51.69,
+        "changed_pct_hip": 84.91,
+        "changed_pct_foot": 65.28,
+        "changed_pct_socks": 18.66
+      },
+      {
+        "sheet": "back-action",
+        "frame": 3,
+        "body_px": 8303,
+        "changed_px": 4111,
+        "changed_pct_of_body": 49.51,
+        "changed_pct_of_frame": 8.03,
+        "changed_pct_torso": 69.37,
+        "changed_pct_hip": 33.05,
+        "changed_pct_foot": 72.87,
+        "changed_pct_socks": 57.53
+      },
+      {
+        "sheet": "back-run",
+        "frame": 0,
+        "body_px": 6334,
+        "changed_px": 3354,
+        "changed_pct_of_body": 52.95,
+        "changed_pct_of_frame": 17.13,
+        "changed_pct_torso": 62.64,
+        "changed_pct_hip": 52.32,
+        "changed_pct_foot": 77.5,
+        "changed_pct_socks": 75.12
+      },
+      {
+        "sheet": "back-run",
+        "frame": 1,
+        "body_px": 6043,
+        "changed_px": 3468,
+        "changed_pct_of_body": 57.39,
+        "changed_pct_of_frame": 17.71,
+        "changed_pct_torso": 69.1,
+        "changed_pct_hip": 64.32,
+        "changed_pct_foot": 54.62,
+        "changed_pct_socks": 52.16
+      },
+      {
+        "sheet": "back-run",
+        "frame": 2,
+        "body_px": 5700,
+        "changed_px": 2921,
+        "changed_pct_of_body": 51.25,
+        "changed_pct_of_frame": 14.92,
+        "changed_pct_torso": 63.12,
+        "changed_pct_hip": 53.83,
+        "changed_pct_foot": 68.8,
+        "changed_pct_socks": 38.25
+      },
+      {
+        "sheet": "back-run",
+        "frame": 3,
+        "body_px": 6415,
+        "changed_px": 3386,
+        "changed_pct_of_body": 52.78,
+        "changed_pct_of_frame": 17.29,
+        "changed_pct_torso": 61.81,
+        "changed_pct_hip": 67.28,
+        "changed_pct_foot": 66.08,
+        "changed_pct_socks": 52.52
+      },
+      {
+        "sheet": "back-run",
+        "frame": 4,
+        "body_px": 6424,
+        "changed_px": 3418,
+        "changed_pct_of_body": 53.21,
+        "changed_pct_of_frame": 17.46,
+        "changed_pct_torso": 62.37,
+        "changed_pct_hip": 57.49,
+        "changed_pct_foot": 74.13,
+        "changed_pct_socks": 72.02
+      },
+      {
+        "sheet": "back-run",
+        "frame": 5,
+        "body_px": 6466,
+        "changed_px": 3547,
+        "changed_pct_of_body": 54.86,
+        "changed_pct_of_frame": 18.11,
+        "changed_pct_torso": 62.91,
+        "changed_pct_hip": 68.17,
+        "changed_pct_foot": 52.22,
+        "changed_pct_socks": 56.38
+      },
+      {
+        "sheet": "back-run",
+        "frame": 6,
+        "body_px": 5840,
+        "changed_px": 2973,
+        "changed_pct_of_body": 50.91,
+        "changed_pct_of_frame": 15.18,
+        "changed_pct_torso": 61.84,
+        "changed_pct_hip": 52.94,
+        "changed_pct_foot": 68.21,
+        "changed_pct_socks": 41.81
+      },
+      {
+        "sheet": "back-run",
+        "frame": 7,
+        "body_px": 6566,
+        "changed_px": 3507,
+        "changed_pct_of_body": 53.41,
+        "changed_pct_of_frame": 17.91,
+        "changed_pct_torso": 63.65,
+        "changed_pct_hip": 63.96,
+        "changed_pct_foot": 65.59,
+        "changed_pct_socks": 56.86
+      }
+    ]
+  },
+  "pixel_changes_vs_base": [
+    {
+      "sheet": "idle",
+      "outfit": "circuit",
+      "frame": 0,
+      "body_px": 10558,
+      "changed_px": 4181,
+      "changed_pct_of_body": 39.6,
+      "changed_pct_of_frame": 8.17,
+      "changed_pct_torso": 52.69,
+      "changed_pct_hip": 15.44,
+      "changed_pct_foot": 53.0,
+      "changed_pct_socks": 44.9
+    },
+    {
+      "sheet": "idle",
+      "outfit": "circuit",
+      "frame": 1,
+      "body_px": 10735,
+      "changed_px": 4268,
+      "changed_pct_of_body": 39.76,
+      "changed_pct_of_frame": 8.34,
+      "changed_pct_torso": 49.39,
+      "changed_pct_hip": 31.01,
+      "changed_pct_foot": 48.78,
+      "changed_pct_socks": 40.43
+    },
+    {
+      "sheet": "idle",
+      "outfit": "circuit",
+      "frame": 2,
+      "body_px": 11291,
+      "changed_px": 3207,
+      "changed_pct_of_body": 28.4,
+      "changed_pct_of_frame": 6.26,
+      "changed_pct_torso": 29.96,
+      "changed_pct_hip": 16.96,
+      "changed_pct_foot": 50.05,
+      "changed_pct_socks": 45.4
+    },
+    {
+      "sheet": "idle",
+      "outfit": "circuit",
+      "frame": 3,
+      "body_px": 10279,
+      "changed_px": 3584,
+      "changed_pct_of_body": 34.87,
+      "changed_pct_of_frame": 7.0,
+      "changed_pct_torso": 43.35,
+      "changed_pct_hip": 18.41,
+      "changed_pct_foot": 48.99,
+      "changed_pct_socks": 38.69
+    },
+    {
+      "sheet": "idle",
+      "outfit": "legend",
+      "frame": 0,
+      "body_px": 10558,
+      "changed_px": 6546,
+      "changed_pct_of_body": 62.0,
+      "changed_pct_of_frame": 12.79,
+      "changed_pct_torso": 68.61,
+      "changed_pct_hip": 67.5,
+      "changed_pct_foot": 89.6,
+      "changed_pct_socks": 59.95
+    },
+    {
+      "sheet": "idle",
+      "outfit": "legend",
+      "frame": 1,
+      "body_px": 10735,
+      "changed_px": 6567,
+      "changed_pct_of_body": 61.17,
+      "changed_pct_of_frame": 12.83,
+      "changed_pct_torso": 73.06,
+      "changed_pct_hip": 57.04,
+      "changed_pct_foot": 92.13,
+      "changed_pct_socks": 66.17
+    },
+    {
+      "sheet": "idle",
+      "outfit": "legend",
+      "frame": 2,
+      "body_px": 11291,
+      "changed_px": 7200,
+      "changed_pct_of_body": 63.77,
+      "changed_pct_of_frame": 14.06,
+      "changed_pct_torso": 64.97,
+      "changed_pct_hip": 85.55,
+      "changed_pct_foot": 91.98,
+      "changed_pct_socks": 55.17
+    },
+    {
+      "sheet": "idle",
+      "outfit": "legend",
+      "frame": 3,
+      "body_px": 10279,
+      "changed_px": 6524,
+      "changed_pct_of_body": 63.47,
+      "changed_pct_of_frame": 12.74,
+      "changed_pct_torso": 67.84,
+      "changed_pct_hip": 78.54,
+      "changed_pct_foot": 92.69,
+      "changed_pct_socks": 72.62
+    },
+    {
+      "sheet": "idle",
+      "outfit": "signature",
+      "frame": 0,
+      "body_px": 10558,
+      "changed_px": 6277,
+      "changed_pct_of_body": 59.45,
+      "changed_pct_of_frame": 12.26,
+      "changed_pct_torso": 66.15,
+      "changed_pct_hip": 64.19,
+      "changed_pct_foot": 83.6,
+      "changed_pct_socks": 56.31
+    },
+    {
+      "sheet": "idle",
+      "outfit": "signature",
+      "frame": 1,
+      "body_px": 10735,
+      "changed_px": 6351,
+      "changed_pct_of_body": 59.16,
+      "changed_pct_of_frame": 12.41,
+      "changed_pct_torso": 71.23,
+      "changed_pct_hip": 54.99,
+      "changed_pct_foot": 88.84,
+      "changed_pct_socks": 58.75
+    },
+    {
+      "sheet": "idle",
+      "outfit": "signature",
+      "frame": 2,
+      "body_px": 11291,
+      "changed_px": 6984,
+      "changed_pct_of_body": 61.85,
+      "changed_pct_of_frame": 13.64,
+      "changed_pct_torso": 63.4,
+      "changed_pct_hip": 83.49,
+      "changed_pct_foot": 86.38,
+      "changed_pct_socks": 52.87
+    },
+    {
+      "sheet": "idle",
+      "outfit": "signature",
+      "frame": 3,
+      "body_px": 10279,
+      "changed_px": 6297,
+      "changed_pct_of_body": 61.26,
+      "changed_pct_of_frame": 12.3,
+      "changed_pct_torso": 65.81,
+      "changed_pct_hip": 75.98,
+      "changed_pct_foot": 86.65,
+      "changed_pct_socks": 63.69
+    },
+    {
+      "sheet": "action",
+      "outfit": "circuit",
+      "frame": 0,
+      "body_px": 7566,
+      "changed_px": 2484,
+      "changed_pct_of_body": 32.83,
+      "changed_pct_of_frame": 4.85,
+      "changed_pct_torso": 35.74,
+      "changed_pct_hip": 15.18,
+      "changed_pct_foot": 52.04,
+      "changed_pct_socks": 47.5
+    },
+    {
+      "sheet": "action",
+      "outfit": "circuit",
+      "frame": 1,
+      "body_px": 7253,
+      "changed_px": 2778,
+      "changed_pct_of_body": 38.3,
+      "changed_pct_of_frame": 5.43,
+      "changed_pct_torso": 46.48,
+      "changed_pct_hip": 20.2,
+      "changed_pct_foot": 57.74,
+      "changed_pct_socks": 45.54
+    },
+    {
+      "sheet": "action",
+      "outfit": "circuit",
+      "frame": 2,
+      "body_px": 7712,
+      "changed_px": 2698,
+      "changed_pct_of_body": 34.98,
+      "changed_pct_of_frame": 5.27,
+      "changed_pct_torso": 41.55,
+      "changed_pct_hip": 18.1,
+      "changed_pct_foot": 54.93,
+      "changed_pct_socks": 49.13
+    },
+    {
+      "sheet": "action",
+      "outfit": "circuit",
+      "frame": 3,
+      "body_px": 6760,
+      "changed_px": 3413,
+      "changed_pct_of_body": 50.49,
+      "changed_pct_of_frame": 6.67,
+      "changed_pct_torso": 61.17,
+      "changed_pct_hip": 30.04,
+      "changed_pct_foot": 56.15,
+      "changed_pct_socks": 46.03
+    },
+    {
+      "sheet": "action",
+      "outfit": "legend",
+      "frame": 0,
+      "body_px": 7566,
+      "changed_px": 6660,
+      "changed_pct_of_body": 88.03,
+      "changed_pct_of_frame": 13.01,
+      "changed_pct_torso": 87.98,
+      "changed_pct_hip": 97.27,
+      "changed_pct_foot": 91.55,
+      "changed_pct_socks": 63.93
+    },
+    {
+      "sheet": "action",
+      "outfit": "legend",
+      "frame": 1,
+      "body_px": 7253,
+      "changed_px": 6229,
+      "changed_pct_of_body": 85.88,
+      "changed_pct_of_frame": 12.17,
+      "changed_pct_torso": 81.33,
+      "changed_pct_hip": 97.37,
+      "changed_pct_foot": 89.38,
+      "changed_pct_socks": 47.13
+    },
+    {
+      "sheet": "action",
+      "outfit": "legend",
+      "frame": 2,
+      "body_px": 7712,
+      "changed_px": 6716,
+      "changed_pct_of_body": 87.09,
+      "changed_pct_of_frame": 13.12,
+      "changed_pct_torso": 84.75,
+      "changed_pct_hip": 96.38,
+      "changed_pct_foot": 88.6,
+      "changed_pct_socks": 53.78
+    },
+    {
+      "sheet": "action",
+      "outfit": "legend",
+      "frame": 3,
+      "body_px": 6760,
+      "changed_px": 5480,
+      "changed_pct_of_body": 81.07,
+      "changed_pct_of_frame": 10.7,
+      "changed_pct_torso": 80.38,
+      "changed_pct_hip": 89.37,
+      "changed_pct_foot": 87.45,
+      "changed_pct_socks": 57.3
+    },
+    {
+      "sheet": "action",
+      "outfit": "signature",
+      "frame": 0,
+      "body_px": 7566,
+      "changed_px": 6424,
+      "changed_pct_of_body": 84.91,
+      "changed_pct_of_frame": 12.55,
+      "changed_pct_torso": 84.68,
+      "changed_pct_hip": 95.17,
+      "changed_pct_foot": 86.27,
+      "changed_pct_socks": 59.46
+    },
+    {
+      "sheet": "action",
+      "outfit": "signature",
+      "frame": 1,
+      "body_px": 7253,
+      "changed_px": 5998,
+      "changed_pct_of_body": 82.7,
+      "changed_pct_of_frame": 11.72,
+      "changed_pct_torso": 79.03,
+      "changed_pct_hip": 93.1,
+      "changed_pct_foot": 84.41,
+      "changed_pct_socks": 45.54
+    },
+    {
+      "sheet": "action",
+      "outfit": "signature",
+      "frame": 2,
+      "body_px": 7712,
+      "changed_px": 6490,
+      "changed_pct_of_body": 84.15,
+      "changed_pct_of_frame": 12.68,
+      "changed_pct_torso": 82.0,
+      "changed_pct_hip": 93.34,
+      "changed_pct_foot": 84.1,
+      "changed_pct_socks": 52.03
+    },
+    {
+      "sheet": "action",
+      "outfit": "signature",
+      "frame": 3,
+      "body_px": 6760,
+      "changed_px": 5231,
+      "changed_pct_of_body": 77.38,
+      "changed_pct_of_frame": 10.22,
+      "changed_pct_torso": 78.29,
+      "changed_pct_hip": 83.4,
+      "changed_pct_foot": 82.24,
+      "changed_pct_socks": 53.42
+    },
+    {
+      "sheet": "run",
+      "outfit": "circuit",
+      "frame": 0,
+      "body_px": 3920,
+      "changed_px": 2786,
+      "changed_pct_of_body": 71.07,
+      "changed_pct_of_frame": 13.36,
+      "changed_pct_torso": 81.86,
+      "changed_pct_hip": 52.72,
+      "changed_pct_foot": 78.27,
+      "changed_pct_socks": 73.76
+    },
+    {
+      "sheet": "run",
+      "outfit": "circuit",
+      "frame": 1,
+      "body_px": 3387,
+      "changed_px": 2460,
+      "changed_pct_of_body": 72.63,
+      "changed_pct_of_frame": 11.8,
+      "changed_pct_torso": 81.01,
+      "changed_pct_hip": 64.63,
+      "changed_pct_foot": 69.34,
+      "changed_pct_socks": 70.24
+    },
+    {
+      "sheet": "run",
+      "outfit": "circuit",
+      "frame": 2,
+      "body_px": 3830,
+      "changed_px": 2535,
+      "changed_pct_of_body": 66.19,
+      "changed_pct_of_frame": 12.15,
+      "changed_pct_torso": 78.24,
+      "changed_pct_hip": 50.3,
+      "changed_pct_foot": 73.09,
+      "changed_pct_socks": 64.5
+    },
+    {
+      "sheet": "run",
+      "outfit": "circuit",
+      "frame": 3,
+      "body_px": 3635,
+      "changed_px": 2323,
+      "changed_pct_of_body": 63.91,
+      "changed_pct_of_frame": 11.14,
+      "changed_pct_torso": 75.77,
+      "changed_pct_hip": 50.9,
+      "changed_pct_foot": 71.5,
+      "changed_pct_socks": 55.56
+    },
+    {
+      "sheet": "run",
+      "outfit": "circuit",
+      "frame": 4,
+      "body_px": 5307,
+      "changed_px": 2954,
+      "changed_pct_of_body": 55.66,
+      "changed_pct_of_frame": 14.16,
+      "changed_pct_torso": 68.49,
+      "changed_pct_hip": 37.97,
+      "changed_pct_foot": 67.93,
+      "changed_pct_socks": 60.87
+    },
+    {
+      "sheet": "run",
+      "outfit": "circuit",
+      "frame": 5,
+      "body_px": 4783,
+      "changed_px": 2531,
+      "changed_pct_of_body": 52.92,
+      "changed_pct_of_frame": 12.14,
+      "changed_pct_torso": 64.2,
+      "changed_pct_hip": 41.86,
+      "changed_pct_foot": 48.51,
+      "changed_pct_socks": 44.28
+    },
+    {
+      "sheet": "run",
+      "outfit": "circuit",
+      "frame": 6,
+      "body_px": 5188,
+      "changed_px": 2447,
+      "changed_pct_of_body": 47.17,
+      "changed_pct_of_frame": 11.73,
+      "changed_pct_torso": 60.49,
+      "changed_pct_hip": 30.43,
+      "changed_pct_foot": 58.02,
+      "changed_pct_socks": 57.36
+    },
+    {
+      "sheet": "run",
+      "outfit": "circuit",
+      "frame": 7,
+      "body_px": 4974,
+      "changed_px": 2503,
+      "changed_pct_of_body": 50.32,
+      "changed_pct_of_frame": 12.0,
+      "changed_pct_torso": 62.63,
+      "changed_pct_hip": 40.44,
+      "changed_pct_foot": 58.14,
+      "changed_pct_socks": 41.54
+    },
+    {
+      "sheet": "run",
+      "outfit": "legend",
+      "frame": 0,
+      "body_px": 3920,
+      "changed_px": 3259,
+      "changed_pct_of_body": 83.14,
+      "changed_pct_of_frame": 15.63,
+      "changed_pct_torso": 86.96,
+      "changed_pct_hip": 89.0,
+      "changed_pct_foot": 93.45,
+      "changed_pct_socks": 77.72
+    },
+    {
+      "sheet": "run",
+      "outfit": "legend",
+      "frame": 1,
+      "body_px": 3387,
+      "changed_px": 2769,
+      "changed_pct_of_body": 81.75,
+      "changed_pct_of_frame": 13.28,
+      "changed_pct_torso": 85.17,
+      "changed_pct_hip": 91.24,
+      "changed_pct_foot": 99.27,
+      "changed_pct_socks": 89.88
+    },
+    {
+      "sheet": "run",
+      "outfit": "legend",
+      "frame": 2,
+      "body_px": 3830,
+      "changed_px": 3053,
+      "changed_pct_of_body": 79.71,
+      "changed_pct_of_frame": 14.64,
+      "changed_pct_torso": 83.55,
+      "changed_pct_hip": 89.47,
+      "changed_pct_foot": 97.67,
+      "changed_pct_socks": 72.5
+    },
+    {
+      "sheet": "run",
+      "outfit": "legend",
+      "frame": 3,
+      "body_px": 3635,
+      "changed_px": 2748,
+      "changed_pct_of_body": 75.6,
+      "changed_pct_of_frame": 13.18,
+      "changed_pct_torso": 81.75,
+      "changed_pct_hip": 80.95,
+      "changed_pct_foot": 92.23,
+      "changed_pct_socks": 57.78
+    },
+    {
+      "sheet": "run",
+      "outfit": "legend",
+      "frame": 4,
+      "body_px": 5307,
+      "changed_px": 3824,
+      "changed_pct_of_body": 72.06,
+      "changed_pct_of_frame": 18.34,
+      "changed_pct_torso": 76.61,
+      "changed_pct_hip": 83.82,
+      "changed_pct_foot": 92.64,
+      "changed_pct_socks": 67.19
+    },
+    {
+      "sheet": "run",
+      "outfit": "legend",
+      "frame": 5,
+      "body_px": 4783,
+      "changed_px": 3251,
+      "changed_pct_of_body": 67.97,
+      "changed_pct_of_frame": 15.59,
+      "changed_pct_torso": 72.91,
+      "changed_pct_hip": 77.09,
+      "changed_pct_foot": 97.03,
+      "changed_pct_socks": 80.6
+    },
+    {
+      "sheet": "run",
+      "outfit": "legend",
+      "frame": 6,
+      "body_px": 5188,
+      "changed_px": 3408,
+      "changed_pct_of_body": 65.69,
+      "changed_pct_of_frame": 16.34,
+      "changed_pct_torso": 69.92,
+      "changed_pct_hip": 79.83,
+      "changed_pct_foot": 91.11,
+      "changed_pct_socks": 64.73
+    },
+    {
+      "sheet": "run",
+      "outfit": "legend",
+      "frame": 7,
+      "body_px": 4974,
+      "changed_px": 3278,
+      "changed_pct_of_body": 65.9,
+      "changed_pct_of_frame": 15.72,
+      "changed_pct_torso": 71.56,
+      "changed_pct_hip": 80.15,
+      "changed_pct_foot": 90.31,
+      "changed_pct_socks": 43.85
+    },
+    {
+      "sheet": "run",
+      "outfit": "signature",
+      "frame": 0,
+      "body_px": 3920,
+      "changed_px": 3175,
+      "changed_pct_of_body": 80.99,
+      "changed_pct_of_frame": 15.22,
+      "changed_pct_torso": 85.01,
+      "changed_pct_hip": 85.83,
+      "changed_pct_foot": 91.07,
+      "changed_pct_socks": 72.28
+    },
+    {
+      "sheet": "run",
+      "outfit": "signature",
+      "frame": 1,
+      "body_px": 3387,
+      "changed_px": 2706,
+      "changed_pct_of_body": 79.89,
+      "changed_pct_of_frame": 12.97,
+      "changed_pct_torso": 83.71,
+      "changed_pct_hip": 88.26,
+      "changed_pct_foot": 95.62,
+      "changed_pct_socks": 82.74
+    },
+    {
+      "sheet": "run",
+      "outfit": "signature",
+      "frame": 2,
+      "body_px": 3830,
+      "changed_px": 2980,
+      "changed_pct_of_body": 77.81,
+      "changed_pct_of_frame": 14.29,
+      "changed_pct_torso": 81.57,
+      "changed_pct_hip": 86.98,
+      "changed_pct_foot": 94.02,
+      "changed_pct_socks": 70.5
+    },
+    {
+      "sheet": "run",
+      "outfit": "signature",
+      "frame": 3,
+      "body_px": 3635,
+      "changed_px": 2665,
+      "changed_pct_of_body": 73.31,
+      "changed_pct_of_frame": 12.78,
+      "changed_pct_torso": 79.85,
+      "changed_pct_hip": 76.6,
+      "changed_pct_foot": 88.08,
+      "changed_pct_socks": 55.56
+    },
+    {
+      "sheet": "run",
+      "outfit": "signature",
+      "frame": 4,
+      "body_px": 5307,
+      "changed_px": 3700,
+      "changed_pct_of_body": 69.72,
+      "changed_pct_of_frame": 17.74,
+      "changed_pct_torso": 74.73,
+      "changed_pct_hip": 80.22,
+      "changed_pct_foot": 87.41,
+      "changed_pct_socks": 62.45
+    },
+    {
+      "sheet": "run",
+      "outfit": "signature",
+      "frame": 5,
+      "body_px": 4783,
+      "changed_px": 3130,
+      "changed_pct_of_body": 65.44,
+      "changed_pct_of_frame": 15.01,
+      "changed_pct_torso": 70.68,
+      "changed_pct_hip": 73.13,
+      "changed_pct_foot": 92.57,
+      "changed_pct_socks": 72.14
+    },
+    {
+      "sheet": "run",
+      "outfit": "signature",
+      "frame": 6,
+      "body_px": 5188,
+      "changed_px": 3283,
+      "changed_pct_of_body": 63.28,
+      "changed_pct_of_frame": 15.74,
+      "changed_pct_torso": 68.06,
+      "changed_pct_hip": 76.07,
+      "changed_pct_foot": 85.19,
+      "changed_pct_socks": 60.47
+    },
+    {
+      "sheet": "run",
+      "outfit": "signature",
+      "frame": 7,
+      "body_px": 4974,
+      "changed_px": 3152,
+      "changed_pct_of_body": 63.37,
+      "changed_pct_of_frame": 15.11,
+      "changed_pct_torso": 69.65,
+      "changed_pct_hip": 74.74,
+      "changed_pct_foot": 88.37,
+      "changed_pct_socks": 42.31
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "circuit",
+      "frame": 0,
+      "body_px": 9683,
+      "changed_px": 4244,
+      "changed_pct_of_body": 43.83,
+      "changed_pct_of_frame": 8.29,
+      "changed_pct_torso": 59.82,
+      "changed_pct_hip": 24.87,
+      "changed_pct_foot": 62.48,
+      "changed_pct_socks": 36.2
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "circuit",
+      "frame": 1,
+      "body_px": 8916,
+      "changed_px": 4229,
+      "changed_pct_of_body": 47.43,
+      "changed_pct_of_frame": 8.26,
+      "changed_pct_torso": 52.19,
+      "changed_pct_hip": 33.74,
+      "changed_pct_foot": 85.17,
+      "changed_pct_socks": 78.01
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "circuit",
+      "frame": 2,
+      "body_px": 9994,
+      "changed_px": 4109,
+      "changed_pct_of_body": 41.11,
+      "changed_pct_of_frame": 8.03,
+      "changed_pct_torso": 50.25,
+      "changed_pct_hip": 25.43,
+      "changed_pct_foot": 62.79,
+      "changed_pct_socks": 54.95
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "circuit",
+      "frame": 3,
+      "body_px": 9376,
+      "changed_px": 4352,
+      "changed_pct_of_body": 46.42,
+      "changed_pct_of_frame": 8.5,
+      "changed_pct_torso": 61.41,
+      "changed_pct_hip": 22.34,
+      "changed_pct_foot": 68.89,
+      "changed_pct_socks": 64.91
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "legend",
+      "frame": 0,
+      "body_px": 9683,
+      "changed_px": 6782,
+      "changed_pct_of_body": 70.04,
+      "changed_pct_of_frame": 13.25,
+      "changed_pct_torso": 82.6,
+      "changed_pct_hip": 85.67,
+      "changed_pct_foot": 81.24,
+      "changed_pct_socks": 36.2
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "legend",
+      "frame": 1,
+      "body_px": 8916,
+      "changed_px": 6311,
+      "changed_pct_of_body": 70.78,
+      "changed_pct_of_frame": 12.33,
+      "changed_pct_torso": 79.04,
+      "changed_pct_hip": 71.15,
+      "changed_pct_foot": 94.37,
+      "changed_pct_socks": 88.24
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "legend",
+      "frame": 2,
+      "body_px": 9994,
+      "changed_px": 7182,
+      "changed_pct_of_body": 71.86,
+      "changed_pct_of_frame": 14.03,
+      "changed_pct_torso": 80.13,
+      "changed_pct_hip": 93.92,
+      "changed_pct_foot": 85.94,
+      "changed_pct_socks": 58.99
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "legend",
+      "frame": 3,
+      "body_px": 9376,
+      "changed_px": 6666,
+      "changed_pct_of_body": 71.1,
+      "changed_pct_of_frame": 13.02,
+      "changed_pct_torso": 82.39,
+      "changed_pct_hip": 86.52,
+      "changed_pct_foot": 84.89,
+      "changed_pct_socks": 72.81
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "signature",
+      "frame": 0,
+      "body_px": 9683,
+      "changed_px": 6652,
+      "changed_pct_of_body": 68.7,
+      "changed_pct_of_frame": 12.99,
+      "changed_pct_torso": 80.95,
+      "changed_pct_hip": 84.59,
+      "changed_pct_foot": 78.56,
+      "changed_pct_socks": 34.12
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "signature",
+      "frame": 1,
+      "body_px": 8916,
+      "changed_px": 6183,
+      "changed_pct_of_body": 69.35,
+      "changed_pct_of_frame": 12.08,
+      "changed_pct_torso": 77.53,
+      "changed_pct_hip": 69.39,
+      "changed_pct_foot": 92.33,
+      "changed_pct_socks": 84.91
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "signature",
+      "frame": 2,
+      "body_px": 9994,
+      "changed_px": 7048,
+      "changed_pct_of_body": 70.52,
+      "changed_pct_of_frame": 13.77,
+      "changed_pct_torso": 79.33,
+      "changed_pct_hip": 91.45,
+      "changed_pct_foot": 83.76,
+      "changed_pct_socks": 54.95
+    },
+    {
+      "sheet": "back-idle",
+      "outfit": "signature",
+      "frame": 3,
+      "body_px": 9376,
+      "changed_px": 6553,
+      "changed_pct_of_body": 69.89,
+      "changed_pct_of_frame": 12.8,
+      "changed_pct_torso": 80.89,
+      "changed_pct_hip": 85.13,
+      "changed_pct_foot": 83.33,
+      "changed_pct_socks": 69.88
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "circuit",
+      "frame": 0,
+      "body_px": 9363,
+      "changed_px": 4056,
+      "changed_pct_of_body": 43.32,
+      "changed_pct_of_frame": 7.92,
+      "changed_pct_torso": 56.64,
+      "changed_pct_hip": 29.32,
+      "changed_pct_foot": 64.51,
+      "changed_pct_socks": 39.35
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "circuit",
+      "frame": 1,
+      "body_px": 8315,
+      "changed_px": 4223,
+      "changed_pct_of_body": 50.79,
+      "changed_pct_of_frame": 8.25,
+      "changed_pct_torso": 56.37,
+      "changed_pct_hip": 35.77,
+      "changed_pct_foot": 77.85,
+      "changed_pct_socks": 67.92
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "circuit",
+      "frame": 2,
+      "body_px": 9398,
+      "changed_px": 4307,
+      "changed_pct_of_body": 45.83,
+      "changed_pct_of_frame": 8.41,
+      "changed_pct_torso": 55.62,
+      "changed_pct_hip": 29.64,
+      "changed_pct_foot": 70.96,
+      "changed_pct_socks": 46.92
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "circuit",
+      "frame": 3,
+      "body_px": 7770,
+      "changed_px": 4094,
+      "changed_pct_of_body": 52.69,
+      "changed_pct_of_frame": 8.0,
+      "changed_pct_torso": 57.88,
+      "changed_pct_hip": 40.17,
+      "changed_pct_foot": 86.94,
+      "changed_pct_socks": 75.98
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "legend",
+      "frame": 0,
+      "body_px": 9363,
+      "changed_px": 6631,
+      "changed_pct_of_body": 70.82,
+      "changed_pct_of_frame": 12.95,
+      "changed_pct_torso": 71.52,
+      "changed_pct_hip": 89.16,
+      "changed_pct_foot": 81.48,
+      "changed_pct_socks": 40.65
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "legend",
+      "frame": 1,
+      "body_px": 8315,
+      "changed_px": 6076,
+      "changed_pct_of_body": 73.07,
+      "changed_pct_of_frame": 11.87,
+      "changed_pct_torso": 82.7,
+      "changed_pct_hip": 72.0,
+      "changed_pct_foot": 88.82,
+      "changed_pct_socks": 75.66
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "legend",
+      "frame": 2,
+      "body_px": 9398,
+      "changed_px": 6800,
+      "changed_pct_of_body": 72.36,
+      "changed_pct_of_frame": 13.28,
+      "changed_pct_torso": 72.86,
+      "changed_pct_hip": 96.72,
+      "changed_pct_foot": 86.02,
+      "changed_pct_socks": 47.63
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "legend",
+      "frame": 3,
+      "body_px": 7770,
+      "changed_px": 5664,
+      "changed_pct_of_body": 72.9,
+      "changed_pct_of_frame": 11.06,
+      "changed_pct_torso": 83.98,
+      "changed_pct_hip": 67.58,
+      "changed_pct_foot": 93.02,
+      "changed_pct_socks": 84.93
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "signature",
+      "frame": 0,
+      "body_px": 9363,
+      "changed_px": 6507,
+      "changed_pct_of_body": 69.5,
+      "changed_pct_of_frame": 12.71,
+      "changed_pct_torso": 70.23,
+      "changed_pct_hip": 87.86,
+      "changed_pct_foot": 77.98,
+      "changed_pct_socks": 38.48
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "signature",
+      "frame": 1,
+      "body_px": 8315,
+      "changed_px": 5976,
+      "changed_pct_of_body": 71.87,
+      "changed_pct_of_frame": 11.67,
+      "changed_pct_torso": 81.44,
+      "changed_pct_hip": 70.34,
+      "changed_pct_foot": 88.39,
+      "changed_pct_socks": 73.02
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "signature",
+      "frame": 2,
+      "body_px": 9398,
+      "changed_px": 6672,
+      "changed_pct_of_body": 70.99,
+      "changed_pct_of_frame": 13.03,
+      "changed_pct_torso": 71.6,
+      "changed_pct_hip": 95.1,
+      "changed_pct_foot": 83.45,
+      "changed_pct_socks": 43.13
+    },
+    {
+      "sheet": "back-action",
+      "outfit": "signature",
+      "frame": 3,
+      "body_px": 7770,
+      "changed_px": 5576,
+      "changed_pct_of_body": 71.76,
+      "changed_pct_of_frame": 10.89,
+      "changed_pct_torso": 82.47,
+      "changed_pct_hip": 66.28,
+      "changed_pct_foot": 92.79,
+      "changed_pct_socks": 84.5
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "circuit",
+      "frame": 0,
+      "body_px": 5965,
+      "changed_px": 2900,
+      "changed_pct_of_body": 48.62,
+      "changed_pct_of_frame": 14.81,
+      "changed_pct_torso": 53.52,
+      "changed_pct_hip": 26.17,
+      "changed_pct_foot": 92.34,
+      "changed_pct_socks": 86.87
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "circuit",
+      "frame": 1,
+      "body_px": 5685,
+      "changed_px": 2708,
+      "changed_pct_of_body": 47.63,
+      "changed_pct_of_frame": 13.83,
+      "changed_pct_torso": 54.37,
+      "changed_pct_hip": 23.07,
+      "changed_pct_foot": 71.3,
+      "changed_pct_socks": 71.01
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "circuit",
+      "frame": 2,
+      "body_px": 5303,
+      "changed_px": 2545,
+      "changed_pct_of_body": 47.99,
+      "changed_pct_of_frame": 13.0,
+      "changed_pct_torso": 53.98,
+      "changed_pct_hip": 33.88,
+      "changed_pct_foot": 77.33,
+      "changed_pct_socks": 62.8
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "circuit",
+      "frame": 3,
+      "body_px": 5956,
+      "changed_px": 2826,
+      "changed_pct_of_body": 47.45,
+      "changed_pct_of_frame": 14.43,
+      "changed_pct_torso": 58.35,
+      "changed_pct_hip": 21.84,
+      "changed_pct_foot": 72.87,
+      "changed_pct_socks": 72.7
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "circuit",
+      "frame": 4,
+      "body_px": 6030,
+      "changed_px": 2920,
+      "changed_pct_of_body": 48.42,
+      "changed_pct_of_frame": 14.91,
+      "changed_pct_torso": 53.98,
+      "changed_pct_hip": 25.95,
+      "changed_pct_foot": 90.71,
+      "changed_pct_socks": 90.43
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "circuit",
+      "frame": 5,
+      "body_px": 6100,
+      "changed_px": 2968,
+      "changed_pct_of_body": 48.66,
+      "changed_pct_of_frame": 15.16,
+      "changed_pct_torso": 55.86,
+      "changed_pct_hip": 23.12,
+      "changed_pct_foot": 72.65,
+      "changed_pct_socks": 69.39
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "circuit",
+      "frame": 6,
+      "body_px": 5472,
+      "changed_px": 2568,
+      "changed_pct_of_body": 46.93,
+      "changed_pct_of_frame": 13.11,
+      "changed_pct_torso": 54.19,
+      "changed_pct_hip": 28.14,
+      "changed_pct_foot": 64.75,
+      "changed_pct_socks": 63.92
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "circuit",
+      "frame": 7,
+      "body_px": 6109,
+      "changed_px": 2839,
+      "changed_pct_of_body": 46.47,
+      "changed_pct_of_frame": 14.5,
+      "changed_pct_torso": 56.33,
+      "changed_pct_hip": 21.55,
+      "changed_pct_foot": 70.81,
+      "changed_pct_socks": 74.82
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "legend",
+      "frame": 0,
+      "body_px": 5965,
+      "changed_px": 4483,
+      "changed_pct_of_body": 75.16,
+      "changed_pct_of_frame": 22.89,
+      "changed_pct_torso": 82.65,
+      "changed_pct_hip": 77.04,
+      "changed_pct_foot": 96.77,
+      "changed_pct_socks": 91.92
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "legend",
+      "frame": 1,
+      "body_px": 5685,
+      "changed_px": 4308,
+      "changed_pct_of_body": 75.78,
+      "changed_pct_of_frame": 22.0,
+      "changed_pct_torso": 83.05,
+      "changed_pct_hip": 84.65,
+      "changed_pct_foot": 82.06,
+      "changed_pct_socks": 71.43
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "legend",
+      "frame": 2,
+      "body_px": 5303,
+      "changed_px": 3879,
+      "changed_pct_of_body": 73.15,
+      "changed_pct_of_frame": 19.81,
+      "changed_pct_torso": 81.68,
+      "changed_pct_hip": 77.62,
+      "changed_pct_foot": 93.33,
+      "changed_pct_socks": 66.46
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "legend",
+      "frame": 3,
+      "body_px": 5956,
+      "changed_px": 4439,
+      "changed_pct_of_body": 74.53,
+      "changed_pct_of_frame": 22.67,
+      "changed_pct_torso": 82.85,
+      "changed_pct_hip": 86.6,
+      "changed_pct_foot": 90.96,
+      "changed_pct_socks": 77.3
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "legend",
+      "frame": 4,
+      "body_px": 6030,
+      "changed_px": 4496,
+      "changed_pct_of_body": 74.56,
+      "changed_pct_of_frame": 22.96,
+      "changed_pct_torso": 81.53,
+      "changed_pct_hip": 79.44,
+      "changed_pct_foot": 97.03,
+      "changed_pct_socks": 93.62
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "legend",
+      "frame": 5,
+      "body_px": 6100,
+      "changed_px": 4599,
+      "changed_pct_of_body": 75.39,
+      "changed_pct_of_frame": 23.49,
+      "changed_pct_torso": 81.17,
+      "changed_pct_hip": 86.8,
+      "changed_pct_foot": 84.62,
+      "changed_pct_socks": 72.24
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "legend",
+      "frame": 6,
+      "body_px": 5472,
+      "changed_px": 4001,
+      "changed_pct_of_body": 73.12,
+      "changed_pct_of_frame": 20.43,
+      "changed_pct_torso": 81.32,
+      "changed_pct_hip": 76.42,
+      "changed_pct_foot": 93.44,
+      "changed_pct_socks": 67.72
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "legend",
+      "frame": 7,
+      "body_px": 6109,
+      "changed_px": 4547,
+      "changed_pct_of_body": 74.43,
+      "changed_pct_of_frame": 23.22,
+      "changed_pct_torso": 82.76,
+      "changed_pct_hip": 84.55,
+      "changed_pct_foot": 93.15,
+      "changed_pct_socks": 79.93
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "signature",
+      "frame": 0,
+      "body_px": 5965,
+      "changed_px": 4302,
+      "changed_pct_of_body": 72.12,
+      "changed_pct_of_frame": 21.97,
+      "changed_pct_torso": 79.96,
+      "changed_pct_hip": 70.72,
+      "changed_pct_foot": 93.95,
+      "changed_pct_socks": 88.38
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "signature",
+      "frame": 1,
+      "body_px": 5685,
+      "changed_px": 4202,
+      "changed_pct_of_body": 73.91,
+      "changed_pct_of_frame": 21.46,
+      "changed_pct_torso": 80.96,
+      "changed_pct_hip": 81.9,
+      "changed_pct_foot": 79.37,
+      "changed_pct_socks": 69.33
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "signature",
+      "frame": 2,
+      "body_px": 5303,
+      "changed_px": 3756,
+      "changed_pct_of_body": 70.83,
+      "changed_pct_of_frame": 19.18,
+      "changed_pct_torso": 79.4,
+      "changed_pct_hip": 73.75,
+      "changed_pct_foot": 92.0,
+      "changed_pct_socks": 63.41
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "signature",
+      "frame": 3,
+      "body_px": 5956,
+      "changed_px": 4302,
+      "changed_pct_of_body": 72.23,
+      "changed_pct_of_frame": 21.97,
+      "changed_pct_torso": 80.5,
+      "changed_pct_hip": 83.28,
+      "changed_pct_foot": 87.86,
+      "changed_pct_socks": 74.82
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "signature",
+      "frame": 4,
+      "body_px": 6030,
+      "changed_px": 4329,
+      "changed_pct_of_body": 71.79,
+      "changed_pct_of_frame": 22.11,
+      "changed_pct_torso": 79.06,
+      "changed_pct_hip": 73.17,
+      "changed_pct_foot": 95.17,
+      "changed_pct_socks": 91.49
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "signature",
+      "frame": 5,
+      "body_px": 6100,
+      "changed_px": 4465,
+      "changed_pct_of_body": 73.2,
+      "changed_pct_of_frame": 22.8,
+      "changed_pct_torso": 78.75,
+      "changed_pct_hip": 83.61,
+      "changed_pct_foot": 79.49,
+      "changed_pct_socks": 70.61
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "signature",
+      "frame": 6,
+      "body_px": 5472,
+      "changed_px": 3862,
+      "changed_pct_of_body": 70.58,
+      "changed_pct_of_frame": 19.72,
+      "changed_pct_torso": 79.25,
+      "changed_pct_hip": 71.76,
+      "changed_pct_foot": 89.34,
+      "changed_pct_socks": 61.39
+    },
+    {
+      "sheet": "back-run",
+      "outfit": "signature",
+      "frame": 7,
+      "body_px": 6109,
+      "changed_px": 4403,
+      "changed_pct_of_body": 72.07,
+      "changed_pct_of_frame": 22.49,
+      "changed_pct_torso": 80.55,
+      "changed_pct_hip": 81.12,
+      "changed_pct_foot": 88.83,
+      "changed_pct_socks": 77.01
+    }
+  ]
+}

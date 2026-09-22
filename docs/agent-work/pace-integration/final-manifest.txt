@@ -1,0 +1,27 @@
+# pace-integration final manifest
+head: 7b4dc561ac262555649ea0ec3f184466c382126c
+captured: 2026-09-21T13:46:57Z
+
+## sha256 (post-edit)
+9f9163ca563d7dde76430205cff8781ae9330a9cf437ce5e6ff4e7f8a8f9cc1f  godot/game/match_config.gd
+dd50679cb06183903e4c3415330459e3eb8b27edbfe86e297dcfa2d7979903d8  godot/game/match_controller.gd
+b603bb80661f1aaeebc72821743ca92f68b14a7a050bb12564cc6ca286c303e5  godot/src/save/save_schema.gd
+8912c484d2ce8c908058d4e04f1d9c7c67048b4e96e4f0cc66c9cf717755329a  godot/src/ui/data/UiData.gd
+48304d894f263388047e4cd7dc2b355dbbd32999c28e5d1b90ca1c0880f83e66  godot/src/ui/screens/SettingsScreen.gd
+eefdf618947b9a2a916abc59065e94fa4294e938818415c288234b941516cc65  godot/src/ui/screens/ModesScreen.gd
+13ba4e5239f045921bc9569e50f45b9087b437f299ed128d8fa5e2d5412dc526  godot/src/ui/screens/ModesScreen.tscn
+6cbe1c363065cef0418db633409b62d89ff9f3b0fe5d04383848ec72bb45165c  godot/tests/save_steam_test.gd
+f8993a38eb7f3494b365774ee23ea07aa68483f621713d846cc73c0c04863d1a  godot/tests/ui/screen_modes_audit.gd
+1f1e2a9227e5272475e00cd53652e42e05a2ebca64467ed4ef14790d560fcb11  godot/src/sim/pace.gd
+04a2a21e8edf2f6a922a9f5257ce32c04d6484197dea02462112c7d7f9b45c1d  godot/tests/pace_presets_test.gd
+c419bf7f80bbc63573f1196a93b80eb7d2e81d8771f503eaf49a26a4c2fbcf94  godot/tests/pace_screen_test.gd
+
+## new files (untracked)
+untracked godot/src/sim/pace.gd
+untracked godot/tests/pace_presets_test.gd
+untracked godot/tests/pace_screen_test.gd
+
+## generated UID sidecars present?
+ABSENT  godot/src/sim/pace.gd.uid
+ABSENT  godot/tests/pace_presets_test.gd.uid
+ABSENT  godot/tests/pace_screen_test.gd.uid

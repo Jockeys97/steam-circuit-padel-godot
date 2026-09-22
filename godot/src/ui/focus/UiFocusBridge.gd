@@ -308,6 +308,15 @@ func dispatch(event: InputEvent) -> bool:
 	# rather than once, because a context change rebuilds the live list.
 	carry_metadata()
 	if event is InputEventKey:
+		# `keydown`'s own first line (`js/main.js:2589-2598`): "un campo di testo fa
+		# parte del modulo, non della navigazione del menu". The unlock code's field is
+		# where its absence showed — `KEY_A` is `"left"` in the model
+		# (`game/menu_focus.gd:171`), so the field took every letter of "Lucale" except
+		# the "a", which the menu consumed as a move. The event is left unhandled here
+		# so the focused field receives it.
+		if _text_entry_consumes(event as InputEventKey):
+			_last_dispatch = {"kind": "text-entry", "activated": false}
+			return false
 		_last = _focus.handle_key(event as InputEventKey)
 		if not bool(_last.get("handled", false)):
 			_last_dispatch = {"kind": "unhandled", "activated": false}
@@ -331,6 +340,30 @@ func dispatch(event: InputEvent) -> bool:
 		var moved := _act(_nav.keyboard_direction(direction))
 		_note_range_step()
 		return moved
+	return false
+
+
+## Whether a text entry must receive this key instead of menu navigation. The reference
+## asks the event's own target (`event.target instanceof HTMLInputElement`,
+## `js/main.js:2592-2596`); in Godot the focused control is the same fact, and both field
+## types the port uses count — the unlock code's `LineEdit` and the feedback form's
+## `TextEdit`.
+##
+## A native `LineEdit` owns Enter too: it emits `text_submitted`, which is how the unlock
+## code is validated. A multiline `TextEdit` keeps the port's established Enter-to-OSK
+## contract used by the feedback screen. Escape remains the bridge's back/close command;
+## every writing/editing key (including WASD, arrows and Space) stays native.
+func _text_entry_consumes(event: InputEventKey) -> bool:
+	if _shell == null or not is_instance_valid(_shell):
+		return false
+	var viewport := _shell.get_viewport()
+	if viewport == null:
+		return false
+	var owner := viewport.gui_get_focus_owner()
+	if owner is LineEdit:
+		return event.keycode != KEY_ESCAPE
+	if owner is TextEdit:
+		return event.keycode not in [KEY_ENTER, KEY_KP_ENTER, KEY_ESCAPE]
 	return false
 
 

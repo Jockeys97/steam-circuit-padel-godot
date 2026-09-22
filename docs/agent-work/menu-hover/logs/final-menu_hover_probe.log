@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+1a. home=(0.0, 0.0)  lifted=(0.0, -3.0)  scaled=(1.0, 1.03)
+1b. after queue_sort: pos=(0.0, 0.0) scale=(1.0, 1.0)
+ok a_container_resets_a_child_position_on_resort
+ok a_container_resets_a_child_scale_on_resort
+ok the_manual_lift_landed_before_the_sort
+2a. minimum_size with content 18.0 and expand 3.0: (18.0, 18.0)
+ok expand_margin_is_absent_from_minimum_size
+2b. card size: before=(200.0, 100.0) after=(200.0, 100.0) (minimum (200.0, 100.0))
+ok an_expand_margin_ring_does_not_resize_the_card
+PASS 5/5

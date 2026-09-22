@@ -1,0 +1,291 @@
+diff --git a/godot/game/match_controller.gd b/godot/game/match_controller.gd
+index 7a79088..c44b0ee 100644
+--- a/godot/game/match_controller.gd
++++ b/godot/game/match_controller.gd
+@@ -95,6 +95,7 @@ const Lineup := preload("res://game/lineup.gd")
+ const AthleteSpawn := preload("res://src/character/athlete_spawn.gd")
+ const AthleteRig := preload("res://src/character/athlete_rig.gd")
+ const ModeSession := preload("res://game/mode_session.gd")
++const ModesSave := preload("res://src/modes/modes_save.gd")
+ const ModeHudScript := preload("res://game/mode_hud.gd")
+ ## UIR-22: the card's range rows are read through the shared component's own accessors
+ ## (`focus_node`), never through a node-path guess.
+@@ -171,6 +172,9 @@ var seen_events: Dictionary = {}
+ var score_history: Array = []
+ var meta: Dictionary = {}
+ var finished: bool = false
++## Quick matches do not own a ModeSession. Their outfit award is cached here on
++## the result edge so repeated payload/render calls cannot increment athleteWins.
++var _quick_outfit_award: Dictionary = {}
+ 
+ ## The playable mode session this scene is running, or null for a quick match.
+ ## `Config.pending_mode` decides which: a mode entry on the menu sets it, and the
+@@ -198,6 +202,14 @@ var use_scripted_input: bool = false
+ ## The browser's accumulator (`js/main.js:1187-1205`). Simulated time owed, in
+ ## seconds, never above `FIXED_STEP * MAX_SIM_STEPS` and never negative.
+ var sim_accumulator: float = 0.0
++## The game-pace preset's dt multiplier (`src/sim/pace.gd`), read once when a match
++## or a mode session starts. This is the ONE place the pace setting enters the
++## simulation: `advance_frame` is the only clock that turns real frame time into
++## simulated time, for a quick match and for a mode session alike (a mode's own
++## `step` is called from `tick_fixed` with a whole `FIXED_STEP`, so scaling there
++## too would apply the factor twice). The default preset's factor is 1.0, which is
++## why an untouched profile runs the arithmetic it always ran.
++var pace_factor: float = 1.0
+ ## One-shot fields armed by a rendered frame and not yet consumed by a sub-step.
+ var queued_one_shots: Dictionary = {}
+ ## The second player's latched one-shots, kept apart from the first's: the reference
+@@ -307,6 +319,10 @@ var _capture_index: int = 0
+ var _capture_ticks: int = 0
+ var _paused: bool = false
+ var _points_total_prev: int = 0
++## Clean mode: while true the informational presentation is hidden and the court is
++## left alone. Presentation only — no simulation state, no pause state and no match
++## persistence reads or writes this flag, and every reset path clears it.
++var _hud_hidden: bool = false
+ 
+ # ---------------------------------------------------------------------------
+ # UIR-27: the playback state (`js/main.js:138-140`)
+@@ -475,6 +491,7 @@ func _adopt_session() -> void:
+ 	# The saved switching mode, on the state the mode session built: the reference
+ 	# copies it onto the match before its loop starts (`js/main.js:1184`).
+ 	state.controlMode = Config.control_mode()
++	pace_factor = Config.pace_factor()
+ 	ticks = 0
+ 	crossings = 0
+ 	points_scored = 0
+@@ -482,6 +499,10 @@ func _adopt_session() -> void:
+ 	seen_events = {}
+ 	score_history = []
+ 	finished = false
++	_quick_outfit_award = {}
++	# A new match starts with its informational overlay showing (clean mode is a
++	# per-match view, not a stored preference).
++	_hud_hidden = false
+ 	_clear_pause()
+ 	sim_accumulator = 0.0
+ 	queued_one_shots.clear()
+@@ -504,6 +525,7 @@ func _adopt_session() -> void:
+ 	}
+ 	if _mode_hud != null:
+ 		_mode_hud.bind_session(session)
++	_apply_hud_visibility()
+ 	_sync_views()
+ 	if _hud != null:
+ 		_hud.refresh(state, meta)
+@@ -1148,6 +1170,7 @@ func start_match() -> void:
+ 	# `matchState.controlMode = ui.controlMode`), validated against the reference's
+ 	# own three values by `Config.control_mode()` (`js/main.js:2273`).
+ 	state.controlMode = Config.control_mode()
++	pace_factor = Config.pace_factor()
+ 	ticks = 0
+ 	crossings = 0
+ 	points_scored = 0
+@@ -1155,6 +1178,10 @@ func start_match() -> void:
+ 	seen_events = {}
+ 	score_history = []
+ 	finished = false
++	_quick_outfit_award = {}
++	# A new match starts with its informational overlay showing, exactly as a mode
++	# session's `_adopt_session()` does above.
++	_hud_hidden = false
+ 	# The accumulator and the latch start clean: a new match does not inherit the
+ 	# previous one's owed time or its unconsumed shots. The pause flag is part of the
+ 	# same reset (review-2 F-3): a match that starts paused is a match that never
+@@ -1177,6 +1204,7 @@ func start_match() -> void:
+ 		"camera": Config.camera_preset,
+ 		"tick": 0,
+ 	}
++	_apply_hud_visibility()
+ 	_sync_views()
+ 	if _hud != null:
+ 		_hud.refresh(state, meta)
+@@ -1215,8 +1243,13 @@ func start_match() -> void:
+ func advance_frame(delta: float) -> Dictionary:
+ 	if state == null:
+ 		return {"steps": 0, "accumulator": sim_accumulator, "ticks": ticks}
+-	var dt := minf(delta, MAX_FRAME_DELTA)
+-	sim_accumulator = minf(sim_accumulator + dt, FIXED_STEP * float(MAX_SIM_STEPS))
++	# The game-pace preset scales the SIMULATED time a real frame is worth, and the
++	# catch-up clamp with it: leaving the clamp at its unscaled value would make it
++	# k times tighter in simulated seconds, so a fast preset would quietly drop sim
++	# time whenever a frame ran long. Both clamps stay the reference's own at the
++	# default preset, whose factor is 1.0.
++	var dt := minf(delta, MAX_FRAME_DELTA) * pace_factor
++	sim_accumulator = minf(sim_accumulator + dt, FIXED_STEP * float(MAX_SIM_STEPS) * pace_factor)
+ 	var input := _pending_input
+ 	var input2 := _pending_input2
+ 	var steps := 0
+@@ -1472,6 +1505,8 @@ func _observe(prev_y: float) -> void:
+ 		finished = true
+ 		if session != null:
+ 			_finish_mode()
++		else:
++			_finish_quick_outfits()
+ 		if _hud != null:
+ 			_hud.refresh(state, meta)
+ 			_hud.show_result(state)
+@@ -1497,6 +1532,21 @@ func _observe(prev_y: float) -> void:
+ 		_ui_hud.refresh(state, meta)
+ 
+ 
++## `awardOutfitChallenges(matchState, won)` is called before the browser branches
++## into career/tournament handling (`js/main.js:1472`). Quick mode has no
++## ModeSession in this port, so its common end-of-match edge performs that one
++## progression write directly. The cached result makes the operation idempotent.
++func _finish_quick_outfits() -> Dictionary:
++	if not _quick_outfit_award.is_empty() or state == null or state.result == null:
++		return _quick_outfit_award
++	var won := String(state.result.get("winner", "")) == "player"
++	_quick_outfit_award = ModesSave.award_match_outfits(
++		Config.save_store(), String(state.athlete.get("id", "")), state.stats, won,
++		float(state.ai.get("skill", 0.0))
++	)
++	return _quick_outfit_award
++
++
+ ## True when the mode's own end has been reached — a drill that the player left.
+ func _page_finished() -> bool:
+ 	return session != null and session.finished
+@@ -1583,7 +1633,10 @@ func _sync_views() -> void:
+ 	# Follow the actual selected athlete; display geometry never changes reach.
+ 	if _active_ring != null:
+ 		var active = state.active_player()
+-		var shown: bool = bool(state.running) and not finished and active != null
++		# Clean mode is a presentation flag: the ring and the pin are informational,
++		# so they follow it like the HUD does. The flag is folded into `shown` here,
++		# which is what this every-frame rewrite has to respect.
++		var shown: bool = bool(state.running) and not finished and active != null and not _hud_hidden
+ 		_active_ring.visible = shown
+ 		if _active_ring.visible:
+ 			var ground: Vector3 = Court.world_pos(active.x, active.y, 0.0)
+@@ -1604,7 +1657,7 @@ func _sync_views() -> void:
+ 		var target: Dictionary = {}
+ 		if session != null and session.mode == "drill":
+ 			target = session.drill.target
+-		_target_ring.visible = bool(target.get("active", false))
++		_target_ring.visible = bool(target.get("active", false)) and not _hud_hidden
+ 		if _target_ring.visible:
+ 			_target_ring.position = Court.world_pos(float(target.get("x", 0.0)), float(target.get("y", 0.0)), 0.6)
+ 			var metres: float = Court.PX_TO_M * float(target.get("r", 1.0))
+@@ -1973,6 +2026,15 @@ func _unhandled_input(event: InputEvent) -> void:
+ ## own. `main_menu.gd:963-968` states the same rule for every menu screen and is why
+ ## this card is the only place the walk used to run.
+ func _input(event: InputEvent) -> void:
++	# Clean mode rides the PRE-GUI path. A left double-click over any HUD control with
++	# `MOUSE_FILTER_STOP` is consumed by that control before `_unhandled_input` ever
++	# runs, so the gesture has to be answered here, before the engine's GUI walk.
++	# `_clean_mode_event` returns false while the pause card is open, so the card keeps
++	# every press it owns; the event is consumed here so a pad Start/Back cannot also
++	# reach the InputMap's `padel_pause` below (`_unhandled_input`).
++	if state != null and _clean_mode_event(event):
++		get_viewport().set_input_as_handled()
++		return
+ 	if _pause_overlay == null or not _pause_overlay.is_open():
+ 		return
+ 	if _pause_nav(event):
+@@ -2032,6 +2094,79 @@ func is_paused() -> bool:
+ 	return _paused
+ 
+ 
++# ---------------------------------------------------------------------------
++# Clean mode: the in-match presentation toggle
++# ---------------------------------------------------------------------------
++
++## True while the informational overlay is hidden for a clean view of the court.
++func is_hud_hidden() -> bool:
++	return _hud_hidden
++
++
++## The explicit state behind `toggle_hud_hidden`, so a test drives the same seam a
++## player's gesture does. Returns the state now in force.
++func set_hud_hidden(hidden: bool) -> bool:
++	_hud_hidden = hidden
++	_apply_hud_visibility()
++	# The world-space marks and the timing presentation are rewritten every frame by
++	# `_sync_views`; re-running it here makes the seam's effect immediate as well as
++	# persistent (the flag, not a one-shot write, is what survives the next refresh).
++	_sync_views()
++	return _hud_hidden
++
++
++## The toggle the left double-click and the pad's Start/Back ride. Returns the new
++## state.
++func toggle_hud_hidden() -> bool:
++	return set_hud_hidden(not _hud_hidden)
++
++
++## Writes `_hud_hidden` onto the surfaces clean mode owns. The world-space marks
++## (`_active_ring`, `_active_pin`, the drill target) are `_sync_views`' own and are
++## kept off by the same flag there, not here.
++func _apply_hud_visibility() -> void:
++	# The informational HUD, in whichever column this run built (the two are never
++	# built together — `_ui_hud` in a recreated run, `_hud` in a legacy one).
++	if _ui_hud != null:
++		_ui_hud.visible = not _hud_hidden
++	if _hud != null:
++		_hud.visible = not _hud_hidden
++	# The ported mode strip rides `_mode_hud` in BOTH UI modes, but a recreated run
++	# hides it on purpose (the recreated HUD carries the facts): showing it when
++	# clean mode ends would be exactly the regression the mount policy forbids.
++	if _mode_hud != null:
++		_mode_hud.visible = (not _hud_hidden) and (not _ui_new)
++	# The court timing presentation (the ring, the window, the two bars, the advice
++	# word and the verdict) through the module's own mute seam — the same flag the
++	# A/B capture flips.
++	if _timing_marks != null:
++		_timing_marks.set_muted(_hud_hidden)
++
++
++## True when `event` is a clean-view toggle gesture and it was applied. The two pad
++## buttons are the ones the contract names (`JOY_BUTTON_START`, `JOY_BUTTON_BACK`),
++## read directly rather than through the InputMap: the pad's Start is ALSO
++## `padel_pause`'s own binding, and this rung has to answer the same press the pause
++## rung would, so the event is consumed here and the pause never runs. A press while
++## the pause card is open belongs to the card and is left alone.
++func _clean_mode_event(event: InputEvent) -> bool:
++	if _pause_overlay != null and _pause_overlay.is_open():
++		return false
++	if event is InputEventMouseButton:
++		var mouse := event as InputEventMouseButton
++		if mouse.pressed and mouse.double_click and mouse.button_index == MOUSE_BUTTON_LEFT:
++			toggle_hud_hidden()
++			return true
++		return false
++	if event is InputEventJoypadButton:
++		var button := event as InputEventJoypadButton
++		if button.pressed and (button.button_index == JOY_BUTTON_START
++				or button.button_index == JOY_BUTTON_BACK):
++			toggle_hud_hidden()
++			return true
++	return false
++
++
+ # ---------------------------------------------------------------------------
+ # UIR-27: the replay seam — the recorded point, played back over a frozen match.
+ # The contract is `evidence/uir-27-replay.log` §Seam; `tests/ui/replay_audit.gd`
+diff --git a/godot/src/ui/screens/PauseOverlay.gd b/godot/src/ui/screens/PauseOverlay.gd
+index 979f7a2..48bf214 100644
+--- a/godot/src/ui/screens/PauseOverlay.gd
++++ b/godot/src/ui/screens/PauseOverlay.gd
+@@ -1239,7 +1239,10 @@ func _build_controls_panel(parent: Control) -> void:
+ 	_legend.name = "PauseLegend"
+ 	_legend_host.add_child(_legend)
+ 	if _legend.has_method("setup"):
+-		_legend.call("setup", LegendClass.reference_rows(), {"tutorial_link": true})
++		_legend.call("setup", LegendClass.reference_rows(), {
++			"tutorial_link": true,
++			"side_by_side": true,
++		})
+ 	if _legend.has_signal("tutorial_requested"):
+ 		_legend.connect("tutorial_requested", open_tutorial)
+ 	_tutorial = TutorialScene.instantiate()
+@@ -1432,6 +1435,8 @@ func _apply_layout() -> void:
+ 	for mode in _mode_buttons:
+ 		(_mode_buttons[mode] as Button).set_meta("message_id", String(CONTROL_MODE_LABELS[mode]))
+ 	if _legend != null:
++		if _legend.has_method("set_side_by_side"):
++			_legend.call("set_side_by_side", not _narrow)
+ 		var rows_node: Node = _legend.get_node_or_null("LegendRows")
+ 		if rows_node != null and rows_node is GridContainer:
+ 			(rows_node as GridContainer).columns = 1 if _tight else 2

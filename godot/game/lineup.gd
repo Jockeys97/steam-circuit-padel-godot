@@ -28,14 +28,15 @@
 ##
 ## Outfits: the reference stores the equipped outfit per athlete id
 ## (`equippedOutfits`) and applies it at this one point (`athleteWithOutfit`,
-## `js/ui.js:587-589`). The port's menu selects one outfit, for the athlete the
-## player controls; the other three slots take that athlete's own default outfit
-## (`base`). Stated because it is a real difference, not a detail.
+## `js/ui.js:587-589`). Live matches pass the saved career to resolve all four
+## selections with the same unlock rules as the wardrobe.
 extends RefCounted
 
 const Frozen := preload("res://src/sim/frozen.gd")
 const Gate := preload("res://game/content_gate.gd")
 const AthleteSpawn := preload("res://src/character/athlete_spawn.gd")
+const ModeTables := preload("res://src/modes/mode_tables.gd")
+const CareerRules := preload("res://src/modes/career_rules.gd")
 
 ## The four slots, in the reference's own order.
 const ROLES := ["player", "playerMate", "opponent", "opponentMate"]
@@ -78,19 +79,31 @@ static func resolve(player: Dictionary, dictated: Variant = null) -> Dictionary:
 	return out
 
 
-## The outfit each slot plays in: the menu's choice for the player, that athlete's
-## own default for everyone else (`AthleteSpawn`'s `base`). No unlock logic is
-## applied here — the outfit-challenge state machine is `src/modes/**`'s.
-static func outfits(lineup: Dictionary, player_outfit: StringName) -> Dictionary:
+## Saved per-athlete choices for live matches; explicit player override and base
+## reserves for older diagnostic callers that omit the career.
+static func outfits(lineup: Dictionary, player_outfit: StringName, career: Variant = null) -> Dictionary:
 	var out := {}
 	for role in ROLES:
 		if not lineup.has(role):
 			continue
-		if role == "player":
+		if career is Dictionary:
+			out[role] = equipped_outfit(String(lineup[role]["id"]), career)
+		elif role == "player":
 			out[role] = player_outfit
 		else:
 			out[role] = &"base"
 	return out
+
+
+## Same persisted selection and unlock check as the wardrobe, for every court role.
+## The optional career argument above preserves explicit legacy/capture callers.
+static func equipped_outfit(athlete_id: String, career: Dictionary) -> StringName:
+	var equipped: Variant = career.get("equippedOutfits", {})
+	var wanted := String(equipped.get(athlete_id, "base")) if equipped is Dictionary else "base"
+	for outfit in ModeTables.outfits_for_athlete(athlete_id):
+		if String(outfit.get("id", "")) == wanted and CareerRules.is_unlocked(outfit, career):
+			return StringName(wanted)
+	return &"base"
 
 
 ## The id of each slot, for logs and for the slice test.

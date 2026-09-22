@@ -1,0 +1,37 @@
+
+> steam-circuit-padel-pro@0.1.0 audit
+> node scripts/run-audits.mjs
+
+✅ ai-attack              407 ms
+✅ api-feedback            32 ms
+✅ arena-scenery           27 ms
+❌ assets                  33 ms
+✅ career                  29 ms
+✅ controller-tactics      33 ms
+✅ court-speed             41 ms
+✅ demo                    32 ms
+✅ determinism             57 ms
+✅ difficulty             724 ms
+✅ drill                  272 ms
+✅ feedback                48 ms
+✅ gamepad-nav             31 ms
+✅ i18n                    71 ms
+✅ lineup                  37 ms
+✅ match-format           426 ms
+✅ module-contract         43 ms
+✅ modules                 40 ms
+✅ outfit-assets         2463 ms
+✅ outfit-challenges       33 ms
+✅ reachability            26 ms
+✅ shot-balance           717 ms
+✅ shot-quality            39 ms
+✅ smash-input             34 ms
+✅ sprite-loading          26 ms
+✅ tournament              26 ms
+✅ unlockable-animation   209 ms
+✅ wall-rules             242 ms
+
+27/28 audit passano
+
+❌ assets-audit.mjs
+   AssertionError [ERR_ASSERTION]: Immagini attive mai referenziate: vanno in assets/_archivio/ assets/arenas/officina-vapore.webp

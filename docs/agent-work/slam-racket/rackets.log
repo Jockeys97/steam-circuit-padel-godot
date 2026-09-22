@@ -1,0 +1,38 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok default build uses the textured Slam racket
+ok no procedural grip overlaps the imported grip
+ok default build has no croissant
+ok default build has the authored mesh
+ok style standard uses Slam
+ok standard has no duplicate grip
+ok style `standard` has no croissant
+ok cornetto has a CroissantHead node
+ok cornetto has a Throat node
+ok cornetto has a Handle node
+ok cornetto draws no ellipse face
+ok the croissant head is one mesh per dough segment
+ok the handle carries a shaft, knobs and twine
+ok the handle is a rolling pin
+ok the cornetto root is not an empty root
+ok every cornetto mesh has a mesh and a material
+ok every cornetto part is matte (no chrome, no metal)
+CORNETTO_SPANS plain=(0.30719, 0.449729) standard=(0.30719, 0.449729) cornetto=(0.271805, 0.427409)
+ok the shipped racket stays in the 36-52 cm band (0.450 m)
+ok the cornetto is in the same band (0.427 m)
+ok the cornetto's height is within 0.05 m of the ellipse's
+ok the croissant head is the ellipse face's width (0.272 m)
+ok the cornetto's handle covers the hand attach y
+ok the shipped grip covers the hand attach y
+ok the cornetto's handle reaches the top of the shipped grip band
+ok athlete id fornaio swings Il Cornetto
+ok a frozen athlete keeps the shipped ellipse
+ok an unknown athlete id keeps the shipped ellipse
+CORNETTO_SPECIAL rigs=1 style=cornetto
+ok the fornaio rig swings Il Cornetto with no override at all
+ok and the croissant is on the rig's hand bone
+ok the cornetto style reached the spawned racket on the hand bone
+ok the view reports the style it built
+ok the athlete report carries the style per role
+ok the cornetto rides the same grip-centre offset as the shipped racket
+PASS 33/33

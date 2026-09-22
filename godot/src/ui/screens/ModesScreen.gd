@@ -37,6 +37,21 @@
 ## `ModesSave.save_pref(store, "matchLength", …)`, the validated preference the
 ## reference itself keeps (`js/main.js:2277`). No new settings schema.
 ##
+## THE GAME-PACE GROUP IS A PORT ADDITION, NEXT TO THE REFERENCE'S TWO. `#matchSetup`
+## carries the difficulty and the match-length segments and nothing else; the pace
+## rungs are this build's own (`src/sim/pace.gd`, the same control the settings screen
+## shows) and they wear the setup groups' own presentation. Their display text comes
+## from that module — `locale_data.gd` is generated from the frozen `js/i18n.js` — and
+## the choice is written through the same prefs carrier the other two use, so the match
+## reads it at start (`Config.pace_id()`) with no second store and no second default.
+##
+## THE SETUP AREA IS A RESPONSIVE THREE-CARD GRID. The original two reference groups
+## and the port's pace group share one visual hierarchy at desktop widths, then stack
+## into a single readable column on smaller frames. Each group keeps its own controls
+## and save semantics; this is presentation only. Two-column difficulty and pace
+## ladders keep their labels legible without making the pace card dictate a tall,
+## mostly-empty row for its neighbours.
+##
 ## LITERALS. `ModesScreen.gd` carries none: every visible string is a locale id
 ## resolved through `UiStrings`. The scene carries none either (this screen's nodes
 ## are named, not worded).
@@ -49,6 +64,8 @@ const UiData := preload("res://src/ui/data/UiData.gd")
 const ModesSave := preload("res://src/modes/modes_save.gd")
 const Config := preload("res://game/match_config.gd")
 const Gate := preload("res://game/content_gate.gd")
+const Pace := preload("res://src/sim/pace.gd")
+const Locale := preload("res://src/locale/locale.gd")
 
 const SCREEN_ID := "modes"
 
@@ -61,6 +78,18 @@ const SELECT_MODE_ACTION := "select-mode"
 const DIFFICULTY_ACTION := "difficulty"
 const LENGTH_ACTION := "length"
 const ROUTE_TO_CHARACTERS := "characters"
+
+## PORT ADDITION: the game-pace rung (`src/sim/pace.gd`) — the same control the
+## settings screen carries, on the page a match is actually started from. The ladder,
+## its factors and its display text are that module's; this screen shows the rungs and
+## writes the chosen id through the prefs carrier the match reads at start
+## (`Config.pace_id()`), exactly as the two reference segments write theirs.
+const PACE_ACTION := "pace"
+const PACE_KEY := "pacePreset"
+## The pace group's own title, resolved through the pace module rather than through
+## `UiStrings`: it is a port addition, and `locale_data.gd` is generated from the
+## frozen `js/i18n.js` (its verifier rejects any key the reference lacks).
+const PACE_TITLE_KEY := "pacePreset"
 
 ## `index.html:136-139`, in the reference's own order.
 const DIFFICULTY_ORDER: Array[String] = ["easy", "medium", "hard", "legend"]
@@ -82,6 +111,12 @@ const LENGTH_KEYS := {
 	"set": "lenSet",
 	"match2": "lenMatch2",
 }
+
+## Difficulty keeps the familiar single-row ladder, while length and pace use compact
+## three-column grids over two rows. Every segment expands to fill its grid cell
+## instead of bunching around the text at the left edge.
+const DIFFICULTY_COLUMNS := 4
+const PACE_COLUMNS := 3
 
 ## The three mode ids in the reference's document order (`index.html:112-156`).
 const MODE_ORDER: Array[String] = ["quick", "tournament", "career"]
@@ -111,6 +146,11 @@ const ARIA_SLOTS := {
 	"LengthSegmented": "matchLength",
 }
 
+## PORT ADDITION: the pace group's own screen-reader name. It resolves through
+## `Pace.text`, like its rung labels, so it is not a row of `ARIA_SLOTS` above —
+## every row of that table resolves through `UiStrings`.
+const PACE_ARIA_NODE := "PaceSegmented"
+
 ## `.mode-card__art { aspect-ratio: 3 / 1 }` (`styles.css:460-474`).
 const ART_RATIO := 3.0
 ## `.mode-grid { gap: 20px }`, the grid's own h/v separation.
@@ -120,11 +160,15 @@ const GRID_BREAKPOINT := 1050.0
 ## `.mode-grid { grid-template-columns: repeat(3, 1fr); gap: 20px }`.
 const GRID_COLUMNS := 3
 const SMALL_COLUMNS := 1
-## `.match-setup { width: min(760px, 100%); padding: 0 24px }`.
-const SETUP_MAX_WIDTH := 760.0
+## The setup cards align with the mode-card composition above instead of collapsing
+## into a narrow strip in the middle of a wide screen.
+const SETUP_MAX_WIDTH := 1240.0
 const SETUP_SIDE_PADDING := 24.0
-## `.segmented button { height: 42px }`.
-const SEGMENT_HEIGHT := 42
+const SETUP_GRID_COLUMNS := 3
+const SETUP_SMALL_COLUMNS := 1
+const SETUP_BREAKPOINT := 1200.0
+## Taller setup choices reproduce the reference mockup's card-like selectors.
+const SEGMENT_HEIGHT := 62
 ## `.mode-card__body { padding: 18px }`.
 const CARD_PADDING := 18.0
 ## `.mode-card__art + h3 { margin-top: 14px }` and the gap before the tag.
@@ -133,6 +177,18 @@ const TAG_GAP := 14.0
 ## `.mode-card--locked { opacity: 0.55 }` — a node's own modulate, because a stylebox
 ## cannot modulate the node (theme README §6.4).
 const LOCKED_CARD_ALPHA := 0.55
+## `.athlete-card, .mode-card, .arena-card { transition: transform 0.15s ease }` with
+## `:hover { transform: translateY(-3px) }` (`styles.css:332`, `styles.css:339-342`):
+## the card rises 3 px over the reference's own 0.15 s, ease-out.
+const CARD_LIFT_PX := 3.0
+const CARD_LIFT_SECONDS := 0.15
+## `#difficultySeg button.is-active { box-shadow: 0 0 18px var(--step-glow) }`
+## (`styles.css:2303-2305`): the active chip's glow is the rung's own colour at the
+## rung's own alpha — `--step-glow` is green 0.4 / cyan 0.42 / gold 0.42 / coral 0.45
+## (`styles.css:2265`, `:2272`, `:2279`, `:2286`). Keyed by the same Palette token
+## `_segment_accent` answers with; the fallback is the base `.segmented` cyan.
+const SEGMENT_GLOW_SIZE := 18
+const SEGMENT_GLOW_ALPHA := {"green": 0.4, "cyan": 0.42, "gold": 0.42, "coral": 0.45}
 ## The art never collapses at one column.
 const ART_MIN_HEIGHT := 90.0
 ## The separator `js/main.js:1567` writes into the fixture line
@@ -153,6 +209,7 @@ const TAG_PREFIX := "ModeTag_"
 const FIXTURE_PREFIX := "ModeFixture_"
 const DIFFICULTY_PREFIX := "DiffButton_"
 const LENGTH_PREFIX := "LengthButton_"
+const PACE_PREFIX := "PaceButton_"
 
 ## The mode screen owns its header instead of mounting ScreenShell. These are the
 ## reference's `data-i18n` bindings for that header, including the back control.
@@ -160,6 +217,11 @@ const HEADER_TEXT_SLOTS := {
 	"BackButton": "back",
 	"TitleLabel": "modesTitle",
 	"SubLabel": "modesSub",
+}
+
+const SETUP_TEXT_SLOTS := {
+	"DifficultyLabel": "difficulty",
+	"LengthLabel": "matchLength",
 }
 
 ## `find_child` cannot find the root by name; the aria slot for the screen itself
@@ -182,8 +244,19 @@ var _cards: Dictionary = {}
 ## Pointer hover and keyboard/controller focus are two ways of selecting the same
 ## card. Keeping the pointer state prevents one from erasing the other's visual.
 var _card_pointer_hover: Dictionary = {}
+## The lift's own state, one row per mode id: the offset the card currently carries,
+## the y `ModeGrid` laid it out at, the offset it should hold, and the in-flight
+## tween. One tween per card, so a fast pointer cannot leave a card stuck off-origin.
+var _card_lift: Dictionary = {}
+var _card_lift_base: Dictionary = {}
+var _card_lift_target: Dictionary = {}
+var _card_lift_tweens: Dictionary = {}
+## True for the duration of this screen's own write to a card's `position.y`, so the
+## card's `item_rect_changed` can tell our move from the grid's.
+var _card_lift_writing: bool = false
 var _difficulty_buttons: Dictionary = {}
 var _length_buttons: Dictionary = {}
+var _pace_buttons: Dictionary = {}
 var _focus_specs: Dictionary = {}
 
 
@@ -193,6 +266,10 @@ func _ready() -> void:
 		var header_node := _control(String(node_name))
 		if header_node != null:
 			_bind(header_node, String(HEADER_TEXT_SLOTS[node_name]))
+	for node_name in SETUP_TEXT_SLOTS:
+		var setup_label := _control(String(node_name))
+		if setup_label != null:
+			_bind(setup_label, String(SETUP_TEXT_SLOTS[node_name]))
 	_build_rows()
 	_build_segments()
 	_wire()
@@ -201,6 +278,9 @@ func _ready() -> void:
 	if grid != null:
 		grid.resized.connect(_update_art_heights)
 	_apply_layout()
+	# The selected/highlighted frames are resolved for the rows the build just made, so
+	# a screen mounted without `enter()` still shows the session's mode as chosen.
+	_refresh_cards()
 	_refresh_selection()
 	refresh_strings()
 
@@ -348,6 +428,9 @@ func _make_card(row: Dictionary) -> Control:
 	card.add_theme_stylebox_override("panel", _card_box(false))
 	card.mouse_default_cursor_shape = Control.CURSOR_FORBIDDEN if locked else Control.CURSOR_POINTING_HAND
 	card.modulate = Color(1, 1, 1, LOCKED_CARD_ALPHA) if locked else Color(1, 1, 1, 1)
+	# `ModeGrid` owns the card's position and rewrites it on every re-sort; this is the
+	# card's own move notification, and the one place a stale lift base is caught.
+	card.item_rect_changed.connect(_on_card_item_rect_changed.bind(id))
 	card.mouse_entered.connect(_on_card_hover.bind(id, true))
 	card.mouse_exited.connect(_on_card_hover.bind(id, false))
 	# PanelContainer has no built-in focused style. Mirror its controller focus into
@@ -455,9 +538,10 @@ func _make_card(row: Dictionary) -> Control:
 func _build_segments() -> void:
 	var difficulty := _control("DifficultySegmented")
 	if difficulty != null:
-		# `.segmented { grid-auto-flow: column }` with four options: one row of four.
+		# Two balanced rows keep the setup cards compact at desktop and readable when
+		# the responsive grid stacks them on narrower frames.
 		if difficulty is GridContainer:
-			(difficulty as GridContainer).columns = DIFFICULTY_ORDER.size()
+			(difficulty as GridContainer).columns = DIFFICULTY_COLUMNS
 		for key in DIFFICULTY_ORDER:
 			var button := _segment_button(DIFFICULTY_PREFIX + key, String(DIFFICULTY_KEYS[key]))
 			button.pressed.connect(select_difficulty.bind(key))
@@ -474,6 +558,19 @@ func _build_segments() -> void:
 			button.pressed.connect(select_length.bind(key))
 			length.add_child(button)
 			_length_buttons[key] = button
+	var pace := _control("PaceSegmented")
+	if pace != null:
+		# The port's own group. Its rungs come from the pace module, in that module's
+		# ladder order, and they are not `_segment_button`s: their labels are `Pace`'s
+		# strings, not locale ids, so `_refresh_pace()` sets both the text and the
+		# selected look for them.
+		if pace is GridContainer:
+			(pace as GridContainer).columns = PACE_COLUMNS
+		for id in Pace.ids():
+			var button := _pace_button(PACE_PREFIX + String(id))
+			button.pressed.connect(select_pace.bind(String(id)))
+			pace.add_child(button)
+			_pace_buttons[String(id)] = button
 
 
 func _segment_button(node_name: String, key: String) -> Button:
@@ -481,7 +578,22 @@ func _segment_button(node_name: String, key: String) -> Button:
 	button.name = node_name
 	button.theme_type_variation = &"SegmentedInactive"
 	button.custom_minimum_size = Vector2(0, SEGMENT_HEIGHT)
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_bind(button, key)
+	return button
+
+
+## A pace rung. Registered in `_text_nodes` — the audits read a control's text through
+## `text_shown()`, the same door as every other control — but deliberately NOT in
+## `_bindings`: every row of that list resolves through `UiStrings`, and a rung's label
+## is `Pace`'s own string (`_refresh_pace()` is what fills it, in both locales).
+func _pace_button(node_name: String) -> Button:
+	var button := Button.new()
+	button.name = node_name
+	button.theme_type_variation = &"SegmentedInactive"
+	button.custom_minimum_size = Vector2(0, SEGMENT_HEIGHT)
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_text_nodes[node_name] = button
 	return button
 
 
@@ -564,6 +676,26 @@ func select_length(key: String) -> bool:
 	return true
 
 
+## The pace rung the save holds. Read through the config's own validated reader — the
+## same call `match_controller` latches when a match starts — so the screen can never
+## show a rung the clock would not run, and a save from a build without the key reads
+## back as the module's default rather than as a stopped clock.
+func active_pace() -> String:
+	return Config.pace_id()
+
+
+## The pace rung press: the chosen id is written through the same save door the two
+## reference segments use (`ModesSave.save_pref`), into the key the match reads at
+## start. An id outside the ladder is refused rather than stored — a stored id no
+## clock can read would just be a rung that never runs.
+func select_pace(id: String) -> bool:
+	if not Pace.has(id):
+		return false
+	ModesSave.save_pref(Config.save_store(), PACE_KEY, id)
+	_refresh_pace()
+	return true
+
+
 ## The screen's one activation door for UIR-05's bridge: an action the bridge does
 ## not route (it is not a `to-*` edge) is reported to the mount, which hands it here.
 func activate(action: String) -> bool:
@@ -577,6 +709,8 @@ func activate(action: String) -> bool:
 			return select_difficulty(parts[1])
 		LENGTH_ACTION:
 			return select_length(parts[1])
+		PACE_ACTION:
+			return select_pace(parts[1])
 	return false
 
 
@@ -673,7 +807,37 @@ func refresh_strings() -> void:
 			(node as Button).text = text
 		elif node is Label:
 			(node as Label).text = text
+	_refresh_pace()
+	_refresh_setup_titles()
 	_refresh_aria()
+
+
+## The pace group's three moving parts: every rung's label, the group's own title and
+## which rung wears the selected look. Its strings are `Pace`'s — this is the one place
+## on this screen where text does not come from `UiStrings`, because the pace rungs are
+## a port addition and `locale_data.gd` carries only the reference's ids — and it runs
+## on a language flip with everything else. The active state is the same
+## `SegmentedActive`/`SegmentedInactive` swap the two reference segments use.
+func _refresh_pace() -> void:
+	var lang := Locale.current_lang()
+	var current := active_pace()
+	for id in _pace_buttons:
+		var button: Button = _pace_buttons[id]
+		var preset: Dictionary = Pace.preset(String(id))
+		button.text = Pace.text(String(preset["label_key"]), lang)
+		var active: bool = String(id) == current
+		_style_segment_state(button, active)
+		button.set_meta("active", active)
+	var title := _control("PaceLabel") as Label
+	if title != null:
+		title.text = Pace.text(PACE_TITLE_KEY, lang)
+
+
+func _refresh_setup_titles() -> void:
+	for node_name in ["DifficultyLabel", "LengthLabel", "PaceLabel"]:
+		var label := _control(node_name) as Label
+		if label != null:
+			label.text = label.text.to_upper()
 
 
 ## `careerTag` `{season}/{match}/{total}` + `careerFixture` … (`js/main.js:1549-1567`).
@@ -710,6 +874,9 @@ func aria_names() -> Dictionary:
 	var out := {}
 	for node_name in ARIA_SLOTS:
 		out[node_name] = UiStrings.t(String(ARIA_SLOTS[node_name]))
+	# PORT ADDITION: the pace group's own name, resolved through the module that owns
+	# its text (the reference's two segments resolve theirs through `UiStrings`).
+	out[PACE_ARIA_NODE] = Pace.text(PACE_TITLE_KEY, Locale.current_lang())
 	for row in _rows:
 		var id := String(row.get("id", ""))
 		out[ART_PREFIX + id] = UiStrings.t(String(MODE_ARIA_KEYS.get(id, "")))
@@ -743,6 +910,10 @@ func _refresh_cards() -> void:
 		var locked := bool(row.get("locked", false))
 		card.modulate = Color(1, 1, 1, LOCKED_CARD_ALPHA) if locked else Color(1, 1, 1, 1)
 		card.mouse_default_cursor_shape = Control.CURSOR_FORBIDDEN if locked else Control.CURSOR_POINTING_HAND
+	# The selected frame follows the session's mode, and the mode can move while this
+	# screen is off (a capture state, a career that unlocked one): re-resolve it here.
+	for row in _rows:
+		_refresh_card_highlight(String(row.get("id", "")))
 
 
 func _refresh_selection() -> void:
@@ -750,15 +921,51 @@ func _refresh_selection() -> void:
 	for key in _difficulty_buttons:
 		var button: Button = _difficulty_buttons[key]
 		var active := String(key) == rung
-		button.theme_type_variation = &"SegmentedActive" if active else &"SegmentedInactive"
+		_style_segment_state(button, active)
 		button.disabled = not difficulty_allowed(String(key))
 		button.set_meta("active", active)
 	var length := active_length()
 	for key in _length_buttons:
 		var button: Button = _length_buttons[key]
 		var active := String(key) == length
-		button.theme_type_variation = &"SegmentedActive" if active else &"SegmentedInactive"
+		_style_segment_state(button, active)
 		button.set_meta("active", active)
+
+
+func _style_segment_state(button: Button, active: bool) -> void:
+	button.theme_type_variation = &"SegmentedActive" if active else &"SegmentedInactive"
+	button.add_theme_font_size_override("font_size", 14)
+	var accent_token := _segment_accent(button)
+	button.add_theme_stylebox_override("normal", _segment_box(accent_token, active, false))
+	button.add_theme_stylebox_override("hover", _segment_box(accent_token, active, true))
+	button.add_theme_stylebox_override("pressed", _segment_box(accent_token, active, true))
+	var indicator := button.get_node_or_null("Indicator") as ColorRect
+	if indicator == null:
+		indicator = ColorRect.new()
+		indicator.name = "Indicator"
+		indicator.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		indicator.anchor_left = 0.5
+		indicator.anchor_top = 1.0
+		indicator.anchor_right = 0.5
+		indicator.anchor_bottom = 1.0
+		indicator.offset_left = -28.0
+		indicator.offset_top = -10.0
+		indicator.offset_right = 28.0
+		indicator.offset_bottom = -6.0
+		button.add_child(indicator)
+	var accent := theme.get_color(accent_token, "Palette")
+	indicator.color = accent.darkened(0.42) if active else _alpha(accent, 0.9)
+
+
+func _segment_accent(button: Button) -> String:
+	var node_name := String(button.name)
+	if node_name == DIFFICULTY_PREFIX + "easy":
+		return "green"
+	if node_name == DIFFICULTY_PREFIX + "hard":
+		return "gold"
+	if node_name == DIFFICULTY_PREFIX + "legend":
+		return "coral"
+	return "cyan"
 
 
 ## `syncMatchSetup` (`js/main.js:1651-1657`): the setup groups are shown for the
@@ -790,12 +997,105 @@ func _on_card_focus(mode_id: String) -> void:
 
 ## The visible selection is active when either navigation method names this card.
 ## This is presentation-only: activation remains the bridge -> `select_mode` path.
+##
+## THREE STATES, resolved in the reference's cascade order: the selected card
+## (`.athlete-card--selected`, `styles.css:341-345`) over the highlighted one
+## (`.athlete-card:hover`, `styles.css:339-342`) over the resting card (`.mode-card`,
+## `styles.css:323-338`). Pointer and controller feed the ONE `highlighted` flag, so
+## the two input methods still land on the same frame.
 func _refresh_card_highlight(mode_id: String) -> void:
 	var card: Control = _cards.get(mode_id, null)
 	if card == null or mode_locked_shown(mode_id):
 		return
 	var highlighted := card.has_focus() or bool(_card_pointer_hover.get(mode_id, false))
-	card.add_theme_stylebox_override("panel", _card_box(highlighted))
+	card.add_theme_stylebox_override("panel", _card_box(highlighted, _card_is_selected(mode_id)))
+	_animate_card_lift(mode_id, highlighted)
+
+
+## The card whose mode the session is in: `Config.pending_mode`, the seam `select_mode`
+## writes and `syncMatchSetup` reads. The reference marks no mode card as selected
+## (`.mode-card` only ever gains `--locked`/`--demo`, `js/ui.js:746-753`), so this is
+## the port's own reading of the selection — the frame the characters and arena grids
+## already wear, on the seam that says which mode a match would start in.
+func _card_is_selected(mode_id: String) -> bool:
+	return _mode_now() == mode_id
+
+
+## `.athlete-card:hover { transform: translateY(-3px) }` (`styles.css:339-342`) over
+## the card's `transition: transform 0.15s ease` (`styles.css:332`).
+##
+## WHY AN OFFSET AGAINST A STORED BASE, NOT A TWEENED `position`. The cards are
+## `ModeGrid`'s children, so the GRID owns their position: every re-sort
+## (`Container.fit_child_in_rect`) rewrites it, and a tween aimed at an absolute y would
+## fight that and could end on the wrong one. The tween therefore animates a float
+## offset, applied as `base + offset`, and every move the container makes re-reads the
+## base (`_on_card_item_rect_changed`, the `NOTIFICATION_SORT_CHILDREN` equivalent for
+## a card whose container owns the sort). Killing the card's own in-flight tween before
+## starting the next one means exactly one writer per card, so rapid mouse movement
+## cannot interleave two of them.
+func _animate_card_lift(mode_id: String, lifted: bool) -> void:
+	var card: Control = _cards.get(mode_id, null)
+	if card == null:
+		return
+	var target := -CARD_LIFT_PX if lifted else 0.0
+	_card_lift_target[mode_id] = target
+	var current := float(_card_lift.get(mode_id, 0.0))
+	var running: Tween = _card_lift_tweens.get(mode_id, null)
+	if running != null and running.is_valid():
+		running.kill()
+	if is_equal_approx(current, target):
+		return
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_OUT)
+	tween.tween_method(_set_card_lift.bind(mode_id), current, target, CARD_LIFT_SECONDS)
+	_card_lift_tweens[mode_id] = tween
+
+
+## The y the grid gave this card. The hook below keeps it current, so this only ever
+## has to answer the first time it is asked: the lift is 0 at that moment, so the
+## card's own `position.y` IS the base.
+func _card_lift_base_y(mode_id: String, card: Control) -> float:
+	if not _card_lift_base.has(mode_id):
+		_card_lift_base[mode_id] = card.position.y
+	return float(_card_lift_base[mode_id])
+
+
+func _set_card_lift(amount: float, mode_id: String) -> void:
+	var card: Control = _cards.get(mode_id, null)
+	if card != null:
+		_write_card_lift(card, mode_id, amount)
+
+
+func _write_card_lift(card: Control, mode_id: String, amount: float) -> void:
+	_card_lift[mode_id] = amount
+	# The guard is what keeps our own write from being mistaken for the container's:
+	# `_on_card_item_rect_changed` re-reads the base on every move it did not make.
+	# The signal is emitted synchronously, so the guard cannot outlive this call.
+	_card_lift_writing = true
+	card.position.y = _card_lift_base_y(mode_id, card) + amount
+	_card_lift_writing = false
+
+
+## A `Container` rewrites a child's position on every re-sort, so a stored base goes
+## stale under a running tween and the card would settle off-origin (measured: a resize
+## from three columns to one left a card 3 px off its new row). `NOTIFICATION_SORT_CHILDREN`
+## goes to `ModeGrid`, not to its children, so the card's own `item_rect_changed` is the
+## move notification this screen can subscribe to. The position the container just wrote
+## IS the base, the tween that measured against the old one is dropped, and the offset
+## the card should hold is re-applied on the spot — so any re-layout, whenever it lands,
+## converges on `base + target` in one step.
+func _on_card_item_rect_changed(mode_id: String) -> void:
+	if _card_lift_writing:
+		return
+	var card: Control = _cards.get(mode_id, null)
+	if card == null:
+		return
+	var running: Tween = _card_lift_tweens.get(mode_id, null)
+	if running != null and running.is_valid():
+		running.kill()
+	_card_lift_base[mode_id] = card.position.y
+	_write_card_lift(card, mode_id, float(_card_lift_target.get(mode_id, 0.0)))
 
 
 # ---------------------------------------------------------------------------
@@ -831,6 +1131,9 @@ func _register_focus() -> void:
 	for key in _length_buttons:
 		var button: Button = _length_buttons[key]
 		_focus_specs[LENGTH_PREFIX + key] = _focus_spec(LENGTH_PREFIX + key, button, "%s:%s" % [LENGTH_ACTION, key])
+	for id in _pace_buttons:
+		var button: Button = _pace_buttons[id]
+		_focus_specs[PACE_PREFIX + id] = _focus_spec(PACE_PREFIX + id, button, "%s:%s" % [PACE_ACTION, id])
 
 
 func _focus_spec(node_name: String, control: Control, action: String, extra: Dictionary = {}) -> Dictionary:
@@ -857,9 +1160,10 @@ func _apply_layout() -> void:
 	if grid != null:
 		grid.columns = GRID_COLUMNS if size.x >= GRID_BREAKPOINT else SMALL_COLUMNS
 	_update_art_heights()
-	var setup := _control("MatchSetup")
+	var setup := _control("MatchSetup") as GridContainer
 	if setup != null:
 		setup.visible = setup_visible()
+		setup.columns = SETUP_GRID_COLUMNS if size.x >= SETUP_BREAKPOINT else SETUP_SMALL_COLUMNS
 	var area := _control("SetupArea") as MarginContainer
 	if area != null:
 		var side := int(maxf(0.0, (size.x - SETUP_MAX_WIDTH) / 2.0) + SETUP_SIDE_PADDING)
@@ -912,11 +1216,27 @@ func _style_chrome() -> void:
 	var sub := _control("SubLabel")
 	if sub != null:
 		sub.theme_type_variation = &"ScreenSubtitle"
-	for panel_name in ["DifficultyGroup", "LengthGroup"]:
+	var setup_accents := {
+		"DifficultyGroup": "cyan",
+		"LengthGroup": "cyan",
+		"PaceGroup": "cyan",
+	}
+	for panel_name in setup_accents:
 		var panel := _control(panel_name)
 		if panel != null:
-			(panel as PanelContainer).add_theme_stylebox_override("panel", _setup_box(theme))
-	for card_name in ["DifficultySegmentedBox", "LengthSegmentedBox"]:
+			(panel as PanelContainer).add_theme_stylebox_override(
+				"panel", _setup_box(theme, String(setup_accents[panel_name])))
+	for label_name in ["DifficultyLabel", "LengthLabel", "PaceLabel"]:
+		var label := _control(label_name) as Label
+		if label != null:
+			label.theme_type_variation = &"CardTitle"
+			label.add_theme_color_override("font_color", theme.get_color(
+				String(setup_accents.get(String(label.get_parent().get_parent().name), "cyan")), "Palette"))
+	for line_name in ["DifficultyTitleLine", "LengthTitleLine", "PaceTitleLine"]:
+		var line := _control(line_name) as HSeparator
+		if line != null:
+			line.add_theme_stylebox_override("separator", _title_line_box(theme))
+	for card_name in ["DifficultySegmentedBox", "LengthSegmentedBox", "PaceSegmentedBox"]:
 		var segmented := _control(card_name)
 		if segmented != null:
 			(segmented as PanelContainer).add_theme_stylebox_override("panel", _theme_box("SegmentedContainer"))
@@ -924,8 +1244,28 @@ func _style_chrome() -> void:
 
 ## `.mode-card` (`styles.css:323-338`): `--panel`, 1 px `--line`, radius 12, art
 ## flush to the card's edges (the body carries the 18 px).
-func _card_box(hover: bool) -> StyleBoxFlat:
-	var box := _theme_box("PanelCardHover" if hover else "PanelDark")
+##
+## THREE STATES, in the reference's cascade order: the selected card (full `--cyan`
+## border plus the `box-shadow: 0 0 0 1px var(--cyan)` halo, `.athlete-card--selected`,
+## `styles.css:341-345`) over the highlighted one (`border-color:
+## rgba(0,229,255,0.35)`, `.athlete-card:hover`, `styles.css:339-342`) over the
+## resting card. A card that is BOTH selected and highlighted keeps the halo — it is
+## what marks the mode a match would start in, and it must not vanish under the
+## pointer — and wears the hover frame, so the card a pointer hovers and the card the
+## controller has focused still read the same (`tests/ui/controller_cards_test.gd`
+## pins that convergence). The halo's colour and width are read off
+## `BoxPanelSelected` itself, so the theme keeps owning the token.
+func _card_box(hover: bool, selected: bool = false) -> StyleBoxFlat:
+	var variation := "PanelDark"
+	if hover:
+		variation = "PanelCardHover"
+	elif selected:
+		variation = "PanelCardSelected"
+	var box := _theme_box(variation)
+	if selected and hover:
+		var halo := _theme_box("PanelCardSelected")
+		box.shadow_color = halo.shadow_color
+		box.shadow_size = halo.shadow_size
 	# The reference bleeds the art to the card's edges and pads the body instead
 	# (`.mode-card__art { margin: -18px -18px 0 }`, `styles.css:460`), so the frame
 	# keeps the theme's fill/border/radius and gives up only its content padding.
@@ -955,16 +1295,54 @@ func _art_box(accent_token: String) -> StyleBoxFlat:
 ## over `rgba(6,20,38,0.92)` (the first stop, as the theme's own gradient rule does;
 ## `surface_2` is `#0b2444` = rgb(11,36,68)). No variation exists for this box, so it
 ## is composed here from Palette — the theme request is in the evidence log.
-func _setup_box(theme: Theme) -> StyleBoxFlat:
+func _setup_box(theme: Theme, accent_token: String) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()
-	box.bg_color = _alpha(theme.get_color("surface_2", "Palette"), 0.9)
-	box.border_color = _alpha(theme.get_color("cyan", "Palette"), 0.22)
-	box.set_corner_radius_all(14)
+	var accent := theme.get_color(accent_token, "Palette")
+	box.bg_color = _alpha(theme.get_color("surface_2", "Palette"), 0.94)
+	box.border_color = _alpha(accent, 0.42)
+	box.set_corner_radius_all(16)
 	box.set_border_width_all(1)
-	box.content_margin_left = 17.0
-	box.content_margin_right = 17.0
-	box.content_margin_top = 15.0
-	box.content_margin_bottom = 17.0
+	box.content_margin_left = 24.0
+	box.content_margin_right = 24.0
+	box.content_margin_top = 20.0
+	box.content_margin_bottom = 22.0
+	box.shadow_color = _alpha(theme.get_color("cyan", "Palette"), 0.08)
+	box.shadow_size = 14
+	return box
+
+
+func _title_line_box(source_theme: Theme) -> StyleBoxLine:
+	var line := StyleBoxLine.new()
+	line.color = _alpha(source_theme.get_color("cyan", "Palette"), 0.52)
+	line.thickness = 2
+	line.vertical = false
+	return line
+
+
+## `.segmented button` (`styles.css:2228-2256`): the reference's own cyan wash
+## `rgba(0,229,255,0.10)` on hover-but-not-active (`styles.css:2237-2240`) — cyan for
+## EVERY rung, the coloured ones included — and, on the active chip, the lit fill plus
+## `box-shadow: 0 0 18px var(--step-glow)` (`#difficultySeg button.is-active`,
+## `styles.css:2303-2305`), i.e. the rung's own colour at the rung's own alpha.
+##
+## The reference's `linear-gradient(180deg, var(--step-lit), var(--step-color))` is a
+## FLAT approximation here: a `StyleBoxFlat` carries one fill, not a gradient, and the
+## theme's own `BoxSegmentedActive` made the same flat choice (#22d5ee, the gradient's
+## base stop). The chip is `--step-color` (`accent`); the `inset 0 1px 0` top highlight
+## is not expressible on a `StyleBoxFlat` and is left out rather than faked.
+func _segment_box(accent_token: String, active: bool, hover: bool) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	var accent := theme.get_color(accent_token, "Palette")
+	box.set_corner_radius_all(10)
+	box.content_margin_left = 8.0
+	box.content_margin_right = 8.0
+	if active:
+		box.bg_color = accent
+		box.shadow_color = _alpha(accent, float(SEGMENT_GLOW_ALPHA.get(accent_token, 0.42)))
+		box.shadow_size = SEGMENT_GLOW_SIZE
+	else:
+		var wash := theme.get_color("cyan", "Palette")
+		box.bg_color = _alpha(wash, 0.10) if hover else _alpha(accent, 0.025)
 	return box
 
 

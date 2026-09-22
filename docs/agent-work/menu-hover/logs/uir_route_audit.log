@@ -1,0 +1,260 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok route/the_route_starts_on_the_menu
+ok route/the_menu_registers_its_play_button
+ok route/the_host_owns_the_bridge
+ok route/the_play_button_takes_the_focus
+ok route/the_confirm_is_handled
+ok route/a_real_confirm_on_play_lands_on_modes
+ok route/characters_arena_and_drill_mount_one_at_a_time
+ok route/the_drill_screen_is_what_mounted
+ok route/this_build_grants_the_drill
+ok route/the_drill_start_names_the_mode
+ok route/the_drill_start_points_at_the_match_scene
+ok route/and_writes_the_pending_mode
+ok route/and_the_chosen_exercise
+ok route/the_godot_only_return_exercise_can_be_chosen
+ok route/and_becomes_the_chosen_exercise
+ok route/starting_it_carries_the_return_id
+ok route/and_the_mount_reads_it_as_the_pending_exercise
+ok route/the_reference_default_can_be_chosen_back
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+MODE_RESOLVED {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"exercise":"return","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillIn","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"score":0,"score_line":"—","streak":0,"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0}},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=124 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=264 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+TREES glb=res://assets/trees/stylized-tree.glb glb_loads=1 load_ms=91 instances=2 tris_per_copy=9164 tris_total=18328 box=(-0.3145,-0.5000,-0.3223)+(0.6289,1.0000,0.6406)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _drill_boots_a_real_session (res://tests/ui/uir_route_audit.gd:157)
+         [6] _initialize (res://tests/ui/uir_route_audit.gd:61)
+         [7] _route_to_the_drill (res://tests/ui/uir_route_audit.gd:147)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _drill_boots_a_real_session (res://tests/ui/uir_route_audit.gd:157)
+         [6] _initialize (res://tests/ui/uir_route_audit.gd:61)
+         [7] _route_to_the_drill (res://tests/ui/uir_route_audit.gd:147)
+MODE_START {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"exercise":"return","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillIn","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"score":0,"score_line":"—","streak":0,"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0}},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+ok drill/the_match_adopts_a_session
+ok drill/and_it_is_the_drill_the_screen_asked_for
+ok drill/the_state_runs_the_drill_mode
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+MODE_RESOLVED {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"exercise":"return","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillIn","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"score":0,"score_line":"—","streak":0,"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0}},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=116 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=254 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+TREES glb=res://assets/trees/stylized-tree.glb glb_loads=2 load_ms=1 instances=2 tris_per_copy=9164 tris_total=18328 box=(-0.3145,-0.5000,-0.3223)+(0.6289,1.0000,0.6406)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _drill_boots_a_real_session (res://tests/ui/uir_route_audit.gd:171)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _drill_boots_a_real_session (res://tests/ui/uir_route_audit.gd:171)
+MODE_START {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"exercise":"return","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillIn","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"score":0,"score_line":"—","streak":0,"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0}},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+ok drill/the_return_exercise_boots_a_drill_session
+ok drill/and_it_is_the_return_exercise
+ok drill/and_it_ticks (the drill's own step)
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=113 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=266 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+TREES glb=res://assets/trees/stylized-tree.glb glb_loads=3 load_ms=83 instances=2 tris_per_copy=9164 tris_total=18328 box=(-0.3145,-0.5000,-0.3223)+(0.6289,1.0000,0.6406)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:198)
+         [6] _match_pause_and_result (res://tests/ui/uir_route_audit.gd:205)
+         [7] _initialize (res://tests/ui/uir_route_audit.gd:62)
+         [8] _drill_boots_a_real_session (res://tests/ui/uir_route_audit.gd:187)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:198)
+         [6] _match_pause_and_result (res://tests/ui/uir_route_audit.gd:205)
+         [7] _initialize (res://tests/ui/uir_route_audit.gd:62)
+         [8] _drill_boots_a_real_session (res://tests/ui/uir_route_audit.gd:187)
+ok match/the_match_starts_running
+ok pause/escape_on_a_running_match_pauses
+ok pause/and_the_card_is_open
+ok pause/a_second_escape_resumes
+ok pause/and_closes_the_card
+ok result/the_scripted_match_reaches_a_result
+ok result/the_finish_route_is_the_result
+ok result/the_payload_waits_for_the_host
+ok result/the_host_boots_straight_onto_the_result
+ok result/and_shows_the_matches_own_numbers
+ok result/the_payload_is_consumed_once
+ok rematch/rematch_goes_back_to_the_match_scene
+ok rematch/and_keeps_the_run_mode
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=108 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=247 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+TREES glb=res://assets/trees/stylized-tree.glb glb_loads=4 load_ms=81 instances=2 tris_per_copy=9164 tris_total=18328 box=(-0.3145,-0.5000,-0.3223)+(0.6289,1.0000,0.6406)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+ok settings/the_router_mounts_the_settings_screen
+ok settings/the_volume_row_takes_the_focus
+ok settings/the_right_press_is_handled
+ok settings/the_press_steps_the_row
+ok settings/the_step_lands_in_the_save
+ok settings/the_host_owns_the_audio_application
+ok settings/the_stepped_value_is_APPLIED_to_the_mixer (F6)
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=112 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=258 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+TREES glb=res://assets/trees/stylized-tree.glb glb_loads=5 load_ms=1 instances=2 tris_per_copy=9164 tris_total=18328 box=(-0.3145,-0.5000,-0.3223)+(0.6289,1.0000,0.6406)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:198)
+         [6] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:286)
+         [7] _initialize (res://tests/ui/uir_route_audit.gd:64)
+         [8] _settings_apply_what_they_store (res://tests/ui/uir_route_audit.gd:275)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:198)
+         [6] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:286)
+         [7] _initialize (res://tests/ui/uir_route_audit.gd:64)
+         [8] _settings_apply_what_they_store (res://tests/ui/uir_route_audit.gd:275)
+ok human/coop_reaches_the_state
+ok human/coop_sets_the_coop_flag
+ok human/coop_sets_the_pvp_flag
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=103 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=249 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+TREES glb=res://assets/trees/stylized-tree.glb glb_loads=6 load_ms=0 instances=2 tris_per_copy=9164 tris_total=18328 box=(-0.3145,-0.5000,-0.3223)+(0.6289,1.0000,0.6406)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:198)
+         [6] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:286)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _quick_match (res://tests/ui/uir_route_audit.gd:198)
+         [6] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:286)
+ok human/pvp_reaches_the_state
+ok human/pvp_sets_the_coop_flag
+ok human/pvp_sets_the_pvp_flag
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+MODE_RESOLVED {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"exercise":"precision","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillHits","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"score":0,"score_line":"—","streak":0,"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0}},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=110 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=243 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+TREES glb=res://assets/trees/stylized-tree.glb glb_loads=7 load_ms=0 instances=2 tris_per_copy=9164 tris_total=18328 box=(-0.3145,-0.5000,-0.3223)+(0.6289,1.0000,0.6406)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:297)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:881)
+         [4] _ready (res://game/match_controller.gd:474)
+         [5] _human_modes_reach_the_state (res://tests/ui/uir_route_audit.gd:297)
+MODE_START {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"exercise":"precision","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillHits","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"score":0,"score_line":"—","streak":0,"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0}},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+ok human/a_non_quick_mode_stays_solo
+PASS 51/51
+WARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)

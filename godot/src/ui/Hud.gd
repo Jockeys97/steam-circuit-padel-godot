@@ -29,6 +29,12 @@
 ##     mount binds it (`godot/game/match_controller.gd` keeps `_paused`, and no
 ##     `set_match_paused()` exists yet — UIR-22 introduces it). The match panel's
 ##     control legend is UIR-13's: this HUD only provides its seat, `control_rows()`.
+##   - **Component visibility is a profile, not a root switch.** `set_component_visibility`
+##     hides the named top-level panels (`COMPONENT_IDS`) instead of this Control, so the
+##     restore hint the controller mounts beside this HUD stays independent of it. Every
+##     write that used to show one of those panels (`set_panel_open`, `_apply_view`,
+##     `_apply_mode`, `_set_log_expanded`) is gated on the profile, which is what makes a
+##     disabled component stay disabled across refresh frames.
 ##   - **Nothing here is mounted.** `Hud.tscn` is instantiable on its own; the router,
 ##     `Match.tscn` and `godot/game/**` are other owners' files.
 ##
@@ -150,6 +156,16 @@ const CAPTURE_STATES := [
 	"drill", "tournament", "career", "panel-open",
 ]
 
+## The six component ids of the in-match visibility profile, in the match
+## controller's canonical order (`godot/game/match_controller.gd:UI_COMPONENTS`,
+## the owner of the profile; `tests/ui/ui_visibility_audit.gd` asserts the two
+## lists are equal). This HUD implements five of them with its own panels —
+## `guidance` also carries the ported mode strip, which the mount carries — and
+## `indicators` names the world-space marks and the timing presentation, which
+## the controller owns; a profile that turns it off hides nothing here and is
+## reported, never silently dropped.
+const COMPONENT_IDS := ["score", "time", "map", "guidance", "indicators", "events"]
+
 var _frame := DESIGN_FRAME
 var _frame_ok := true
 var _view: Dictionary = {}
@@ -160,6 +176,13 @@ var _muted := false
 var _panel_open := false
 var _log_expanded := false
 var _pad_connected := false
+## The component profile in force. Every entry of `COMPONENT_IDS` is present:
+## `true` (the default) is the reference's own always-on HUD.
+var _components: Dictionary = {}
+## The serve banner's own wish, kept apart from the profile: the chip shows only
+## when the view asks for it AND `guidance` is on, so a refresh cannot re-show a
+## disabled component (`_apply_view`).
+var _serve_want := false
 
 # --- scoreboard
 var _score_panel: PanelContainer
@@ -176,6 +199,12 @@ var _tactic_label: Button
 var _combo_label: Button
 # --- actions
 var _actions_row: HBoxContainer
+## `timer` and the four buttons share `_actions_row` in the reference's own markup
+## (`.game-hud__actions`, `index.html:465-469`), but they are two different
+## components: the timer is `time`, the buttons are `events`. The buttons live in
+## this group so each half can be hidden on its own.
+var _action_buttons: HBoxContainer
+var _timer_panel: PanelContainer
 var _timer_label: Label
 var _timer_value: Label
 var _panel_button: Button
@@ -258,7 +287,7 @@ func is_paused() -> bool:
 
 func set_panel_open(open: bool) -> void:
 	_panel_open = open
-	_match_panel.visible = open
+	_match_panel.visible = open and _component_on("guidance")
 	_panel_button.theme_type_variation = &"HudButtonActive" if open else &"HudButton"
 	_panel_button.set_pressed_no_signal(open)
 	# The panel state measures the feed as a 28 px row, i.e. collapsed: the log and the
@@ -298,6 +327,74 @@ func set_mode_view(view: Dictionary) -> void:
 ## The seat for UIR-13's control legend. Empty until that ticket fills it.
 func control_rows() -> VBoxContainer:
 	return _control_rows
+
+
+## The component-visibility seam: the mount hands over the profile the match
+## controller owns (`ui_visibility_snapshot()`), and the named panels follow it.
+## This Control itself is NEVER hidden — the restore hint the controller mounts
+## beside this HUD has to stay independent of it (`docs/agent-work/
+## ui-visibility-settings/PLAN.md` §Architecture).
+func set_component_visibility(profile: Dictionary) -> void:
+	var next := {}
+	for id in COMPONENT_IDS:
+		next[id] = bool(profile.get(id, true))
+	_components = next
+	_apply_component_visibility()
+
+
+## The profile currently in force, one entry per `COMPONENT_IDS` entry.
+func component_visibility() -> Dictionary:
+	var out := {}
+	for id in COMPONENT_IDS:
+		out[id] = _component_on(id)
+	return out
+
+
+## One component's requested visibility. `indicators` answers for the world-space
+## marks, which this Control does not own: the profile still round-trips.
+func is_component_visible(id: String) -> bool:
+	return _component_on(id)
+
+
+## The nodes one component owns, in tree order. An empty array is the honest
+## answer for `indicators`, whose marks the controller carries.
+func component_nodes(id: String) -> Array:
+	match id:
+		"score":
+			return [_score_panel]
+		"time":
+			return [_timer_panel]
+		"map":
+			return [_minimap_panel]
+		"guidance":
+			return [_serve_banner, _match_panel, _mode_panel]
+		"events":
+			return [_action_buttons, _match_feed]
+	return []
+
+
+## The profile's own truth: a component with no id entry is on (the reference's
+## always-on HUD is the default the mount starts from).
+func _component_on(id: String) -> bool:
+	return bool(_components.get(id, true))
+
+
+## Writes the profile onto the panels. Called by `set_component_visibility` and by
+## `_clear`, never from the paint path: the paint path asks `_component_on` at each
+## of its own show/hide writes instead, so a refresh cannot re-show a disabled
+## component (the contract's `_sync_views` rule, seen from the HUD's side).
+func _apply_component_visibility() -> void:
+	if _score_panel == null:
+		return
+	_score_panel.visible = _component_on("score")
+	_timer_panel.visible = _component_on("time")
+	_minimap_panel.visible = _component_on("map")
+	_serve_banner.visible = _serve_want and _component_on("guidance")
+	_match_panel.visible = _panel_open and _component_on("guidance")
+	_mode_panel.visible = not _mode_view.is_empty() and _component_on("guidance")
+	_action_buttons.visible = _component_on("events")
+	_match_feed.visible = _component_on("events")
+	_event_log.visible = _log_expanded and _component_on("events")
 
 
 ## Safe-area pass. The geometry is anchor-based, so this resolves the frame, records
@@ -384,6 +481,7 @@ func report() -> Dictionary:
 		"log_visible": _event_log.visible,
 		"special_alpha": _special_fill.modulate.a,
 		"panels": panels(),
+		"components": component_visibility(),
 	}
 
 
@@ -458,9 +556,18 @@ func _build_actions() -> void:
 	_actions_row.grow_vertical = Control.GROW_DIRECTION_END
 	_actions_row.add_theme_constant_override("separation", ACTIONS_SEPARATION)
 	_actions_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var timer := _panel("TimerPanel", "HudPanel", _actions_row)
-	timer.custom_minimum_size = TIMER_SIZE
-	var timer_margin := _margin(timer, 8)
+	# The two halves of the reference's own `.game-hud__actions` row are two
+	# components (`time` and `events`), so the buttons get their own group inside
+	# the row. The separation and the row's total minimum width are unchanged
+	# (timer + 8 + group === the measured 284.52 / 334.52 boxes), and
+	# `ALIGNMENT_END` keeps whichever half is showing flush against the row's right
+	# edge when the other one is hidden.
+	_actions_row.alignment = BoxContainer.ALIGNMENT_END
+	_timer_panel = _panel("TimerPanel", "HudPanel", _actions_row)
+	_timer_panel.custom_minimum_size = TIMER_SIZE
+	_action_buttons = _hbox(_actions_row, ACTIONS_SEPARATION)
+	_action_buttons.name = "ActionButtons"
+	var timer_margin := _margin(_timer_panel, 8)
 	# `.game-timer` is a flex row: the ball, then the two-line time column, centred
 	# (`index.html:462-463`, `styles.css:692-697`). The ball carries the `TimerBall`
 	# variation — its fill, 3 px border and round radius are theme values
@@ -753,7 +860,8 @@ func _apply_view(view: Dictionary) -> void:
 	_power_fill.anchor_right = clampf(float(view.get("shot_power", 0.0)), 0.0, 1.0)
 	_place_needle(_aim_needle, float(view.get("aim_left", 50.0)))
 	_place_timing(float(view.get("timing_left", -8.0)), float(view.get("timing_width", 5.0)))
-	_serve_banner.visible = bool(view.get("serve_visible", false))
+	_serve_want = bool(view.get("serve_visible", false))
+	_serve_banner.visible = _serve_want and _component_on("guidance")
 	_serve_label.text = String(view.get("serve_text", ""))
 	_serve_label.add_theme_color_override("font_color",
 		_palette("state_yellow") if bool(view.get("serve_point_style", false)) else _palette("cyan"))
@@ -814,7 +922,7 @@ func _set_log(lines: Variant) -> void:
 
 func _apply_mode() -> void:
 	var has_view := not _mode_view.is_empty()
-	_mode_panel.visible = has_view
+	_mode_panel.visible = has_view and _component_on("guidance")
 	if not has_view:
 		return
 	_mode_title.text = String(_mode_view.get("title", ""))
@@ -864,6 +972,7 @@ func _clear() -> void:
 	_timer_value.text = ""
 	_serve_banner.visible = false
 	_serve_label.text = ""
+	_serve_want = false
 	_intent_label.text = ""
 	_advice_label.text = ""
 	_special_fill.anchor_right = 0.0
@@ -881,6 +990,9 @@ func _clear() -> void:
 	_mode_panel.visible = false
 	_set_log_expanded(false)
 	_feed_toggle.text = "☰" + ViewState.sep_space() + UiStrings.t("chronicle")
+	# The profile is the mount's, not the view's: `_clear` never resets it, and this
+	# pass runs last so a cleared HUD paints no component the profile disabled.
+	_apply_component_visibility()
 
 
 # ---------------------------------------------------------------------------
@@ -911,7 +1023,7 @@ func _on_feed_pressed() -> void:
 ## follow, because UIR-19's overlap pass reads these rects.
 func _set_log_expanded(expanded: bool) -> void:
 	_log_expanded = expanded
-	_event_log.visible = expanded
+	_event_log.visible = expanded and _component_on("events")
 	_feed_toggle.theme_type_variation = &"SegmentedActive" if expanded else &"SegmentedInactive"
 	_feed_toggle.set_pressed_no_signal(expanded)
 	_place_bottom_regions()
@@ -970,7 +1082,7 @@ func _action_button(node_name: String, glyph: String) -> Button:
 	node.custom_minimum_size = ACTION_BUTTON
 	node.focus_mode = Control.FOCUS_NONE
 	node.mouse_filter = Control.MOUSE_FILTER_STOP
-	_actions_row.add_child(node)
+	_action_buttons.add_child(node)
 	return node
 
 

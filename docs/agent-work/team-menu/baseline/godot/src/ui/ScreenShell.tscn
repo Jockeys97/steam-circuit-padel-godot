@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Theme" path="res://src/ui/theme/padel_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://src/ui/ScreenShell.gd" id="1_shell"]
+
+[node name="ScreenShell" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("1_shell")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Rows" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+
+[node name="TitleRow" type="HBoxContainer" parent="Margin/Rows"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="Margin/Rows/TitleRow"]
+layout_mode = 2
+
+[node name="TitleBlock" type="VBoxContainer" parent="Margin/Rows/TitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Margin/Rows/TitleRow/TitleBlock"]
+layout_mode = 2
+
+[node name="Subtitle" type="Label" parent="Margin/Rows/TitleRow/TitleBlock"]
+layout_mode = 2
+
+[node name="Content" type="MarginContainer" parent="Margin/Rows"]
+layout_mode = 2
+size_flags_vertical = 3

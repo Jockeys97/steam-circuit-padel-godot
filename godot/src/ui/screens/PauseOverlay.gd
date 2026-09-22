@@ -47,7 +47,7 @@
 ##   overlay = PauseOverlay.tscn instantiate, added over the match
 ##   overlay.bind_seam(match_controller)            # or bind the signals below
 ##   overlay.set_store(store)                       # defaults to Config.save_store()
-##   overlay.set_pad_connected(Input.get_connected_joypads().size() > 0)
+##   overlay.set_pad_device(device, Input.get_joy_name(device), device >= 0)
 ##   overlay.set_osk_open(menu_nav.osk.is_open())   # once per frame, or on change
 ##   seam.set_match_paused(...) on both edges, echoing overlay.set_match_paused(...)
 ##   overlay.set_match_paused(controller.is_paused()) after every edge, so the card
@@ -98,11 +98,33 @@ signal tab_changed(tab_id: String)
 const TAB_MATCH := "match"
 const TAB_CONTROLLER := "controller"
 const TAB_CONTROLS := "controls"
+## The fourth tab is this bundle's own (`docs/agent-work/ui-visibility-settings/
+## PLAN.md`): the reference has no such panel, and its controls read and write the
+## match's visibility profile through the seam, never through a node of their own.
+const TAB_UI := "ui"
 const TABS := [
 	{"id": TAB_MATCH, "label_id": "tabMatch"},
 	{"id": TAB_CONTROLLER, "label_id": "tabController"},
 	{"id": TAB_CONTROLS, "label_id": "commands"},
+	{"id": TAB_UI, "label_id": "tabUi"},
 ]
+
+## The UI tab's own vocabulary, in the order the tab lists it. The ids are the
+## match controller's (`match_controller.gd:UI_COMPONENTS` / `UI_PRESET_IDS`), which
+## owns the profile; `tests/ui/ui_visibility_audit.gd` asserts the two lists and
+## `Hud.COMPONENT_IDS` are equal, so a mirror cannot drift silently. The label ids
+## are the tab's own, like every other string this overlay shows.
+const UI_COMPONENT_IDS := ["score", "time", "map", "guidance", "indicators", "events"]
+const UI_COMPONENT_LABEL_IDS := {
+	"score": "uiCompScore", "time": "uiCompTime", "map": "uiCompMap",
+	"guidance": "uiCompGuidance", "indicators": "uiCompIndicators",
+	"events": "uiCompEvents",
+}
+const UI_PRESET_IDS := ["all", "essential", "score_only", "clean"]
+const UI_PRESET_LABEL_IDS := {
+	"all": "uiPresetAll", "essential": "uiPresetEssential",
+	"score_only": "uiPresetScoreOnly", "clean": "uiPresetClean",
+}
 
 ## The one-line seam UIR-22 owns (`set_match_paused(bool)`, see the header) and the
 ## action the overlay falls back to until it lands — `match_controller._unhandled_input`'s
@@ -122,7 +144,8 @@ const STEP_PAUSE := 5
 
 ## The capture states the ticket's frontmatter declares.
 const CAPTURE_STATES: Array[String] = [
-	"pause-match", "pause-controller", "pause-controls", "quit-confirm", "smash-tutorial",
+	"pause-match", "pause-controller", "pause-controls", "pause-ui",
+	"quit-confirm", "smash-tutorial",
 ]
 
 ## `index.html:589` (`data-i18n="pauseInProgress"`), the line above the product title.
@@ -216,6 +239,9 @@ const NODE_REPLAY := "ReplayButton"
 const NODE_REMATCH := "RematchButton"
 const NODE_QUIT := "QuitButton"
 const NODE_CONTROLLER := "ControllerSettings"
+const NODE_UI := "UiVisibilitySettings"
+const NODE_UI_PRESETS := "UiPresets"
+const NODE_UI_NOTE := "UiShortcutNote"
 const NODE_MODE_STRIP := "ControlModeToggle"
 const NODE_STICK := "StickMonitor"
 const NODE_LEGEND_HOST := "PauseControlsOverview"
@@ -238,6 +264,9 @@ const ACTION_DEADZONE := "deadzone"
 const ACTION_VIBRATION := "vibration"
 const ACTION_VOLUME := "volume"
 const ACTION_MODE_PREFIX := "control-mode:"
+## The UI tab's two control families, in its own action vocabulary.
+const ACTION_UI_PRESET_PREFIX := "ui-preset:"
+const ACTION_UI_COMPONENT_PREFIX := "ui-component:"
 
 var _built := false
 var _open := false
@@ -248,6 +277,9 @@ var _osk_open := false
 var _replay_active := false
 var _replay_available := false
 var _pad_connected := false
+var _pad_device := -1
+var _pad_name := ""
+var _pad_layout := LegendClass.DEFAULT_LAYOUT
 var _narrow := false
 var _tight := false
 var _seam: Object = null
@@ -264,6 +296,12 @@ var _status_title: Label
 var _tabs: Dictionary = {}
 var _panels: Dictionary = {}
 var _controller_box: Control = null
+var _ui_panel: Control = null
+var _ui_title: Label = null
+var _ui_presets_label: Label = null
+var _ui_note: Label = null
+var _ui_preset_buttons: Dictionary = {}
+var _ui_toggle_rows: Dictionary = {}
 var _mode_strip: Control = null
 var _stick_monitor: Control = null
 var _continue_button: Button
@@ -316,10 +354,49 @@ func store() -> RefCounted:
 ## `setPauseTab(button.dataset.pauseTab, gamepad.connected)`).
 func set_pad_connected(connected: bool) -> void:
 	_pad_connected = connected
+	if not connected:
+		_pad_device = -1
+		_pad_name = ""
+		_pad_layout = LegendClass.detect_device_layout("")
+		_apply_pad_layout()
 
 
 func pad_connected() -> bool:
 	return _pad_connected
+
+
+## Live controller identity, fed from the match's selected input seat. This is the
+## Godot equivalent of `gamepadconnected` + `applyControllerLayout(gamepad.id)` in
+## the 2D game: one update swaps artwork, caption and every key cap together.
+func set_pad_device(device_id: int, device_name: String, connected: bool = true) -> void:
+	var next_device := device_id if connected else -1
+	var next_name := device_name if connected else ""
+	var next_layout := LegendClass.detect_device_layout(next_name)
+	if _pad_connected == connected and _pad_device == next_device \
+			and _pad_name == next_name and _pad_layout == next_layout:
+		return
+	_pad_connected = connected
+	_pad_device = next_device
+	_pad_name = next_name
+	_pad_layout = next_layout
+	_apply_pad_layout()
+
+
+func pad_device() -> int:
+	return _pad_device
+
+
+func pad_name() -> String:
+	return _pad_name
+
+
+func pad_layout() -> String:
+	return _pad_layout
+
+
+func _apply_pad_layout() -> void:
+	if _legend != null and _legend.has_method("set_device_layout"):
+		_legend.call("set_device_layout", _pad_layout)
 
 
 ## The keyboard's state, mirrored for the back hierarchy's step 1. The mount syncs
@@ -662,6 +739,7 @@ func refresh_values() -> void:
 		(_vibration_row as Rows.ToggleRow).set_on(bool(snap.get("vibration", true)))
 	if _volume_row != null:
 		(_volume_row as Rows.RangeRow).set_value(float(snap.get("volume", VOLUME_DEFAULT)))
+	refresh_ui_values()
 
 
 ## What the rows show: `UiData.settings_snapshot()` over the store — the same
@@ -714,7 +792,7 @@ func set_row_value(row_name: String, value: float) -> bool:
 	_ensure()
 	var rows_now := rows()
 	if not rows_now.has(row_name):
-		return false
+		return _set_ui_row_value(row_name, value)
 	var row: Control = rows_now[row_name]
 	if row is Rows.RangeRow:
 		(row as Rows.RangeRow).set_value(value)
@@ -735,6 +813,89 @@ func set_row_value(row_name: String, value: float) -> bool:
 func mode_button(mode: String) -> Button:
 	_ensure()
 	return _mode_buttons.get(mode, null)
+
+
+# ---------------------------------------------------------------------------
+# The UI tab's controls (docs/agent-work/ui-visibility-settings/PLAN.md)
+# ---------------------------------------------------------------------------
+
+## The UI tab's toggle rows, by component id — one door along from `rows()`, which
+## stays exactly the controller tab's own table (`DeadzoneRow`/`VolumeRow`/
+## `VibrationRow`). The nav model and the audit read both through these doors.
+func ui_rows() -> Dictionary:
+	_ensure()
+	var out := {}
+	for id in UI_COMPONENT_IDS:
+		out[String(id)] = _ui_toggle_rows.get(id, null)
+	return out
+
+
+## The four preset buttons, by preset id.
+func ui_preset_buttons() -> Dictionary:
+	_ensure()
+	return _ui_preset_buttons.duplicate()
+
+
+## The profile in force, read through the seam. No seam means the documented
+## default (the full view) and NO recorded miss: a read falls back, while a write is
+## what a missing seam makes dead — and that is what `_call_seam` records.
+func ui_profile() -> Dictionary:
+	if _seam != null and _seam.has_method("ui_visibility_snapshot"):
+		var snapshot: Variant = _seam.call("ui_visibility_snapshot")
+		if snapshot is Dictionary:
+			return snapshot
+	return {}
+
+
+## The preset the profile is exactly, straight from the seam: the controller owns
+## the maps, so the tab cannot disagree with the HUD about what `essential` means.
+func ui_preset_id() -> String:
+	if _seam != null and _seam.has_method("ui_preset_id"):
+		return String(_seam.call("ui_preset_id"))
+	return ""
+
+
+## Repaints the tab from the seam: the six toggles, then the selected preset (four
+## inactive buttons when the profile matches none of them).
+func refresh_ui_values() -> void:
+	_ensure()
+	var profile := ui_profile()
+	for id in UI_COMPONENT_IDS:
+		var row: Control = _ui_toggle_rows.get(id, null)
+		if row is Rows.ToggleRow:
+			(row as Rows.ToggleRow).set_on(bool(profile.get(id, true)))
+	var active := ui_preset_id()
+	for id in UI_PRESET_IDS:
+		var button: Button = _ui_preset_buttons.get(id, null)
+		if button == null:
+			continue
+		var on := String(id) == active
+		button.theme_type_variation = &"SegmentedActive" if on else &"SegmentedInactive"
+		button.set_pressed_no_signal(on)
+
+
+## The checkbox's own route: the write goes through the seam, then the tab re-reads
+## the profile — the controller may have refused, and the preset selection has moved.
+func _on_ui_component_changed(on: bool, id: String) -> void:
+	_call_seam("set_ui_component", [id, on])
+	refresh_ui_values()
+
+
+func _on_ui_preset_pressed(id: String) -> void:
+	_call_seam("set_ui_preset", [id])
+	refresh_ui_values()
+
+
+## The model-stepped route into the UI tab's toggles (`set_row_value`'s other half):
+## the row is set for the player AND the tab's own handler runs, which is what writes
+## the profile.
+func _set_ui_row_value(row_name: String, value: float) -> bool:
+	var row: Control = _ui_toggle_rows.get(row_name, null)
+	if not (row is Rows.ToggleRow):
+		return false
+	(row as Rows.ToggleRow).set_on(value > 0.5)
+	_on_ui_component_changed(value > 0.5, row_name)
+	return true
 
 
 # ---------------------------------------------------------------------------
@@ -835,6 +996,16 @@ func refresh_strings() -> void:
 	for mode in CONTROL_MODES:
 		if _mode_buttons.has(mode):
 			(_mode_buttons[mode] as Button).text = UiStrings.t(String(CONTROL_MODE_LABELS[mode]))
+	if _ui_title != null:
+		_ui_title.text = UiStrings.t("uiVisibility")
+	if _ui_presets_label != null:
+		_ui_presets_label.text = UiStrings.t("uiPresets")
+	if _ui_note != null:
+		_ui_note.text = UiStrings.t("uiShortcutNote")
+	for id in UI_PRESET_IDS:
+		var preset_button: Button = _ui_preset_buttons.get(id, null)
+		if preset_button != null:
+			preset_button.text = UiStrings.t(String(UI_PRESET_LABEL_IDS[id]))
 	if _legend != null and _legend.has_method("refresh_strings"):
 		_legend.call("refresh_strings")
 	if _tutorial != null and _tutorial.has_method("refresh_strings"):
@@ -858,6 +1029,10 @@ func _refresh_row_strings() -> void:
 	for row in [_deadzone_row, _volume_row, _vibration_row]:
 		if row != null:
 			Rows.refresh_strings(row)
+	for id in UI_COMPONENT_IDS:
+		var row: Control = _ui_toggle_rows.get(id, null)
+		if row != null:
+			Rows.refresh_strings(row)
 
 
 ## `index.html:578`: `<strong>STEAM CIRCUIT</strong>`, the reference's own literal
@@ -879,6 +1054,9 @@ func report() -> Dictionary:
 		"replay_active": _replay_active,
 		"replay_enabled": replay_enabled(),
 		"pad_connected": _pad_connected,
+		"pad_device": _pad_device,
+		"pad_name": _pad_name,
+		"pad_layout": _pad_layout,
 		"seam": _seam != null,
 		"seam_missing": _missing_seam.duplicate(),
 		"pause_route": pause_route(),
@@ -886,6 +1064,9 @@ func report() -> Dictionary:
 		"stick_offsets": stick_offsets(),
 		"narrow": _narrow,
 		"tight": _tight,
+		"ui_visibility": ui_profile(),
+		"ui_preset": ui_preset_id(),
+		"ui_components": UI_COMPONENT_IDS.duplicate(),
 	}
 
 
@@ -907,6 +1088,9 @@ func apply_capture_state(state_id: String) -> bool:
 		"pause-controls":
 			open()
 			return set_tab(TAB_CONTROLS, false)
+		"pause-ui":
+			open()
+			return set_tab(TAB_UI, false)
 		"quit-confirm":
 			open()
 			set_tab(TAB_MATCH, false)
@@ -977,6 +1161,13 @@ func focus_controls() -> Array:
 				var link: Button = _legend.call("tutorial_button")
 				if link != null:
 					out.append(_focus_row(ACTION_TUTORIAL_OPEN, link))
+		TAB_UI:
+			for id in UI_PRESET_IDS:
+				out.append(_focus_row(ACTION_UI_PRESET_PREFIX + String(id),
+					_ui_preset_buttons.get(id, null)))
+			for id in UI_COMPONENT_IDS:
+				var row: Control = _ui_toggle_rows.get(id, null)
+				out.append(_focus_row(ACTION_UI_COMPONENT_PREFIX + String(id), Rows.focus_node(row)))
 	return out
 
 
@@ -1040,6 +1231,7 @@ func _build() -> void:
 	_build_match_panel(column)
 	_build_controller_panel(column)
 	_build_controls_panel(column)
+	_build_ui_panel(column)
 	resized.connect(_apply_layout)
 
 
@@ -1116,16 +1308,16 @@ func _build_match_panel(parent: Control) -> void:
 ## `.pause-panel--controller` (`index.html:597-636`): the settings strip, the two
 ## rows from UIR-19's shared components, the stick monitors.
 func _build_controller_panel(parent: Control) -> void:
-	var panel := PanelContainer.new()
+	# The 2D reference's `.pause-panel--controller` is only a centring container;
+	# it has no additional surface behind the compact settings column.
+	var panel := CenterContainer.new()
 	panel.name = "PanelController"
 	parent.add_child(panel)
-	var center := CenterContainer.new()
-	panel.add_child(center)
 	var settings := VBoxContainer.new()
 	settings.name = NODE_CONTROLLER
 	settings.custom_minimum_size = Vector2(SETTINGS_WIDTH, 0.0)
 	settings.add_theme_constant_override("separation", 14)
-	center.add_child(settings)
+	panel.add_child(settings)
 	_controller_box = settings
 	var title := Label.new()
 	title.name = "ControllerTitle"
@@ -1239,7 +1431,11 @@ func _build_controls_panel(parent: Control) -> void:
 	_legend.name = "PauseLegend"
 	_legend_host.add_child(_legend)
 	if _legend.has_method("setup"):
-		_legend.call("setup", LegendClass.reference_rows(), {"tutorial_link": true})
+		_legend.call("setup", LegendClass.reference_rows(), {
+			"tutorial_link": true,
+			"side_by_side": true,
+		})
+	_apply_pad_layout()
 	if _legend.has_signal("tutorial_requested"):
 		_legend.connect("tutorial_requested", open_tutorial)
 	_tutorial = TutorialScene.instantiate()
@@ -1252,6 +1448,65 @@ func _build_controls_panel(parent: Control) -> void:
 	if _tutorial.has_method("close"):
 		_tutorial.call("close")
 	_panels[TAB_CONTROLS] = panel
+
+
+## The UI tab (`docs/agent-work/ui-visibility-settings/PLAN.md`): the four presets
+## first, then the six independent toggles, then the one-line explanation of the
+## in-match shortcut. Every control reads its state from the bound controller and
+## writes through it — the panel owns no profile of its own, so the tab and the live
+## HUD cannot disagree.
+func _build_ui_panel(parent: Control) -> void:
+	var panel := VBoxContainer.new()
+	panel.name = "PanelUi"
+	panel.add_theme_constant_override("separation", 12)
+	parent.add_child(panel)
+	_ui_panel = panel
+	var settings := VBoxContainer.new()
+	settings.name = NODE_UI
+	settings.custom_minimum_size = Vector2(SETTINGS_WIDTH, 0.0)
+	settings.add_theme_constant_override("separation", 12)
+	panel.add_child(settings)
+	_ui_title = _section_label("UiTitle", "uiVisibility", 11)
+	settings.add_child(_ui_title)
+	_ui_presets_label = _section_label("UiPresetsTitle", "uiPresets", 11)
+	settings.add_child(_ui_presets_label)
+	var presets := GridContainer.new()
+	presets.name = NODE_UI_PRESETS
+	presets.columns = 2
+	presets.add_theme_constant_override("h_separation", 6)
+	presets.add_theme_constant_override("v_separation", 6)
+	settings.add_child(presets)
+	for id in UI_PRESET_IDS:
+		var button := _action_button("UiPreset%s" % String(id).capitalize(),
+			"SegmentedInactive", String(UI_PRESET_LABEL_IDS[id]))
+		button.custom_minimum_size = Vector2(0.0, MODE_HEIGHT)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.pressed.connect(_on_ui_preset_pressed.bind(String(id)))
+		presets.add_child(button)
+		_ui_preset_buttons[id] = button
+	for id in UI_COMPONENT_IDS:
+		var row := Rows.make_toggle(String(UI_COMPONENT_LABEL_IDS[id]), true,
+			"UiToggle%s" % String(id).capitalize())
+		(row as Rows.ToggleRow).changed.connect(_on_ui_component_changed.bind(String(id)))
+		settings.add_child(row)
+		_ui_toggle_rows[id] = row
+	_ui_note = _section_label(NODE_UI_NOTE, "uiShortcutNote", 11)
+	_ui_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	settings.add_child(_ui_note)
+	_panels[TAB_UI] = panel
+
+
+## A section label in the controller tab's own type (`controlPlayers`'s shape): the
+## small soft-cased eyebrow above a group of controls.
+func _section_label(node_name: String, key: String, size: int) -> Label:
+	var label := Label.new()
+	label.name = node_name
+	label.text = UiStrings.t(key)
+	label.set_meta("message_id", key)
+	label.add_theme_font_override("font", _font("LabelSmall"))
+	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_color_override("font_color", _palette("text_soft"))
+	return label
 
 
 func _action_button(node_name: String, variation: String, key: String) -> Button:
@@ -1429,9 +1684,19 @@ func _apply_layout() -> void:
 			if String(tab["id"]) == String(id):
 				var button: Button = _tabs[id]
 				button.set_meta("message_id", String(tab["label_id"]))
+	if _ui_panel != null:
+		var presets := _ui_panel.find_child(NODE_UI_PRESETS, true, false)
+		if presets is GridContainer:
+			(presets as GridContainer).columns = 1 if _tight else 2
+		for id in UI_PRESET_IDS:
+			var preset_button: Button = _ui_preset_buttons.get(id, null)
+			if preset_button != null:
+				preset_button.set_meta("message_id", String(UI_PRESET_LABEL_IDS[id]))
 	for mode in _mode_buttons:
 		(_mode_buttons[mode] as Button).set_meta("message_id", String(CONTROL_MODE_LABELS[mode]))
 	if _legend != null:
+		if _legend.has_method("set_side_by_side"):
+			_legend.call("set_side_by_side", not _narrow)
 		var rows_node: Node = _legend.get_node_or_null("LegendRows")
 		if rows_node != null and rows_node is GridContainer:
 			(rows_node as GridContainer).columns = 1 if _tight else 2

@@ -1,0 +1,23 @@
+# pace-integration baseline
+branch: codex/integrate-arena-11m
+head: 7b4dc561ac262555649ea0ec3f184466c382126c
+captured: 2026-09-21T13:24:46Z
+
+## sha256 of affected files (pre-edit)
+609261ea3f6a0526e3ddb00d87fa44e388a975af2d669984873661384ca7a6fc  godot/game/match_config.gd
+54d63c4de3892ea2a95123e082989a09a3366526b049c03903ed2d733e106008  godot/game/match_controller.gd
+f8847b9794ab1e43b9af4a8ca837c0a4db7b38a78dfd4f69ebc004df142043ec  godot/src/save/save_schema.gd
+891f7e09e4412d5255f35c7857dc253d82312a6c1210b041bbc42f61ea9dedd3  godot/src/ui/data/UiData.gd
+be5ea2385d2b48e708af4ae8e3a62813421ef59afc8f395b1a12df0d76149cf4  godot/src/ui/screens/SettingsScreen.gd
+76ed920eb417636f0d968c15edd2795e98cd088d7893c08d57a20f24b077553c  godot/src/ui/screens/ModesScreen.gd
+d02f7b75994daf4edc1f1b66d07fb85aeb9e7e6a7f1a98089bd3255cca648000  godot/src/ui/screens/ModesScreen.tscn
+1eb09f97112bd96948184c248760f1c232568cb61d8150057ce44631dd9a158b  godot/tests/save_steam_test.gd
+c95a2094e836828400b3316c5dd1564dbb37412bde561d79229226959b1d7880  godot/tests/ui/screen_modes_audit.gd
+
+## absence check (new files)
+ABSENT  godot/src/sim/pace.gd
+ABSENT  godot/tests/pace_presets_test.gd
+ABSENT  godot/tests/pace_screen_test.gd
+
+## git status of affected paths
+ M godot/game/match_controller.gd

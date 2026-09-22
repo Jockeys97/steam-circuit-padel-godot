@@ -1,0 +1,94 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+court timing marks seam test — one owner for the presentation
+  module res://game/court_timing_marks.gd
+  caller res://game/match_controller.gd
+
+ok the one court timing module exists at res://game/court_timing_marks.gd
+ok the module owns every moved geometry constant
+ok the module owns every builder of the presentation
+ok the module's public seam is the six calls the shell and the tests use
+ok the match shell carries no TIMING_* constant any more
+ok the shell's only `_timing_*` name is the module reference
+ok the match shell declares none of the moved builders
+ok the match shell preloads the module
+ok the shell uses the one interface: create, mount, update, report, capture_lines
+ok the module preloads no caller (no pass-through, no cycle)
+ok the module preloads no simulation script: it reads the state it is handed
+ok mount() built every mark of the presentation
+ok the module's own list is the scene's eleven marks, names and order unchanged
+ok every mark is a child of the mount parent
+ok the mount parent carries the eleven marks and nothing else
+ok every mark starts invisible: `update` decides what is on screen
+ok every mesh mark is a mesh and every label mark a label
+ok every mark is camera-facing, unshaded, depth-test-free and shadowless
+ok the compact advice word is camera-facing and depth-test-free at 1/60 m per pixel
+ok the verdict's grade line carries the reference's own size and stroke
+ok the verdict's mode line is the reference's own second line
+ok with nothing charging only the energy bar is drawn
+ok the energy bar sits under the active athlete, pulled towards the camera
+ok the energy fill hangs off the bar's left edge, half a bar to the left
+ok the energy fill is `rallyEnergy.player` of the bar
+ok full energy is the reference's #56e8d8
+ok a charging shot with a live read draws the ring
+ok the ring is over the athlete, at the measured ring height
+ok the fill is `1 - read.eta / 0.55`, the reference's own expression
+ok the drawn arc is quantised to the reference's own 7.5-degree step
+ok the window is not drawn while eta is outside `perfectWindow`
+ok an eta at the perfect window fills the ring to the top of the arc
+ok the full arc is `1.6*PI` in `PI/24` steps
+ok the drawn arc is rebuilt longer as the fill grows
+ok the perfect window is the read's own `perfectWindow`
+ok the ring's own radius is the measured one
+ok the met window blinks at `0.55 + 0.4 * (0.5 + 0.5*sin(18t))`
+ok an eta past 0.55 leaves the fill empty, as `clampf(..., 0, 1)` requires
+ok the precision bar is hidden at or under `precision > 0.04`
+ok the precision bar is drawn while the charge carries precision
+ok the precision bar is at the measured precision height
+ok the precision fill grows from the bar's left edge
+ok the precision fill is `precision` of the bar
+ok an unarmed angle is the reference's cyan
+ok an armed angle takes the vocabulary's amber (the reference's pulse rule)
+ok an armed angle is no longer the unarmed cyan
+ok the advice word is the locale's `shotAdvice_<advice>`, uppercased as the reference does
+ok no id ever reaches the field: the word is the resolved sentence
+ok the word is the vocabulary module's own resolution
+ok the word sits at the measured advice height
+ok a control profile is the reference's #8fffd0
+ok the word's panel is a box around the measured text, not a fixed width
+ok an aggressive profile is the reference's #ffd46a
+ok no advice while the athlete is serving
+ok no advice while the point is paused
+ok energy 1.00 is the reference's #56e8d8
+ok energy 0.40 is the reference's #ffd45c
+ok energy 0.20 is the reference's #ff6b64
+ok the energy fill follows the player's own energy
+ok the energy bar follows a switch to the partner
+ok the ring follows the same switch as the energy bar
+ok a state that is not running draws nothing
+ok no feedback means no verdict on the field
+ok the verdict is drawn while the feedback lives
+ok the verdict word is the locale's grade word, not the id
+ok the mode line is the locale's mode word
+ok a perfect grade takes the reference's #74ffba
+ok it fades with `life / 0.28`, as the reference does
+ok it is anchored to the athlete who HIT, not to the one under control
+ok the verdict drifts upwards as it fades
+ok a feedback with no paddle key draws no verdict
+ok a spent feedback draws no verdict
+ok a good grade takes the reference's #77e7ff
+ok a early grade takes the reference's #ffd45c
+ok a late grade takes the reference's #ff8b70
+ok a smashX2 grade takes the reference's #ffffff
+ok the frame before the A/B has the marks on screen
+ok the A/B mute turns every timing mark off for the same tick
+ok a muted frame reports no placement at all
+ok switching the mute back restores the same frame
+ok the report is a copy, not the module's own dictionary
+ok the frame recorder gets its two marker lines
+ok the timing line is the one the evidence files quote, key for key
+ok the verdict line carries the report's own word, mode, grade and paddle
+ok no camera is the shell's own (-1, -1), never a crash
+ok an unmounted module draws nothing and reports nothing
+ok every test section ran to completion (a section that threw is a failure)
+PASS 87/87

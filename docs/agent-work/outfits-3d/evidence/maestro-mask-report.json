@@ -1,0 +1,230 @@
+{
+ "tool": "tools/character/build_maestro_outfit_mask.py",
+ "glb": "godot/assets/athletes/maestro.glb",
+ "texture": "godot/assets/athletes/maestro_texture_0.png",
+ "mask": "godot/assets/athletes/outfits/maestro/maestro_region_mask.png",
+ "mask_size": 2048,
+ "edge_soften_px": 1.2,
+ "bone_region": {
+  "Spine": "torso",
+  "Spine01": "torso",
+  "Spine02": "torso",
+  "LeftShoulder": "torso",
+  "RightShoulder": "torso",
+  "Hips": "hip",
+  "LeftUpLeg": "hip",
+  "RightUpLeg": "hip",
+  "LeftFoot": "foot",
+  "RightFoot": "foot",
+  "LeftToeBase": "foot",
+  "RightToeBase": "foot"
+ },
+ "regions": [
+  "torso",
+  "hip",
+  "foot"
+ ],
+ "coverage_texels": 1518488,
+ "coverage_fraction": 0.362,
+ "protected_texels": 2675816,
+ "family_anchors": {
+  "navy": {
+   "hex": "#102040",
+   "srgb": [
+    0.0627,
+    0.1255,
+    0.251
+   ],
+   "hue_deg": 217.1,
+   "samples": 54088,
+   "modal_hits": 10335
+  },
+  "sky": {
+   "hex": "#68a8c8",
+   "srgb": [
+    0.4078,
+    0.6588,
+    0.7843
+   ],
+   "hue_deg": 196.5,
+   "samples": 2563,
+   "modal_hits": 557
+  }
+ },
+ "triangles": 12253,
+ "region_triangles": {
+  "torso": 1124,
+  "hip": 1850,
+  "foot": 2564
+ },
+ "protected_triangles": 6715,
+ "straddling_triangles": 176,
+ "region_y_min": {
+  "torso": 0.897,
+  "hip": 0.4347,
+  "foot": -0.0
+ },
+ "region_y_max": {
+  "torso": 1.5476,
+  "hip": 1.0604,
+  "foot": 0.1901
+ },
+ "bone_diff": {
+  "maestro_joint_count": 24,
+  "fiamma_joint_count": 28,
+  "absent_from_maestro": [
+   "mixamorig:LeftToe_End",
+   "mixamorig:RightToe_End"
+  ],
+  "renamed": {
+   "mixamorig:Spine1": "Spine01",
+   "mixamorig:Spine2": "Spine02"
+  },
+  "note": "Maestro names its spine chain downward from the pelvis (Spine02 lowest, then Spine01, then Spine) while Fiamma's Spine/Spine1/Spine2 run upward. All three map to torso, so the flip moves no triangle. The two missing bones are Toe_End joints only; the toes stay covered by LeftToeBase and RightToeBase."
+ },
+ "protected_leak": {
+  "Head": {
+   "strict": {
+    "triangles": 4432,
+    "texels": 607848,
+    "inside_mask_texels_ge200": 2,
+    "leak_ge200": 0.0,
+    "inside_mask_texels_ge128": 154,
+    "leak_ge128": 0.0003
+   },
+   "majority": {
+    "triangles": 4452,
+    "texels": 611159,
+    "inside_mask_texels_ge200": 2986,
+    "leak_ge200": 0.0049,
+    "inside_mask_texels_ge128": 3436,
+    "leak_ge128": 0.0056
+   }
+  },
+  "Hands": {
+   "strict": {
+    "triangles": 720,
+    "texels": 46427,
+    "inside_mask_texels_ge200": 0,
+    "leak_ge200": 0.0,
+    "inside_mask_texels_ge128": 0,
+    "leak_ge128": 0.0
+   },
+   "majority": {
+    "triangles": 746,
+    "texels": 48610,
+    "inside_mask_texels_ge200": 0,
+    "leak_ge200": 0.0,
+    "inside_mask_texels_ge128": 0,
+    "leak_ge128": 0.0
+   }
+  },
+  "ForeArm": {
+   "strict": {
+    "triangles": 302,
+    "texels": 50380,
+    "inside_mask_texels_ge200": 0,
+    "leak_ge200": 0.0,
+    "inside_mask_texels_ge128": 0,
+    "leak_ge128": 0.0
+   },
+   "majority": {
+    "triangles": 364,
+    "texels": 59670,
+    "inside_mask_texels_ge200": 0,
+    "leak_ge200": 0.0,
+    "inside_mask_texels_ge128": 0,
+    "leak_ge128": 0.0
+   }
+  },
+  "Arm": {
+   "strict": {
+    "triangles": 722,
+    "texels": 70227,
+    "inside_mask_texels_ge200": 16,
+    "leak_ge200": 0.0002,
+    "inside_mask_texels_ge128": 527,
+    "leak_ge128": 0.0075
+   },
+   "majority": {
+    "triangles": 825,
+    "texels": 95725,
+    "inside_mask_texels_ge200": 13847,
+    "leak_ge200": 0.1447,
+    "inside_mask_texels_ge128": 15996,
+    "leak_ge128": 0.1671
+   }
+  },
+  "Shin": {
+   "strict": {
+    "triangles": 416,
+    "texels": 78318,
+    "inside_mask_texels_ge200": 4,
+    "leak_ge200": 0.0001,
+    "inside_mask_texels_ge128": 492,
+    "leak_ge128": 0.0063
+   },
+   "majority": {
+    "triangles": 498,
+    "texels": 99075,
+    "inside_mask_texels_ge200": 18444,
+    "leak_ge200": 0.1862,
+    "inside_mask_texels_ge128": 21087,
+    "leak_ge128": 0.2128
+   }
+  }
+ },
+ "texel_classes": {
+  "masked_texels": 1518775,
+  "classes": {
+   "sky": 48803,
+   "navy": 961770,
+   "skin": 60271,
+   "neutral": 442907,
+   "other": 5024
+  },
+  "classes_by_region": {
+   "torso": {
+    "navy": 197794,
+    "neutral": 32337,
+    "other": 2542,
+    "sky": 7336,
+    "skin": 4231
+   },
+   "hip": {
+    "navy": 253682,
+    "skin": 51759,
+    "neutral": 615,
+    "sky": 28727,
+    "other": 897
+   },
+   "foot": {
+    "neutral": 409697,
+    "navy": 510487,
+    "skin": 4253,
+    "sky": 12763,
+    "other": 1584
+   }
+  },
+  "family_test": {
+   "effective": {
+    "hue_tol_deg": 45.0,
+    "sat_min": 0.18,
+    "val_min": 0.02,
+    "val_max": 0.98
+   },
+   "anchor_hue_deg": {
+    "navy": 220.0,
+    "sky": 200.0
+   },
+   "hue_separation_deg": 20.0,
+   "hits": {
+    "navy": 1127490,
+    "sky": 1114593
+   },
+   "texels_matching_both_anchors": 1114473,
+   "skin_hued_family_hits": 0,
+   "hue_test_separates_the_two_families": false
+  }
+ }
+}

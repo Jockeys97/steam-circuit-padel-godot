@@ -170,6 +170,9 @@ var _stroke_speed_scale: float = 1.0
 var _use_glb_pbr: bool = false
 var _building: bool = false
 var _athlete_id: StringName = &""
+const OutfitGeometry := preload("res://src/character/outfit_geometry.gd")
+var _geometry_outfit: StringName = &"base"
+var _motion_id: String = ""
 var _glb_base_path: String = GLB_BASE
 var _glb_walk_path: String = GLB_WALK
 var _glb_run_path: String = GLB_RUN
@@ -195,10 +198,21 @@ func _ready() -> void:
 ## intentionally a pre-build operation: changing the mesh of a live rig would
 ## invalidate its Skeleton3D, racket anchor and animation library. Returning false
 ## after construction prevents an accidental mid-match model swap.
-func set_athlete_asset(athlete_id: StringName) -> bool:
+func set_athlete_asset(athlete_id: StringName, outfit_id: StringName = &"base") -> bool:
 	if _load_error != ERR_UNCONFIGURED or _building:
 		return false
 	_athlete_id = athlete_id
+	_geometry_outfit = &"base"
+	_motion_id = String(athlete_id)
+	var variant := OutfitGeometry.variant(athlete_id, outfit_id)
+	if not variant.is_empty():
+		_geometry_outfit = outfit_id
+		_glb_base_path = variant.base
+		_glb_walk_path = variant.walk
+		_glb_run_path = ""
+		_glb_idle_path = ""
+		_motion_id = variant.motion_id
+		return true
 	_glb_base_path = String(ATHLETE_GLB.get(athlete_id, GLB_BASE))
 	var companions: Dictionary = COMPANION_CLIPS.get(athlete_id, {})
 	_glb_idle_path = String(companions.get(CLIP_IDLE, ""))
@@ -216,6 +230,9 @@ func set_athlete_asset(athlete_id: StringName) -> bool:
 
 func get_athlete_asset() -> StringName:
 	return _athlete_id
+
+func get_geometry_outfit() -> StringName:
+	return _geometry_outfit
 
 
 ## The res:// path of the mesh this rig actually loads. For a special athlete with
@@ -293,6 +310,18 @@ func _build() -> int:
 	# (restpose/Walking/Running) into the stable API names. The Volpe fallback has
 	# one base clip and keeps adopting walk/run from its companion GLBs.
 	var embedded := _animation_names()
+	if _geometry_outfit != &"base":
+		# This export contains running, not a resting pose. Build a planted idle
+		# from this skeleton's own rest transforms, then relax arms from its walk.
+		var idle := Animation.new()
+		idle.length = 3.2
+		idle.loop_mode = Animation.LOOP_LINEAR
+		lib.add_animation(CLIP_IDLE, idle)
+		_complete_idle_tracks(lib)
+		for source_name in _anim.get_animation_list():
+			if "running" in String(source_name).to_lower():
+				_alias_clip(lib, source_name, CLIP_RUN)
+				break
 	if embedded.has("restpose"):
 		_alias_clip(lib, embedded["restpose"], CLIP_IDLE)
 	if embedded.has("walking"):
@@ -316,14 +345,14 @@ func _build() -> int:
 	if not lib.has_animation(CLIP_RUN) and _glb_run_path != "":
 		_adopt_clip(lib, _glb_run_path, CLIP_RUN)
 
-	if _athlete_id == &"fiamma":
+	if _athlete_id == &"fiamma" or _geometry_outfit != &"base":
 		_author_ready_idle(lib)
 	_complete_idle_tracks(lib)
 	_author_footwork(lib)
 	_author_strokes(lib)
 	if _athlete_id in [&"fiamma", &"colosso", &"oracolo", &"maestro", &"fornaio", &"pantera", &"steamer"]:
 		for shot in ["drive", "smash", "bandeja", "backhand", "slice"]:
-			var motion_path := "res://assets/athletes/animations/%s_meshy_%s.tres" % [_athlete_id,shot]
+			var motion_path := "res://assets/athletes/animations/%s_meshy_%s.tres" % [_motion_id,shot]
 			if ResourceLoader.exists(motion_path):
 				var motion := load(motion_path) as Animation
 				if motion != null:

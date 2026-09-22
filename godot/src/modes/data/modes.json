@@ -5,8 +5,8 @@
     "js/drill.js"
   ],
   "sourceSha256": {
-    "js/data.js": "c63c496cd967663a5ec9f708e77b6f6948e4b523ba5b0e4280a40af642ec6403",
-    "js/drill.js": "b3f346f65029e0a402eda2f6e73a1fd7897b0c1ee0c812e701eee911a89c8703"
+    "js/data.js": "6727f940621bd74bceb1a5c9cc0d2b9653309cc6fbd600f6377bacb8964cab89",
+    "js/drill.js": "010e6faebb774f6932d0242b0732176eb888a6cc79fb799ce0881b9a6fb179e6"
   },
   "career": {
     "matches": 3,
@@ -54,7 +54,7 @@
         "unit": "max"
       }
     },
-    "unlockCode": "GAPROVA"
+    "unlockCode": "LUCALE"
   },
   "outfits": {
     "maestro": [

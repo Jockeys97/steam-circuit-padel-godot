@@ -1,0 +1,142 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# Godot 4.7.2-stable (official) · slice S11 save + Steam seam
+ok save root is user://save (js/ui.js:7-11 has five localStorage keys)
+ok there is one save group per reference key
+ok no two groups share a file
+ok history is capped at 20 entries (js/ui.js:1551)
+ok feedback queue is capped at FEEDBACK.maxQueued (js/data.js:73)
+ok career defaults carry all 16 reference fields
+ok career default season is 1 (js/ui.js:13)
+ok career default seasonProgress has the 6 SEASON_METRIC_AGG keys (js/data.js:775-782)
+ok career default seasonProgress keys match the reference exactly
+ok career default claimedObjectives is empty (js/ui.js:30)
+ok prefs defaults carry all 17 collectPrefs fields
+ok prefs defaults carry the port addition 'pacePreset'
+ok prefs default controlMode is 'semi' (js/ui.js:466)
+ok prefs default gamepadDeadzone is 0.15 (js/ui.js:467)
+ok prefs default matchLength is 'points11' (js/ui.js:470)
+ok prefs default volume is 0.5 (js/audio.js:5)
+ok prefs default tournamentRound is 0 (js/ui.js:464)
+ok prefs defaults carry the lineup triple (js/ui.js:480)
+ok the envelope records the writing build (js/data.js:20)
+ok write_all writes every group
+ok write_all reports non-zero bytes
+ok every group is a real non-empty file on disk
+ok read_all succeeds with nothing recovered or refused
+ok career round-trips field for field
+ok prefs round-trip field for field
+ok history round-trips (1 entry)
+ok drill records round-trip
+ok the feedback queue round-trips with `sent` preserved
+ok the feedback entry keeps its topic (js/data.js:78)
+ok whole numbers reload as ints, not floats
+ok fractional numbers stay floats
+ok the career file is a JSON object
+ok the file carries the format tag
+ok the file carries schemaVersion 1
+ok the file carries the build that wrote it
+ok the payload is nested under `payload`
+ok store.last_write_ok and byte count are recorded
+ok an incomplete career payload can be written
+ok the stored field survives the merge
+ok missing matchIndex is the default 0 (js/ui.js:14)
+ok missing trophies is the default 0 (js/ui.js:17)
+ok missing seasonProgress gains all 6 default metrics
+ok missing claimedObjectives is {}
+ok missing equippedOutfits is {}
+ok missing unlockAll is false
+ok missing finaleSeen is false
+ok a payload with an unknown key is written
+ok a field the schema does not know is preserved, not dropped
+ok and the known field is still there
+ok a stored prefs field wins over its default
+ok a missing prefs field is supplied by the ui defaults (js/ui.js:466)
+ok a fresh install reads as a complete empty profile, not an error
+ok the fresh profile's groups were all absent, not corrupt
+ok a second write replaces the first in place
+ok the new payload is the one on disk
+ok an interrupted write reports failure
+ok the target file is byte-identical after the interrupted write
+ok the old payload is still the one on disk
+ok no .tmp file is left behind
+ok the previous good content was non-empty to begin with
+ok read_all reports the corrupted group
+ok the corrupt group falls back to the reference defaults, not an empty profile
+ok the other groups are untouched by one corrupt file
+ok the corrupt file was quarantined, not deleted
+ok the quarantined bytes are the ones that were there
+ok the corrupted path itself is gone (renamed away)
+ok a clean write after recovery succeeds
+ok the rebuilt file reads back
+ok the v0 sample has no schemaVersion
+ok the v0 file is read as a migration, not a corruption
+ok v0 -> v1 preserves a stored field verbatim
+ok v0 -> v1 preserves an unknown field too
+ok the migrated envelope is at the current schema version
+ok the migrated envelope records where it came from
+ok migration reports the action it took
+ok a v0 array payload migrates as an array
+ok a save from an unknown future schema version is refused
+ok the refusal does not claim a payload to merge
+ok the refused file is NOT quarantined (the bytes are left for a newer build)
+ok the refused file is byte-identical after the read
+ok read_all lists the refusal
+ok read_all reports the profile as not ok while a group is refused
+ok no source->API-name mapping exists yet (steamworks-prerequisites open)
+ok unlock_source refuses while the mapping is empty
+ok the refusal is recorded with its reason
+ok no achievement reached the backend from a refused source
+ok the sources list is the three families the ticket names (6 values)
+ok the 20 unlockable outfit challenges are named
+ok every source is still uncovered
+ok an achievement unlocks through the seam
+ok the backend saw exactly one call
+ok unlocking the same achievement again still reports true
+ok and does NOT call the backend a second time
+ok a second achievement unlocks too
+ok the backend saw one call per distinct achievement
+ok the seam's own call counter matches
+ok two achievements are recorded as unlocked
+ok an empty API name is refused rather than sent
+ok the empty name did not reach the backend
+ok the mock is a mock
+ok the mock does not claim live Steam
+ok with no client the mock reports a soft status 2
+ok with no client the gate is closed
+ok an unlock with no Steam backend fails honestly
+ok nothing is recorded as unlocked when the backend refused
+ok the refusal is recorded on the mock
+ok a refused unlock is not remembered as unlocked
+ok an init failure reports status 1
+ok an init failure keeps the gate closed and the game running
+ok the mock cloud accepts the upload
+ok the cloud file is named after the local group file
+ok the mock cloud holds the file
+ok the local file still exists after the upload (cloud is not the only copy)
+ok the uploaded bytes are the local file's own bytes
+ok the cloud copy downloads
+ok and is byte-identical to what was uploaded
+ok the conflict rule today is local-wins, never cloud-wins (the save-format decision owns it)
+ok cloud is used only when there is no local copy at all
+ok the mock reports itself as a mock in the cloud status
+ok with no backend the upload is skipped, not failed
+ok with no backend the download is skipped
+ok the local file is untouched by the skipped cloud pass
+ok an open gate that refuses the write is reported as not ok
+ok the refused write is not in the mock cloud
+ok the real bridge class is not a mock
+ok the real bridge class never claims live Steam
+ok with the addon absent the real bridge reports a non-zero (soft) status
+ok and leaves the gate closed
+ok an achievement on a closed real bridge returns false
+ok a cloud write on a closed real bridge returns false
+ok Engine.has_singleton("Steam") is false here, which is why the above is the honest answer
+ok the factory's default backend is the mock
+ok the factory's default mock is a mock
+ok the factory's default reports the honest no-Steam status
+ok the factory's default leaves Steam off
+ok the factory never claims live Steam
+ok an explicit AVAILABLE mock opens the gate for tests only
+ok every test section ran to completion
+PASS 138/138

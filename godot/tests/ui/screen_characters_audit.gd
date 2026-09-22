@@ -19,6 +19,9 @@
 ##   7. three activations inside the window open the code entry; a wrong code changes
 ##      nothing; the right one (`ModeTables.unlock_code()`) sets `career.unlockAll`;
 ##      **a build-excluded athlete stays locked afterwards** — the ticket's negation;
+##  7b. the wardrobe's own title door: three activations on the title's last word open
+##      the same entry, a point outside that word does not, and the password is taken
+##      exactly as the player types it;
 ##   8. zero user-facing literals in the screen (scene: none), with the scan's synthetic
 ##      proof it can still see prose;
 ##   9. a language flip re-resolves every binding, in both locales;
@@ -40,6 +43,7 @@ const Bridge := preload("res://src/ui/focus/UiFocusBridge.gd")
 const MenuFocus := preload("res://game/menu_focus.gd")
 const Locale := preload("res://src/locale/locale.gd")
 const UiStrings := preload("res://src/ui/UiStrings.gd")
+const UiArt := preload("res://src/ui/data/UiArtPaths.gd")
 const DemoGate := preload("res://src/ui/data/DemoGateAdapter.gd")
 const DemoContent := preload("res://tests/build/DemoContent.gd")
 const Config := preload("res://game/match_config.gd")
@@ -459,6 +463,10 @@ func _outfits(audit: AuditBase) -> void:
 		var outfit_id := String((outfit as Dictionary).get("id", ""))
 		if screen.find_child("OutfitCard_%s" % outfit_id, true, false) != null:
 			shown.append(outfit_id)
+			var portrait := screen.find_child("OutfitCard_%sArtImage" % outfit_id, true, false) as TextureRect
+			var expected := "res://assets/ui/athletes/%s.webp" % athlete_id if outfit_id == "base" else "res://assets/ui/outfits/%s/%s-preview.webp" % [athlete_id, outfit_id]
+			audit.check_true(portrait != null and portrait.texture != null and portrait.texture.resource_path == expected,
+				"characters/outfit_uses_its_original_preview_%s" % outfit_id)
 	audit.check_eq(shown.size(), outfits.size(), "characters/the_wardrobe_shows_every_outfit")
 	var equipped_card: Control = screen.find_child("OutfitCard_%s" % equipped, true, false)
 	var equipped_box := equipped_card.get_theme_stylebox("panel") as StyleBoxFlat
@@ -495,6 +503,30 @@ func _outfits(audit: AuditBase) -> void:
 		var worn: Dictionary = career.get("equippedOutfits", {})
 		audit.check_eq(String(worn.get(athlete_id, "")), unlocked_id, "characters/the_equipped_outfit_is_persisted")
 		audit.check_eq(screen.view(), "team", "characters/equipping_returns_to_the_team_panel")
+	# The unlock code makes every outfit selectable. Pick a non-base preview and prove
+	# the rebuilt team card reads the saved outfit instead of returning to base art.
+	var all_open: Dictionary = ModesSave.load_career(Config.save_store())
+	all_open["unlockAll"] = true
+	ModesSave.save_career(Config.save_store(), all_open)
+	screen.refresh_data()
+	audit.check_true(screen.open_outfits("player"), "characters/the_unlocked_wardrobe_reopens_for_the_team_portrait_probe")
+	var alternate_id := ""
+	for outfit in outfits:
+		var candidate := String((outfit as Dictionary).get("id", ""))
+		if candidate != "base" and UiArt.outfit_path_for(athlete_id, candidate) != UiArt.path_for("athletes", athlete_id):
+			alternate_id = candidate
+			break
+	audit.check_true(alternate_id != "", "characters/the_player_has_a_non_base_preview_for_the_team_portrait_probe")
+	if alternate_id != "":
+		audit.check_true(screen.equip_outfit(athlete_id, alternate_id), "characters/a_non_base_outfit_is_equipped_for_the_team_portrait_probe")
+		var team_portrait := screen.find_child("TeamSlot_playerArtImage", true, false) as TextureRect
+		var expected_team_art := UiArt.outfit_path_for(athlete_id, alternate_id)
+		audit.check_true(team_portrait != null and team_portrait.texture != null and team_portrait.texture.resource_path == expected_team_art,
+			"characters/the_team_card_uses_the_equipped_outfit_preview")
+	all_open = ModesSave.load_career(Config.save_store())
+	all_open["unlockAll"] = false
+	ModesSave.save_career(Config.save_store(), all_open)
+	screen.refresh_data()
 	audit.check_eq(screen.open_outfits("opponentMate"), true, "characters/the_wardrobe_opens_for_a_rival_slot_too")
 
 
@@ -561,6 +593,16 @@ func _unlock_code(audit: AuditBase) -> void:
 			break
 	audit.report("unlock candidate=%s" % candidate)
 	audit.check_eq(screen.submit_unlock_code(code), "refused", "characters/the_code_door_is_closed_by_default")
+
+	# 7b. The wardrobe's title door. It runs before the card door below because it
+	# spends the code; the career is put back afterwards so that door starts fresh.
+	await _title_door(audit, screen, code)
+	var spent: Dictionary = ModesSave.load_career(Config.save_store())
+	spent["unlockAll"] = false
+	ModesSave.save_career(Config.save_store(), spent)
+	screen.refresh_data()
+	audit.check_eq(screen.submit_unlock_code(code), "refused", "characters/the_code_door_is_closed_again_after_the_title_door")
+
 	if candidate != "":
 		audit.check_eq(screen.unlock_tap(candidate), false, "characters/the_first_activation_asks_nothing")
 		audit.check_eq(screen.unlock_tap(candidate), false, "characters/the_second_activation_asks_nothing")
@@ -581,6 +623,57 @@ func _unlock_code(audit: AuditBase) -> void:
 			audit.check_eq(screen.athlete_locked_shown(String(id)), true, "characters/build_locked_athlete_%s_survives_the_code" % id)
 		if DemoGate.build() != "demo":
 			audit.check_true(screen.apply_capture_state("default"), "characters/the_live_state_returns_after_the_negation")
+
+
+## 7b. The wardrobe's title door. The presses are delivered through the label's own
+## `gui_input` because this audit's own evidence runs it `--headless`, and a headless
+## Godot has the dummy display server, which does no mouse routing at all: the routed
+## click was verified once in a windowed run, and what is asserted here is every
+## precondition a real click needs — the filter raised off `IGNORE`, the handler
+## connected, and a hit test that covers the word rather than the whole title. The
+## password is typed the way the player types it, not in the table's own case.
+func _title_door(audit: AuditBase, screen: Node, code: String) -> void:
+	audit.check_true(screen.open_outfits("player"), "characters/the_title_door_probe_opens_the_players_outfits")
+	audit.check_eq(screen.view(), "outfits", "characters/the_title_door_probe_starts_in_the_outfit_view")
+	var title := screen.find_child("TitleLabel", true, false) as Label
+	audit.check_true(title != null, "characters/the_title_door_has_a_title_label")
+	if title == null:
+		return
+	audit.check_eq(title.mouse_filter, Control.MOUSE_FILTER_STOP, "characters/the_title_door_raises_the_label_mouse_filter")
+	audit.check_gt(title.gui_input.get_connections().size(), 0, "characters/the_title_door_is_wired_to_gui_input")
+	var word: Rect2 = screen.title_word_rect()
+	audit.check_true(word.size.x > 0.0 and word.size.y > 0.0, "characters/the_title_door_measures_a_word")
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = Vector2(word.position.x - 8.0, word.get_center().y)
+	title.gui_input.emit(press)
+	audit.check_eq(screen.submit_unlock_code(code), "refused", "characters/a_press_left_of_the_word_asks_nothing")
+	press.position = Vector2(word.end.x + 8.0, word.get_center().y)
+	title.gui_input.emit(press)
+	audit.check_eq(screen.submit_unlock_code(code), "refused", "characters/a_press_right_of_the_word_asks_nothing")
+	press.position = word.get_center()
+	title.gui_input.emit(press)
+	title.gui_input.emit(press)
+	audit.check_eq(screen.submit_unlock_code(code), "refused", "characters/the_first_two_presses_on_the_word_ask_nothing")
+	title.gui_input.emit(press)
+	audit.check_eq(screen.submit_unlock_code(code + "XX"), "wrong", "characters/the_third_press_on_the_word_opens_the_code_entry")
+	audit.check_eq(bool(ModesSave.load_career(Config.save_store()).get("unlockAll", false)), false, "characters/a_wrong_code_from_the_title_changes_nothing")
+	var input := screen.find_child("UnlockCodeInput", true, false) as LineEdit
+	audit.check_true(input != null, "characters/the_title_door_exposes_the_code_field")
+	if input != null:
+		audit.check_gt(input.text_submitted.get_connections().size(), 0, "characters/the_code_field_connects_Enter_to_submission")
+		input.text = "Lucale"
+		input.grab_focus()
+		await process_frame
+		var enter := InputEventKey.new()
+		enter.keycode = KEY_ENTER
+		enter.physical_keycode = KEY_ENTER
+		enter.pressed = true
+		get_root().push_input(enter, true)
+		await process_frame
+	audit.check_eq(bool(ModesSave.load_career(Config.save_store()).get("unlockAll", false)), true, "characters/the_title_door_sets_unlockAll")
+	audit.check_eq(screen.view(), "outfits", "characters/Enter_unlocks_without_leaving_the_outfit_view")
 
 
 func _build_withheld_ids() -> Array:
@@ -608,9 +701,16 @@ func _literal_scan(audit: AuditBase) -> void:
 	var source := FileAccess.get_file_as_string(SCREEN_PATH)
 	audit.check_true(source != "", "characters/the_screen_source_is_readable")
 	var offenders: Array = []
-	for entry in _offenders_in_source(SCREEN_PATH, source):
-		if not SCREEN_LITERALS.has(String((entry as Dictionary).get("literal", ""))):
-			offenders.append("%s \"%s\"" % [(entry as Dictionary).get("where", ""), (entry as Dictionary).get("literal", "")])
+	for reported in _offenders_in_source(SCREEN_PATH, source):
+		# `_offenders_in_source` reports `path:line "literal"`, the shape the probe above
+		# asserts on. This loop used to read each entry as a Dictionary, so the first
+		# offender it ever met threw and aborted the function — leaving both checks
+		# below unrun, which is why a screen with no such literal reported green.
+		var text := String(reported)
+		var literal := text.substr(text.find("\"") + 1)
+		literal = literal.substr(0, literal.length() - 1)
+		if not SCREEN_LITERALS.has(literal):
+			offenders.append(text)
 	audit.check_eq(offenders, [], "characters/CharactersScreen_gd_carries_no_prose_literal")
 	var scene := FileAccess.get_file_as_string(SCENE_PATH)
 	var found: Array = []

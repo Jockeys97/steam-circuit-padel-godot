@@ -1,0 +1,120 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Theme" path="res://src/ui/theme/padel_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://src/ui/screens/CharactersScreen.gd" id="2_characters"]
+
+[node name="CharactersScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_characters")
+
+[node name="Frame" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="ScreenScroll" type="ScrollContainer" parent="Frame"]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="Body" type="VBoxContainer" parent="Frame/ScreenScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="HeaderArea" type="MarginContainer" parent="Frame/ScreenScroll/Body"]
+layout_mode = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 0
+
+[node name="Header" type="HBoxContainer" parent="Frame/ScreenScroll/Body/HeaderArea"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="BackButton" type="Button" parent="Frame/ScreenScroll/Body/HeaderArea/Header"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="TitleBlock" type="VBoxContainer" parent="Frame/ScreenScroll/Body/HeaderArea/Header"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="TitleLabel" type="Label" parent="Frame/ScreenScroll/Body/HeaderArea/Header/TitleBlock"]
+layout_mode = 2
+
+[node name="SubLabel" type="Label" parent="Frame/ScreenScroll/Body/HeaderArea/Header/TitleBlock"]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="HeadArea" type="MarginContainer" parent="Frame/ScreenScroll/Body"]
+layout_mode = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 0
+
+[node name="GridHead" type="PanelContainer" parent="Frame/ScreenScroll/Body/HeadArea"]
+layout_mode = 2
+visible = false
+
+[node name="HeadRow" type="HBoxContainer" parent="Frame/ScreenScroll/Body/HeadArea/GridHead"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HeadAction" type="Button" parent="Frame/ScreenScroll/Body/HeadArea/GridHead/HeadRow"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="HeadBack" type="Button" parent="Frame/ScreenScroll/Body/HeadArea/GridHead/HeadRow"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="HeadHint" type="Label" parent="Frame/ScreenScroll/Body/HeadArea/GridHead/HeadRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="CodeRow" type="HBoxContainer" parent="Frame/ScreenScroll/Body/HeadArea/GridHead/HeadRow"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="UnlockCodeInput" type="LineEdit" parent="Frame/ScreenScroll/Body/HeadArea/GridHead/HeadRow/CodeRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(180, 0)
+max_length = 24
+
+[node name="CodeSubmit" type="Button" parent="Frame/ScreenScroll/Body/HeadArea/GridHead/HeadRow/CodeRow"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="CodeError" type="Label" parent="Frame/ScreenScroll/Body/HeadArea/GridHead/HeadRow"]
+layout_mode = 2
+visible = false
+size_flags_vertical = 4
+
+[node name="GridArea" type="MarginContainer" parent="Frame/ScreenScroll/Body"]
+layout_mode = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 48
+
+[node name="AthleteGrid" type="GridContainer" parent="Frame/ScreenScroll/Body/GridArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 4

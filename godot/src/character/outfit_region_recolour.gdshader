@@ -28,6 +28,11 @@ shader_type spatial;
 // Anything the mask does not cover - skin, hair, eyes, racket, wristbands, and
 // every texel of every other athlete - keeps its baked colour no matter what it
 // looks like. Set every uniform through src/character/outfit_catalogue.gd.
+//
+// THE VALUE GATE (optional, per profile). The hue test above assumes the two
+// families are two different hues. Maestro's are not - see the `value_gate_enabled`
+// block below - so a profile may separate them by VALUE instead. Off by default:
+// a profile that does not declare the gate renders exactly as it did before.
 
 uniform sampler2D source_tex : source_color, filter_linear_mipmap, repeat_enable;
 
@@ -57,6 +62,34 @@ uniform float val_max = 0.99;
 uniform float strength : hint_range(0.0, 1.0) = 1.0;
 uniform float luma_clamp_lo = 0.45;
 uniform float luma_clamp_hi = 1.7;
+
+// OPTIONAL PER-PROFILE VALUE GATE — disabled unless a profile declares it.
+//
+// The hue test above separates the two families when they are two different hues
+// (Fiamma: lime 77 deg vs navy 219 deg). It CANNOT separate them when both
+// families sit in one hue band: Maestro's anchors are 20.0 deg apart (#102040 navy
+// at 217.1, #68a8c8 sky at 196.5) under a 42 deg tolerance, so 973,915 masked
+// texels answer to both anchors at once and the six targets collapse onto one
+// colour per region (measured by tools/character/measure_maestro_value_split.py).
+//
+// Maestro's families are far apart in VALUE instead: the navy kit and its baked
+// shading live below 0.75, the sky-blue accent above. So a profile may declare a
+// value band per family. A texel outside both bands belongs to neither family and
+// keeps its baked colour, which is what stops a recolour from leaving patches.
+//
+// The gate MULTIPLIES the hue weight, so with the gate off (`value_gate_enabled`
+// false, the default) `family_weight()` is bit-for-bit the shipped behaviour:
+// `value_band_weight()` returns exactly 1.0 and the bands are never read.
+//
+//   value_band_a  [0.0, 0.74] for Maestro: the dark family, full membership at or
+//   value_band_b  [0.76, 1.0] for Maestro: the light family
+//   value_band_feather  the width of each ramp; Maestro's two ramps meet at 0.75,
+//                 which is the accent's own antialiased edge, so no recolourable
+//                 texel is orphaned (measured: 103 orphan texels out of 1,518,775).
+uniform bool value_gate_enabled = false;
+uniform vec2 value_band_a = vec2(0.0, 1.0);
+uniform vec2 value_band_b = vec2(0.0, 1.0);
+uniform float value_band_feather = 0.05;
 
 // Reversible non-glTF PBR defaults; see AthleteRig owner decision 1.
 uniform float pbr_metallic : hint_range(0.0, 1.0) = 0.0;
@@ -107,15 +140,31 @@ float luma_lin(vec3 lin) {
 	return dot(lin, vec3(0.2126, 0.7152, 0.0722));
 }
 
+// 1.0 when the gate is off, so `family_weight` is unchanged for every profile that
+// does not declare one. With the gate on, a texel outside the band keeps its baked
+// colour: both families then score zero and `apply_anchor` returns early.
+// Declared BEFORE family_weight: Godot's shader language, like GLSL, needs a
+// function declared before its first call.
+float value_band_weight(float value, vec2 band) {
+	if (!value_gate_enabled) {
+		return 1.0;
+	}
+	float low = smoothstep(band.x - value_band_feather, band.x, value);
+	float high = 1.0 - smoothstep(band.y, band.y + value_band_feather, value);
+	return low * high;
+}
+
 // How much this texel belongs to the family anchored at `anchor_srgb`, in [0,1].
-// Same windows as outfit_recolour.gdshader's apply_anchor, minus the target.
-float family_weight(vec3 cur, vec3 anchor_srgb) {
+// Same windows as outfit_recolour.gdshader's apply_anchor, minus the target, plus
+// the optional per-profile value band (identity when the gate is off).
+float family_weight(vec3 cur, vec3 anchor_srgb, vec2 value_band) {
 	vec3 hsv = rgb_to_hsv_deg(cur);
 	vec3 anchor_hsv = rgb_to_hsv_deg(anchor_srgb);
 	float dh = abs(mod(hsv.x - anchor_hsv.x + 180.0, 360.0) - 180.0);
 	float w = 1.0 - smoothstep(hue_tol_deg * 0.55, hue_tol_deg, dh);
 	w *= ss((hsv.y - sat_min) / 0.12);
 	w *= ss((hsv.z - val_min) / 0.12);
+	w *= value_band_weight(hsv.z, value_band);
 	return w;
 }
 
@@ -137,8 +186,8 @@ void fragment() {
 	vec4 region = texture(region_mask, UV);
 
 	// Classified once, from the baked colour, so the two passes cannot compound.
-	float fam_a = family_weight(base_srgb, anchor_a);
-	float fam_b = family_weight(base_srgb, anchor_b);
+	float fam_a = family_weight(base_srgb, anchor_a, value_band_a);
+	float fam_b = family_weight(base_srgb, anchor_b, value_band_b);
 
 	vec3 cur = base_srgb;
 	cur = apply_anchor(cur, anchor_a, target_torso_a, region.r * fam_a * strength);

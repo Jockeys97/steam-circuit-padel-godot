@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M4
+
+MENU_HOVER_CAPTURE_START frame=(1280.0, 720.0)
+ok capture/the_hover_state_was_reached
+# rect hover_card=PickCard_pantera rect=[P: (355.0, 209.1261), S: (271.0, 598.0)]
+# rect focus_card=PickCard_steamer rect=[P: (646.0, 211.0), S: (271.0, 598.0)]
+ok capture/characters-hover
+ok characters-hover path=res://../docs/agent-work/menu-hover/characters-hover.png size=1280x720 colours=140
+ok capture/the_pointer_was_moved_away
+ok capture/the_pad_ring_was_reached
+ok capture/characters-pad-focus
+ok characters-pad-focus path=res://../docs/agent-work/menu-hover/characters-pad-focus.png size=1280x720 colours=130
+ok capture/the_composed_state_was_reached
+ok capture/characters-hover-and-focus
+ok characters-hover-and-focus path=res://../docs/agent-work/menu-hover/characters-hover-and-focus.png size=1280x720 colours=131
+ok capture/the_team_slot_lifted
+ok capture/team-hover
+ok team-hover path=res://../docs/agent-work/menu-hover/team-hover.png size=1280x720 colours=139
+# note hover driven by a pushed mouse motion=true, border_alpha=0.35, ring=false
+# note focus ring on PickCard_steamer, hover ring on PickCard_pantera
+# note team slot TeamSlot_player lifted 2.0 px, border alpha 1.00 (the reference paints none)
+# saved=["res://../docs/agent-work/menu-hover/characters-hover.png","res://../docs/agent-work/menu-hover/characters-pad-focus.png","res://../docs/agent-work/menu-hover/characters-hover-and-focus.png","res://../docs/agent-work/menu-hover/team-hover.png"]
+PASS 9/9

@@ -1,0 +1,810 @@
+{
+ "tool": "tools/character/build_oracolo_outfit_mask.py",
+ "glb": "godot/assets/athletes/oracolo.glb",
+ "texture": "godot/assets/athletes/oracolo_texture_0.png",
+ "mask": "godot/assets/athletes/outfits/oracolo/oracolo_region_mask.png",
+ "mask_size": 2048,
+ "edge_soften_px": 1.2,
+ "bone_region": {
+  "mixamorig:Spine": "torso",
+  "mixamorig:Spine1": "torso",
+  "mixamorig:Spine2": "torso",
+  "mixamorig:LeftShoulder": "torso",
+  "mixamorig:RightShoulder": "torso",
+  "mixamorig:Hips": "hip",
+  "mixamorig:LeftUpLeg": "hip",
+  "mixamorig:RightUpLeg": "hip",
+  "mixamorig:LeftFoot": "foot",
+  "mixamorig:RightFoot": "foot",
+  "mixamorig:LeftToeBase": "foot",
+  "mixamorig:RightToeBase": "foot",
+  "mixamorig:LeftToe_End": "foot",
+  "mixamorig:RightToe_End": "foot"
+ },
+ "regions": [
+  "torso",
+  "hip",
+  "foot"
+ ],
+ "coverage_texels": 1159771,
+ "coverage_fraction": 0.2765,
+ "protected_texels": 3034533,
+ "family_anchors": {
+  "magenta": {
+   "hex": "#302028",
+   "srgb": [
+    0.1882,
+    0.1255,
+    0.1569
+   ],
+   "hue_deg": 325.7,
+   "samples": 1416,
+   "modal_hits": 51,
+   "components": 922,
+   "components_ge_64px": 54,
+   "largest_component_px": 240
+  },
+  "violet": {
+   "hex": "#301850",
+   "srgb": [
+    0.1882,
+    0.0941,
+    0.3137
+   ],
+   "hue_deg": 264.5,
+   "samples": 38253,
+   "modal_hits": 2854,
+   "components": 2342,
+   "components_ge_64px": 1177,
+   "largest_component_px": 12064
+  }
+ },
+ "declared_families": {
+  "outfit_base": [
+   "#6d42b8",
+   "#a96cff"
+  ],
+  "catalogue_visual": [
+   "#6b3df0",
+   "#e3c6ff"
+  ]
+ },
+ "triangles": 32106,
+ "region_triangles": {
+  "torso": 5309,
+  "hip": 8743,
+  "foot": 1369
+ },
+ "protected_triangles": 16685,
+ "straddling_triangles": 56,
+ "region_y_min": {
+  "torso": 0.9754,
+  "hip": 0.4877,
+  "foot": -0.0
+ },
+ "region_y_max": {
+  "torso": 1.4333,
+  "hip": 1.0752,
+  "foot": 0.1765
+ },
+ "bone_diff": {
+  "oracolo_joint_count": 28,
+  "fiamma_joint_count": 28,
+  "maestro_joint_count": 24,
+  "absent_from_oracolo": [],
+  "renamed": {},
+  "note": "Oracolo's skins[0].joints is the same 28-name set as Fiamma's, so the Fiamma bone map applies verbatim: no bone had to be dropped or renamed. The extra node `headfront` and the `LeftHandMiddle4`/`RightHandMiddle4` tips are present but own no garment region, like Fiamma. Maestro, the previous athlete, is the rig whose names differ (bare, spine numbered downward) and whose two Toe_End joints are absent."
+ },
+ "protected_leak": {
+  "Head": {
+   "strict": {
+    "triangles": 9623,
+    "texels": 467626,
+    "inside_mask_texels_ge200": 1823,
+    "leak_ge200": 0.0039,
+    "inside_mask_texels_ge128": 3145,
+    "leak_ge128": 0.0067
+   },
+   "majority": {
+    "triangles": 9796,
+    "texels": 481403,
+    "inside_mask_texels_ge200": 9335,
+    "leak_ge200": 0.0194,
+    "inside_mask_texels_ge128": 14470,
+    "leak_ge128": 0.0301
+   }
+  },
+  "Hands": {
+   "strict": {
+    "triangles": 643,
+    "texels": 13220,
+    "inside_mask_texels_ge200": 0,
+    "leak_ge200": 0.0,
+    "inside_mask_texels_ge128": 11,
+    "leak_ge128": 0.0008
+   },
+   "majority": {
+    "triangles": 662,
+    "texels": 13493,
+    "inside_mask_texels_ge200": 0,
+    "leak_ge200": 0.0,
+    "inside_mask_texels_ge128": 11,
+    "leak_ge128": 0.0008
+   }
+  },
+  "ForeArm": {
+   "strict": {
+    "triangles": 812,
+    "texels": 16319,
+    "inside_mask_texels_ge200": 88,
+    "leak_ge200": 0.0054,
+    "inside_mask_texels_ge128": 130,
+    "leak_ge128": 0.008
+   },
+   "majority": {
+    "triangles": 846,
+    "texels": 21021,
+    "inside_mask_texels_ge200": 88,
+    "leak_ge200": 0.0042,
+    "inside_mask_texels_ge128": 130,
+    "leak_ge128": 0.0062
+   }
+  },
+  "Arm": {
+   "strict": {
+    "triangles": 2790,
+    "texels": 123340,
+    "inside_mask_texels_ge200": 655,
+    "leak_ge200": 0.0053,
+    "inside_mask_texels_ge128": 1893,
+    "leak_ge128": 0.0153
+   },
+   "majority": {
+    "triangles": 3069,
+    "texels": 174935,
+    "inside_mask_texels_ge200": 34770,
+    "leak_ge200": 0.1988,
+    "inside_mask_texels_ge128": 42303,
+    "leak_ge128": 0.2418
+   }
+  },
+  "Shin": {
+   "strict": {
+    "triangles": 2699,
+    "texels": 109647,
+    "inside_mask_texels_ge200": 1161,
+    "leak_ge200": 0.0106,
+    "inside_mask_texels_ge128": 1690,
+    "leak_ge128": 0.0154
+   },
+   "majority": {
+    "triangles": 2769,
+    "texels": 119095,
+    "inside_mask_texels_ge200": 9586,
+    "leak_ge200": 0.0805,
+    "inside_mask_texels_ge128": 10984,
+    "leak_ge128": 0.0922
+   }
+  }
+ },
+ "texel_classes": {
+  "masked_texels": 1161080,
+  "classes": {
+   "violet": 819263,
+   "magenta": 55527,
+   "skin": 169302,
+   "neutral": 110987,
+   "other": 6001
+  },
+  "classes_by_region": {
+   "torso": {
+    "neutral": 64973,
+    "violet": 267399,
+    "magenta": 25846,
+    "skin": 63191,
+    "other": 3530
+   },
+   "hip": {
+    "violet": 507299,
+    "neutral": 31815,
+    "skin": 95263,
+    "magenta": 21949,
+    "other": 2340
+   },
+   "foot": {
+    "skin": 10343,
+    "magenta": 7693,
+    "violet": 45326,
+    "neutral": 14358,
+    "other": 58
+   }
+  },
+  "family_test": {
+   "effective": {
+    "hue_tol_deg": 45.0,
+    "sat_min": 0.18,
+    "val_min": 0.02,
+    "val_max": 0.98
+   },
+   "anchor_hue_deg": {
+    "magenta": 330.0,
+    "violet": 265.7
+   },
+   "anchor_hue_window": {
+    "magenta": {
+     "hue_window_deg": [
+      285.0,
+      15.0
+     ],
+     "wraps_past_360": true
+    },
+    "violet": {
+     "hue_window_deg": [
+      220.7,
+      310.7
+     ],
+     "wraps_past_360": false
+    }
+   },
+   "hue_separation_deg": 64.2,
+   "hits": {
+    "violet": 879585,
+    "magenta": 143654
+   },
+   "skin_hued_family_hits_by_anchor": {
+    "magenta": 24182
+   },
+   "texels_matching_both_anchors": 41333,
+   "texels_matching_both_anchors_fraction": 0.0356,
+   "skin_hued_family_hits": 24182,
+   "hue_test_separates_the_two_families": false,
+   "verdict": "The hue test does NOT separate the two anchors: magenta vs violet are 64.2 deg apart under a 45 deg tolerance (2x tolerance = 90 deg), and 0.0356 of the mask answers to both. 24182 skin-hued masked texels would be recoloured, all of them by the magenta anchor, whose window [285, 15] wraps past 360 onto the low hues; the violet anchor alone recolours 0 skin-hued texels."
+  }
+ },
+ "tripartition": {
+  "landmarks_world_y": {
+   "mixamorig:Hips": [
+    0.0073,
+    0.9916,
+    0.0049
+   ],
+   "mixamorig:Spine": [
+    0.0073,
+    1.097,
+    0.0017
+   ],
+   "mixamorig:Spine1": [
+    0.0073,
+    1.2024,
+    -0.0015
+   ],
+   "mixamorig:Spine2": [
+    0.0073,
+    1.311,
+    -0.0048
+   ],
+   "mixamorig:Neck": [
+    0.0073,
+    1.3736,
+    -0.0067
+   ],
+   "mixamorig:Head": [
+    0.0073,
+    1.4479,
+    -0.0067
+   ],
+   "mixamorig:LeftUpLeg": [
+    0.0889,
+    0.9053,
+    0.0049
+   ],
+   "mixamorig:LeftLeg": [
+    0.1247,
+    0.5603,
+    0.0581
+   ],
+   "mixamorig:LeftFoot": [
+    0.176,
+    0.1532,
+    0.001
+   ],
+   "mixamorig:LeftShoulder": [
+    0.0352,
+    1.3341,
+    -0.0055
+   ],
+   "mixamorig:LeftArm": [
+    0.1467,
+    1.3341,
+    0.0013
+   ],
+   "mixamorig:LeftForeArm": [
+    0.3557,
+    1.2938,
+    -0.018
+   ],
+   "mixamorig:LeftHand": [
+    0.5648,
+    1.2974,
+    -0.0066
+   ]
+  },
+  "hips_y": 0.9916,
+  "spine_y": 1.097,
+  "pelvis_to_spine_interval_m": 0.1054,
+  "waist_y": 1.0,
+  "cut_above_hips_m": 0.0084,
+  "cut_fraction_of_pelvis_to_spine": 0.0798,
+  "cut_fraction_reference": {
+   "maestro": {
+    "hips_y": 0.9517,
+    "spine_y": 1.1042,
+    "cut_fraction_of_interval": 0.317
+   },
+   "fiamma": {
+    "hips_y": 0.9549,
+    "spine_y": 1.0755,
+    "cut_fraction_of_interval": 0.374
+   }
+  },
+  "cut_lands_on": "pelvis",
+  "uv_islands": {
+   "count": 14022,
+   "largest_tris": [
+    37,
+    31,
+    28,
+    26,
+    24,
+    23,
+    22,
+    22
+   ],
+   "median_tris": 1,
+   "mean_tris": 2.29,
+   "islands_spanning_more_than_one_region": 69,
+   "share_of_islands_spanning": 0.0049,
+   "triangles_in_those_islands": 530,
+   "share_of_triangles_in_those_islands": 0.0165
+  },
+  "uv_budget": {
+   "total_uv_area_of_unit_square": 0.4136,
+   "atlas_px_total": 1734897,
+   "atlas_px_per_triangle_mean": 54.0,
+   "atlas_px_per_triangle_median": 18.9,
+   "atlas_px_per_triangle_p10": 3.7,
+   "atlas_px_per_triangle_p90": 116.2,
+   "by_region": {
+    "torso": {
+     "triangles": 5309,
+     "uv_area_share": 0.2326,
+     "atlas_px_per_triangle_mean": 76.0
+    },
+    "hip": {
+     "triangles": 8743,
+     "uv_area_share": 0.3581,
+     "atlas_px_per_triangle_mean": 71.1
+    },
+    "foot": {
+     "triangles": 1369,
+     "uv_area_share": 0.0427,
+     "atlas_px_per_triangle_mean": 54.1
+    }
+   },
+   "note": "A triangle owns a median of this many atlas pixels, which is the resolution the recolour works at and the reason the mask edge is rasterised at 2048 with a 1.2 px soften."
+  },
+  "band_profile_around_the_cut": [
+   {
+    "y_lo": 0.94,
+    "y_hi": 0.95,
+    "triangles": 162,
+    "violet_share": 0.9568,
+    "skin_hued_share": 0.0062
+   },
+   {
+    "y_lo": 0.95,
+    "y_hi": 0.96,
+    "triangles": 177,
+    "violet_share": 0.8927,
+    "skin_hued_share": 0.0282
+   },
+   {
+    "y_lo": 0.96,
+    "y_hi": 0.97,
+    "triangles": 190,
+    "violet_share": 0.8421,
+    "skin_hued_share": 0.0632
+   },
+   {
+    "y_lo": 0.97,
+    "y_hi": 0.98,
+    "triangles": 250,
+    "violet_share": 0.78,
+    "skin_hued_share": 0.14
+   },
+   {
+    "y_lo": 0.98,
+    "y_hi": 0.99,
+    "triangles": 257,
+    "violet_share": 0.8288,
+    "skin_hued_share": 0.0895
+   },
+   {
+    "y_lo": 0.99,
+    "y_hi": 1.0,
+    "triangles": 228,
+    "violet_share": 0.6404,
+    "skin_hued_share": 0.2763
+   },
+   {
+    "y_lo": 1.0,
+    "y_hi": 1.01,
+    "triangles": 333,
+    "violet_share": 0.4354,
+    "skin_hued_share": 0.5105
+   },
+   {
+    "y_lo": 1.01,
+    "y_hi": 1.02,
+    "triangles": 323,
+    "violet_share": 0.4025,
+    "skin_hued_share": 0.4923
+   },
+   {
+    "y_lo": 1.02,
+    "y_hi": 1.03,
+    "triangles": 232,
+    "violet_share": 0.3233,
+    "skin_hued_share": 0.569
+   },
+   {
+    "y_lo": 1.03,
+    "y_hi": 1.04,
+    "triangles": 225,
+    "violet_share": 0.3156,
+    "skin_hued_share": 0.4578
+   },
+   {
+    "y_lo": 1.04,
+    "y_hi": 1.05,
+    "triangles": 153,
+    "violet_share": 0.3987,
+    "skin_hued_share": 0.4248
+   },
+   {
+    "y_lo": 1.05,
+    "y_hi": 1.06,
+    "triangles": 85,
+    "violet_share": 0.5765,
+    "skin_hued_share": 0.2824
+   },
+   {
+    "y_lo": 1.06,
+    "y_hi": 1.07,
+    "triangles": 80,
+    "violet_share": 0.3875,
+    "skin_hued_share": 0.425
+   },
+   {
+    "y_lo": 1.07,
+    "y_hi": 1.08,
+    "triangles": 59,
+    "violet_share": 0.4068,
+    "skin_hued_share": 0.4576
+   },
+   {
+    "y_lo": 1.08,
+    "y_hi": 1.09,
+    "triangles": 67,
+    "violet_share": 0.5672,
+    "skin_hued_share": 0.2388
+   },
+   {
+    "y_lo": 1.09,
+    "y_hi": 1.1,
+    "triangles": 60,
+    "violet_share": 0.8333,
+    "skin_hued_share": 0.0833
+   }
+  ],
+  "verdict": "The partition is topologically clean (see region_seams) but it is NOT a garment partition: the cut is a horizontal plane at bind Y 1.00, which is 0.0084 m above the Hips joint - 8.0% of the pelvis-to-Spine interval, against 31.7% on Maestro and 37.4% on Fiamma. On this body it lands on the pelvis, and the violet garment is present on both sides of it."
+ },
+ "region_seams": {
+  "mesh_edges": 47795,
+  "edges_shared_by_two_triangles": 47027,
+  "edges_not_shared_by_two": 768,
+  "region_seam_edges": 191,
+  "region_seam_edges_by_pair": {
+   "hip|torso": 191
+  },
+  "region_adjacency_all_pairs": {
+   "protected|torso": 370,
+   "hip|torso": 191,
+   "foot|protected": 56,
+   "hip|protected": 14
+  },
+  "region_seam_bind_y_min": 0.9883,
+  "region_seam_bind_y_max": 1.0088,
+  "uv_island_alignment": {
+   "seam_edges_on_a_uv_island_border": 99,
+   "seam_edges_inside_a_uv_island": 92,
+   "share_on_a_uv_island_border": 0.5183,
+   "base_rate_all_shared_edges": 0.627,
+   "likelihood_ratio": 0.83
+  },
+  "texture_edge_alignment": {
+   "gradient_threshold_percentile": 0.95,
+   "gradient_threshold_value": 36,
+   "seam_midpoints_on_a_texture_edge": 94,
+   "seam_midpoints": 191,
+   "share_on_a_texture_edge": 0.4921,
+   "base_rate_random_in_mask_texels": 0.5212,
+   "likelihood_ratio": 0.94
+  },
+  "colour_across_the_boundary": {
+   "seam_pairs_mean_max_channel_delta_255": 19.2,
+   "same_region_pairs_mean_max_channel_delta_255": 18.9,
+   "ratio": 1.02
+  },
+  "what_the_shader_sees": {
+   "recolourable_fabric_on_both_sides": 117,
+   "on_one_side_only": 17,
+   "on_neither_side": 57,
+   "visible_share": 0.6126,
+   "anchor_hue_deg": 265.7,
+   "hue_tol_deg": 45.0
+  },
+  "cut_height_sweep": [
+   {
+    "waist_y": 0.94,
+    "seam_edges": 342,
+    "visible_on_both_sides": 305,
+    "visible_share": 0.8918
+   },
+   {
+    "waist_y": 0.96,
+    "seam_edges": 297,
+    "visible_on_both_sides": 253,
+    "visible_share": 0.8519
+   },
+   {
+    "waist_y": 0.98,
+    "seam_edges": 252,
+    "visible_on_both_sides": 213,
+    "visible_share": 0.8452
+   },
+   {
+    "waist_y": 1.0,
+    "seam_edges": 191,
+    "visible_on_both_sides": 117,
+    "visible_share": 0.6126
+   },
+   {
+    "waist_y": 1.02,
+    "seam_edges": 167,
+    "visible_on_both_sides": 64,
+    "visible_share": 0.3832
+   },
+   {
+    "waist_y": 1.04,
+    "seam_edges": 102,
+    "visible_on_both_sides": 36,
+    "visible_share": 0.3529
+   },
+   {
+    "waist_y": 1.06,
+    "seam_edges": 70,
+    "visible_on_both_sides": 35,
+    "visible_share": 0.5
+   },
+   {
+    "waist_y": 1.08,
+    "seam_edges": 83,
+    "visible_on_both_sides": 33,
+    "visible_share": 0.3976
+   },
+   {
+    "waist_y": 1.1,
+    "seam_edges": 27,
+    "visible_on_both_sides": 8,
+    "visible_share": 0.2963
+   },
+   {
+    "waist_y": 1.12,
+    "seam_edges": 27,
+    "visible_on_both_sides": 9,
+    "visible_share": 0.3333
+   }
+  ],
+  "verdict": "The region boundary follows nothing the outfit has. 191 seam edges, all torso<->hip and all inside bind Y [0.988, 1.009] - a horizontal plane. It is 0.94x as likely as a random masked texel to sit on a texture edge and 0.83x as likely to sit on a UV island border, and the fabric colour across it is 1.02x the same-region baseline. 61.3% of it passes through recolourable violet on both sides, so a torso/hip colour split would draw a hard line there. The cut-height sweep shows no height in 0.94-1.12 avoids it."
+ },
+ "value_split": {
+  "population": 874790,
+  "population_definition": "masked texels (alpha>=128) with hue 240-360, sat >= 0.18, 0.02 <= v <= 0.98 - i.e. everything the shader could recolour",
+  "value_histogram_0_01_bins": {
+   "0.02": 23,
+   "0.03": 85,
+   "0.04": 104,
+   "0.05": 1231,
+   "0.06": 1231,
+   "0.07": 2477,
+   "0.08": 3555,
+   "0.09": 6021,
+   "0.10": 6751,
+   "0.11": 5161,
+   "0.12": 12830,
+   "0.13": 10612,
+   "0.14": 18388,
+   "0.15": 11630,
+   "0.16": 16136,
+   "0.17": 12089,
+   "0.18": 23589,
+   "0.19": 16605,
+   "0.20": 21069,
+   "0.21": 19765,
+   "0.22": 15147,
+   "0.23": 24283,
+   "0.24": 17080,
+   "0.25": 31624,
+   "0.26": 25798,
+   "0.27": 43314,
+   "0.28": 34264,
+   "0.29": 54589,
+   "0.30": 55838,
+   "0.31": 36517,
+   "0.32": 51073,
+   "0.33": 30899,
+   "0.34": 41974,
+   "0.35": 25019,
+   "0.36": 35261,
+   "0.37": 21193,
+   "0.38": 28897,
+   "0.39": 18123,
+   "0.40": 21517,
+   "0.41": 18179,
+   "0.42": 10068,
+   "0.43": 11721,
+   "0.44": 5757,
+   "0.45": 6118,
+   "0.46": 2801,
+   "0.47": 3095,
+   "0.48": 1634,
+   "0.49": 1894,
+   "0.50": 1382,
+   "0.51": 784,
+   "0.52": 923,
+   "0.53": 553,
+   "0.54": 645,
+   "0.55": 345,
+   "0.56": 485,
+   "0.57": 297,
+   "0.58": 359,
+   "0.59": 223,
+   "0.60": 303,
+   "0.61": 280,
+   "0.62": 164,
+   "0.63": 211,
+   "0.64": 130,
+   "0.65": 233,
+   "0.66": 148,
+   "0.67": 207,
+   "0.68": 116,
+   "0.69": 200,
+   "0.70": 184,
+   "0.71": 113,
+   "0.72": 174,
+   "0.73": 112,
+   "0.74": 161,
+   "0.75": 110,
+   "0.76": 169,
+   "0.77": 110,
+   "0.78": 151,
+   "0.79": 124,
+   "0.80": 175,
+   "0.81": 162,
+   "0.82": 145,
+   "0.83": 169,
+   "0.84": 99,
+   "0.85": 193,
+   "0.86": 107,
+   "0.87": 165,
+   "0.88": 106,
+   "0.89": 184,
+   "0.90": 176,
+   "0.91": 104,
+   "0.92": 139,
+   "0.93": 92,
+   "0.94": 120,
+   "0.95": 78,
+   "0.96": 103,
+   "0.97": 48
+  },
+  "flat_band": {
+   "v_lo": 0.55,
+   "v_hi": 0.98,
+   "counts_per_0.01_bin_min": 48,
+   "counts_per_0.01_bin_max": 485,
+   "counts_per_0.01_bin_median": 162
+  },
+  "largest_upward_jumps": [
+   {
+    "ratio": 11.84,
+    "at_v": 0.04
+   },
+   {
+    "ratio": 3.7,
+    "at_v": 0.02
+   },
+   {
+    "ratio": 2.49,
+    "at_v": 0.11
+   },
+   {
+    "ratio": 2.01,
+    "at_v": 0.06
+   },
+   {
+    "ratio": 1.95,
+    "at_v": 0.84
+   },
+   {
+    "ratio": 1.95,
+    "at_v": 0.17
+   }
+  ],
+  "largest_upward_jump_above_v_0_30": {
+   "ratio": 1.95,
+   "at_v": 0.84
+  },
+  "maestro_reference": {
+   "discontinuity_value": 0.76,
+   "jump_ratio": 5.34,
+   "light_family_texels": 24067,
+   "light_family_components_ge_64px": 23
+  },
+  "bright_tail": {
+   "0.50": {
+    "texels": 11761,
+    "share_of_population": 0.0134,
+    "components": 1280,
+    "components_ge_64px": 24,
+    "largest_component_px": 830,
+    "median_component_px": 1
+   },
+   "0.60": {
+    "texels": 5765,
+    "share_of_population": 0.0066,
+    "components": 293,
+    "components_ge_64px": 12,
+    "largest_component_px": 667,
+    "median_component_px": 2
+   },
+   "0.70": {
+    "texels": 3773,
+    "share_of_population": 0.0043,
+    "components": 105,
+    "components_ge_64px": 12,
+    "largest_component_px": 524,
+    "median_component_px": 3
+   },
+   "0.76": {
+    "texels": 2919,
+    "share_of_population": 0.0033,
+    "components": 81,
+    "components_ge_64px": 10,
+    "largest_component_px": 450,
+    "median_component_px": 4
+   },
+   "0.80": {
+    "texels": 2365,
+    "share_of_population": 0.0027,
+    "components": 78,
+    "components_ge_64px": 10,
+    "largest_component_px": 368,
+    "median_component_px": 3
+   }
+  },
+  "possible": false,
+  "verdict": "A value split is NOT possible on this atlas. The population is 874790 texels and above value 0.55 its value histogram is FLAT - 48 to 485 texels per 0.01 bin with a median of 162 - where Maestro had a 5.34x density jump at 0.76. The largest upward jump anywhere above v=0.30 is 1.95x (at v=0.84), which is noise; the biggest ratio in the whole histogram (11.84x at v=0.04) is the val_min gate itself, not the atlas. The bright population is speckle: v>=0.76 holds 2919 texels (0.0033 of the population) in 81 components with a median of 4 px, against Maestro's 24067 texels in 23 components >= 64 px. There is no threshold to cut on, so the second declared family cannot be reached by value either."
+ }
+}

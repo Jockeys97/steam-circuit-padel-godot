@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok Colosso spawns through the normal factory
+ok Colosso selects its own asset
+ok Colosso GLB loads
+ok Colosso keeps the exported Mixamo skeleton
+ok Colosso has idle
+ok Colosso has walk
+ok Colosso has run
+ok Colosso walk clip plays
+ok Colosso run clip plays
+ok Colosso keeps the existing stroke API
+ok Colosso exposes the standard right-hand bone
+ok Colosso creates a racket attachment on the standard skeleton
+ok Racket attachment belongs to Colosso's skeleton
+ok Racket attachment resolves the exported hand name
+ok Racket geometry is parented to the hand attachment
+ok Hand attachment carries the complete racket geometry
+ok Match athlete view spawns Colosso
+ok Match athlete view mounts Colosso's racket on a bone attachment
+ok Match racket uses the calibrated grip-centre offset
+PASS 19/19

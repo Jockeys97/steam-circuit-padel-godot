@@ -1,0 +1,78 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok serve has a stroke clip
+ok serve has a contact phase
+ok serve has a stroke speed
+ok serve resolves to a registered clip
+ok serve contact phase is inside the clip
+ok drive has a stroke clip
+ok drive has a contact phase
+ok drive has a stroke speed
+ok drive resolves to a registered clip
+ok drive contact phase is inside the clip
+ok slice has a stroke clip
+ok slice has a contact phase
+ok slice has a stroke speed
+ok slice resolves to a registered clip
+ok slice contact phase is inside the clip
+ok lob has a stroke clip
+ok lob has a contact phase
+ok lob has a stroke speed
+ok lob resolves to a registered clip
+ok lob contact phase is inside the clip
+ok globo has a stroke clip
+ok globo has a contact phase
+ok globo has a stroke speed
+ok globo resolves to a registered clip
+ok globo contact phase is inside the clip
+ok chiquita has a stroke clip
+ok chiquita has a contact phase
+ok chiquita has a stroke speed
+ok chiquita resolves to a registered clip
+ok chiquita contact phase is inside the clip
+ok vibora has a stroke clip
+ok vibora has a contact phase
+ok vibora has a stroke speed
+ok vibora resolves to a registered clip
+ok vibora contact phase is inside the clip
+ok volley has a stroke clip
+ok volley has a contact phase
+ok volley has a stroke speed
+ok volley resolves to a registered clip
+ok volley contact phase is inside the clip
+ok cut-volley has a stroke clip
+ok cut-volley has a contact phase
+ok cut-volley has a stroke speed
+ok cut-volley resolves to a registered clip
+ok cut-volley contact phase is inside the clip
+ok bandeja has a stroke clip
+ok bandeja has a contact phase
+ok bandeja has a stroke speed
+ok bandeja resolves to a registered clip
+ok bandeja contact phase is inside the clip
+ok wall-angle has a stroke clip
+ok wall-angle has a contact phase
+ok wall-angle has a stroke speed
+ok wall-angle resolves to a registered clip
+ok wall-angle contact phase is inside the clip
+ok smash-flat has a stroke clip
+ok smash-flat has a contact phase
+ok smash-flat has a stroke speed
+ok smash-flat resolves to a registered clip
+ok smash-flat contact phase is inside the clip
+ok smash-x2 has a stroke clip
+ok smash-x2 has a contact phase
+ok smash-x2 has a stroke speed
+ok smash-x2 resolves to a registered clip
+ok smash-x2 contact phase is inside the clip
+ok smash-x3 has a stroke clip
+ok smash-x3 has a contact phase
+ok smash-x3 has a stroke speed
+ok smash-x3 resolves to a registered clip
+ok smash-x3 contact phase is inside the clip
+ok rig exposes contact-synchronised stroke API
+ok rig starts a drive at the contact phase
+ok contact-synchronised pose reports drive (expected drive, got drive)
+ok contact-synchronised pose seeks past wind-up
+ok contact-synchronised pose keeps the stroke active
+PASS 75/75

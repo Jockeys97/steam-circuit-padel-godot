@@ -36,6 +36,17 @@
 ## A world arena has no roster index, so its seat is the id itself
 ## (`Config.set_arena_id`, the same call the ported column's world row makes).
 ##
+## THE CARD STATES MOVE (the reference's hover states, ported as motion). The web cards
+## are CSS transitions, not two frames: `.arena-card:hover` rides 3 px up over 0.15 s
+## with its border lightening (`styles.css:332`, `:335-340`), the chosen card wears a
+## halo instead of a second border (`:342-345`), and the chips under the player-mode
+## panel have three states, not two (`:2220-2252`). The port drew the states and never
+## moved one — a `StyleBoxFlat` swap cannot translate anything — so the lift is a
+## `Tween` on the card's own `position.y` (`_lift_to`) and the halo is the box's
+## `shadow_size`/`shadow_color`. A card is lit while the POINTER or the PAD holds it:
+## the reference has one `:hover`, the focus model paints the same cards
+## (`game/menu_focus.gd:73`), and one lift serves both.
+##
 ## SPLIT FROM THE SCENES. Like the other screens in this lane: named nodes only, every
 ## string resolved from `UiStrings`, chrome read off `padel_theme.tres`.
 
@@ -50,6 +61,8 @@ const CareerRules := preload("res://src/modes/career_rules.gd")
 const Config := preload("res://game/match_config.gd")
 const Gate := preload("res://game/content_gate.gd")
 const Frozen := preload("res://src/sim/frozen.gd")
+const CardFocusRing := preload("res://src/ui/components/CardFocusRing.gd")
+const UiMotionPolicy := preload("res://src/ui/accessibility/UiMotionPolicy.gd")
 const Locale := preload("res://src/locale/locale.gd")
 
 const SCREEN_ID := "arena"
@@ -65,6 +78,38 @@ const PREVIEW_RATIO := 16.0 / 9.0
 const PREVIEW_MIN_HEIGHT := 120.0
 ## `.arena-card__body { padding: 18px }` (`styles.css:323-345`).
 const CARD_PADDING := 18.0
+
+## `.arena-card:hover { transform: translateY(-3px) }` (`styles.css:335-340`) over the
+## card's own `transition: transform 0.15s ease` (`:332`): the lift is as animated as the
+## reference's own, so it is a tween and not a second frame.
+const CARD_LIFT := 3.0
+const LIFT_SECONDS := 0.15
+## How far off the captured rest Y a card may sit before this screen reads the position
+## as the grid's own rather than one of its tweens (`_rest_y_of`): a `GridContainer`
+## writes whole pixels, the tween writes fractions, and the smallest lift is 3 px.
+const LIFT_EPSILON := 0.5
+## The halo `.athlete-card--selected` (`styles.css:342-345`) and `.arena-card--in-programma`
+## (`:3126-3128`) wear. One `StyleBoxFlat` carries ONE shadow, so the `0 0 0 1px
+## var(--cyan)` ring is the box's own cyan border and the shadow is the `0 12px 40px
+## rgba(0, 229, 255, 0.18)` glow — at 16 px of blur, because `shadow_size` is a radius
+## drawn on both sides of the box and the grid leaves 20 px between two cards, where the
+## reference's 40 px blur would paint over its neighbours.
+const HALO_SIZE := 16
+const HALO_ALPHA := 0.18
+## `.segmented button.is-active { box-shadow: 0 0 16px rgba(22, 190, 215, 0.42), inset 0
+## 1px 0 rgba(255, 255, 255, 0.38) }` (`styles.css:2248-2252`): the chosen chip keeps its
+## own light source, at the size and ink the theme already carries for it
+## (`padel_theme.tres:187-188`).
+const SEGMENT_GLOW_SIZE := 16
+const SEGMENT_GLOW_COLOR := Color(0.08627451, 0.74509805, 0.84313726, 0.42)
+## `.segmented button:hover:not(.is-active) { background: rgba(0, 229, 255, 0.1); color:
+## #cfe9f7 }` (`styles.css:2238-2241`) — through the theme's own cyan, 229/255 is the
+## palette token's own blue and only the alpha is the reference's.
+const SEGMENT_HOVER_ALPHA := 0.1
+const SEGMENT_HOVER_INK := "cfe9f7"
+## The meta a lifted card carries: its rest Y, the offset in flight and the tween
+## carrying it (`_lift_state`).
+const LIFT_META := "arena_card_lift"
 
 const CARD_PREFIX := "ArenaCard_"
 const ART_PREFIX := "ArenaArt_"
@@ -118,6 +163,18 @@ var _focus_specs: Array[Dictionary] = []
 ## stick move must show where A will act without changing the player's saved
 ## arena until they confirm it.
 var _focused_card_id: String = ""
+## The arena the POINTER is over. A separate holder from `_focused_card_id` (the pad
+## moves the focus, the mouse does not), and the two are ONE visual state: the reference
+## has a single `:hover` (`styles.css:335-340`) and the focus model hands a card the same
+## focus a controller moves (`game/menu_focus.gd:73`).
+var _hovered_card_id: String = ""
+## One re-capture of the captured rest Y at a time (`_refresh_lifts`): a resize arrives as
+## several `resized` signals through the frame's containers.
+var _lift_refresh_queued: bool = false
+## The port's one door for "may this animation run" (`UiMotionPolicy`), hydrated from the
+## saved prefs (`SettingsScreen._stored_prefs`, `ModesSave.profile`): the reference's
+## `body.reduce-motion` switches `.menu-focus`'s keyframes off (`styles.css:2748-2758`).
+var _motion: UiMotionPolicy = null
 
 
 func screen_id() -> String:
@@ -145,6 +202,10 @@ func _ready() -> void:
 	var grid := _control("ArenaGrid")
 	if grid != null:
 		grid.resized.connect(_update_preview_heights)
+		# The grid is the truth about where a card rests: a relayout re-reads the
+		# captured Y (`_refresh_lifts`), so a card that is lifted while the window
+		# changes size comes back to the row it is actually drawn in.
+		grid.resized.connect(_refresh_lifts)
 	_wire()
 	refresh_data()
 
@@ -196,6 +257,7 @@ func route_to(screen_id: String) -> bool:
 
 ## The nine rows of `renderArenas` (`js/ui.js:1240-1268`), the build's answer included.
 func refresh_data() -> void:
+	_hydrate_motion()
 	_wording = _wording_now()
 	_rows = _rows_now()
 	_world_rows = _world_rows_now()
@@ -542,20 +604,33 @@ func select_player_mode(mode: String) -> bool:
 	return true
 
 
+## `.segmented button`'s three states, one box each (`styles.css:2220-2252`): the chip
+## asleep is transparent with the reference's muted ink, the chip under the POINTER takes
+## `background: rgba(0, 229, 255, 0.1); color: #cfe9f7` (`:2238-2241`), and the chosen one
+## keeps the accent and its glow (`:2248-2252`). Handing `hover` the same box as `normal`
+## — what this function used to do — made the lightest of the three invisible under the
+## pointer, which is the defect this replaces.
 func refresh_selection() -> void:
 	var current := player_mode()
 	for key in MODE_KEYS:
 		var button := _control(MODE_PREFIX + key) as Button
 		if button == null:
 			continue
-		if key == current:
-			button.add_theme_stylebox_override("normal", _active_segment_box())
-			button.add_theme_stylebox_override("hover", _active_segment_box())
-			button.add_theme_stylebox_override("pressed", _active_segment_box())
+		var active := String(key) == current
+		button.add_theme_stylebox_override("normal", _active_segment_box() if active else _inactive_segment_box())
+		button.add_theme_stylebox_override("hover", _active_segment_box() if active else _segment_hover_box())
+		button.add_theme_stylebox_override("pressed", _active_segment_box() if active else _segment_hover_box())
+		if active:
+			# `.segmented button.is-active` fixes the ink in every state (`:2248-2252`):
+			# the reference's `:hover:not(.is-active)` rule cannot reach the chosen chip,
+			# so no override of this button's own colour is left behind.
+			button.remove_theme_color_override("font_hover_color")
+			button.remove_theme_color_override("font_pressed_color")
 		else:
-			button.add_theme_stylebox_override("normal", _inactive_segment_box())
-			button.add_theme_stylebox_override("hover", _inactive_segment_box())
-			button.add_theme_stylebox_override("pressed", _inactive_segment_box())
+			# `.segmented button { color: #809bb6 }` is the theme's own; only the ink
+			# under the pointer moves (`:2231`, `:2240`).
+			button.add_theme_color_override("font_hover_color", Color(SEGMENT_HOVER_INK))
+			button.add_theme_color_override("font_pressed_color", Color(SEGMENT_HOVER_INK))
 
 
 func player_mode_shown(mode: String) -> String:
@@ -598,6 +673,9 @@ func _build_grid() -> void:
 	var grid := _control("ArenaGrid") as GridContainer
 	if grid == null:
 		return
+	# Every card node is replaced here, so a card the POINTER held is gone: the holder is
+	# dropped with it rather than surviving into the new node under the same name.
+	_hovered_card_id = ""
 	_clear(grid)
 	for row in _rows:
 		var entry: Dictionary = row
@@ -616,6 +694,16 @@ func _build_grid() -> void:
 		card.add_theme_stylebox_override("panel", _card_box_of(id))
 		card.focus_entered.connect(_on_card_focus.bind(id, true))
 		card.focus_exited.connect(_on_card_focus.bind(id, false))
+		# The pad's ring (`styles.css:733-738`) rides the card as an overlay; see
+		# `CardFocusRing.gd` for why it is not a theme variation.
+		CardFocusRing.attach(card)
+		# `.arena-card:hover` (`styles.css:335-340`): the pointer lightens the border and
+		# rides the card 3 px up. Unlike `.mode-card:not(.mode-card--locked):hover`
+		# (`:336`) the reference excludes nothing here, so a card out of the matchday
+		# answers the pointer as well — it is the calendar's own sentence that says why
+		# the card cannot be taken, not a dead frame.
+		card.mouse_entered.connect(_on_card_pointer.bind(id, true))
+		card.mouse_exited.connect(_on_card_pointer.bind(id, false))
 		grid.add_child(card)
 		var column := VBoxContainer.new()
 		column.name = card.name + "Column"
@@ -729,6 +817,9 @@ func _make_world_grid() -> GridContainer:
 	grid.add_theme_constant_override("h_separation", 20)
 	grid.add_theme_constant_override("v_separation", 20)
 	grid.columns = _column_count()
+	# The world grid's own relayouts matter to the lift exactly as the frozen grid's do
+	# (`_refresh_lifts`).
+	grid.resized.connect(_refresh_lifts)
 	area.add_child(grid)
 	var frozen_area := _control(GRID_AREA_NODE)
 	if frozen_area != null:
@@ -747,6 +838,12 @@ func _build_world_card(grid: GridContainer, row: Dictionary) -> void:
 	card.add_theme_stylebox_override("panel", _card_box_of(id))
 	card.focus_entered.connect(_on_card_focus.bind(id, true))
 	card.focus_exited.connect(_on_card_focus.bind(id, false))
+	# The world cards wear the same pad ring as the frozen nine.
+	CardFocusRing.attach(card)
+	# The world cards answer the pointer exactly as the frozen nine do: one card, one
+	# hover rule (`styles.css:335-340`).
+	card.mouse_entered.connect(_on_card_pointer.bind(id, true))
+	card.mouse_exited.connect(_on_card_pointer.bind(id, false))
 	grid.add_child(card)
 	var column := VBoxContainer.new()
 	column.name = card.name + "Column"
@@ -841,6 +938,137 @@ func _on_card_focus(arena_id: String, entered: bool) -> void:
 	elif _focused_card_id == arena_id:
 		_focused_card_id = ""
 	_apply_selection_styles()
+
+
+# ---------------------------------------------------------------------------
+# The card's own motion (`styles.css:332`, `:335-340`)
+#
+# A card is a child of a `GridContainer`, and a container owns its children's positions:
+# the reference's `transform: translateY(-3px)` has no equivalent that survives a
+# relayout on its own. So the Y the layout gives a card at rest is CAPTURED and re-read
+# whenever the grid re-lays the card out (`_refresh_lifts`, wired to the screen's and the
+# grid's own `resized`), and every move starts from that rest Y — offsets are never
+# accumulated on top of each other.
+# ---------------------------------------------------------------------------
+
+
+## The pointer is the second holder of the lit state (see `_hovered_card_id`): both it
+## and the pad go through `_apply_selection_styles`, so the frame and the lift resolve in
+## one place and the two can never disagree.
+func _on_card_pointer(arena_id: String, entered: bool) -> void:
+	if entered:
+		_hovered_card_id = arena_id
+	elif _hovered_card_id == arena_id:
+		_hovered_card_id = ""
+	_apply_selection_styles()
+
+
+func _card_lifted(arena_id: String) -> bool:
+	return arena_id == _hovered_card_id or arena_id == _focused_card_id
+
+
+## The card's own record: the Y the layout gives it at rest, how far it currently sits
+## from that Y, and the tween carrying it. Kept on the node itself, so a card the grid
+## rebuilds takes its stale record with it.
+func _lift_state(card: Control) -> Dictionary:
+	if not card.has_meta(LIFT_META):
+		card.set_meta(LIFT_META, {"base_y": INF, "applied": 0.0, "tween": null})
+	return card.get_meta(LIFT_META)
+
+
+## The Y the grid gives this card at rest. A `GridContainer` writes its children's
+## positions when it sorts, so a position that is not where this screen last put the card
+## IS the container's own answer: the base follows it there and the offset in flight is
+## dropped rather than added to it. Otherwise the base is recovered from the offset, which
+## holds even for a card caught half way through its own tween.
+func _rest_y_of(card: Control) -> float:
+	var state := _lift_state(card)
+	var base := float(state["base_y"])
+	var applied := float(state["applied"])
+	if not is_finite(base) or absf(card.position.y - (base + applied)) > LIFT_EPSILON:
+		base = card.position.y
+		state["applied"] = 0.0
+	state["base_y"] = base
+	return base
+
+
+## Moves a card `offset` px off its rest Y over the reference's own 0.15 s, replacing any
+## tween still in flight: a pointer crossing four cards quickly used to leave each one
+## wherever its own tween happened to be. Driven by `tween_method` rather than
+## `tween_property` so the record above is written by the same hand that moves the card.
+func _lift_to(card: Control, offset: float) -> void:
+	var state := _lift_state(card)
+	var base := _rest_y_of(card)
+	var target := base + offset
+	_kill_lift(state)
+	if is_zero_approx(card.position.y - target):
+		_lift_step(target, card)
+		return
+	var tween: Tween = card.create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_OUT)
+	tween.tween_method(_lift_step.bind(card), card.position.y, target, LIFT_SECONDS)
+	state["tween"] = tween
+
+
+func _lift_step(y: float, card: Control) -> void:
+	var state := _lift_state(card)
+	card.position.y = y
+	state["applied"] = y - float(state["base_y"])
+
+
+func _kill_lift(state: Dictionary) -> void:
+	var tween: Tween = state.get("tween", null)
+	state["tween"] = null
+	if tween != null and tween.is_valid():
+		tween.kill()
+
+
+## Schedules the re-capture a relayout needs. A container sorts its children DEFERRED and
+## queues that sort from the very notification that resized it, so a capture taken in this
+## frame would read the row the cards are LEAVING: the re-capture waits one frame, by
+## which time every sort this resize queued has run. One capture is queued at a time — a
+## resize arrives as several `resized` signals through the frame's containers.
+func _refresh_lifts() -> void:
+	if _lift_refresh_queued:
+		return
+	_lift_refresh_queued = true
+	_after_sort.call_deferred()
+
+
+func _after_sort() -> void:
+	if not is_inside_tree():
+		_lift_refresh_queued = false
+		return
+	await get_tree().process_frame
+	_lift_refresh_queued = false
+	if not is_inside_tree():
+		return
+	_recapture_lifts()
+
+
+## Re-reads every card's rest Y and re-applies the offset it owes, without animation:
+## after a relayout the grid's own positions are the truth, and a tween started under the
+## old layout would land on a Y nothing stands on any more.
+func _recapture_lifts() -> void:
+	if not is_inside_tree():
+		return
+	for row in _rows:
+		_recapture_card_lift(String((row as Dictionary).get("id", "")), CARD_PREFIX)
+	for row in _world_rows:
+		_recapture_card_lift(String((row as Dictionary).get("id", "")), WORLD_CARD_PREFIX)
+
+
+func _recapture_card_lift(arena_id: String, prefix: String) -> void:
+	var card := _control(prefix + arena_id)
+	if card == null:
+		return
+	var state := _lift_state(card)
+	var base := _rest_y_of(card)
+	_kill_lift(state)
+	state["base_y"] = base
+	state["applied"] = -CARD_LIFT if _card_lifted(arena_id) else 0.0
+	card.position.y = base + float(state["applied"])
 
 
 func _place_overlay(host: Control, overlay_name: String, overlay: Control, visible_now: bool) -> void:
@@ -940,26 +1168,81 @@ func _card_box() -> StyleBoxFlat:
 	return _theme_box("PanelDark")
 
 
-func _selected_box() -> StyleBoxFlat:
-	return _theme_box("PanelCardSelected")
-
-
-## The frame the card wears: the calendar's fixture, or the session's own pick.
-## Without it a press left the grid looking untouched (the 2026-09-18 screenshot).
+## The frame the card wears, in the reference's own order: the calendar's fixture and the
+## session's pick wear the halo (`styles.css:3126-3128`), the card the pointer or the pad
+## holds wears the cyan frame alone — `styles.css:335-340` is the reference's whole hover
+## state, and the port's focus rule (`game/menu_focus.gd:73`) paints the same card, so one
+## held state serves both. Without a frame at all a press left the grid looking untouched
+## (the 2026-09-18 screenshot).
 func _card_box_of(arena_id: String) -> StyleBoxFlat:
-	if arena_id == _in_program or arena_id == _selected_id or arena_id == _focused_card_id:
+	if arena_id == _in_program or arena_id == _selected_id:
 		return _selected_box()
+	if _card_lifted(arena_id):
+		return _focus_box()
 	return _card_box()
+
+
+## `.arena-card--in-programma` (`styles.css:3126-3128`) / `.athlete-card--selected`
+## (`:342-345`): the cyan border AND the halo.
+func _selected_box() -> StyleBoxFlat:
+	var box := _theme_box("PanelCardSelected")
+	_add_halo(box)
+	return box
+
+
+## The same frame without the glow: the card under the pointer or the pad, one state
+## below the session's own choice. The reference lightens the hovered border
+## (`styles.css:335-340`) where the port's own focus rule has always painted the cyan
+## frame, and `controller_cards_test` pins that frame's border and fill on the focused
+## card — so the two held states share one box and only the halo is reserved for the
+## chosen card.
+func _focus_box() -> StyleBoxFlat:
+	var box := _theme_box("PanelCardSelected")
+	box.shadow_size = 0
+	return box
+
+
+## The halo the chosen card wears: `0 0 0 1px var(--cyan)` (the box's own cyan border)
+## plus `0 12px 40px rgba(0, 229, 255, 0.18)` (the shadow, `styles.css:342-345`,
+## `:3126-3128`).
+func _add_halo(box: StyleBoxFlat) -> void:
+	var theme_now: Theme = self.theme
+	if theme_now == null or not theme_now.has_color("cyan", "Palette"):
+		return
+	box.shadow_color = Color(theme_now.get_color("cyan", "Palette"), HALO_ALPHA)
+	box.shadow_size = int(HALO_SIZE)
+	box.shadow_offset = Vector2(0.0, 4.0)
 
 
 func _apply_selection_styles() -> void:
 	for arena_id in _card_ids():
-		var card := _control(CARD_PREFIX + String(arena_id))
+		var id := String(arena_id)
+		var card := _control(CARD_PREFIX + id)
 		if card == null:
-			card = _control(WORLD_CARD_PREFIX + String(arena_id))
+			card = _control(WORLD_CARD_PREFIX + id)
 		if card == null:
 			continue
-		card.add_theme_stylebox_override("panel", _card_box_of(String(arena_id)))
+		card.add_theme_stylebox_override("panel", _card_box_of(id))
+		# The frame and the lift are one state: a card the pointer or the pad holds
+		# moves as well as lights up (`styles.css:332`, `:335-340`), whichever frame it
+		# happens to be wearing.
+		_lift_to(card, -CARD_LIFT if _card_lifted(id) else 0.0)
+		# The PAD's own presentation, on top of the frame above: `.menu-focus`'s 3 px cyan
+		# ring 3 px outside the card (`styles.css:733-738`). The reference keeps it a
+		# separate rule from `:hover` and hands it to the pointer only when a pad is
+		# connected (`js/main.js:2579-2588`); the port draws it for the pad alone, so the
+		# card the controller holds never reads as a card the mouse happens to be over.
+		CardFocusRing.set_focused(card, id == _focused_card_id, _motion)
+
+
+## The motion policy the ring asks before it pulses: `UiMotionPolicy` over the saved
+## prefs, the same store `SettingsScreen._stored_prefs` reads. Hydrated on
+## `refresh_data()` (the screen's own re-entry point), so a toggle in the settings screen
+## is live the next time this screen is entered.
+func _hydrate_motion() -> void:
+	if _motion == null:
+		_motion = UiMotionPolicy.new()
+	_motion.apply_prefs(ModesSave.profile(Config.save_store()).get("prefs", {}))
 
 
 ## Bound after `_build_grid` because `_clear(ArenaGrid)` wipes `_bindings`.
@@ -1009,6 +1292,12 @@ func _active_segment_box() -> StyleBoxFlat:
 		box.border_color = theme.get_color("cyan", "Palette")
 	box.set_corner_radius_all(8)
 	box.border_width_bottom = 2
+	# `.segmented button.is-active { box-shadow: 0 0 16px rgba(22, 190, 215, 0.42) ... }`
+	# (`styles.css:2248-2252`): the chosen chip is the only lit one, and the tween-less
+	# `StyleBoxFlat` is where a shadow belongs. The box draws no fill, so the shadow
+	# reads as the glow the reference draws around it.
+	box.shadow_color = SEGMENT_GLOW_COLOR
+	box.shadow_size = int(SEGMENT_GLOW_SIZE)
 	return box
 
 
@@ -1020,6 +1309,21 @@ func _inactive_segment_box() -> StyleBoxFlat:
 		box.border_color = theme.get_color("line", "Palette")
 	box.set_corner_radius_all(8)
 	box.border_width_bottom = 1
+	return box
+
+
+## `.segmented button:hover:not(.is-active) { background: rgba(0, 229, 255, 0.1) }`
+## (`styles.css:2238-2241`) over the reference's `.segmented button { transition:
+## background 0.18s ease, color 0.18s ease, transform 0.18s ease }` (`:2235`): the chip
+## under the pointer is a FILL over the idle border, not the idle box again — the pair the
+## theme already carries as `BoxSegmentedIdleHover` (`padel_theme.tres:166-175`). The ink
+## that goes with it is `#cfe9f7` and is set by `refresh_selection`, next to the state it
+## belongs to.
+func _segment_hover_box() -> StyleBoxFlat:
+	var theme: Theme = self.theme
+	var box := _inactive_segment_box()
+	if theme != null and theme.has_color("cyan", "Palette"):
+		box.bg_color = Color(theme.get_color("cyan", "Palette"), SEGMENT_HOVER_ALPHA)
 	return box
 
 
@@ -1062,6 +1366,9 @@ func _apply_layout() -> void:
 	var world := _control(WORLD_GRID) as GridContainer
 	if world != null:
 		world.columns = _column_count()
+	# A relayout moves every card: the rest Y captured for the lift (`_lift_to`) is
+	# re-read once the containers have sorted (`_refresh_lifts`).
+	_refresh_lifts()
 	_update_preview_heights()
 
 

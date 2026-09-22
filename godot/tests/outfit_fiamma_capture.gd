@@ -41,6 +41,7 @@ const POSE_CLIP := {
 }
 
 var out_dir := "docs/agent-work/outfits-3d/evidence/renders"
+var athlete: StringName = ATHLETE
 var states: Array = ALL_STATES
 var poses: Array = ALL_POSES
 var views: Array = ALL_VIEWS
@@ -56,7 +57,9 @@ func _initialize() -> void:
 
 func _parse_args() -> void:
 	for arg in OS.get_cmdline_user_args():
-		if arg.begins_with("--out="):
+		if arg.begins_with("--athlete="):
+			athlete = StringName(arg.trim_prefix("--athlete="))
+		elif arg.begins_with("--out="):
 			out_dir = arg.trim_prefix("--out=")
 		elif arg.begins_with("--states="):
 			states = arg.trim_prefix("--states=").split(",", false)
@@ -149,10 +152,10 @@ func run() -> void:
 		var rig: Node3D = RigScene.instantiate()
 		# The asset must be selected BEFORE the rig enters the tree: `_ready()` builds
 		# it, and `set_athlete_asset()` refuses once construction has started.
-		check(rig.set_athlete_asset(ATHLETE), "asset select failed for " + state)
+		check(rig.set_athlete_asset(athlete), "asset select failed for " + state)
 		check(rig.get_load_error() == OK, "rig failed to load for " + state)
 		root.add_child(rig)
-		check(Catalogue.apply(rig, ATHLETE, StringName(state)), "outfit apply failed for " + state)
+		check(Catalogue.apply(rig, athlete, StringName(state)), "outfit apply failed for " + state)
 		rigs[state] = rig
 
 	for state in states:
@@ -170,7 +173,7 @@ func run() -> void:
 					await process_frame
 					await RenderingServer.frame_post_draw
 					var img := root.get_texture().get_image()
-					var name := "fiamma_%s_%s_%s_%s.png" % [state, pose, view, scale_name]
+					var name := "%s_%s_%s_%s_%s.png" % [athlete, state, pose, view, scale_name]
 					var path := dir.path_join(name)
 					var err := img.save_png(path)
 					check(err == OK, "could not write " + path)
@@ -201,7 +204,7 @@ func run() -> void:
 		column += 1
 	await process_frame
 	await RenderingServer.frame_post_draw
-	check(root.get_texture().get_image().save_png(dir.path_join("fiamma-lineup.png")) == OK, "comparison save")
+	check(root.get_texture().get_image().save_png(dir.path_join("%s-lineup.png" % athlete)) == OK, "comparison save")
 	for state in rigs:
 		(rigs[state] as Node).free()
 	print("OUTFIT_FIAMMA_CAPTURE_%s written=%d failures=%d" %

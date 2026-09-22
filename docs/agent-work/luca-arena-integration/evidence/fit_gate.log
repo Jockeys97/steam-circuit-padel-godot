@@ -1,0 +1,135 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# FIT_REPORT · Godot 4.7.2-stable (official) · preset=default · band=1.92 m (glass -10.02 - margin 0.05 -> wall -12.00)
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=106 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=249 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=105 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=249 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=107 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=246 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=105 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=250 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=107 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=251 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+# gate: 145 piece(s) measured across the five arenas
+# GLASS: none
+# WALL: none
+# BUDGET: none
+# HONEST: none
+# HEIGHT: none
+# CENTRE: none
+FIT_VERDICT PASS
+ERROR: Pages in use exist at exit in PagedAllocator: N20RasterizerSceneDummy21GeometryInstanceDummyE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: 500 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 50 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 50 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 150 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 50 RID allocations of type 'N17RendererSceneCull8InstanceE' were leaked at exit.

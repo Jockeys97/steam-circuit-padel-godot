@@ -1,0 +1,26 @@
+i18n port contract — js/i18n.js @ 91d679950931
+  locales          {"it":693,"en":693}  default 'en' → fallback 'it' → the id
+  duplicate keys   {"it":["shotPerfect","shotGood","shotEarly","shotLate","shotModeControl","shotModePower","shotModeBalanced"],"en":["shotPerfect","shotGood","shotEarly","shotLate","shotModeControl","shotModePower","shotModeBalanced"]}
+  missing keys     {"it":[],"en":[]}
+  composed keys    undefined across undefined runtime families, all defined in both locales
+  emit sites       69 in godot/src/sim/**
+  ids emitted      108 — 98 resolve, 10 ledgered
+  composites       32 port resolutions compared against the live reference module
+    no-params serveHint
+    no-key    LET
+    no-key    doubleFault:serveoutbox
+    no-key    doubleFault:servewallfault
+    no-key    serveOutBox secondServe
+    no-key    serveWallFault secondServe
+    no-key    pointYou:doubleFault:serveoutbox
+    no-key    pointYou:doubleFault:servewallfault
+    no-key    pointOpp:doubleFault:serveoutbox
+    no-key    pointOpp:doubleFault:servewallfault
+  injected drift   9/11 scenarios caught
+
+FAIL godot/src/locale/locale_data.gd does not parse: parseGdScript: unparsable line in it: "\t\t# PORT ADDITION — NOT FROM `js/i18n.js`. A special athlete is Godot-only"
+FAIL tools/i18n-port/resolve-rules.json: reference.sha256 a884267562d3 != live 91d679950931 — the contract is written against a different reference
+FAIL (drift control) port-string-changed: one string in the port's locale data is edited by hand -> NOT caught (2 findings)
+FAIL (drift control) port-key-removed: one key is missing from the port's locale data -> NOT caught (2 findings)
+
+4 finding(s) — the port's locale data and the reference have diverged

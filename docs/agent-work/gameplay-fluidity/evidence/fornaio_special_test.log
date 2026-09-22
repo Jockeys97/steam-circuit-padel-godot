@@ -1,0 +1,92 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# fornaio special gate build=full
+ok the specials overlay parses
+ok the overlay lists fornaio
+MEASURED specials=["fornaio"]
+ok ids and rows agree
+ok the display name is IL FORNAIO
+ok the roster UI colour is amber d98e2b
+ok the briefed rig height is 1.82 m
+ok the stand-in asset is named in the overlay
+ok the record marks itself as an addition
+ok the record carries the sim's stats
+ok the record carries a special with a cooldown
+MEASURED frozen_athletes=6
+ok Frozen.athletes stays the reference's six
+ok the outfit catalogue's roster is still the six
+ok fornaio is NOT in athlete_ids()
+MEASURED catalogue_entries=26
+ok the catalogue still carries the six athletes' 26 outfits
+ok selectable_athletes is the build's own roster
+ok fornaio is NOT in selectable_athletes()
+ok has_outfit answers for fornaio/base
+ok an outfit fornaio does not own is refused
+ok fornaio owns exactly the base outfit
+ok the catalogue hands back the special's record
+ok resolve answers for fornaio/base
+ok the base outfit's primary is the jacket white f7f4ee
+ok the base outfit's trim is the amber d98e2b
+ok AthleteSpawn.is_known answers for fornaio
+ok the base outfit's name key resolves (outfitBase)
+ok AthleteSpawn.make(fornaio, base) returns a rig, not null
+MEASURED joints=24 triangles=30980 asset=fornaio glb=res://assets/athletes/maestro-rigged.glb
+ok the rig loads
+ok the rig reports the fornaio id
+ok the rig reports the maestro stand-in mesh
+ok fornaio is never the Volpe fallback
+ok ATHLETE_GLB and the overlay name the same stand-in
+MEASURED locomotion=[&"idle", &"walk", &"run", &"shuffle_left", &"shuffle_right", &"backpedal", &"prepare"]
+ok the stand-in carries the 'idle' clip
+ok the stand-in carries the 'walk' clip
+ok the stand-in carries the 'run' clip
+ok the stand-in is a humanoid rig
+ok the outfit was noted on the rig through the catalogue's own door
+ok a DEMO build offers no specials (the parameterised answer)
+ok a FULL build offers the whole specials table
+ok Config's special list is the gate's own answer
+ok a full build's gate lists fornaio
+ok a full build offers the special strip
+ok a full build accepts the special seat
+ok the selected athlete id is fornaio
+ok the seat reports itself occupied
+ok Config.athlete() hands the special's record
+ok the frozen index is left where it was
+ok the special's own outfit list reaches Config
+ok an id the overlay does not hold is refused
+ok a full build's limits change nothing
+ok clearing the seat puts the frozen selection back
+ok the seat can be taken again after a clear
+ok the special's record is a lineup candidate
+MEASURED lineup_player_special={"opponent":"pantera","opponentMate":"steamer","player":"fornaio","playerMate":"maestro"}
+ok the player slot holds fornaio
+ok the four slots stay four distinct athletes
+MEASURED lineup_special_pref={"opponent":"fornaio","opponentMate":"steamer","player":"maestro","playerMate":"pantera"}
+ok the four slots stay four distinct athletes with a special in the prefs
+ok a full build fields the special in an assigned AI slot
+ok the record a lineup carries keeps the id the rig is built from
+ok the menu scene loads
+ok the special has a strip button in a full build and none in a demo
+ok the strip is labelled as its own block in a full build
+ok the ATLETA label still counts the exposed roster alone
+ok the menu still offers exactly one choice toggle per frozen row
+ok the strip names him from the overlay
+MEASURED menu_setup_row_min=(1044.0, 261.0) extras_min_h=258.0 tallest_other=261.0
+ok the setup row still fits the 1152x648 width budget
+ok the special strip rides inside the setup row's existing height
+ok pressing the strip selects fornaio
+ok the menu's selection is his record
+ok athlete_fornaio_name resolves in it
+MEASURED athlete_fornaio_name[it]=IL FORNAIO
+ok athlete_fornaio_name resolves in en
+MEASURED athlete_fornaio_name[en]=THE BAKER
+ok the Italian name is IL FORNAIO
+ok the English name is THE BAKER
+ok the portrait copy is on disk
+ok the Meshy source view is on disk
+ok the art table's candidate for a special is the png
+ok path_for answers the special's portrait
+ok a frozen athlete keeps the webp convention
+MEASURED portrait_bytes copy=1538759 source=1538759
+ok the portrait is a byte-for-byte copy (same size)
+PASS 77/77

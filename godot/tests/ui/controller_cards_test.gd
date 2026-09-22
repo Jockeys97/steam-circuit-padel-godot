@@ -155,6 +155,7 @@ func _walk_modes() -> void:
 
 	# The confirm is the card's own `select_mode`, not a route the bridge guessed: the
 	# mode is written to the session and the screen moves to the character panel.
+	check(await _walk_to(first_card), "the pad returns to the quick-match card after editing setup")
 	await _confirm()
 	check(_menu._router.active_id() == "characters", "a pad confirm on an unlocked mode card opens the characters screen")
 

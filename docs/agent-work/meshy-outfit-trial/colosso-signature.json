@@ -1,0 +1,32 @@
+{
+  "name": "colosso-signature",
+  "endpoint": "retexture",
+  "status": "SUCCEEDED",
+  "created": "2026-09-21T17:12:03.736Z",
+  "balanceBefore": 660,
+  "referenceSha256": "368126d1d9e5f52d3b1daa4522aea820602d39d5d98824a3e7e17ac950bb753f",
+  "modelSha256": "d69d3dbf31d10d1e711e0d7a54a54036cad75211aa9aaff6283b17ad22f59755",
+  "settings": {
+    "ai_model": "meshy-7",
+    "enable_pbr": true,
+    "texture_resolution": "2k",
+    "target_formats": [
+      "glb"
+    ],
+    "enable_original_uv": true
+  },
+  "id": "01a0c4f4-0e89-7286-bd1d-11012f1567a0",
+  "progress": 100,
+  "credits": 10,
+  "checked": "2026-09-21T17:13:38.469Z",
+  "balanceAfter": 620,
+  "files": [
+    "docs/agent-work/meshy-outfit-trial/colosso-signature/model.glb",
+    "docs/agent-work/meshy-outfit-trial/colosso-signature/preview.png",
+    "docs/agent-work/meshy-outfit-trial/colosso-signature/texture-0-base_color.png",
+    "docs/agent-work/meshy-outfit-trial/colosso-signature/texture-0-metallic.png",
+    "docs/agent-work/meshy-outfit-trial/colosso-signature/texture-0-roughness.png",
+    "docs/agent-work/meshy-outfit-trial/colosso-signature/texture-0-normal.png"
+  ],
+  "downloaded": true
+}

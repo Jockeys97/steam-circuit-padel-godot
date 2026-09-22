@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+MASK athlete=fiamma exists=true has_import=true class=CompressedTexture2D size=2048x2048 handed_to_shader=true sha_prefix_declared=f176618b03f92216 path=res://assets/athletes/outfits/fiamma/fiamma_region_mask.png
+MASK athlete=maestro exists=true has_import=true class=CompressedTexture2D size=2048x2048 handed_to_shader=true sha_prefix_declared=dc39e62c92bc5b8e path=res://assets/athletes/outfits/maestro/maestro_region_mask.png
+MASKS_OK

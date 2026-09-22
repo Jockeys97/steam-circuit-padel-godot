@@ -39,6 +39,11 @@ const CURRENT_SCHEMA_VERSION: int = 1
 ## `schemaVersion` is treated as v0 (the browser's bare payload).
 const FORMAT_TAG: String = "padel-save"
 
+## The pace ladder owns its own default, so this file stores the id rather than a
+## second copy of the choice (`src/sim/pace.gd`). Pure data module: it preloads
+## nothing, so the save layer gains no dependency beyond the one constant.
+const Pace := preload("res://src/sim/pace.gd")
+
 ## Writing build, read from the frozen reference so the save records which build
 ## wrote it — the same thing the feedback diagnostics already carry.
 const BUILD: String = "alpha-0.2" ## js/data.js:20 VERSION.build
@@ -133,6 +138,10 @@ const PREFS_DEFAULTS: Dictionary = {
 	"colorblind": false, ## js/ui.js:473
 	"lang": "en", ## js/ui.js:475
 	"playerMode": "solo", ## js/ui.js:476
+	## PORT ADDITION, no reference line: the game-pace preset
+	## (`src/sim/pace.gd`). Its default is the rung whose factor is 1.0, so a save
+	## written before this key existed reads back as the tuning it was written at.
+	"pacePreset": Pace.DEFAULT_ID,
 	"lineup": { ## js/ui.js:480
 		"playerMate": null,
 		"opponent": null,

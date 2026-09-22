@@ -56,7 +56,11 @@ const TEMP_DIR := "user://uir20-pause-audit"
 const FRAME := Vector2(1280, 720)
 const SETTLE_FRAMES := 3
 ## The five states the ticket's frontmatter declares.
-const CAPTURE_STATES := ["pause-match", "pause-controller", "pause-controls", "quit-confirm", "smash-tutorial"]
+## The overlay's declared capture states. The UI tab is this bundle's fourth panel
+## (`docs/agent-work/ui-visibility-settings/PLAN.md`), so its state is declared here
+## exactly as the reference's five are.
+const CAPTURE_STATES := ["pause-match", "pause-controller", "pause-controls", "pause-ui",
+	"quit-confirm", "smash-tutorial"]
 const DEVELOPER_MARKERS := ["push_error(", "push_warning(", "printerr(", "assert("]
 const PROBE_SOURCE := "func x() -> void:\n\tlabel.text = \"Play now\"\n\tpush_error(\"dev only\")\n\tlabel.text = UiStrings.t(\"volume\")\n## a comment quoting \"prose in a comment\"\n"
 ## The patterns this ticket may never carry in code (comments are stripped first).
@@ -73,6 +77,19 @@ var _seam
 class FakeSeam extends RefCounted:
 	var paused := false
 	var calls: Array = []
+	## The UI tab's read/write contract, in the same shape the match controller
+	## exposes it (`match_controller.gd:ui_visibility_snapshot`, `set_ui_component`,
+	## `set_ui_preset`, `ui_preset_id`). The preset MAPS are the controller's own
+	## subject (`tests/ui/ui_visibility_audit.gd`); this stub only has to answer and
+	## to record, so the tab's routing is what this audit pins.
+	const COMPONENTS := ["score", "time", "map", "guidance", "indicators", "events"]
+	const PRESETS := {
+		"all": {"score": true, "time": true, "map": true, "guidance": true, "indicators": true, "events": true},
+		"essential": {"score": true, "time": true, "map": false, "guidance": false, "indicators": true, "events": true},
+		"score_only": {"score": true, "time": false, "map": false, "guidance": false, "indicators": false, "events": false},
+		"clean": {"score": false, "time": false, "map": false, "guidance": false, "indicators": false, "events": false},
+	}
+	var profile := {"score": true, "time": true, "map": true, "guidance": true, "indicators": true, "events": true}
 
 	func is_paused() -> bool:
 		return paused
@@ -81,6 +98,33 @@ class FakeSeam extends RefCounted:
 		calls.append(["set_match_paused", value])
 		paused = value
 		return true
+
+	func ui_visibility_snapshot() -> Dictionary:
+		return profile.duplicate()
+
+	func set_ui_component(id: String, visible: bool) -> bool:
+		calls.append(["set_ui_component", id, visible])
+		if not COMPONENTS.has(id):
+			return false
+		profile[id] = visible
+		return true
+
+	func set_ui_preset(id: String) -> bool:
+		calls.append(["set_ui_preset", id])
+		if not PRESETS.has(id):
+			return false
+		profile = (PRESETS[id] as Dictionary).duplicate()
+		return true
+
+	func ui_preset_id() -> String:
+		for id in ["all", "essential", "score_only", "clean"]:
+			var same := true
+			for key in COMPONENTS:
+				if bool(profile.get(key, true)) != bool((PRESETS[id] as Dictionary)[key]):
+					same = false
+			if same:
+				return String(id)
+		return ""
 
 	func rematch() -> void:
 		calls.append(["rematch", true])
@@ -155,7 +199,7 @@ func _mount(audit: AuditBase) -> void:
 	var report: Dictionary = _overlay.report()
 	audit.check_eq(report.get("open"), false, "pause/the_overlay_starts_hidden")
 	audit.check_eq(report.get("tab"), "match", "pause/partita_is_the_initial_tab")
-	audit.check_eq(_overlay.capture_states(), CAPTURE_STATES, "pause/the_five_capture_states_are_declared")
+	audit.check_eq(_overlay.capture_states(), CAPTURE_STATES, "pause/the_six_capture_states_are_declared")
 	audit.check_ne(_overlay.theme, null, "pause/the_scene_mounts_the_theme")
 	audit.check_eq(_overlay.legend() != null, true, "pause/the_legend_is_consumed")
 	audit.check_eq(_overlay.smash_tutorial() != null, true, "pause/the_tutorial_is_consumed")
@@ -188,21 +232,73 @@ func _tabs(audit: AuditBase) -> void:
 	audit.check_eq(_overlay.tab_button("controller").theme_type_variation, &"SegmentedActive", "pause/the_switched_tab_takes_the_active_look")
 	audit.check_eq(_overlay.tab_button("match").theme_type_variation, &"SegmentedInactive", "pause/the_left_tab_returns_to_idle")
 	audit.check_eq(_overlay.set_tab("controls"), true, "pause_the_controls_tab_switches")
+	audit.check_eq(_overlay.set_tab("ui"), true, "pause_the_ui_tab_switches")
+	audit.check_eq(_overlay.active_tab(), "ui", "pause/the_ui_tab_is_active")
+	audit.check_eq(_overlay.tab_button("ui").theme_type_variation, &"SegmentedActive", "pause/the_ui_tab_takes_the_active_look")
+	audit.check_eq(_overlay.tab_button("controls").theme_type_variation, &"SegmentedInactive", "pause/the_controls_tab_returns_to_idle")
 	audit.check_eq(_overlay.set_tab("nope"), false, "pause/an_unknown_tab_is_refused")
 	var panels: Array = []
-	for tab in ["match", "controller", "controls"]:
+	for tab in ["match", "controller", "controls", "ui"]:
 		var panel: Control = _overlay.find_child(_panel_name(tab), true, false)
 		if panel != null and panel.visible:
 			panels.append(tab)
-	audit.check_eq(panels, ["controls"], "pause/exactly_one_panel_is_visible")
+	audit.check_eq(panels, ["ui"], "pause/exactly_one_panel_is_visible")
 	audit.check_eq(_overlay.set_tab("match"), true, "pause/back_to_the_match_tab")
-	audit.check_eq(_overlay.focus_controls().size(), 7, "pause/three_tabs_and_four_actions_are_focusable")
+	audit.check_eq(_overlay.focus_controls().size(), 8, "pause/four_tabs_and_four_actions_are_focusable")
 	var focus_ids: Array = []
 	for entry in _overlay.focus_controls():
 		focus_ids.append(String((entry as Dictionary).get("id", "")))
-	for wanted in ["pause/tab-match", "pause/tab-controller", "pause/tab-controls",
+	for wanted in ["pause/tab-match", "pause/tab-controller", "pause/tab-controls", "pause/tab-ui",
 			"pause/resume", "pause/replay", "pause/rematch", "pause/quit-match"]:
 		audit.check_true(focus_ids.has(wanted), "pause/the_focus_table_carries_%s" % wanted)
+	await _ui_tab(audit)
+
+
+## The fourth tab's own panel: the four presets first, then the six independent
+## toggles, all of them focusable, and the controller tab's own `rows()` table left
+## exactly as it was (the UI rows live behind `ui_rows()`).
+func _ui_tab(audit: AuditBase) -> void:
+	audit.check_eq(_overlay.set_tab("ui"), true, "pause/ui/the_ui_tab_opens")
+	var panel: Control = _overlay.find_child("PanelUi", true, false)
+	audit.check_true(panel != null and panel.visible, "pause/ui/the_ui_panel_is_mounted_and_shown")
+	var presets: Dictionary = _overlay.ui_preset_buttons()
+	audit.check_eq(presets.size(), 4, "pause/ui/the_tab_builds_four_preset_controls")
+	for id in ["all", "essential", "score_only", "clean"]:
+		audit.check_true(presets.get(id) is Button, "pause/ui/the_preset_%s_is_a_button" % id)
+	var ui_rows: Dictionary = _overlay.ui_rows()
+	audit.check_eq(ui_rows.size(), 6, "pause/ui/the_tab_builds_six_toggle_rows")
+	for id in ["score", "time", "map", "guidance", "indicators", "events"]:
+		audit.check_true(ui_rows.get(id) is RowsClass.ToggleRow, "pause/ui/the_toggle_%s_is_a_toggle_row" % id)
+	audit.check_eq(_overlay.rows().size(), 3, "pause/ui/the_controller_rows_table_is_unchanged")
+	var focus: Array = _overlay.focus_controls()
+	audit.check_eq(focus.size(), 14, "pause/ui/four_tabs_plus_four_presets_plus_six_toggles_are_focusable")
+	var ids: Array = []
+	for entry in focus:
+		ids.append(String((entry as Dictionary).get("id", "")))
+	for id in ["ui-preset:all", "ui-preset:essential", "ui-preset:score_only", "ui-preset:clean",
+			"ui-component:score", "ui-component:time", "ui-component:map",
+			"ui-component:guidance", "ui-component:indicators", "ui-component:events"]:
+		audit.check_true(ids.has("pause/" + id), "pause/ui/the_focus_table_carries_%s" % id)
+	for wanted in ["pause/tab-match", "pause/tab-controller", "pause/tab-controls", "pause/tab-ui"]:
+		audit.check_true(ids.has(wanted), "pause/ui/the_fourth_tab_keeps_%s" % wanted)
+	audit.check_eq(_overlay.apply_capture_state("pause-ui"), true, "pause/ui/the_capture_state_applies")
+	audit.check_eq(_overlay.report().get("tab"), "ui", "pause/ui/the_capture_state_lands_on_the_ui_tab")
+	# The routing: a preset press and a toggle flip each cross the seam, and the tab
+	# re-reads the profile the seam now answers with (no local copy of its own).
+	(presets["clean"] as Button).pressed.emit()
+	audit.check_eq((_seam as FakeSeam).last_args("set_ui_preset"), ["set_ui_preset", "clean"], "pause/ui/a_preset_press_is_written_through_the_seam")
+	audit.check_eq(_overlay.ui_preset_id(), "clean", "pause/ui/the_preset_selection_comes_from_the_seam")
+	audit.check_eq((_overlay.ui_rows()["score"] as RowsClass.ToggleRow).on(), false, "pause/ui/the_toggles_follow_the_preset")
+	var map_check := (_overlay.ui_rows()["map"] as RowsClass.ToggleRow).check
+	(presets["all"] as Button).pressed.emit()
+	audit.check_eq((_overlay.ui_rows()["map"] as RowsClass.ToggleRow).on(), true, "pause/ui/the_presets_reach_every_toggle")
+	map_check.button_pressed = false
+	audit.check_eq((_seam as FakeSeam).last_args("set_ui_component"), ["set_ui_component", "map", false], "pause/ui/a_toggle_flip_is_written_through_the_seam")
+	audit.check_eq(_overlay.ui_preset_id(), "", "pause/ui/a_custom_profile_selects_no_preset")
+	audit.check_eq(_overlay.set_row_value("map", 1.0), true, "pause/ui/the_model_stepped_door_reaches_a_ui_row")
+	audit.check_eq((_overlay.ui_rows()["map"] as RowsClass.ToggleRow).on(), true, "pause/ui/the_model_stepped_write_lands")
+	audit.check_eq(_overlay.set_row_value("nope", 1.0), false, "pause/ui/an_unknown_row_is_still_refused")
+	audit.check_eq(_overlay.set_tab("match"), true, "pause/ui/back_to_the_match_tab")
 
 
 func _panel_name(tab: String) -> String:
@@ -211,6 +307,8 @@ func _panel_name(tab: String) -> String:
 			return "PanelMatch"
 		"controller":
 			return "PanelController"
+		"ui":
+			return "PanelUi"
 	return "PanelControls"
 
 
@@ -374,7 +472,7 @@ func _controller_rows(audit: AuditBase) -> void:
 	audit.check_eq(_overlay.mode_button("semi").theme_type_variation, &"SegmentedActive", "pause/the_strip_follows_the_foreign_write")
 	audit.check_eq(is_equal_approx(_overlay.deadzone(), 0.11), true, "pause/a_foreign_deadzone_write_is_read_back")
 	audit.check_eq(is_equal_approx(deadzone_row.value(), 0.11), true, "pause/the_row_shows_the_foreign_deadzone")
-	audit.check_eq(_overlay.focus_controls().size(), 9, "pause/the_controller_tab_exposes_three_modes_and_three_rows")
+	audit.check_eq(_overlay.focus_controls().size(), 10, "pause/the_controller_tab_exposes_three_modes_three_rows_and_the_fourth_tab")
 
 
 func _pref(key: String) -> Variant:
@@ -443,6 +541,10 @@ func _legend_and_tutorial(audit: AuditBase) -> void:
 	var legend: Control = _overlay.legend()
 	audit.check_eq(legend.row_count(), LegendClass.ROW_COUNT, "pause/the_legend_carries_the_reference_rows")
 	audit.check_eq(legend.tutorial_link_enabled(), true, "pause/the_legend_carries_the_tutorial_link")
+	audit.check_eq(legend.side_by_side(), true, "pause/the_desktop_legend_matches_the_2d_split_layout")
+	audit.check_ne(legend.get_node_or_null("LegendSplit"), null, "pause/the_split_layout_has_one_shared_host")
+	audit.check_eq(legend.visual_node().get_parent().name, "LegendSplit", "pause/the_controller_art_is_on_the_left_of_the_legend")
+	audit.check_eq(legend.get_node("LegendSplit/LegendRows").columns, 2, "pause/the_controls_keep_the_2d_two_column_grid")
 	audit.check_ne(legend.tutorial_button(), null, "pause/the_tutorial_link_is_a_button")
 	var focus_ids: Array = []
 	for entry in _overlay.focus_controls():
@@ -576,7 +678,7 @@ func _strings(audit: AuditBase) -> void:
 			still_wrong.append(String(id))
 	audit.check_eq(still_wrong, [], "pause/the_flip_back_restores_every_slot")
 	audit.check_eq(_overlay.set_language("xx"), false, "pause/an_unknown_locale_is_refused")
-	audit.check_eq(_overlay.focus_controls().size(), 7, "pause/the_match_tab_is_still_focusable_after_the_flip")
+	audit.check_eq(_overlay.focus_controls().size(), 8, "pause/the_match_tab_is_still_focusable_after_the_flip")
 	audit.report("language flip: %d of %d visible slots differ between tables" % [moved, before.size()])
 	_overlay.close()
 

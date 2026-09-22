@@ -1,0 +1,59 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok   the real CharactersScreen scene registers
+ok   the session athlete is maestro (the roster's index 0)
+MEASURED maestro outfits = ["base","circuit","legend","signature","mythic"]
+ok   the maestro athlete has a wardrobe
+ok   the wardrobe opens for the player slot
+ok   the open wardrobe belongs to maestro (got 'maestro')
+ok   the wardrobe is the active view
+ok   the wardrobe shows a card for 'circuit'
+ok   'circuit' exists in the reference table
+ok   'circuit' starts LOCKED on a fresh career
+ok   'circuit' carries a challenge
+ok   a locked 'circuit' cannot be equipped
+ok   'circuit' shows its challenge line
+ok   the wardrobe shows a card for 'legend'
+ok   'legend' exists in the reference table
+ok   'legend' starts LOCKED on a fresh career
+ok   'legend' carries a challenge
+ok   a locked 'legend' cannot be equipped
+ok   'legend' shows its challenge line
+ok   the wardrobe shows a card for 'signature'
+ok   'signature' exists in the reference table
+ok   'signature' starts LOCKED on a fresh career
+ok   'signature' carries a challenge
+ok   a locked 'signature' cannot be equipped
+ok   'signature' shows its challenge line
+MEASURED award_match_outfits(maestro) unlocked = ["maestro:circuit","maestro:legend","maestro:signature","maestro:mythic"]
+MEASURED the same match won for fiamma = ["fiamma:circuit","fiamma:legend","fiamma:signature"]
+ok   the shared award unlocks maestro:circuit
+ok   the same award unlocks fiamma:circuit (parity)
+ok   the shared award unlocks maestro:legend
+ok   the same award unlocks fiamma:legend (parity)
+ok   the shared award unlocks maestro:signature
+ok   the same award unlocks fiamma:signature (parity)
+ok   the match counts one maestro win
+ok   the wardrobe reopens after the unlock
+ok   'circuit' is unlocked now
+ok   'circuit' now offers its pick action
+ok   'circuit' can be equipped
+ok   equipping 'circuit' is written to career.equippedOutfits
+ok   the screen reports 'circuit' as equipped
+ok   'legend' is unlocked now
+ok   'legend' now offers its pick action
+ok   'legend' can be equipped
+ok   equipping 'legend' is written to career.equippedOutfits
+ok   the screen reports 'legend' as equipped
+ok   'signature' is unlocked now
+ok   'signature' now offers its pick action
+ok   'signature' can be equipped
+ok   equipping 'signature' is written to career.equippedOutfits
+ok   the screen reports 'signature' as equipped
+ok   a fresh mount still reports 'signature' as equipped (got 'signature')
+ok   the equipped card exists after the remount
+ok   the equipped card wears the selected frame after the remount
+ok   the real profile under user://save is untouched
+MEASURED real profile before = {"career.json":588,"prefs.json":615}
+MEASURED real profile after  = {"career.json":588,"prefs.json":615}
+MAESTRO_WARDROBE_PASS checks=51

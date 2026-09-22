@@ -1,0 +1,84 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok drill/step_delegates_to_the_engine_the_drill_imports_it
+ok drill/the_single_line_where_a_drill_step_becomes_an_engine_step
+ok drill/no_self_integrated_ball_flight_in_the_drill_sources
+# report drill_sources_bytes=35624
+ok drill/state_has_arena
+ok drill/state_has_athlete
+ok drill/state_has_rallyEnergy
+ok drill/state_has_stats
+ok drill/state_has_player
+ok drill/state_has_opponent
+ok drill/state_has_ball
+ok drill/athlete_carries_its_stats
+ok drill/arena_carries_the_glass_physics
+ok drill/state_declares_its_mode
+ok drill/a_point_cannot_close_the_session
+ok drill/precision/first_command_starts_the_attempt
+ok drill/precision/the_engine_put_the_ball_in_play
+ok drill/precision/a_target_was_placed
+ok drill/precision/the_target_sits_in_the_opponents_half
+ok drill/precision/an_attempt_closes_within_20_simulated_seconds
+ok drill/precision/the_attempt_was_counted_once
+ok drill/precision/points_are_valid
+ok drill/precision/the_score_is_numeric
+ok drill/precision/the_hud_wants_four_metrics
+ok drill/precision/every_metric_is_populated
+ok drill/smash/first_command_starts_the_attempt
+ok drill/smash/the_engine_put_the_ball_in_play
+ok drill/smash/an_attempt_closes_within_20_simulated_seconds
+ok drill/smash/the_attempt_was_counted_once
+ok drill/smash/points_are_valid
+ok drill/smash/the_score_is_numeric
+ok drill/smash/the_hud_wants_four_metrics
+ok drill/smash/every_metric_is_populated
+ok drill/rally/first_command_starts_the_attempt
+ok drill/rally/the_engine_put_the_ball_in_play
+ok drill/rally/an_attempt_closes_within_20_simulated_seconds
+ok drill/rally/the_attempt_was_counted_once
+ok drill/rally/points_are_valid
+ok drill/rally/the_score_is_numeric
+ok drill/rally/the_hud_wants_four_metrics
+ok drill/rally/every_metric_is_populated
+ok drill/serve/first_command_starts_the_attempt
+ok drill/serve/the_engine_prepared_the_serve
+ok drill/serve/an_attempt_closes_within_20_simulated_seconds
+ok drill/serve/the_attempt_was_counted_once
+ok drill/serve/points_are_valid
+ok drill/serve/the_score_is_numeric
+ok drill/serve/the_hud_wants_four_metrics
+ok drill/serve/every_metric_is_populated
+ok drill/precision/opponents_stay_frozen_or_they_intercept
+ok drill/smash/the_opponent_must_be_able_to_play
+ok drill/rally/the_opponent_must_be_able_to_play
+ok drill/exercise_precision_resolves
+ok drill/exercise_smash_resolves
+ok drill/exercise_rally_resolves
+ok drill/exercise_serve_resolves
+ok drill/an_unknown_id_falls_back_to_the_first_exercise
+ok drill/precision/attempt_closes_for_the_diagnosis_check
+ok drill/precision/a_closed_attempt_carries_a_diagnosis
+ok drill/smash/attempt_closes_for_the_diagnosis_check
+ok drill/smash/a_closed_attempt_carries_a_diagnosis
+ok drill/rally/attempt_closes_for_the_diagnosis_check
+ok drill/rally/a_closed_attempt_carries_a_diagnosis
+ok drill/serve/attempt_closes_for_the_diagnosis_check
+ok drill/serve/a_closed_attempt_carries_a_diagnosis
+ok drill/every_diagnosis_resolves_in_both_languages
+# report diagnosi=["drillWhyOwnHalf","drillWhyNoSmash","drillWhyRallyShort","drillWhyFirstServe"]
+ok drill/the_squash_scale_needs_three_landings
+ok drill/squash_quality_stays_in_scale
+ok drill/the_squash_scale_is_monotone
+# report squash_samples=[{"q":0.0,"vz":269.360940137694},{"q":0.0,"vz":325.680275720249},{"q":0.0,"vz":260.939435749431},{"q":0.0,"vz":260.939435749431},{"q":0.0,"vz":260.939435749431},{"q":0.0,"vz":260.939435749431}]
+ok drill/serve/the_state_is_in_the_serve
+ok drill/serve/the_player_serves_not_the_opponent
+ok drill/serve/the_double_faults_are_shown
+ok drill/same_seed_same_targets
+ok drill/same_seed_same_attempt_outcomes
+ok drill/a_different_seed_places_different_targets
+ok drill/every_seeded_target_sits_in_the_opponents_half
+ok drill/the_exercise_table_still_has_four_entries
+# report drill=["precision tentativi=1 centrati=0 punti=2 voto=perfect colpi=1 energia=1.00","smash tentativi=1 centrati=0 punti=2 voto=perfect colpi=2 energia=1.00","rally tentativi=1 centrati=0 punti=6 voto=perfect colpi=2 energia=1.00","serve tentativi=1 centrati=1 punti=10 voto=perfect colpi=5 energia=1.00"]
+# report source_sha256={"js/data.js":"c63c496cd967663a5ec9f708e77b6f6948e4b523ba5b0e4280a40af642ec6403","js/drill.js":"b3f346f65029e0a402eda2f6e73a1fd7897b0c1ee0c812e701eee911a89c8703"}
+PASS 76/76

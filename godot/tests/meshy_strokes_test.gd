@@ -12,11 +12,13 @@ func check(ok: bool, message: String):
 func _initialize(): call_deferred("run")
 func run():
 	var athlete := "fiamma"
+	var outfit := "base"
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--athlete="): athlete = arg.trim_prefix("--athlete=")
+		if arg.begins_with("--outfit="): outfit = arg.trim_prefix("--outfit=")
 	var view := View.new()
 	root.add_child(view)
-	view.spawn({"player":{"id":athlete},"opponent":{"id":"maestro"}}, {}, {})
+	view.spawn({"player":{"id":athlete},"opponent":{"id":"maestro"}}, {"player":StringName(outfit)}, {})
 	var rig = view.rigs.player
 	var state = Sim.create_match_state("quick",Frozen.athletes()[0],Frozen.arenas()[0],Frozen.ai_opponents()[0])
 	for entry in [["smash","smash",20.0],["bandeja","bandeja",20.0],["drive","backhand",-20.0],["slice","slice",20.0],["drive","drive",20.0]]:
@@ -86,7 +88,7 @@ func run():
 			for col in 3:
 				var sample := View.new()
 				root.add_child(sample)
-				sample.spawn({"player":{"id":athlete}}, {}, {})
+				sample.spawn({"player":{"id":athlete}}, {"player":StringName(outfit)}, {})
 				sample.position = Vector3((col-1)*1.7,(3-row)*2.0,0)
 				var r = sample.rigs.player
 				r.set_facing_degrees(0)
@@ -103,6 +105,7 @@ func run():
 		await RenderingServer.frame_post_draw
 		var output := ProjectSettings.globalize_path("res://../docs/agent-work/meshy-roster-retarget")
 		DirAccess.make_dir_recursive_absolute(output)
-		root.get_texture().get_image().save_png(output+"/%s-poses.png" % athlete)
+		var capture_id := athlete if outfit == "base" else athlete + "-" + outfit
+		root.get_texture().get_image().save_png(output+"/%s-poses.png" % capture_id)
 	print("MESHY_STROKES ",athlete," ",checks-failures,"/",checks)
 	quit(1 if failures else 0)

@@ -449,6 +449,26 @@ func _keyboard(audit: AuditBase, bridge: RefCounted, focus: MenuFocus, router: C
 	released.pressed = false
 	audit.check_eq(bridge.dispatch(released), false, "a11y/a_button_release_is_not_a_confirm")
 
+	# A letter the navigation also uses must reach the field instead of moving the
+	# focus. `KEY_A` is "left" in the model (`game/menu_focus.gd:171`), and the
+	# reference's own `keydown` exits before any of that when the event's target is a
+	# text entry (`js/main.js:2589-2598`). Without the exit, the unlock code "Lucale"
+	# typed as "Luc".
+	field.grab_focus()
+	await process_frame
+	audit.check_true(field.has_focus(), "a11y/the_probe_field_holds_the_engine_focus")
+	var focused_before := String(bridge.focus_id())
+	audit.check_eq(bridge.dispatch(_key_event(KEY_A)), false, "a11y/a_letter_the_navigation_uses_is_left_to_the_field")
+	audit.check_eq(bridge.focus_id(), focused_before, "a11y/the_focused_field_does_not_move_on_that_letter")
+	audit.check_eq(String(bridge.last_dispatch().get("kind", "")), "text-entry", "a11y/the_verdict_names_the_text_entry")
+	audit.check_eq(bridge.dispatch(_key_event(KEY_SPACE)), false, "a11y/a_space_is_left_to_the_field_instead_of_confirming")
+	audit.check_eq(bridge.dispatch(_key_event(KEY_ENTER)), false, "a11y/Enter_is_left_to_a_native_LineEdit_for_submission")
+	# The negation: the same letter is the navigation's again once no field holds the
+	# focus, so the exit is a text-entry rule and not a dead key.
+	field.release_focus()
+	await process_frame
+	audit.check_eq(bridge.dispatch(_key_event(KEY_A)), true, "a11y/with_no_field_focused_the_letter_is_the_navigation_again")
+
 
 # ---------------------------------------------------------------------------
 # 7. The carried metadata: the range keys and the OSK keys the model cannot hold

@@ -1,0 +1,44 @@
+ M docs/art/roster-3d.json
+ M godot/game/court_timing_marks.gd
+ M godot/game/main_menu.gd
+ M godot/game/out/hud-off.png
+ M godot/game/out/hud.png
+ M godot/game/out/quickmatch-serve.png
+ M godot/game/out/rally.png
+ M godot/game/out/result.png
+ M godot/game/out/timing-off.png
+ M godot/game/out/timing.png
+ M godot/src/character/athlete_rig.gd
+ M godot/src/ui/ScreenShell.gd
+ M godot/src/ui/ScreenShell.tscn
+ M godot/src/ui/screens/DrillScreen.gd
+ M godot/src/ui/screens/FeedbackScreen.gd
+ M godot/src/ui/screens/SettingsScreen.gd
+ M godot/tests/court_timing_marks_test.gd
+?? docs/agent-work/
+?? godot/assets/athletes/fiamma.glb
+?? godot/assets/athletes/fiamma.glb.import
+?? godot/assets/athletes/fiamma_normal.png
+?? godot/assets/athletes/fiamma_normal.png.import
+?? godot/assets/athletes/fiamma_texture_0.png
+?? godot/assets/athletes/fiamma_texture_0.png.import
+?? godot/assets/athletes/fiamma_texture_0_metallic_roughness.png
+?? godot/assets/athletes/fiamma_texture_0_metallic_roughness.png.import
+?? godot/assets/athletes/maestro.glb
+?? godot/assets/athletes/maestro.glb.import
+?? godot/assets/athletes/maestro_texture_0.png
+?? godot/assets/athletes/maestro_texture_0.png.import
+?? godot/assets/athletes/oracolo.glb
+?? godot/assets/athletes/oracolo.glb.import
+?? godot/assets/athletes/oracolo_normal.png
+?? godot/assets/athletes/oracolo_normal.png.import
+?? godot/assets/athletes/oracolo_texture_0.png
+?? godot/assets/athletes/oracolo_texture_0.png.import
+?? godot/assets/athletes/oracolo_texture_0_metallic_roughness.png
+?? godot/assets/athletes/oracolo_texture_0_metallic_roughness.png.import
+?? godot/tests/fiamma_idle_test.gd
+?? godot/tests/fiamma_idle_test.gd.uid
+?? godot/tests/three_athlete_assets_test.gd
+?? godot/tests/three_athlete_assets_test.gd.uid
+?? godot/tests/ui/back_label_probe.gd
+?? godot/tests/ui/back_label_probe.gd.uid

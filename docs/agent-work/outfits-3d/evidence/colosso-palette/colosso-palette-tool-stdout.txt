@@ -1,0 +1,107 @@
+WROTE docs/agent-work/outfits-3d/evidence/colosso-palette/mask-check-idle.png
+WROTE docs/agent-work/outfits-3d/evidence/colosso-palette/mask-check-action.png
+WROTE docs/agent-work/outfits-3d/evidence/colosso-palette/mask-check-run.png
+WROTE docs/agent-work/outfits-3d/evidence/colosso-palette/mask-check-back-idle.png
+WROTE docs/agent-work/outfits-3d/evidence/colosso-palette/mask-check-back-action.png
+WROTE docs/agent-work/outfits-3d/evidence/colosso-palette/mask-check-back-run.png
+WROTE docs/agent-work/outfits-3d/evidence/colosso-palette/measured-slots.png
+WROTE docs/agent-work/outfits-3d/evidence/colosso-palette/proposed-slots.png
+WROTE docs/agent-work/outfits-3d/evidence/colosso-palette/colosso-palette-report.json
+base       torso_a=#474545(mode)/#63432a(mean) 74.9% sat=0.029 val=0.278  torso_b=#fffffe(mode)/#e1ce98(mean) 25.1% sat=0.002 val=0.999  hip_a=#484645(mode)/#634226(mean) 81.5% sat=0.042 val=0.282  hip_b=#fffffe(mode)/#d5bc79(mean) 18.5% sat=0.003 val=0.999  foot_a=#572908(mode)/#654727(mean) 72.1% sat=0.907 val=0.341  foot_b=#fffffe(mode)/#e2cb85(mean) 27.9% sat=0.002 val=1.000
+signature  torso_a=#474545(mode)/#603f2a(mean) 83.0% sat=0.030 val=0.278  torso_b=#fffffe(mode)/#dfd8c6(mean) 17.0% sat=0.002 val=0.999  hip_a=#484645(mode)/#5f3e26(mean) 90.1% sat=0.042 val=0.282  hip_b=#fffffe(mode)/#cec7aa(mean) 9.9% sat=0.003 val=1.000  foot_a=#562908(mode)/#5f4127(mean) 84.0% sat=0.902 val=0.338  foot_b=#fffffe(mode)/#dbd5bf(mean) 16.0% sat=0.004 val=1.000
+slots proposed (origin/source per slot):
+  signature  torso_a  #25211e  [source]  measured=#474545 sat=0.030  torso_a carries the outfit's identity; measured #474545 is the declared #25211e (dE76 16.6 <= 20)
+  signature  torso_b  #ff7a12  [source]  measured=#fffffe sat=0.002  measured modal colour #fffffe (17.0% of the region) REJECTED: sat 0.002 / val 0.999 fails the shader's own family test at sat_min 0.18 (the sprite has no flat garment fill on this athlete -- the mode is its neutral shading, not paint), so the declared #ff7a12 takes the trim (b, the accent) family
+  signature  hip_a    #25211e  [source]  measured=#484645 sat=0.042  measured modal colour #484645 (90.1% of the region) REJECTED: sat 0.042 / val 0.282 fails the shader's own family test at sat_min 0.18 (the sprite has no flat garment fill on this athlete -- the mode is its neutral shading, not paint), so the declared #25211e takes the primary (a, the dominant mass) family
+  signature  hip_b    #ff7a12  [source]  measured=#fffffe sat=0.003  measured modal colour #fffffe (9.9% of the region) REJECTED: sat 0.003 / val 1.000 fails the shader's own family test at sat_min 0.18 (the sprite has no flat garment fill on this athlete -- the mode is its neutral shading, not paint), so the declared #ff7a12 takes the trim (b, the accent) family
+  signature  foot_a   #562908  [sprite]  measured=#562908 sat=0.902  measured modal colour of the region (#562908, 84.0% of the region's garment pixels); the reference declares no region/family
+  signature  foot_b   #ff7a12  [source]  measured=#fffffe sat=0.004  measured modal colour #fffffe (16.0% of the region) REJECTED: sat 0.004 / val 1.000 fails the shader's own family test at sat_min 0.18 (the sprite has no flat garment fill on this athlete -- the mode is its neutral shading, not paint), so the declared #ff7a12 takes the trim (b, the accent) family
+provenance over the six slots: {'source': 5, 'sprite': 1}   port_only={'signature': []}
+inertness (effective sat_min 0.18 from the catalogue's MASK_DEFAULTS; the shader's own default is 0.25):
+  foot_a   #562908 target_sat=0.907 val=0.337 passes@0.18=True | measured_sat=0.902 val=0.338 passes@0.18=True
+      vs baked anchor leather  #282018  dE76= 28.6  visible
+      vs baked anchor light    #906040  dE76= 23.2  visible
+  foot_b   #ff7a12 target_sat=0.929 val=1.000 passes@0.18=True | measured_sat=0.004 val=1.000 passes@0.18=False
+      vs baked anchor leather  #282018  dE76= 93.6  visible
+      vs baked anchor light    #906040  dE76= 57.5  visible
+  hip_a    #25211e target_sat=0.189 val=0.145 passes@0.18=True | measured_sat=0.042 val=0.282 passes@0.18=False
+      vs baked anchor leather  #282018  dE76=  4.3  INVISIBLE
+      vs baked anchor light    #906040  dE76= 42.3  visible
+  hip_b    #ff7a12 target_sat=0.929 val=1.000 passes@0.18=True | measured_sat=0.003 val=1.000 passes@0.18=False
+      vs baked anchor leather  #282018  dE76= 93.6  visible
+      vs baked anchor light    #906040  dE76= 57.5  visible
+  torso_a  #25211e target_sat=0.189 val=0.145 passes@0.18=True | measured_sat=0.030 val=0.278 passes@0.18=False
+      vs baked anchor leather  #282018  dE76=  4.3  INVISIBLE
+      vs baked anchor light    #906040  dE76= 42.3  visible
+  torso_b  #ff7a12 target_sat=0.929 val=1.000 passes@0.18=True | measured_sat=0.002 val=0.999 passes@0.18=False
+      vs baked anchor leather  #282018  dE76= 93.6  visible
+      vs baked anchor light    #906040  dE76= 57.5  visible
+  targets below effective sat_min: none
+  targets INVISIBLE on their own baked anchor: hip_a, torso_a
+ATLAS FAMILY SPLIT IN MASK (godot/assets/athletes/outfits/colosso/colosso_region_mask.png)
+      anchors from docs/agent-work/outfits-3d/evidence/colosso-mask-report.json: {'leather': {'hex': '#282018', 'srgb': [0.1569, 0.1255, 0.0941], 'hue_deg': 33.3, 'modal_hue_deg': 30.0, 'samples': 17234, 'modal_hits': 793}, 'light': {'hex': '#906040', 'srgb': [0.5647, 0.3765, 0.251], 'hue_deg': 28.2, 'modal_hue_deg': 24.0, 'samples': 17146, 'modal_hits': 3588}}
+      coverage texels (>=128): {'torso': 515645, 'hip': 531136, 'foot': 373671}
+      [shader_defaults] hue_tol=42 sat_min=0.25 val_min=0.06
+        torso masked= 515645  gateOFF accepted: {'leather': 63.7, 'light': 63.7}  BOTH=328232 (63.7%)  dHue between anchors=6.0
+              gateON  accepted: {'leather': 36.8, 'light': 33.1}  BOTH=31873  orphans=187421
+        hip   masked= 531136  gateOFF accepted: {'leather': 32.3, 'light': 32.3}  BOTH=171362 (32.3%)  dHue between anchors=6.0
+              gateON  accepted: {'leather': 14.5, 'light': 20.7}  BOTH=15298  orphans=359771
+        foot  masked= 373671  gateOFF accepted: {'leather': 25.7, 'light': 25.7}  BOTH=96050 (25.7%)  dHue between anchors=6.0
+              gateON  accepted: {'leather': 15.1, 'light': 13.8}  BOTH=11897  orphans=277616
+      [catalogue_mask_defaults_EFFECTIVE] hue_tol=45 sat_min=0.18 val_min=0.02
+        torso masked= 515645  gateOFF accepted: {'leather': 68.3, 'light': 68.3}  BOTH=352025 (68.3%)  dHue between anchors=6.0
+              gateON  accepted: {'leather': 41.3, 'light': 33.2}  BOTH=32126  orphans=163527
+        hip   masked= 531136  gateOFF accepted: {'leather': 34.2, 'light': 34.2}  BOTH=181736 (34.2%)  dHue between anchors=6.0
+              gateON  accepted: {'leather': 16.4, 'light': 20.7}  BOTH=15376  orphans=349381
+        foot  masked= 373671  gateOFF accepted: {'leather': 31.2, 'light': 31.2}  BOTH=116476 (31.2%)  dHue between anchors=6.0
+              gateON  accepted: {'leather': 20.5, 'light': 13.8}  BOTH=11929  orphans=257132
+      CROSS-CHECK vs the mask lane's own figure: masked_texels_here=1420186 (mask lane 1421791)
+        pure hue window (dh<=tol for BOTH): 1047268 (73.7%)  | mask lane reports 1048218 (73.7%)
+        the same set after the shader's sat/val ramps: 711419 (50.1%) -- that is the count the render sees
+REGION CHANGE DELTA (scale-invariant shares, outfit minus base, points):
+  torso base_px=381840 sig_px=137293  biggest deltas: bright_yellow_h35_65_s_gt_40_v_gt_45 -5.2, skin_de76_le20_from_declared +2.5, gold_h35_60_s_gt_40_v_30_70 -1.9
+  hip   base_px=138691 sig_px=50308  biggest deltas: bright_yellow_h35_65_s_gt_40_v_gt_45 -3.7, skin_de76_le20_from_declared +2.0, gold_h35_60_s_gt_40_v_30_70 -1.5
+  foot  base_px=51639 sig_px=18747  biggest deltas: bright_yellow_h35_65_s_gt_40_v_gt_45 -9.5, gold_h35_60_s_gt_40_v_30_70 -3.5, skin_de76_le20_from_declared +3.3
+ATLAS godot/assets/athletes/colosso_texture_0.png [2048, 2048] sha=446417e196e8f755 saturated=52.1% bands={'0-30': 50.2, '30-60': 49.3, '60-90': 0.1, '90-120': 0.0, '120-150': 0.0, '150-180': 0.0, '180-210': 0.2, '210-240': 0.2, '240-270': 0.0, '270-300': 0.0, '300-330': 0.0, '330-360': 0.0}
+      dark texels passing family test: {'sat_min_0.18': {'pixels': 649784, 'pct_of_dark': 26.0, 'pct_of_atlas': 15.5}, 'sat_min_0.25': {'pixels': 493189, 'pct_of_dark': 19.7, 'pct_of_atlas': 11.8}}
+BASE vs SIGNATURE (scale-invariant):
+  torso  base ['#474545', '#57260a', '#fffffe'] / sig ['#474545', '#57260a', '#fffffe']  shared modes ['#474545', '#57260a', '#582914', '#672c14', '#fffffe']
+      torso_a  base #474545 (74.9%) vs sig #474545 (83.0%)  dE76=0.0
+      torso_b  base #fffffe (25.1%) vs sig #fffffe (17.0%)  dE76=0.0
+  hip    base ['#484645', '#773617', '#57260b'] / sig ['#484645', '#583617', '#773617']  shared modes ['#484645', '#582914', '#583617', '#773617']
+      hip_a    base #484645 (81.5%) vs sig #484645 (90.1%)  dE76=0.0
+      hip_b    base #fffffe (18.5%) vs sig #fffffe (9.9%)  dE76=0.0
+  foot   base ['#572908', '#683708', '#fffffe'] / sig ['#562908', '#583616', '#494645']  shared modes ['#494645', '#773807', '#fffffe']
+      foot_a   base #572908 (72.1%) vs sig #562908 (84.0%)  dE76=0.6
+      foot_b   base #fffffe (27.9%) vs sig #fffffe (16.0%)  dE76=0.0
+ORANGE vs SKIN:
+  declared #25211e hue=25.7 sat=0.189 val=0.145 inside_skin_hue_window=True
+  declared #ff7a12 hue=26.3 sat=0.929 val=1.000 inside_skin_hue_window=True
+  idle       base  skin_rule(hue+sat)=63.5% -> with val floor=19.0%  bright_warm=16.9%  glow(val>.90)=0.5%  glow_modes=['#e77d02', '#eb8c03', '#eb8d04', '#ebbc5c']
+  idle       outfit skin_rule(hue+sat)=68.2% -> with val floor=21.4%  bright_warm=16.8%  glow(val>.90)=0.3%  glow_modes=['#ea9c52', '#eb8c32', '#ec8525', '#ee994a']
+  action     base  skin_rule(hue+sat)=57.8% -> with val floor=18.3%  bright_warm=16.1%  glow(val>.90)=1.1%  glow_modes=['#ec8403', '#f49c03', '#f4b203', '#f4c35c']
+  action     outfit skin_rule(hue+sat)=60.7% -> with val floor=20.7%  bright_warm=16.9%  glow(val>.90)=1.0%  glow_modes=['#eb7b13', '#eb7c13', '#eb7d15', '#eb8c33']
+  run        base  skin_rule(hue+sat)=48.8% -> with val floor=38.8%  bright_warm=33.3%  glow(val>.90)=3.3%  glow_modes=['#e69166', '#e99265', '#e99266', '#ea9265']
+  run        outfit skin_rule(hue+sat)=50.5% -> with val floor=40.2%  bright_warm=33.2%  glow(val>.90)=2.4%  glow_modes=['#e69167', '#e69266', '#e99265', '#e99266']
+  back-idle  base  skin_rule(hue+sat)=39.9% -> with val floor=28.2%  bright_warm=24.1%  glow(val>.90)=6.4%  glow_modes=['#eb8b5c', '#eb8b5d', '#eb8d62', '#eb8d63']
+  back-idle  outfit skin_rule(hue+sat)=42.4% -> with val floor=30.0%  bright_warm=24.2%  glow(val>.90)=5.0%  glow_modes=['#eb8b5d', '#eb8d62', '#eb8d63', '#ec8b5c']
+  back-action base  skin_rule(hue+sat)=55.1% -> with val floor=50.6%  bright_warm=39.5%  glow(val>.90)=7.4%  glow_modes=['#eba344', '#ebab53', '#ebac54', '#ecab4c']
+  back-action outfit skin_rule(hue+sat)=58.9% -> with val floor=54.3%  bright_warm=39.7%  glow(val>.90)=4.6%  glow_modes=['#eca25d', '#eca562', '#eca563', '#f09b4c']
+  back-run   base  skin_rule(hue+sat)=43.3% -> with val floor=27.2%  bright_warm=20.5%  glow(val>.90)=2.3%  glow_modes=['#eaa44d', '#eba344', '#eba444', '#eba44c']
+  back-run   outfit skin_rule(hue+sat)=45.8% -> with val floor=28.8%  bright_warm=20.7%  glow(val>.90)=1.1%  glow_modes=['#eaa462', '#eaa563', '#eb9d54', '#eb9d55']
+CARD signature master(exact, [1024, 1536]): 12.6% over 16/255 mean 10.0 | preview(APPROX): 54.7%
+RACKET RULE applied_count=0 (0 means the geometric rule never fired, so the racket was NOT excluded and the pool may contain racket pixels)
+      bright-gold family, largest blob per sheet (why the Maestro's gold-blob rule cannot be used here):
+        idle        base  gold=0.641% of body  largest_blob=63 px
+        idle        outfit gold=0.000% of body  largest_blob=0 px
+        action      base  gold=1.195% of body  largest_blob=241 px
+        action      outfit gold=0.000% of body  largest_blob=0 px
+        run         base  gold=0.357% of body  largest_blob=9 px
+        run         outfit gold=0.000% of body  largest_blob=0 px
+        back-idle   base  gold=0.488% of body  largest_blob=19 px
+        back-idle   outfit gold=0.000% of body  largest_blob=0 px
+        back-action base  gold=0.913% of body  largest_blob=13 px
+        back-action outfit gold=0.000% of body  largest_blob=0 px
+        back-run    base  gold=0.381% of body  largest_blob=10 px
+        back-run    outfit gold=0.000% of body  largest_blob=0 px
+MASKLANE report_present=True mask_present=True 

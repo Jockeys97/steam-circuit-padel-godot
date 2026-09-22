@@ -95,6 +95,7 @@ const Lineup := preload("res://game/lineup.gd")
 const AthleteSpawn := preload("res://src/character/athlete_spawn.gd")
 const AthleteRig := preload("res://src/character/athlete_rig.gd")
 const ModeSession := preload("res://game/mode_session.gd")
+const ModesSave := preload("res://src/modes/modes_save.gd")
 const ModeHudScript := preload("res://game/mode_hud.gd")
 ## UIR-22: the card's range rows are read through the shared component's own accessors
 ## (`focus_node`), never through a node-path guess.
@@ -171,6 +172,9 @@ var seen_events: Dictionary = {}
 var score_history: Array = []
 var meta: Dictionary = {}
 var finished: bool = false
+## Quick matches do not own a ModeSession. Their outfit award is cached here on
+## the result edge so repeated payload/render calls cannot increment athleteWins.
+var _quick_outfit_award: Dictionary = {}
 
 ## The playable mode session this scene is running, or null for a quick match.
 ## `Config.pending_mode` decides which: a mode entry on the menu sets it, and the
@@ -198,6 +202,64 @@ var use_scripted_input: bool = false
 ## The browser's accumulator (`js/main.js:1187-1205`). Simulated time owed, in
 ## seconds, never above `FIXED_STEP * MAX_SIM_STEPS` and never negative.
 var sim_accumulator: float = 0.0
+## The game-pace preset's dt multiplier (`src/sim/pace.gd`), read once when a match
+## or a mode session starts. This is the ONE place the pace setting enters the
+## simulation: `advance_frame` is the only clock that turns real frame time into
+## simulated time, for a quick match and for a mode session alike (a mode's own
+## `step` is called from `tick_fixed` with a whole `FIXED_STEP`, so scaling there
+## too would apply the factor twice). The default preset's factor is 1.0, which is
+## why an untouched profile runs the arithmetic it always ran.
+var pace_factor: float = 1.0
+
+# ---------------------------------------------------------------------------
+# In-match UI visibility (docs/agent-work/ui-visibility-settings/PLAN.md)
+#
+# One per-match profile over the six component ids below, plus the memory of the
+# last profile that was NOT fully clean, so the clean-view gesture restores what
+# the player had rather than forcing `all`. Presentation only: nothing here is
+# persisted, nothing here touches the simulation, and a new match resets to `all`.
+# ---------------------------------------------------------------------------
+
+## The six stable component ids, in the contract's own order. `src/ui/Hud.gd`
+## mirrors this list (`Hud.COMPONENT_IDS`) and `tests/ui/ui_visibility_audit.gd`
+## asserts the two are equal, so the HUD cannot drift from the owner.
+const UI_COMPONENTS := ["score", "time", "map", "guidance", "indicators", "events"]
+
+## The four presets, as exact maps over `UI_COMPONENTS`.
+const UI_PRESET_MAPS := {
+	"all": {
+		"score": true, "time": true, "map": true,
+		"guidance": true, "indicators": true, "events": true,
+	},
+	"essential": {
+		"score": true, "time": true, "map": false,
+		"guidance": false, "indicators": true, "events": true,
+	},
+	"score_only": {
+		"score": true, "time": false, "map": false,
+		"guidance": false, "indicators": false, "events": false,
+	},
+	"clean": {
+		"score": false, "time": false, "map": false,
+		"guidance": false, "indicators": false, "events": false,
+	},
+}
+## The presets in the order the pause tab lists them.
+const UI_PRESET_IDS := ["all", "essential", "score_only", "clean"]
+## One locale id per preset and per component: the pause tab reads these instead of
+## carrying its own copy of the vocabulary (`PauseOverlay`), because the ids are
+## the profile's names, not the tab's.
+const UI_PRESET_LABELS := {
+	"all": "uiPresetAll", "essential": "uiPresetEssential",
+	"score_only": "uiPresetScoreOnly", "clean": "uiPresetClean",
+}
+const UI_COMPONENT_LABELS := {
+	"score": "uiCompScore", "time": "uiCompTime", "map": "uiCompMap",
+	"guidance": "uiCompGuidance", "indicators": "uiCompIndicators",
+	"events": "uiCompEvents",
+}
+## The hint's own geometry: 24 px above the frame's bottom edge, centred.
+const UI_HINT_BOTTOM := 24.0
 ## One-shot fields armed by a rendered frame and not yet consumed by a sub-step.
 var queued_one_shots: Dictionary = {}
 ## The second player's latched one-shots, kept apart from the first's: the reference
@@ -307,6 +369,21 @@ var _capture_index: int = 0
 var _capture_ticks: int = 0
 var _paused: bool = false
 var _points_total_prev: int = 0
+## Clean mode: while true the informational presentation is hidden and the court is
+## left alone. Presentation only — no simulation state, no pause state and no match
+## persistence reads or writes this flag, and every reset path clears it.
+var _hud_hidden: bool = false
+## The profile in force, one entry per `UI_COMPONENTS` entry. Empty means `all`:
+## `ui_visibility_snapshot()` resolves the default rather than storing a copy of it.
+var _ui_visibility: Dictionary = {}
+## The last profile that was not fully clean — what the gesture restores. Empty
+## means the default `all` (a match that has never left the full view).
+var _ui_last_non_clean: Dictionary = {}
+## The restore hint: a small sibling of the shipping HUD, under the pause card and
+## independent of the HUD root the profile hides components inside.
+var _restore_hint: Control = null
+## The locale door the hint's text goes through, loaded on first use.
+var _ui_strings: Object = null
 
 # ---------------------------------------------------------------------------
 # UIR-27: the playback state (`js/main.js:138-140`)
@@ -475,6 +552,7 @@ func _adopt_session() -> void:
 	# The saved switching mode, on the state the mode session built: the reference
 	# copies it onto the match before its loop starts (`js/main.js:1184`).
 	state.controlMode = Config.control_mode()
+	pace_factor = Config.pace_factor()
 	ticks = 0
 	crossings = 0
 	points_scored = 0
@@ -482,6 +560,11 @@ func _adopt_session() -> void:
 	seen_events = {}
 	score_history = []
 	finished = false
+	_quick_outfit_award = {}
+	# A new match starts at `all` (the visibility profile is a per-match view, not a
+	# stored preference): the profile, its restore memory and the clean flag reset
+	# together, and `_apply_hud_visibility` below repaints every surface.
+	_reset_ui_visibility()
 	_clear_pause()
 	sim_accumulator = 0.0
 	queued_one_shots.clear()
@@ -504,6 +587,7 @@ func _adopt_session() -> void:
 	}
 	if _mode_hud != null:
 		_mode_hud.bind_session(session)
+	_apply_hud_visibility()
 	_sync_views()
 	if _hud != null:
 		_hud.refresh(state, meta)
@@ -807,6 +891,11 @@ func _build_scene() -> void:
 			ai_color
 		)
 		_ui_hud.pause_requested.connect(_on_ui_pause)
+		# The restore hint: a sibling of the HUD, added BEFORE the card so the card
+		# draws over it. It carries no state of its own — `_apply_ui_hint` decides
+		# when it shows.
+		_restore_hint = _build_restore_hint()
+		layer.add_child(_restore_hint)
 		# UIR-20's pause card, above the HUD: its own recipe's steps 1-6 (instantiate
 		# over the match, one store, one seam, the echo, the stick feed, the pad flag).
 		# EXACTLY ONE pause route is live — the seam bound here — and the overlay's
@@ -818,7 +907,7 @@ func _build_scene() -> void:
 		layer.add_child(_pause_overlay)
 		_pause_overlay.bind_seam(self)
 		_pause_overlay.set_store(Config.save_store())
-		_pause_overlay.set_pad_connected(not Input.get_connected_joypads().is_empty())
+		_sync_pause_pad_identity()
 		_pause_overlay.set_osk_open(false)
 		_pause_overlay.set_match_paused(false)
 		_pause_overlay.tab_changed.connect(_on_pause_tab_changed)
@@ -880,6 +969,9 @@ func set_match_paused(paused: bool) -> bool:
 		else:
 			_pause_pad_seen = false
 			_pause_measure_frames = 0
+	# The restore hint belongs to live play: the card opening hides it, and closing
+	# the card in clean mode brings it back (`_apply_ui_hint` reads `_paused`).
+	_apply_ui_hint()
 	return _paused
 
 
@@ -1055,7 +1147,8 @@ func build_athletes() -> int:
 		_athletes.name = "Athletes"
 		add_child(_athletes)
 	var started := Time.get_ticks_msec()
-	var spawned: int = _athletes.spawn(_lineup, Lineup.outfits(_lineup, Config.outfit_id()), {
+	var spawned: int = _athletes.spawn(_lineup, Lineup.outfits(_lineup, Config.outfit_id(),
+		ModesSave.load_career(Config.save_store())), {
 		"player": _player_color,
 		"playerMate": _player_color.lightened(0.25),
 		"opponent": _ai_color,
@@ -1148,6 +1241,7 @@ func start_match() -> void:
 	# `matchState.controlMode = ui.controlMode`), validated against the reference's
 	# own three values by `Config.control_mode()` (`js/main.js:2273`).
 	state.controlMode = Config.control_mode()
+	pace_factor = Config.pace_factor()
 	ticks = 0
 	crossings = 0
 	points_scored = 0
@@ -1155,6 +1249,11 @@ func start_match() -> void:
 	seen_events = {}
 	score_history = []
 	finished = false
+	_quick_outfit_award = {}
+	# A new match starts with its informational overlay showing, exactly as a mode
+	# session's `_adopt_session()` does above: the profile, its restore memory and
+	# the clean flag go back to the full view together.
+	_reset_ui_visibility()
 	# The accumulator and the latch start clean: a new match does not inherit the
 	# previous one's owed time or its unconsumed shots. The pause flag is part of the
 	# same reset (review-2 F-3): a match that starts paused is a match that never
@@ -1177,6 +1276,7 @@ func start_match() -> void:
 		"camera": Config.camera_preset,
 		"tick": 0,
 	}
+	_apply_hud_visibility()
 	_sync_views()
 	if _hud != null:
 		_hud.refresh(state, meta)
@@ -1215,8 +1315,13 @@ func start_match() -> void:
 func advance_frame(delta: float) -> Dictionary:
 	if state == null:
 		return {"steps": 0, "accumulator": sim_accumulator, "ticks": ticks}
-	var dt := minf(delta, MAX_FRAME_DELTA)
-	sim_accumulator = minf(sim_accumulator + dt, FIXED_STEP * float(MAX_SIM_STEPS))
+	# The game-pace preset scales the SIMULATED time a real frame is worth, and the
+	# catch-up clamp with it: leaving the clamp at its unscaled value would make it
+	# k times tighter in simulated seconds, so a fast preset would quietly drop sim
+	# time whenever a frame ran long. Both clamps stay the reference's own at the
+	# default preset, whose factor is 1.0.
+	var dt := minf(delta, MAX_FRAME_DELTA) * pace_factor
+	sim_accumulator = minf(sim_accumulator + dt, FIXED_STEP * float(MAX_SIM_STEPS) * pace_factor)
 	var input := _pending_input
 	var input2 := _pending_input2
 	var steps := 0
@@ -1313,12 +1418,6 @@ func _process(delta: float) -> void:
 			if bool(pause_move.get("focus_moved", false)):
 				_pause_focus.apply_focus()
 			_apply_pause_range()
-		# The pad's connectedness is re-read here as well: the reference greys the
-		# controller copy the moment the last pad goes away.
-		var pad_now := not Input.get_connected_joypads().is_empty()
-		if pad_now != _pause_pad_seen:
-			_pause_pad_seen = pad_now
-			_pause_overlay.set_pad_connected(pad_now)
 	# Sample once per rendered frame. `use_scripted_input` is the harness path;
 	# the default path reads the keyboard and the pad through the InputMap.
 	if use_scripted_input:
@@ -1336,6 +1435,30 @@ func _refresh_pads() -> void:
 	var pads: Array = InputSource.assign_devices(keep, _input_source.device, _input_source2.device)
 	_input_source.set_device(int(pads[0]))
 	_input_source2.set_device(int(pads[1]))
+	_sync_pause_pad_identity()
+
+
+## The 2D game classifies `gamepad.id` on every connected/disconnected edge and on
+## every active-pad change. Godot exposes the same identity through
+## `Input.get_joy_name(device)`: the selected primary seat is the one the pause guide
+## describes, including when another connected pad takes over after real activity.
+func _sync_pause_pad_identity() -> void:
+	if _pause_overlay == null:
+		return
+	var device := _pause_pad_device()
+	var connected_devices := Input.get_connected_joypads()
+	# During `_build_scene` the input seat has not polled its first frame yet. Show
+	# an already-connected controller immediately instead of spending that frame on
+	# the disconnected fallback; `_refresh_pads` will then confirm or replace it.
+	if device == InputSource.NO_DEVICE and not connected_devices.is_empty():
+		device = int(connected_devices[0])
+	var connected := device != InputSource.NO_DEVICE and connected_devices.has(device)
+	var device_name := Input.get_joy_name(device) if connected else ""
+	_pause_pad_seen = connected
+	if _pause_overlay.has_method("set_pad_device"):
+		_pause_overlay.call("set_pad_device", device, device_name, connected)
+	else:
+		_pause_overlay.set_pad_connected(connected)
 
 
 ## Arms every one-shot this sample carries, without clearing the ones already
@@ -1472,6 +1595,8 @@ func _observe(prev_y: float) -> void:
 		finished = true
 		if session != null:
 			_finish_mode()
+		else:
+			_finish_quick_outfits()
 		if _hud != null:
 			_hud.refresh(state, meta)
 			_hud.show_result(state)
@@ -1495,6 +1620,21 @@ func _observe(prev_y: float) -> void:
 			_mode_hud.refresh()
 	if _ui_hud != null and not engine_driven and (finished or ticks % 30 == 0):
 		_ui_hud.refresh(state, meta)
+
+
+## `awardOutfitChallenges(matchState, won)` is called before the browser branches
+## into career/tournament handling (`js/main.js:1472`). Quick mode has no
+## ModeSession in this port, so its common end-of-match edge performs that one
+## progression write directly. The cached result makes the operation idempotent.
+func _finish_quick_outfits() -> Dictionary:
+	if not _quick_outfit_award.is_empty() or state == null or state.result == null:
+		return _quick_outfit_award
+	var won := String(state.result.get("winner", "")) == "player"
+	_quick_outfit_award = ModesSave.award_match_outfits(
+		Config.save_store(), String(state.athlete.get("id", "")), state.stats, won,
+		float(state.ai.get("skill", 0.0))
+	)
+	return _quick_outfit_award
 
 
 ## True when the mode's own end has been reached — a drill that the player left.
@@ -1583,7 +1723,12 @@ func _sync_views() -> void:
 	# Follow the actual selected athlete; display geometry never changes reach.
 	if _active_ring != null:
 		var active = state.active_player()
-		var shown: bool = bool(state.running) and not finished and active != null
+		# The ring and the pin are the `indicators` component: informational, so they
+		# follow the profile exactly as the HUD's own panels do. The component is
+		# folded into `shown` here, which is what this every-frame rewrite has to
+		# respect — a refresh must never re-show a disabled component.
+		var shown: bool = bool(state.running) and not finished and active != null \
+			and _ui_component_on("indicators")
 		_active_ring.visible = shown
 		if _active_ring.visible:
 			var ground: Vector3 = Court.world_pos(active.x, active.y, 0.0)
@@ -1604,7 +1749,7 @@ func _sync_views() -> void:
 		var target: Dictionary = {}
 		if session != null and session.mode == "drill":
 			target = session.drill.target
-		_target_ring.visible = bool(target.get("active", false))
+		_target_ring.visible = bool(target.get("active", false)) and _ui_component_on("indicators")
 		if _target_ring.visible:
 			_target_ring.position = Court.world_pos(float(target.get("x", 0.0)), float(target.get("y", 0.0)), 0.6)
 			var metres: float = Court.PX_TO_M * float(target.get("r", 1.0))
@@ -1973,6 +2118,15 @@ func _unhandled_input(event: InputEvent) -> void:
 ## own. `main_menu.gd:963-968` states the same rule for every menu screen and is why
 ## this card is the only place the walk used to run.
 func _input(event: InputEvent) -> void:
+	# Clean mode rides the PRE-GUI path. A left double-click over any HUD control with
+	# `MOUSE_FILTER_STOP` is consumed by that control before `_unhandled_input` ever
+	# runs, so the gesture has to be answered here, before the engine's GUI walk.
+	# `_clean_mode_event` returns false while the pause card is open, so the card keeps
+	# every press it owns; the event is consumed here so a pad Start/Back cannot also
+	# reach the InputMap's `padel_pause` below (`_unhandled_input`).
+	if state != null and _clean_mode_event(event):
+		get_viewport().set_input_as_handled()
+		return
 	if _pause_overlay == null or not _pause_overlay.is_open():
 		return
 	if _pause_nav(event):
@@ -2030,6 +2184,273 @@ func rematch() -> void:
 ## renderings of one flag and a test must be able to read it (review-2 F-3).
 func is_paused() -> bool:
 	return _paused
+
+
+# ---------------------------------------------------------------------------
+# In-match UI visibility: the profile, its seams and the restore hint
+#
+# THE SEAM IS THE PROFILE. `_hud_hidden` (clean mode) is now the special case of a
+# profile whose six components are all off — every legacy seam below still answers,
+# and the gesture that toggles it restores the exact profile the player had rather
+# than forcing `all` back. The shipping HUD is handed the whole profile
+# (`Hud.set_component_visibility`) and hides its own named panels; the world-space
+# marks and the timing presentation, which no HUD panel owns, follow `indicators`
+# here in `_apply_hud_visibility` and `_sync_views`.
+# ---------------------------------------------------------------------------
+
+## True while the informational overlay is hidden for a clean view of the court.
+func is_hud_hidden() -> bool:
+	return _hud_hidden
+
+
+## The profile in force, one entry per `UI_COMPONENTS` entry. A copy: the caller
+## reads it, it does not write through it (`set_ui_component` is the door).
+func ui_visibility_snapshot() -> Dictionary:
+	var out := {}
+	for id in UI_COMPONENTS:
+		out[id] = _ui_component_on(String(id))
+	return out
+
+
+## The canonical component ids, in the contract's order.
+func ui_components() -> Array:
+	return UI_COMPONENTS.duplicate()
+
+
+## The four preset ids, in the order the pause tab lists them.
+func ui_preset_ids() -> Array:
+	return UI_PRESET_IDS.duplicate()
+
+
+## The locale id the pause tab shows for a component / for a preset. The profile's
+## own vocabulary lives with the profile, not with the tab.
+func ui_component_label(id: String) -> String:
+	return String(UI_COMPONENT_LABELS.get(id, ""))
+
+
+func ui_preset_label(id: String) -> String:
+	return String(UI_PRESET_LABELS.get(id, ""))
+
+
+## One component's own state, read by the pause tab and the HUD-facing passes.
+func is_ui_component_visible(id: String) -> bool:
+	return _ui_component_on(id)
+
+
+## The preset the profile is EXACTLY, or "" when a toggle has moved it off every
+## preset (the contract's "changing a toggle that no longer exactly matches a
+## preset leaves no preset selected").
+func ui_preset_id() -> String:
+	var now := ui_visibility_snapshot()
+	for id in UI_PRESET_IDS:
+		if _ui_profiles_equal(now, UI_PRESET_MAPS[id]):
+			return String(id)
+	return ""
+
+
+## One component on or off. Unknown ids are refused, never silently absorbed.
+func set_ui_component(id: String, visible: bool) -> bool:
+	if not UI_COMPONENTS.has(id):
+		return false
+	var next := ui_visibility_snapshot()
+	next[id] = visible
+	_apply_ui_profile(next)
+	return true
+
+
+## One of the four presets, by id. The map applied is the preset's exact map.
+func set_ui_preset(id: String) -> bool:
+	if not UI_PRESET_MAPS.has(id):
+		return false
+	_apply_ui_profile((UI_PRESET_MAPS[id] as Dictionary).duplicate())
+	return true
+
+
+## The explicit state behind `toggle_hud_hidden`, so a test drives the same seam a
+## player's gesture does. `true` is the `clean` preset; `false` restores the exact
+## last non-clean profile (the default `all` before any other profile was chosen).
+## Returns the state now in force.
+func set_hud_hidden(hidden: bool) -> bool:
+	if hidden:
+		_apply_ui_profile((UI_PRESET_MAPS["clean"] as Dictionary).duplicate())
+	else:
+		_apply_ui_profile(_restore_profile())
+	return _hud_hidden
+
+
+## The toggle the left double-click and the pad's Start/Back ride. Returns the new
+## state.
+func toggle_hud_hidden() -> bool:
+	return set_hud_hidden(not _hud_hidden)
+
+
+## A new match sees the full view: the profile and its memory go back to `all`.
+## Every reset path calls this (`start_match`, `_adopt_session`).
+func _reset_ui_visibility() -> void:
+	_ui_visibility = {}
+	_ui_last_non_clean = {}
+	_hud_hidden = false
+
+
+## The profile to restore: the last non-clean one, or the `all` default when the
+## player has never left the full view.
+func _restore_profile() -> Dictionary:
+	if _ui_last_non_clean.is_empty():
+		return (UI_PRESET_MAPS["all"] as Dictionary).duplicate()
+	return _ui_last_non_clean.duplicate()
+
+
+## The one writer of the profile: remembers what it is leaving, stores the new
+## map, derives `_hud_hidden` from it and re-applies every surface.
+func _apply_ui_profile(next: Dictionary) -> void:
+	var before := ui_visibility_snapshot()
+	if not _ui_profile_is_clean(before):
+		_ui_last_non_clean = before
+	var stored := {}
+	for id in UI_COMPONENTS:
+		stored[id] = bool(next.get(id, true))
+	_ui_visibility = stored
+	# A profile that is not fully clean is also the newest thing to restore to.
+	if not _ui_profile_is_clean(stored):
+		_ui_last_non_clean = stored.duplicate()
+	_hud_hidden = _ui_profile_is_clean(stored)
+	_apply_hud_visibility()
+	# The world-space marks and the timing presentation are rewritten every frame by
+	# `_sync_views`; re-running it here makes the seam's effect immediate as well as
+	# persistent (the profile, not a one-shot write, is what survives the refresh).
+	_sync_views()
+
+
+## The profile's own default: an entry the map does not carry is ON (the full view).
+func _ui_component_on(id: String) -> bool:
+	return bool(_ui_visibility.get(id, true))
+
+
+func _ui_profile_is_clean(profile: Dictionary) -> bool:
+	for id in UI_COMPONENTS:
+		if bool(profile.get(id, true)):
+			return false
+	return true
+
+
+## Exact equality over the six components, so `ui_preset_id()` cannot report a
+## preset for a profile that merely resembles it.
+func _ui_profiles_equal(a: Dictionary, b: Dictionary) -> bool:
+	for id in UI_COMPONENTS:
+		if bool(a.get(id, true)) != bool(b.get(id, true)):
+			return false
+	return true
+
+
+## Writes the profile onto the surfaces the controller owns. The shipping HUD is
+## handed the profile itself (it hides its own panels — never its root, which the
+## hint's independence depends on); the legacy column, which has no component seam,
+## keeps the whole-surface behaviour proportionally.
+func _apply_hud_visibility() -> void:
+	if _ui_hud != null:
+		_ui_hud.call("set_component_visibility", ui_visibility_snapshot())
+	if _hud != null:
+		_hud.visible = not _hud_hidden
+	# The ported mode strip rides `_mode_hud` in BOTH UI modes, but a recreated run
+	# hides it on purpose (the recreated HUD carries the facts): showing it when
+	# clean mode ends would be exactly the regression the mount policy forbids. It is
+	# the `guidance` component where it does show.
+	if _mode_hud != null:
+		_mode_hud.visible = _ui_component_on("guidance") and (not _ui_new)
+	# The court timing presentation (the ring, the window, the two bars, the advice
+	# word and the verdict) through the module's own mute seam — the same flag the
+	# A/B capture flips.
+	if _timing_marks != null:
+		_timing_marks.set_muted(not _ui_component_on("indicators"))
+	# The hint's visibility is a function of the profile and the card, so it is
+	# re-derived on every pass that repaints the surfaces (one writer, no drift).
+	_apply_ui_hint()
+
+
+## The restore hint: one small chip, bottom-centre, and it is shown only in clean
+## live play. Every edge that can change either half of that condition re-runs this
+## (`_apply_ui_profile` on a profile change, `set_match_paused` on the card), so it
+## is never left on screen after a restore or behind an open card.
+func _apply_ui_hint() -> void:
+	if _restore_hint == null:
+		return
+	# The text is re-resolved on every pass, so a language flip cannot leave the
+	# hint reading the other locale's string.
+	var label := _restore_hint.get_node_or_null("HintChip/HintLabel") as Label
+	if label != null:
+		label.text = _ui_hint_text()
+	_restore_hint.visible = _hud_hidden and not _is_pause_card_open()
+
+
+## True while the pause card is up: the hint belongs to live play, and a press that
+## opens the card is exactly what the contract says must hide it.
+func _is_pause_card_open() -> bool:
+	return _paused or (_pause_overlay != null and bool(_pause_overlay.call("is_open")))
+
+
+## The hint's own text, through the locale layer. Loaded on first use rather than
+## preloaded: a legacy run mounts no hint, and its object count is measured.
+func _ui_hint_text() -> String:
+	if _ui_strings == null:
+		_ui_strings = load("res://src/ui/UiStrings.gd")
+	return String(_ui_strings.call("t", "uiHintRestore"))
+
+
+## The hint's own node tree: a full-rect, input-transparent root carrying one chip
+## anchored to the bottom centre. Every node is `MOUSE_FILTER_IGNORE`, because the
+## hint sits over live play and must not eat a click.
+func _build_restore_hint() -> Control:
+	var root := Control.new()
+	root.name = "UiRestoreHint"
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.visible = false
+	var chip := PanelContainer.new()
+	chip.name = "HintChip"
+	chip.theme_type_variation = &"ServeChip"
+	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	chip.anchor_left = 0.5
+	chip.anchor_right = 0.5
+	chip.anchor_top = 1.0
+	chip.anchor_bottom = 1.0
+	chip.offset_left = 0.0
+	chip.offset_right = 0.0
+	chip.offset_top = -UI_HINT_BOTTOM
+	chip.offset_bottom = -UI_HINT_BOTTOM
+	chip.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	chip.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	root.add_child(chip)
+	var label := Label.new()
+	label.name = "HintLabel"
+	label.theme_type_variation = &"HudLabel"
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.text = _ui_hint_text()
+	chip.add_child(label)
+	return root
+
+
+## True when `event` is a clean-view toggle gesture and it was applied. The two pad
+## buttons are the ones the contract names (`JOY_BUTTON_START`, `JOY_BUTTON_BACK`),
+## read directly rather than through the InputMap: the pad's Start is ALSO
+## `padel_pause`'s own binding, and this rung has to answer the same press the pause
+## rung would, so the event is consumed here and the pause never runs. A press while
+## the pause card is open belongs to the card and is left alone.
+func _clean_mode_event(event: InputEvent) -> bool:
+	if _pause_overlay != null and _pause_overlay.is_open():
+		return false
+	if event is InputEventMouseButton:
+		var mouse := event as InputEventMouseButton
+		if mouse.pressed and mouse.double_click and mouse.button_index == MOUSE_BUTTON_LEFT:
+			toggle_hud_hidden()
+			return true
+		return false
+	if event is InputEventJoypadButton:
+		var button := event as InputEventJoypadButton
+		if button.pressed and (button.button_index == JOY_BUTTON_START
+				or button.button_index == JOY_BUTTON_BACK):
+			toggle_hud_hidden()
+			return true
+	return false
 
 
 # ---------------------------------------------------------------------------

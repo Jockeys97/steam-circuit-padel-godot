@@ -80,11 +80,14 @@ theme_override_constants/margin_top = 26
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 48
 
-[node name="MatchSetup" type="HBoxContainer" parent="Frame/ScreenScroll/Body/SetupArea"]
+[node name="MatchSetup" type="GridContainer" parent="Frame/ScreenScroll/Body/SetupArea"]
 layout_mode = 2
-theme_override_constants/separation = 18
+theme_override_constants/h_separation = 18
+theme_override_constants/v_separation = 18
+columns = 3
 
 [node name="DifficultyGroup" type="PanelContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup"]
+custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -92,8 +95,16 @@ size_flags_horizontal = 3
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="DifficultyLabel" type="Label" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/DifficultyGroup/DifficultyStack"]
+[node name="DifficultyTitleRow" type="HBoxContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/DifficultyGroup/DifficultyStack"]
 layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="DifficultyLabel" type="Label" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/DifficultyGroup/DifficultyStack/DifficultyTitleRow"]
+layout_mode = 2
+
+[node name="DifficultyTitleLine" type="HSeparator" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/DifficultyGroup/DifficultyStack/DifficultyTitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="DifficultySegmentedBox" type="PanelContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/DifficultyGroup/DifficultyStack"]
 layout_mode = 2
@@ -106,6 +117,7 @@ theme_override_constants/v_separation = 4
 columns = 4
 
 [node name="LengthGroup" type="PanelContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup"]
+custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -113,14 +125,52 @@ size_flags_horizontal = 3
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="LengthLabel" type="Label" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/LengthGroup/LengthStack"]
+[node name="LengthTitleRow" type="HBoxContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/LengthGroup/LengthStack"]
 layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="LengthLabel" type="Label" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/LengthGroup/LengthStack/LengthTitleRow"]
+layout_mode = 2
+
+[node name="LengthTitleLine" type="HSeparator" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/LengthGroup/LengthStack/LengthTitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="LengthSegmentedBox" type="PanelContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/LengthGroup/LengthStack"]
 layout_mode = 2
 theme_type_variation = &"SegmentedContainer"
 
 [node name="LengthSegmented" type="GridContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/LengthGroup/LengthStack/LengthSegmentedBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 3
+
+[node name="PaceGroup" type="PanelContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup"]
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PaceStack" type="VBoxContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/PaceGroup"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PaceTitleRow" type="HBoxContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/PaceGroup/PaceStack"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="PaceLabel" type="Label" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/PaceGroup/PaceStack/PaceTitleRow"]
+layout_mode = 2
+
+[node name="PaceTitleLine" type="HSeparator" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/PaceGroup/PaceStack/PaceTitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PaceSegmentedBox" type="PanelContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/PaceGroup/PaceStack"]
+layout_mode = 2
+theme_type_variation = &"SegmentedContainer"
+
+[node name="PaceSegmented" type="GridContainer" parent="Frame/ScreenScroll/Body/SetupArea/MatchSetup/PaceGroup/PaceStack/PaceSegmentedBox"]
 layout_mode = 2
 theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 4

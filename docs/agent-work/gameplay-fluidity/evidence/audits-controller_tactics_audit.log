@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok controller_tactics/chiquita_contact_registered
+ok controller_tactics/chiquita_sets_shot_type
+ok controller_tactics/vibora_contact_registered
+ok controller_tactics/vibora_sets_shot_type
+ok controller_tactics/defensive_lob_contact_registered
+ok controller_tactics/defensive_lob_sets_shot_type
+ok controller_tactics/split_step_trades_speed_for_stability
+ok controller_tactics/rt_does_not_change_distance
+ok controller_tactics/rt_does_not_spend_energy
+ok controller_tactics/charge_slows_the_step
+ok controller_tactics/charge_still_allows_adjustment
+ok controller_tactics/team_tactic_reaches_the_state
+ok controller_tactics/team_tactic_announces_itself
+ok controller_tactics/team_tactic_event_id
+# report movement(splitStep=3.14 charging=2.94 normal=5.07 sprint=5.07) tactic=attack
+PASS 14/14

@@ -187,6 +187,26 @@ corner_radius_bottom_left = 7
 shadow_color = Color(0.08627451, 0.74509805, 0.84313726, 0.42)
 shadow_size = 16
 
+[sub_resource type="StyleBoxFlat" id="BoxSegmentFocus"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.89803922, 1, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
 [sub_resource type="StyleBoxFlat" id="BoxPanelDark"]
 content_margin_left = 18.0
 content_margin_top = 18.0
@@ -476,6 +496,7 @@ Palette/colors/danger_fill_hover = Color(0.47843137, 0.10196078, 0.14117647, 1.0
 Palette/colors/danger_shadow = Color(0.23529412, 0.03137255, 0.04705882, 0.5)
 Palette/colors/overlay_scrim = Color(0.01568627, 0.01568627, 0.05490196, 0.82)
 Palette/colors/segmented_gradient_end = Color(0.08627451, 0.74509804, 0.84313725, 1.0)
+Palette/colors/focus_pulse = Color(0.64705882, 1, 0.87843137, 1)
 
 Label/fonts/font = SubResource("FontVariation_Body")
 Label/font_sizes/font_size = 16
@@ -602,6 +623,7 @@ SegmentedInactive/colors/font_pressed_color = Color(0.81176472, 0.91372555, 0.96
 SegmentedInactive/styles/normal = SubResource("BoxSegmentedIdle")
 SegmentedInactive/styles/hover = SubResource("BoxSegmentedIdleHover")
 SegmentedInactive/styles/pressed = SubResource("BoxSegmentedIdleHover")
+SegmentedInactive/styles/focus = SubResource("BoxSegmentFocus")
 
 SegmentedActive/base_type = &"Button"
 SegmentedActive/fonts/font = SubResource("FontVariation_Segmented")
@@ -612,6 +634,7 @@ SegmentedActive/colors/font_pressed_color = Color(0.02352941, 0.07843137, 0.1490
 SegmentedActive/styles/normal = SubResource("BoxSegmentedActive")
 SegmentedActive/styles/hover = SubResource("BoxSegmentedActive")
 SegmentedActive/styles/pressed = SubResource("BoxSegmentedActive")
+SegmentedActive/styles/focus = SubResource("BoxSegmentFocus")
 
 HudButton/base_type = &"Button"
 HudButton/fonts/font = SubResource("FontVariation_Display")

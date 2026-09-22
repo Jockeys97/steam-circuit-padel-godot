@@ -1,0 +1,173 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok a11y/the_router_inventory_is_the_thirteen_screens
+ok a11y/the_root_is_one_of_them
+ok a11y/every_declared_forward_action_names_a_registered_screen
+ok a11y/every_declared_return_names_a_registered_screen
+ok a11y/ten_screens_declare_a_return
+ok a11y/the_only_screens_no_declared_edge_reaches_are_the_two_the_match_flow_enters
+ok a11y/eleven_screens_are_reachable_by_declared_edges
+ok a11y/the_game_screen_declares_no_return
+ok a11y/no_declared_edge_enters_game
+ok a11y/the_result_screen_declares_no_return
+ok a11y/no_declared_edge_enters_result
+# report graph: 13 screens, 11 reachable by declared edges, 19 forward edges, 10 returns, flow-entered=["game", "result"]
+ok a11y/the_default_policy_allows_motion
+ok a11y/the_default_policy_says_yes
+ok a11y/a_duration_passes_through_untouched
+ok a11y/an_uncapped_shake_passes_through
+ok a11y/a_particle_count_passes_through
+ok a11y/the_policy_reads_the_object_it_was_given
+ok a11y/the_reduce_motion_setting_exists
+ok a11y/the_policy_mirrors_reduce_motion
+ok a11y/reduced_motion_says_no_to_motion
+ok a11y/reduced_motion_removes_a_ui_animation
+ok a11y/reduced_motion_caps_the_shake_the_reference_caps
+ok a11y/reduced_motion_scales_particles_by_the_reference_figure
+ok a11y/the_particle_floor_holds
+ok a11y/the_setting_toggles_back
+ok a11y/toggling_flips_the_policy
+ok a11y/motion_returns_when_the_setting_does
+ok a11y/the_colorblind_setting_exists
+ok a11y/the_policy_mirrors_colorblind
+ok a11y/prefs_applied_through_the_policy_reach_the_same_settings
+ok a11y/the_settings_object_shows_the_same_value
+ok a11y/applying_prefs_does_not_disturb_another_setting
+ok a11y/prefs_can_turn_the_setting_off_again
+ok a11y/the_active_screen_exposes_its_shell
+ok a11y/the_shell_knows_the_screen_it_is
+ok a11y/attaching_registers_the_shells_back_control
+ok a11y/the_model_holds_exactly_the_registered_ids
+ok a11y/the_back_control_carries_the_shells_own_action
+ok a11y/the_registered_id_is_the_shells_naming
+ok a11y/re_registering_an_id_does_not_duplicate_it_in_the_bridge
+ok a11y/re_registering_an_id_does_not_duplicate_it_in_the_model
+ok a11y/every_registered_control_reaches_the_model_once
+ok a11y/four_controls_are_registered
+ok a11y/four_targets_are_in_the_model
+ok a11y/the_locked_control_is_reported_locked
+ok a11y/a_locked_control_stays_registered_and_visible
+ok a11y/the_models_own_filter_refuses_a_locked_target
+ok a11y/the_bridge_will_not_focus_a_locked_control
+ok a11y/a_normal_control_takes_the_focus
+ok a11y/the_focus_lands_where_it_was_asked
+ok a11y/an_unregistered_id_cannot_take_the_focus
+ok a11y/the_models_walk_cannot_reach_a_locked_control
+ok a11y/the_models_walk_reaches_the_controls_it_should
+ok a11y/the_first_control_takes_the_focus_before_a_move
+ok a11y/a_direction_is_handled_by_the_bridge
+ok a11y/a_down_press_lands_on_the_control_below
+ok a11y/the_screens_forward_action_names_a_registered_screen
+ok a11y/the_modes_row_declares_exactly_one_action
+ok a11y/the_modes_rows_only_action_is_its_own_return
+ok a11y/that_return_points_at_the_root
+ok a11y/the_acting_control_has_the_focus
+ok a11y/confirm_on_a_control_is_handled
+ok a11y/the_control_activated
+ok a11y/the_activation_names_the_screen_the_action_points_at
+ok a11y/the_activation_navigated_once
+ok a11y/the_router_is_on_the_screen_the_action_named
+ok a11y/the_root_declares_a_forward_action_the_audit_can_take
+ok a11y/the_forward_action_names_a_registered_screen
+ok a11y/the_forward_action_reaches_a_screen_that_is_not_the_root
+ok a11y/the_forward_control_takes_the_focus
+ok a11y/confirm_on_the_forward_control_is_handled
+ok a11y/the_forward_action_navigated_once
+ok a11y/the_router_is_on_the_screen_the_forward_action_named
+ok a11y/a_non_root_screen_declares_its_return
+ok a11y/re_attaching_registers_the_new_shell
+ok a11y/back_is_handled
+ok a11y/back_navigated
+ok a11y/back_navigated_once
+ok a11y/back_landed_on_the_shells_declared_target
+ok a11y/the_walk_back_reached_the_root
+ok a11y/the_root_declares_no_return
+ok a11y/back_on_the_root_is_still_handled
+ok a11y/back_on_the_root_navigates_nowhere
+ok a11y/the_root_stays_the_root
+ok a11y/confirm_is_the_models_to_handle
+ok a11y/back_is_the_models_to_handle
+ok a11y/a_direction_is_the_models_to_handle
+ok a11y/a_key_the_model_does_not_own_is_left_to_the_game
+ok a11y/a_pointer_event_is_not_the_bridges
+ok a11y/a_control_to_be_locked_later_takes_the_focus
+ok a11y/a_control_that_became_locked_leaves_the_focusable_set
+ok a11y/confirm_on_a_control_that_became_locked_is_handled
+ok a11y/a_locked_control_does_not_activate
+ok a11y/no_navigation_happened_for_the_locked_control
+ok a11y/the_router_did_not_move_for_a_locked_control
+ok a11y/the_late_lock_is_reported_upward
+ok a11y/the_probe_runs_with_a_pad_connected
+ok a11y/the_probe_field_is_seen_as_a_text_field
+ok a11y/the_probe_field_takes_the_focus
+ok a11y/the_keyboard_starts_closed
+ok a11y/confirm_on_a_text_field_is_handled
+ok a11y/with_a_pad_connected_confirm_opens_the_keyboard_model
+ok a11y/the_verdict_names_the_keyboard
+ok a11y/the_keyboard_opened_for_the_focused_field
+ok a11y/the_model_is_in_the_keyboard_context
+ok a11y/the_keyboard_model_takes_a_character
+ok a11y/the_character_lands_in_the_open_field
+ok a11y/back_with_the_keyboard_open_is_handled
+ok a11y/back_closes_the_keyboard_model
+ok a11y/the_verdict_names_the_close
+ok a11y/closing_the_keyboard_gives_the_field_back
+ok a11y/the_model_is_back_in_the_screen_context
+ok a11y/a_pad_confirm_is_handled
+ok a11y/a_pad_confirm_opens_the_keyboard_again
+ok a11y/a_pad_cancel_is_handled
+ok a11y/a_pad_cancel_closes_the_keyboard
+ok a11y/a_button_release_is_not_a_confirm
+FAIL a11y/a_letter_the_navigation_uses_is_left_to_the_field: expected false, got true
+ok a11y/the_focused_field_does_not_move_on_that_letter
+FAIL a11y/the_verdict_names_the_text_entry: expected "text-entry", got ""
+ok a11y/with_no_field_focused_the_letter_is_the_navigation_again
+ok a11y/the_registered_range_keys_are_reported_back
+ok a11y/a_plain_control_carries_no_metadata
+ok a11y/no_range_step_is_reported_before_one_happens
+ok a11y/the_range_takes_the_focus
+ok a11y/the_carried_keys_reach_the_live_target_the_input_lane_reads
+ok a11y/a_direction_on_the_range_is_handled
+ok a11y/right_steps_the_range_from_the_registered_value
+ok a11y/the_stepped_value_is_the_live_targets_own
+ok a11y/the_step_is_mirrored_into_the_registration
+ok a11y/the_range_steps_again
+ok a11y/the_second_step_reaches_the_maximum
+ok a11y/a_direction_at_the_maximum_is_still_handled
+ok a11y/the_maximum_clamps_the_value
+ok a11y/the_clamped_step_reported_no_change
+ok a11y/the_range_steps_back
+ok a11y/the_mirrored_value_is_where_the_next_step_starts
+ok a11y/a_pad_motion_on_the_range_is_handled
+ok a11y/the_pad_motion_steps_the_same_range
+ok a11y/every_step_reported_once
+ok a11y/the_registered_osk_keys_are_reported_back
+ok a11y/the_message_field_takes_the_focus
+ok a11y/the_osk_keys_reach_the_live_target_too
+ok a11y/the_keyboard_is_closed_before_the_field_is_confirmed
+ok a11y/confirm_on_the_seeded_field_is_handled
+ok a11y/the_seeded_field_opens_the_keyboard
+ok a11y/the_keyboard_opens_with_the_registered_seed
+ok a11y/the_keyboard_opens_with_the_registered_length_cap
+ok a11y/the_keyboard_labels_the_field_the_screen_named
+ok a11y/the_bridge_reports_the_field_the_keyboard_opened_for
+ok a11y/the_report_says_the_keyboard_is_open
+ok a11y/a_key_press_lands_while_the_keyboard_is_open
+ok a11y/back_with_the_seeded_keyboard_open_is_handled
+ok a11y/the_seeded_keyboard_closes
+ok a11y/the_screen_can_read_back_what_was_typed
+ok a11y/the_field_gets_the_focus_back
+ok a11y/the_carried_keys_survive_the_context_change_the_keyboard_made
+# report transitions observed by the routers own signal: 4
+# not-ported osk_visual_grid: the keyboard model opens, shifts, types and closes (osk.gd) but nothing draws its rows: the drawn grid is the postponed platform decision (UIR-26), so a pad-only player can open the keyboard and not see it
+# not-ported touch_input: no touch bindings exist in scheme.gd; the reference's touch paths (js/main.js:430-542) have no port side to exercise without a touch device
+# not-ported ime_text_entry: typing goes through the OSK model or the engine's own text controls; composing input for the languages the locale seam carries is not wired into the shell
+# not-ported key_repeat_events: the bridge hands one event to MenuFocus.handle_key; repeat lives in menu_nav.gd's repeat_state for the pad and in the engine for keys, so the audit asserts the final focused id instead of per-step movement
+# note constructed state: the router, the shell, the four probe controls and the probe text field below are built by this audit in a 1280x720 frame and freed at the end; no real screen and no user:// state is touched
+# note the bridge does not re-state focus or lock rules: `focus_nav.gd::_selectable` owns them (`godot/tests/input/**` asserts the model), so a locked control is asserted here as *registered, reported, unfocusable, inert*, which is what a screen can act on
+# report not-ported=4
+# totals checks=157 failures=2 not-ported=4
+FAIL 155/157
+FAIL 155/157
+# first failure FAIL a11y/a_letter_the_navigation_uses_is_left_to_the_field: expected false, got true
+# first failure FAIL a11y/a_letter_the_navigation_uses_is_left_to_the_field: expected false, got true

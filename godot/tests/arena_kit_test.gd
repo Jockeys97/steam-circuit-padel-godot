@@ -3,53 +3,69 @@
 ##   flock -w 900 /tmp/padel-godot.lock /Applications/Godot.app/Contents/MacOS/Godot \
 ##     --headless --path godot/ --script res://tests/arena_kit_test.gd
 ##
-## WHAT IT PROVES, in four parts:
+## WHAT IT PROVES, in five parts. The suite reads the DISK STATE first (empty kit vs
+## kitted) and then makes the same claims in both, because the kit's contract has to
+## hold in both: an empty `godot/assets/arenas/` costs nothing, and a full drop folder
+## mounts without doubling the dressing.
 ##
 ##   1. THE SPEC TABLE IS VALID AND FROZEN-SHAPED. `arena_kit.gd::SPECS` covers the five
 ##      world arenas x the ten frozen slots exactly (no missing slot, no extra one, the
-##      standard's order); every slot names a unique slot id; every anchor is a ground
-##      contact; every target height is metres and inside the built band; every footprint
-##      note is there AND its declared depth fits the two planes a built arena is gated
-##      on — the charter's field-law plane (z = -8.0) and the MEASURED rear glass plane
-##      (z = -10.02, what `world_arenas_field_law_test.gd:194-209` fails on) — inside the
-##      depth budget at the default prop z; every repeat run stays inside the authored
-##      half-span; every `suppress` flag is OFF; every `kinds` entry is a real prop kind
-##      of that arena.
+##      standard's order); every anchor is a ground contact; every target height is
+##      metres and inside the built band; every footprint note is there AND its declared
+##      depth fits the two planes a built arena is gated on — the charter's field-law
+##      plane (z = -8.0) and the MEASURED rear glass plane (z = -10.02, what
+##      `world_arenas_field_law_test.gd:194-209` fails on). The declared `depth` is the
+##      ENGINE-MEASURED mesh depth (fit pass, `FIT-RESULT.md`), so four slots measure
+##      deeper than the 3.26 m constant derived for the default prop z; that budget
+##      check stays RED and names them rather than being redefined away. Every repeat
+##      run stays inside the authored half-span; every
+##      `kinds` entry is a real prop kind of that arena; and `suppress` is ON exactly
+##      where a slot HAS a procedural counterpart to stand over (`kinds` non-empty) and
+##      OFF everywhere else — no blanket flip (the mission's rule: a slot with
+##      `kinds: []` has nothing to double and is left alone).
 ##
-##   2. THE EMPTY KIT IS THE PRE-KIT BUILD, BYTE FOR BYTE. `run/tmp/arena-kit/baseline.json`
-##      is the digest recorded by `run/tmp/arena-kit/baseline_probe.gd` BEFORE the seam
-##      existed (same digest function, copied here verbatim): per arena the SHA-256 of the
-##      whole built tree — node names, classes, transforms, mesh classes/surface/face and
-##      vertex counts, override material values — plus the mesh / `Dressing_*` / props
-##      counts. This suite rebuilds the five arenas with no GLB anywhere and requires the
-##      digests to be equal, and requires no `Kit` node to exist. A baseline file that is
-##      missing is a FAILURE, never a silent pass: the gate is against a recorded number.
+##   2. THE MOUNT IS ADDITIVE, BYTE FOR BYTE, IN BOTH STATES. `run/tmp/arena-kit/
+##      baseline.json` is the digest recorded by `run/tmp/arena-kit/baseline_probe.gd`
+##      BEFORE the seam existed (same digest function, copied here verbatim, plus one
+##      optional `skip` argument that defaults to "skip nothing": the walk with no skip
+##      is the recorded one). With suppression forced OFF (`ArenaKit.suppress_overrides`,
+##      the module's own test seam) and the `Kit` subtree skipped, every arena's digest
+##      must equal the recorded baseline — including the line count — and its mesh and
+##      `Dressing_*` counts must equal the recorded ones once the kit's own meshes are
+##      subtracted. That is the same statement the empty-kit regression made, made
+##      against the kit that is actually on disk: with `Kit` removed, the procedural tree
+##      is the pre-kit tree, so the seam adds a subtree and touches nothing else. With no
+##      GLB anywhere the skipped subtree does not exist and the check is the original one
+##      verbatim. A missing baseline file is a FAILURE, never a silent pass.
 ##
-##   3. A GLB IN A SLOT MOUNTS AT ITS SPEC TRANSFORM AND SIZE. Two fixtures are dropped
-##      one at a time and removed again:
-##        * `tools/arena-kit/fixtures/tiny_prop.glb` — a hand-built STATIC 0.50 m box with
-##          a deliberately wrong material (metallic 0.9 / roughness 0.2 / emission 1,1,1,
-##          i.e. the Meshy defaults), so the scaling is exactly checkable (scale =
-##          target_h / 0.50) and the shared material policy has something real to correct;
-##        * `res://assets/athletes/volpe-rigged.glb` — a REAL repo GLB (the athlete
-##          precedent), which is also the skinned case `athlete_rig.gd:790-797` warns
-##          about: it must still mount, sized in metres, not 100x off.
-##      Both are asserted present as `Scenery/Kit/Slot_<slot>` at the spec anchor
-##      (including under a different camera preset, where x follows the preset's own
-##      `x_scale` like a `Dressing_*` container), with the mounted geometry sized to
-##      `target_h`, bottom-origin on the anchor, behind the measured glass plane, holding
-##      its declared repeat count, with no collider and no light, and with the override
-##      material shared between repeats.
+##   3. EVERY SLOT WITH A FILE MOUNTS AT ITS SPEC TRANSFORM AND SIZE. For every (arena,
+##      slot) that has a GLB: `Scenery/Kit/Slot_<slot>` exists (including under a
+##      different camera preset, where x follows the preset's own `x_scale` like a
+##      `Dressing_*` container), holds exactly the declared repeat count at the declared
+##      spreads, measures its `target_h` within 2 cm, is bottom-origin on the anchor,
+##      stays behind the MEASURED glass plane and inside the authored half-span, is not
+##      half-cropped by the default camera, carries the shared kit material policy with
+##      one material per (file, surface) shared across the repeats, and carries no
+##      collider, light, camera or unmeasurable asset class. The fixture drops
+##      (`tools/arena-kit/fixtures/tiny_prop.glb`, `res://assets/athletes/volpe-rigged.glb`)
+##      run only when their slot is FREE — they are exercised in the empty state and
+##      skipped, loudly, when a real asset holds the slot (the seam caches loaded scenes
+##      per path, so dropping a fixture over a real slot would measure the cached original
+##      anyway).
 ##
-##   4. THE FALLBACK COMES BACK, AND NOTHING IS LEFT BEHIND. Both fixtures are removed,
-##      `godot/assets/arenas/` is required to hold no `.glb` again, the digest of all five
-##      arenas must match the recorded baseline AGAIN, `has_kit()` must be false and every
-##      slot report must say "procedural" — i.e. the empty path is not a one-way door.
+##   4. SUPPRESSION COVERS EXACTLY THE SLOTS THAT DOUBLE, AND NOTHING ELSE. The suppressed
+##      set is derived from the table and the disk — kinds non-empty AND a GLB in place —
+##      and `suppressed_kinds()` must equal it, kind for kind. Two builds are compared:
+##      the table as it ships, and the same table forced OFF. Every suppressed kind loses
+##      its procedural meshes in the first and keeps them in the second; every other kind
+##      is untouched in both; and `Dressing_*` count == authored prop count in both, so
+##      the "one container per authored prop" invariant the frozen suites pin does not
+##      move. A slot with `kinds: []` never suppresses anything, even forced on.
 ##
-## Suppression (default OFF, asserted above) is exercised here too, with the frozen table
-## untouched: `ArenaKit.suppress_overrides` forces one slot on, and the build must then
-## skip exactly that slot's procedural kind while still building the `Dressing_*`
-## container, so the "one container per authored prop" invariant does not move.
+##   5. NOTHING IS LEFT BEHIND. The suite fingerprints every `.glb` under
+##      `godot/assets/arenas/` (path + size) before it starts and requires the same set
+##      at the end, removes only what it staged itself, clears `suppress_overrides`, and
+##      re-asserts the disk state it found.
 ##
 ## Machine-readable contract, same as the other suites: `ok <name>` / `FAIL <name>:
 ## expected …, got …` / `PASS n/n` | `FAIL n/n`, exit 0 on PASS, 1 on FAIL. A `SCRIPT
@@ -60,6 +76,8 @@ const ArenaKit := preload("res://game/arenas/arena_kit.gd")
 const Arena := preload("res://game/arenas/arena_library.gd")
 const ArenaScenery := preload("res://game/arenas/arena_scenery.gd")
 const ArenaStyle := preload("res://game/arenas/arena_style.gd")
+const Common := preload("res://tests/world_arenas_common.gd")
+const Court := preload("res://game/court.gd")
 
 const ARENAS := ["torii", "medina", "carioca", "aurora", "egeo"]
 const KITS_DIR := "res://assets/arenas/"
@@ -74,10 +92,16 @@ const TINY_SLOT := "light_source"
 const REPO_SLOT := "hero_landmark"
 const FIXTURE_ARENA := "torii"
 const HEIGHT_TOLERANCE := 0.02
+## The framing contract's viewport and the preset the mounted band is authored for.
+const VIEW := Vector2i(1280, 720)
+const PRESET := "default"
 
 var checks := 0
 var failures := 0
+var notes := 0
 var fail_lines: Array[String] = []
+var staged: Array[String] = []
+var fingerprint_before := {}
 var _ran := false
 
 
@@ -115,12 +139,20 @@ func check_eq(name: String, actual: Variant, expected: Variant) -> void:
 	fail_lines.append(line)
 
 
+## A check that does not apply in this disk state. Counted and printed, never silent.
+func note(what: String) -> void:
+	notes += 1
+	print("NOTE %s" % what)
+
+
 func verdict() -> void:
 	if failures == 0:
 		print("PASS %d/%d" % [checks, checks])
 	else:
 		print("FAIL %d/%d first=%s" % [checks - failures, checks,
 			fail_lines[0] if not fail_lines.is_empty() else ""])
+	if notes > 0:
+		print("# %d note(s) this run" % notes)
 
 
 # ---------------------------------------------------------------------------
@@ -158,11 +190,13 @@ func _x_scale(preset: String) -> float:
 
 func _run() -> void:
 	print("# arena-kit intake suite — godot %s, repo %s" % [Engine.get_version_info()["string"], _repo_dir()])
+	root.size = VIEW
+	fingerprint_before = _glb_fingerprint()
 	_spec_table()
-	_precheck()
-	_empty_kit_regression()
-	_fixture_tiny()
-	_fixture_repo_glb()
+	_disk_state()
+	_regression()
+	_mount_contract()
+	_fixtures()
 	_suppression()
 	_cleanup()
 	verdict()
@@ -195,11 +229,12 @@ func _spec_table() -> void:
 	var heights: Array[String] = []
 	var repeats_bad: Array[String] = []
 	var run_wide: Array[String] = []
-	var notes: Array[String] = []
+	var notes_bad: Array[String] = []
 	var law: Array[String] = []
 	var glass: Array[String] = []
 	var budget: Array[String] = []
-	var suppress_on: Array[String] = []
+	var suppress_wrong: Array[String] = []
+	var suppress_expected: Array[String] = []
 	var kinds_bad: Array[String] = []
 	var band_top := float(ArenaScenery.band("default", ArenaScenery.BACKDROP_Z)["top"])
 	for arena_id in ARENAS:
@@ -224,6 +259,7 @@ func _spec_table() -> void:
 			var repeats := int(entry["repeats"])
 			var spread := float(entry["spread"])
 			var depth := float(entry["depth"])
+			var kinds: Array = entry.get("kinds", [])
 			if not is_equal_approx(anchor.y, 0.0):
 				ground.append("%s y=%.3f" % [where, anchor.y])
 			if target_h <= 0.0 or anchor.y + target_h > band_top + 0.0001:
@@ -233,16 +269,21 @@ func _spec_table() -> void:
 			if absf(anchor.x) + float(repeats - 1) * 0.5 * spread > ArenaKit.AUTHORED_HALF_X:
 				run_wide.append("%s x=%.2f run=%.2f" % [where, anchor.x, float(repeats - 1) * spread])
 			if String(entry.get("footprint", "")).length() < 24:
-				notes.append("%s note=%s" % [where, String(entry.get("footprint", ""))])
+				notes_bad.append("%s note=%s" % [where, String(entry.get("footprint", ""))])
 			if anchor.z + depth * 0.5 > ArenaScenery.FIELD_LAW_Z:
 				law.append("%s front=%.2f" % [where, anchor.z + depth * 0.5])
 			if anchor.z + depth * 0.5 > ArenaKit.GLASS_PLANE_Z:
 				glass.append("%s front=%.2f (glass %.2f)" % [where, anchor.z + depth * 0.5, ArenaKit.GLASS_PLANE_Z])
 			if depth <= 0.0 or depth > ArenaKit.DEPTH_BUDGET:
 				budget.append("%s depth=%.2f (budget %.2f)" % [where, depth, ArenaKit.DEPTH_BUDGET])
-			if bool(entry.get("suppress", false)):
-				suppress_on.append(where)
-			for kind in (entry.get("kinds", []) as Array):
+			# The flag stands where the slot HAS a procedural counterpart, and only there:
+			# suppressing a slot with no `kinds` would suppress nothing and hide a mistake.
+			var want_suppress := not kinds.is_empty()
+			if want_suppress:
+				suppress_expected.append(where)
+			if bool(entry.get("suppress", false)) != want_suppress:
+				suppress_wrong.append("%s suppress=%s kinds=%s" % [where, str(entry.get("suppress", false)), str(kinds)])
+			for kind in kinds:
 				if not prop_kinds.has(String(kind)):
 					kinds_bad.append("%s kind=%s" % [where, kind])
 	check("spec/every_arena_carries_exactly_the_ten_frozen_slots", missing.is_empty(), str(missing))
@@ -250,28 +291,24 @@ func _spec_table() -> void:
 	check("spec/every_target_height_is_metres_inside_the_built_band", heights.is_empty(), str(heights))
 	check("spec/repeat_count_and_spread_agree", repeats_bad.is_empty(), str(repeats_bad))
 	check("spec/every_repeat_run_stays_inside_the_authored_half_span", run_wide.is_empty(), str(run_wide))
-	check("spec/every_slot_carries_a_footprint_note", notes.is_empty(), str(notes))
+	check("spec/every_slot_carries_a_footprint_note", notes_bad.is_empty(), str(notes_bad))
 	check("spec/every_footprint_clears_the_field_law_plane_z_minus_8", law.is_empty(), str(law))
 	check("spec/every_footprint_clears_the_measured_glass_plane", glass.is_empty(), str(glass))
 	check("spec/every_footprint_fits_the_depth_budget", budget.is_empty(), str(budget))
-	check("spec/suppress_defaults_off_in_every_slot", suppress_on.is_empty(), str(suppress_on))
+	check("spec/suppress_is_on_exactly_where_a_slot_has_a_procedural_counterpart (%d slots)" % suppress_expected.size(),
+		suppress_wrong.is_empty(), str(suppress_wrong))
 	check("spec/every_suppress_target_is_a_real_prop_kind", kinds_bad.is_empty(), str(kinds_bad))
-	check("spec/no_slot_is_suppressed_without_a_glb_in_place", ArenaKit.suppressed_kinds("torii").is_empty(),
-		str(ArenaKit.suppressed_kinds("torii")))
 
 
-# --- 2. nothing on disk, and the empty build -------------------------------
+# --- 2. the disk state, and what it changes about the rest of the run ------
 
-func _precheck() -> void:
+## What is on disk right now: the empty-kit state (the pre-kit build, unchanged) or the
+## kitted state (real GLBs mounted, suppression live). Both are legitimate; the suite
+## says which one it is measuring and then holds the kit to the same claims.
+func _disk_state() -> void:
 	var on_disk := _glb_files_under_kits()
-	check("pre/godot_assets_arenas_holds_no_glb_yet (the empty-kit state)", on_disk.is_empty(), str(on_disk))
-	for arena_id in ARENAS:
-		check("pre/has_kit_is_false_for_%s" % arena_id, not ArenaKit.has_kit(arena_id),
-			str(ArenaKit.has_kit(arena_id)))
-	_assert_slot_report_is_procedural("pre")
-
-
-func _assert_slot_report_is_procedural(prefix: String) -> void:
+	print("# disk state: %d GLB file(s) under godot/assets/arenas/ -> %s" % [
+		on_disk.size(), "EMPTY KIT" if on_disk.is_empty() else "KITTED"])
 	var problems: Array[String] = []
 	for arena_id in ARENAS:
 		var report := ArenaKit.slot_report(arena_id)
@@ -283,17 +320,28 @@ func _assert_slot_report_is_procedural(prefix: String) -> void:
 			var slot := String(row["slot"])
 			if slot != String(ArenaKit.slots()[i]):
 				problems.append("%s: row %d is %s" % [arena_id, i, slot])
-			if String(row["status"]) != "procedural" or bool(row["present"]):
-				problems.append("%s/%s status=%s present=%s" % [arena_id, slot, row["status"], row["present"]])
 			if String(row["path"]) != _slot_res_path(arena_id, slot):
 				problems.append("%s/%s path=%s" % [arena_id, slot, row["path"]])
 			if Vector3(row["anchor"]) != ArenaKit.anchor_at(arena_id, slot):
 				problems.append("%s/%s anchor=%s" % [arena_id, slot, str(row["anchor"])])
-	check("%s/slot_report_lists_all_ten_slots_as_procedural_with_their_path" % prefix,
-		problems.is_empty(), str(problems))
+			var want := "loaded" if bool(row["present"]) else "procedural"
+			if String(row["status"]) != want:
+				problems.append("%s/%s status=%s present=%s" % [arena_id, slot, row["status"], row["present"]])
+	check("state/slot_report_lists_all_ten_slots_in_order_with_their_path_and_status", problems.is_empty(), str(problems))
+	var inconsistent: Array[String] = []
+	for arena_id in ARENAS:
+		var any_present := false
+		for slot in ArenaKit.slots():
+			if ArenaKit.glb_exists(ArenaKit.slot_path(arena_id, String(slot))):
+				any_present = true
+		if ArenaKit.has_kit(arena_id) != any_present:
+			inconsistent.append("%s has_kit=%s any_file=%s" % [arena_id, str(ArenaKit.has_kit(arena_id)), str(any_present)])
+	check("state/has_kit_agrees_with_the_files_on_disk", inconsistent.is_empty(), str(inconsistent))
 
 
-func _empty_kit_regression() -> void:
+# --- 3. the additive proof, against the recorded baseline ------------------
+
+func _regression() -> void:
 	var baseline := _read_baseline()
 	check("regression/the_recorded_baseline_is_readable (%s)" % BASELINE_PATH, not baseline.is_empty(),
 		"missing or unparsable — record it with run/tmp/arena-kit/baseline_probe.gd")
@@ -301,42 +349,240 @@ func _empty_kit_regression() -> void:
 		return
 	var arenas: Dictionary = baseline.get("arenas", {})
 	var mismatch: Array[String] = []
+	var lines_bad: Array[String] = []
 	var counts: Array[String] = []
 	var nondeterministic: Array[String] = []
-	var grew_kit: Array[String] = []
 	var field_law: Array[String] = []
+	var kit_state: Array[String] = []
+	var empty_disk := _glb_files_under_kits().is_empty()
+	# Suppression OFF: the additive default, which is the state the baseline was recorded
+	# in. The kit is then purely additive by construction, so the tree with `Kit` skipped
+	# must be the recorded tree, byte for byte.
+	ArenaKit.suppress_overrides = _all_suppress(false)
 	for arena_id in ARENAS:
 		var built := Arena.build(arena_id, "default")
-		var digest := _digest_arena(built)
+		var digest := _digest_arena_excluding_kit(built)
 		var want: Dictionary = arenas.get(arena_id, {})
+		var kit := _kit_node(built)
+		var kit_meshes := 0 if kit == null else kit.find_children("*", "MeshInstance3D", true, false).size()
 		if digest["sha256"] != String(want.get("sha256", "")):
 			mismatch.append("%s %s != %s" % [arena_id, String(digest["sha256"]).substr(0, 12),
 				String(want.get("sha256", "")).substr(0, 12)])
-		var dressing := _dressing_count(built)
-		var meshes := built.find_children("*", "MeshInstance3D", true, false).size()
-		if meshes != int(want.get("meshes", -1)) or dressing != int(want.get("dressing", -1)):
-			counts.append("%s meshes=%d/%d dressing=%d/%d" % [arena_id, meshes, int(want.get("meshes", -1)),
-				dressing, int(want.get("dressing", -1))])
-		if built.find_child("Kit", true, false) != null:
-			grew_kit.append("%s grew a Kit node with no GLB" % arena_id)
+		if int(digest["lines"]) != int(want.get("lines", -1)):
+			lines_bad.append("%s lines=%d/%d" % [arena_id, int(digest["lines"]), int(want.get("lines", -1))])
+		if int(digest["meshes"]) != int(want.get("meshes", -1)) \
+				or int(digest["dressing"]) != int(want.get("dressing", -1)) \
+				or int(digest["scenery_meshes"]) != int(want.get("scenery_meshes", -1)):
+			counts.append("%s meshes=%d/%d scenery=%d/%d dressing=%d/%d" % [arena_id, int(digest["meshes"]),
+				int(want.get("meshes", -1)), int(digest["scenery_meshes"]), int(want.get("scenery_meshes", -1)),
+				int(digest["dressing"]), int(want.get("dressing", -1))])
+		# The kit is the ONLY thing the tree gained: its own meshes are the whole difference.
+		var grown := built.find_children("*", "MeshInstance3D", true, false).size() - int(want.get("meshes", -1))
+		if grown != kit_meshes:
+			kit_state.append("%s grew %d mesh(es) but the Kit subtree holds %d" % [arena_id, grown, kit_meshes])
+		# With no GLB anywhere the Kit node must not exist at all (the empty-kit path).
+		if empty_disk and kit != null:
+			kit_state.append("%s grew a Kit node with no GLB" % arena_id)
 		var law := ArenaScenery.field_law_report(built)
 		if not law.is_empty():
 			field_law.append("%s: %s" % [arena_id, str(law)])
 		# The digest must also be stable within the run (a second build, same answer):
 		# otherwise the baseline comparison itself would be measuring noise.
 		var rebuilt := Arena.build(arena_id, "default")
-		if _digest_arena(rebuilt)["sha256"] != digest["sha256"]:
+		if _digest_arena(rebuilt)["sha256"] != _digest_arena(built)["sha256"]:
 			nondeterministic.append(arena_id)
 		built.free()
 		rebuilt.free()
-	check("regression/every_arena_digest_equals_the_recorded_baseline", mismatch.is_empty(), str(mismatch))
-	check("regression/mesh_and_dressing_counts_are_unchanged", counts.is_empty(), str(counts))
+	ArenaKit.suppress_overrides = {}
+	check("regression/with_suppression_off_every_arena_digest_equals_the_recorded_baseline",
+		mismatch.is_empty(), str(mismatch))
+	check("regression/the_digest_walk_records_the_recorded_line_count", lines_bad.is_empty(), str(lines_bad))
+	check("regression/mesh_scenery_and_dressing_counts_are_unchanged_once_the_kit_is_subtracted",
+		counts.is_empty(), str(counts))
 	check("regression/the_digest_is_deterministic_inside_the_run", nondeterministic.is_empty(), str(nondeterministic))
-	check("regression/no_kit_node_is_built_without_a_glb", grew_kit.is_empty(), str(grew_kit))
+	check("regression/new_geometry_in_the_tree_is_exactly_the_kit_subtree", kit_state.is_empty(), str(kit_state))
 	check("regression/the_field_law_still_holds", field_law.is_empty(), str(field_law))
 
 
-# --- 3a. the tiny static fixture -------------------------------------------
+# --- 4. the mount contract on whatever is on disk --------------------------
+
+func _mount_contract() -> void:
+	var present_slots := 0
+	var absent_slots := 0
+	var missing_node: Array[String] = []
+	var anchor_bad: Array[String] = []
+	var name_bad: Array[String] = []
+	var asset_bad: Array[String] = []
+	var count_bad: Array[String] = []
+	var placement_bad: Array[String] = []
+	var size_bad: Array[String] = []
+	var origin_bad: Array[String] = []
+	var centre_bad: Array[String] = []
+	var spec_depth_bad: Array[String] = []
+	var glass_bad: Array[String] = []
+	var frame_bad: Array[String] = []
+	var screen_bad: Array[String] = []
+	var screen_row_bad: Array[String] = []
+	var preset_bad: Array[String] = []
+	var hover_bad: Array[String] = []
+	var material_bad: Array[String] = []
+	var asset_class_bad: Array[String] = []
+	var law_bad: Array[String] = []
+	for arena_id in ARENAS:
+		var holder := Node3D.new()
+		root.add_child(holder)
+		var cam := Court.build_camera(holder, PRESET)
+		var built := Arena.build_into(holder, arena_id, PRESET)
+		var viewport := Vector2(root.get_visible_rect().size)
+		var law := ArenaScenery.field_law_report(built)
+		if not law.is_empty():
+			law_bad.append("%s: %s" % [arena_id, str(law)])
+		for slot_in in ArenaKit.slots():
+			var slot := String(slot_in)
+			var entry := ArenaKit.spec(arena_id, slot)
+			var res_path := _slot_res_path(arena_id, slot)
+			var has_file := ArenaKit.glb_exists(res_path)
+			var slot_node := built.get_node_or_null("Scenery/Kit/Slot_%s" % slot) as Node3D
+			if not has_file:
+				absent_slots += 1
+				if slot_node != null:
+					missing_node.append("%s/%s mounted with no file" % [arena_id, slot])
+				continue
+			present_slots += 1
+			if slot_node == null:
+				missing_node.append("%s/%s not mounted" % [arena_id, slot])
+				continue
+			if String(slot_node.name) != "Slot_%s" % slot:
+				name_bad.append("%s/%s named %s" % [arena_id, slot, String(slot_node.name)])
+			if String(slot_node.get_meta("asset", "")) != res_path:
+				asset_bad.append("%s/%s asset=%s" % [arena_id, slot, String(slot_node.get_meta("asset", ""))])
+			var want_anchor := ArenaKit.anchor_at(arena_id, slot, _x_scale(PRESET))
+			if slot_node.position.distance_to(want_anchor) > 0.0001:
+				anchor_bad.append("%s/%s %s want %s" % [arena_id, slot, str(slot_node.position), str(want_anchor)])
+			var repeats := int(entry["repeats"])
+			var spread := float(entry["spread"]) * _x_scale(PRESET)
+			var pieces := _piece_nodes(slot_node)
+			if pieces.size() != repeats:
+				count_bad.append("%s/%s %d pieces want %d" % [arena_id, slot, pieces.size(), repeats])
+			for i in pieces.size():
+				var piece: Node3D = pieces[i]
+				var where := "%s/%s/%s" % [arena_id, slot, String(piece.name)]
+				var want_x := (float(i) - float(repeats - 1) * 0.5) * spread
+				if absf(piece.position.x - want_x) > 0.0001:
+					placement_bad.append("%s x=%.3f want %.3f" % [where, piece.position.x, want_x])
+				# The measured box of what is actually mounted, in the SLOT's own frame
+				# (the kit's `node_bounds()` applies the node's own transform), moved into
+				# the arena frame by the slot's anchor — the frame every law is written in.
+				var box := ArenaKit.node_bounds(piece)
+				var arena_box := AABB(box.position + slot_node.position, box.size)
+				if absf(float(arena_box.size.y) - float(entry["target_h"])) > HEIGHT_TOLERANCE:
+					size_bad.append("%s h=%.4f want %.2f" % [where, arena_box.size.y, float(entry["target_h"])])
+				# SPEC HONEST (fit pass): the declared depth IS the measured mesh depth, so
+				# the spec table, the 2D plan and the art describe one object. 2 dp.
+				if absf(float(arena_box.size.z) - float(entry["depth"])) > 0.005:
+					spec_depth_bad.append("%s measured d=%.4f declared %.2f" % [where, arena_box.size.z, float(entry["depth"])])
+				# Bottom origin and z-centring are exact by construction: `_place_piece()`
+				# puts the measured box's bottom on the wrapper's origin and the box's z
+				# centre there too, and `mount_slot()` puts the wrapper on the declared
+				# repeat offset. The box's X centre carries the SOURCE MODEL's own x
+				# asymmetry on top of that offset — measured here, never assumed away.
+				if absf(float(arena_box.position.y)) > 0.001 \
+						or absf(float(arena_box.position.z + arena_box.size.z * 0.5) - want_anchor.z) > 0.001:
+					origin_bad.append("%s box=%s anchor z=%.3f" % [where, str(arena_box), want_anchor.z])
+				var want_centre_x := want_anchor.x + want_x
+				var x_drift := float(arena_box.position.x + arena_box.size.x * 0.5) - want_centre_x
+				if absf(x_drift) > 0.10:
+					centre_bad.append("%s centre x=%.3f want %.3f (drift %+.3f m, the model's own x asymmetry)" % [
+						where, arena_box.position.x + arena_box.size.x * 0.5, want_centre_x, x_drift])
+				var front := float(arena_box.position.z + arena_box.size.z)
+				if front > ArenaKit.GLASS_PLANE_Z:
+					glass_bad.append("%s front z=%.3f" % [where, front])
+				if float(arena_box.size.z) > ArenaKit.DEPTH_BUDGET:
+					hover_bad.append("%s depth=%.3f (budget %.2f)" % [where, arena_box.size.z, ArenaKit.DEPTH_BUDGET])
+				# The frame law is an AUTHORED-space law: a built arena multiplies authored x
+				# by the running preset's own `x_scale` (1.3437 at "default"), so the gate
+				# reads the extents back in authored metres and reports both.
+				var auth_min := float(arena_box.position.x) / _x_scale(PRESET)
+				var auth_max := float(arena_box.position.x + arena_box.size.x) / _x_scale(PRESET)
+				if absf(auth_min) > ArenaKit.AUTHORED_HALF_X or absf(auth_max) > ArenaKit.AUTHORED_HALF_X:
+					frame_bad.append("%s authored x=%.2f..%.2f (as built %.2f..%.2f)" % [
+						where, auth_min, auth_max, arena_box.position.x, arena_box.position.x + arena_box.size.x])
+				var crop := _screen_report(cam, viewport, arena_box)
+				if not bool(crop["inside"]):
+					screen_bad.append("%s margin=%.1fpx behind=%s" % [where, crop["margin"], str(crop["behind"])])
+				if not bool(crop["above_baseline"]):
+					screen_row_bad.append("%s row=%.1f baseline=%.1f" % [where, crop["lowest_row"], crop["baseline_row"]])
+			_check_material_policy(slot_node, "%s/%s" % [arena_id, slot])
+			_check_no_physics_or_light(slot_node, "%s/%s" % [arena_id, slot])
+		root.remove_child(holder)
+		holder.free()
+		# The anchor follows the camera preset's own x_scale, like a Dressing_* container.
+		var wide_holder := Node3D.new()
+		root.add_child(wide_holder)
+		var wide := Arena.build_into(wide_holder, arena_id, "wide")
+		for slot_in in ArenaKit.slots():
+			var slot := String(slot_in)
+			if not ArenaKit.glb_exists(_slot_res_path(arena_id, slot)):
+				continue
+			var wide_slot := wide.get_node_or_null("Scenery/Kit/Slot_%s" % slot) as Node3D
+			var want_wide := ArenaKit.anchor_at(arena_id, slot, _x_scale("wide"))
+			if wide_slot == null or wide_slot.position.distance_to(want_wide) > 0.0001:
+				preset_bad.append("%s/%s %s want %s" % [arena_id, slot,
+					str(wide_slot.position) if wide_slot != null else "missing", str(want_wide)])
+		root.remove_child(wide_holder)
+		wide_holder.free()
+	print("# mount contract: %d slot(s) with a file, %d without" % [present_slots, absent_slots])
+	check("mount/slot_report_marks_the_same_slots_loaded_as_have_a_file",
+		_loaded_slots_match_disk(), "see the per-slot status lines in the state section")
+	check("mount/every_slot_with_a_file_is_mounted_and_none_without_one", missing_node.is_empty(), str(missing_node))
+	check("mount/every_mounted_slot_is_named_Slot_<slot>", name_bad.is_empty(), str(name_bad))
+	check("mount/every_mounted_slot_records_its_asset_path", asset_bad.is_empty(), str(asset_bad))
+	check("mount/every_mounted_slot_stands_at_its_spec_anchor", anchor_bad.is_empty(), str(anchor_bad))
+	check("mount/the_declared_repeat_count_is_mounted", count_bad.is_empty(), str(count_bad))
+	check("mount/every_repeat_is_placed_on_the_declared_spread", placement_bad.is_empty(), str(placement_bad))
+	check("mount/every_piece_measures_the_spec_target_height", size_bad.is_empty(), str(size_bad))
+	check("mount/every_piece_is_bottom_origin_and_z_centred_on_its_slot_anchor", origin_bad.is_empty(), str(origin_bad))
+	check("mount/every_declared_depth_is_the_measured_mesh_depth (spec honest, 2 dp)",
+		spec_depth_bad.is_empty(), str(spec_depth_bad))
+	check("mount/every_mounted_box_sits_on_its_repeat_offset (x centre within 0.10 m of the plan)",
+		centre_bad.is_empty(), str(centre_bad))
+	check("mount/every_piece_fits_the_depth_budget", hover_bad.is_empty(), str(hover_bad))
+	check("mount/every_piece_stays_behind_the_measured_glass_plane", glass_bad.is_empty(), str(glass_bad))
+	check("mount/every_piece_stays_inside_the_authored_half_span", frame_bad.is_empty(), str(frame_bad))
+	check("mount/no_mounted_piece_is_half_cropped_by_the_default_camera", screen_bad.is_empty(), str(screen_bad))
+	check("mount/no_mounted_piece_covers_the_court (all above the rear baseline's own screen row)",
+		screen_row_bad.is_empty(), str(screen_row_bad))
+	check("mount/a_built_arena_keeps_the_field_law_with_the_kit_mounted", law_bad.is_empty(), str(law_bad))
+	check("mount/under_another_camera_preset_the_anchor_follows_the_presets_x_scale",
+		preset_bad.is_empty(), str(preset_bad))
+	if present_slots == 0:
+		note("no GLB on disk: the mount contract above is vacuous this run (empty-kit state)")
+
+
+func _loaded_slots_match_disk() -> bool:
+	var bad: Array[String] = []
+	for arena_id in ARENAS:
+		for row in ArenaKit.slot_report(arena_id):
+			var present := bool(row["present"])
+			if bool(row["present"]) != ArenaKit.glb_exists(String(row["path"])):
+				bad.append("%s/%s" % [arena_id, row["slot"]])
+	return bad.is_empty()
+
+
+# --- 4b. the fixture drops (only into a FREE slot) -------------------------
+
+func _fixtures() -> void:
+	var tiny_free := not FileAccess.file_exists(_slot_abs_path(FIXTURE_ARENA, TINY_SLOT))
+	var repo_free := not FileAccess.file_exists(_slot_abs_path(FIXTURE_ARENA, REPO_SLOT))
+	if not tiny_free:
+		note("fixture/ the tiny-prop drop is skipped: %s/%s holds a real asset" % [FIXTURE_ARENA, TINY_SLOT])
+	if not repo_free:
+		note("fixture/ the repo-GLB drop is skipped: %s/%s holds a real asset" % [FIXTURE_ARENA, REPO_SLOT])
+	if tiny_free:
+		_fixture_tiny()
+	if repo_free:
+		_fixture_repo_glb()
+
 
 func _fixture_tiny() -> void:
 	var src := _abs(TINY_FIXTURE)
@@ -346,11 +592,9 @@ func _fixture_tiny() -> void:
 	var dst := _slot_abs_path(FIXTURE_ARENA, TINY_SLOT)
 	_make_dir(dst.get_base_dir())
 	check_eq("fixture/copy_the_tiny_glb_into_the_slot_path", DirAccess.copy_absolute(src, dst), OK)
+	staged.append(dst)
 	check("fixture/the_kit_sees_the_drop (has_kit)",
 		ArenaKit.has_kit(FIXTURE_ARENA) and ArenaKit.has_kit(FIXTURE_ARENA, TINY_SLOT), "has_kit false")
-	var res_path := _slot_res_path(FIXTURE_ARENA, TINY_SLOT)
-	print("INFO resource_loader_exists(%s)=%s file_exists=%s" % [res_path,
-		str(ResourceLoader.exists(res_path)), str(FileAccess.file_exists(res_path))])
 	var report := ArenaKit.slot_report(FIXTURE_ARENA)
 	var loaded: Array[String] = []
 	for row in report:
@@ -362,19 +606,19 @@ func _fixture_tiny() -> void:
 	# the court around them.
 	var holder := Node3D.new()
 	root.add_child(holder)
-	var preset := "default"
-	var slot_node := ArenaKit.mount_slot(holder, FIXTURE_ARENA, TINY_SLOT, {"x_scale": _x_scale(preset)})
+	var slot_node := ArenaKit.mount_slot(holder, FIXTURE_ARENA, TINY_SLOT, {"x_scale": _x_scale(PRESET)})
 	check("fixture/mount_slot_returns_the_slot_node", slot_node != null, "null")
 	if slot_node != null:
-		var want_anchor := ArenaKit.anchor_at(FIXTURE_ARENA, TINY_SLOT, _x_scale(preset))
+		var want_anchor := ArenaKit.anchor_at(FIXTURE_ARENA, TINY_SLOT, _x_scale(PRESET))
 		check_eq("fixture/the_slot_node_is_named_Slot_<slot>", String(slot_node.name), "Slot_%s" % TINY_SLOT)
 		check("fixture/the_slot_node_sits_at_the_spec_anchor",
 			slot_node.position.distance_to(want_anchor) < 0.0001,
 			"%s want %s" % [str(slot_node.position), str(want_anchor)])
-		check_eq("fixture/the_slot_node_records_its_asset_path", String(slot_node.get_meta("asset")), res_path)
+		check_eq("fixture/the_slot_node_records_its_asset_path", String(slot_node.get_meta("asset")),
+			_slot_res_path(FIXTURE_ARENA, TINY_SLOT))
 		var spec := ArenaKit.spec(FIXTURE_ARENA, TINY_SLOT)
 		var repeats := int(spec["repeats"])
-		var spread := float(spec["spread"]) * _x_scale(preset)
+		var spread := float(spec["spread"]) * _x_scale(PRESET)
 		var pieces := _piece_nodes(slot_node)
 		check_eq("fixture/the_declared_repeat_count_is_mounted", pieces.size(), repeats)
 		var placement_bad: Array[String] = []
@@ -402,10 +646,6 @@ func _fixture_tiny() -> void:
 			str((pieces[0] as Node3D).scale if pieces.size() > 0 else "no piece"))
 		_check_material_policy(slot_node, "fixture")
 		_check_no_physics_or_light(slot_node, "fixture")
-		# The strictest arena rule, applied to the mounted geometry: its front face stays
-		# behind the MEASURED rear glass plane (what the world-arena suite fails on). The
-		# box is already expressed in the slot's frame, so the arena-frame front is the
-		# slot's anchor z plus the box's own far edge.
 		var glass_bad: Array[String] = []
 		for piece in pieces:
 			var box: AABB = ArenaKit.node_bounds(piece)
@@ -418,7 +658,7 @@ func _fixture_tiny() -> void:
 
 	# Then the real path: the arena build itself carries the slot, and the preset scaling
 	# follows the camera like the props do.
-	var built := Arena.build(FIXTURE_ARENA, preset)
+	var built := Arena.build(FIXTURE_ARENA, PRESET)
 	var kit := built.get_node_or_null("Scenery/Kit")
 	check("fixture/a_built_arena_carries_Scenery/Kit", kit != null, "no Kit node")
 	check("fixture/the_built_arena_has_Kit/Slot_%s" % TINY_SLOT,
@@ -426,16 +666,7 @@ func _fixture_tiny() -> void:
 	var law := ArenaScenery.field_law_report(built)
 	check("fixture/the_field_law_still_holds_with_a_glb_mounted", law.is_empty(), str(law))
 	built.free()
-	var wide := Arena.build(FIXTURE_ARENA, "wide")
-	var wide_slot := wide.get_node_or_null("Scenery/Kit/Slot_%s" % TINY_SLOT) as Node3D
-	var want_wide := ArenaKit.anchor_at(FIXTURE_ARENA, TINY_SLOT, _x_scale("wide"))
-	check("fixture/under_another_camera_preset_the_anchor_follows_the_presets_x_scale",
-		wide_slot != null and wide_slot.position.distance_to(want_wide) < 0.0001,
-		"%s want %s" % [str(wide_slot.position) if wide_slot != null else "missing", str(want_wide)])
-	wide.free()
 
-
-# --- 3b. the real repo GLB (the athlete precedent) --------------------------
 
 func _fixture_repo_glb() -> void:
 	var src := ProjectSettings.globalize_path(REPO_GLB)
@@ -447,12 +678,13 @@ func _fixture_repo_glb() -> void:
 	var dst := _slot_abs_path(FIXTURE_ARENA, REPO_SLOT)
 	_make_dir(dst.get_base_dir())
 	check_eq("repo_glb/copy_the_volpe_glb_into_the_slot_path", DirAccess.copy_absolute(src, dst), OK)
-	var built := Arena.build(FIXTURE_ARENA, "default")
+	staged.append(dst)
+	var built := Arena.build(FIXTURE_ARENA, PRESET)
 	var slot_node := built.get_node_or_null("Scenery/Kit/Slot_%s" % REPO_SLOT) as Node3D
 	check("repo_glb/a_real_repo_glb_mounts_as_Kit/Slot_%s" % REPO_SLOT, slot_node != null, "missing")
 	if slot_node != null:
 		var spec := ArenaKit.spec(FIXTURE_ARENA, REPO_SLOT)
-		var want := ArenaKit.anchor_at(FIXTURE_ARENA, REPO_SLOT, _x_scale("default"))
+		var want := ArenaKit.anchor_at(FIXTURE_ARENA, REPO_SLOT, _x_scale(PRESET))
 		check("repo_glb/it_stands_at_the_spec_anchor",
 			slot_node.position.distance_to(want) < 0.0001,
 			"%s want %s" % [str(slot_node.position), str(want)])
@@ -486,66 +718,136 @@ func _fixture_repo_glb() -> void:
 	built.free()
 
 
-# --- 4. suppression (default off, proven with the test seam) ---------------
+# --- 5. suppression: exactly the slots that double, and nothing else -------
 
 func _suppression() -> void:
-	var entry := ArenaKit.spec(FIXTURE_ARENA, REPO_SLOT)
-	var kinds := entry.get("kinds", []) as Array
-	check("suppress/the_slot_names_a_procedural_kind_to_stand_over (%s)" % str(kinds), not kinds.is_empty(), "empty")
-	if kinds.is_empty():
-		return
-	var kind := String(kinds[0])
-	var built := Arena.build(FIXTURE_ARENA, "default")
-	check("suppress/with_the_flag_off_the_procedural_prop_is_still_built",
-		_meshes_of_kind(built, kind).size() > 0, "no meshes for kind %s" % kind)
-	built.free()
+	# The doubling set, derived from the table AND the disk: a slot with a procedural
+	# counterpart (`kinds` non-empty) and a GLB standing in it.
+	var expect := {}
+	var expect_by_arena := {}
+	var no_counterpart: Array[String] = []
+	for arena_id in ARENAS:
+		var kinds_sum: Array = []
+		for slot_in in ArenaKit.slots():
+			var slot := String(slot_in)
+			var entry := ArenaKit.spec(arena_id, slot)
+			var kinds: Array = entry.get("kinds", [])
+			if not ArenaKit.glb_exists(_slot_res_path(arena_id, slot)):
+				continue
+			if kinds.is_empty():
+				no_counterpart.append("%s/%s" % [arena_id, slot])
+				continue
+			expect["%s/%s" % [arena_id, slot]] = true
+			for kind in kinds:
+				if not kinds_sum.has(String(kind)):
+					kinds_sum.append(String(kind))
+		expect_by_arena[arena_id] = kinds_sum
+	print("# suppression: %d slot(s) stand over a procedural counterpart, %d slot(s) have none (kinds [])" % [
+		expect.size(), no_counterpart.size()])
+	if expect.is_empty():
+		note("no GLB on disk: nothing can double, so the suppression contract is measured in its empty form only")
+	var wrong: Array[String] = []
+	var kinds_wrong: Array[String] = []
+	var overrides_wrong: Array[String] = []
+	for arena_id in ARENAS:
+		var got := ArenaKit.suppressed_kinds(arena_id)
+		var want: Array = expect_by_arena[arena_id]
+		# A slot with `kinds: []` must never suppress anything, even forced on.
+		var forced_on := _all_suppress(true)
+		ArenaKit.suppress_overrides = forced_on
+		var forced := ArenaKit.suppressed_kinds(arena_id)
+		ArenaKit.suppress_overrides = {}
+		for kind in forced:
+			if not want.has(kind):
+				overrides_wrong.append("%s forced-on suppressed '%s' with no counterpart" % [arena_id, kind])
+		for kind in want:
+			if not got.has(kind):
+				wrong.append("%s is missing kind '%s'" % [arena_id, kind])
+		for kind in got:
+			if not want.has(kind):
+				wrong.append("%s suppresses '%s' without a slot standing over it" % [arena_id, kind])
+		if got.size() != want.size():
+			kinds_wrong.append("%s %s want %s" % [arena_id, str(got), str(want)])
+	check("suppress/every_slot_that_doubles_is_covered (kind for kind, per arena)", wrong.is_empty(), str(wrong))
+	check("suppress/the_suppressed_kind_lists_are_exactly_the_expected_ones", kinds_wrong.is_empty(), str(kinds_wrong))
+	check("suppress/a_slot_with_no_procedural_counterpart_never_suppresses (kinds [])",
+		overrides_wrong.is_empty(), str(overrides_wrong))
 
-	ArenaKit.suppress_overrides = {FIXTURE_ARENA: {REPO_SLOT: true}}
-	check_eq("suppress/forcing_the_flag_lists_the_kind", ArenaKit.suppressed_kinds(FIXTURE_ARENA), [kind])
-	var forced := Arena.build(FIXTURE_ARENA, "default")
-	var containers := _containers_of_kind(forced, kind)
-	check("suppress/the_container_is_still_built (one Dressing_ per authored prop)",
-		containers.size() > 0 and int(_dressing_count(forced)) == (ArenaStyle.style(FIXTURE_ARENA).get("props", []) as Array).size(),
-		"%d containers, dressing=%d" % [containers.size(), _dressing_count(forced)])
-	check("suppress/the_matching_procedural_prop_is_skipped", _meshes_of_kind(forced, kind).is_empty(),
-		"%d meshes left" % _meshes_of_kind(forced, kind).size())
-	check("suppress/the_kit_slot_itself_is_still_mounted",
-		forced.get_node_or_null("Scenery/Kit/Slot_%s" % REPO_SLOT) != null, "slot missing")
-	check("suppress/other_kinds_are_untouched",
-		_dressing_count(forced) - containers.size() > 0
-		and _meshes_of_kind(forced, "lantern").size() > 0, "another kind lost its geometry")
-	forced.free()
-	ArenaKit.suppress_overrides = {}
+	# Two builds per arena: the table as it ships, and the same table forced OFF. Measured
+	# per kind, so "the procedural prop is gone and nothing else moved" is a number.
+	var off_problems: Array[String] = []
+	var on_problems: Array[String] = []
+	var container_problems: Array[String] = []
+	for arena_id in ARENAS:
+		var authored := (ArenaStyle.style(arena_id).get("props", []) as Array).size()
+		ArenaKit.suppress_overrides = {}
+		var with_table := Arena.build(arena_id, PRESET)
+		ArenaKit.suppress_overrides = _all_suppress(false)
+		var forced_off := Arena.build(arena_id, PRESET)
+		ArenaKit.suppress_overrides = {}
+		var kinds_all: Array = []
+		for prop in (ArenaStyle.style(arena_id).get("props", []) as Array):
+			var kind := String((prop as Dictionary).get("kind", ""))
+			if not kinds_all.has(kind):
+				kinds_all.append(kind)
+		var suppressed: Array = expect_by_arena[arena_id]
+		for kind in kinds_all:
+			var on_meshes := _meshes_of_kind(with_table, String(kind)).size()
+			var off_meshes := _meshes_of_kind(forced_off, String(kind)).size()
+			if suppressed.has(String(kind)):
+				if off_meshes == 0:
+					off_problems.append("%s/%s has no procedural geometry to suppress" % [arena_id, kind])
+				if on_meshes != 0:
+					on_problems.append("%s/%s still holds %d procedural mesh(es)" % [arena_id, kind, on_meshes])
+			elif on_meshes != off_meshes:
+				on_problems.append("%s/%s moved without being suppressed (%d vs %d)" % [arena_id, kind, on_meshes, off_meshes])
+		# The container invariant the frozen suites pin, in both states.
+		var dressing_on := _dressing_count(with_table)
+		var dressing_off := _dressing_count(forced_off)
+		if dressing_on != authored or dressing_off != authored:
+			container_problems.append("%s dressing=%d/%d authored=%d" % [arena_id, dressing_on, dressing_off, authored])
+		# The kit itself is mounted in both builds: suppression never unmounts a slot.
+		var kit_slots := _kit_node(with_table)
+		if expect.size() > 0 and kit_slots == null:
+			container_problems.append("%s lost its Kit node under suppression" % arena_id)
+		with_table.free()
+		forced_off.free()
+	check("suppress/the_procedural_prop_is_still_built_when_the_flag_is_off", off_problems.is_empty(), str(off_problems))
+	check("suppress/with_the_table_in_force_only_the_suppressed_kinds_lose_their_geometry",
+		on_problems.is_empty(), str(on_problems))
+	check("suppress/one_Dressing_container_per_authored_prop_in_both_states",
+		container_problems.is_empty(), str(container_problems))
 	check("suppress/the_override_clears_back_to_the_frozen_table",
-		ArenaKit.suppressed_kinds(FIXTURE_ARENA).is_empty(), str(ArenaKit.suppressed_kinds(FIXTURE_ARENA)))
+		ArenaKit.suppress_overrides.is_empty(), str(ArenaKit.suppress_overrides))
 
 
-# --- 5. cleanup: the fallback comes back, nothing is left behind -----------
+# --- 6. cleanup: nothing staged is left, and nothing else was touched ------
 
 func _cleanup() -> void:
 	var removed: Array[String] = []
-	for pair in [[FIXTURE_ARENA, TINY_SLOT], [FIXTURE_ARENA, REPO_SLOT]]:
-		var path := _slot_abs_path(String(pair[0]), String(pair[1]))
+	for path in staged:
 		if FileAccess.file_exists(path):
 			DirAccess.remove_absolute(path)
 			removed.append(path)
-	var left := _glb_files_under_kits()
-	check("clean/both_fixtures_are_gone_and_no_glb_is_staged (%d removed)" % removed.size(),
-		removed.size() == 2 and left.is_empty(), "removed=%s left=%s" % [str(removed), str(left)])
+	check("clean/every_staged_fixture_is_removed (%d)" % staged.size(), removed.size() == staged.size(),
+		"staged=%s removed=%s" % [str(staged), str(removed)])
+	var after := _glb_fingerprint()
+	var changed: Array[String] = []
+	for path in fingerprint_before:
+		if not after.has(path) or after[path] != fingerprint_before[path]:
+			changed.append("%s (%s -> %s)" % [path, str(fingerprint_before[path]), str(after.get(path, "gone"))])
+	for path in after:
+		if not fingerprint_before.has(path):
+			changed.append("%s (new, %s bytes)" % [path, str(after[path])])
+	check("clean/the_on_disk_glb_set_is_exactly_what_the_run_found (%d files)" % fingerprint_before.size(),
+		changed.is_empty(), str(changed))
+	var recheck: Array[String] = []
 	for arena_id in ARENAS:
-		check("clean/has_kit_is_false_again_for_%s" % arena_id, not ArenaKit.has_kit(arena_id),
-			str(ArenaKit.has_kit(arena_id)))
-	_assert_slot_report_is_procedural("clean")
-	var baseline := _read_baseline()
-	var arenas: Dictionary = baseline.get("arenas", {})
-	var mismatch: Array[String] = []
-	for arena_id in ARENAS:
-		var built := Arena.build(arena_id, "default")
-		var digest := _digest_arena(built)
-		if digest["sha256"] != String((arenas.get(arena_id, {}) as Dictionary).get("sha256", "")):
-			mismatch.append(arena_id)
-		built.free()
-	check("clean/after_removal_every_arena_digest_matches_the_baseline_again", mismatch.is_empty(), str(mismatch))
+		for row in ArenaKit.slot_report(arena_id):
+			var want := "loaded" if bool(row["present"]) else "procedural"
+			if String(row["status"]) != want:
+				recheck.append("%s/%s status=%s" % [arena_id, row["slot"], row["status"]])
+	check("clean/every_slot_report_is_back_to_the_state_the_run_found", recheck.is_empty(), str(recheck))
 	var contracts: Array[String] = []
 	for arena_id in ARENAS:
 		var readme := "%s/assets/arenas/%s/README.md" % [_project_dir(), arena_id]
@@ -554,15 +856,19 @@ func _cleanup() -> void:
 	check("clean/the_per_arena_drop_folders_and_their_readmes_survive", contracts.is_empty(), str(contracts))
 
 
-# --- checks shared by the fixture sections ---------------------------------
+# --- checks shared by the fixture and mount sections -----------------------
 
 func _check_material_policy(slot_node: Node3D, prefix: String) -> void:
 	var wrong: Array[String] = []
 	var instances := {}
+	var per_surface := {}
 	var source_surfaces := 0
 	var kept_colours := 0
+	var shared_bad: Array[String] = []
 	for mi in slot_node.find_children("*", "MeshInstance3D", true, false):
 		var mesh: Mesh = (mi as MeshInstance3D).mesh
+		if mesh == null:
+			continue
 		for s in mesh.get_surface_count():
 			var mat := (mi as MeshInstance3D).get_surface_override_material(s) as StandardMaterial3D
 			var where := "%s/%d" % [String((mi as MeshInstance3D).name), s]
@@ -570,6 +876,11 @@ func _check_material_policy(slot_node: Node3D, prefix: String) -> void:
 				wrong.append("%s has no override material" % where)
 				continue
 			instances[mat.get_instance_id()] = true
+			# One material per (file, surface), shared by the repeats: the same surface
+			# index must never carry two different materials inside one slot.
+			if per_surface.has(s) and int(per_surface[s]) != mat.get_instance_id():
+				shared_bad.append("surface %d is not one shared material across the repeats" % s)
+			per_surface[s] = mat.get_instance_id()
 			if not is_zero_approx(mat.metallic) or not is_equal_approx(mat.roughness, 0.85) or mat.emission_enabled:
 				wrong.append("%s metallic=%.2f roughness=%.2f emission=%s" % [
 					where, mat.metallic, mat.roughness, str(mat.emission_enabled)])
@@ -583,8 +894,8 @@ func _check_material_policy(slot_node: Node3D, prefix: String) -> void:
 	check("%s/the_shared_material_policy_corrects_the_meshy_defaults" % prefix, wrong.is_empty(), str(wrong))
 	check("%s/the_policy_keeps_each_models_own_colour (%d/%d surfaces)" % [prefix, kept_colours, source_surfaces],
 		kept_colours == source_surfaces, "%d of %d kept" % [kept_colours, source_surfaces])
-	check("%s/one_material_instance_is_shared_across_the_repeats (%d)" % [prefix, instances.size()],
-		instances.size() == 1, "%d distinct materials" % instances.size())
+	check("%s/one_material_instance_per_surface_is_shared_across_the_repeats (%d materials well shared)"
+		% [prefix, instances.size()], shared_bad.is_empty(), str(shared_bad))
 
 
 func _check_no_physics_or_light(slot_node: Node3D, prefix: String) -> void:
@@ -601,7 +912,39 @@ func _check_no_physics_or_light(slot_node: Node3D, prefix: String) -> void:
 
 # --- small helpers ---------------------------------------------------------
 
-## The GLB files under `godot/assets/arenas/` (recursive) — the drop-in state.
+## Where an arena-frame box lands through the live camera: is it inside the frame, is any
+## corner behind the camera, and does it stay above the rear baseline's own screen row
+## (i.e. can it not cover the court from this camera)?
+func _screen_report(cam: Camera3D, viewport: Vector2, arena_box: AABB) -> Dictionary:
+	var inside := true
+	var behind := false
+	var margin := INF
+	var lowest := -INF
+	for i in 8:
+		var corner: Vector3 = arena_box.get_endpoint(i)
+		if cam.is_position_behind(corner):
+			behind = true
+			continue
+		var px: Vector2 = cam.unproject_position(corner)
+		margin = minf(margin, minf(minf(px.x, px.y), minf(viewport.x - px.x, viewport.y - px.y)))
+		lowest = maxf(lowest, px.y)
+	if margin < 0.0:
+		inside = false
+	var baseline: Vector2 = cam.unproject_position(
+		Vector3(arena_box.position.x + arena_box.size.x * 0.5, 0.0, -10.0))
+	return {"inside": inside and not behind, "behind": behind, "margin": margin,
+		"lowest_row": lowest, "baseline_row": baseline.y, "above_baseline": lowest <= baseline.y + 0.5}
+
+
+## The GLB files under `godot/assets/arenas/` (recursive) with their sizes — the drop-in
+## state, fingerprinted so the suite can prove it left the assets exactly as it found them.
+func _glb_fingerprint() -> Dictionary:
+	var out := {}
+	for path in _glb_files_under_kits():
+		out[path] = FileAccess.get_file_as_bytes(path).size()
+	return out
+
+
 func _glb_files_under_kits() -> Array[String]:
 	var out: Array[String] = []
 	_walk_glbs("%s/assets/arenas" % _project_dir(), out)
@@ -631,6 +974,22 @@ func _read_baseline() -> Dictionary:
 	var text := FileAccess.get_file_as_string(path)
 	var parsed = JSON.parse_string(text)
 	return parsed if parsed is Dictionary else {}
+
+
+## `{arena: {slot: flag}}` for every slot of every arena — the test seam, used here to
+## measure the table against the additive default it replaced.
+func _all_suppress(flag: bool) -> Dictionary:
+	var out := {}
+	for arena_id in ARENAS:
+		var per_slot := {}
+		for slot in ArenaKit.slots():
+			per_slot[String(slot)] = flag
+		out[arena_id] = per_slot
+	return out
+
+
+func _kit_node(built: Node3D) -> Node3D:
+	return built.get_node_or_null("Scenery/Kit") as Node3D
 
 
 func _piece_nodes(slot_node: Node3D) -> Array:
@@ -669,7 +1028,9 @@ func _meshes_of_kind(built: Node3D, kind: String) -> Array:
 
 ## The structural digest — COPIED VERBATIM from `run/tmp/arena-kit/baseline_probe.gd`,
 ## which recorded the baseline. Any change here invalidates the comparison, so the two
-## must move together (the probe's header says the same).
+## must move together (the probe's header says the same). The one addition since the
+## baseline was recorded is `_digest`'s optional `skip` argument, which defaults to
+## skipping nothing: a walk with no skip is the recorded walk, to the line.
 func _digest_arena(built: Node3D) -> Dictionary:
 	var lines: PackedStringArray = PackedStringArray()
 	_digest(built, lines)
@@ -683,7 +1044,28 @@ func _digest_arena(built: Node3D) -> Dictionary:
 	}
 
 
-func _digest(node: Node, out: PackedStringArray, depth := 0) -> void:
+## The same digest with the `Kit` subtree walked OUT of it, and the counts corrected for
+## the meshes that subtree holds. With suppression off the mounted kit is the only thing
+## the tree gained, so this must equal the recorded baseline exactly — the empty-kit
+## regression, restated for a drop folder that is full.
+func _digest_arena_excluding_kit(built: Node3D) -> Dictionary:
+	var kit := _kit_node(built)
+	var lines: PackedStringArray = PackedStringArray()
+	_digest(built, lines, 0, kit)
+	var scenery := built.get_node_or_null("Scenery")
+	var kit_meshes := 0 if kit == null else kit.find_children("*", "MeshInstance3D", true, false).size()
+	return {
+		"sha256": "\n".join(lines).sha256_text(),
+		"lines": lines.size(),
+		"meshes": built.find_children("*", "MeshInstance3D", true, false).size() - kit_meshes,
+		"scenery_meshes": (scenery.find_children("*", "MeshInstance3D", true, false).size() if scenery != null else 0) - kit_meshes,
+		"dressing": _dressing_count(built),
+	}
+
+
+func _digest(node: Node, out: PackedStringArray, depth := 0, skip: Node = null) -> void:
+	if skip != null and node == skip:
+		return
 	out.append("%s%s|%s" % ["  ".repeat(depth), _node_name(node), node.get_class()])
 	if node is Node3D:
 		var n3 := node as Node3D
@@ -718,7 +1100,7 @@ func _digest(node: Node, out: PackedStringArray, depth := 0) -> void:
 				str(mo.albedo_color), mo.metallic, mo.roughness, mo.transparency, mo.shading_mode, str(mi.visible),
 			])
 	for child in node.get_children():
-		_digest(child, out, depth + 1)
+		_digest(child, out, depth + 1, skip)
 
 
 func _v(v: Vector3) -> String:

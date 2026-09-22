@@ -132,6 +132,7 @@ the declaration is dropped and `var(--mode-accent, var(--cyan))` at `styles.css:
 | `summary_fill` | `rgba(8,22,48,0.6)` | `styles.css:3592` (profile career summary panel) — same addition |
 | `stat_bar` | `#7ee0ff` | `styles.css:3026` `.stat-bar` (UIR-11's stat strip) — added 2026-09-17 (wave 3) with the strip itself |
 | `stat_bar_rival` | `#ffb08c` | `styles.css:3030` `.team-slot--rival .stat-bar` — same addition |
+| `focus_pulse` | `#a5ffe0` | `styles.css:742` — `@keyframes menu-focus-pulse` 50 % frame, the colour the pad's `.menu-focus` outline (`:733-738`) travels to. Read by `godot/src/ui/components/CardFocusRing.gd`; the ring itself is composed at run time from `cyan` + this token, not added as a variation, because it is drawn OUTSIDE the card's own box (see §6.11) |
 
 ## 4. Type variations (names fixed here; screens use these strings)
 
@@ -231,6 +232,14 @@ root. The measured value wins, per the ticket's rule.
     `shadow_outline_size`: the combo glow is rendered as the shadow colour with the CSS blur mapped to
     the outline size 1:1 (the §6.3 mechanism), and a two-shadow stack (`0 3px 0 #07152b, 0 0 16px rgba(...)`)
     keeps only its offset component. Recorded for the GATE-A read, not treated as equivalent.
+11. **`outline` / `outline-offset` is not a theme variation.** `.menu-focus` (`styles.css:733-738`)
+    paints a 3 px `cyan` ring 3 px OUTSIDE the element. `StyleBoxFlat.expand_margin_*` is the one
+    Godot mechanism that paints outside a control's rect without changing the space it occupies
+    (measured: `get_minimum_size()` returns the content margins alone), so the ring CAN be drawn —
+    but it cannot live on the card's own `Panel` variation, because that variation is the card's
+    frame and a stylebox carries one border and one shadow. `godot/src/ui/components/CardFocusRing.gd`
+    therefore composes it at run time from `cyan` + `focus_pulse` as a child overlay. The keyframe
+    colour is the only value this needed and it is the §3 row above.
 
 ## 7. How this is proven
 

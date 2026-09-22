@@ -1,0 +1,23 @@
+{
+  "name": "maestro-mythic-rig",
+  "endpoint": "rigging",
+  "status": "SUCCEEDED",
+  "created": "2026-09-21T17:17:47.818Z",
+  "balanceBefore": 620,
+  "referenceSha256": "908447567986b87de4e1bf54a457caa51c9b1ad9cbb34ecf7ea3e211cfb58d2c",
+  "settings": {
+    "input_task_id": "01a0c4f4-3256-75cf-9ef1-3b0955a832f3",
+    "height_meters": 1.8
+  },
+  "id": "01a0c4f9-4e14-730d-9d1f-f48a212a293c",
+  "progress": 100,
+  "credits": 5,
+  "checked": "2026-09-21T17:19:11.423Z",
+  "balanceAfter": 615,
+  "files": [
+    "docs/agent-work/meshy-outfit-trial/maestro-mythic-rig/model.glb",
+    "docs/agent-work/meshy-outfit-trial/maestro-mythic-rig/running.glb",
+    "docs/agent-work/meshy-outfit-trial/maestro-mythic-rig/walking.glb"
+  ],
+  "downloaded": true
+}

@@ -21,10 +21,10 @@
 ##
 ## WHAT MOUNTS, AND WHERE. `mount()` is called once by `arena_scenery.gd::build()` at
 ## the end of the scenery build and returns null — adding NOTHING — when the arena has
-## no GLB at all, which is the state of the repo today: with no files in
-## `godot/assets/arenas/`, the built tree is byte-identical to the pre-kit tree (proved
-## by `godot/tests/arena_kit_test.gd` against the recorded baseline, not asserted here).
-## When a file is present the tree gains exactly
+## no GLB at all, so with no files in `godot/assets/arenas/` the built tree is
+## byte-identical to the pre-kit tree (proved by `godot/tests/arena_kit_test.gd` against
+## the recorded baseline, not asserted here). With the fifty files in place the tree
+## gains exactly
 ##
 ##   Arena/Scenery/Kit/Slot_<slot>/Piece[_<n>]        (one Piece per repeat)
 ##
@@ -48,18 +48,43 @@
 ##     standard states as "about 3.6 m of depth budget" at the default prop z;
 ##   * the MEASURED rear glass plane `GLASS_PLANE_Z` = -10.02, the stricter one: the
 ##     world-arena suite fails any scenery mesh whose nearest point is in front of the
-##     glass (`world_arenas_field_law_test.gd:194-209`). At the default prop z
-##     (-11.65) that leaves `DEPTH_BUDGET` = 3.26 m of real depth per slot, and the
-##     table is written to it.
+##     glass (`world_arenas_field_law_test.gd:194-209`).
 ##
-## SUPPRESSION (default OFF). A slot may stand *in place of* the procedural prop it
-## maps to (`"kinds"`) instead of beside it: with `"suppress": true` AND a GLB present,
-## `arena_scenery.gd::build()` skips `_build_prop()` for those kinds — the container is
-## still built, so the "one `Dressing_*` per authored prop" invariant the frozen suites
-## pin stays intact. Every slot ships with `suppress = false` (asserted by the test):
-## the kit is ADDITIVE until the owner asks otherwise, and `kits_to_skip()` is a pure
-## function of (table, file presence) so a suite can prove the skip path with
-## `suppress_overrides` without editing the frozen table.
+## THE FIT (every number in the table below is measured, not authored). A slot's depth is
+## bounded by the BAND between the two planes: a piece that crosses the glass floats in
+## the court, and a piece that passes the backdrop wall at z = -12.0 is not drawn at all.
+## The band is 1.98 m, so `FIT_DEPTH` = 1.98 - the 5 cm glass margin = 1.93 m is the
+## deepest a piece may measure. `tools/arena-kit/fit_report.gd --emit` measures every file
+## with the kit's own `node_bounds()` walk and reports the row the fit produces for it: a
+## piece is scaled UNIFORMLY (height and depth together, never squashed) until it either
+## fits the band or reaches its authored height, and its anchor z is clamped into the
+## band. Seven of the fifty Meshy meshes are deeper than the band at their authored
+## height — medina/ornament_accent, carioca/hero_landmark, carioca/ornament_accent,
+## aurora/hero_landmark, aurora/vegetation_cluster, aurora/furniture, egeo/hero_landmark —
+## so those seven carry the FITTED (smaller) `target_h`; the other forty-three keep the
+## authored height and the authored anchor z. `DEPTH_BUDGET` = 3.26 m (what the DEFAULT
+## prop z could take) stays the ceiling the intake test reads; the fit holds a stricter
+## one. Every declared `depth` and `footprint` is the measured mesh at 2 dp, and
+## `fit_report.gd` re-measures glass, wall, budget, spec honesty, height and repeat
+## centring off a built arena, exiting 1 on any drift.
+##
+## SUPPRESSION (ON for the slots that have a counterpart, OFF for the rest). A slot may
+## stand *in place of* the procedural prop it maps to (`"kinds"`) instead of beside it:
+## with `"suppress": true` AND a GLB present, `arena_scenery.gd::build()` skips
+## `_build_prop()` for those kinds — the container is still built, so the "one
+## `Dressing_*` per authored prop" invariant the frozen suites pin stays intact. The
+## flag is ON for the sixteen slots that HAVE a procedural counterpart (the four/five
+## per arena whose `kinds` is non-empty) and OFF for the thirty-four whose `kinds` is
+## `[]`: those have nothing to double, so flipping them would suppress nothing and hide
+## a mistake. The mount census measured the doubling before the flip — sixteen slots
+## carrying both a procedural prop and a mounted GLB, 296 procedural meshes standing
+## beside 145 pieces — and the same census measures the zero after it
+## (`tools/arena-kit/mount_census.gd`, `docs/mission/arena-kit/arena-props/CENSUS.md`).
+## `suppressed_kinds()` stays a pure function of (table, file presence) so a suite can
+## force the skip path either way with `suppress_overrides` without editing the table.
+## (The before/after doubling numbers above were counted by the source mission's own mount
+## census — `docs/mission/arena-kit/arena-props/CENSUS.md` on the arena-kit branch; that
+## census tool is not part of this port.)
 ##
 ## NO COLLISION ON DECOR. Slot geometry is band dressing behind the rear glass, outside
 ## the playable footprint, so nothing here is ever `-col`/`-colonly` (the standard's
@@ -125,261 +150,261 @@ const AUTHORED_HALF_X := 14.35
 const SPECS := {
 	"torii": {
 		"hero_landmark": {
-			"anchor": Vector3(-3.2, 0.0, -11.30), "target_h": 4.0, "repeats": 1, "spread": 0.0,
-			"depth": 2.2, "footprint": "5.2 x 4.0 x 2.2 m - pagoda mass on the left of the band",
-			"suppress": false, "kinds": ["pagoda"],
+			"anchor": Vector3(-3.2, 0.0, -11.2107), "target_h": 4.0, "repeats": 1, "spread": 0.0,
+			"depth": 1.56, "footprint": "1.52 x 4.00 x 1.56 m - pagoda mass on the left of the band",
+			"suppress": true, "kinds": ["pagoda"],
 		},
 		"gate_portal": {
 			"anchor": Vector3(4.0, 0.0, -11.10), "target_h": 2.6, "repeats": 1, "spread": 0.0,
-			"depth": 0.9, "footprint": "3.4 x 2.6 x 0.9 m - vermillion gate, opening on the anchor",
-			"suppress": false, "kinds": ["torii"],
+			"depth": 0.50, "footprint": "2.77 x 2.60 x 0.50 m - vermillion gate, opening on the anchor",
+			"suppress": true, "kinds": ["torii"],
 		},
 		"light_source": {
 			"anchor": Vector3(-8.4, 0.0, -11.05), "target_h": 1.15, "repeats": 3, "spread": 1.5,
-			"depth": 0.5, "footprint": "0.45 x 1.15 x 0.5 m - stone lantern on a post",
-			"suppress": false, "kinds": ["lantern"],
+			"depth": 0.58, "footprint": "0.58 x 1.15 x 0.58 m - stone lantern on a post",
+			"suppress": true, "kinds": ["lantern"],
 		},
 		"vegetation_cluster": {
-			"anchor": Vector3(-10.2, 0.0, -11.45), "target_h": 2.6, "repeats": 2, "spread": 1.8,
-			"depth": 1.4, "footprint": "1.6 x 2.6 x 1.4 m - cherry cluster, seams hidden",
-			"suppress": false, "kinds": ["petal"],
+			"anchor": Vector3(-10.2, 0.0, -11.3413), "target_h": 2.6, "repeats": 2, "spread": 1.8,
+			"depth": 1.30, "footprint": "2.70 x 2.60 x 1.30 m - cherry cluster, seams hidden",
+			"suppress": true, "kinds": ["petal"],
 		},
 		"ground_dressing": {
 			"anchor": Vector3(6.6, 0.0, -10.75), "target_h": 0.55, "repeats": 2, "spread": 2.2,
-			"depth": 0.7, "footprint": "1.2 x 0.55 x 0.7 m - raked gravel mound",
+			"depth": 1.25, "footprint": "1.35 x 0.55 x 1.25 m - raked gravel mound",
 			"suppress": false, "kinds": [],
 		},
 		"ornament_accent": {
 			"anchor": Vector3(0.8, 0.0, -10.90), "target_h": 0.9, "repeats": 4, "spread": 0.9,
-			"depth": 0.25, "footprint": "0.8 x 0.9 x 0.25 m - shrine panel",
+			"depth": 0.73, "footprint": "0.76 x 0.90 x 0.73 m - shrine panel",
 			"suppress": false, "kinds": [],
 		},
 		"column_pillar": {
 			"anchor": Vector3(9.6, 0.0, -10.95), "target_h": 2.6, "repeats": 4, "spread": 0.8,
-			"depth": 0.5, "footprint": "0.6 x 2.6 x 0.5 m - vermillion post",
+			"depth": 0.42, "footprint": "0.56 x 2.60 x 0.42 m - vermillion post",
 			"suppress": false, "kinds": [],
 		},
 		"railing_segment": {
 			"anchor": Vector3(-6.2, 0.0, -10.70), "target_h": 1.05, "repeats": 6, "spread": 1.1,
-			"depth": 0.3, "footprint": "2.0 x 1.05 x 0.3 m - wooden rail tile",
+			"depth": 0.26, "footprint": "1.62 x 1.05 x 0.26 m - wooden rail tile",
 			"suppress": false, "kinds": [],
 		},
 		"furniture": {
 			"anchor": Vector3(2.6, 0.0, -10.80), "target_h": 0.95, "repeats": 2, "spread": 1.6,
-			"depth": 0.8, "footprint": "1.2 x 0.95 x 0.8 m - bench",
+			"depth": 0.89, "footprint": "3.02 x 0.95 x 0.89 m - bench",
 			"suppress": false, "kinds": [],
 		},
 		"signage_banner": {
 			"anchor": Vector3(-1.4, 0.0, -10.92), "target_h": 1.4, "repeats": 2, "spread": 1.2,
-			"depth": 0.12, "footprint": "1.5 x 1.4 x 0.12 m - noren panel",
+			"depth": 0.36, "footprint": "0.86 x 1.40 x 0.36 m - noren panel",
 			"suppress": false, "kinds": [],
 		},
 	},
 	"medina": {
 		"hero_landmark": {
 			"anchor": Vector3(-4.2, 0.0, -11.35), "target_h": 3.9, "repeats": 1, "spread": 0.0,
-			"depth": 2.0, "footprint": "3.0 x 3.9 x 2.0 m - minaret shaft and balcony",
-			"suppress": false, "kinds": ["minaret"],
+			"depth": 0.72, "footprint": "0.73 x 3.90 x 0.72 m - minaret shaft and balcony",
+			"suppress": true, "kinds": ["minaret"],
 		},
 		"gate_portal": {
 			"anchor": Vector3(3.6, 0.0, -11.15), "target_h": 2.8, "repeats": 1, "spread": 0.0,
-			"depth": 1.0, "footprint": "3.2 x 2.8 x 1.0 m - horseshoe arch",
-			"suppress": false, "kinds": ["arch"],
+			"depth": 0.68, "footprint": "2.37 x 2.80 x 0.68 m - horseshoe arch",
+			"suppress": true, "kinds": ["arch"],
 		},
 		"light_source": {
 			"anchor": Vector3(-7.8, 0.0, -11.00), "target_h": 1.3, "repeats": 4, "spread": 1.4,
-			"depth": 0.45, "footprint": "0.4 x 1.3 x 0.45 m - brass lantern",
-			"suppress": false, "kinds": ["lantern"],
+			"depth": 0.38, "footprint": "0.44 x 1.30 x 0.38 m - brass lantern",
+			"suppress": true, "kinds": ["lantern"],
 		},
 		"vegetation_cluster": {
-			"anchor": Vector3(-10.6, 0.0, -11.50), "target_h": 2.7, "repeats": 2, "spread": 2.0,
-			"depth": 1.5, "footprint": "1.8 x 2.7 x 1.5 m - palm cluster",
-			"suppress": false, "kinds": ["palm"],
+			"anchor": Vector3(-10.6, 0.0, -11.4416), "target_h": 2.7, "repeats": 2, "spread": 2.0,
+			"depth": 1.10, "footprint": "2.13 x 2.70 x 1.10 m - palm cluster",
+			"suppress": true, "kinds": ["palm"],
 		},
 		"ground_dressing": {
 			"anchor": Vector3(5.8, 0.0, -10.70), "target_h": 0.6, "repeats": 3, "spread": 2.0,
-			"depth": 0.8, "footprint": "1.4 x 0.6 x 0.8 m - pottery and kerb strip",
+			"depth": 0.75, "footprint": "0.70 x 0.60 x 0.75 m - pottery and kerb strip",
 			"suppress": false, "kinds": [],
 		},
 		"ornament_accent": {
-			"anchor": Vector3(0.4, 0.0, -10.85), "target_h": 1.0, "repeats": 4, "spread": 1.0,
-			"depth": 0.22, "footprint": "0.8 x 1.0 x 0.22 m - zellige panel",
-			"suppress": false, "kinds": ["zellige"],
+			"anchor": Vector3(0.4, 0.0, -11.0392), "target_h": 0.78, "repeats": 4, "spread": 1.0,
+			"depth": 1.90, "footprint": "1.90 x 0.78 x 1.90 m - zellige panel",
+			"suppress": true, "kinds": ["zellige"],
 		},
 		"column_pillar": {
 			"anchor": Vector3(8.8, 0.0, -10.90), "target_h": 2.7, "repeats": 5, "spread": 0.85,
-			"depth": 0.55, "footprint": "0.65 x 2.7 x 0.55 m - zellige column",
+			"depth": 0.41, "footprint": "0.83 x 2.70 x 0.41 m - zellige column",
 			"suppress": false, "kinds": [],
 		},
 		"railing_segment": {
 			"anchor": Vector3(-5.6, 0.0, -10.65), "target_h": 1.15, "repeats": 6, "spread": 1.15,
-			"depth": 0.3, "footprint": "2.0 x 1.15 x 0.3 m - iron grille",
+			"depth": 0.23, "footprint": "1.70 x 1.15 x 0.23 m - iron grille",
 			"suppress": false, "kinds": [],
 		},
 		"furniture": {
-			"anchor": Vector3(2.2, 0.0, -10.75), "target_h": 0.95, "repeats": 3, "spread": 1.3,
-			"depth": 0.85, "footprint": "1.3 x 0.95 x 0.85 m - divan",
+			"anchor": Vector3(2.2, 0.0, -10.78), "target_h": 0.95, "repeats": 3, "spread": 1.3,
+			"depth": 1.42, "footprint": "1.42 x 0.95 x 1.42 m - divan",
 			"suppress": false, "kinds": [],
 		},
 		"signage_banner": {
 			"anchor": Vector3(-1.6, 0.0, -10.88), "target_h": 1.3, "repeats": 2, "spread": 1.1,
-			"depth": 0.12, "footprint": "1.4 x 1.3 x 0.12 m - awning sign",
+			"depth": 1.23, "footprint": "2.28 x 1.30 x 1.23 m - awning sign",
 			"suppress": false, "kinds": [],
 		},
 	},
 	"carioca": {
 		"hero_landmark": {
-			"anchor": Vector3(4.6, 0.0, -11.40), "target_h": 3.6, "repeats": 1, "spread": 0.0,
-			"depth": 2.2, "footprint": "4.0 x 3.6 x 2.2 m - sugarloaf mass",
-			"suppress": false, "kinds": ["peak"],
+			"anchor": Vector3(4.6, 0.0, -11.0319), "target_h": 1.86, "repeats": 1, "spread": 0.0,
+			"depth": 1.92, "footprint": "1.92 x 1.86 x 1.92 m - sugarloaf mass",
+			"suppress": true, "kinds": ["peak"],
 		},
 		"gate_portal": {
 			"anchor": Vector3(-4.0, 0.0, -11.10), "target_h": 2.4, "repeats": 1, "spread": 0.0,
-			"depth": 0.9, "footprint": "2.6 x 2.4 x 0.9 m - quay arch",
+			"depth": 0.60, "footprint": "2.57 x 2.40 x 0.60 m - quay arch",
 			"suppress": false, "kinds": [],
 		},
 		"light_source": {
 			"anchor": Vector3(7.6, 0.0, -10.95), "target_h": 1.5, "repeats": 3, "spread": 1.7,
-			"depth": 0.5, "footprint": "0.5 x 1.5 x 0.5 m - festoon post",
+			"depth": 0.38, "footprint": "2.77 x 1.50 x 0.38 m - festoon post",
 			"suppress": false, "kinds": [],
 		},
 		"vegetation_cluster": {
-			"anchor": Vector3(-9.8, 0.0, -11.40), "target_h": 2.5, "repeats": 3, "spread": 1.7,
-			"depth": 1.8, "footprint": "2.0 x 2.5 x 1.8 m - banana and tree-fern clump",
-			"suppress": false, "kinds": ["palm"],
+			"anchor": Vector3(-9.8, 0.0, -11.1990), "target_h": 2.5, "repeats": 3, "spread": 1.7,
+			"depth": 1.58, "footprint": "2.40 x 2.50 x 1.58 m - banana and tree-fern clump",
+			"suppress": true, "kinds": ["palm"],
 		},
 		"ground_dressing": {
 			"anchor": Vector3(4.2, 0.0, -10.70), "target_h": 0.5, "repeats": 2, "spread": 2.6,
-			"depth": 1.0, "footprint": "3.0 x 0.5 x 1.0 m - beach boulders",
-			"suppress": false, "kinds": ["foam"],
+			"depth": 0.84, "footprint": "0.88 x 0.50 x 0.84 m - beach boulders",
+			"suppress": true, "kinds": ["foam"],
 		},
 		"ornament_accent": {
-			"anchor": Vector3(-1.0, 0.0, -10.80), "target_h": 0.85, "repeats": 4, "spread": 1.1,
-			"depth": 0.25, "footprint": "0.7 x 0.85 x 0.25 m - capoeira ring brass",
+			"anchor": Vector3(-1.0, 0.0, -11.0320), "target_h": 0.45, "repeats": 4, "spread": 1.1,
+			"depth": 1.92, "footprint": "1.92 x 0.45 x 1.92 m - capoeira ring brass",
 			"suppress": false, "kinds": [],
 		},
 		"column_pillar": {
 			"anchor": Vector3(-7.2, 0.0, -10.85), "target_h": 2.6, "repeats": 4, "spread": 0.9,
-			"depth": 0.55, "footprint": "0.6 x 2.6 x 0.55 m - painted mast",
+			"depth": 0.44, "footprint": "0.49 x 2.60 x 0.44 m - painted mast",
 			"suppress": false, "kinds": [],
 		},
 		"railing_segment": {
 			"anchor": Vector3(1.4, 0.0, -10.55), "target_h": 1.0, "repeats": 6, "spread": 1.2,
-			"depth": 0.3, "footprint": "2.2 x 1.0 x 0.3 m - quay rope rail",
+			"depth": 0.29, "footprint": "1.51 x 1.00 x 0.29 m - quay rope rail",
 			"suppress": false, "kinds": [],
 		},
 		"furniture": {
 			"anchor": Vector3(9.4, 0.0, -10.85), "target_h": 0.9, "repeats": 3, "spread": 1.4,
-			"depth": 0.9, "footprint": "1.3 x 0.9 x 0.9 m - deck chair",
+			"depth": 1.05, "footprint": "0.80 x 0.90 x 1.05 m - deck chair",
 			"suppress": false, "kinds": [],
 		},
 		"signage_banner": {
 			"anchor": Vector3(-2.4, 0.0, -10.80), "target_h": 1.2, "repeats": 3, "spread": 1.3,
-			"depth": 0.12, "footprint": "1.3 x 1.2 x 0.12 m - bandeira",
+			"depth": 0.09, "footprint": "0.78 x 1.20 x 0.09 m - bandeira",
 			"suppress": false, "kinds": [],
 		},
 	},
 	"aurora": {
 		"hero_landmark": {
-			"anchor": Vector3(-5.0, 0.0, -11.45), "target_h": 4.0, "repeats": 1, "spread": 0.0,
-			"depth": 2.0, "footprint": "3.6 x 4.0 x 2.0 m - ice spire",
-			"suppress": false, "kinds": ["snowridge"],
+			"anchor": Vector3(-5.0, 0.0, -11.0339), "target_h": 1.99, "repeats": 1, "spread": 0.0,
+			"depth": 1.91, "footprint": "1.99 x 1.99 x 1.91 m - ice spire",
+			"suppress": true, "kinds": ["snowridge"],
 		},
 		"gate_portal": {
 			"anchor": Vector3(3.2, 0.0, -11.05), "target_h": 2.2, "repeats": 1, "spread": 0.0,
-			"depth": 0.8, "footprint": "2.2 x 2.2 x 0.8 m - cairn marker",
+			"depth": 1.72, "footprint": "1.70 x 2.20 x 1.72 m - cairn marker",
 			"suppress": false, "kinds": [],
 		},
 		"light_source": {
-			"anchor": Vector3(-8.8, 0.0, -10.90), "target_h": 1.6, "repeats": 4, "spread": 1.5,
-			"depth": 0.55, "footprint": "0.5 x 1.6 x 0.55 m - brazier",
+			"anchor": Vector3(-8.8, 0.0, -11.03), "target_h": 1.6, "repeats": 4, "spread": 1.5,
+			"depth": 1.90, "footprint": "1.90 x 1.60 x 1.90 m - brazier",
 			"suppress": false, "kinds": [],
 		},
 		"vegetation_cluster": {
-			"anchor": Vector3(8.6, 0.0, -11.35), "target_h": 1.9, "repeats": 2, "spread": 2.2,
-			"depth": 1.6, "footprint": "1.8 x 1.9 x 1.6 m - moss-rock tuft",
+			"anchor": Vector3(8.6, 0.0, -11.0354), "target_h": 1.54, "repeats": 2, "spread": 2.2,
+			"depth": 1.91, "footprint": "1.91 x 1.54 x 1.91 m - moss-rock tuft",
 			"suppress": false, "kinds": [],
 		},
 		"ground_dressing": {
 			"anchor": Vector3(-2.8, 0.0, -10.65), "target_h": 0.7, "repeats": 3, "spread": 2.4,
-			"depth": 0.9, "footprint": "1.5 x 0.7 x 0.9 m - basalt shards",
-			"suppress": false, "kinds": ["basalt"],
+			"depth": 0.59, "footprint": "0.66 x 0.70 x 0.59 m - basalt shards",
+			"suppress": true, "kinds": ["basalt"],
 		},
 		"ornament_accent": {
 			"anchor": Vector3(0.6, 0.0, -10.78), "target_h": 1.1, "repeats": 4, "spread": 1.0,
-			"depth": 0.3, "footprint": "0.8 x 1.1 x 0.3 m - runestone",
+			"depth": 0.14, "footprint": "0.44 x 1.10 x 0.14 m - runestone",
 			"suppress": false, "kinds": [],
 		},
 		"column_pillar": {
 			"anchor": Vector3(5.4, 0.0, -10.88), "target_h": 2.8, "repeats": 4, "spread": 1.0,
-			"depth": 0.6, "footprint": "0.7 x 2.8 x 0.6 m - basalt prism",
+			"depth": 1.18, "footprint": "1.25 x 2.80 x 1.18 m - basalt prism",
 			"suppress": false, "kinds": [],
 		},
 		"railing_segment": {
 			"anchor": Vector3(-3.6, 0.0, -10.50), "target_h": 0.95, "repeats": 5, "spread": 1.3,
-			"depth": 0.35, "footprint": "2.2 x 0.95 x 0.35 m - driftwood fence",
+			"depth": 0.23, "footprint": "1.18 x 0.95 x 0.23 m - driftwood fence",
 			"suppress": false, "kinds": [],
 		},
 		"furniture": {
-			"anchor": Vector3(10.2, 0.0, -10.90), "target_h": 0.9, "repeats": 2, "spread": 1.6,
-			"depth": 0.95, "footprint": "1.4 x 0.9 x 0.95 m - sled bench",
+			"anchor": Vector3(10.2, 0.0, -11.0345), "target_h": 0.67, "repeats": 2, "spread": 1.6,
+			"depth": 1.91, "footprint": "1.19 x 0.67 x 1.91 m - sled bench",
 			"suppress": false, "kinds": [],
 		},
 		"signage_banner": {
 			"anchor": Vector3(1.8, 0.0, -10.72), "target_h": 1.5, "repeats": 2, "spread": 1.4,
-			"depth": 0.12, "footprint": "1.2 x 1.5 x 0.12 m - pennant",
+			"depth": 0.11, "footprint": "0.93 x 1.50 x 0.11 m - pennant",
 			"suppress": false, "kinds": [],
 		},
 	},
 	"egeo": {
 		"hero_landmark": {
-			"anchor": Vector3(3.8, 0.0, -11.35), "target_h": 3.7, "repeats": 1, "spread": 0.0,
-			"depth": 2.3, "footprint": "4.2 x 3.7 x 2.3 m - caldera rim with domes",
-			"suppress": false, "kinds": ["island"],
+			"anchor": Vector3(3.8, 0.0, -11.0335), "target_h": 1.80, "repeats": 1, "spread": 0.0,
+			"depth": 1.91, "footprint": "1.93 x 1.80 x 1.91 m - caldera rim with domes",
+			"suppress": true, "kinds": ["island"],
 		},
 		"gate_portal": {
 			"anchor": Vector3(-3.4, 0.0, -11.00), "target_h": 2.5, "repeats": 1, "spread": 0.0,
-			"depth": 0.9, "footprint": "2.4 x 2.5 x 0.9 m - chapel door",
+			"depth": 1.70, "footprint": "1.62 x 2.50 x 1.70 m - chapel door",
 			"suppress": false, "kinds": [],
 		},
 		"light_source": {
 			"anchor": Vector3(7.2, 0.0, -10.90), "target_h": 1.7, "repeats": 3, "spread": 1.8,
-			"depth": 0.5, "footprint": "0.5 x 1.7 x 0.5 m - wind-light",
+			"depth": 0.41, "footprint": "0.40 x 1.70 x 0.41 m - wind-light",
 			"suppress": false, "kinds": [],
 		},
 		"vegetation_cluster": {
 			"anchor": Vector3(-9.4, 0.0, -11.30), "target_h": 2.2, "repeats": 2, "spread": 2.0,
-			"depth": 1.7, "footprint": "1.8 x 2.2 x 1.7 m - olive and growth clump",
-			"suppress": false, "kinds": ["bougainvillea"],
+			"depth": 1.24, "footprint": "2.13 x 2.20 x 1.24 m - olive and growth clump",
+			"suppress": true, "kinds": ["bougainvillea"],
 		},
 		"ground_dressing": {
 			"anchor": Vector3(5.6, 0.0, -10.68), "target_h": 0.55, "repeats": 2, "spread": 2.4,
-			"depth": 0.95, "footprint": "1.6 x 0.55 x 0.95 m - dry-stone stub",
+			"depth": 0.83, "footprint": "0.89 x 0.55 x 0.83 m - dry-stone stub",
 			"suppress": false, "kinds": [],
 		},
 		"ornament_accent": {
 			"anchor": Vector3(-0.8, 0.0, -10.76), "target_h": 0.95, "repeats": 4, "spread": 1.0,
-			"depth": 0.3, "footprint": "0.9 x 0.95 x 0.3 m - donkey cart",
+			"depth": 1.29, "footprint": "1.89 x 0.95 x 1.29 m - donkey cart",
 			"suppress": false, "kinds": [],
 		},
 		"column_pillar": {
 			"anchor": Vector3(-6.6, 0.0, -10.82), "target_h": 2.5, "repeats": 5, "spread": 0.85,
-			"depth": 0.5, "footprint": "0.6 x 2.5 x 0.5 m - whitewashed pier",
+			"depth": 0.56, "footprint": "1.13 x 2.50 x 0.56 m - whitewashed pier",
 			"suppress": false, "kinds": [],
 		},
 		"railing_segment": {
 			"anchor": Vector3(1.2, 0.0, -10.52), "target_h": 1.0, "repeats": 6, "spread": 1.25,
-			"depth": 0.3, "footprint": "2.2 x 1.0 x 0.3 m - blue rail",
+			"depth": 0.25, "footprint": "1.32 x 1.00 x 0.25 m - blue rail",
 			"suppress": false, "kinds": [],
 		},
 		"furniture": {
 			"anchor": Vector3(9.8, 0.0, -10.86), "target_h": 1.0, "repeats": 3, "spread": 1.5,
-			"depth": 0.85, "footprint": "1.3 x 1.0 x 0.85 m - taverna chair",
+			"depth": 0.55, "footprint": "0.52 x 1.00 x 0.55 m - taverna chair",
 			"suppress": false, "kinds": [],
 		},
 		"signage_banner": {
 			"anchor": Vector3(-1.9, 0.0, -10.70), "target_h": 1.3, "repeats": 2, "spread": 1.3,
-			"depth": 0.12, "footprint": "1.4 x 1.3 x 0.12 m - taverna sign",
+			"depth": 0.21, "footprint": "1.16 x 1.30 x 0.21 m - taverna sign",
 			"suppress": false, "kinds": [],
 		},
 	},
@@ -511,11 +536,13 @@ static func mount_slot(parent: Node3D, arena_id: String, slot: String,
 	parent.add_child(holder)
 	var pieces := 0
 	for i in repeats:
-		var piece := _place_piece(source, entry, path)
+		# The repeat offset is the piece's own x, ON TOP of the centring `_place_piece()`
+		# does: assigning `position.x` here would throw the centring away (see its note).
+		var piece := _place_piece(source, entry, path,
+			(float(i) - float(repeats - 1) * 0.5) * spread)
 		if piece == null:
 			continue
 		piece.name = "Piece_%d" % (i + 1) if repeats > 1 else "Piece"
-		piece.position.x = (float(i) - float(repeats - 1) * 0.5) * spread
 		holder.add_child(piece)
 		pieces += 1
 	if pieces == 0:
@@ -568,7 +595,9 @@ static func slot_report(arena_id: String) -> Array[Dictionary]:
 
 ## The procedural prop kinds `arena_scenery.gd::build()` must skip for this arena: a
 ## slot's `kinds` enter here only when the slot has BOTH `suppress = true` and a GLB in
-## place (empty today — every slot's flag is off — and the test asserts that).
+## place. With the table as it ships that is sixteen slots across the five arenas; with
+## no GLB anywhere it is empty for every arena, whatever the flags say, which is what
+## `tests/arena_kit_test.gd` pins in both disk states.
 static func suppressed_kinds(arena_id: String) -> Array[String]:
 	var out: Array[String] = []
 	var override: Dictionary = suppress_overrides.get(arena_id, {})
@@ -635,7 +664,15 @@ static func node_bounds(node: Node3D) -> AABB:
 ## moved so the box's bottom is on the wrapper's own origin (bottom origin) and its x/z
 ## centre is there too, sanitized and given the shared material. Null when the source
 ## has no measurable geometry at all (nothing to normalize against).
-static func _place_piece(source: Node3D, entry: Dictionary, path: String) -> Node3D:
+##
+## `offset_x` is the piece's own repeat offset, and it is the WRAPPER's x — the intake
+## suite pins `Piece_<n>.position.x` to the declared spread. The geometry's own x centre
+## is therefore brought onto the wrapper origin on the CHILD instead: a source model whose
+## AABB is not x-centred (aurora/furniture is 0.18 m off) would otherwise carry that
+## asymmetry into the measured box, and the two checks that read the same placement —
+## `mount/every_repeat_is_placed_on_the_declared_spread` (the node) and
+## `mount/every_mounted_box_sits_on_its_repeat_offset` (the box) — would disagree.
+static func _place_piece(source: Node3D, entry: Dictionary, path: String, offset_x := 0.0) -> Node3D:
 	var piece := Node3D.new()
 	var child: Node3D = source.duplicate()
 	if child == null:
@@ -648,8 +685,11 @@ static func _place_piece(source: Node3D, entry: Dictionary, path: String) -> Nod
 		return null
 	var s := float(entry["target_h"]) / box.size.y
 	piece.scale = Vector3(s, s, s)
+	# x: the child takes the centring (so the wrapper's own x is the repeat offset); z and
+	# y: the wrapper takes them (bottom origin, z centre on the anchor).
+	child.position.x -= box.position.x + box.size.x * 0.5
 	piece.position = Vector3(
-		-(box.position.x + box.size.x * 0.5) * s,
+		offset_x,
 		-box.position.y * s,
 		-(box.position.z + box.size.z * 0.5) * s)
 	_sanitize(piece)
