@@ -41,6 +41,11 @@ extends Node3D
 ##     Do not mix with set_outfit(): both own surface override 0. See
 ##     `src/character/outfit_catalogue.gd`, which drives this path.
 ##
+##   PRESENTATION LAYERS  (applied after the clip; never persisted into bone poses)
+##     set_anticipation(stroke, weight, contact_phase) # 0..1 towards that stroke's backswing
+##     get_anticipation() -> Dictionary                # {stroke, weight}
+##     set_look_yaw(degrees) / get_look_yaw()          # chest+head turn, clamped +-55
+##
 ##   POSE READOUT
 ##     get_pose() -> Dictionary                  # {clip, time, length, facing_degrees, bones[*]}
 ##     get_skeleton() -> Skeleton3D              # escape hatch; prefer get_pose()
@@ -188,6 +193,16 @@ var _override: StandardMaterial3D = null
 var _catalogue_surface: ShaderMaterial = null
 var _outfit_cache: Dictionary = {}          # id -> {texture: Texture2D, digest: String}
 var _strokes: Dictionary = {}               # StringName -> length (float)
+const AthletePoseLayer := preload("res://src/character/athlete_pose_layer.gd")
+var _pose_layer: SkeletonModifier3D = null
+var _anticipation_stroke: StringName = &""
+var _anticipation_phase: float = 0.34
+var _anticipation_weight: float = 0.0
+var _prep_cache: Dictionary = {}            # "stroke|phase" -> {bone index -> Quaternion}
+var _prep_meta: Dictionary = {}             # same key -> {t, z, y, raised, score, bones}
+var _ready_hand := Vector3.ZERO             # racket hand in the ready stance
+var _ready_hand_set := false
+var _look_yaw: float = 0.0
 var _catalogue_outfit: Dictionary = {}      # {athlete_id, outfit_id}, set by the catalogue
 
 
@@ -295,6 +310,12 @@ func _build() -> int:
 	# instance frustum-culled (observed: two render frames came out empty). A generous
 	# cull margin costs nothing here and makes captures unconditional.
 	_mesh_instance.extra_cull_margin = 4.0
+	# Presentation layers over the clip (anticipation + look). Inert at weight 0.
+	_pose_layer = AthletePoseLayer.new()
+	_pose_layer.name = "PoseLayer"
+	_pose_layer.rig = self
+	_skeleton.add_child(_pose_layer)
+	_pose_layer.look_chain = _look_chain()
 
 	var mesh := _mesh_instance.mesh
 	if mesh != null and mesh.get_surface_count() > 0:
@@ -923,6 +944,223 @@ func face_towards(target: Vector3) -> void:
 
 
 # =========================================================================
+# Presentation layers: anticipation and look (athlete_pose_layer.gd)
+# =========================================================================
+
+## Upper-body bones the anticipation may move. Legs and hips stay with the
+## footwork clip so a backswing never slides the feet.
+const PREP_BONES := ["Spine", "Spine01", "Spine02", "RightShoulder", "RightArm", "RightForeArm",
+	"RightHand", "LeftShoulder", "LeftArm", "LeftForeArm"]
+## Spine chain + head carrying the look yaw, parent first, with each bone's share.
+const LOOK_BONES := [["Spine", 0.18], ["Spine01", 0.18], ["Spine02", 0.18], ["neck", 0.18], ["Head", 0.28]]
+## Hard limit of the look yaw, degrees either side of the rig's facing.
+const LOOK_MAX_DEGREES := 55.0
+## Most of a backswing: the contact frame still has a pose to swing into.
+const ANTICIPATION_MAX := 0.85
+## A preparation frame must put the racket behind the athlete's torso plane or
+## above his ready hand by this much (in body lengths) before the wind-up is
+## shown at all: below it there is no honest preparation in the clip, and no
+## wind-up beats the pose that reads as the athlete shielding himself.
+const PREP_MIN_SCORE := 0.15
+## The knee flexion a low-contact adaptation may reach in total (the clip's own
+## stance plus what this adds). A padel player on a low ball bends to roughly
+## 50-60 deg; measured before this bound: 100-110 deg on every groundstroke.
+const LOW_CONTACT_MAX_KNEE_DEG := 58.0
+## How far the wind-up may take each joint from the clip's own neutral pose, in
+## degrees. A padel preparation is compact — the racket hand travels ~0.2-0.3 m
+## (measured: 0.6-1.1 m before these caps, `evidence/anticipation-look-layers.md`),
+## which is what "the wind-up is exaggerated" was describing. The cap is per
+## joint, so it bounds the hand's travel through the whole arm chain.
+const PREP_LIMIT_DEG := {
+	"Spine": 6.0, "Spine01": 5.0, "Spine02": 5.0,
+	"RightShoulder": 8.0, "LeftShoulder": 6.0,
+	"RightArm": 16.0, "LeftArm": 11.0,
+	"RightForeArm": 13.0, "LeftForeArm": 9.0, "RightHand": 8.0,
+}
+
+
+## Blends the upper body towards `stroke`'s own backswing pose. `weight` 0..1;
+## ignored (forced to 0) while a stroke is playing, because contact is the
+## simulation's and must never be blended away.
+func set_anticipation(stroke: StringName, weight: float, contact_phase: float = 0.5) -> void:
+	_ensure_built()
+	if _pose_layer == null:
+		return
+	if stroke == &"" or not _strokes.has(stroke) or is_stroking():
+		weight = 0.0
+	elif _prep_pose_for(stroke, contact_phase).is_empty():
+		weight = 0.0 # the clip holds no frame that reads as a preparation
+	_anticipation_weight = clampf(weight, 0.0, ANTICIPATION_MAX)
+	if _anticipation_weight <= 0.0:
+		_pose_layer.prep_weight = 0.0
+		return
+	if stroke != _anticipation_stroke or not is_equal_approx(contact_phase, _anticipation_phase):
+		_anticipation_stroke = stroke
+		_anticipation_phase = contact_phase
+		_pose_layer.prep_pose = _prep_pose_for(stroke, contact_phase)
+	_pose_layer.prep_weight = _anticipation_weight
+
+
+func get_anticipation() -> Dictionary:
+	return {"stroke": _anticipation_stroke, "weight": _anticipation_weight, "contact_phase": _anticipation_phase}
+
+
+## Turns chest and head by `degrees` about the rig's up axis (positive = the
+## rig's own left, same sign as `set_facing_degrees`). Clamped to LOOK_MAX_DEGREES.
+func set_look_yaw(degrees: float) -> void:
+	_ensure_built()
+	_look_yaw = clampf(degrees if is_finite(degrees) else 0.0, -LOOK_MAX_DEGREES, LOOK_MAX_DEGREES)
+	if _pose_layer != null:
+		_pose_layer.look_yaw_degrees = _look_yaw
+
+
+func get_look_yaw() -> float:
+	return _look_yaw
+
+
+func _look_chain() -> Array:
+	var out := []
+	var total := 0.0
+	for entry in LOOK_BONES:
+		var index := _skeleton.find_bone(_resolve_bone_name(String(entry[0])))
+		if index >= 0:
+			out.append([index, float(entry[1])])
+			total += float(entry[1])
+	if total > 0.0:
+		for entry in out:
+			entry[1] = float(entry[1]) / total
+	return out
+
+
+## The backswing is the frame, before contact, where the racket hand is furthest
+## BEHIND the athlete and/or raised — not the frame furthest from the clip's first
+## pose. The old rule picked the pose that reads as the athlete protecting himself
+## with the racket (hand in front of the chest: measured z = +0.31 m on the
+## backhand clip, while the same clip holds a real take-back at z = -0.41 m).
+## The hand is placed by forward kinematics from the clip's own rotation tracks,
+## so nothing is played or mutated here, and an authored and a Meshy clip
+## calibrate alike. Returns {} when the clip has no frame that reads as a
+## preparation: no wind-up beats a wrong one.
+func _prep_pose_for(stroke: StringName, contact_phase: float = 0.5) -> Dictionary:
+	var key := "%s|%.2f" % [stroke, contact_phase]
+	if _prep_cache.has(key):
+		return _prep_cache[key]
+	var pose := {}
+	var anim: Animation = _anim.get_animation(stroke) if _anim != null and _anim.has_animation(stroke) else null
+	if anim == null:
+		return pose
+	var tracks := {}
+	for bone_name in PREP_BONES:
+		var resolved := _resolve_bone_name(bone_name)
+		var index := _skeleton.find_bone(resolved)
+		if index < 0:
+			continue
+		var track := anim.find_track(NodePath("%s:%s" % [_track_prefix, resolved]), Animation.TYPE_ROTATION_3D)
+		if track >= 0 and not tracks.has(index):
+			tracks[index] = track
+	if tracks.is_empty():
+		return pose
+	var contact := anim.length * clampf(contact_phase, 0.1, 0.9)
+	var hand0 := _hand_local_at(anim, 0.0)
+	var scale := maxf(0.2, hand0.length())
+	# "Raised" is measured against the athlete's READY hand, not against the
+	# clip's own first frame: an overhead clip (the smash) starts with the racket
+	# already at 1.50 m, so its own frame 0 made every later frame look flat and
+	# the smash silently lost its wind-up.
+	var ready_hand := _ready_hand_local()
+	if ready_hand == Vector3.ZERO:
+		ready_hand = hand0
+	var best_t := 0.0
+	var best_score := -INF
+	for step in 25:
+		var t := contact * float(step) / 24.0
+		var hand := _hand_local_at(anim, t)
+		var behind: float = -hand.z / scale
+		var raised: float = 0.6 * (hand.y - ready_hand.y) / scale
+		var score: float = maxf(behind, raised)
+		if score > best_score:
+			best_score = score
+			best_t = t
+	if best_score < PREP_MIN_SCORE:
+		_prep_cache[key] = pose
+		_prep_meta[key] = {"t": best_t, "z": 0.0, "y": 0.0, "score": best_score, "bones": 0}
+		return pose
+	for index in tracks:
+		var track: int = tracks[index]
+		var neutral: Quaternion = anim.rotation_track_interpolate(track, 0.0)
+		var target: Quaternion = anim.rotation_track_interpolate(track, best_t)
+		pose[index] = _clamp_to_neutral(neutral, target, index)
+	var chosen := _hand_local_at(anim, best_t)
+	_prep_meta[key] = {"t": best_t, "z": chosen.z / scale, "y": chosen.y / scale,
+		"raised": (chosen.y - ready_hand.y) / scale, "score": best_score, "bones": pose.size()}
+	_prep_cache[key] = pose
+	return pose
+
+
+## What the wind-up chose for this stroke, in body lengths: `z` negative means
+## the racket is behind the athlete (a take-back), positive means in front of the
+## chest (the pose that reads as shielding). `bones` 0 means no preparation was
+## available, so no wind-up is shown. For the probes and the evidence file.
+func get_prep_readout(stroke: StringName, contact_phase: float = 0.34) -> Dictionary:
+	_ensure_built()
+	_prep_pose_for(stroke, contact_phase)
+	return _prep_meta.get("%s|%.2f" % [stroke, contact_phase], {})
+
+
+## Where the racket hand sits in the athlete's ready stance, for the "raised"
+## comparison above. Cached: it never changes for a given rig.
+func _ready_hand_local() -> Vector3:
+	if _ready_hand_set:
+		return _ready_hand
+	var ready: Animation = _anim.get_animation(&"ready") if _anim != null and _anim.has_animation(&"ready") else null
+	if ready == null:
+		return Vector3.ZERO
+	var hand := _hand_local_at(ready, ready.length * 0.5)
+	if hand == Vector3.ZERO:
+		return Vector3.ZERO
+	_ready_hand = hand
+	_ready_hand_set = true
+	return _ready_hand
+
+
+## The racket hand's origin in the rig's LOCAL frame at time `t`, by forward
+## kinematics over the clip's rotation tracks and the skeleton's rest positions.
+## Local +Z points at the net for every rig (the near pair is yawed 180), so a
+## take-back is z < 0 and "in front of the chest" is z > 0. Units are the rig's
+## own (metres on a Meshy export, centimetres on the legacy Volpe one), which is
+## why every use of it normalises by `_hand_local_at(anim, 0.0).length()`.
+func _hand_local_at(anim: Animation, t: float) -> Vector3:
+	if _skeleton == null:
+		return Vector3.ZERO
+	var hand := _skeleton.find_bone(_resolve_bone_name("RightHand"))
+	if hand < 0:
+		return Vector3.ZERO
+	var chain: Array[int] = []
+	var cursor := hand
+	while cursor >= 0 and chain.size() < 32:
+		chain.push_front(cursor)
+		cursor = _skeleton.get_bone_parent(cursor)
+	var acc := Transform3D.IDENTITY
+	for index in chain:
+		var local := _skeleton.get_bone_rest(index)
+		var track := anim.find_track(NodePath("%s:%s" % [_track_prefix, _skeleton.get_bone_name(index)]), Animation.TYPE_ROTATION_3D)
+		if track >= 0:
+			local.basis = Basis(anim.rotation_track_interpolate(track, t)).scaled(local.basis.get_scale())
+		acc = acc * local
+	return acc.origin
+
+
+## Bounds one joint's wind-up: `target` is pulled back along its own arc from
+## `neutral` until it is no further than PREP_LIMIT_DEG from it.
+func _clamp_to_neutral(neutral: Quaternion, target: Quaternion, bone_index: int) -> Quaternion:
+	var limit := float(PREP_LIMIT_DEG.get(_skeleton.get_bone_name(bone_index).replace("mixamorig_", "").replace("mixamorig:", ""), 10.0))
+	var angle := rad_to_deg(neutral.angle_to(target))
+	if angle <= limit or angle <= 0.001:
+		return target
+	return neutral.slerp(target, limit / angle).normalized()
+
+
+# =========================================================================
 # Clips
 # =========================================================================
 
@@ -979,6 +1217,10 @@ func play_stroke_at(stroke: StringName, contact_phase: float = 0.0,
 	if _anim == null or not _anim.has_animation(stroke):
 		return false
 	_stroke = stroke
+	# The contact pose is the simulation's: drop any anticipation this frame.
+	_anticipation_weight = 0.0
+	if _pose_layer != null:
+		_pose_layer.prep_weight = 0.0
 	_stroke_speed_scale = maxf(speed_scale, 0.05)
 	_anim.speed_scale = _stroke_speed_scale
 	var visual_clip := _low_contact_clip(stroke, contact_phase, low_contact)
@@ -992,6 +1234,12 @@ func play_stroke_at(stroke: StringName, contact_phase: float = 0.0,
 ## Per-instance baked adaptation: preserve the source wrist/torso animation,
 ## flex the legs and compensate the pelvis to retain the mean foot anchor.
 ## Three strengths bound cache size; no cumulative bone overrides each frame.
+##
+## The added flexion is BOUNDED: the clip's own stance already carries 15-72 deg
+## of knee flexion, and a flat +36 deg took the total to 100-110 deg — a deep
+## squat, which is what "they bend too much" was describing. The weight backs off
+## per sample until the knee stays under LOW_CONTACT_MAX_KNEE_DEG, so a clip that
+## already crouches is left alone and a straight-legged one still gets a dip.
 func _low_contact_clip(stroke: StringName, contact: float, amount: float) -> StringName:
 	var level := clampi(roundi(amount * 3.0), 0, 3)
 	if level == 0: return stroke
@@ -1020,14 +1268,24 @@ func _low_contact_clip(stroke: StringName, contact: float, amount: float) -> Str
 		var time := phase * source.length
 		_anim.seek(time, true, true)
 		_skeleton.force_update_all_bone_transforms()
+		var originals: Array[Quaternion] = []
+		for i in 6:
+			originals.append(_skeleton.get_bone_pose_rotation(bones[i]))
 		var feet := (_skeleton.get_bone_global_pose(bones[4]).origin + _skeleton.get_bone_global_pose(bones[5]).origin) * 0.5
 		var weight := smoothstep(0.0, maxf(contact, 0.05), phase) if phase <= contact else 1.0 - smoothstep(contact, 1.0, phase)
 		weight *= float(level) / 3.0
+		# Back the added flexion off until the knee is inside a padel range.
+		for attempt in 5:
+			for i in 6:
+				var degrees := -18.0 if i < 2 else (36.0 if i < 4 else -18.0)
+				var rotation := (originals[i] * Quaternion(Vector3.RIGHT, deg_to_rad(degrees) * weight)).normalized()
+				_skeleton.set_bone_pose_rotation(bones[i], rotation)
+			_skeleton.force_update_all_bone_transforms()
+			if _knee_flexion(bones) <= LOW_CONTACT_MAX_KNEE_DEG or weight <= 0.02:
+				break
+			weight *= 0.55
 		for i in 6:
-			var degrees := -18.0 if i < 2 else (36.0 if i < 4 else -18.0)
-			var rotation := (_skeleton.get_bone_pose_rotation(bones[i]) * Quaternion(Vector3.RIGHT, deg_to_rad(degrees) * weight)).normalized()
-			_skeleton.set_bone_pose_rotation(bones[i], rotation)
-			adapted.rotation_track_insert_key(tracks[i], time, rotation)
+			adapted.rotation_track_insert_key(tracks[i], time, _skeleton.get_bone_pose_rotation(bones[i]))
 		_skeleton.force_update_all_bone_transforms()
 		var moved_feet := (_skeleton.get_bone_global_pose(bones[4]).origin + _skeleton.get_bone_global_pose(bones[5]).origin) * 0.5
 		var parent := _skeleton.get_bone_parent(bones[6])
@@ -1036,6 +1294,19 @@ func _low_contact_clip(stroke: StringName, contact: float, amount: float) -> Str
 		adapted.position_track_insert_key(tracks[6], time, pelvis)
 	_anim.get_animation_library(&"").add_animation(name, adapted)
 	return name
+
+
+## Knee flexion in degrees at the CURRENT bone poses: 0 = straight leg. Measured
+## between the thigh and the shin, in skeleton space (angles are scale-free).
+## `bones` is the seven-bone list `_low_contact_clip` builds.
+func _knee_flexion(bones: Array[int]) -> float:
+	var worst := 0.0
+	for side in 2:
+		var thigh: Vector3 = _skeleton.get_bone_global_pose(bones[2 + side]).origin - _skeleton.get_bone_global_pose(bones[side]).origin
+		var shin: Vector3 = _skeleton.get_bone_global_pose(bones[4 + side]).origin - _skeleton.get_bone_global_pose(bones[2 + side]).origin
+		if thigh.length_squared() > 1e-9 and shin.length_squared() > 1e-9:
+			worst = maxf(worst, rad_to_deg(thigh.angle_to(shin)))
+	return worst
 
 
 func clear_low_contact() -> void:

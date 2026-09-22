@@ -19,9 +19,9 @@ func _initialize() -> void:
 func _run() -> void:
 	print("[soundtrack_manager_test] Starting verification suite...")
 
-	# 1. Catalog integrity & count (30 OST tracks)
+	# 1. Catalog integrity & count (42 OST tracks: 22 standard + 8 epic + 12 Sawano Titan)
 	var all_tracks := SoundtrackManager.all_track_ids()
-	_assert_eq(all_tracks.size(), 30, "Catalog contains exactly 30 distinct OST track IDs")
+	_assert_eq(all_tracks.size(), 42, "Catalog contains exactly 42 distinct OST track IDs")
 
 	# 2. Frozen 9 Arena Mappings
 	_assert_eq(SoundtrackManager.track_id_for_arena("officina"), "ost_officina", "Arena officina maps to ost_officina")
@@ -62,6 +62,20 @@ func _run() -> void:
 	_assert_eq(SoundtrackManager.track_id_for_context("epic_sudden_death"), "ost_epic_sudden_death", "Context epic_sudden_death maps to ost_epic_sudden_death")
 	_assert_eq(SoundtrackManager.track_id_for_context("epic_ascension"), "ost_epic_ascension", "Context epic_ascension maps to ost_epic_ascension")
 	_assert_eq(SoundtrackManager.track_id_for_context("epic_rematch"), "ost_epic_rematch", "Context epic_rematch maps to ost_epic_rematch")
+
+	# 5c. Sawano / Attack on Titan Special Context Mappings (6 Instrumental + 6 Vocal Anthems)
+	_assert_eq(SoundtrackManager.track_id_for_context("titan_breach"), "ost_sawano_titan_breach", "Context titan_breach maps to ost_sawano_titan_breach")
+	_assert_eq(SoundtrackManager.track_id_for_context("titan_breach_vocal"), "ost_sawano_titan_breach_vocal", "Context titan_breach_vocal maps to ost_sawano_titan_breach_vocal")
+	_assert_eq(SoundtrackManager.track_id_for_context("counterattack"), "ost_sawano_counterattack", "Context counterattack maps to ost_sawano_counterattack")
+	_assert_eq(SoundtrackManager.track_id_for_context("k21_vocal"), "ost_sawano_k21_vocal", "Context k21_vocal maps to ost_sawano_k21_vocal")
+	_assert_eq(SoundtrackManager.track_id_for_context("wings_of_freedom"), "ost_sawano_wings_of_freedom", "Context wings_of_freedom maps to ost_sawano_wings_of_freedom")
+	_assert_eq(SoundtrackManager.track_id_for_context("wings_of_freedom_vocal"), "ost_sawano_wings_of_freedom_vocal", "Context wings_of_freedom_vocal maps to ost_sawano_wings_of_freedom_vocal")
+	_assert_eq(SoundtrackManager.track_id_for_context("shiganshina_cry"), "ost_sawano_shiganshina_cry", "Context shiganshina_cry maps to ost_sawano_shiganshina_cry")
+	_assert_eq(SoundtrackManager.track_id_for_context("shiganshina_cry_vocal"), "ost_sawano_shiganshina_cry_vocal", "Context shiganshina_cry_vocal maps to ost_sawano_shiganshina_cry_vocal")
+	_assert_eq(SoundtrackManager.track_id_for_context("colossal_smash"), "ost_sawano_colossal_smash", "Context colossal_smash maps to ost_sawano_colossal_smash")
+	_assert_eq(SoundtrackManager.track_id_for_context("colossal_smash_vocal"), "ost_sawano_colossal_smash_vocal", "Context colossal_smash_vocal maps to ost_sawano_colossal_smash_vocal")
+	_assert_eq(SoundtrackManager.track_id_for_context("barricades"), "ost_sawano_barricades", "Context barricades maps to ost_sawano_barricades")
+	_assert_eq(SoundtrackManager.track_id_for_context("barricades_vocal"), "ost_sawano_barricades_vocal", "Context barricades_vocal maps to ost_sawano_barricades_vocal")
 
 	# 6. Candidate Paths Formatting
 	var paths := SoundtrackManager.candidate_paths("ost_officina")

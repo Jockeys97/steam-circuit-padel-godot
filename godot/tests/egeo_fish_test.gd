@@ -1,0 +1,21 @@
+extends SceneTree
+func _initialize(): call_deferred("run")
+func run():
+	var fish = preload("res://game/arenas/egeo_fish.gd").new()
+	root.add_child(fish)
+	fish.set_process(false)
+	assert(not fish.fish.visible)
+	fish.wait_seconds=0
+	fish.step(0.6)
+	assert(fish.fish.visible and absf(fish.fish.position.x)>20.0)
+	assert(fish.fish.position.y > fish.WATER_Y+0.9)
+	fish.step(0.65)
+	assert(not fish.fish.visible and fish.splash.visible)
+	fish.step(0.8)
+	assert(not fish.splash.visible and fish.wait_seconds>=18 and fish.wait_seconds<=35)
+	var count := fish.get_child_count()
+	for i in 6000: fish.step(0.1)
+	assert(fish.get_child_count()==count)
+	fish.free()
+	print("EGEO_FISH PASS")
+	quit()

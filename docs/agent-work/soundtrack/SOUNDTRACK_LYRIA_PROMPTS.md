@@ -274,3 +274,56 @@ This document provides the complete artistic direction, technical parameters, an
 - **Key**: C minor | **BPM**: 138 | **Time Signature**: 4/4
 - **Prompt for Lyria**:
   > *Determined and heroic anime comeback theme, driving industrial steel groove, resolute cello riffs growing into a powerful symphonic rock wall of sound, pulsing clockwork synth, indomitable will to win.*
+
+---
+
+### Category G: Sawano / Attack on Titan Special Suite (6 Tracks)
+
+#### OST 31: "ət'æk:0N:WALL" (Colossal Breach & Boss Match Intro)
+- **ID**: `ost_sawano_titan_breach`
+- **File**: `res://assets/audio/music/ost_sawano_titan_breach.ogg`
+- **Context**: Boss Match Intro & Invasione Campo (`titan_breach`)
+- **Key**: C minor | **BPM**: 135 | **Time Signature**: 4/4
+- **Prompt for Lyria**:
+  > *Epic orchestral symphonic metal in the unmistakable style of Hiroyuki Sawano (Attack on Titan / Vogel im Käfig). Heavy colossal timpani and taiko stomps, unison brass French horns screaming a soaring tragic melody in C minor, sudden dramatic drop into ticking clockwork tension, followed by explosive distorted guitar wall-of-sound with choral accents.*
+
+#### OST 32: "K21:Vanguard" (Counter-Rally & High Stakes Turnaround)
+- **ID**: `ost_sawano_counterattack`
+- **File**: `res://assets/audio/music/ost_sawano_counterattack.ogg`
+- **Context**: Rimonta Epica / Break Point Critico (`counterattack`)
+- **Key**: D minor | **BPM**: 142 | **Time Signature**: 4/4
+- **Prompt for Lyria**:
+  > *Hiroyuki Sawano hybrid orchestral rap-rock battle theme (inspired by K21 and Before Lights Out). Fast syncopated hip-hop snare beat, screeching overdrive guitars, rapid staccato violin runs, heroic brass answers, intense motivational sports combat drive.*
+
+#### OST 33: "FLÜGEL:der:Freiheit" (Scouting Overdrive & Championship Semifinals)
+- **ID**: `ost_sawano_wings_of_freedom`
+- **File**: `res://assets/audio/music/ost_sawano_wings_of_freedom.ogg`
+- **Context**: Semifinali Torneo & Battaglia per la Libertà (`wings_of_freedom`)
+- **Key**: G minor | **BPM**: 154 | **Time Signature**: 4/4
+- **Prompt for Lyria**:
+  > *Hiroyuki Sawano heroic anime anthem (style of The Reluctant Heroes and Bauklötze). Soaring lead violin melody, driving symphonic power metal drum double-kick, energetic German-style choir stabs, brass fanfares, euphoric sense of speed and freedom.*
+
+#### OST 34: "T:T" (Shiganshina Requiem & Sudden Death Deuce)
+- **ID**: `ost_sawano_shiganshina_cry`
+- **File**: `res://assets/audio/music/ost_sawano_shiganshina_cry.ogg`
+- **Context**: Match Point Decisivo / Deuce a Oltranza (`shiganshina_cry`)
+- **Key**: E minor | **BPM**: 128 | **Time Signature**: 4/4
+- **Prompt for Lyria**:
+  > *Dramatic emotional anime soundtrack (style of YouSeeBIGGIRL/T:T and Call of Silence). Melancholic solo cello intro over ambient breathy pads, sudden silence heartbeat drop, erupting into a colossal symphonic choir climax with thundering percussion and weeping brass chords.*
+
+#### OST 35: "XL-TT" (Padel Colossus & Berserk Super Smash)
+- **ID**: `ost_sawano_colossal_smash`
+- **File**: `res://assets/audio/music/ost_sawano_colossal_smash.ogg`
+- **Context**: Steam Gauge 100% / Super Colpo Speciale (`colossal_smash`)
+- **Key**: F# minor | **BPM**: 148 | **Time Signature**: 4/4
+- **Prompt for Lyria**:
+  > *Hiroyuki Sawano colossal monster battle music (style of XL-TT and APETITAN). Earth-shaking industrial sub-bass thumps, distorted synth arpeggios pulsing in F# minor, massive orchestral brass stabs, adrenaline-fueled titan confrontation.*
+
+#### OST 36: "bà:R1CADES" (Final Wall & Grand Championship Anthem)
+- **ID**: `ost_sawano_barricades`
+- **File**: `res://assets/audio/music/ost_sawano_barricades.ogg`
+- **Context**: Finalissima Scudetto & Inno di Gloria (`barricades`)
+- **Key**: A minor | **BPM**: 160 | **Time Signature**: 4/4
+- **Prompt for Lyria**:
+  > *High-octane Hiroyuki Sawano J-Rock orchestral anthem (style of Barricades and ət'æk 0N t'aɪtn). Driving 160 BPM drum beat, soaring twin lead guitars, uplifting choir chants, heroic trumpet hooks, emotional climax for a world championship victory.*
+

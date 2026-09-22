@@ -60,7 +60,7 @@ func _build_ui() -> void:
 	add_child(_shell)
 	_shell.setup("jukebox")
 	_shell.set_title_text("JUKEBOX & SOUND TEST")
-	_shell.set_subtitle_text("Colonna sonora originale — 22 tracce steampunk e prompt generativi Lyria")
+	_shell.set_subtitle_text("Colonna sonora originale — 42 tracce (Standard, Epiche e Suite Sawano Titan)")
 	_shell.set_back_target("menu")
 
 	var back_btn: Button = _shell.back_control()
@@ -100,7 +100,7 @@ func _build_ui() -> void:
 	list_margin.add_child(list_vbox)
 
 	var list_header := Label.new()
-	list_header.text = "CATALOGO TRACCE (22)"
+	list_header.text = "CATALOGO TRACCE (%d)" % _track_ids.size()
 	list_header.theme_type_variation = &"LabelSmall"
 	list_header.add_theme_color_override("font_color", Color(0.96, 0.82, 0.44))
 	list_vbox.add_child(list_header)
@@ -305,9 +305,14 @@ func _select_track(idx: int) -> void:
 	var info := SoundtrackManager.track_info(tid)
 	var has_file := SoundtrackManager.has_track(tid)
 
-	_title_label.text = "%02d. %s" % [idx + 1, String(info.get("title", tid))]
-	_scene_label.text = "Destinazione: %s (ID: %s)" % [String(info.get("scene", "Match")), tid]
-	_category_badge.text = "[ %s ]" % String(info.get("category", "General")).to_upper()
+	var cat_str: String = String(info.get("category", "General"))
+	_category_badge.text = "[ %s ]" % cat_str.to_upper()
+	if cat_str.begins_with("Sawano"):
+		_category_badge.add_theme_color_override("font_color", Color(1.0, 0.28, 0.35))
+	elif cat_str.begins_with("Epico"):
+		_category_badge.add_theme_color_override("font_color", Color(1.0, 0.82, 0.2))
+	else:
+		_category_badge.add_theme_color_override("font_color", Color(0.3, 0.8, 0.95))
 	_bpm_key_label.text = "Tempo: %d BPM  |  Chiave: %s" % [int(info.get("bpm", 120)), String(info.get("key", "D minor"))]
 
 	if has_file:

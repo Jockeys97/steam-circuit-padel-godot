@@ -220,6 +220,8 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 	# The trees' shared scene is cached across the prop loop (one read, N draws);
 	# drop it now so no Resource outlives this arena in a `static var`.
 	Trees.release()
+	if id == "egeo":
+		preload("res://game/arenas/egeo_environment.gd").build(root)
 	if id in ["officina","locomotive","clockwork"]:
 		# Pilot replacement is presentation-only and local to this arena.
 		for child in root.get_children():

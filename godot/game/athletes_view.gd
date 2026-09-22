@@ -29,6 +29,13 @@
 ##   2. Facing does not track the ball. The reference's athletes face along their
 ##      own movement axis, and `face_towards(ball)` was available but is NOT used:
 ##      using it would change the on-court composition, which is an owner gate.
+##      What follows the ball is the chest and head only (`rig.set_look_yaw`,
+##      owner-approved 2026-09-23): feet, hips and facing keep the composition.
+##   2b. Anticipation. The sim reports a stroke on its contact tick only, so the
+##      athlete the ball is flying to winds the racket back beforehand
+##      (`rig.set_anticipation`, towards the predicted stroke's own backswing),
+##      purely from the ball's current position/velocity; the stroke still starts
+##      at its contact frame.
 ##   3. The rig is not a physics body. Contact is the sim's contact box; the rig
 ##      never collides with the ball, the net or the glass.
 ##   4. All four athletes are the same model, differing by outfit colour only
@@ -45,11 +52,31 @@ extends Node3D
 
 const Court := preload("res://game/court.gd")
 const AthleteSpawn := preload("res://src/character/athlete_spawn.gd")
+const Frozen := preload("res://src/sim/frozen.gd") # read-only: ballGravity
 
 const ROLES := ["player", "playerMate", "opponent", "opponentMate"]
 ## The rig's own gait thresholds, in `paddle.motion` units (0..1).
 const WALK_MOTION := 0.08
 const RUN_MOTION := 0.55
+## Anticipation starts this many seconds before the ball reaches the athlete's
+## line and is full at ANTICIPATION_FULL_S. A drive's authored backswing is
+## ~0.2 s ahead of contact, so the wind-up spans roughly one backswing.
+const ANTICIPATION_START_S := 0.42
+const ANTICIPATION_FULL_S := 0.10
+## Sim units (px) of horizontal slack beyond half the paddle width: a ball
+## further than that from the athlete at their line is not theirs to prepare.
+const ANTICIPATION_REACH_PX := 70.0
+## Lateral px/s the athlete is credited with while closing on the ball; a
+## measured contact arrived from 232 px off with 0.33 s to go (~440 px/s).
+const ANTICIPATION_CLOSE_PX_S := 520.0
+## Predicted contact height (sim px) above which the wind-up is an overhead.
+const OVERHEAD_HEIGHT_PX := 70.0
+## Smoothing rates (1/s) of the two layers; frame-rate independent.
+const ANTICIPATION_RATE := 16.0
+const LOOK_RATE := 9.0
+## A ball this far behind the athlete fades the look back to the facing.
+const LOOK_FADE_FROM_DEG := 110.0
+const LOOK_FADE_TO_DEG := 160.0
 
 var rigs: Dictionary = {}            # role -> Node3D
 var ids: Dictionary = {}             # role -> athlete id
@@ -71,6 +98,8 @@ var _split_remaining: Dictionary = {}
 var _recovery_remaining: Dictionary = {}
 var _was_stroking: Dictionary = {}
 var _previous_hitter: String = ""
+var _anticipation: Dictionary = {}   # role -> float, smoothed weight
+var _look: Dictionary = {}           # role -> float, smoothed degrees
 var _racket_on_hand: Dictionary = {} # role -> bool; standard and legacy rigs
 
 ## The racket root is the centre of its face. Its grip centre is 0.2405 m below
@@ -105,6 +134,8 @@ func spawn(lineup: Dictionary, outfit_map: Dictionary, colors: Dictionary,
 	_visual_lean.clear()
 	_recovery_remaining.clear()
 	_was_stroking.clear()
+	_anticipation.clear()
+	_look.clear()
 	spawn_rigs = 0
 	for role in ROLES:
 		if not lineup.has(role):
@@ -250,6 +281,8 @@ func sync(state, delta: float = -1.0) -> void:
 		_sync_stroke(role, rig, paddle, float(state.ball.x), float(state.ball.z) if not reset_movement else NAN)
 		_was_stroking[role] = rig.is_stroking()
 		_sync_movement_weight(role, rig, movement, delta, reset_movement)
+		_sync_anticipation(role, rig, paddle, state, delta, reset_movement)
+		_sync_look(role, rig, state, delta, teleported)
 		# Small visual split step; never changes the simulated paddle coordinates.
 		var lift := sin(float(_split_remaining[role]) / 0.28 * PI) * 0.025
 		rig.set_split_step_lift(lift if receiving and not state.serving and not rig.is_stroking() else 0.0)
@@ -344,6 +377,127 @@ func _sync_stroke(role: String, rig: Node3D, paddle, ball_x: float = NAN, ball_h
 		if played:
 			_last_stroke[role] = stroke
 	_swing_seen[role] = swinging
+
+
+## Anticipation: the athlete the ball is flying to winds up before contact.
+## Reads the ball's position and velocity only (a ballistic guess, no bounce
+## modelling); the simulation decides whether and how the shot happens.
+func _sync_anticipation(role: String, rig: Node3D, paddle, state, delta: float, reset: bool) -> void:
+	if not rig.has_method("set_anticipation"):
+		return
+	var target := 0.0
+	var stroke: StringName = &""
+	var contact_phase := 0.5
+	var guess := _contact_guess(role, paddle, state)
+	if not reset and not guess.is_empty() and not rig.is_stroking():
+		var t: float = guess["t"]
+		target = 1.0 - smoothstep(ANTICIPATION_FULL_S, ANTICIPATION_START_S, t)
+		var recipe := anticipation_stroke(rig.get_stroke_names(), role, float(paddle.x), float(guess["x"]), float(guess["z"]))
+		stroke = recipe["clip"]
+		contact_phase = float(recipe["contact_phase"])
+		# A clip with no frame that reads as a preparation would silently drop the
+		# wind-up: fall back to one that has it (the smash, e.g., on a rig whose
+		# overhead clip holds only the strike).
+		stroke = anticipation_fallback(rig, stroke, contact_phase)
+		if stroke == &"":
+			target = 0.0
+	var weight: float = float(_anticipation.get(role, 0.0))
+	if reset or rig.is_stroking():
+		weight = 0.0
+	else:
+		weight = lerpf(weight, target, 1.0 - exp(-ANTICIPATION_RATE * delta))
+		if weight < 0.01 and target == 0.0:
+			weight = 0.0
+	_anticipation[role] = weight
+	if stroke == &"":
+		stroke = StringName(rig.get_anticipation()["stroke"])
+		contact_phase = float(rig.get_anticipation().get("contact_phase", 0.34))
+	rig.set_anticipation(stroke, weight, contact_phase)
+
+
+## Time (s), x and height (sim px) at which the ball reaches this athlete's line,
+## or {} when it is not coming to them (wrong direction, behind them, or their
+## partner is closer to it). Pure read of the state.
+func _contact_guess(role: String, paddle, state) -> Dictionary:
+	if state.serving or float(state.pointPause) > 0.0 or state.result != null:
+		return {}
+	var ball = state.ball
+	var near_team := role.begins_with("player")
+	var vy := float(ball.vy)
+	if (near_team and vy <= 28.0) or (not near_team and vy >= -28.0):
+		return {}
+	# Contact happens when the ball enters the athlete's depth reach
+	# (`Sim.can_hit`: |ball.y - paddle.y| < reach * depthReach), not at the line.
+	var balance: Dictionary = Frozen.balance()
+	var depth_reach: float = float(paddle.reach) * float(balance["playerDepthReach"] if paddle.isPlayer else balance["aiDepthReach"])
+	var gap := (float(paddle.y) - float(ball.y)) * (1.0 if near_team else -1.0)
+	if gap <= 0.0:
+		return {}
+	var t := maxf(0.0, gap - depth_reach) / absf(vy)
+	if not is_finite(t) or t > ANTICIPATION_START_S:
+		return {}
+	var x := float(ball.x) + float(ball.vx) * t
+	var g := float(balance["ballGravity"])
+	var z := maxf(0.0, float(ball.z) + float(ball.vz) * t - 0.5 * g * t * t)
+	# The athlete is still running to the ball: allow what they can cover in t.
+	var mine := absf(x - float(paddle.x))
+	if mine > float(paddle.w) * 0.5 + ANTICIPATION_REACH_PX + ANTICIPATION_CLOSE_PX_S * t:
+		return {}
+	var mate_role: String = {"player": "playerMate", "playerMate": "player",
+		"opponent": "opponentMate", "opponentMate": "opponent"}[role]
+	var mate = state.paddle(mate_role)
+	if mate != null and absf(x - float(mate.x)) < mine:
+		return {}
+	return {"t": t, "x": x, "z": z}
+
+
+## Which of the rig's strokes to wind up for: an overhead for a high ball, else
+## the forehand/backhand by contact side (same rule as `meshy_stroke_for`).
+static func anticipation_stroke(available: Array, role: String, paddle_x: float, contact_x: float, contact_z: float) -> Dictionary:
+	var intent := "smash" if contact_z > OVERHEAD_HEIGHT_PX else "drive"
+	var clip: StringName = meshy_stroke_for(intent, role, paddle_x, contact_x)
+	var recipe := stroke_recipe(intent)
+	if not clip in available:
+		clip = recipe["clip"]
+	return {"clip": clip, "contact_phase": recipe["contact_phase"]}
+
+
+## The first of `wanted` (then the forehand family) whose clip actually holds a
+## preparation frame, or &"" when none does — measured on the rig, not assumed.
+static func anticipation_fallback(rig: Node3D, wanted: StringName, contact_phase: float) -> StringName:
+	var candidates: Array = [wanted, &"meshy_drive", &"meshy_slice", &"drive", &"slice", &"lob"]
+	var available: Array = rig.get_stroke_names()
+	for candidate in candidates:
+		if candidate in available and not (rig.get_prep_readout(candidate, contact_phase) as Dictionary).is_empty() \
+				and int((rig.get_prep_readout(candidate, contact_phase) as Dictionary).get("bones", 0)) > 0:
+			return candidate
+	return &""
+
+
+## Chest and head follow the ball (clamped in the rig); feet and facing do not.
+func _sync_look(role: String, rig: Node3D, state, delta: float, snap: bool) -> void:
+	if not rig.has_method("set_look_yaw"):
+		return
+	var ball = state.ball
+	var target := look_yaw_towards(rig.position, rig.get_facing_degrees(),
+		Court.world_pos(float(ball.x), float(ball.y), float(ball.z)))
+	if rig.is_stroking():
+		target = 0.0 # the stroke clip owns the torso around contact
+	var yaw: float = float(_look.get(role, 0.0))
+	yaw = target if snap else lerpf(yaw, target, 1.0 - exp(-LOOK_RATE * delta))
+	_look[role] = yaw
+	rig.set_look_yaw(yaw)
+
+
+## Relative yaw (degrees, same sign as `set_facing_degrees`) from a rig at
+## `from` facing `facing_degrees` to `target`, faded out for a ball behind it.
+static func look_yaw_towards(from: Vector3, facing_degrees: float, target: Vector3) -> float:
+	var d := target - from
+	if Vector2(d.x, d.z).length_squared() < 0.04:
+		return 0.0
+	var rel := wrapf(rad_to_deg(atan2(d.x, d.z)) - facing_degrees, -180.0, 180.0)
+	var fade := 1.0 - smoothstep(LOOK_FADE_FROM_DEG, LOOK_FADE_TO_DEG, absf(rel))
+	return rel * fade
 
 
 ## Height observed on the swing edge, never tracked during follow-through.

@@ -2,7 +2,7 @@ extends Node
 ## soundtrack_manager.gd — Complete OST and Dynamic Music Manager for Steam Circuit Padel Pro.
 ##
 ## WHAT IT DOES:
-##   Manages playback and smooth crossfades for the 22 orchestral/steampunk OST tracks.
+##   Manages playback and smooth crossfades for the 42 orchestral/steampunk OST tracks.
 ##   Resolves arena and menu contexts to track IDs, streams audio files from
 ##   `res://assets/audio/music/`, and routes audio directly to the engine's `Music` bus.
 ##
@@ -55,9 +55,22 @@ const CONTEXT_TRACK_MAP := {
 	"epic_sudden_death": "ost_epic_sudden_death",
 	"epic_ascension": "ost_epic_ascension",
 	"epic_rematch": "ost_epic_rematch",
+	# 12 Sawano / Attack on Titan Special Suite (6 Instrumental + 6 Vocal Anthems)
+	"titan_breach": "ost_sawano_titan_breach",
+	"titan_breach_vocal": "ost_sawano_titan_breach_vocal",
+	"counterattack": "ost_sawano_counterattack",
+	"k21_vocal": "ost_sawano_k21_vocal",
+	"wings_of_freedom": "ost_sawano_wings_of_freedom",
+	"wings_of_freedom_vocal": "ost_sawano_wings_of_freedom_vocal",
+	"shiganshina_cry": "ost_sawano_shiganshina_cry",
+	"shiganshina_cry_vocal": "ost_sawano_shiganshina_cry_vocal",
+	"colossal_smash": "ost_sawano_colossal_smash",
+	"colossal_smash_vocal": "ost_sawano_colossal_smash_vocal",
+	"barricades": "ost_sawano_barricades",
+	"barricades_vocal": "ost_sawano_barricades_vocal",
 }
 
-## Complete metadata dictionary for all 30 OST tracks (22 Standard + 8 Epic/Anime)
+## Complete metadata dictionary for all 42 OST tracks (22 Standard + 8 Epic/Anime + 12 Sawano/Titan)
 const TRACK_METADATA := {
 	"ost_menu": {
 		"id": "ost_menu",
@@ -360,6 +373,127 @@ const TRACK_METADATA := {
 		"style": "Groove d'acciaio in crescendo con progressione eroica",
 		"prompt": "Determined and heroic anime comeback theme, driving industrial steel groove, resolute cello riffs growing into a powerful symphonic rock wall of sound, pulsing clockwork synth, indomitable will to win."
 	},
+	# 12 Sawano / Attack on Titan Special Tracks (6 Instrumental + 6 Vocal Anthems)
+	"ost_sawano_titan_breach": {
+		"id": "ost_sawano_titan_breach",
+		"title": "ət'æk:0N:WALL (Colossal Breach)",
+		"scene": "Boss Match Intro & Invasione Campo",
+		"category": "Sawano / Titan Special",
+		"bpm": 135,
+		"key": "C minor",
+		"style": "Orchestrale drammatico con corni in unisono, timpani colossali e power metal drop",
+		"prompt": "Epic orchestral symphonic metal in the unmistakable style of Hiroyuki Sawano (Attack on Titan / Vogel im Käfig). Heavy colossal timpani and taiko stomps, unison brass French horns screaming a soaring tragic melody in C minor, sudden dramatic drop into ticking clockwork tension, followed by explosive distorted guitar wall-of-sound with choral accents."
+	},
+	"ost_sawano_titan_breach_vocal": {
+		"id": "ost_sawano_titan_breach_vocal",
+		"title": "ət'æk:0N:WALL [VOCAL ANTHEM] (Titan Cry)",
+		"scene": "Boss Match Inno Vocale & Invasione Campo",
+		"category": "Sawano / Titan Special",
+		"bpm": 135,
+		"key": "C minor",
+		"style": "Inno titanico cantato con rituale in tedesco, cori ad armonie multiple e grida di battaglia",
+		"prompt": "Epic orchestral symphonic metal vocal anthem in the style of Hiroyuki Sawano (Attack on Titan / Vogel im Käfig). Dark German spoken intro, soaring English male rock lead, powerful female backing choir in fifths and octaves, heavy djent guitars, thunderous taiko rolls, and emotional Sawano drop climax."
+	},
+	"ost_sawano_counterattack": {
+		"id": "ost_sawano_counterattack",
+		"title": "K21:Vanguard (Counter-Rally)",
+		"scene": "Rimonta Epica / Break Point Critico",
+		"category": "Sawano / Titan Special",
+		"bpm": 142,
+		"key": "D minor",
+		"style": "Hybrid Orchestral Rap-Rock con rullante sincopato e archi taglienti",
+		"prompt": "Hiroyuki Sawano hybrid orchestral rap-rock battle theme (inspired by K21 and Before Lights Out). Fast syncopated hip-hop snare beat, screeching overdrive guitars, rapid staccato violin runs, heroic brass answers, intense motivational sports combat drive."
+	},
+	"ost_sawano_k21_vocal": {
+		"id": "ost_sawano_k21_vocal",
+		"title": "K21:Vanguard [VOCAL ANTHEM] (Battle Aria)",
+		"scene": "Boss Match Climax & Inno Vocale Sawano",
+		"category": "Sawano / Titan Special",
+		"bpm": 142,
+		"key": "D minor",
+		"style": "Inno rock/hip-hop cantato con voce solista acapella, cori a 3 parti e riff titanico",
+		"prompt": "Hiroyuki Sawano epic vocal battle anthem (inspired by K21 vocal and Before Lights Out). Emotional acapella vocal opening, exploding into heavy distorted guitar power chords, syncopated hip-hop breakbeat, soaring male/female lead vocals belting anthemic melodies, 3-part vocal choir harmonies, high soprano breakdown, and massive symphonic rock climax."
+	},
+	"ost_sawano_wings_of_freedom": {
+		"id": "ost_sawano_wings_of_freedom",
+		"title": "FLÜGEL:der:Freiheit (Scouting Overdrive)",
+		"scene": "Semifinali Torneo & Battaglia per la Libertà",
+		"category": "Sawano / Titan Special",
+		"bpm": 154,
+		"key": "G minor",
+		"style": "Symphonic Power Metal anime con violino solista e coro staccato",
+		"prompt": "Hiroyuki Sawano heroic anime anthem (style of The Reluctant Heroes and Bauklötze). Soaring lead violin melody, driving symphonic power metal drum double-kick, energetic German-style choir stabs, brass fanfares, euphoric sense of speed and freedom."
+	},
+	"ost_sawano_wings_of_freedom_vocal": {
+		"id": "ost_sawano_wings_of_freedom_vocal",
+		"title": "FLÜGEL:der:Freiheit [VOCAL ANTHEM] (Wings of Freedom)",
+		"scene": "Semifinali Torneo & Inno Vocale della Libertà",
+		"category": "Sawano / Titan Special",
+		"bpm": 154,
+		"key": "G minor",
+		"style": "Power metal vocale sinfonico con duetto maschile/femminile e cori tedeschi epici",
+		"prompt": "Hiroyuki Sawano symphonic power metal battle hymn with soaring lead vocals. Emotional violin ballad intro with female vocals, exploding into high-speed double-kick power metal, dual male/female vocal harmonies, German choral calls, and blazing anime climax."
+	},
+	"ost_sawano_shiganshina_cry": {
+		"id": "ost_sawano_shiganshina_cry",
+		"title": "T:T (Shiganshina Requiem)",
+		"scene": "Match Point Decisivo / Deuce a Oltranza",
+		"category": "Sawano / Titan Special",
+		"bpm": 128,
+		"key": "E minor",
+		"style": "Violoncello solista drammatico, Sawano drop e climax corale maestoso",
+		"prompt": "Dramatic emotional anime soundtrack (style of YouSeeBIGGIRL/T:T and Call of Silence). Melancholic solo cello intro over ambient breathy pads, sudden silence heartbeat drop, erupting into a colossal symphonic choir climax with thundering percussion and weeping brass chords."
+	},
+	"ost_sawano_shiganshina_cry_vocal": {
+		"id": "ost_sawano_shiganshina_cry_vocal",
+		"title": "T:T [VOCAL ANTHEM] (Shiganshina Requiem Aria)",
+		"scene": "Match Point Decisivo & Aria Vocale Drammatica",
+		"category": "Sawano / Titan Special",
+		"bpm": 128,
+		"key": "E minor",
+		"style": "Aria vocale lirica eterea con carillon, sussurro nel Sawano drop e boato corale operatico",
+		"prompt": "Heart-wrenching Hiroyuki Sawano vocal requiem aria (style of YouSeeBIGGIRL/T:T and Call of Silence). Delicate music box and breathy female solo aria intro, building into a dramatic duet, sudden silence heartbeat drop with a fragile whisper, exploding into a colossal SATB operatic choir wall-of-sound."
+	},
+	"ost_sawano_colossal_smash": {
+		"id": "ost_sawano_colossal_smash",
+		"title": "XL-TT (Padel Colossus)",
+		"scene": "Steam Gauge 100% / Super Colpo Speciale",
+		"category": "Sawano / Titan Special",
+		"bpm": 148,
+		"key": "F# minor",
+		"style": "Passi titanici industriali, sub-bass drop e synth arpeggiato aggressivo",
+		"prompt": "Hiroyuki Sawano colossal monster battle music (style of XL-TT and APETITAN). Earth-shaking industrial sub-bass thumps, distorted synth arpeggios pulsing in F# minor, massive orchestral brass stabs, adrenaline-fueled titan confrontation."
+	},
+	"ost_sawano_colossal_smash_vocal": {
+		"id": "ost_sawano_colossal_smash_vocal",
+		"title": "XL-TT [VOCAL ANTHEM] (Colossal Smash Roar)",
+		"scene": "Steam Gauge 100% & Inno Vocale Cyber-Colosso",
+		"category": "Sawano / Titan Special",
+		"bpm": 148,
+		"key": "F# minor",
+		"style": "Cyber-industrial rap-metal cantato con countdown vocale distorto e cori aggressivi",
+		"prompt": "High-octane industrial cyberpunk titan vocal battle anthem (style of XL-TT and APETITAN). Distorted warning countdown alert, aggressive rhythmic chants with sub-octave doublings, driving 4-on-the-floor kick, metallic anvil strikes, and colossal shouting brass climax."
+	},
+	"ost_sawano_barricades": {
+		"id": "ost_sawano_barricades",
+		"title": "bà:R1CADES (Final Wall)",
+		"scene": "Finalissima Scudetto & Inno di Gloria",
+		"category": "Sawano / Titan Special",
+		"bpm": 160,
+		"key": "A minor",
+		"style": "Inno J-Rock orchestrale ad alta energia con chitarre gemelle e ottoni trionfali",
+		"prompt": "High-octane Hiroyuki Sawano J-Rock orchestral anthem (style of Barricades and ət'æk 0N t'aɪtn). Driving 160 BPM drum beat, soaring twin lead guitars, uplifting choir chants, heroic trumpet hooks, emotional climax for a world championship victory."
+	},
+	"ost_sawano_barricades_vocal": {
+		"id": "ost_sawano_barricades_vocal",
+		"title": "bà:R1CADES [VOCAL ANTHEM] (Break the Wall)",
+		"scene": "Finalissima Scudetto & Inno Vocale Shonen",
+		"category": "Sawano / Titan Special",
+		"bpm": 160,
+		"key": "A minor",
+		"style": "Inno J-Rock anime shonen cantato con battiti di mani, slap bass e ritornello a due voci",
+		"prompt": "Joyful and electrifying Hiroyuki Sawano J-Rock anime vocal anthem (style of Barricades and Zero Eclipse). Energetic spoken shout intro with clapping hands, punchy slap bassline, sunny dual male/female vocal chorus singing in thirds, and triumphant stadium victory celebration."
+	},
 }
 
 const SUPPORTED_EXTENSIONS := [".ogg", ".mp3", ".wav"]
@@ -399,7 +533,7 @@ func _setup_players() -> void:
 	add_child(_player_b)
 
 
-## Returns all 22 registered OST track IDs.
+## Returns all 42 registered OST track IDs.
 static func all_track_ids() -> PackedStringArray:
 	var out := PackedStringArray()
 	for k in CONTEXT_TRACK_MAP:
@@ -475,6 +609,10 @@ static func load_stream(track_id: String) -> AudioStream:
 
 ## Gets the currently active track ID.
 func get_current_track_id() -> String:
+	return _current_track_id
+
+
+func current_track_id() -> String:
 	return _current_track_id
 
 

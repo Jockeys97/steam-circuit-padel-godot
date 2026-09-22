@@ -35,6 +35,20 @@ The `SoundtrackManager` (`res://src/audio/soundtrack_manager.gd`) looks for file
 | `ost_steam_workshop` | `ost_steam_workshop.ogg` / `.mp3` | Arena: Steam Workshop |
 | `ost_climax` | `ost_climax.ogg` / `.mp3` | Match Point / Deuce / Climax |
 | `ost_victory` | `ost_victory.ogg` / `.mp3` | Post-Match Victory Ceremony |
+| `ost_epic_anthem` | `ost_epic_anthem.ogg` / `.mp3` | Epic Shonen Opening & Grand Event |
+| `ost_epic_semifinal` | `ost_epic_semifinal.ogg` / `.mp3` | Tournament Semifinals |
+| `ost_epic_grand_final` | `ost_epic_grand_final.ogg` / `.mp3` | Championship Grand Final Match |
+| `ost_epic_rival_legend` | `ost_epic_rival_legend.ogg` / `.mp3` | Legend Tier Boss AI Opponents |
+| `ost_epic_awakening` | `ost_epic_awakening.ogg` / `.mp3` | 100% Steam Gauge Super Rally |
+| `ost_epic_sudden_death` | `ost_epic_sudden_death.ogg` / `.mp3` | Sudden Death & Golden Point |
+| `ost_epic_ascension` | `ost_epic_ascension.ogg` / `.mp3` | Hall of Fame & Trophy Ascension |
+| `ost_epic_rematch` | `ost_epic_rematch.ogg` / `.mp3` | Immediate Rematch & Defiance |
+| `ost_sawano_titan_breach` | `ost_sawano_titan_breach.ogg` / `.mp3` | Boss Match Intro & Colossal Breach |
+| `ost_sawano_counterattack` | `ost_sawano_counterattack.ogg` / `.mp3` | Counter-Rally & High Stakes Turnaround |
+| `ost_sawano_wings_of_freedom` | `ost_sawano_wings_of_freedom.ogg` / `.mp3` | Scouting Overdrive & Championship Semifinals |
+| `ost_sawano_shiganshina_cry` | `ost_sawano_shiganshina_cry.ogg` / `.mp3` | Shiganshina Requiem & Sudden Death Deuce |
+| `ost_sawano_colossal_smash` | `ost_sawano_colossal_smash.ogg` / `.mp3` | Padel Colossus & Berserk Super Smash |
+| `ost_sawano_barricades` | `ost_sawano_barricades.ogg` / `.mp3` | Final Wall & Grand Championship Anthem |
 
 ## Graceful Fallback
 If an OST file is not yet placed in this directory, `SoundtrackManager` gracefully falls back to silence or the deterministic procedural synthesizer (`music.gd`), ensuring test suites and match controllers continue without interruption.

@@ -349,6 +349,22 @@ static func apply(env: Environment, sun: DirectionalLight3D, fill: DirectionalLi
 	fill.light_color = rig["fill_color"]
 	fill.light_energy = float(rig["fill_energy"])
 	fill.shadow_enabled = false
+	if id == "egeo":
+		var sky_material := ProceduralSkyMaterial.new()
+		sky_material.sky_top_color = Color("287dc0")
+		sky_material.sky_horizon_color = Color("b0d5e3")
+		sky_material.ground_horizon_color = Color("b0d5e3")
+		sky_material.ground_bottom_color = Color("237e9f")
+		sky_material.sky_curve = 0.2
+		sky.sky_material = sky_material
+		env.fog_sky_affect = 0.0
+		env.fog_depth_begin = 80.0
+		env.fog_depth_end = 700.0
+		env.fog_light_energy = 0.35
+		env.fog_light_color = Color("75a1b8")
+		env.ambient_light_energy = 0.65
+		env.tonemap_exposure = 0.9
+		env.glow_enabled = false
 	return true
 
 
