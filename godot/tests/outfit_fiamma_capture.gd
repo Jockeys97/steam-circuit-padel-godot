@@ -152,7 +152,7 @@ func run() -> void:
 		var rig: Node3D = RigScene.instantiate()
 		# The asset must be selected BEFORE the rig enters the tree: `_ready()` builds
 		# it, and `set_athlete_asset()` refuses once construction has started.
-		check(rig.set_athlete_asset(athlete), "asset select failed for " + state)
+		check(rig.set_athlete_asset(athlete, StringName(state)), "asset select failed for " + state)
 		check(rig.get_load_error() == OK, "rig failed to load for " + state)
 		root.add_child(rig)
 		check(Catalogue.apply(rig, athlete, StringName(state)), "outfit apply failed for " + state)

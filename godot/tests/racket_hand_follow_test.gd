@@ -4,16 +4,23 @@ var failures := 0
 func _initialize():
 	call_deferred("run")
 func run():
+	var cases := []
 	for id in ["maestro", "fiamma", "oracolo", "colosso", "fornaio", "pantera"]:
+		cases.append([id, "base"])
+	cases.append(["maestro", "mythic"])
+	var poses := 0
+	for entry in cases:
+		var id: String = entry[0]
 		var view = View.new()
 		root.add_child(view)
-		view.spawn({"player": {"id": id}}, {}, {})
+		view.spawn({"player": {"id": id}}, {"player":StringName(entry[1])}, {})
 		var rig = view.rigs["player"]
 		var racket: Node3D = view.rackets["player"]
 		var anchor = racket.get_parent()
 		if not anchor is BoneAttachment3D:
 			failures += 1
 		for clip in ["idle", "run", "drive", "volley", "smash"]:
+			poses += 1
 			if clip in ["idle", "run"]:
 				rig.play_locomotion(StringName(clip))
 			else:
@@ -29,5 +36,5 @@ func run():
 				push_error("Bad grip %s %s distance=%s scale=%s" % [id, clip, distance, size])
 				failures += 1
 		view.free()
-	print("RACKET_HAND_FOLLOW 30 poses failures=", failures)
+	print("RACKET_HAND_FOLLOW ", poses, " poses failures=", failures)
 	quit(1 if failures else 0)

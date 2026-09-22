@@ -77,6 +77,15 @@ func run() -> void:
 	check(Lineup.equipped_outfit("maestro", {"equippedOutfits":{"maestro":"mythic"},"outfitsWon":{}}) == &"base", "locked Mythic cannot bypass challenge")
 	var locked := {"equippedOutfits": {"maestro": "signature"}, "outfitsWon": {}}
 	check(Lineup.equipped_outfit("maestro", locked) == &"base", "locked saved outfit cannot bypass challenge")
+	if "--capture" in OS.get_cmdline_user_args():
+		screen.hide()
+		match_node._sync_views()
+		for frame in 8:
+			await process_frame
+		await RenderingServer.frame_post_draw
+		var capture_dir := ProjectSettings.globalize_path("res://../docs/agent-work/meshy-outfit-trial/runtime")
+		DirAccess.make_dir_recursive_absolute(capture_dir)
+		check(root.get_texture().get_image().save_png(capture_dir.path_join("mythic-match.png")) == OK, "real match capture saved")
 	match_node.queue_free()
 	screen.queue_free()
 	await process_frame
