@@ -78,7 +78,10 @@ var _volume_slider: HSlider = null
 var _now_playing_label: Label = null
 
 # Player card (the dominant surface)
+var _list_card: PanelContainer = null
 var _player_card: PanelContainer = null
+var _insp_scroll: ScrollContainer = null
+var _hero_eyebrow: Label = null
 var _record: Control = null
 var _progress_bar: ProgressBar = null
 var _elapsed_label: Label = null
@@ -157,6 +160,7 @@ func _build_list_column(split_hbox: HBoxContainer) -> void:
 	list_card.size_flags_stretch_ratio = 0.62
 	list_card.add_theme_stylebox_override("panel", _panel_style(NAVY_DEEP, LINE, 12, 1))
 	split_hbox.add_child(list_card)
+	_list_card = list_card
 
 	var list_margin := MarginContainer.new()
 	list_margin.add_theme_constant_override("margin_left", 12)
@@ -206,9 +210,20 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 	insp_margin.add_theme_constant_override("margin_bottom", 14)
 	inspector_card.add_child(insp_margin)
 
+	# The column scrolls rather than overflowing: collapsed it fits every shipped
+	# resolution, and expanded at 720p the prompt is reached by scrolling this column
+	# instead of drawing outside the card or squeezing the player out of the screen.
+	_insp_scroll = ScrollContainer.new()
+	_insp_scroll.size_flags_horizontal = SIZE_EXPAND_FILL
+	_insp_scroll.size_flags_vertical = SIZE_EXPAND_FILL
+	_insp_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	insp_margin.add_child(_insp_scroll)
+
 	var insp_vbox := VBoxContainer.new()
+	insp_vbox.size_flags_horizontal = SIZE_EXPAND_FILL
+	insp_vbox.size_flags_vertical = SIZE_EXPAND_FILL
 	insp_vbox.add_theme_constant_override("separation", 12)
-	insp_margin.add_child(insp_vbox)
+	_insp_scroll.add_child(insp_vbox)
 
 	# Console header: what this card is, and the honest audio-file lamp.
 	var header_row := HBoxContainer.new()
@@ -248,6 +263,10 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 
 	var player_vbox := VBoxContainer.new()
 	player_vbox.add_theme_constant_override("separation", 14)
+	# The console card is deliberately taller than its content on a 1080p screen;
+	# centring the stack keeps that extra room reading as console margin instead of as
+	# an accidental gap under the transport.
+	player_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	player_margin.add_child(player_vbox)
 
 	var hero_row := HBoxContainer.new()
@@ -276,10 +295,13 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 	hero_info.add_theme_constant_override("separation", 6)
 	hero_row.add_child(hero_info)
 
-	var now_eyebrow := Label.new()
-	now_eyebrow.text = "IN RIPRODUZIONE"
-	now_eyebrow.theme_type_variation = &"LabelSmall"
-	hero_info.add_child(now_eyebrow)
+	# The hero's title/scene/badge describe the SELECTED track, so this eyebrow must say
+	# so — "IN RIPRODUZIONE" here would be a lie whenever the selection is not the track
+	# actually streaming. `_refresh_readout()` flips it only when the two coincide.
+	_hero_eyebrow = Label.new()
+	_hero_eyebrow.text = "TRACCIA SELEZIONATA"
+	_hero_eyebrow.theme_type_variation = &"LabelSmall"
+	hero_info.add_child(_hero_eyebrow)
 
 	# Track Title — the largest type in the card, trimmed at two lines rather than
 	# growing the card (the longest catalogue title is 46 characters).
@@ -355,7 +377,7 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 	# Transport controls. Prev/Next select only (never autoplay, as before); Play is
 	# disabled for a track with no file on disk, Stop only while something is playing.
 	var controls_bar := HBoxContainer.new()
-	controls_bar.add_theme_constant_override("separation", 10)
+	controls_bar.add_theme_constant_override("separation", 16)
 	player_vbox.add_child(controls_bar)
 
 	_prev_btn = Button.new()
@@ -403,7 +425,10 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 	_volume_slider = HSlider.new()
 	_volume_slider.min_value = -30.0
 	_volume_slider.max_value = 6.0
-	_volume_slider.value = 0.0
+	# Start where the Music bus actually is: opening the jukebox must not rewrite the
+	# user's stored mix, and the first `value_changed` (after the connect below) is
+	# what puts the slider and the bus in step.
+	_volume_slider.value = _bus_volume_db()
 	_volume_slider.custom_minimum_size = Vector2(96, 20)
 	_volume_slider.size_flags_vertical = SIZE_SHRINK_CENTER
 	_volume_slider.tooltip_text = "Volume musica"
@@ -576,6 +601,11 @@ func _refresh_readout() -> void:
 
 	_record.set_spinning(playing)
 	_stop_btn.disabled = not playing
+	# The hero shows the SELECTED track; only when that selection is the one actually
+	# streaming does the eyebrow claim playback. The "In Riproduzione" line below it
+	# always names the real audio, so the two never contradict each other.
+	var selected_is_playing: bool = playing and _track_ids[_selected_idx] == now_id
+	_hero_eyebrow.text = "IN RIPRODUZIONE" if selected_is_playing else "TRACCIA SELEZIONATA"
 	_refresh_track_markers(now_id)
 
 
@@ -640,6 +670,16 @@ func _on_volume_changed(val: float) -> void:
 	var bus_idx := AudioServer.get_bus_index("Music")
 	if bus_idx >= 0:
 		AudioServer.set_bus_volume_db(bus_idx, val)
+
+
+## The Music bus volume the slider should open at, in the slider's own dB band.
+## A missing bus reads as 0.0 dB — the same value the bus defaults to — and an
+## out-of-band or muted bus is clamped so the handle is always somewhere reachable.
+func _bus_volume_db() -> float:
+	var bus_idx := AudioServer.get_bus_index("Music")
+	if bus_idx < 0:
+		return 0.0
+	return clampf(AudioServer.get_bus_volume_db(bus_idx), -30.0, 6.0)
 
 
 func _on_prompt_toggle_pressed() -> void:
