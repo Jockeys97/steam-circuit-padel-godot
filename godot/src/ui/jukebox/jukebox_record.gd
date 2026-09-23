@@ -9,9 +9,9 @@ extends Control
 ##
 ## COST. The disc is rasterised ONCE by `_draw()`. Spinning is a tween on this
 ## node's own `rotation`, which reuses that raster: no shader, no particles, and
-## deliberately no per-frame `queue_redraw()`. The only redraws are the two this
-## control asks for itself — when the accent colour changes and when playback
-## flips — so the motif adds nothing measurable to the frame budget.
+## deliberately no per-frame `queue_redraw()`. This control repaints only when its
+## own state changes (the accent colour, playback flipping, or a resize). That cost
+## has not been benchmarked; it is described here as shape, not as a measurement.
 ##
 ## HONESTY. The tick mark is asymmetric on purpose: concentric circles alone would
 ## hide the rotation, and this motif must only ever turn while audio is really
@@ -39,6 +39,9 @@ func _ready() -> void:
 
 func _recentre_pivot() -> void:
 	pivot_offset = size * 0.5
+	# `_draw()` reads `size`, so a resize has to repaint: the rasterised disc is not
+	# rescaled for us.
+	queue_redraw()
 
 
 ## The label/rim colour, taken from the selected track's category by the screen.
@@ -66,9 +69,12 @@ func set_spinning(on: bool) -> void:
 		# A whole turn ends where it started, so the loop seam is invisible.
 		_spin_tween.tween_property(self, "rotation", TAU, SPIN_SECONDS)
 	else:
-		var rest := create_tween()
-		rest.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		rest.tween_property(self, "rotation", 0.0, REST_SECONDS)
+		# The same handle as the spin tween, on purpose: the kill above happens before
+		# this line, so a stop/play pair arriving close together can never leave a rest
+		# tween and a spin tween turning the disc at the same time.
+		_spin_tween = create_tween()
+		_spin_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_spin_tween.tween_property(self, "rotation", 0.0, REST_SECONDS)
 	queue_redraw()
 
 
