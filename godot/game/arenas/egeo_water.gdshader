@@ -3,6 +3,7 @@ render_mode unshaded, cull_back;
 
 // Opaque analytic water: no screen/depth reads, reflection viewport or textures.
 uniform float wave_time = -1.0; // Negative uses TIME; fixed value for capture tests.
+uniform vec2 coast_extent = vec2(18.0, 17.0);
 varying vec3 world_position;
 void vertex() {
 	world_position = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
@@ -25,7 +26,7 @@ void fragment() {
 	vec3 view_direction = normalize(CAMERA_POSITION_WORLD - world_position);
 	float fresnel = pow(1.0 - max(dot(n, view_direction), 0.0), 4.0);
 	// Distance from terrace footprint approximates coastal colour, not bathymetry.
-	vec2 q = abs(p) - vec2(18.0, 17.0);
+	vec2 q = abs(p) - coast_extent;
 	float coast = length(max(q, vec2(0.0)));
 	float shallow = exp(-coast * 0.10);
 	vec3 colour = mix(vec3(0.025, 0.19, 0.29), vec3(0.04, 0.43, 0.46), shallow);

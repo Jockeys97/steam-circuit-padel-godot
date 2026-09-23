@@ -221,6 +221,7 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 	# drop it now so no Resource outlives this arena in a `static var`.
 	Trees.release()
 	if id in ["torii", "medina", "carioca", "aurora"]:
+		preload("res://game/arenas/outdoor_landscape.gd").build(root, id)
 		# These outdoor arenas already have a continuous panorama sky in ArenaLook.
 		# The old camera-sized painting masks it and exposes rectangular edges when
 		# the match camera moves. Retain the actual 3D dressing and kit assets.

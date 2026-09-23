@@ -142,11 +142,11 @@ const LOOKS := {
 		"exposure": 1.04,
 		"saturation": 1.06,
 		"adjust_contrast": 1.02,
-		"fog_depth": Vector3(28.0, 320.0, 0.80),
-		"fog_color": Color(0.80, 0.90, 0.96),         # #cce6f5 sea haze over the ridges
-		"fog_energy": 0.90,
+		"fog_depth": Vector3(100.0, 700.0, 1.20),
+		"fog_color": Color(0.38, 0.64, 0.78),         # Blue marine haze, not white wash.
+		"fog_energy": 0.65,
 		"fog_sun_scatter": 0.25,
-		"fog_aerial": 0.45,
+		"fog_aerial": 0.12,
 		"fog_sky_affect": 0.85,
 		"glow_threshold": 0.85,
 		"glow_bloom": 0.07,
@@ -352,6 +352,15 @@ static func apply(env: Environment, sun: DirectionalLight3D, fill: DirectionalLi
 	if id in ["torii", "medina", "carioca", "aurora"]:
 		# Keep depth haze on scenery, not on the now fully exposed sky panorama.
 		env.fog_sky_affect = 0.0
+	if id == "carioca":
+		var tropical_sky := ProceduralSkyMaterial.new()
+		tropical_sky.sky_top_color = Color("187db7")
+		tropical_sky.sky_horizon_color = Color("88c8df")
+		tropical_sky.ground_bottom_color = Color("276d86")
+		tropical_sky.ground_horizon_color = Color("88c8df")
+		tropical_sky.sky_curve = 0.22
+		sky.sky_material = tropical_sky
+		env.sky = sky
 	if id == "egeo":
 		var sky_material := ProceduralSkyMaterial.new()
 		sky_material.sky_top_color = Color("287dc0")
