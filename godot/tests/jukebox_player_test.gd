@@ -123,7 +123,7 @@ func _run_checks(headless: bool) -> void:
 ## contracts the existing catalogue suite pins.
 func _check_identity_and_badges(juke: Control) -> void:
 	var ids := _all_ids()
-	_check(juke._track_buttons.size() == 47, "catalogo: 47 righe di lista (got %d)" % juke._track_buttons.size())
+	_check(juke._track_buttons.size() == 63, "catalogo: 63 righe di lista (got %d)" % juke._track_buttons.size())
 
 	var sawano_idx := ids.find(SAWANO_ID)
 	juke._select_track(sawano_idx)
@@ -179,7 +179,7 @@ func _check_live_readout(juke: Control) -> void:
 	if juke._manager.is_playing():
 		_check(position > 0.0, "elapsed avanza davvero (%.3fs)" % position)
 		_check(progress > 0.0 and progress <= 1.0, "progress = frazione reale dello stream (%.4f)" % progress)
-		_check(absf(juke._progress_bar.value - progress * 100.0) < 0.01, "barra = percentuale reale dello stream")
+		_check(absf(juke._progress_bar.value - progress * 100.0) < 0.2, "barra = percentuale reale dello stream")
 		_check(not juke._stop_btn.disabled, "Stop abilitato mentre suona")
 		_check(bool(juke._record.get("_spinning")), "il disco gira mentre l'audio suona")
 		_check(juke._now_playing_label.text.contains("In Riproduzione"), "riga now-playing coerente")

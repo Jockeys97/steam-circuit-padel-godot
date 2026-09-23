@@ -140,6 +140,7 @@ const PREFS_DEFAULTS: Dictionary = {
 	"tournamentRound": 0, ## js/ui.js:427, 464
 	"muted": false, ## js/audio.js:4
 	"volume": 0.5, ## js/audio.js:5
+	"musicVolume": 1.0, ## Port addition: multiplier for the Music bus only.
 	"controlMode": "semi", ## js/ui.js:466
 	"gamepadDeadzone": 0.15, ## js/ui.js:467
 	"vibration": true, ## js/ui.js:468

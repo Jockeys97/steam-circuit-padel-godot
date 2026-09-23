@@ -36,3 +36,29 @@ static func random_skip(store) -> bool:
 
 static func set_random_skip(store, enabled: bool) -> void:
 	Save.save_pref(store, "musicRandomR3", enabled)
+
+static func belongs(store, id: String, scope: String) -> bool:
+	var overrides: Variant = read(store).get("musicContexts", {})
+	if overrides is Dictionary and overrides.get(id) is Array:
+		return overrides[id].has(scope)
+	var menu := id in ["ost_menu", "ost_roster", "ost_career"]
+	return menu == (scope == "menu") or favorites(store, scope).has(id)
+
+static func transfer(store, id: String, source: String, move: bool) -> void:
+	var target := "match" if source == "menu" else "menu"
+	var prefs := read(store)
+	var raw: Variant = prefs.get("musicContexts", {})
+	var contexts: Dictionary = raw.duplicate(true) if raw is Dictionary else {}
+	contexts[id] = [target] if move else ["menu", "match"]
+	prefs["musicContexts"] = contexts
+	var source_favorites := favorites(store, source)
+	var target_favorites := favorites(store, target)
+	if source_favorites.has(id):
+		if not target_favorites.has(id):
+			target_favorites.append(id)
+		if move:
+			source_favorites.erase(id)
+	prefs["musicFavorites_" + source] = source_favorites
+	prefs["musicFavorites_" + target] = target_favorites
+	# One write preserves unrelated preferences and both halves of a move together.
+	store.write_group("prefs", prefs)

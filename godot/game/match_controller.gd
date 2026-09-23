@@ -88,6 +88,7 @@ const CourtTiming := preload("res://game/court_timing_marks.gd")
 ## since UIR-22, and since gate 4 the only mount whose construction does not depend
 ## on the clock.
 const Config := preload("res://game/match_config.gd")
+const MixerContract := preload("res://src/audio/mixer_contract.gd")
 const ScriptedPlayer := preload("res://game/scripted_player.gd")
 const MatchAudioScript := preload("res://game/match_audio.gd")
 const AthletesView := preload("res://game/athletes_view.gd")
@@ -960,6 +961,7 @@ func _build_scene() -> void:
 		_pause_overlay.set_osk_open(false)
 		_pause_overlay.set_match_paused(false)
 		_pause_overlay.tab_changed.connect(_on_pause_tab_changed)
+		_pause_overlay.music_volume_changed.connect(_on_pause_music_volume_changed)
 		# UIR-27's entry from the card (`js/main.js:2238-2241`): the reference hides the
 		# card and toggles the replay. The card hides through the pause echo the entry
 		# performs, and the toggle is the same seam the `r` key calls.
@@ -1143,7 +1145,13 @@ func _apply_pause_range() -> void:
 	var id := String(target.get("id", ""))
 	if id == "":
 		return
-	var row_name := id.get_slice("/", 1)
+	var action := id.get_slice("/", 1)
+	var row_names := {
+		"volume": "VolumeRow",
+		"deadzone": "DeadzoneRow",
+		"music-volume": "MusicVolumeRow",
+	}
+	var row_name := String(row_names.get(action, action))
 	var value := float(target.get("value", 0.0))
 	var row: Control = _pause_overlay.rows().get(row_name, null)
 	if row is SettingsRows.RangeRow:
@@ -1160,6 +1168,10 @@ func _apply_pause_range() -> void:
 		InputSource.set_deadzone(value)
 
 
+func _on_pause_music_volume_changed(value: float) -> void:
+	MixerContract.new().apply_music_volume(value)
+
+
 ## The stored mixer/input prefs, applied at match boot the way the reference applies
 ## them at load (`js/main.js:2276-2278`): `volume` to the audio module's own master
 ## gain (the bus derivation stays in the module) and `gamepadDeadzone` to the pad
@@ -1168,6 +1180,7 @@ func _apply_stored_audio_prefs() -> void:
 	var prefs: Dictionary = Config.stored_prefs()
 	if _audio != null and _audio.port != null:
 		_audio.port.set_master_gain(float(prefs.get("volume", 0.5)))
+	MixerContract.new().apply_music_volume(float(prefs.get("musicVolume", 1.0)))
 	InputSource.set_deadzone(float(prefs.get("gamepadDeadzone", 0.15)))
 
 

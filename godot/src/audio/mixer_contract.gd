@@ -211,6 +211,23 @@ func bus_volume_db(bus_name: String) -> float:
 	return 0.0
 
 
+## A saved 0-1 music-only multiplier over the reference Music bus level.
+## Master volume stays independently owned by `apply_master_gain()`.
+func apply_music_volume(gain: float) -> float:
+	var idx := AudioServer.get_bus_index(MUSIC_BUS)
+	if idx < 0:
+		idx = ensure_bus(MUSIC_BUS)
+	var normalized := clampf(gain if not is_nan(gain) else 0.0, 0.0, 1.0)
+	if normalized <= 0.0:
+		AudioServer.set_bus_volume_db(idx, SILENCE_DB)
+		AudioServer.set_bus_mute(idx, true)
+		return SILENCE_DB
+	var db := linear_to_db(reference_music_bus_gain() * normalized)
+	AudioServer.set_bus_volume_db(idx, db)
+	AudioServer.set_bus_mute(idx, false)
+	return db
+
+
 ## Names the bus, points it at its send and sets its level; adds it if absent.
 ## Idempotent, so no project setting (and no `default_bus_layout.tres`) is needed.
 func ensure_bus(bus_name: String) -> int:

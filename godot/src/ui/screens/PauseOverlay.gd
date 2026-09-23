@@ -93,6 +93,7 @@ signal rematch_requested
 signal replay_requested
 signal quit_requested
 signal tab_changed(tab_id: String)
+signal music_volume_changed(value: float)
 
 ## The three tabs (`index.html:570-572`), in markup order.
 const TAB_MATCH := "match"
@@ -192,6 +193,11 @@ const VOLUME_MIN := 0.0
 const VOLUME_MAX := 1.0
 const VOLUME_STEP := 0.01
 const VOLUME_DEFAULT := 0.5
+const MUSIC_VOLUME_KEY := "musicVolume"
+const MUSIC_VOLUME_MIN := 0.0
+const MUSIC_VOLUME_MAX := 1.0
+const MUSIC_VOLUME_STEP := 0.01
+const MUSIC_VOLUME_DEFAULT := 1.0
 ## `index.html:625`: the vibration toggle.
 const VIBRATION_KEY := "vibration"
 
@@ -323,6 +329,7 @@ var _quit_button: Button
 var _mode_buttons: Dictionary = {}
 var _deadzone_row: Control = null
 var _volume_row: Control = null
+var _music_volume_row: Control = null
 var _now_playing_row: Control = null
 var _vibration_row: Control = null
 var _stick_dots: Dictionary = {}
@@ -761,6 +768,8 @@ func refresh_values() -> void:
 		(_vibration_row as Rows.ToggleRow).set_on(bool(snap.get("vibration", true)))
 	if _volume_row != null:
 		(_volume_row as Rows.RangeRow).set_value(float(snap.get("volume", VOLUME_DEFAULT)))
+	if _music_volume_row != null:
+		(_music_volume_row as Rows.RangeRow).set_value(float(snap.get("music_volume", MUSIC_VOLUME_DEFAULT)))
 	refresh_ui_values()
 	if _now_playing_row != null:
 		(_now_playing_row as Rows.ToggleRow).set_on(bool(ModesSave.profile(store()).get("prefs", {}).get("nowPlaying", true)))
@@ -785,6 +794,10 @@ func volume() -> float:
 	return float(snapshot().get("volume", VOLUME_DEFAULT))
 
 
+func music_volume() -> float:
+	return float(snapshot().get("music_volume", MUSIC_VOLUME_DEFAULT))
+
+
 ## The player's own change of mode (`js/main.js:2474-2481`): persist; the match's
 ## own copy is the seam's business (`match_controller` reads `Config.control_mode()`).
 func set_control_mode(mode: String) -> bool:
@@ -803,6 +816,7 @@ func rows() -> Dictionary:
 	return {
 		"DeadzoneRow": _deadzone_row,
 		"VolumeRow": _volume_row,
+		"MusicVolumeRow": _music_volume_row,
 		"NowPlayingRow": _now_playing_row,
 		"VibrationRow": _vibration_row,
 	}
@@ -823,6 +837,8 @@ func set_row_value(row_name: String, value: float) -> bool:
 		(row as Rows.RangeRow).set_value(value)
 		if row_name == "VolumeRow":
 			_on_volume_changed(value)
+		elif row_name == "MusicVolumeRow":
+			_on_music_volume_changed(value)
 		elif row_name == "DeadzoneRow":
 			_on_deadzone_changed(value)
 		return true
@@ -1063,6 +1079,8 @@ func _refresh_row_strings() -> void:
 	for row in [_deadzone_row, _volume_row, _vibration_row]:
 		if row != null:
 			Rows.refresh_strings(row)
+	if _music_volume_row != null:
+		Rows.refresh_strings(_music_volume_row)
 	for id in UI_COMPONENT_IDS:
 		var row: Control = _ui_toggle_rows.get(id, null)
 		if row != null:
@@ -1194,6 +1212,7 @@ func focus_controls() -> Array:
 			out.append(_focus_row(ACTION_VIBRATION, Rows.focus_node(_vibration_row)))
 			out.append(_focus_row(ACTION_VOLUME, Rows.focus_node(_volume_row)))
 			out.append(_focus_row("now-playing", Rows.focus_node(_now_playing_row)))
+			out.append(_focus_row("music-volume", Rows.focus_node(_music_volume_row)))
 		TAB_CONTROLS:
 			if _legend != null and _legend.has_method("tutorial_button"):
 				var link: Button = _legend.call("tutorial_button")
@@ -1390,6 +1409,10 @@ func _build_controller_panel(parent: Control) -> void:
 	_now_playing_row = Rows.make_toggle("Mostra titolo e copertina", bool(ModesSave.profile(store()).get("prefs", {}).get("nowPlaying", true)), "NowPlayingRow")
 	(_now_playing_row as Rows.ToggleRow).changed.connect(func(on: bool) -> void: _persist("nowPlaying", on))
 	settings.add_child(_now_playing_row)
+	_music_volume_row = Rows.make_range("musicVolume", MUSIC_VOLUME_MIN, MUSIC_VOLUME_MAX, MUSIC_VOLUME_STEP,
+		float(snapshot().get("music_volume", MUSIC_VOLUME_DEFAULT)), "MusicVolumeRow")
+	(_music_volume_row as Rows.RangeRow).changed.connect(_on_music_volume_changed)
+	settings.add_child(_music_volume_row)
 	_panels[TAB_CONTROLLER] = panel
 
 
@@ -1690,6 +1713,12 @@ func _on_deadzone_changed(raw: float) -> void:
 
 func _on_volume_changed(raw: float) -> void:
 	_persist(VOLUME_KEY, clampf(raw, VOLUME_MIN, VOLUME_MAX))
+
+
+func _on_music_volume_changed(raw: float) -> void:
+	var value := clampf(raw, MUSIC_VOLUME_MIN, MUSIC_VOLUME_MAX)
+	_persist(MUSIC_VOLUME_KEY, value)
+	music_volume_changed.emit(value)
 
 
 func _on_vibration_changed(on: bool) -> void:

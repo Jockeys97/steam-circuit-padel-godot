@@ -19,9 +19,9 @@ func _initialize() -> void:
 func _run() -> void:
 	print("[soundtrack_manager_test] Starting verification suite...")
 
-	# 1. Catalog integrity & count (47 OST tracks: 22 standard + 8 epic + 12 Sawano Titan + 5 DBGT)
+	# 1. Catalog integrity & count (63 OST tracks: 22 standard + 8 epic + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH)
 	var all_tracks := SoundtrackManager.all_track_ids()
-	_assert_eq(all_tracks.size(), 47, "Catalog contains exactly 47 distinct OST track IDs")
+	_assert_eq(all_tracks.size(), 63, "Catalog contains exactly 63 distinct OST track IDs")
 
 	# 2. Frozen 9 Arena Mappings
 	_assert_eq(SoundtrackManager.track_id_for_arena("officina"), "ost_officina", "Arena officina maps to ost_officina")
@@ -83,6 +83,26 @@ func _run() -> void:
 	_assert_eq(SoundtrackManager.track_id_for_context("dbgt_grand_tour"), "ost_dbgt_grand_tour", "Context dbgt_grand_tour maps to ost_dbgt_grand_tour")
 	_assert_eq(SoundtrackManager.track_id_for_context("dbgt_super_saiyan_4"), "ost_dbgt_super_saiyan_4", "Context dbgt_super_saiyan_4 maps to ost_dbgt_super_saiyan_4")
 	_assert_eq(SoundtrackManager.track_id_for_context("dbgt_sabitsuita_machine_gun"), "ost_dbgt_sabitsuita_machine_gun", "Context dbgt_sabitsuita_machine_gun maps to ost_dbgt_sabitsuita_machine_gun")
+
+	# 5e. Automata Suite Context Mappings (15 Acoustic / Choral / Orchestral Tracks)
+	_assert_eq(SoundtrackManager.track_id_for_context("rays_of_rust"), "ost_rays_of_rust", "Context rays_of_rust maps to ost_rays_of_rust")
+	_assert_eq(SoundtrackManager.track_id_for_context("weight_of_the_rally"), "ost_weight_of_the_rally", "Context weight_of_the_rally maps to ost_weight_of_the_rally")
+	_assert_eq(SoundtrackManager.track_id_for_context("beautiful_duel"), "ost_beautiful_duel", "Context beautiful_duel maps to ost_beautiful_duel")
+	_assert_eq(SoundtrackManager.track_id_for_context("memories_of_sand"), "ost_memories_of_sand", "Context memories_of_sand maps to ost_memories_of_sand")
+	_assert_eq(SoundtrackManager.track_id_for_context("rebirth_of_hope"), "ost_rebirth_of_hope", "Context rebirth_of_hope maps to ost_rebirth_of_hope")
+	_assert_eq(SoundtrackManager.track_id_for_context("broken_monolith"), "ost_broken_monolith", "Context broken_monolith maps to ost_broken_monolith")
+	_assert_eq(SoundtrackManager.track_id_for_context("city_of_pearls"), "ost_city_of_pearls", "Context city_of_pearls maps to ost_city_of_pearls")
+	_assert_eq(SoundtrackManager.track_id_for_context("tears_of_porcelain"), "ost_tears_of_porcelain", "Context tears_of_porcelain maps to ost_tears_of_porcelain")
+	_assert_eq(SoundtrackManager.track_id_for_context("hymn_of_the_ancients"), "ost_hymn_of_the_ancients", "Context hymn_of_the_ancients maps to ost_hymn_of_the_ancients")
+	_assert_eq(SoundtrackManager.track_id_for_context("ashes_of_destiny"), "ost_ashes_of_destiny", "Context ashes_of_destiny maps to ost_ashes_of_destiny")
+	_assert_eq(SoundtrackManager.track_id_for_context("carnival_of_illusions"), "ost_carnival_of_illusions", "Context carnival_of_illusions maps to ost_carnival_of_illusions")
+	_assert_eq(SoundtrackManager.track_id_for_context("verdant_whispers"), "ost_verdant_whispers", "Context verdant_whispers maps to ost_verdant_whispers")
+	_assert_eq(SoundtrackManager.track_id_for_context("abyssal_silence"), "ost_abyssal_silence", "Context abyssal_silence maps to ost_abyssal_silence")
+	_assert_eq(SoundtrackManager.track_id_for_context("dance_of_the_blade"), "ost_dance_of_the_blade", "Context dance_of_the_blade maps to ost_dance_of_the_blade")
+	_assert_eq(SoundtrackManager.track_id_for_context("cradle_of_waves"), "ost_cradle_of_waves", "Context cradle_of_waves maps to ost_cradle_of_waves")
+
+	# 5f. Hunter x Hunter Special Vocal Anthem
+	_assert_eq(SoundtrackManager.track_id_for_context("hyori_ittai_vocal"), "ost_hyori_ittai_vocal", "Context hyori_ittai_vocal maps to ost_hyori_ittai_vocal")
 
 	# 6. Candidate Paths Formatting
 	var paths := SoundtrackManager.candidate_paths("ost_officina")

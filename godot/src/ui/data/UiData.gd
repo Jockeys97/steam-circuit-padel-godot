@@ -468,6 +468,7 @@ static func settings_snapshot(store: RefCounted = null) -> Dictionary:
 		"reduce_motion": _bool(prefs.get("reduceMotion", defaults.get("reduceMotion", false)), false),
 		"colorblind": _bool(prefs.get("colorblind", defaults.get("colorblind", false)), false),
 		"volume": _float(prefs.get("volume", defaults.get("volume", 0.5)), 0.5),
+		"music_volume": _float(prefs.get("musicVolume", defaults.get("musicVolume", 1.0)), 1.0),
 		"muted": _bool(prefs.get("muted", defaults.get("muted", false)), false),
 		"deadzone": _float(prefs.get("gamepadDeadzone", defaults.get("gamepadDeadzone", 0.15)), 0.15),
 		"vibration": _bool(prefs.get("vibration", defaults.get("vibration", true)), true),

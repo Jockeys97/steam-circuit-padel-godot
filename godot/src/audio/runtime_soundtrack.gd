@@ -37,6 +37,7 @@ func _ready() -> void:
 	add_child(layer)
 	toast = preload("res://src/audio/now_playing.gd").new()
 	layer.add_child(toast)
+	Mixer.new().apply_music_volume(float(Config.stored_prefs().get("musicVolume", 1.0)))
 
 func set_screen(id: String) -> void:
 	_match = false
@@ -67,26 +68,28 @@ func playlist() -> Array[String]:
 	var favorite_ids := Preferences.favorites(store, scope)
 	var only_favorites := Preferences.only(store, scope)
 	# Rebuild only when context or ownership changes, not 47 disk lookups per tick.
-	var key := str([requested, fallback, _match, Economy.unlock_all(store), Economy.relock_all(store), Economy.owned_ids(store), favorite_ids, only_favorites])
+	var key := str([requested, fallback, _match, Economy.unlock_all(store), Economy.relock_all(store), Economy.owned_ids(store), favorite_ids, only_favorites, Preferences.read(store).get("musicContexts", {})])
 	if key == _playlist_key:
 		return _playlist_cache
 	_playlist_key = key
 	var first := requested if Economy.has_access(store, requested) and Manager.has_track(requested) else fallback
-	items.append(first)
-	if _match:
+	if Preferences.belongs(store, first, scope):
+		items.append(first)
+	if Preferences.belongs(store, CLASSIC, scope):
 		items.append(CLASSIC)
-	var candidates: Array = Array(Manager.all_track_ids()) if _match else ["ost_menu", "ost_roster", "ost_career"]
+	var candidates: Array = Array(Manager.all_track_ids())
 	if requested == "ost_victory" and not only_favorites:
+		items = [first]
 		_playlist_cache = items
 		return items
 	for id in candidates:
-		if _match and id in ["ost_menu", "ost_roster", "ost_career", "ost_victory"]:
+		if not Preferences.belongs(store, id, scope):
 			continue
 		if not items.has(id) and Manager.has_track(id) and Economy.has_access(store, id):
 			items.append(id)
 	# A favourite can be assigned to either context, irrespective of its original tag.
 	for id in favorite_ids:
-		if not items.has(id) and ((id == CLASSIC and _match) or (Manager.has_track(id) and Economy.has_access(store, id))):
+		if Preferences.belongs(store, id, scope) and not items.has(id) and (id == CLASSIC or (Manager.has_track(id) and Economy.has_access(store, id))):
 			items.append(id)
 	if only_favorites:
 		items.assign(items.filter(func(id): return favorite_ids.has(id)))

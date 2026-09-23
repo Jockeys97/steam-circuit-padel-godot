@@ -74,9 +74,27 @@ const CONTEXT_TRACK_MAP := {
 	"dbgt_grand_tour": "ost_dbgt_grand_tour",
 	"dbgt_super_saiyan_4": "ost_dbgt_super_saiyan_4",
 	"dbgt_sabitsuita_machine_gun": "ost_dbgt_sabitsuita_machine_gun",
+	# 15 Automata Suite (Acoustic / Choral / Orchestral)
+	"rays_of_rust": "ost_rays_of_rust",
+	"weight_of_the_rally": "ost_weight_of_the_rally",
+	"beautiful_duel": "ost_beautiful_duel",
+	"memories_of_sand": "ost_memories_of_sand",
+	"rebirth_of_hope": "ost_rebirth_of_hope",
+	"broken_monolith": "ost_broken_monolith",
+	"city_of_pearls": "ost_city_of_pearls",
+	"tears_of_porcelain": "ost_tears_of_porcelain",
+	"hymn_of_the_ancients": "ost_hymn_of_the_ancients",
+	"ashes_of_destiny": "ost_ashes_of_destiny",
+	"carnival_of_illusions": "ost_carnival_of_illusions",
+	"verdant_whispers": "ost_verdant_whispers",
+	"abyssal_silence": "ost_abyssal_silence",
+	"dance_of_the_blade": "ost_dance_of_the_blade",
+	"cradle_of_waves": "ost_cradle_of_waves",
+	# 1 Hunter x Hunter Special Vocal Anthem
+	"hyori_ittai_vocal": "ost_hyori_ittai_vocal",
 }
 
-## Complete metadata dictionary for all 47 OST tracks (22 Standard + 8 Epic/Anime + 12 Sawano + 5 DBGT)
+## Complete metadata dictionary for all 63 OST tracks (22 Standard + 8 Epic/Anime + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH)
 const TRACK_METADATA := {
 	"ost_menu": {
 		"id": "ost_menu",
@@ -551,6 +569,166 @@ const TRACK_METADATA := {
 		"style": "Pop-punk anime anni '90 veloce e spensierato con chitarre in levare, rullante incalzante e melodia allegra",
 		"prompt": "High-tempo 90s anime pop-punk ending theme in the style of Sabitsuita Machine Gun (WANDS). Upbeat staccato guitar skank intro, driving skate-punk drum beat at 168 BPM, melodic walking bassline, bright distorted power chords, euphoric shonen anime celebration."
 	},
+	"ost_rays_of_rust": {
+		"id": "ost_rays_of_rust",
+		"title": "Rays of Rust",
+		"scene": "Rovine Meccaniche & Raggi di Luce",
+		"category": "Automata Special",
+		"bpm": 108,
+		"key": "D minor",
+		"style": "Acustico etereo con chitarra a 12 corde, canto Chaos Language, archi intimi e toms tribali",
+		"prompt": "Ethereal NieR: Automata inspired acoustic theme. Fingerpicked steel-string acoustic guitar arpeggios, haunting breathy female solo vocals chanting in evocative alien Chaos Language, warm expressive cello melodies, subtle crystalline glockenspiel chimes, deep tribal toms."
+	},
+	"ost_weight_of_the_rally": {
+		"id": "ost_weight_of_the_rally",
+		"title": "Weight of the Rally",
+		"scene": "Cattedrale Diroccata & Duello Filosofico",
+		"category": "Automata Special",
+		"bpm": 115,
+		"key": "F# minor",
+		"style": "Inno corale maestoso ed emotivo con pianoforte a coda, cori polifonici e archi travolgenti",
+		"prompt": "Soaring emotional NieR: Automata anthem in the style of Weight of the World. Melancholic yet resolute grand piano chords, lush layered choral vocals chanting in invented language, expressive solo violin and rich string orchestra swells, driving acoustic percussion."
+	},
+	"ost_beautiful_duel": {
+		"id": "ost_beautiful_duel",
+		"title": "Beautiful Duel",
+		"scene": "Teatro dell'Opera Infranto & Valzer Gotico",
+		"category": "Automata Special",
+		"bpm": 132,
+		"key": "G minor",
+		"style": "Valzer tragico teatrale in 3/4 con violino virtuoso solista, arpeggi di chitarra drammatici e voce operistica",
+		"prompt": "Tragic, theatrical waltz in 3/4 inspired by NieR: Automata boss themes (A Beautiful Song). Virtuosic dramatic solo violin passionate runs, operatic female vocal flourishes with microtonal melisma, heavy percussive orchestral downbeats, broken harpsichord accents."
+	},
+	"ost_memories_of_sand": {
+		"id": "ost_memories_of_sand",
+		"title": "Memories of Sand",
+		"scene": "Deserto Infinito & Relitti Sepolti",
+		"category": "Automata Special",
+		"bpm": 96,
+		"key": "E Phrygian",
+		"style": "Etnico meditativo con chitarra araba/acustica, percussioni desertiche e canto misterioso",
+		"prompt": "Hypnotic, atmospheric desert ambient theme inspired by NieR: Automata Memories of Dust. Intricate acoustic guitar picking in E Phrygian mode, subtle frame drum and tambourine shaker rhythms, resonant cello drone, ethereal female vocal melodies echoing over sun-scorched dunes."
+	},
+	"ost_rebirth_of_hope": {
+		"id": "ost_rebirth_of_hope",
+		"title": "Rebirth of Hope",
+		"scene": "Alba sulle Nubi & Redenzione",
+		"category": "Automata Special",
+		"bpm": 120,
+		"key": "A minor / C major",
+		"style": "Crescendo estatico luminoso con piano brillante, coro celestiale, rintocchi cristallini e archi trionfali",
+		"prompt": "Uplifting, spiritual sunrise crescendo inspired by NieR: Automata final epilogue themes. Gentle hopeful piano ostinato modulating from A minor to C major, soaring angelic choral harmony chanting in Chaos Language, crystalline glockenspiel chimes, triumphant cinematic strings."
+	},
+	"ost_broken_monolith": {
+		"id": "ost_broken_monolith",
+		"title": "Broken Monolith",
+		"scene": "Santuario Sommerso & Rovine Antiche",
+		"category": "Automata Special",
+		"bpm": 104,
+		"key": "C minor",
+		"style": "Arpeggi acustici di chitarra classica, pianoforte felpato, violoncello profondo e taiko solenne",
+		"prompt": "Contemplative, profound acoustic NieR: Automata piece. Gentle fingerpicked nylon-string classical guitar arpeggios, warm felt grand piano chords, deep steady acoustic cello pedal tones, subtle resonant concert taiko downbeats."
+	},
+	"ost_city_of_pearls": {
+		"id": "ost_city_of_pearls",
+		"title": "City of Pearls",
+		"scene": "Città di Cristallo & Architettura D'Alabastro",
+		"category": "Automata Special",
+		"bpm": 126,
+		"key": "D minor",
+		"style": "Minimalismo virtuosistico al pianoforte a coda, arpa da concerto, violoncello caldo e taiko soffuso",
+		"prompt": "Crystalline post-classical minimalist piano arpeggios inspired by Copied City (NieR: Automata). Rapid fluid 16th-note grand piano runs, sustained warm acoustic cello bass, delicate concert harp accents, pristine architectural stillness."
+	},
+	"ost_tears_of_porcelain": {
+		"id": "ost_tears_of_porcelain",
+		"title": "Tears of Porcelain",
+		"scene": "Palazzo d'Inverno & Marionette Spezzate",
+		"category": "Automata Special",
+		"bpm": 114,
+		"key": "A minor",
+		"style": "Valzer acustico in 3/4 con chitarra classica, pianoforte a coda, violoncello pizzicato e celesta morbida",
+		"prompt": "Nostalgic, sorrowful acoustic 3/4 waltz of antique marionettes. Gentle nylon-string guitar strums on offbeats, warm felt piano harmonies, acoustic cello, soft wooden celesta melody, intimate moonlit conservatory mood."
+	},
+	"ost_hymn_of_the_ancients": {
+		"id": "ost_hymn_of_the_ancients",
+		"title": "Hymn of the Ancients",
+		"scene": "Cattedrale Ipogea & Divinità Dimenticate",
+		"category": "Automata Special",
+		"bpm": 92,
+		"key": "E minor",
+		"style": "Coro sacro ad armonie aperte, pianoforte risonante, violoncello maestoso e taiko cerimoniale",
+		"prompt": "Sacred, profound subterranean sanctuary anthem. Serene open-harmony vocal choir chords with rock-solid steady pitch, dark resonant felt grand piano, deep acoustic cello pedal tones, slow ceremonial taiko drum."
+	},
+	"ost_ashes_of_destiny": {
+		"id": "ost_ashes_of_destiny",
+		"title": "Ashes of Destiny",
+		"scene": "Dune di Cenere Vulcanica & Spada nel Suolo",
+		"category": "Automata Special",
+		"bpm": 100,
+		"key": "B minor",
+		"style": "Marcia acustica solenne con chitarra a 12 corde, pianoforte a coda, arpa da concerto e taiko marciante",
+		"prompt": "Solemn, sweeping cinematic acoustic march across volcanic ash plains. Rich acoustic guitar fingerpicking, resonant felt piano chords, warm cello countermelody, concert harp cadences, steady marching taiko heartbeat."
+	},
+	"ost_carnival_of_illusions": {
+		"id": "ost_carnival_of_illusions",
+		"title": "Carnival of Illusions",
+		"scene": "Parco Meccanico & Giostra Spezzata",
+		"category": "Automata Special",
+		"bpm": 138,
+		"key": "A minor / C major",
+		"style": "Marimba in legno, contrabbasso pizzicato, accordi di chitarra in levare e carillon spettrale",
+		"prompt": "Playful, nostalgic, and eerie mechanical amusement park in ruins. Staccato wooden rosewood marimba arpeggios, walking upright acoustic double bass, light offbeat acoustic guitar strums, delicate music box accents, no pitch modulation."
+	},
+	"ost_verdant_whispers": {
+		"id": "ost_verdant_whispers",
+		"title": "Verdant Whispers",
+		"scene": "Regno delle Foreste & Bastioni Sommersi",
+		"category": "Automata Special",
+		"bpm": 96,
+		"key": "D Dorian (6/8)",
+		"style": "Ballata pastorale in 6/8 con liuto acustico, flauto dolce ligneo, tamburo bodhran e violoncello",
+		"prompt": "Enchanting 6/8 pastoral folk melody for an overgrown forest castle. Delicate lute fingerpicking, pure wooden transverse recorder flute melody, heartbeat bodhran hand-drum pulse, warm sustained acoustic cello."
+	},
+	"ost_abyssal_silence": {
+		"id": "ost_abyssal_silence",
+		"title": "Abyssal Silence",
+		"scene": "Voragine Ipogea & Monolite Sommergibile",
+		"category": "Automata Special",
+		"bpm": 72,
+		"key": "F minor",
+		"style": "Atmosfera ipogea solenne con contrabbasso sub-grave, pianoforte felpato, campana tibetana e blocchi di legno",
+		"prompt": "Profound, dark subterranean cavern ambient. Deep bowed double bass sub-octave fundamental at 43.6 Hz, sparse felt grand piano chords with spacious room reverb, sustained acoustic bronze meditation chime, wooden temple blocks."
+	},
+	"ost_dance_of_the_blade": {
+		"id": "ost_dance_of_the_blade",
+		"title": "Dance of the Blade",
+		"scene": "Piattaforma del Duello & Lame Incrociate",
+		"category": "Automata Special",
+		"bpm": 144,
+		"key": "E Phrygian / E minor",
+		"style": "Duello acustico rapido con chitarra flamenca spagnola, ostinato di violoncello e cajon poliritmico",
+		"prompt": "High-intensity acoustic duel theme inspired by NieR: Automata boss encounters. Rapid virtuosic Spanish flamenco nylon guitar riffs, driving cello bass ostinato, tight acoustic cajon percussion and concert taiko."
+	},
+	"ost_cradle_of_waves": {
+		"id": "ost_cradle_of_waves",
+		"title": "Cradle of Waves",
+		"scene": "Rive della Città Allagata & Ninna Nanna Marina",
+		"category": "Automata Special",
+		"bpm": 84,
+		"key": "G major",
+		"style": "Ninna nanna marina con cascate d'arpa da concerto, armonici di chitarra, violoncello cantabile e celesta",
+		"prompt": "Serene, tranquil flooded city shoreline lullaby. Cascading concert harp pentatonic arpeggios, gentle acoustic guitar natural harmonics, singing warm acoustic cello melody, soft celesta water-drop chimes."
+	},
+	"ost_hyori_ittai_vocal": {
+		"id": "ost_hyori_ittai_vocal",
+		"title": "Hyori Ittai [VOCAL ANTHEM] (Two Sides of Fate)",
+		"scene": "Eclissi Solare & Duello della Chimera",
+		"category": "Anime Vocal Special",
+		"bpm": 154,
+		"key": "D minor / F major",
+		"style": "Inno shonen vocale epico con chitarre acustiche furiose a 12 corde, archi sinfonici, ottoni da battaglia e duo vocale armonizzato",
+		"prompt": "Passionate, high-intensity shonen anime ending anthem inspired by Hyori Ittai (Hunter x Hunter Chimera Ant Arc). Furious 12-string acoustic guitar strumming at 154 BPM, dramatic soaring orchestral strings, heavy brass stabs, driving rock drums with taiko, and emotional dual-voice shonen vocal harmony."
+	},
 }
 
 const SUPPORTED_EXTENSIONS := [".ogg", ".mp3", ".wav"]
@@ -597,7 +775,7 @@ func _setup_players() -> void:
 	add_child(_player_b)
 
 
-## Returns all 47 registered OST track IDs.
+## Returns all 63 registered OST track IDs.
 static func all_track_ids() -> PackedStringArray:
 	var out := PackedStringArray()
 	for k in CONTEXT_TRACK_MAP:
@@ -649,25 +827,26 @@ static func has_track_for_arena(arena_id: String) -> bool:
 ## Loads the AudioStream for the given track ID if available, or returns null.
 static func load_stream(track_id: String) -> AudioStream:
 	for path in candidate_paths(track_id):
-		if ResourceLoader.exists(path):
-			var res = load(path)
-			if res is AudioStream:
-				return res
-		if FileAccess.file_exists(path):
+		var global_p := ProjectSettings.globalize_path(path)
+		if FileAccess.file_exists(global_p):
 			if path.ends_with(".ogg"):
-				var ogg = AudioStreamOggVorbis.load_from_file(path)
+				var ogg = AudioStreamOggVorbis.load_from_file(global_p)
 				if ogg != null:
 					ogg.loop = true
 					return ogg
 			elif path.ends_with(".mp3"):
 				var mp3 = AudioStreamMP3.new()
-				mp3.data = FileAccess.get_file_as_bytes(path)
+				mp3.data = FileAccess.get_file_as_bytes(global_p)
 				mp3.loop = true
 				return mp3
 			elif path.ends_with(".wav"):
 				var wav = AudioStreamWAV.new()
-				wav.data = FileAccess.get_file_as_bytes(path)
+				wav.data = FileAccess.get_file_as_bytes(global_p)
 				return wav
+		if ResourceLoader.exists(path):
+			var res = load(path)
+			if res is AudioStream:
+				return res
 	return null
 
 

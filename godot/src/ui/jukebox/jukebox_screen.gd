@@ -34,6 +34,7 @@ const SoundtrackManager := preload("res://src/audio/soundtrack_manager.gd")
 ## override does not unlock) is listed honestly as locked and is not playable here.
 const Economy := preload("res://src/economy/economy_service.gd")
 const Config := preload("res://game/match_config.gd")
+const MixerContract := preload("res://src/audio/mixer_contract.gd")
 const ShellScene := preload("res://src/ui/ScreenShell.tscn")
 const RecordMotif := preload("res://src/ui/jukebox/jukebox_record.gd")
 const DefaultTheme := preload("res://src/ui/theme/padel_theme.tres")
@@ -54,13 +55,20 @@ const READOUT_INTERVAL := 0.1
 
 signal closed
 const MusicPreferences := preload("res://src/audio/music_preferences.gd")
-var _favorite_buttons: Dictionary = {}
-var _only_buttons: Dictionary = {}
-var _playlist_scope: OptionButton
+var _scope := "menu"
+var _scope_buttons: Dictionary = {}
+var _only_favorites: CheckButton
+var _show_favorites_only := false
+var _catalog_filter_buttons: Dictionary = {}
+var _star_buttons: Dictionary = {}
+var _track_rows: Array[Control] = []
 var _r3_order: OptionButton
 var _playlist_hint: Label
 var _playlist_preview := false
-var _classic_favorite: CheckButton
+var _classic_row: Control
+var _genre: OptionButton
+var _copy_context: Button
+var _move_context: Button
 ## Emitted when the player tries to play a LOCKED track: the host routes this to the
 ## Emporio shop. The screen itself never opens another screen.
 signal shop_requested(track_id: String)
@@ -124,8 +132,10 @@ func _ready() -> void:
 	_track_ids = SoundtrackManager.all_track_ids()
 	_manager = SoundtrackManager.new()
 	add_child(_manager)
+	_apply_saved_music_volume()
 	_build_ui()
 	_select_track(0)
+	_filter_playlist()
 	# The readout follows the stream, so it is polled rather than evented — the
 	# manager owns no per-frame signal and this screen will not invent one.
 	set_process(true)
@@ -141,9 +151,6 @@ func set_store(store: RefCounted) -> void:
 		_populate_track_list()
 		_refresh_readout()
 		_sync_favorites()
-		for scope in _only_buttons:
-			_only_buttons[scope].set_pressed_no_signal(MusicPreferences.only(_economy(), scope))
-		_classic_favorite.set_pressed_no_signal(MusicPreferences.favorites(_economy(), "match").has("classic_match"))
 		_r3_order.select(1 if MusicPreferences.random_skip(_economy()) else 0)
 		_filter_playlist()
 
@@ -193,7 +200,7 @@ func _build_ui() -> void:
 	add_child(_shell)
 	_shell.setup("jukebox")
 	_shell.set_title_text("JUKEBOX & SOUND TEST")
-	_shell.set_subtitle_text("Colonna sonora originale — 47 tracce (Standard, Epiche, Suite Sawano e Dragon Ball GT)")
+	_shell.set_subtitle_text("Colonna sonora originale — 63 tracce (Standard, Epiche, Sawano, Dragon Ball GT, Automata, Hunter x Hunter)")
 	_shell.set_back_target("menu")
 
 	var back_btn: Button = _shell.back_control()
@@ -268,59 +275,91 @@ func _build_favorites(parent: VBoxContainer) -> void:
 	_r3_order.tooltip_text = "Vale per R3 nei menu e in partita. Rispetta i preferiti e le tracce sbloccate; non cambia l'avanzamento automatico."
 	_r3_order.item_selected.connect(func(index: int): MusicPreferences.set_random_skip(_economy(), index == 1))
 	parent.add_child(_r3_order)
-	var caption := Label.new()
-	caption.text = "PREFERITI DEL BRANO SELEZIONATO"
-	caption.add_theme_font_size_override("font_size", 11)
-	parent.add_child(caption)
-	var favorites := HBoxContainer.new()
-	parent.add_child(favorites)
-	var filters := HBoxContainer.new()
-	parent.add_child(filters)
+	var tabs := HBoxContainer.new()
+	parent.add_child(tabs)
 	for scope in ["menu", "match"]:
-		var label_text := "Menu" if scope == "menu" else "Partita"
-		var favorite := Button.new()
-		favorite.toggle_mode = true
-		favorite.size_flags_horizontal = SIZE_EXPAND_FILL
-		favorite.custom_minimum_size.y = 34
-		favorite.text = "+ " + label_text
-		favorite.pressed.connect(_toggle_favorite.bind(scope))
-		favorites.add_child(favorite)
-		_favorite_buttons[scope] = favorite
-		var only := CheckButton.new()
-		only.text = "Solo pref. " + label_text
-		only.add_theme_font_size_override("font_size", 11)
-		only.tooltip_text = "Riproduci solo i preferiti in questo contesto. Senza preferiti disponibili, la musica resta silenziosa."
-		only.set_pressed_no_signal(MusicPreferences.only(_economy(), scope))
-		only.toggled.connect(_set_only_favorites.bind(scope))
-		filters.add_child(only)
-		_only_buttons[scope] = only
-	_classic_favorite = CheckButton.new()
-	_classic_favorite.text = "Tema originale: preferito partita"
-	_classic_favorite.add_theme_font_size_override("font_size", 11)
-	_classic_favorite.tooltip_text = "Il tema generato dal gioco viene riprodotto in partita, non nell'anteprima dei file OST."
-	_classic_favorite.set_pressed_no_signal(MusicPreferences.favorites(_economy(), "match").has("classic_match"))
-	_classic_favorite.toggled.connect(func(_on: bool):
-		MusicPreferences.toggle(_economy(), "match", "classic_match")
-		_filter_playlist()
-	)
-	parent.add_child(_classic_favorite)
-	_playlist_scope = OptionButton.new()
-	for text in ["Catalogo completo", "Playlist menu", "Playlist partita"]:
-		_playlist_scope.add_item(text)
-	_playlist_scope.item_selected.connect(func(_index): _filter_playlist())
-	parent.add_child(_playlist_scope)
+		var tab := Button.new()
+		tab.text = "Musiche menu" if scope == "menu" else "Musiche partita"
+		tab.custom_minimum_size.y = 40
+		tab.add_theme_font_size_override("font_size", 13)
+		tab.size_flags_horizontal = SIZE_EXPAND_FILL
+		tab.pressed.connect(_set_scope.bind(scope))
+		tabs.add_child(tab)
+		_scope_buttons[scope] = tab
+	_only_favorites = CheckButton.new()
+	_only_favorites.text = "Riproduci solo i preferiti"
+	_only_favorites.add_theme_font_size_override("font_size", 13)
+	_only_favorites.tooltip_text = "Solo per la scheda aperta. Senza preferiti disponibili la musica resta silenziosa. La lista resta visibile per aggiungerne altri."
+	_only_favorites.toggled.connect(func(on: bool): _set_only_favorites(on, _scope))
+	parent.add_child(_only_favorites)
+	var catalog_caption := Label.new()
+	catalog_caption.text = "MOSTRA NELL'ELENCO"
+	catalog_caption.add_theme_font_size_override("font_size", 10)
+	parent.add_child(catalog_caption)
+	var catalog_filter := HBoxContainer.new()
+	catalog_filter.add_theme_constant_override("separation", 4)
+	parent.add_child(catalog_filter)
+	var catalog_filter_group := ButtonGroup.new()
+	for entry in [{"label": "Tutti", "favorites": false}, {"label": "Preferiti", "favorites": true}]:
+		var filter_button := Button.new()
+		filter_button.text = entry.label
+		filter_button.toggle_mode = true
+		filter_button.button_group = catalog_filter_group
+		filter_button.set_pressed_no_signal(not entry.favorites)
+		filter_button.custom_minimum_size.y = 36
+		filter_button.size_flags_horizontal = SIZE_EXPAND_FILL
+		filter_button.theme_type_variation = &"SegmentedActive" if not entry.favorites else &"SegmentedInactive"
+		filter_button.tooltip_text = "Mostra solo i brani preferiti della playlist selezionata." if entry.favorites else "Mostra tutti i brani della playlist selezionata."
+		filter_button.pressed.connect(_set_catalog_filter.bind(entry.favorites))
+		catalog_filter.add_child(filter_button)
+		_catalog_filter_buttons[entry.favorites] = filter_button
+	_genre = OptionButton.new()
+	_genre.add_item("Tutti i generi")
+	_genre.set_item_metadata(0, "")
+	var categories: Array[String] = []
+	for id in _track_ids:
+		var category := String(SoundtrackManager.track_info(id).get("category", "Altro"))
+		if not categories.has(category):
+			categories.append(category)
+	for category in categories:
+		_genre.add_item(category)
+		_genre.set_item_metadata(_genre.item_count - 1, category)
+	_genre.clip_text = true
+	_genre.item_selected.connect(func(_index): _filter_playlist())
+	parent.add_child(_genre)
 	var listen := Button.new()
 	listen.text = "Ascolta playlist"
 	listen.pressed.connect(func(): _play_playlist(0))
 	parent.add_child(listen)
 	_playlist_hint = Label.new()
-	_playlist_hint.text = "R3: prossimo brano nei menu e in partita"
+	_playlist_hint.text = "Stella: aggiungi/rimuovi · Controller: △ / Y"
 	_playlist_hint.add_theme_font_size_override("font_size", 11)
 	_playlist_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	parent.add_child(_playlist_hint)
 
-func _toggle_favorite(scope: String) -> void:
-	MusicPreferences.toggle(_economy(), scope, String(_track_ids[_selected_idx]))
+func _set_scope(scope: String) -> void:
+	_scope = scope
+	_filter_playlist()
+
+func _update_transfer_buttons() -> void:
+	if _copy_context == null:
+		return
+	var target := "partita" if _scope == "menu" else "menu"
+	var id := String(_track_ids[_selected_idx])
+	var already := MusicPreferences.belongs(_economy(), id, "match" if _scope == "menu" else "menu")
+	_copy_context.text = "Già in " + target if already else "Aggiungi anche a " + target
+	_copy_context.disabled = already or not _visible_ids().has(id)
+	_move_context.text = "Sposta in " + target
+	_move_context.disabled = not _visible_ids().has(id)
+	_move_context.tooltip_text = "Sposta il brano selezionato nell'altra playlist, rimuovendolo da questa."
+
+func _transfer_selected(move: bool) -> void:
+	var id := String(_track_ids[_selected_idx])
+	MusicPreferences.transfer(_economy(), id, _scope, move)
+	_filter_playlist()
+
+func _toggle_track_favorite(id: String) -> void:
+	MusicPreferences.toggle(_economy(), _scope, id)
 	_sync_favorites()
 	_filter_playlist()
 
@@ -329,33 +368,71 @@ func _set_only_favorites(enabled: bool, scope: String) -> void:
 	_filter_playlist()
 
 func _sync_favorites() -> void:
-	for scope in _favorite_buttons:
-		var on := MusicPreferences.favorites(_economy(), scope).has(String(_track_ids[_selected_idx]))
-		_favorite_buttons[scope].set_pressed_no_signal(on)
-		_favorite_buttons[scope].text = ("✓ " if on else "+ ") + ("Menu" if scope == "menu" else "Partita")
+	var favorites := MusicPreferences.favorites(_economy(), _scope)
+	for id in _star_buttons:
+		var star: Button = _star_buttons[id]
+		star.set_pressed_no_signal(favorites.has(id))
+		star.tooltip_text = ("Rimuovi dai preferiti: " if favorites.has(id) else "Aggiungi ai preferiti: ") + ("Tema originale" if id == "classic_match" else String(SoundtrackManager.track_info(id).get("title", id)))
+		star.queue_redraw()
+	for scope in _scope_buttons:
+		_scope_buttons[scope].theme_type_variation = &"SegmentedActive" if scope == _scope else &"SegmentedInactive"
+	_only_favorites.set_pressed_no_signal(MusicPreferences.only(_economy(), _scope))
+	for favorites_only in _catalog_filter_buttons:
+		var active: bool = favorites_only == _show_favorites_only
+		_catalog_filter_buttons[favorites_only].theme_type_variation = &"SegmentedActive" if active else &"SegmentedInactive"
+		_catalog_filter_buttons[favorites_only].set_pressed_no_signal(active)
+
+func _set_catalog_filter(favorites_only: bool) -> void:
+	_show_favorites_only = favorites_only
+	_filter_playlist()
+
+func _scope_genre_ids() -> Array[String]:
+	var ids: Array[String] = []
+	var category := String(_genre.get_item_metadata(_genre.selected))
+	for id in _track_ids:
+		if MusicPreferences.belongs(_economy(), id, _scope) and (category == "" or SoundtrackManager.track_info(id).get("category", "") == category):
+			ids.append(id)
+	return ids
+
+func _visible_ids() -> Array[String]:
+	var ids: Array[String] = []
+	var favorites := MusicPreferences.favorites(_economy(), _scope)
+	for id in _scope_genre_ids():
+		if not _show_favorites_only or favorites.has(id):
+			ids.append(id)
+	return ids
 
 func _playlist_ids() -> Array[String]:
 	var result: Array[String] = []
-	var scope := "menu" if _playlist_scope.selected == 1 else "match"
-	var favorites := MusicPreferences.favorites(_economy(), scope)
-	var only := MusicPreferences.only(_economy(), scope)
-	for id in _track_ids:
-		var belongs := (id in ["ost_menu", "ost_roster", "ost_career"]) if scope == "menu" else (not id in ["ost_menu", "ost_roster", "ost_career", "ost_victory"])
-		if _playlist_scope.selected == 0 or ((belongs or favorites.has(id)) and (not only or favorites.has(id))):
+	var favorites := MusicPreferences.favorites(_economy(), _scope)
+	var only := MusicPreferences.only(_economy(), _scope)
+	for id in _scope_genre_ids():
+		if not only or favorites.has(id):
 			result.append(id)
 	return result
 
 func _filter_playlist() -> void:
-	var ids := _playlist_ids()
+	var ids := _visible_ids()
 	for child in _track_list_container.get_children():
 		if child is Label:
-			child.visible = _playlist_scope.selected == 0
+			child.visible = false
 	for index in _track_buttons.size():
-		_track_buttons[index].visible = ids.has(_track_ids[index])
-	_playlist_hint.text = "Nessuna OST nella lista. Aggiungila dal catalogo; il tema originale si ascolta in partita." if ids.is_empty() else "R3: prossimo brano nei menu e in partita"
+		_track_rows[index].visible = ids.has(_track_ids[index])
+	var classic_visible := MusicPreferences.belongs(_economy(), "classic_match", _scope) and String(_genre.get_item_metadata(_genre.selected)) == ""
+	if _show_favorites_only:
+		classic_visible = classic_visible and MusicPreferences.favorites(_economy(), _scope).has("classic_match")
+	_classic_row.visible = classic_visible
+	_sync_favorites()
+	_playlist_hint.text = "Stella: aggiungi/rimuovi · Controller: △ / Y"
+	if ids.is_empty() and not _classic_row.visible:
+		_playlist_hint.text = "Nessun preferito in questa playlist." if _show_favorites_only else "Nessun brano di questo genere nella scheda. Prova l'altra scheda o Tutti i generi."
 	if not ids.is_empty() and not ids.has(_track_ids[_selected_idx]):
 		_select_track(_track_ids.find(ids[0]))
-	if _playlist_preview and not ids.has(_manager.current_track_id()):
+	var focus_owner := get_viewport().gui_get_focus_owner()
+	if focus_owner != null and is_ancestor_of(focus_owner) and not focus_owner.is_visible_in_tree() and not ids.is_empty():
+		_track_buttons[_selected_idx].grab_focus()
+	_update_transfer_buttons()
+	if _playlist_preview and not _playlist_ids().has(_manager.current_track_id()):
 		_manager.stop(0.0)
 
 func _play_playlist(direction: int) -> void:
@@ -504,6 +581,18 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 	_scene_label.clip_text = true
 	_scene_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	hero_info.add_child(_scene_label)
+	var transfer_row := HBoxContainer.new()
+	transfer_row.add_theme_constant_override("separation", 8)
+	hero_info.add_child(transfer_row)
+	_copy_context = Button.new()
+	_move_context = Button.new()
+	for button in [_copy_context, _move_context]:
+		button.theme_type_variation = &"ButtonSecondary"
+		button.add_theme_font_size_override("font_size", 12)
+		button.custom_minimum_size.y = 36
+		transfer_row.add_child(button)
+	_copy_context.pressed.connect(_transfer_selected.bind(false))
+	_move_context.pressed.connect(_transfer_selected.bind(true))
 
 	# Category lamp. Text contract is unchanged: "[ <CATEGORY> ]" in upper case.
 	var badges_row := HBoxContainer.new()
@@ -692,6 +781,8 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 
 func _populate_track_list() -> void:
 	_track_buttons.clear()
+	_track_rows.clear()
+	_star_buttons.clear()
 	_track_base_texts = PackedStringArray()
 	var current_cat := ""
 
@@ -712,14 +803,13 @@ func _populate_track_list() -> void:
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.theme_type_variation = &"SegmentedInactive"
 		var has_file := SoundtrackManager.has_track(tid)
-		var badge := "[✔ AUDIO]" if has_file else "[PROMPT]"
 		var title: String = String(info.get("title", tid))
-		var idx_str := "%02d" % (i + 1)
 		# Emporio OST: a track the profile does not own is marked here, honestly, and the
 		# marker lives in the base text so the ▶ playback marker cannot erase it.
 		var lock := " 🔒" if is_locked(tid) else ""
-		var base_text := " %s. %s %s%s" % [idx_str, title, badge, lock]
+		var base_text := title + lock + (" [PROMPT]" if not has_file else "")
 		btn.text = base_text
+		btn.tooltip_text = title + (" · Da sbloccare" if is_locked(tid) else "")
 		# A long title trims inside the column instead of forcing the row wider.
 		btn.clip_text = true
 		btn.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
@@ -728,15 +818,42 @@ func _populate_track_list() -> void:
 
 		var captured_idx := i
 		btn.pressed.connect(func(): _select_track(captured_idx))
-		_track_list_container.add_child(btn)
+		btn.focus_entered.connect(func():
+			if _title_label != null:
+				_select_track(captured_idx)
+		)
+		btn.set_meta("favorite_track_id", tid)
+		var row := HBoxContainer.new()
+		row.size_flags_horizontal = SIZE_EXPAND_FILL
+		_track_list_container.add_child(row)
+		btn.size_flags_horizontal = SIZE_EXPAND_FILL
+		row.add_child(btn)
+		_add_star(row, tid)
+		_track_rows.append(row)
 		_track_buttons.append(btn)
 		_track_base_texts.append(base_text)
+	_classic_row = HBoxContainer.new()
+	_track_list_container.add_child(_classic_row)
+	var classic_label := Label.new()
+	classic_label.text = "Tema originale · in partita"
+	classic_label.add_theme_font_size_override("font_size", 12)
+	classic_label.size_flags_horizontal = SIZE_EXPAND_FILL
+	_classic_row.add_child(classic_label)
+	_add_star(_classic_row, "classic_match")
+
+func _add_star(row: Control, id: String) -> void:
+	var star := preload("res://src/ui/jukebox/favorite_star.gd").new()
+	star.set_meta("favorite_track_id", id)
+	star.pressed.connect(_toggle_track_favorite.bind(id))
+	row.add_child(star)
+	_star_buttons[id] = star
 
 
 func _select_track(idx: int) -> void:
 	if idx < 0 or idx >= _track_ids.size():
 		return
 	_selected_idx = idx
+	_update_transfer_buttons()
 	_sync_favorites()
 
 	for i in _track_buttons.size():
@@ -808,6 +925,8 @@ func _category_color(cat_str: String) -> Color:
 		return Color(1.0, 0.28, 0.35)
 	elif cat_str.begins_with("Dragon Ball"):
 		return Color(1.0, 0.55, 0.1) # Iconic Dragon Ball Orange
+	elif cat_str.begins_with("Automata"):
+		return Color(0.88, 0.95, 0.82) # Ethereal pale sage / ivory
 	elif cat_str.begins_with("Epico"):
 		return Color(1.0, 0.82, 0.2)
 	return Color(0.3, 0.8, 0.95)
@@ -1026,6 +1145,7 @@ func _on_play_pressed() -> void:
 			return
 		_now_playing_label.text = "Traccia bloccata: acquistabile nell'Emporio"
 		_now_playing_label.add_theme_color_override("font_color", Color(0.95, 0.65, 0.25))
+		_apply_saved_music_volume()
 		shop_requested.emit(tid)
 		_refresh_readout()
 		return
@@ -1051,25 +1171,18 @@ func _on_stop_pressed() -> void:
 
 
 func _on_prev_pressed() -> void:
-	if _playlist_scope.selected != 0:
-		_play_playlist(-1)
-		return
-	var new_idx := (_selected_idx - 1 + _track_ids.size()) % _track_ids.size()
-	_select_track(new_idx)
+	_play_playlist(-1)
 
 
 func _on_next_pressed() -> void:
-	if _playlist_scope.selected != 0:
-		_play_playlist(1)
-		return
-	var new_idx := (_selected_idx + 1) % _track_ids.size()
-	_select_track(new_idx)
+	_play_playlist(1)
 
 
 func _on_volume_changed(val: float) -> void:
 	var bus_idx := AudioServer.get_bus_index("Music")
 	if bus_idx >= 0:
 		AudioServer.set_bus_volume_db(bus_idx, val)
+		AudioServer.set_bus_mute(bus_idx, false)
 
 
 ## The Music bus volume the slider should open at, in the slider's own dB band.
@@ -1105,9 +1218,21 @@ func _on_copy_prompt_pressed() -> void:
 
 func _on_back_pressed() -> void:
 	_on_stop_pressed()
+	_apply_saved_music_volume()
 	closed.emit()
 	queue_free()
 
+
+func _apply_saved_music_volume() -> void:
+	MixerContract.new().apply_music_volume(float(Config.stored_prefs().get("musicVolume", 1.0)))
+
+
+func _input(event: InputEvent) -> void:
+	if is_visible_in_tree() and event is InputEventJoypadButton and event.pressed and event.button_index == JOY_BUTTON_Y:
+		var focused := get_viewport().gui_get_focus_owner()
+		if focused != null and is_ancestor_of(focused) and focused.has_meta("favorite_track_id"):
+			_toggle_track_favorite(String(focused.get_meta("favorite_track_id")))
+			get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE):
