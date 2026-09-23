@@ -39,9 +39,11 @@ LOG_DIR="${LOG_DIR:-/tmp}"
 
 # `-- ` separates engine arguments from the user arguments the game reads.
 run_harness() {
-  echo "=== harness: --headless --path godot/ (main scene = SmokeTest.tscn) ==="
+  # The project's main scene is the game menu (`game/Main.tscn`) since 2026-09-23,
+  # so the harness names its scene explicitly instead of relying on the default.
+  echo "=== harness: --headless --path godot/ res://tests/SmokeTest.tscn ==="
   flock -w 900 "$LOCK" timeout 120 env -u DISPLAY GODOT_SILENCE_ROOT_WARNING=1 \
-    "$GODOT" --headless --path "$PROJECT" 2>&1 | tee "$LOG_DIR/padel-harness.log"
+    "$GODOT" --headless --path "$PROJECT" res://tests/SmokeTest.tscn 2>&1 | tee "$LOG_DIR/padel-harness.log"
   echo "harness exit=${PIPESTATUS[0]}"
 }
 

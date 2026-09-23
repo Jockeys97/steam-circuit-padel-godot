@@ -323,6 +323,7 @@ var _quit_button: Button
 var _mode_buttons: Dictionary = {}
 var _deadzone_row: Control = null
 var _volume_row: Control = null
+var _now_playing_row: Control = null
 var _vibration_row: Control = null
 var _stick_dots: Dictionary = {}
 var _stick_boxes: Dictionary = {}
@@ -761,6 +762,8 @@ func refresh_values() -> void:
 	if _volume_row != null:
 		(_volume_row as Rows.RangeRow).set_value(float(snap.get("volume", VOLUME_DEFAULT)))
 	refresh_ui_values()
+	if _now_playing_row != null:
+		(_now_playing_row as Rows.ToggleRow).set_on(bool(ModesSave.profile(store()).get("prefs", {}).get("nowPlaying", true)))
 
 
 ## What the rows show: `UiData.settings_snapshot()` over the store — the same
@@ -800,6 +803,7 @@ func rows() -> Dictionary:
 	return {
 		"DeadzoneRow": _deadzone_row,
 		"VolumeRow": _volume_row,
+		"NowPlayingRow": _now_playing_row,
 		"VibrationRow": _vibration_row,
 	}
 
@@ -827,6 +831,8 @@ func set_row_value(row_name: String, value: float) -> bool:
 		(row as Rows.ToggleRow).set_on(on)
 		if row_name == "VibrationRow":
 			_on_vibration_changed(on)
+		elif row_name == "NowPlayingRow":
+			_persist("nowPlaying", on)
 		return true
 	return false
 
@@ -1052,6 +1058,8 @@ func set_language(lang: String) -> bool:
 
 
 func _refresh_row_strings() -> void:
+	if _now_playing_row != null:
+		(_now_playing_row as Rows.ToggleRow).check.text = "Mostra titolo e copertina" if Locale.current_lang() == "it" else "Show music title and cover"
 	for row in [_deadzone_row, _volume_row, _vibration_row]:
 		if row != null:
 			Rows.refresh_strings(row)
@@ -1185,6 +1193,7 @@ func focus_controls() -> Array:
 			out.append(_focus_row(ACTION_DEADZONE, Rows.focus_node(_deadzone_row)))
 			out.append(_focus_row(ACTION_VIBRATION, Rows.focus_node(_vibration_row)))
 			out.append(_focus_row(ACTION_VOLUME, Rows.focus_node(_volume_row)))
+			out.append(_focus_row("now-playing", Rows.focus_node(_now_playing_row)))
 		TAB_CONTROLS:
 			if _legend != null and _legend.has_method("tutorial_button"):
 				var link: Button = _legend.call("tutorial_button")
@@ -1378,6 +1387,9 @@ func _build_controller_panel(parent: Control) -> void:
 		float(snapshot().get("volume", VOLUME_DEFAULT)), "VolumeRow")
 	(_volume_row as Rows.RangeRow).changed.connect(_on_volume_changed)
 	settings.add_child(_volume_row)
+	_now_playing_row = Rows.make_toggle("Mostra titolo e copertina", bool(ModesSave.profile(store()).get("prefs", {}).get("nowPlaying", true)), "NowPlayingRow")
+	(_now_playing_row as Rows.ToggleRow).changed.connect(func(on: bool) -> void: _persist("nowPlaying", on))
+	settings.add_child(_now_playing_row)
 	_panels[TAB_CONTROLLER] = panel
 
 

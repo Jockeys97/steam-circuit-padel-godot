@@ -447,7 +447,7 @@ func refresh_data() -> void:
 	_career = ModesSave.load_career(store)
 	_rows = _rows_now(store)
 	_dictated = _dictated_now()
-	_lineup = Lineup.resolve(Config.athlete(), _dictated if not _dictated.is_empty() else null)
+	_lineup = Lineup.resolve(Config.athlete(), _dictated if not _dictated.is_empty() else null, _career)
 	_build_view()
 	_apply_layout()
 	_refresh_head()
@@ -1665,22 +1665,34 @@ func _on_title_input(event: InputEvent) -> void:
 			title_door_tap(mouse.position)
 
 
-## The code entry's one door. `ok` (and the career's `unlockAll` is saved), `wrong`
-## (nothing changes) or `refused` (no code is being asked for, or there is nothing
-## progression-locked to open).
+## LUCALE grants access; ALELU temporarily blocks unlockables without deleting
+## rewards or purchases. The optional lockAll save field defaults to false on old saves.
+## `refused` means the entry is closed or persistence failed; `wrong` changes nothing.
 func submit_unlock_code(code: String) -> String:
 	if not _code_open:
 		return "refused"
-	if _career.get("unlockAll", false):
-		return "refused"
-	if code.strip_edges().to_upper() != ModeTables.unlock_code():
+	var normalized := code.strip_edges().to_upper()
+	var relock := normalized == ModeTables.relock_code()
+	if not relock and normalized != ModeTables.unlock_code():
 		_code_wrong = true
 		_refresh_head()
 		return "wrong"
 	var career := ModesSave.load_career(Config.save_store())
-	career["unlockAll"] = true
-	ModesSave.save_career(Config.save_store(), career)
+	career["unlockAll"] = not relock
+	career["lockAll"] = relock
+	var saved := ModesSave.save_career(Config.save_store(), career)
+	if not bool(saved.get("ok", false)):
+		return "refused"
 	_career = career
+	if relock:
+		Config.outfit_index = 0
+		if not CareerRules.is_unlocked(Config.athlete(), career):
+			for index in Frozen.athletes().size():
+				var athlete: Dictionary = Frozen.athletes()[index]
+				if CareerRules.is_unlocked(athlete, career) and not DemoGate.locked(String(athlete["id"]), DemoGate.KIND_ATHLETE):
+					Config.athlete_index = index
+					Config.special_athlete_id = ""
+					break
 	_code_open = false
 	_code_wrong = false
 	refresh_data()
@@ -1695,12 +1707,13 @@ func _refresh_lineup_and_save(store: RefCounted) -> void:
 	Lineup.set_pref_source(ModesSave.profile(store).get("prefs", {}))
 	# `resolveLineup` asks for the second player before the dictated pair, and excludes
 	# both when it asks (`js/ui.js:566-572`).
-	_lineup = Lineup.resolve(Config.athlete(), null)
+	_lineup = Lineup.resolve(Config.athlete(), null, _career)
 	_dictated = _dictated_now()
-	_lineup = Lineup.resolve(Config.athlete(), _dictated if not _dictated.is_empty() else null)
+	_lineup = Lineup.resolve(Config.athlete(), _dictated if not _dictated.is_empty() else null, _career)
 	# `ui.lineup = {playerMate, opponent, opponentMate}` (`js/ui.js:915-916`): the player
 	# is `Config`'s own athlete, not a lineup preference.
-	ModesSave.save_pref(store, "lineup", slots_of(Lineup.ids(_lineup)))
+	if not bool(_career.get("lockAll", false)):
+		ModesSave.save_pref(store, "lineup", slots_of(Lineup.ids(_lineup)))
 
 
 func route_to(screen_id: String) -> bool:

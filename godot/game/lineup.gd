@@ -47,7 +47,13 @@ const FILLED := ["playerMate", "opponent", "opponentMate"]
 ## `{role: athlete_dict}`. `player` is the athlete the menu selected; the other
 ## three come from the rule above. `dictated` is `{opponent, opponentMate}` or
 ## empty/null.
-static func resolve(player: Dictionary, dictated: Variant = null) -> Dictionary:
+static func resolve(player: Dictionary, dictated: Variant = null, career: Dictionary = {}) -> Dictionary:
+	var relocked := bool(career.get("lockAll", false))
+	if relocked and not CareerRules.is_unlocked(player, career):
+		for candidate in Gate.roster():
+			if CareerRules.is_unlocked(candidate, career):
+				player = candidate
+				break
 	var out := {"player": player}
 	var roster: Array = Frozen.athletes()
 	var used := {String(player["id"]): true}
@@ -62,6 +68,8 @@ static func resolve(player: Dictionary, dictated: Variant = null) -> Dictionary:
 			chosen = _pref(role)
 		if chosen == null:
 			continue
+		if relocked and not CareerRules.is_unlocked(chosen, career):
+			continue
 		if used.has(String((chosen as Dictionary)["id"])):
 			continue
 		out[role] = chosen
@@ -69,6 +77,8 @@ static func resolve(player: Dictionary, dictated: Variant = null) -> Dictionary:
 	# The reserve pool is the FULL roster minus the player (`js/ui.js:578`).
 	var reserves: Array = []
 	for athlete in roster:
+		if relocked and not CareerRules.is_unlocked(athlete, career):
+			continue
 		if String(athlete["id"]) != String(player["id"]):
 			reserves.append(athlete)
 	for role in FILLED:

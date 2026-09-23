@@ -96,6 +96,7 @@ func _run(audit: AuditBase) -> void:
 	for _i in SETTLE_FRAMES:
 		await process_frame
 	await _idle(audit)
+	await _controller_actions(audit)
 	await _advice(audit)
 	await _continuation(audit)
 	await _states(audit)
@@ -107,6 +108,36 @@ func _run(audit: AuditBase) -> void:
 ## A CONSTRUCTED result: the four stat groups and the three rally counters a match writes,
 ## with the numbers of an 11-7 win. Nothing here claims a match was played — the payload is
 ## a fixture, and the block never reads anything else.
+func _controller_actions(audit: AuditBase) -> void:
+	var mounted := await _mount(_payload())
+	var screen: Node = mounted[0]
+	var poster: RefCounted = mounted[2]
+	var focus = load("res://game/menu_focus.gd").new("result")
+	var bridge = load("res://src/ui/focus/UiFocusBridge.gd").new()
+	bridge.attach(screen.get_node("Shell"), focus, _router)
+	bridge.action_requested.connect(func(action: String): screen.call("activate", action))
+	var rematches := [0]
+	screen.rematch_requested.connect(func(): rematches[0] += 1)
+	for suffix in ["RematchButton", "CoachAnalyzeButton", "MenuButton"]:
+		audit.check_true(bridge.set_focus(screen.call("focus_id", suffix)), "pad/focus_" + suffix)
+		var event := InputEventJoypadButton.new()
+		event.device = 0
+		event.button_index = JOY_BUTTON_A # Godot south button: Xbox A / PlayStation cross.
+		event.pressed = true
+		bridge.act(focus.handle_pad_event(event, 0))
+		event.pressed = false
+		focus.handle_pad_event(event, 0)
+		if suffix == "RematchButton":
+			audit.check_eq(rematches[0], 1, "pad/rematch_emits_once")
+			audit.check_eq(screen.call("activate", "unknown"), false, "pad/unknown_is_inert")
+			audit.check_eq(screen.call("activate", "coach-drill"), false, "pad/hidden_drill_is_inert")
+		elif suffix == "CoachAnalyzeButton":
+			audit.check_eq(poster.calls.size(), 1, "pad/coach_calls_fake_transport_once")
+			screen.call("activate", "coach-analyze")
+			audit.check_eq(poster.calls.size(), 1, "pad/loading_cannot_duplicate_request")
+	audit.check_eq(_router.active_id(), "menu", "pad/menu_routes_home")
+
+
 func _payload(extra: Dictionary = {}) -> Dictionary:
 	var payload := {
 		"result": {

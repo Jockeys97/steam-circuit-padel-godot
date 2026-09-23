@@ -34,6 +34,9 @@ extends Control
 
 const UiStrings := preload("res://src/ui/UiStrings.gd")
 
+## A click on the shell's visible Back control. The router owns the actual transition.
+signal back_requested(target_id: String)
+
 ## `godot/game/hud.gd:75`. Applied to the shell's outer margins in `_apply_safe_area`.
 const SAFE_MARGIN := 8.0
 
@@ -192,9 +195,15 @@ func _ensure_nodes() -> void:
 	_title = $Margin/Rows/TitleRow/TitleBlock/Title
 	_subtitle = $Margin/Rows/TitleRow/TitleBlock/Subtitle
 	_content = $Margin/Rows/Content
+	_back.pressed.connect(_on_back_pressed)
 	_apply_safe_area()
 	_style_chrome()
 	_apply_back_label()
+
+
+func _on_back_pressed() -> void:
+	if back_target_id != "":
+		back_requested.emit(back_target_id)
 
 
 ## Re-reads the label the reference's own markup carries (`index.html:312`). A door a

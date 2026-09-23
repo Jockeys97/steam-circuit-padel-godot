@@ -295,10 +295,13 @@ func _marks_contract(built: int) -> void:
 	_check("every mark is camera-facing, unshaded, depth-test-free and shadowless",
 		bad.is_empty(), str(bad))
 	var advice := _mark("TimingAdvice") as Label3D
-	_check("the compact advice word is camera-facing and depth-test-free at 1/60 m per pixel",
+	# 1/75 m per pixel: a fifth smaller than the other timing text, owner's request
+	# (`court_timing_marks.gd::TIMING_ADVICE_M_PER_PX`). Font size stays 11 so the word
+	# is not rasterised any softer.
+	_check("the compact advice word is camera-facing and depth-test-free at 1/75 m per pixel",
 		advice != null and advice.billboard == BaseMaterial3D.BILLBOARD_ENABLED
 			and advice.no_depth_test and advice.font_size == 11
-			and is_equal_approx(advice.pixel_size, 1.0 / 60.0), "")
+			and is_equal_approx(advice.pixel_size, 1.0 / 75.0), "")
 	var verdict := _mark("TimingVerdict") as Label3D
 	_check("the verdict's grade line carries the reference's own size and stroke",
 		verdict != null and verdict.font_size == 14 and verdict.outline_size == 5

@@ -234,6 +234,9 @@ static func _js_round(value: float) -> int:
 
 ## `isUnlocked(item, career)` (`js/data.js:702-710`).
 static func is_unlocked(item: Dictionary, career: Dictionary) -> bool:
+	# Reversible content lock: earned progress is retained, starter content stays open.
+	if bool(career.get("lockAll", false)) and (item.get("unlock") != null or item.get("challenge") != null):
+		return false
 	if bool(career.get("unlockAll", false)):
 		return true
 	# I completi non si comprano: si vincono.

@@ -98,6 +98,18 @@ var aiTeamShape: String = "defend"
 var playerTeamTactic: String = "balanced"
 var tacticFlash: float = 0.0
 var aiX3Recovery: float = 0.0
+## How willing the AI is to let a ball bounce instead of taking it in the air
+## (`ai_contact.gd`). 0.0 is the behaviour recorded in tools/parity-godot/golden/
+## (a conservative bounce planner: the back player volleys ~82% of the balls it
+## touches, measured 2026-09-23); 1.0 relaxes the planner's three refusals fully.
+## A knob for tuning, not yet a rule: nothing sets it above 0 in a real match.
+var aiBounceBias: float = 0.0
+## Glass-aware bounce play for the AI back player (`ai_glass.gd`): when on, a ball
+## the old planner would take in the air is instead forecast through its bounce and
+## any glass, and the AI waits for it where it can reach it at a comfortable height.
+## Off by default: the golden matches and the shipped game are unchanged until a
+## level turns it on on purpose.
+var aiGlassPlay: bool = false
 var playerX3Recovery: float = 0.0
 var playerSwingBuffer: float = 0.0
 var queuedShotPower: float = 1.0

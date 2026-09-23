@@ -1,0 +1,81 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok helper/the_fixture_really_overflows
+ok helper/a_held_stick_moves_every_frame
+ok helper/five_frames_move_speed_times_time
+ok helper/the_offset_stays_inside_the_range
+ok helper/the_control_carries_the_helper_offset
+ok helper/a_half_stick_is_proportionally_slower
+ok helper/and_slower_than_full_deflection
+ok helper/inside_the_deadzone_nothing_moves
+ok helper/and_the_fraction_is_dropped
+ok helper/a_released_stick_stops_at_once
+ok helper/held_down_stops_at_the_bottom
+ok helper/and_the_offset_is_clamped
+ok helper/held_up_stops_at_the_top
+ok helper/a_sub_pixel_frame_accumulates
+ok helper/and_writes_no_whole_pixel_yet
+ok helper/and_the_fraction_reaches_a_pixel
+ok helper/a_manual_scroll_is_where_the_stick_continues
+ok helper/reset_forgets_the_container
+ok helper/reset_forgets_the_fraction
+ok nesting/the_outer_body_overflows
+ok nesting/the_nested_card_overflows
+ok nesting/the_nested_card_owns_the_stick
+ok nesting/a_card_with_nothing_to_scroll_gives_the_stick_back
+ok modal/the_modal_owns_the_stick_not_the_focus_owners_screen
+ok modal/the_background_did_not_scroll
+ok modal/a_modal_with_nothing_to_scroll_is_inert
+ok modal/and_the_background_still_did_not_scroll
+# report engine joypad list: [] (physical interaction untested)
+ok host/the_scene_owns_a_scroll_helper
+ok host/the_real_router_mounted_the_menu
+ok host/the_result_screen_is_up
+ok host/the_result_screen_has_a_scrolling_body
+ok host/and_it_really_overflows
+# report result overflow room: 207 px
+ok host/held_down_moves_the_real_screen
+ok host/and_by_speed_times_time_once
+ok host/the_control_carries_the_helpers_own_offset
+ok host/the_report_names_the_container_it_drove
+ok host/held_down_clamps_at_the_real_screens_end
+ok host/held_up_moves_back
+ok host/a_manual_scroll_is_not_snapped_back
+ok host/the_help_screen_is_up
+ok host/the_help_screen_has_a_scrolling_body
+ok host/and_it_really_overflows
+ok host/the_help_body_moves_by_the_same_rule
+ok host/the_abstract_model_scroll_paints_nothing
+ok host/the_left_stick_still_moves_the_focus
+ok host/and_the_focus_really_moved
+ok host/the_left_stick_scrolls_nothing
+ok boundaries/a_visible_surface_scrolls
+ok boundaries/a_hidden_surface_scrolls_nothing
+ok boundaries/and_the_helper_reports_itself_inert
+ok boundaries/and_it_resumes_when_shown
+ok boundaries/a_screen_change_resets_the_helper
+ok boundaries/and_drops_the_fraction
+ok boundaries/the_stick_is_driving_a_container
+ok boundaries/a_disconnected_pad_stops_at_once
+ok boundaries/a_held_stick_does_not_resume_after_a_disconnect
+ok boundaries/neutral_rearms_after_a_disconnect
+ok boundaries/the_stick_is_driving_again
+ok boundaries/losing_the_window_stops_at_once
+ok boundaries/and_the_helper_is_suspended
+ok boundaries/a_held_stick_does_not_resume_when_the_window_returns
+ok boundaries/and_no_container_is_taken
+ok boundaries/neutral_rearms_the_helper
+ok boundaries/and_the_next_push_scrolls_again
+ok boundaries/an_absent_seat_is_inert
+ok boundaries/and_reads_as_centred
+ok boundaries/a_connected_neutral_seat_is_inert
+ok boundaries/and_a_neutral_seat_scrolls_nothing
+PASS 68/68
+WARNING: 99 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 52 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)

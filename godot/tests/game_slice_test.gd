@@ -1306,6 +1306,18 @@ func _parity_against_direct_sim() -> void:
 	var reference = Sim.create_match_state("quick", Config.athlete(), Config.arena(), Config.tier(), 0, {})
 	reference.rng_state = Config.seed_value
 	reference.running = true
+	# The game turns the AI's glass-aware bounce play on (`match_controller.gd`,
+	# AI_GLASS_PLAY); the bare simulation's default is off. Same setting on both sides,
+	# or the comparison measures the switch instead of the controller.
+	reference.aiGlassPlay = node.AI_GLASS_PLAY
+	# The controller also applies the saved switching mode and the quick-match format
+	# (`Config.apply_quick_match_format`); the bare reference did not: measured
+	# 2026-09-23, controlMode assisted vs semi, gamesToWin 3 vs 6, tieBreakAt null vs 6.
+	# The runs only stayed equal because this seed never reached a receiver switch in
+	# PARITY_TICKS; a different AI (glass play on) reached one at tick 1165 and the
+	# human paddle split. Same settings on both sides, or the check compares configs.
+	for field in ["controlMode", "setsToWin", "gamesToWin", "pointsToWin", "tieBreakAt"]:
+		reference.set(field, node.state.get(field))
 
 	var bot_a := ScriptedPlayer.new()
 	var bot_b := ScriptedPlayer.new()

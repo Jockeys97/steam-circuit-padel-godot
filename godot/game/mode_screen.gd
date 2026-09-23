@@ -116,6 +116,8 @@ var _drill_best: Label
 ## host renders software GL (`xvfb-run` + `opengl3`) and every engine start-up is
 ## paid for once.
 var _capture := false
+var _tournament_details: Dictionary = {}
+var _tournament_scroll: ScrollContainer
 
 
 func _ready() -> void:
@@ -135,6 +137,8 @@ func _ready() -> void:
 		Config.save_dir = save_dir_arg
 	_capture = _arg(args, "--capture=", "") != ""
 	_mode = Config.pending_mode
+	if _mode == "tournament":
+		theme = PadelTheme
 	_focus = MenuFocus.new(SCREEN_ID)
 
 	var bg := ColorRect.new()
@@ -155,10 +159,23 @@ func _ready() -> void:
 	var col := VBoxContainer.new()
 	col.name = "ModeColumn"
 	col.add_theme_constant_override("separation", 6)
-	margin.add_child(col)
+	if _mode == "tournament":
+		col.add_theme_constant_override("separation", 18)
+	if _mode == "tournament":
+		_tournament_scroll = ScrollContainer.new()
+		_tournament_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		_tournament_scroll.follow_focus = true
+		margin.add_child(_tournament_scroll)
+		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_tournament_scroll.add_child(col)
+	else:
+		margin.add_child(col)
 	_column = col
 
 	_title = _label(_mode_title(), 30, Color(0.0, 0.898, 1.0))
+	if _mode == "tournament":
+		_title.theme_type_variation = "HudTitle"
+		_title.add_theme_color_override("font_color", Color.WHITE)
 	col.add_child(_title)
 	var subtitle := _label(_mode_subtitle(), 16, Color(0.72, 0.78, 0.86))
 	col.add_child(subtitle)
@@ -200,6 +217,8 @@ func _ready() -> void:
 	# accented letters, and the glyph check in `tests/game_slice_test.gd` now covers
 	# the punctuation the screens actually use.
 	back.text = _back_label()
+	if _mode == "tournament":
+		back.theme_type_variation = "ButtonSecondary"
 	back.custom_minimum_size = Vector2(240.0, 46.0)
 	back.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	if _mode == "drill":
@@ -208,6 +227,8 @@ func _ready() -> void:
 	back.pressed.connect(to_menu)
 	col.add_child(back)
 	_register("back", back, "back")
+	if _mode == "tournament":
+		col.add_child(_label("D-PAD / LS · %s     A · %s     B · %s" % ["Naviga" if Locale.current_lang() == "it" else "Navigate", "Conferma" if Locale.current_lang() == "it" else "Confirm", "Indietro" if Locale.current_lang() == "it" else "Back"], 12, Color("8192ab")))
 
 	_refresh_detail()
 	set_process_input(true)
@@ -281,10 +302,14 @@ func _mode_title() -> String:
 		return _text("drillTitle", _mode.to_upper())
 	var key := String(MODE_LABELS.get(_mode, ""))
 	var name := Locale.t(key) if key != "" and Locale.is_resolvable(key) else _mode.to_upper()
+	if _mode == "tournament":
+		return name
 	return "%s — %s" % [name, Gate.label()]
 
 
 func _mode_subtitle() -> String:
+	if _mode == "tournament":
+		return "Tre sfide. Un solo trofeo. Vinci ogni turno per arrivare in finale." if Locale.current_lang() == "it" else "Three matches. One trophy. Win each round to reach the final."
 	# `drillSub` is the reference's own training subtitle. It replaces the
 	# "dati da godot/src/modes/**" line on this screen: a player must never read a
 	# repository path or a declared back action, and the mode's data is no longer
@@ -621,30 +646,78 @@ func _col_make_drill(col: VBoxContainer) -> void:
 
 
 func _col_make_tournament(col: VBoxContainer) -> void:
-	col.add_child(_label("TABELLONE (%d turni)" % TournamentRules.ROUNDS, 19, Color(1.0, 0.821, 0.4)))
-	# Where the bracket IS, from the save (`ModesSave.tournament_round`): the round
-	# the next match plays and the fixture it plays on. This is the line a player
-	# reads after winning a round, so it is read from the same store the session
-	# wrote to rather than from a screen-local guess.
-	var state := saved_state()
-	var current_round := int(state.get("round", 0))
-	var current_arena := String(((state.get("fixture", {}) as Dictionary).get("arena", {}) as Dictionary).get("id", "?"))
-	col.add_child(_label("PROSSIMO TURNO %d  ·  %s  ·  partite in albo %d" % [
-		current_round + 1, current_arena, int(state.get("history", 0))], 17, Color(0.42, 0.98, 0.55)))
-	var path: Array = TournamentRules.path(Config.selectable_arenas())
-	for round in path.size():
-		var fixture: Dictionary = path[round]
-		var arena: Dictionary = fixture.get("arena", {})
-		var ai: Dictionary = TournamentRules.ai_for_round(round)
-		_row("tournament:round%d" % round, "TURNO %d  ·  %s  ·  %s (%s %.2f)%s%s" % [
-			round, String(arena.get("id", "?")), String(ai.get("name", "?")),
-			Locale.t("ability"), float(ai.get("skill", 0.0)),
-			"  ·  TROFEO" if TournamentRules.is_trophy(round, true) else "",
-			"  ·  IN CORSO" if round == current_round else ""],
-			"prestigio %d · advance(won) -> %s" % [
-				TournamentRules.prestigio(arena), JSON.stringify(TournamentRules.advance(round, true))])
-	_start_row(col, "GIOCA TURNO %d  >" % (current_round + 1))
+	_build_tournament_cards(col)
+	return
 
+func _build_tournament_cards(col: VBoxContainer) -> void:
+	var italian := Locale.current_lang() == "it"
+	var current := int(saved_state().get("round", 0))
+	var gold := Color("ffdb70")
+	col.add_child(_label(("VERSO IL TROFEO   /   TURNO %d DI 3" if italian else "ROAD TO THE TROPHY   /   ROUND %d OF 3") % (current + 1), 15, gold))
+	var grid := HBoxContainer.new()
+	grid.name = "TournamentCards"
+	grid.add_theme_constant_override("separation", 18)
+	col.add_child(grid)
+	var fixtures: Array = TournamentRules.path(Config.selectable_arenas())
+	for index in fixtures.size():
+		var arena: Dictionary = fixtures[index].get("arena", {})
+		var ai := TournamentRules.ai_for_round(index)
+		var id := "tournament:round%d" % index
+		var stages := ["QUALIFICAZIONE", "SEMIFINALE", "FINALE"] if italian else ["QUALIFIER", "SEMI-FINAL", "FINAL"]
+		var stage: String = stages[index]
+		var arena_name := String(arena.get("name", arena.get("id", "")))
+		var status := ("COMPLETATO" if italian else "COMPLETED") if index < current else (("PROSSIMA SFIDA" if italian else "UP NEXT") if index == current else ("DA RAGGIUNGERE" if italian else "COMING UP"))
+		var button := Button.new()
+		button.name = "Round%d" % index
+		button.custom_minimum_size = Vector2(0, 292)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var box := StyleBoxFlat.new()
+		box.bg_color = Color("111c37")
+		box.border_color = Color("18c6db") if index == current else Color("294365")
+		box.set_border_width_all(2)
+		box.set_corner_radius_all(14)
+		button.add_theme_stylebox_override("normal", box)
+		var focused := box.duplicate() as StyleBoxFlat
+		focused.border_color = gold
+		focused.set_border_width_all(4)
+		focused.shadow_color = Color(0, 0.8, 1, 0.25)
+		focused.shadow_size = 8
+		for slot in ["focus", "hover", "pressed"]:
+			button.add_theme_stylebox_override(slot, focused)
+		grid.add_child(button)
+		var body := VBoxContainer.new()
+		body.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		body.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		body.offset_left = 14
+		body.offset_right = -14
+		body.offset_top = 14
+		body.offset_bottom = -14
+		body.add_theme_constant_override("separation", 8)
+		button.add_child(body)
+		var art := TextureRect.new()
+		art.custom_minimum_size.y = 122
+		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		art.clip_contents = true
+		art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var image_path := preload("res://src/ui/data/UiArtPaths.gd").path_for("arenas", String(arena.get("id", "")))
+		if image_path != "":
+			art.texture = load(image_path)
+		body.add_child(art)
+		body.add_child(_label("0%d   %s" % [index + 1, stage], 19, gold if index == 2 else Color("68e4ed")))
+		body.add_child(_label(arena_name, 18, Color.WHITE))
+		body.add_child(_label(String(ai.get("name", "")), 14, Color("9cafc8")))
+		body.add_child(_label(status, 12, Color("69e8ba") if index <= current else Color("8192ab")))
+		_tournament_details[id] = "%s · %s · %s" % [stage, arena_name, status]
+		button.pressed.connect(_show_tournament_round.bind(id))
+		button.focus_entered.connect(_show_tournament_round.bind(id))
+		_rows.append(button)
+		_register(id, button, id)
+	_start_row(col, ("GIOCA TURNO %d  >" if italian else "PLAY ROUND %d  >") % (current + 1), true)
+
+func _show_tournament_round(id: String) -> void:
+	if _detail != null:
+		_detail.text = String(_tournament_details.get(id, ""))
 
 func _col_make_career(col: VBoxContainer) -> void:
 	var objectives: Array = CareerRules.season_objectives(1)
@@ -705,6 +778,9 @@ func _col_make_locked(col: VBoxContainer) -> void:
 
 
 func _refresh_detail() -> void:
+	if _mode == "tournament":
+		_detail.text = "D-PAD / LS  ·  Naviga       A  ·  Conferma       B  ·  Indietro" if Locale.current_lang() == "it" else "D-PAD / LS  ·  Navigate       A  ·  Confirm       B  ·  Back"
+		return
 	# The training screen's bottom line is the chosen exercise's own hint, written by
 	# `_refresh_drill_detail()`. The raw session readout below is the debug prose this
 	# screen had to lose; `screen_report()` still answers `drill_phase` and
@@ -775,7 +851,7 @@ func _dispatch(result: Dictionary) -> void:
 
 
 func _run_action(action: String) -> void:
-	if action == "back":
+	if action == "back" or action == "to-menu":
 		to_menu()
 	elif action.begins_with("drill:"):
 		# The model's confirm on an exercise row. The mouse reaches the same choice
@@ -784,6 +860,8 @@ func _run_action(action: String) -> void:
 		_on_exercise(action.substr(6))
 	elif action == "start":
 		start_mode()
+	elif action.begins_with("tournament:"):
+		_show_tournament_round(action)
 
 
 func to_menu() -> void:
@@ -814,7 +892,7 @@ func focus_model() -> MenuFocus:
 func screen_report() -> Dictionary:
 	var labels: Array = []
 	for b in _rows:
-		labels.append(b.text)
+		labels.append(b.text if _mode != "tournament" else String(_tournament_details.get("tournament:round%d" % _rows.find(b), "")))
 	return {
 		"mode": _mode,
 		"screen": SCREEN_ID,

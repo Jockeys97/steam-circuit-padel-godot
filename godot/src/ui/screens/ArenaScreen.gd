@@ -1407,7 +1407,39 @@ func refresh_strings() -> void:
 		if node == null:
 			continue
 		_set_node_text(node, _resolve_entry(entry))
+	_refresh_fixture_launch()
 	_apply_accessibility()
+
+
+## Outside the scrolling catalog: the scheduled match is always one press away.
+func _refresh_fixture_launch() -> void:
+	var area := _control("FixtureLaunch") as MarginContainer
+	if area == null:
+		area = MarginContainer.new()
+		area.name = "FixtureLaunch"
+		for edge in ["left", "right"]:
+			area.add_theme_constant_override("margin_" + edge, 64)
+		area.add_theme_constant_override("margin_top", 12)
+		area.add_theme_constant_override("margin_bottom", 8)
+		var frame := _control("Frame")
+		frame.add_child(area)
+		frame.move_child(area, 1)
+		var button := Button.new()
+		button.name = "PlayFixture"
+		button.custom_minimum_size.y = 60
+		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.pressed.connect(start_match)
+		area.add_child(button)
+	area.visible = _wording == WORDING_CAREER or _wording == WORDING_TOURNAMENT
+	if not area.visible:
+		return
+	var button := _control("PlayFixture") as Button
+	button.disabled = not can_start()
+	var row := _row_of(_in_program)
+	var arena_name := UiStrings.t(String(row.get("name_key", "")))
+	button.text = UiStrings.t("arenaPlayFixture", {"arena": arena_name})
+	var sub := _control("SubLabel") as Label
+	sub.text = UiStrings.t("arenaScheduledHint")
 
 
 func _resolve_entry(entry: Dictionary) -> String:
@@ -1471,6 +1503,9 @@ func _apply_accessibility() -> void:
 	var back := _control("BackButton")
 	if back != null:
 		_focus_specs.append(_focus_spec("BackButton", back, "back"))
+	var launch := _control("PlayFixture") as Button
+	if launch != null and launch.is_visible_in_tree():
+		_focus_specs.append(_focus_spec("PlayFixture", launch, "play-fixture", {"disabled": launch.disabled}))
 	for row in _rows:
 		var arena_id := String((row as Dictionary).get("id", ""))
 		var card := _control(CARD_PREFIX + arena_id)
@@ -1519,6 +1554,8 @@ func _arena_focus_opts(arena_id: String) -> Dictionary:
 ## the handler the mouse path runs (`_on_card_input` calls `activate_arena`, `_wire`
 ## calls `select_player_mode`), so a pad confirm and a click mean the same thing.
 func activate(action: String) -> bool:
+	if action == "play-fixture":
+		return start_match()
 	var parts := action.split(":")
 	if parts.size() != 2:
 		return false

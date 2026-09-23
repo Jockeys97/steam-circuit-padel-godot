@@ -194,8 +194,27 @@ func go_to(id: String, payload: Dictionary = {}) -> bool:
 		handed["back_target"] = back_target_of(id)
 	if node.has_method("enter"):
 		node.enter(handed)
+	_connect_shell_back_signals(node, id)
 	screen_changed.emit(from_id, id)
 	return true
+
+
+## ScreenShell reports the target configured by its screen; transitions remain owned
+## here alongside the keyboard/controller bridge. The source id prevents a queued
+## signal from an outgoing screen from navigating after another screen was mounted.
+func _connect_shell_back_signals(node: Node, source_id: String) -> void:
+	if node.has_signal("back_requested"):
+		var callback: Callable = _on_shell_back_requested.bind(source_id)
+		if not node.is_connected("back_requested", callback):
+			node.connect("back_requested", callback)
+	for child in node.get_children():
+		_connect_shell_back_signals(child, source_id)
+
+
+func _on_shell_back_requested(target_id: String, source_id: String) -> void:
+	if source_id != _active_id or target_id == "" or not _scenes.has(target_id):
+		return
+	go_to(target_id)
 
 
 func active_id() -> String:

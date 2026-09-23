@@ -1,5 +1,16 @@
 # tools/parity-godot — cross-engine MATCH parity (lane `crew-parity`)
 
+> **2026-09-23 — the Godot build is now the authority on the rules.** The browser
+> build is an archive: `sim.gd` has already diverged from `js/game.js` on purpose
+> (the AI's low-drive "containment" of commit `067584e` exists only in the 3D sim;
+> measured, m1 and m3 split at the first such shot, m2 is still identical). The
+> JS-vs-Godot matrix below is kept for history and is **expected to diverge**.
+> The gate is now `bash tools/parity-godot/run-golden.sh`: the same three matches
+> replayed through the Godot sim and compared with `golden/` (final digest, every
+> event, one full sample every 250 ticks). After an intended rule change, re-record
+> with `--record` and commit the golden diff together with the rule change.
+
+
 The playable thing a player cares about: **does the Godot port play the same match
 as the frozen browser reference?** Same seed, same scripted input, whole match,
 tick by tick.

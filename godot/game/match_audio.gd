@@ -94,6 +94,8 @@ const POINT_PREFIXES := {
 var port: Node = null
 ## The music engine, built at `_ready()` and driven from the match's own state.
 var music: Node = null
+var use_ost := false
+var ost: Node = null
 ## How many times the score has been stopped (a match end), for the read-back.
 var music_stops: int = 0
 ## The last intensity this seam pushed into the score.
@@ -120,6 +122,10 @@ func _ready() -> void:
 	port = AudioPortScript.new()
 	port.name = "AudioPort"
 	add_child(port)
+	if use_ost:
+		ost = preload("res://src/audio/runtime_soundtrack.gd").new()
+		add_child(ost)
+		return
 	music = MusicScript.new()
 	music.name = "Music"
 	add_child(music)
@@ -132,6 +138,9 @@ func _ready() -> void:
 ## Called on `start_match()`/`rematch()` so a restart does not fire on the old
 ## match's last tick, and so the counters describe one match.
 func reset() -> void:
+	if ost != null:
+		ost.set_held(false)
+		ost.set_arena(preload("res://game/match_config.gd").arena_id())
 	_prev_hit_flash = 0.0
 	_prev_serve_in_flight = false
 	_prev_had_result = false
@@ -320,6 +329,14 @@ func summary() -> Dictionary:
 ## re-drives the intensity (`gameLoop` runs while paused), so this does too: pause is not
 ## a reason to freeze the tempo map, only to stop advancing the match.
 func _drive_music(state) -> void:
+	if ost != null:
+		ost.set_muted(port.is_muted() if port != null else false)
+		if state.result != null:
+			ost.set_screen("result")
+		else:
+			ost.set_arena(preload("res://game/match_config.gd").arena_id())
+			ost.classic.set_intensity(ost.classic.intensity_for_rally(int(state.rallyHits), int(state.sets["player"]) + int(state.sets["ai"]), int(state.games["player"]) + int(state.games["ai"])))
+		return
 	if music == null:
 		return
 	if state.result != null:
@@ -341,6 +358,16 @@ func _drive_music(state) -> void:
 ## What the slice test and the evidence file read back about the score: the engine's own
 ## state, never a flag this seam keeps about itself.
 func music_summary() -> Dictionary:
+	if ost != null:
+		return {
+			"present": true,
+			"engine": "ost",
+			"playing": ost.classic.is_processing() if ost._track == ost.CLASSIC else ost.player.is_playing(),
+			"paused": ost._held or ost._muted,
+			"track": ost._track,
+			"muted": port.is_muted(),
+			"master_gain": port.master_gain(),
+		}
 	if music == null:
 		return {"present": false}
 	return {

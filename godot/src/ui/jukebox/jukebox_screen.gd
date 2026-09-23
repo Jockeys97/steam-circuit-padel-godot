@@ -30,6 +30,10 @@ extends Control
 ## streaming, so the two can differ without either lying.
 
 const SoundtrackManager := preload("res://src/audio/soundtrack_manager.gd")
+## Emporio OST: the ownership gate. A track the profile does not own (and the LUCALE
+## override does not unlock) is listed honestly as locked and is not playable here.
+const Economy := preload("res://src/economy/economy_service.gd")
+const Config := preload("res://game/match_config.gd")
 const ShellScene := preload("res://src/ui/ScreenShell.tscn")
 const RecordMotif := preload("res://src/ui/jukebox/jukebox_record.gd")
 const DefaultTheme := preload("res://src/ui/theme/padel_theme.tres")
@@ -49,8 +53,22 @@ const STATUS_IDLE := Color(0.6447059, 0.7098039, 0.78431374)
 const READOUT_INTERVAL := 0.1
 
 signal closed
+const MusicPreferences := preload("res://src/audio/music_preferences.gd")
+var _favorite_buttons: Dictionary = {}
+var _only_buttons: Dictionary = {}
+var _playlist_scope: OptionButton
+var _r3_order: OptionButton
+var _playlist_hint: Label
+var _playlist_preview := false
+var _classic_favorite: CheckButton
+## Emitted when the player tries to play a LOCKED track: the host routes this to the
+## Emporio shop. The screen itself never opens another screen.
+signal shop_requested(track_id: String)
 
 var _manager: Node = null
+## The store the ownership gate reads. Unset means the config's own store; a test hands
+## in an isolated directory so a real profile is never read.
+var _economy_store: RefCounted = null
 var _shell: Control = null
 var _track_ids: PackedStringArray = []
 var _selected_idx: int = 0
@@ -58,6 +76,9 @@ var _track_buttons: Array[Button] = []
 ## Each button's own text without the `▶` playback marker, so marking/unmarking the
 ## playing track never re-derives the label (and never drifts from the list build).
 var _track_base_texts: PackedStringArray = []
+const COVERS_DIR := "res://assets/images/jukebox_covers/"
+
+var _cover_cache: Dictionary = {}
 var _readout_accum: float = 0.0
 
 # Inspector UI references
@@ -71,6 +92,7 @@ var _style_label: Label = null
 var _prompt_text: TextEdit = null
 var _copy_btn: Button = null
 var _play_btn: Button = null
+var _pause_btn: Button = null
 var _stop_btn: Button = null
 var _prev_btn: Button = null
 var _next_btn: Button = null
@@ -88,6 +110,13 @@ var _elapsed_label: Label = null
 var _duration_label: Label = null
 var _prompt_section: VBoxContainer = null
 var _prompt_toggle_btn: Button = null
+## True while the reader is dragging the progress handle: the pointer owns the bar for
+## that moment, so the 10 Hz readout must not pull it back under the cursor.
+var _dragging: bool = false
+var _progress_hover: bool = false
+## What the last progress style was built for, so the readout poll does not rebuild
+## three StyleBoxes ten times a second for no visual change.
+var _progress_style_key: String = ""
 
 
 func _ready() -> void:
@@ -102,11 +131,48 @@ func _ready() -> void:
 	set_process(true)
 
 
+## The store the ownership gate reads. A test hands in an isolated directory (call this
+## BEFORE the node enters the tree, or the list is rebuilt here). Never writes.
+func set_store(store: RefCounted) -> void:
+	_economy_store = store
+	if _track_list_container != null:
+		for child in _track_list_container.get_children():
+			child.queue_free()
+		_populate_track_list()
+		_refresh_readout()
+		_sync_favorites()
+		for scope in _only_buttons:
+			_only_buttons[scope].set_pressed_no_signal(MusicPreferences.only(_economy(), scope))
+		_classic_favorite.set_pressed_no_signal(MusicPreferences.favorites(_economy(), "match").has("classic_match"))
+		_r3_order.select(1 if MusicPreferences.random_skip(_economy()) else 0)
+		_filter_playlist()
+
+
+func _economy() -> RefCounted:
+	return _economy_store if _economy_store != null else Config.save_store()
+
+
+## True when the profile may NOT play the track: not owned and not unlocked by LUCALE.
+func is_locked(track_id: String) -> bool:
+	return not Economy.has_access(_economy(), track_id)
+
+
+## The locked track ids, in catalogue order — the list a test asserts against.
+func locked_ids() -> Array:
+	var out: Array = []
+	for id in _track_ids:
+		if is_locked(String(id)):
+			out.append(String(id))
+	return out
+
+
 func _process(delta: float) -> void:
 	_readout_accum += delta
 	if _readout_accum < READOUT_INTERVAL:
 		return
 	_readout_accum = 0.0
+	if _playlist_preview and not _manager.is_active():
+		_play_playlist(1)
 	_refresh_readout()
 
 
@@ -178,6 +244,7 @@ func _build_list_column(split_hbox: HBoxContainer) -> void:
 	list_header.theme_type_variation = &"LabelSmall"
 	list_header.add_theme_color_override("font_color", Color(0.96, 0.82, 0.44))
 	list_vbox.add_child(list_header)
+	_build_favorites(list_vbox)
 
 	var list_scroll := ScrollContainer.new()
 	list_scroll.size_flags_horizontal = SIZE_EXPAND_FILL
@@ -188,9 +255,125 @@ func _build_list_column(split_hbox: HBoxContainer) -> void:
 	_track_list_container = VBoxContainer.new()
 	_track_list_container.size_flags_horizontal = SIZE_EXPAND_FILL
 	_track_list_container.add_theme_constant_override("separation", 6)
+	list_scroll.follow_focus = true
 	list_scroll.add_child(_track_list_container)
 
 	_populate_track_list()
+
+func _build_favorites(parent: VBoxContainer) -> void:
+	_r3_order = OptionButton.new()
+	_r3_order.add_item("R3: ordine fisso")
+	_r3_order.add_item("R3: ordine casuale")
+	_r3_order.select(1 if MusicPreferences.random_skip(_economy()) else 0)
+	_r3_order.tooltip_text = "Vale per R3 nei menu e in partita. Rispetta i preferiti e le tracce sbloccate; non cambia l'avanzamento automatico."
+	_r3_order.item_selected.connect(func(index: int): MusicPreferences.set_random_skip(_economy(), index == 1))
+	parent.add_child(_r3_order)
+	var caption := Label.new()
+	caption.text = "PREFERITI DEL BRANO SELEZIONATO"
+	caption.add_theme_font_size_override("font_size", 11)
+	parent.add_child(caption)
+	var favorites := HBoxContainer.new()
+	parent.add_child(favorites)
+	var filters := HBoxContainer.new()
+	parent.add_child(filters)
+	for scope in ["menu", "match"]:
+		var label_text := "Menu" if scope == "menu" else "Partita"
+		var favorite := Button.new()
+		favorite.toggle_mode = true
+		favorite.size_flags_horizontal = SIZE_EXPAND_FILL
+		favorite.custom_minimum_size.y = 34
+		favorite.text = "+ " + label_text
+		favorite.pressed.connect(_toggle_favorite.bind(scope))
+		favorites.add_child(favorite)
+		_favorite_buttons[scope] = favorite
+		var only := CheckButton.new()
+		only.text = "Solo pref. " + label_text
+		only.add_theme_font_size_override("font_size", 11)
+		only.tooltip_text = "Riproduci solo i preferiti in questo contesto. Senza preferiti disponibili, la musica resta silenziosa."
+		only.set_pressed_no_signal(MusicPreferences.only(_economy(), scope))
+		only.toggled.connect(_set_only_favorites.bind(scope))
+		filters.add_child(only)
+		_only_buttons[scope] = only
+	_classic_favorite = CheckButton.new()
+	_classic_favorite.text = "Tema originale: preferito partita"
+	_classic_favorite.add_theme_font_size_override("font_size", 11)
+	_classic_favorite.tooltip_text = "Il tema generato dal gioco viene riprodotto in partita, non nell'anteprima dei file OST."
+	_classic_favorite.set_pressed_no_signal(MusicPreferences.favorites(_economy(), "match").has("classic_match"))
+	_classic_favorite.toggled.connect(func(_on: bool):
+		MusicPreferences.toggle(_economy(), "match", "classic_match")
+		_filter_playlist()
+	)
+	parent.add_child(_classic_favorite)
+	_playlist_scope = OptionButton.new()
+	for text in ["Catalogo completo", "Playlist menu", "Playlist partita"]:
+		_playlist_scope.add_item(text)
+	_playlist_scope.item_selected.connect(func(_index): _filter_playlist())
+	parent.add_child(_playlist_scope)
+	var listen := Button.new()
+	listen.text = "Ascolta playlist"
+	listen.pressed.connect(func(): _play_playlist(0))
+	parent.add_child(listen)
+	_playlist_hint = Label.new()
+	_playlist_hint.text = "R3: prossimo brano nei menu e in partita"
+	_playlist_hint.add_theme_font_size_override("font_size", 11)
+	_playlist_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	parent.add_child(_playlist_hint)
+
+func _toggle_favorite(scope: String) -> void:
+	MusicPreferences.toggle(_economy(), scope, String(_track_ids[_selected_idx]))
+	_sync_favorites()
+	_filter_playlist()
+
+func _set_only_favorites(enabled: bool, scope: String) -> void:
+	MusicPreferences.set_only(_economy(), scope, enabled)
+	_filter_playlist()
+
+func _sync_favorites() -> void:
+	for scope in _favorite_buttons:
+		var on := MusicPreferences.favorites(_economy(), scope).has(String(_track_ids[_selected_idx]))
+		_favorite_buttons[scope].set_pressed_no_signal(on)
+		_favorite_buttons[scope].text = ("✓ " if on else "+ ") + ("Menu" if scope == "menu" else "Partita")
+
+func _playlist_ids() -> Array[String]:
+	var result: Array[String] = []
+	var scope := "menu" if _playlist_scope.selected == 1 else "match"
+	var favorites := MusicPreferences.favorites(_economy(), scope)
+	var only := MusicPreferences.only(_economy(), scope)
+	for id in _track_ids:
+		var belongs := (id in ["ost_menu", "ost_roster", "ost_career"]) if scope == "menu" else (not id in ["ost_menu", "ost_roster", "ost_career", "ost_victory"])
+		if _playlist_scope.selected == 0 or ((belongs or favorites.has(id)) and (not only or favorites.has(id))):
+			result.append(id)
+	return result
+
+func _filter_playlist() -> void:
+	var ids := _playlist_ids()
+	for child in _track_list_container.get_children():
+		if child is Label:
+			child.visible = _playlist_scope.selected == 0
+	for index in _track_buttons.size():
+		_track_buttons[index].visible = ids.has(_track_ids[index])
+	_playlist_hint.text = "Nessuna OST nella lista. Aggiungila dal catalogo; il tema originale si ascolta in partita." if ids.is_empty() else "R3: prossimo brano nei menu e in partita"
+	if not ids.is_empty() and not ids.has(_track_ids[_selected_idx]):
+		_select_track(_track_ids.find(ids[0]))
+	if _playlist_preview and not ids.has(_manager.current_track_id()):
+		_manager.stop(0.0)
+
+func _play_playlist(direction: int) -> void:
+	var ids := _playlist_ids().filter(func(id): return not is_locked(id) and SoundtrackManager.has_track(id))
+	if ids.is_empty():
+		_on_stop_pressed()
+		_playlist_hint.text = "Nessuna traccia sbloccata disponibile in questa playlist."
+		return
+	var current := ids.find(_manager.current_track_id())
+	var next := posmod(current + direction, ids.size()) if current >= 0 else 0
+	_select_track(_track_ids.find(ids[next]))
+	_on_play_pressed()
+	var stream: AudioStream = _manager.active_player().stream.duplicate()
+	if stream is AudioStreamOggVorbis or stream is AudioStreamMP3:
+		stream.loop = false
+	_manager.active_player().stream = stream
+	_manager.active_player().play()
+	_playlist_preview = true
 
 
 ## RIGHT COLUMN: the player console. This is the screen's dominant surface — the
@@ -369,15 +552,26 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 	_progress_bar.max_value = 100.0
 	_progress_bar.value = 0.0
 	_progress_bar.show_percentage = false
-	_progress_bar.custom_minimum_size = Vector2(0, 10)
-	_progress_bar.add_theme_stylebox_override("background", _panel_style(Color(1, 1, 1, 0.07), LINE, 5, 1))
-	_progress_bar.add_theme_stylebox_override("fill", _panel_style(CYAN, CYAN, 5, 0))
+	# 14 px rather than 10: the bar is now a click target, and a target the reader can
+	# actually hit is worth four pixels. The look is unchanged (same cyan fill, same
+	# track, same rounding).
+	_progress_bar.custom_minimum_size = Vector2(0, 14)
+	# A ProgressBar takes no input by default, so the click/drag handling below is only
+	# reachable because this is set.
+	_progress_bar.mouse_filter = Control.MOUSE_FILTER_STOP
+	_progress_bar.focus_mode = Control.FOCUS_ALL
+	_progress_bar.gui_input.connect(_on_progress_gui_input)
+	_progress_bar.mouse_entered.connect(_on_progress_hover.bind(true))
+	_progress_bar.mouse_exited.connect(_on_progress_hover.bind(false))
+	_apply_progress_style()
 	player_vbox.add_child(_progress_bar)
 
 	# Transport controls. Prev/Next select only (never autoplay, as before); Play is
 	# disabled for a track with no file on disk, Stop only while something is playing.
 	var controls_bar := HBoxContainer.new()
-	controls_bar.add_theme_constant_override("separation", 16)
+	# 12 rather than 16: the extra Pausa control has to fit the same 1280x720 band
+	# without moving anything else about the row's shape.
+	controls_bar.add_theme_constant_override("separation", 12)
 	player_vbox.add_child(controls_bar)
 
 	_prev_btn = Button.new()
@@ -395,6 +589,14 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 	_play_btn.tooltip_text = "Riproduci la traccia selezionata"
 	_play_btn.pressed.connect(_on_play_pressed)
 	controls_bar.add_child(_play_btn)
+
+	_pause_btn = Button.new()
+	_pause_btn.text = "⏸ Pausa"
+	_pause_btn.theme_type_variation = &"ButtonSecondary"
+	_pause_btn.custom_minimum_size = Vector2(104, 40)
+	_pause_btn.tooltip_text = "Metti in pausa la traccia in riproduzione"
+	_pause_btn.pressed.connect(_on_pause_pressed)
+	controls_bar.add_child(_pause_btn)
 
 	_stop_btn = Button.new()
 	_stop_btn.text = "⏹ Stop"
@@ -513,7 +715,10 @@ func _populate_track_list() -> void:
 		var badge := "[✔ AUDIO]" if has_file else "[PROMPT]"
 		var title: String = String(info.get("title", tid))
 		var idx_str := "%02d" % (i + 1)
-		var base_text := " %s. %s %s" % [idx_str, title, badge]
+		# Emporio OST: a track the profile does not own is marked here, honestly, and the
+		# marker lives in the base text so the ▶ playback marker cannot erase it.
+		var lock := " 🔒" if is_locked(tid) else ""
+		var base_text := " %s. %s %s%s" % [idx_str, title, badge, lock]
 		btn.text = base_text
 		# A long title trims inside the column instead of forcing the row wider.
 		btn.clip_text = true
@@ -532,6 +737,7 @@ func _select_track(idx: int) -> void:
 	if idx < 0 or idx >= _track_ids.size():
 		return
 	_selected_idx = idx
+	_sync_favorites()
 
 	for i in _track_buttons.size():
 		_track_buttons[i].theme_type_variation = &"SegmentedActive" if (i == idx) else &"SegmentedInactive"
@@ -561,11 +767,38 @@ func _select_track(idx: int) -> void:
 
 	if _record != null:
 		_record.set_accent(_category_color(cat_str))
+		_record.set_cover_texture(_load_cover_for_track(tid))
 
 	# A selection with no file on disk cannot be played — the button says so instead
 	# of accepting a press that would only ever fail in the manager.
 	_play_btn.disabled = not has_file
 	_refresh_readout()
+
+
+## Loads the picture disc cover art with reliable disk-loader and cache
+func _load_cover_for_track(tid: String) -> Texture2D:
+	if _cover_cache.has(tid):
+		return _cover_cache[tid]
+	var tex: Texture2D = null
+	var candidate_paths := [
+		COVERS_DIR + tid + ".png",
+		COVERS_DIR + tid + ".jpg"
+	]
+	for p in candidate_paths:
+		var global_p := ProjectSettings.globalize_path(p)
+		if FileAccess.file_exists(global_p):
+			var img := Image.load_from_file(global_p)
+			if img != null and not img.is_empty():
+				tex = ImageTexture.create_from_image(img)
+				break
+		if ResourceLoader.exists(p):
+			var res = load(p)
+			if res is Texture2D:
+				tex = res
+				break
+
+	_cover_cache[tid] = tex
+	return tex
 
 
 ## The category lamp colour, shared by the badge and the record label so the two
@@ -587,25 +820,45 @@ func _refresh_readout() -> void:
 	if _manager == null:
 		return
 	var now_id := String(_manager.current_track_id())
-	var playing: bool = now_id != "" and bool(_manager.is_playing())
+	var active: bool = now_id != "" and bool(_manager.is_active())
+	var held: bool = active and bool(_manager.is_paused())
+	var playing: bool = active and bool(_manager.is_playing())
 
-	if playing:
-		_elapsed_label.text = _fmt_time(_manager.playback_position())
+	if active:
+		# Playing and held both report the stream: a held track keeps its own frozen
+		# position, so the readout never snaps to zero just because the audio is held.
+		_elapsed_label.text = _fmt_time(float(_manager.playback_position()))
 		var duration: float = _manager.playback_duration()
 		_duration_label.text = _fmt_time(duration) if duration > 0.0 else "--:--"
-		_progress_bar.value = _manager.playback_progress() * 100.0
+		# The pointer owns the bar mid-drag; the readout takes it back on release.
+		if not _dragging:
+			_progress_bar.value = float(_manager.playback_progress()) * 100.0
 	else:
 		_elapsed_label.text = _fmt_time(0.0)
 		_duration_label.text = "--:--"
-		_progress_bar.value = 0.0
+		if not _dragging:
+			_progress_bar.value = 0.0
+		# A drag that outlives the stream it was dragging must not hold the bar hostage.
+		_dragging = false
 
 	_record.set_spinning(playing)
-	_stop_btn.disabled = not playing
+	# Both transport controls key off "a track is loaded", not off "audio is moving", so
+	# a held track can still be released and stopped.
+	_pause_btn.disabled = not active
+	_pause_btn.text = "▶ Riprendi" if held else "⏸ Pausa"
+	_pause_btn.tooltip_text = (
+		"Riprendi la traccia dal punto in cui era" if held else "Metti in pausa la traccia in riproduzione"
+	)
+	_stop_btn.disabled = not active
 	# The hero shows the SELECTED track; only when that selection is the one actually
 	# streaming does the eyebrow claim playback. The "In Riproduzione" line below it
 	# always names the real audio, so the two never contradict each other.
 	var selected_is_playing: bool = playing and _track_ids[_selected_idx] == now_id
 	_hero_eyebrow.text = "IN RIPRODUZIONE" if selected_is_playing else "TRACCIA SELEZIONATA"
+	var seekable := _seekable()
+	_progress_bar.mouse_default_cursor_shape = CURSOR_POINTING_HAND if seekable else CURSOR_ARROW
+	_progress_bar.tooltip_text = "Clic o trascina per saltare nella traccia" if seekable else "Nessuna traccia in riproduzione"
+	_apply_progress_style()
 	_refresh_track_markers(now_id)
 
 
@@ -633,10 +886,149 @@ func _fmt_time(seconds: float) -> String:
 	return "%d:%02d" % [int(total / 60.0), total % 60]
 
 
+## A click (or a drag) on the bar moves the ACTIVE stream — the one the readout is
+## showing — never the row the catalogue happens to have selected.
+func _on_progress_gui_input(event: InputEvent) -> void:
+	if not _seekable():
+		return
+	if event is InputEventMouseButton:
+		var button := event as InputEventMouseButton
+		if button.button_index != MOUSE_BUTTON_LEFT:
+			return
+		_dragging = button.pressed
+		_seek_to_fraction(_fraction_at(button.position.x))
+	elif event is InputEventMouseMotion and _dragging:
+		var motion := event as InputEventMouseMotion
+		if (motion.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0:
+			_seek_to_fraction(_fraction_at(motion.position.x))
+	elif event is InputEventKey and event.pressed and not event.echo:
+		# The bar takes keyboard focus, so it owes the keyboard the same action: five
+		# seconds at a time, plus the two ends.
+		var key := event as InputEventKey
+		var here := float(_manager.playback_position())
+		match key.keycode:
+			KEY_LEFT:
+				_seek_to_seconds(here - 5.0)
+			KEY_RIGHT:
+				_seek_to_seconds(here + 5.0)
+			KEY_HOME:
+				_seek_to_seconds(0.0)
+			KEY_END:
+				_seek_to_seconds(float(_manager.playback_duration()) - 1.0)
+			_:
+				return
+		get_viewport().set_input_as_handled()
+
+
+## Horizontal position inside the bar -> [0, 1]. Local coordinates, so the same mapping
+## serves a click and a drag, and any position outside the bar lands on an end.
+func _fraction_at(x: float) -> float:
+	return clampf(x / maxf(_progress_bar.size.x, 1.0), 0.0, 1.0)
+
+
+func _seek_to_fraction(frac: float) -> void:
+	var duration := float(_manager.playback_duration())
+	if duration <= 0.0:
+		return
+	var clamped := clampf(frac, 0.0, 1.0)
+	if not bool(_manager.seek(clamped * duration)):
+		return
+	# The pointer's own fraction is the honest bar value for this interaction (the manager
+	# clamps through the engine), and the readout takes the bar back on release.
+	_progress_bar.value = clamped * 100.0
+	_sync_seek_feedback()
+
+
+func _seek_to_seconds(seconds: float) -> void:
+	if not bool(_manager.seek(seconds)):
+		return
+	_sync_seek_feedback()
+
+
+## Report the requested position at once: while held, the engine seek is deferred to
+## release, so the readout would otherwise lag the interaction by a whole hold.
+func _sync_seek_feedback() -> void:
+	var duration := float(_manager.playback_duration())
+	if duration <= 0.0:
+		return
+	_progress_bar.value = float(_manager.playback_progress()) * 100.0
+	_elapsed_label.text = _fmt_time(float(_manager.playback_position()))
+	_duration_label.text = _fmt_time(duration)
+
+
+func _on_progress_hover(over: bool) -> void:
+	_progress_hover = over
+	_apply_progress_style()
+
+
+## True only when a seek would really move something: an active stream of known length.
+## Idle and unknown-duration both answer false, so the bar never offers an action it
+## cannot perform, and the cursor stays an arrow there.
+func _seekable() -> bool:
+	if _manager == null or not bool(_manager.is_active()):
+		return false
+	return float(_manager.playback_duration()) > 0.0
+
+
+## The cyan bar plus the cues that say it is interactive: a brighter fill under the
+## pointer and a themed focus ring. StyleBoxes are shared state, so this rebuilds them
+## only when the state actually changes rather than on every readout poll.
+func _apply_progress_style() -> void:
+	var seekable := _seekable()
+	var key := "%s-%s" % [str(seekable), str(_progress_hover and seekable)]
+	if key == _progress_style_key:
+		return
+	_progress_style_key = key
+	var strong := seekable and _progress_hover
+	var fill := Color(CYAN, 0.85) if strong else (CYAN if seekable else Color(CYAN, 0.35))
+	_progress_bar.add_theme_stylebox_override("background", _panel_style(Color(1, 1, 1, 0.07), LINE, 7, 1))
+	_progress_bar.add_theme_stylebox_override("fill", _panel_style(fill, fill, 7, 0))
+	_progress_bar.add_theme_stylebox_override("focus", _panel_style(Color(0, 0, 0, 0), CYAN, 8, 2))
+
+
+## The dedicated transport control. Both directions act on the stream that is really
+## loaded, whatever the catalogue has selected.
+func _on_pause_pressed() -> void:
+	if _manager == null:
+		return
+	# The label and the line change only on a real transition: a refused hold or release
+	# must leave the transport saying exactly what it is still doing.
+	if bool(_manager.is_paused()):
+		if not bool(_manager.resume()):
+			return
+		_now_playing_label.text = "In Riproduzione: %s" % _active_track_title()
+		_now_playing_label.add_theme_color_override("font_color", Color(0.4, 0.9, 0.5))
+	else:
+		if not bool(_manager.pause()):
+			return
+		_now_playing_label.text = "In pausa: %s" % _active_track_title()
+		_now_playing_label.add_theme_color_override("font_color", Color(0.95, 0.82, 0.45))
+	_refresh_readout()
+
+
+## The title of the track actually loaded in the manager, not of the selected row.
+func _active_track_title() -> String:
+	var now_id := String(_manager.current_track_id())
+	return String(SoundtrackManager.track_info(now_id).get("title", now_id))
+
+
 func _on_play_pressed() -> void:
+	_playlist_preview = false
 	var tid: String = _track_ids[_selected_idx]
 	var info := SoundtrackManager.track_info(tid)
 	var title: String = String(info.get("title", tid))
+
+	# Emporio OST: only owned content plays from here. A locked track is not played and
+	# not silently allowed — the screen says so and asks the host to open the shop.
+	if is_locked(tid):
+		if Economy.relock_all(_economy()):
+			_now_playing_label.text = "Blocco Alelu attivo: usa Lucale per sbloccare."
+			return
+		_now_playing_label.text = "Traccia bloccata: acquistabile nell'Emporio"
+		_now_playing_label.add_theme_color_override("font_color", Color(0.95, 0.65, 0.25))
+		shop_requested.emit(tid)
+		_refresh_readout()
+		return
 
 	if SoundtrackManager.has_track(tid):
 		_manager.play_track(tid, 0.3)
@@ -649,6 +1041,8 @@ func _on_play_pressed() -> void:
 
 
 func _on_stop_pressed() -> void:
+	_playlist_preview = false
+	_dragging = false
 	if _manager != null:
 		_manager.stop(0.2)
 	_now_playing_label.text = "Riproduzione interrotta"
@@ -657,11 +1051,17 @@ func _on_stop_pressed() -> void:
 
 
 func _on_prev_pressed() -> void:
+	if _playlist_scope.selected != 0:
+		_play_playlist(-1)
+		return
 	var new_idx := (_selected_idx - 1 + _track_ids.size()) % _track_ids.size()
 	_select_track(new_idx)
 
 
 func _on_next_pressed() -> void:
+	if _playlist_scope.selected != 0:
+		_play_playlist(1)
+		return
 	var new_idx := (_selected_idx + 1) % _track_ids.size()
 	_select_track(new_idx)
 

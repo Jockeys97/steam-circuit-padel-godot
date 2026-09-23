@@ -161,6 +161,18 @@ func _ensure() -> void:
 		refresh()
 
 
+## Scrolling changes global rectangles. Re-measure without resetting the selection.
+func refresh_geometry() -> void:
+	if menu.context_kind() != menu.CONTEXT_SCREEN:
+		return
+	# Update only rectangles: rebuilding targets here would discard the bridge's
+	# range/text metadata and reset the active context's selection.
+	for target in menu.nav.targets():
+		var node: Control = _nodes.get(String(target.get("id", "")), null)
+		if is_instance_valid(node) and node.is_visible_in_tree():
+			target["rect"] = node.get_global_rect()
+
+
 # ---------------------------------------------------------------------------
 # Keyboard
 # ---------------------------------------------------------------------------
@@ -193,6 +205,7 @@ func handle_key(event: InputEventKey) -> Dictionary:
 	if not event.pressed or event.echo:
 		return _nothing()
 	_ensure()
+	refresh_geometry()
 	var code := event.keycode
 	if KEY_DIRECTIONS.has(code):
 		var moved: Dictionary = menu.keyboard_direction(String(KEY_DIRECTIONS[code]))
@@ -327,6 +340,7 @@ static func _menu_button_key(button: JoyButton) -> String:
 ## synthetic sticks and buttons, and a screen with a real pad calls `poll_pad()`.
 func step_pad(state: Dictionary) -> Dictionary:
 	_ensure()
+	refresh_geometry()
 	var result: Dictionary = menu.poll_pad(state)
 	result["kind"] = ""
 	result["action"] = ""
@@ -378,6 +392,14 @@ func apply_focus() -> Control:
 	var node := focus_node()
 	if node != null and node.is_visible_in_tree():
 		node.grab_focus()
+		# Reveal only when navigation applies focus; manual right-stick scrolling
+		# remains free to move away from the current selection between moves.
+		var ancestor := node.get_parent()
+		while ancestor != null:
+			if ancestor is ScrollContainer:
+				(ancestor as ScrollContainer).ensure_control_visible(node)
+			ancestor = ancestor.get_parent()
+		refresh_geometry()
 	return node
 
 

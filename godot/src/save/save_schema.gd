@@ -29,6 +29,15 @@ class_name SaveSchema
 ##   }
 ##
 ## One file per group under `user://save/` — see `SaveStore` and `README.md`.
+##
+## PORT ADDITION (Emporio OST). The reference has five keys and `group_names()`
+## still returns exactly those five — `js/ui.js:7-11` is not widened. The port adds
+## ONE group of its own, `economy` (wallet + owned OSTs + award receipts, see
+## `godot/src/economy/economy_service.gd`), declared in `GROUP_FILES`/`GROUP_TYPES`
+## and listed by `port_group_names()` = `group_names()` + `["economy"]`. The whole
+## profile read/write and the cloud backup enumerate `port_group_names()`, so the
+## economy group is part of a real backup — it is only the *reference key count*
+## that stays five.
 
 ## Bumped only when the *envelope/payload shape* changes. The browser had no
 ## schema version at all; v0 below is that unversioned shape, so migration has
@@ -61,6 +70,7 @@ const GROUP_FILES: Dictionary = {
 	"history": "history.json",
 	"drill": "drill.json",
 	"feedback": "feedback.json",
+	"economy": "economy.json",
 }
 
 ## Payload JSON type expected per group (Godot type via TYPE_* constants).
@@ -70,6 +80,7 @@ const GROUP_TYPES: Dictionary = {
 	"history": TYPE_ARRAY,
 	"drill": TYPE_DICTIONARY,
 	"feedback": TYPE_ARRAY,
+	"economy": TYPE_DICTIONARY,
 }
 
 ## History is capped at 20 entries by the reference (`js/ui.js:1551`).
@@ -150,6 +161,19 @@ const PREFS_DEFAULTS: Dictionary = {
 	},
 }
 
+## The port's own `economy` group (Emporio OST): a wallet, the OST ids the profile
+## owns, the migration marker and the award receipts. No reference line — this group
+## has no browser counterpart, so it carries no reference default and is merged over
+## exactly this object. `migrationVersion` starts at 0 ("not yet initialized"); the
+## economy service writes 1 on its first successful initialization and never lowers
+## it, so a later missing/refused economy file can never re-decide a grant.
+const ECONOMY_DEFAULTS: Dictionary = {
+	"credits": 0,
+	"owned": [],
+	"migrationVersion": 0,
+	"receipts": {},
+}
+
 ## Which group's payload gets merged over which defaults on read. Groups absent
 ## here are round-tripped as-is (the reference does not merge them either:
 ## `loadHistory`/`loadDrillRecords`/`loadFeedbackQueue` all return the stored
@@ -157,12 +181,21 @@ const PREFS_DEFAULTS: Dictionary = {
 const DEFAULTS_BY_GROUP: Dictionary = {
 	"prefs": PREFS_DEFAULTS,
 	"career": CAREER_DEFAULTS,
+	"economy": ECONOMY_DEFAULTS,
 }
 
 
 ## The group names, in a stable order (deterministic tests and evidence).
 static func group_names() -> Array:
 	return ["prefs", "career", "history", "drill", "feedback"]
+
+
+## Every group this PORT persists, in a stable order: the reference's five plus the
+## port's own `economy`. This is what the whole-profile read/write and the cloud
+## backup enumerate — the reference count stays five in `group_names()`, but a real
+## backup is six files.
+static func port_group_names() -> Array:
+	return group_names() + ["economy"]
 
 
 ## Absolute `user://` path of a group's file.
@@ -240,6 +273,7 @@ static func empty_profile() -> Dictionary:
 		"history": [],
 		"drill": {},
 		"feedback": [],
+		"economy": ECONOMY_DEFAULTS.duplicate(true),
 	}
 
 

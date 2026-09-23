@@ -99,6 +99,32 @@ func _run(audit: AuditBase) -> void:
 	_world(audit, screen)
 	_templates(audit, screen)
 	_activation(audit, screen)
+	_fixture_launch(audit, screen)
+
+
+func _fixture_launch(audit: AuditBase, screen: Node) -> void:
+	for mode in ["career", "tournament"]:
+		Config.pending_mode = mode
+		screen.enter({"entry_mode": mode})
+		var launch := screen.find_child("PlayFixture", true, false) as Button
+		audit.check_true(launch != null and launch.is_visible_in_tree(), mode + "/launch_visible")
+		audit.check_true(not launch.disabled, mode + "/launch_enabled")
+		audit.check_eq(launch.get_parent().get_parent().name, &"Frame", mode + "/launch_outside_scroll")
+		audit.check_true(launch.pressed.is_connected(screen.start_match), mode + "/mouse_uses_existing_start")
+		var registered := false
+		for spec in screen.focus_controls():
+			if spec.get("action", "") == "play-fixture":
+				registered = true
+		audit.check_true(registered, mode + "/controller_launch_registered")
+		audit.check_true(screen.start_match(false), mode + "/scheduled_match_can_start")
+		audit.check_eq(Config.arena_id(), screen.in_program_id(), mode + "/starts_calendar_arena")
+		audit.check_eq(Config.pending_mode, mode, mode + "/preserves_mode")
+		var scroll := screen.find_child("Scroll", true, false) as ScrollContainer
+		scroll.scroll_vertical = 10000
+		audit.check_true(launch.is_visible_in_tree(), mode + "/launch_remains_visible_when_scrolling")
+	Config.pending_mode = "quick"
+	screen.enter({"entry_mode": "quick"})
+	audit.check_true(not screen.find_child("FixtureLaunch", true, false).visible, "quick/no_calendar_launch")
 
 
 ## The router mount of `screen_arena_audit.gd`, one screen and two frames: the

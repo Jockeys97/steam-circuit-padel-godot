@@ -68,6 +68,28 @@ func upload_group(group: String) -> Dictionary:
 	return upload_bytes(cloud_name_for(group), bytes)
 
 
+## Upload EVERY group this port persists, in order: the reference's five plus the
+## port's own `economy` group. A backup that skipped the wallet/owned-OSTs would
+## restore a profile without its purchases, so the enumeration is
+## `SaveSchema.port_group_names()` rather than the reference's five. A group with no
+## local file is a per-group skip, never an error (rule 2 above).
+##
+## Returns: `ok`, `uploaded` (group -> bytes), `skipped` (group -> reason), `errors`.
+func upload_profile() -> Dictionary:
+	var uploaded: Dictionary = {}
+	var skipped: Dictionary = {}
+	var errors: Dictionary = {}
+	for group in Schema.port_group_names():
+		var r: Dictionary = upload_group(group)
+		if bool(r["ok"]):
+			uploaded[group] = int(r["bytes"])
+		elif bool(r.get("skipped", false)):
+			skipped[group] = String(r["reason"])
+		else:
+			errors[group] = String(r["reason"])
+	return {"ok": errors.is_empty(), "uploaded": uploaded, "skipped": skipped, "errors": errors}
+
+
 func upload_bytes(file_name: String, bytes: PackedByteArray) -> Dictionary:
 	if not is_enabled():
 		return {

@@ -107,7 +107,9 @@ func write_all(profile: Dictionary) -> Dictionary:
 	var written: Dictionary = {}
 	var errors: Dictionary = {}
 	var total := 0
-	for group in Schema.group_names():
+	# Every group this PORT persists, the economy group included: a whole-profile
+	# write is a real backup, not the reference's five keys alone.
+	for group in Schema.port_group_names():
 		if not profile.has(group):
 			continue
 		var r := write_group(group, profile[group])
@@ -302,7 +304,9 @@ func read_all() -> Dictionary:
 	var recovered: Array = []
 	var refused: Array = []
 	var errors: Dictionary = {}
-	for group in Schema.group_names():
+	# Every group this PORT persists, the economy group included — see
+	# `SaveSchema.port_group_names()` and `write_all` above.
+	for group in Schema.port_group_names():
 		var r := read_group(group)
 		groups[group] = r
 		if bool(r["recovered"]):

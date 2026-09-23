@@ -38,10 +38,16 @@ const Locale := preload("res://src/locale/locale.gd")
 const Gate := preload("res://game/content_gate.gd")
 const InputStrings := preload("res://src/input/strings.gd")
 const MenuFocus := preload("res://game/menu_focus.gd")
+## The shared right-stick scroll: one instance per UI scene, one `update()` per frame.
+## The stick that scrolls a long screen, over whichever container is up.
+const ControllerScroll := preload("res://src/ui/focus/controller_scroll.gd")
 ## The world-arena set (port additions). Only `is_world` is used here: the list
 ## itself always comes from `Config.selectable_world_arenas()`.
 const Arena := preload("res://game/arenas/arena_library.gd")
 const ModesSave := preload("res://src/modes/modes_save.gd")
+## The Emporio OST's economy service: the host initializes it at boot (before any
+## other group is written) and mounts its shop overlay.
+const Economy := preload("res://src/economy/economy_service.gd")
 const InputSource := preload("res://game/input_map.gd")
 ## The verified audio module, for the one job the host has in it: applying the stored
 ## master volume at boot (`js/main.js:2278`). The bus derivation stays in the module.
@@ -77,6 +83,11 @@ var _seed_label: Label
 var _outfit_button: Button
 var _play: Button
 var _focus: MenuFocus
+## The right stick's own helper (`src/ui/focus/controller_scroll.gd`): built once per
+## UI scene, fed one surface per frame. It reads `JOY_AXIS_RIGHT_Y` and writes
+## `ScrollContainer.scroll_vertical`, and it decides nothing the focus model owns.
+var _controller_scroll: RefCounted = null
+var _scroll_window_active := true
 var _capture := false
 ## UIR-22's switch, and the playable host. `--ui=new` (the default) mounts the
 ## recreated screens — all twelve Control screens the router's table has a scene for —
@@ -104,7 +115,12 @@ var _restore_menu_focus: String = ""
 ## `src/ui/screens/OskPanel.gd`): the panel renders the input lane's own OSK model.
 var _osk_panel: Control = null
 var _jukebox_overlay: Control = null
+var _runtime_ost: Node = null
 var _jukebox_button: Button = null
+## The Emporio OST shop, mounted the same way the Jukebox is (an overlay over the menu,
+## driven by its own Back/Escape and the host's right-stick surface).
+var _emporio_overlay: Control = null
+var _emporio_button: Button = null
 ## The audio module instance the host applies the stored master volume through. Built
 ## once, lazily, by `_apply_stored_audio_prefs()`.
 var _audio_port: Node = null
@@ -127,6 +143,14 @@ var _layout_seen := Vector2.ZERO
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Emporio OST: initialize the economy group FIRST, before anything below can write
+	# prefs or career. The legacy-vs-new decision reads the reference groups' FILES, so a
+	# brand-new profile must be initialized while the profile is still empty — a later
+	# init would see its own prefs/career and falsely grandfather all 47 OSTs.
+	_init_economy()
+	_runtime_ost = preload("res://src/audio/runtime_soundtrack.gd").new()
+	add_child(_runtime_ost)
+	_runtime_ost.set_screen("menu")
 	_capture = "--capture=menu" in OS.get_cmdline_user_args()
 	_out_name = _arg("--out=", "menu")
 	ui_prototype = (not ui_legacy) and (ui_prototype or _arg("--ui=", "new") != "legacy")
@@ -170,6 +194,7 @@ func _ready() -> void:
 
 	_focus = MenuFocus.new()
 	set_process_input(true)
+	_setup_controller_scroll()
 
 	var title := _label("STEAM CIRCUIT PADEL PRO", 34, Color(0.0, 0.898, 1.0))
 	col.add_child(title)
@@ -552,6 +577,7 @@ func _mount_ui_prototype() -> void:
 	# 01:24 run `tests/ui/capture_ui.gd` documents). `modes` above is the recreation.
 	_focus = MenuFocus.new()
 	set_process_input(true)
+	_setup_controller_scroll()
 	_bridge = (load("res://src/ui/focus/UiFocusBridge.gd") as GDScript).new()
 	_bridge.range_changed.connect(_on_range_changed)
 	# The bridge reports what it did not route; without these two connections a
@@ -571,6 +597,7 @@ func _mount_ui_prototype() -> void:
 	_osk_panel.bind_model(_focus.menu.osk)
 	_osk_panel.closed.connect(_on_osk_closed)
 	_create_jukebox_button()
+	_create_emporio_button()
 	# One locale drives the menu and the match HUD (UIR-22): the player's stored
 	# choice is applied once, here, and nothing below switches language behind it.
 	_apply_stored_language()
@@ -665,12 +692,109 @@ func toggle_jukebox() -> void:
 	if scene != null:
 		_jukebox_overlay = scene.instantiate()
 		_jukebox_overlay.z_index = 100
+		# Emporio OST: the Jukebox gates playback on ownership, so it reads the same store
+		# and can ask the host for the shop when a locked track is chosen.
+		if _jukebox_overlay.has_method("set_store"):
+			_jukebox_overlay.call("set_store", Config.save_store())
+		if _jukebox_overlay.has_signal("shop_requested"):
+			_jukebox_overlay.connect("shop_requested", _on_jukebox_shop_requested)
 		_jukebox_overlay.closed.connect(func():
 			if _jukebox_overlay != null and is_instance_valid(_jukebox_overlay):
 				_jukebox_overlay.queue_free()
 				_jukebox_overlay = null
 		)
 		add_child(_jukebox_overlay)
+
+
+## Emporio OST boot step: initialize the economy save group once, before any other
+## group is written. Idempotent, and never fatal — a refused or unwritable economy file
+## leaves the shop empty rather than failing the menu (the service reports the reason).
+func _init_economy() -> void:
+	var result: Dictionary = Economy.ensure_initialized(Config.save_store())
+	if not bool(result.get("ok", false)):
+		push_warning("main_menu: economy init: %s" % String(result.get("reason", "")))
+		return
+	if bool(result.get("granted", false)):
+		print("EMPORIO economy initialized: %s" % String(result.get("reason", "")))
+
+
+## The Emporio OST shop button, beside the Jukebox one. Same construction, same corner.
+func _create_emporio_button() -> void:
+	if _emporio_button != null:
+		return
+	_emporio_button = Button.new()
+	_emporio_button.name = "EmporioLaunchButton"
+	_emporio_button.text = "🛒 Emporio [E]"
+	var theme_res = load("res://src/ui/theme/padel_theme.tres")
+	if theme_res is Theme:
+		_emporio_button.theme = theme_res
+	_emporio_button.theme_type_variation = &"SegmentedInactive"
+	_emporio_button.custom_minimum_size = Vector2(130, 36)
+	_emporio_button.anchor_left = 1.0
+	_emporio_button.anchor_top = 0.0
+	_emporio_button.anchor_right = 1.0
+	_emporio_button.anchor_bottom = 0.0
+	# To the left of the Jukebox button (which sits at -370..-230).
+	_emporio_button.offset_left = -510
+	_emporio_button.offset_top = 15
+	_emporio_button.offset_right = -370
+	_emporio_button.offset_bottom = 51
+	_emporio_button.z_index = 50
+	_emporio_button.pressed.connect(toggle_emporio)
+	add_child(_emporio_button)
+	# The pad must be able to REACH the shop from the initial menu, so the button joins
+	# the focus list. In the playable path the bridge owns that list and rebuilds it from
+	# the mounted screen on every swap (`UiFocusBridge._sync` clears the model), so the
+	# registration is re-applied in `_on_screen_changed`; the ported column uses the
+	# model directly.
+	_ensure_emporio_focus()
+
+
+## (Re-)register the Emporio launch button with whichever focus owner is live. The
+## action is handled in `_on_action_requested`.
+func _ensure_emporio_focus() -> void:
+	if _emporio_button == null:
+		return
+	if _playable and _bridge != null:
+		_bridge.register("emporio", _emporio_button, "emporio")
+	elif _focus != null:
+		_register("emporio", _emporio_button, "emporio")
+
+
+func toggle_emporio() -> void:
+	if _emporio_overlay != null and is_instance_valid(_emporio_overlay):
+		_emporio_overlay.queue_free()
+		_emporio_overlay = null
+		return
+	var scene := load("res://src/ui/screens/EmporioScreen.tscn") as PackedScene
+	if scene == null:
+		return
+	_emporio_overlay = scene.instantiate()
+	_emporio_overlay.z_index = 100
+	if _emporio_overlay.has_method("set_store"):
+		_emporio_overlay.call("set_store", Config.save_store())
+	_emporio_overlay.closed.connect(func():
+		if _emporio_overlay != null and is_instance_valid(_emporio_overlay):
+			_emporio_overlay.queue_free()
+			_emporio_overlay = null
+	)
+	add_child(_emporio_overlay)
+
+
+## The live Emporio overlay, or null. The acceptance audit reads it the way it reads
+## `_jukebox_overlay`.
+func emporio_overlay() -> Control:
+	return _emporio_overlay
+
+
+## The Jukebox asked for the shop — a locked track was chosen. Close the Jukebox and open
+## the Emporio: the Jukebox itself never opens a screen.
+func _on_jukebox_shop_requested(_track_id: String) -> void:
+	if _jukebox_overlay != null and is_instance_valid(_jukebox_overlay):
+		_jukebox_overlay.queue_free()
+		_jukebox_overlay = null
+	if _emporio_overlay == null or not is_instance_valid(_emporio_overlay):
+		toggle_emporio()
 
 
 ## The stored language, applied at boot: `lang` from the same prefs group the
@@ -713,6 +837,10 @@ func _apply_range_side_effects(row_name: String, value: float) -> void:
 ## been sorted. `menu_nav.open_screen` is inside `attach()`, so the context and the
 ## declared-back rule follow the swap in one step.
 func _on_screen_changed(_from_id: String, _to_id: String) -> void:
+	# A swap is a new surface: the stick starts from the new screen's own offset, never
+	# from a fraction accumulated over the screen that just left.
+	if _controller_scroll != null:
+		_controller_scroll.reset()
 	var screen: Node = _router.active_screen()
 	if screen == null:
 		return
@@ -720,6 +848,10 @@ func _on_screen_changed(_from_id: String, _to_id: String) -> void:
 		screen.set_store(Config.save_store())
 	_restore_menu_focus = String(screen.call("preferred_focus_id")) if screen.has_method("preferred_focus_id") else ""
 	_bridge.attach(screen as Control, _focus, _router)
+	# `attach()` rebuilds the bridge's registry from the mounted screen, which drops the
+	# host's own Emporio button: put it back so a pad can still open the shop from the
+	# menu.
+	_ensure_emporio_focus()
 	# The result screen's rematch is the host's decision: the screen reports the
 	# request and names its label, and the mount owns the mode.
 	if screen.has_signal("rematch_requested") and not screen.is_connected("rematch_requested", _on_rematch_requested):
@@ -727,6 +859,8 @@ func _on_screen_changed(_from_id: String, _to_id: String) -> void:
 	_sync_osk()
 	if _jukebox_button != null:
 		_jukebox_button.visible = (_to_id == "menu")
+	if _emporio_button != null:
+		_emporio_button.visible = (_to_id == "menu")
 	# A freshly mounted screen's containers sort at the end of this frame; the model
 	# is re-measured two frames later, not on the rectangles `_ready()` saw.
 	_refresh_pending = 2
@@ -739,6 +873,11 @@ func _on_screen_changed(_from_id: String, _to_id: String) -> void:
 ## inert — a dictated rival slot with a single outfit is a card with no command and no
 ## click handler either — so it is not a gap and is not reported as one.
 func _on_action_requested(action: String) -> void:
+	# The Emporio launch button is the menu's own control, not a screen's: the bridge
+	# reports its action here rather than routing it to a screen.
+	if action == "emporio":
+		toggle_emporio()
+		return
 	if action == "":
 		return
 	var screen: Node = _router.active_screen()
@@ -834,6 +973,98 @@ func rematch_route(dry_run := false) -> Dictionary:
 ## The router UIR-24's capture harness walks. Null in a legacy run.
 func ui_router() -> Control:
 	return _router
+
+
+## The right-stick helper this scene drives, so a screen and a test can ask it what it
+## is scrolling and what the last frame did. Never null after `_ready()`.
+func controller_scroll() -> RefCounted:
+	return _controller_scroll
+
+
+## Built once per UI scene, in both paths. It owns no node and paints nothing on its
+## own: `_update_controller_scroll()` names the surface each frame, and the helper
+## reads `JOY_AXIS_RIGHT_Y` and writes the container.
+func _setup_controller_scroll() -> void:
+	if _controller_scroll != null:
+		return
+	_controller_scroll = ControllerScroll.new()
+	# The focused control, when there is one, is what lets a nested panel pick its own
+	# scroll container. The helper handles a null answer (no focus, a freed node).
+	_controller_scroll.set_focus_source(func() -> Control: return _focus.focus_node() if _focus != null else null)
+	# A pad that goes away mid-scroll stops the scroll: the helper must not keep a
+	# fraction alive for a seat that no longer exists.
+	if not Input.joy_connection_changed.is_connected(_on_joy_connection_changed):
+		Input.joy_connection_changed.connect(_on_joy_connection_changed)
+	# Losing the window is losing the player's hand: a stick left deflected while the
+	# window is in the background must not resume the moment it comes back.
+	var tree := get_tree()
+	if tree != null and tree.root != null and not tree.root.focus_exited.is_connected(_on_window_focus_lost):
+		tree.root.focus_exited.connect(_on_window_focus_lost)
+		tree.root.focus_entered.connect(_on_scroll_window_focus_returned)
+
+
+## One frame of the right stick, over the surface that owns it. The order is the
+## reference's own modal rule: the keyboard, then an overlay, then the active screen.
+func _update_controller_scroll(delta: float) -> void:
+	if _controller_scroll == null:
+		return
+	if not _scroll_window_active:
+		return
+	_controller_scroll.set_device(_read_pad_device())
+	_controller_scroll.set_surface(_scroll_surface())
+	_controller_scroll.update(delta)
+
+
+## True while an OST overlay (the Jukebox or the Emporio) is up and therefore owns the
+## input. The menu's own focus dispatch is skipped so a pad confirm/cancel cannot drive
+## the screen behind the modal.
+##
+## The on-screen keyboard is deliberately NOT in this set: the OSK lane is driven BY the
+## menu's own bridge dispatch (`_sync_osk`, `MenuNav.osk`), so suppressing that dispatch
+## while the keyboard is up would break code entry. The OSK keeps its existing handling.
+func _overlay_owns_input() -> bool:
+	if _jukebox_overlay != null and is_instance_valid(_jukebox_overlay) and _jukebox_overlay.is_visible_in_tree():
+		return true
+	if _emporio_overlay != null and is_instance_valid(_emporio_overlay) and _emporio_overlay.is_visible_in_tree():
+		return true
+	return false
+
+
+## The UI that owns the stick this frame, or null when there is none (the ported
+## column, which builds no scroll container, and the gameplay frame). A hidden
+## overlay is not a surface: `is_visible_in_tree()` is the test, so the screen under a
+## modal is inert without a second flag.
+func _scroll_surface() -> Control:
+	if not _playable:
+		return null
+	if _osk_panel != null and is_instance_valid(_osk_panel) and _osk_panel.is_visible_in_tree():
+		return _osk_panel
+	if _jukebox_overlay != null and is_instance_valid(_jukebox_overlay) and _jukebox_overlay.is_visible_in_tree():
+		return _jukebox_overlay
+	if _emporio_overlay != null and is_instance_valid(_emporio_overlay) and _emporio_overlay.is_visible_in_tree():
+		return _emporio_overlay
+	if _router != null:
+		return _router.active_screen() as Control
+	return null
+
+
+func _on_joy_connection_changed(_device: int, connected: bool) -> void:
+	if not connected and _controller_scroll != null:
+		# Suspend, not reset: a pad that comes back with the stick still held must wait
+		# for neutral before it scrolls again.
+		_controller_scroll.suspend()
+
+
+func _on_window_focus_lost() -> void:
+	_scroll_window_active = false
+	if _controller_scroll != null:
+		# Suspend, not reset: dropping the fraction alone would let the very next frame
+		# read the still-deflected stick and carry on scrolling.
+		_controller_scroll.suspend()
+
+
+func _on_scroll_window_focus_returned() -> void:
+	_scroll_window_active = true
 
 
 func _register(id: String, node: Control, action: String, locked := false) -> void:
@@ -1052,11 +1283,30 @@ func _input(event: InputEvent) -> void:
 		toggle_jukebox()
 		get_viewport().set_input_as_handled()
 		return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E and _emporio_shortcut_available():
+		toggle_emporio()
+		get_viewport().set_input_as_handled()
+		return
+	# An overlay owns the input while it is up. Without this guard the menu behind a
+	# Jukebox/Emporio overlay would still receive pad navigation and confirm through
+	# the focus bridge — the overlay would look modal and behave transparently. The
+	# event is left unhandled so the GUI delivers `ui_accept` to the overlay's own
+	# focused control.
+	if _overlay_owns_input():
+		return
+	if _runtime_ost != null and _runtime_ost.handle_skip(event):
+		get_viewport().set_input_as_handled()
+		return
 	if _playable:
 		if event is InputEventKey:
 			if _bridge.dispatch(event):
 				get_viewport().set_input_as_handled()
-				_sync_osk()
+				var result: Dictionary = _bridge.last_result()
+				if bool(result.get("moved", false)):
+					_apply_focus()
+				_apply_navigation_scroll(float(result.get("scrolled", 0.0)))
+				if String(result.get("kind", "")) != "":
+					_sync_osk()
 		elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
 			# The event can precede `Input`'s per-device state by a rendered frame on
 			# macOS. Feed it into the SAME poll model immediately; the later poll then
@@ -1086,11 +1336,23 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
-func _process(_delta: float) -> void:
+func _emporio_shortcut_available() -> bool:
+	if not _playable or _router == null or _router.active_id() != "menu" or _overlay_owns_input():
+		return false
+	if _osk_panel != null and _osk_panel.is_visible_in_tree():
+		return false
+	var owner := get_viewport().gui_get_focus_owner()
+	return not (owner is LineEdit or owner is TextEdit)
+
+
+func _process(delta: float) -> void:
+	if _runtime_ost != null:
+		_runtime_ost.set_screen(_router.active_id() if _playable and _router != null else "menu")
+		_runtime_ost.set_held(is_instance_valid(_jukebox_overlay))
 	if _capture or _focus == null:
 		return
 	if _playable:
-		_playable_process()
+		_playable_process(delta)
 		return
 	# The layout settles one frame after the tree is built (and changes again on a
 	# window resize): re-measure the model's rectangles when it does, so navigation
@@ -1104,9 +1366,15 @@ func _process(_delta: float) -> void:
 	if connected != _pad_seen:
 		_pad_seen = connected
 		_focus.pad_connected(connected)
+	# The right stick is applied BEFORE the "nobody is connected" return, and it is the
+	# helper — not this branch — that reads the seat: a disconnected pad and a null
+	# surface both leave it inert, so the early return below is about the FOCUS poll,
+	# not about scrolling.
+	_update_controller_scroll(delta)
 	if not connected:
 		return
 	var result: Dictionary = _focus.poll_pad(_read_pad_device())
+	_apply_navigation_scroll(float(result.get("direction_scrolled", 0.0)) * delta * 60.0)
 	if String(result.get("dir", "")) != "" and bool(result.get("focus_moved", false)):
 		_apply_focus()
 	if String(result.get("kind", "")) != "":
@@ -1117,7 +1385,7 @@ func _process(_delta: float) -> void:
 ## whichever screen the router has up. A swap asks for a re-measure (containers sort
 ## at the end of the frame that built them), a confirm or a back the poll resolved is
 ## applied through the bridge, and the presentation is refreshed when the model moved.
-func _playable_process() -> void:
+func _playable_process(delta: float) -> void:
 	# A screen that rebuilt its own view (the athlete picker, the wardrobe) freed the
 	# controls the bridge registered; re-read them before anything paints, so the frame
 	# never touches a freed node. The new tree sorts at the end of this frame, so the
@@ -1136,9 +1404,20 @@ func _playable_process() -> void:
 	if connected != _pad_seen:
 		_pad_seen = connected
 		_focus.pad_connected(connected)
+	# Same order as the ported column: the scroll is applied whatever the focus poll
+	# decides, and the helper itself is what refuses a disconnected seat or a surface
+	# that is not up.
+	_update_controller_scroll(delta)
+	# An OST overlay owns confirm/cancel while it is up. `poll_pad` reads the HELD pad
+	# state every frame (not just pushed events), so without this stop a real gamepad
+	# held down would keep activating the screen behind the shop. The scroll above still
+	# runs, and the GUI still delivers accept to the overlay's own focused control.
+	if _overlay_owns_input():
+		return
 	if not connected:
 		return
 	var result: Dictionary = _focus.poll_pad(_read_pad_device())
+	_apply_navigation_scroll(float(result.get("direction_scrolled", 0.0)) * delta * 60.0)
 	if bool(result.get("focus_moved", false)):
 		_apply_focus()
 	if String(result.get("kind", "")) != "":
@@ -1198,6 +1477,14 @@ func _full_arena_index(arena_id: String) -> int:
 		if String((Frozen.arenas()[i] as Dictionary)["id"]) == arena_id:
 			return i
 	return -1
+
+
+func _apply_navigation_scroll(amount: float) -> void:
+	if _controller_scroll == null or not _scroll_window_active or is_zero_approx(amount):
+		return
+	_controller_scroll.set_surface(_scroll_surface())
+	_controller_scroll.scroll_by(amount)
+	_focus.refresh_geometry()
 
 
 func _apply_focus() -> void:

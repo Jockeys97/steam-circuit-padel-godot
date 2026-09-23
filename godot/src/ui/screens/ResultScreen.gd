@@ -37,6 +37,9 @@
 extends "res://src/ui/screens/ScreenContract.gd"
 
 const UiStrings := preload("res://src/ui/UiStrings.gd")
+## The locale, for the Emporio reward row's own two-line text: the OST lane carries its
+## own IT/EN pair rather than a generated locale key (the Jukebox screen does the same).
+const Locale := preload("res://src/locale/locale.gd")
 const UiData := preload("res://src/ui/data/UiData.gd")
 const DemoGate := preload("res://src/ui/data/DemoGateAdapter.gd")
 const Config := preload("res://game/match_config.gd")
@@ -112,6 +115,9 @@ var _store_kind := CTA_WISHLIST
 var _objective_stars := 0
 var _match_objective: Dictionary = {}
 var _constructed := false
+## Emporio OST: the credits this match paid and the resulting balance (see
+## `_render_reward`). Hidden when the payload carries no reward.
+var _reward_label: Label = null
 ## The coach block mounted under the card's own content, or null before `_build()`.
 var _coach = null
 ## The exercise the coach's last advice links to, kept so the route can be asserted
@@ -295,6 +301,7 @@ func render(payload: Dictionary) -> void:
 		_store_kind = String(_payload.get("store_kind", _store_kind))
 	_render_texts()
 	_render_scores()
+	_render_reward()
 	_render_stats()
 	_render_objectives()
 	_render_cta()
@@ -403,6 +410,25 @@ func rematch_label_key() -> String:
 # The actions
 # ---------------------------------------------------------------------------
 
+## MenuFocus confirms through the host's action dispatcher, not Godot ui_accept.
+## Reuse the mouse handlers, including their disabled/hidden state guards.
+func activate(action: String) -> bool:
+	_ensure()
+	var button: BaseButton = null
+	match action:
+		"rematch":
+			button = _control("RematchButton") as BaseButton
+		"to-menu":
+			button = _control("MenuButton") as BaseButton
+		"coach-analyze":
+			button = _coach.analyze_control() as BaseButton
+		"coach-drill":
+			button = _coach.drill_control() as BaseButton
+	if button == null or button.disabled or not button.is_visible_in_tree():
+		return false
+	button.pressed.emit()
+	return true
+
 ## The rematch press. The reference's own handler restarts the same match with
 ## `pendingContinue` state; the port leaves that to the mount, which is the node that
 ## knows the mode — this screen only reports the request, and names the label it showed.
@@ -443,6 +469,29 @@ func _render_texts() -> void:
 	(_control("HeadOpp") as Label).text = UiStrings.t("statOpp")
 	(_control("RematchButton") as Button).text = UiStrings.t(rematch_label_key())
 	(_control("MenuButton") as Button).text = UiStrings.t("menu")
+
+
+## Emporio OST: the credits this match paid and the resulting balance. The payload
+## carries `reward` only for a real played match — a harness run and a constructed
+## capture payload have none — so the row is hidden rather than showing a fake zero.
+func _render_reward() -> void:
+	if _reward_label == null:
+		return
+	var reward: Variant = _payload.get("reward", null)
+	if not (reward is Dictionary):
+		_reward_label.visible = false
+		_reward_label.text = ""
+		return
+	var awarded := int((reward as Dictionary).get("awarded", 0))
+	var balance := int((reward as Dictionary).get("balance", 0))
+	var italian := Locale.current_lang() != "en"
+	_reward_label.visible = true
+	if awarded > 0:
+		_reward_label.text = ("Crediti Circuito +%d — Saldo: %d" % [awarded, balance]) \
+			if italian else ("Circuit Credits +%d — Balance: %d" % [awarded, balance])
+	else:
+		_reward_label.text = ("Crediti Circuito — Saldo: %d" % balance) \
+			if italian else ("Circuit Credits — Balance: %d" % balance)
 
 
 func _render_scores() -> void:
@@ -758,6 +807,12 @@ func _build() -> void:
 	message.add_theme_font_size_override("font_size", 17)
 	message.modulate.a = 0.82
 	card.add_child(_score_panel())
+	# Emporio OST: the reward row sits with the score, above the stats — it is the
+	# match's payout, and it is hidden when the payload carries none.
+	_reward_label = _label(card, "RewardRow")
+	_reward_label.add_theme_font_size_override("font_size", 15)
+	_reward_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_reward_label.modulate.a = 0.9
 	card.add_child(_stats_panel())
 	card.add_child(_objectives_block())
 	card.add_child(_cta_block())

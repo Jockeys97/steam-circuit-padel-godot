@@ -89,6 +89,12 @@ var load_errors: int = 0
 
 var _gait: Dictionary = {}           # role -> StringName, so the clip is set once
 var _swing_seen: Dictionary = {}     # role -> bool
+## Whether the point now in its pause earns the cheer/dejected pair. Decided once,
+## on the pause's first frame (`_note_point`), so a whole pause shows one answer.
+var _celebrate_point := true
+var _in_point_pause := false
+var _rally_peak := 0
+var _score_mark := 0
 var _last_stroke: Dictionary = {}    # role -> StringName
 var _colors: Dictionary = {}
 var _previous_positions: Dictionary = {}
@@ -230,6 +236,7 @@ func set_outfit(role: String, outfit_id: StringName) -> bool:
 ## the steady state (the only allocation is on an outfit change, which is a menu
 ## action, not a tick).
 func sync(state, delta: float = -1.0) -> void:
+	_note_point(state)
 	if rigs.is_empty() or state == null:
 		return
 	if delta < 0.0:
@@ -277,7 +284,7 @@ func sync(state, delta: float = -1.0) -> void:
 		if float(paddle.charge) > 0.05 or (role == state.activePlayerKey and float(state.shotCharge) > 0.05):
 			_split_remaining[role] = 0.0
 			_recovery_remaining[role] = 0.0
-		_sync_gait(role, rig, paddle, movement, prepare, delta)
+		_sync_gait(role, rig, paddle, movement, prepare, delta, ceremony_for(role, state, paddle, _celebrate_point))
 		_sync_stroke(role, rig, paddle, float(state.ball.x), float(state.ball.z) if not reset_movement else NAN)
 		_was_stroking[role] = rig.is_stroking()
 		_sync_movement_weight(role, rig, movement, delta, reset_movement)
@@ -289,7 +296,7 @@ func sync(state, delta: float = -1.0) -> void:
 		_sync_racket(role, paddle)
 
 
-func _sync_gait(role: String, rig: Node3D, paddle, movement := Vector2.ZERO, prepare := false, delta: float = 1.0 / 60.0) -> void:
+func _sync_gait(role: String, rig: Node3D, paddle, movement := Vector2.ZERO, prepare := false, delta: float = 1.0 / 60.0, ceremony: StringName = &"") -> void:
 	var motion := float(paddle.motion)
 	var want: StringName = &"ready"
 	var moving: bool = movement.length() > 0.01
@@ -318,6 +325,10 @@ func _sync_gait(role: String, rig: Node3D, paddle, movement := Vector2.ZERO, pre
 			want = &"split_step"
 		elif float(_recovery_remaining.get(role, 0.0)) > 0.0:
 			want = &"recover_left" if "backhand" in String(_last_stroke.get(role, "")) else &"recover_right"
+	# Dead-ball body language wins over the ready stance, never over real movement
+	# or a stroke in flight: an athlete walking back to position keeps walking.
+	if ceremony != &"" and not moving and not rig.is_stroking() and ceremony in rig.get_locomotion_states():
+		want = ceremony
 	if _gait[role] != want:
 		_gait[role] = want
 		rig.play_locomotion(want)
@@ -325,7 +336,7 @@ func _sync_gait(role: String, rig: Node3D, paddle, movement := Vector2.ZERO, pre
 	# Imported forward running covers more distance per cycle than small shuffles.
 	var speed: float = _movement_velocity(role, movement, delta).length()
 	var reference_speed := 4.2 if want == &"run" else 2.6
-	rig.set_locomotion_speed_scale(1.0 if want in [&"idle", &"ready", &"brake", &"prepare", &"split_step", &"recover_left", &"recover_right"] else clampf(speed / reference_speed, 0.55, 1.8))
+	rig.set_locomotion_speed_scale(1.0 if want in [&"idle", &"ready", &"brake", &"prepare", &"split_step", &"recover_left", &"recover_right", &"cheer", &"dejected", &"serve_bounce"] else clampf(speed / reference_speed, 0.55, 1.8))
 	if movement.length() > 0.01:
 		rig.recover_to_movement()
 
@@ -413,6 +424,102 @@ func _sync_anticipation(role: String, rig: Node3D, paddle, state, delta: float, 
 		stroke = StringName(rig.get_anticipation()["stroke"])
 		contact_phase = float(rig.get_anticipation().get("contact_phase", 0.34))
 	rig.set_anticipation(stroke, weight, contact_phase)
+
+
+## Rallies this long earn the celebration even on an ordinary point.
+const LONG_RALLY_HITS := 6
+
+
+## Not every point is a celebration: the owner found a cheer on every point would get
+## old fast. The pair plays when the point MEANT something — it closed a game or a
+## set (the score's own totals moved), or it ended a long rally. The match result
+## always celebrates (`ceremony_for` checks `result` before this). Deterministic, no
+## dice: the same match shows the same celebrations, and a test can predict them.
+static func celebrates(score_before: int, score_after: int, rally_peak: int) -> bool:
+	return score_after != score_before or rally_peak >= LONG_RALLY_HITS
+
+
+## Games and sets folded into one number that changes exactly when either does.
+static func score_mark(state) -> int:
+	return int(state.games["player"]) + int(state.games["ai"]) \
+		+ 1000 * (int(state.sets["player"]) + int(state.sets["ai"]))
+
+
+## Called once per sync. While the ball is live it keeps the rally's peak hit count
+## and the score as it stood; on the pause's first frame it compares, decides, and
+## resets. `rallyHits` is zeroed by `score_point` before the pause starts, which is
+## why the peak is kept here rather than read then.
+func _note_point(state) -> void:
+	if float(state.pointPause) <= 0.0:
+		_in_point_pause = false
+		_rally_peak = maxi(_rally_peak, int(state.rallyHits))
+		_score_mark = score_mark(state)
+		return
+	if _in_point_pause:
+		return
+	_in_point_pause = true
+	_celebrate_point = celebrates(_score_mark, score_mark(state), _rally_peak)
+	_rally_peak = 0
+
+
+## Where the ball is DRAWN during the server's bounce ritual, or null when the
+## simulation's own position stands. Presentation only: the simulation keeps its
+## ball parked beside the server (`sim.gd` prepare_serve) and never sees this. The
+## drawn ball follows the left hand and drops to the floor and back once per loop
+## of `serve_bounce`, so ball and hand share one clock: the clip's own position.
+func serve_ball_override(state) -> Variant:
+	if not bool(state.serving) or float(state.pointPause) > 0.0 or state.result != null:
+		return null
+	var role := "player" if String(state.serveSide) == "player" else "opponent"
+	var rig: Node3D = rigs.get(role, null)
+	if rig == null or not rig.is_inside_tree():
+		return null
+	var anim: AnimationPlayer = rig.get("_anim")
+	if anim == null or anim.current_animation != "serve_bounce":
+		return null
+	var length := maxf(anim.current_animation_length, 0.001)
+	var phase := fposmod(anim.current_animation_position / length, 1.0)
+	var skeleton: Skeleton3D = rig.get_skeleton()
+	var bone := skeleton.find_bone(rig._resolve_bone_name("LeftHand"))
+	if bone < 0:
+		return null
+	var hand: Vector3 = skeleton.global_transform * skeleton.get_bone_global_pose(bone).origin
+	# In the hand at the loop's ends, on the floor at its middle.
+	var height := Court.BALL_R + (hand.y - Court.BALL_R) * absf(cos(phase * PI))
+	return Vector3(hand.x, maxf(Court.BALL_R, height), hand.z)
+
+
+## Which dead-ball clip this athlete owes (`athlete_rig.gd::CEREMONIES`), or &""
+## while the ball is live. A pure read of the simulation, which stays the only
+## authority on who won what:
+##   - the match result: `state.result.winner` ("player" | "ai", `sim.gd:1959`);
+##   - the point: the 1.4 s `pointPause` and its `pointMessage`, which begins with
+##     "pointYou" or "pointOpp" (`sim.gd:2039`). A LET has no winner and owes nothing;
+##   - the serve wait: the server is `player` or `opponent` by `serveSide`
+##     (`sim.gd` prepare_serve), and bounces the ball until they start charging.
+static func ceremony_for(role: String, state, paddle, celebrate_point := true) -> StringName:
+	var near_team := role.begins_with("player")
+	if state.result != null:
+		var winner := String((state.result as Dictionary).get("winner", ""))
+		if winner == "":
+			return &""
+		return &"cheer" if (winner == "player") == near_team else &"dejected"
+	if float(state.pointPause) > 0.0:
+		if not celebrate_point:
+			return &""
+		var message := String(state.pointMessage)
+		if message.begins_with("pointYou"):
+			return &"cheer" if near_team else &"dejected"
+		if message.begins_with("pointOpp"):
+			return &"dejected" if near_team else &"cheer"
+		return &""
+	if state.serving:
+		var server := "player" if String(state.serveSide) == "player" else "opponent"
+		var charging := float(paddle.charge) > 0.05 \
+			or (role == String(state.activePlayerKey) and float(state.shotCharge) > 0.05)
+		if role == server and not charging:
+			return &"serve_bounce"
+	return &""
 
 
 ## Time (s), x and height (sim px) at which the ball reaches this athlete's line,

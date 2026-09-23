@@ -40,7 +40,7 @@ func _frames(n: int) -> void:
 
 
 func run() -> void:
-	Config.save_dir = "user://controller-cards-test"
+	Config.save_dir = "user://controller-cards-test-%d" % Time.get_ticks_usec()
 	print("PHYSICAL_DEVICES ", Input.get_connected_joypads())
 	_menu = load("res://game/Main.tscn").instantiate()
 	root.add_child(_menu)

@@ -26,8 +26,17 @@ const SPIN_SECONDS := 6.0
 const REST_SECONDS := 0.35
 
 var _accent: Color = Color(0.0, 0.898, 1.0)
+var _cover_texture: Texture2D = null
 var _spinning: bool = false
 var _spin_tween: Tween = null
+
+
+## Sets the picture disc cover art. Null falls back to the dark procedural vinyl.
+func set_cover_texture(texture: Texture2D) -> void:
+	if _cover_texture == texture:
+		return
+	_cover_texture = texture
+	queue_redraw()
 
 
 func _ready() -> void:
@@ -80,36 +89,62 @@ func set_spinning(on: bool) -> void:
 
 func _draw() -> void:
 	var centre := size * 0.5
-	var radius := minf(size.x, size.y) * 0.5 - 3.0
+	var radius := minf(size.x, size.y) * 0.5 - 2.0
 	if radius <= 1.0:
 		return
 
-	# Vinyl body: near-black navy so the card behind it stays the lightest surface.
-	draw_circle(centre, radius, Color(0.024, 0.031, 0.098))
+	if _cover_texture != null:
+		# Picture Disc: render the full vibrant cover art mapped onto the circular face
+		var pts := PackedVector2Array()
+		var uvs := PackedVector2Array()
+		const SEGS := 72
+		for i in SEGS:
+			var theta := TAU * float(i) / float(SEGS)
+			pts.append(centre + Vector2(cos(theta), sin(theta)) * radius)
+			uvs.append(Vector2(0.5 + 0.5 * cos(theta), 0.5 + 0.5 * sin(theta)))
+		draw_polygon(pts, PackedColorArray([Color.WHITE]), uvs, _cover_texture)
 
-	# Grooves: faint concentric rings, the disc's own texture.
-	for i in 5:
-		var groove := radius * (0.88 - 0.075 * float(i))
-		draw_arc(centre, groove, 0.0, TAU, 72, Color(1.0, 1.0, 1.0, 0.055), 1.0, true)
+		# Subtle authentic vinyl light-catch sheen across upper-left
+		draw_arc(centre, radius * 0.82, -2.45, -1.25, 32, Color(0.0, 0.898, 1.0, 0.4), 2.0, true)
 
-	# Rim: the accent, brighter while the disc is actually turning.
-	draw_arc(centre, radius - 1.0, 0.0, TAU, 96, Color(_accent, 0.85 if _spinning else 0.45), 2.0, true)
+		# Delicate concentric micro-grooves (subtle transparency so artwork shines through)
+		for i in 4:
+			var groove := radius * (0.85 - 0.15 * float(i))
+			if groove > radius * 0.25:
+				draw_arc(centre, groove, 0.0, TAU, 64, Color(1.0, 1.0, 1.0, 0.08), 1.0, true)
 
-	# A single cyan light-catch across the upper-left quadrant, the way a physical
-	# record catches a lamp — it also gives the rotation a second read.
-	draw_arc(centre, radius * 0.80, -2.45, -1.25, 32, Color(0.0, 0.898, 1.0, 0.34), 2.0, true)
+		# Outer rim accent with category glow
+		draw_arc(centre, radius - 1.0, 0.0, TAU, 96, Color(_accent, 0.95 if _spinning else 0.7), 2.5, true)
 
-	# Centre label: the category colour, dimmed so the title above stays dominant.
-	var label_radius := radius * 0.33
-	draw_circle(centre, label_radius, _accent.darkened(0.55))
-	draw_arc(centre, label_radius, 0.0, TAU, 64, Color(_accent, 0.9), 1.5, true)
+		# Tiny authentic spindle hole at center (clean, without blocking artwork)
+		draw_circle(centre, maxf(radius * 0.035, 2.5), Color(0.02, 0.03, 0.07))
+		draw_arc(centre, maxf(radius * 0.035, 2.5), 0.0, TAU, 16, Color(_accent, 0.8), 1.0, true)
+	else:
+		# Fallback Procedural Vinyl Body
+		draw_circle(centre, radius, Color(0.024, 0.031, 0.098))
 
-	# Rotation tick: the asymmetric mark that makes the spin readable.
-	draw_line(
-		centre + Vector2(0.0, -label_radius - 2.0),
-		centre + Vector2(0.0, -radius * 0.55),
-		Color(_accent, 0.95), 2.0, true
-	)
+		# Grooves: faint concentric rings
+		for i in 5:
+			var groove := radius * (0.88 - 0.075 * float(i))
+			draw_arc(centre, groove, 0.0, TAU, 72, Color(1.0, 1.0, 1.0, 0.055), 1.0, true)
 
-	# Spindle hole.
-	draw_circle(centre, maxf(radius * 0.055, 2.0), Color(0.016, 0.02, 0.07))
+		# Rim
+		draw_arc(centre, radius - 1.0, 0.0, TAU, 96, Color(_accent, 0.85 if _spinning else 0.45), 2.0, true)
+
+		# Cyan light-catch
+		draw_arc(centre, radius * 0.80, -2.45, -1.25, 32, Color(0.0, 0.898, 1.0, 0.34), 2.0, true)
+
+		# Centre label
+		var label_radius := radius * 0.33
+		draw_circle(centre, label_radius, _accent.darkened(0.55))
+		draw_arc(centre, label_radius, 0.0, TAU, 64, Color(_accent, 0.9), 1.5, true)
+
+		# Rotation tick
+		draw_line(
+			centre + Vector2(0.0, -label_radius - 2.0),
+			centre + Vector2(0.0, -radius * 0.55),
+			Color(_accent, 0.95), 2.0, true
+		)
+
+		# Spindle hole
+		draw_circle(centre, maxf(radius * 0.055, 2.0), Color(0.016, 0.02, 0.07))

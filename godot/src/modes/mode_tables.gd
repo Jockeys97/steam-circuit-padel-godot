@@ -104,6 +104,10 @@ static func unlock_code() -> String:
 	return String(career()["unlockCode"])
 
 
+static func relock_code() -> String:
+	return "ALELU"
+
+
 ## `ATHLETE_OUTFITS` (`js/data.js:515-554`), keyed by athlete id. Every entry
 ## carries the `unlockKey` / `athleteId` pair `js/data.js:799-804` adds, plus its
 ## `challenge` (or `null`) and its `unlock` (the pre-outfit wall, kept because

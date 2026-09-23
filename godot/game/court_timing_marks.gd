@@ -164,6 +164,11 @@ const TIMING_VERDICT_PX := 14
 const TIMING_VERDICT_MODE_PX := 9
 ## Compact world-space lettering, independent of the timing ring/bar scale.
 const TIMING_TEXT_M_PER_PX := 1.0 / 60.0
+## The advice word ("LEGGI LA PALLA", ...) alone is drawn a fifth smaller than the
+## other timing text, at the owner's request after playing. Its font size stays 11:
+## on a Label3D the font size is also the raster resolution, so shrinking it would
+## blur the word; the metres per pixel shrink instead, and the panel follows.
+const TIMING_ADVICE_M_PER_PX := TIMING_TEXT_M_PER_PX * 0.8
 ## The verdict over the athlete who hit (`js/render.js:1041-1069`): the grade word
 ## at `700 14px` with a 5 px `rgba(4, 14, 32, 0.9)` stroke, the mode line at
 ## `600 9px` fifteen pixels below it, and the whole thing rising `(0.78 - life) * 18`
@@ -294,7 +299,7 @@ func mount(parent: Node3D) -> int:
 	_advice.name = "TimingAdvice"
 	_advice.font = ThemeDB.fallback_font
 	_advice.font_size = TIMING_ADVICE_PX
-	_advice.pixel_size = TIMING_TEXT_M_PER_PX
+	_advice.pixel_size = TIMING_ADVICE_M_PER_PX
 	_advice.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	_advice.no_depth_test = true
 	_advice.render_priority = 3
@@ -427,14 +432,14 @@ func update(state, finished: bool, preparation: Dictionary = {}) -> Dictionary:
 		# (`js/render.js:1735-1742`) measured with the same font the label draws with,
 		# in the reference's own ratios to its font: one line of padding either side
 		# (22/11) in a box 20/11 lines tall. Placed just behind the text.
-		var line_m: float = float(TIMING_ADVICE_PX) * TIMING_TEXT_M_PER_PX
+		var line_m: float = float(TIMING_ADVICE_PX) * TIMING_ADVICE_M_PER_PX
 		var text_px: float = 0.0
 		if _advice.font != null:
 			text_px = _advice.font.get_string_size(
 				word, HORIZONTAL_ALIGNMENT_LEFT, -1, TIMING_ADVICE_PX).x
 		_advice_panel.position = Vector3(at.x, at.y, at.z - 0.01)
 		_advice_panel.scale = Vector3(
-			maxf(line_m * TIMING_ADVICE_BOX_LINES, text_px * TIMING_TEXT_M_PER_PX + line_m * TIMING_ADVICE_PAD_LINES),
+			maxf(line_m * TIMING_ADVICE_BOX_LINES, text_px * TIMING_ADVICE_M_PER_PX + line_m * TIMING_ADVICE_PAD_LINES),
 			line_m * TIMING_ADVICE_BOX_LINES, 1.0)
 
 	# --- the energy bar: every frame, under the active athlete ----------------

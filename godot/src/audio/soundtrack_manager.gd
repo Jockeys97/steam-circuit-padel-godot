@@ -562,6 +562,13 @@ var _active_player: AudioStreamPlayer = null
 var _current_track_id: String = ""
 var _tween: Tween = null
 var _current_intensity: float = 0.0
+## True while playback is held (the streams are frozen, not stopped).
+var _paused: bool = false
+## Where the active track sits while held; also what `resume()` plays from.
+var _paused_position: float = 0.0
+## A seek requested while held. Measured on Godot 4.7: a seek on a paused
+## `AudioStreamPlayer` does not stick, so it is recorded here and applied on resume.
+var _pending_seek: float = -1.0
 
 
 func _init() -> void:
@@ -693,8 +700,27 @@ func is_playing() -> bool:
 	return _active_player != null and _active_player.playing
 
 
-## Elapsed seconds of the active stream; 0.0 while stopped or absent.
+## True while a track is loaded — playing or held. False at idle and after `stop()`,
+## which is the state a transport button should key its enabled-ness off.
+func is_active() -> bool:
+	if _active_player == null or _current_track_id == "":
+		return false
+	# A stream that has run to its end is neither playing nor held, so it is not active:
+	# the transport must not offer a seek into something that is no longer running.
+	return _paused or _active_player.playing
+
+
+## True while playback is held by `pause()`. A held stream is not playing, so this is
+## a third state, not a synonym for either.
+func is_paused() -> bool:
+	return _paused
+
+
+## Elapsed seconds of the active stream; 0.0 while stopped or absent. While held this
+## is the frozen (or most recently requested) position, so a paused readout is honest.
 func playback_position() -> float:
+	if _paused:
+		return maxf(_paused_position, 0.0)
 	if _active_player == null or not _active_player.playing:
 		return 0.0
 	return maxf(_active_player.get_playback_position(), 0.0)
@@ -709,26 +735,115 @@ func playback_duration() -> float:
 
 
 ## Fraction of the active stream already played, clamped to [0, 1]. Returns 0.0
-## when stopped or when the duration is unknown, so a caller can drive a bar
-## straight from this without inventing a value.
+## when stopped, idle or when the duration is unknown, so a caller can drive a bar
+## straight from this without inventing a value. A held stream still reports its
+## frozen fraction.
 func playback_progress() -> float:
 	var duration := playback_duration()
-	if duration <= 0.0 or not is_playing():
+	if duration <= 0.0 or not is_active():
 		return 0.0
 	return clampf(playback_position() / duration, 0.0, 1.0)
+
+
+## Holds playback where it is. Both players are frozen, not just the active one, and a
+## crossfade in flight is held too — otherwise the fade's own volume tween would keep
+## walking volumes while the mix was supposedly stopped. Returns false when there is
+## nothing playing to hold.
+func pause() -> bool:
+	if _paused:
+		return true
+	if _active_player == null or not _active_player.playing:
+		return false
+	# Read the position BEFORE freezing, so resume returns to where the listener was
+	# rather than to wherever the in-flight mix buffer happened to be.
+	_paused_position = maxf(_active_player.get_playback_position(), 0.0)
+	_pending_seek = -1.0
+	if _tween != null and _tween.is_valid():
+		_tween.pause()
+	_freeze_players(true)
+	_paused = true
+	return true
+
+
+## Releases a held stream from the same position. A seek requested while held is applied
+## here, once the audio thread can take it.
+func resume() -> bool:
+	if not _paused:
+		return false
+	_freeze_players(false)
+	if _active_player != null:
+		var target := _pending_seek if _pending_seek >= 0.0 else _paused_position
+		_active_player.seek(_position_within(target, playback_duration()))
+	if _tween != null and _tween.is_valid():
+		_tween.play()
+	_paused = false
+	_pending_seek = -1.0
+	return true
+
+
+## Moves the ACTIVE stream to `seconds` (clamped into the stream). This is the same
+## stream the readout reports, so it is independent of which row the list has selected.
+## While held the request is recorded and the held readout reports it immediately; a
+## paused stream cannot take the engine seek, so it is applied on resume.
+func seek(seconds: float) -> bool:
+	if _active_player == null or _active_player.stream == null or _current_track_id == "":
+		return false
+	var target := _position_within(seconds, playback_duration())
+	if target < 0.0:
+		return false
+	if _paused:
+		_paused_position = target
+		_pending_seek = target
+		return true
+	if not _active_player.playing:
+		return false
+	_active_player.seek(target)
+	return true
+
+
+## Clamp into [0, duration]; -1.0 when the duration is unknown, which every caller
+## above reads as "do not move".
+func _position_within(seconds: float, duration: float) -> float:
+	if duration <= 0.0:
+		return -1.0
+	return clampf(seconds, 0.0, duration)
+
+
+## Freezes or releases BOTH players. `stream_paused` is set unconditionally (a stopped
+## player keeps the flag harmlessly) and cleared the same way, which is what stops a
+## held flag from leaking into the next track.
+func _freeze_players(hold: bool) -> void:
+	for player in [_player_a, _player_b]:
+		if player != null:
+			player.stream_paused = hold
 
 
 ## Plays an OST track with an optional crossfade duration in seconds.
 func play_track(track_id: String, fade_duration: float = 1.0) -> bool:
 	_setup_players()
 
-	if _current_track_id == track_id and _active_player != null and _active_player.playing:
-		return true
+	if _current_track_id == track_id and _active_player != null:
+		# The same track asked for again: a held one is released from where it was, and
+		# a playing one is left alone — the behaviour this call already had.
+		if _paused:
+			return resume()
+		if _active_player.playing:
+			return true
 
+	# Validate the request BEFORE touching transport state. A missing or unreadable track
+	# must leave a held track held, frozen, and exactly where it was — clearing the hold
+	# first would silently release audio to play a track that never starts.
 	var stream := load_stream(track_id)
 	if stream == null:
 		# Fallback: track file not found on disk
 		return false
+
+	# A new track always starts playing: no hold flag and no deferred seek may survive
+	# into it, or a fresh track would open silent or jump to the previous position.
+	_freeze_players(false)
+	_paused = false
+	_paused_position = 0.0
+	_pending_seek = -1.0
 
 	var incoming_player := _player_b if _active_player == _player_a else _player_a
 	var outgoing_player := _active_player
@@ -771,12 +886,38 @@ func stop(fade_duration: float = 0.5) -> void:
 	if _tween != null and _tween.is_valid():
 		_tween.kill()
 
+	if _paused:
+		# A held stop is IMMEDIATE. Releasing the freeze and then fading would let the
+		# stream play for the length of the fade — a short resumption of audio on a
+		# control that is supposed to silence it. Both players are stopped outright.
+		_hard_stop_players()
+		_paused = false
+		_paused_position = 0.0
+		_pending_seek = -1.0
+		_current_track_id = ""
+		return
+
+	_paused = false
+	_paused_position = 0.0
+	_pending_seek = -1.0
+	_freeze_players(false)
+
 	if _active_player != null and _active_player.playing:
 		_tween = create_tween()
 		_tween.tween_property(_active_player, "volume_db", -80.0, fade_duration)
 		_tween.tween_callback(Callable(_active_player, "stop"))
 
 	_current_track_id = ""
+
+
+## Silences both players outright: stop first, then release the freeze, so no mix can
+## pick the stream up again between the two calls.
+func _hard_stop_players() -> void:
+	for player in [_player_a, _player_b]:
+		if player == null:
+			continue
+		player.stop()
+		player.stream_paused = false
 
 
 ## Updates match intensity (0.0 to 1.0) for dynamic audio adjustments.

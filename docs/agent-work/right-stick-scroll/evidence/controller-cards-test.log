@@ -1,0 +1,84 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PHYSICAL_DEVICES []
+PASS default playable menu mounted
+PASS the game opens on the menu
+PASS the menu's first control takes the focus unprompted
+PASS the menu paints the control the model names
+PASS the reachability walk leaves the focus where it found it
+PASS the reachability walk leaves the painted focus alone
+PASS a raw pad confirm opens the modes screen
+PASS the held confirm does not activate twice
+PASS the modes screen is mounted
+PASS modes opens on the declared back control
+PASS modes paints the back control
+PASS modes registers modes/ModeCard_quick as a target
+PASS modes registers modes/ModeCard_tournament as a target
+PASS modes registers modes/ModeCard_career as a target
+PASS a pad down reaches the mode cards
+PASS modes paints the focused card, not the control it left
+PASS controller focus gives the mode card its cyan highlight
+PASS a pad right walks to the next mode card
+PASS modes paints the second card
+PASS the next mode card keeps the cyan controller highlight
+PASS a pad left walks back to the first mode card
+PASS the pad reaches the 3 games segment
+PASS modes paints the focused format segment
+PASS a pad confirm on 3 games persists it as the quick-match format
+PASS the chosen format segment takes the active style
+PASS the format segment the pad left takes the inactive style
+PASS the pad reaches the difficulty segment
+PASS a pad confirm on a difficulty rung persists the rung
+PASS the chosen difficulty segment takes the active style
+PASS the pad returns to the quick-match card after editing setup
+PASS a pad confirm on an unlocked mode card opens the characters screen
+PASS the characters screen is mounted
+PASS characters opens on the declared back control
+PASS characters paints the back control
+PASS characters registers characters/SlotAthleteAction_player as a target
+PASS characters registers characters/SlotOutfitAction_player as a target
+PASS a slot card that holds its own commands is not a target (player)
+PASS characters registers characters/SlotAthleteAction_playerMate as a target
+PASS characters registers characters/SlotOutfitAction_playerMate as a target
+PASS a slot card that holds its own commands is not a target (playerMate)
+PASS characters registers characters/SlotAthleteAction_opponent as a target
+PASS characters registers characters/SlotOutfitAction_opponent as a target
+PASS a slot card that holds its own commands is not a target (opponent)
+PASS characters registers characters/SlotAthleteAction_opponentMate as a target
+PASS characters registers characters/SlotOutfitAction_opponentMate as a target
+PASS a slot card that holds its own commands is not a target (opponentMate)
+PASS a pad down reaches a slot command
+PASS characters paints the focused command
+PASS a pad right walks to the next slot command
+PASS characters paints the second command
+PASS the pad reaches the player slot's Atleta command
+PASS a pad confirm on Atleta opens the picker
+PASS the picker opens on the back control
+PASS a pad down reaches the picker cards
+PASS the picker paints the focused card
+PASS a pad confirm on a pick card chooses the athlete and returns to the team
+PASS the pad's pick is the athlete the slot now holds
+PASS a slot offers the Completo command
+PASS the pad reaches the slot's Completo command
+PASS a pad confirm on Completo opens the wardrobe
+PASS a pad down reaches the wardrobe cards
+PASS the wardrobe paints the focused card
+PASS the wardrobe keeps the focused card inside the visible frame
+PASS the pad reaches the screen's own return
+PASS the screen's own return closes the wardrobe
+PASS the declared back leaves the characters screen for modes
+PASS the arena screen is mounted
+PASS arena opens on the declared back control
+PASS a pad down reaches an offered arena card
+PASS arena paints the focused card
+PASS controller focus gives the arena card its cyan highlight
+PASS the controller does not land on an unavailable arena card
+CONTROLLER_CARDS PASS
+WARNING: 99 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 52 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools12BucketMediumE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)

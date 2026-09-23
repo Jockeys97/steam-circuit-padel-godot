@@ -123,7 +123,10 @@ const ATHLETE_GLB := {
 const CLIP_IDLE := &"idle"
 const CLIP_WALK := &"walk"
 const CLIP_RUN := &"run"
-const LOCOMOTION := [CLIP_IDLE, CLIP_WALK, CLIP_RUN, &"shuffle_left", &"shuffle_right", &"backpedal", &"prepare", &"ready", &"brake", &"split_step", &"recover_left", &"recover_right"]
+const LOCOMOTION := [CLIP_IDLE, CLIP_WALK, CLIP_RUN, &"shuffle_left", &"shuffle_right", &"backpedal", &"prepare", &"ready", &"brake", &"split_step", &"recover_left", &"recover_right", &"cheer", &"dejected", &"serve_bounce"]
+## Dead-ball body language, authored by `_author_ceremonies`: point won, point lost
+## (also the match result) and the server's ball bounce while waiting to serve.
+const CEREMONIES := [&"cheer", &"dejected", &"serve_bounce"]
 
 ## Athletes whose rigged base does not carry every locomotion clip: athlete id ->
 ## { clip name -> res:// path of a single-clip companion GLB }. Maestro's rigged
@@ -371,6 +374,7 @@ func _build() -> int:
 		_author_ready_idle(lib)
 	_complete_idle_tracks(lib)
 	_author_footwork(lib)
+	_author_ceremonies(lib)
 	_author_strokes(lib)
 	if _athlete_id in [&"fiamma", &"colosso", &"oracolo", &"maestro", &"fornaio", &"pantera", &"steamer"]:
 		for shot in ["drive", "smash", "bandeja", "backhand", "slice"]:
@@ -506,6 +510,160 @@ func _author_footwork(lib: AnimationLibrary) -> void:
 					offset.x = deg_to_rad(wave * 4.0)
 				anim.rotation_track_insert_key(track, phase * anim.length, (neutral * Quaternion.from_euler(offset)).normalized())
 		lib.add_animation(name, anim)
+
+
+## Between-point body language. Same contract as the footwork: in place,
+## rotation-only, no root motion, no authority over the simulation.
+##
+## Unlike the footwork these are NOT fixed angles. The imported rigs disagree on
+## bone axes (measured: the right arm rises with -Z on Colosso and +Z on Maestro)
+## and on the starting pose (Colosso's ready hand sits at 1.33 m, Maestro's at the
+## hip), so one fixed angle cheers on one athlete and dislocates the other. Each
+## clip asks this skeleton, once at build time, which rotation really puts the hand
+## up or down (`_solve_limb`), and keys that.
+func _author_ceremonies(lib: AnimationLibrary) -> void:
+	if _skeleton == null or not lib.has_animation(CLIP_IDLE):
+		return
+	var idle := lib.get_animation(CLIP_IDLE)
+	var saved := _pose_like(idle, 0.0)
+	var raise_right := _solve_limb("RightArm", "RightHand", 1.0)
+	var drop_right := _solve_limb("RightArm", "RightHand", -1.0)
+	var drop_left := _solve_limb("LeftArm", "LeftHand", -1.0)
+	# The ball hand: out in front of the body at the waist, where a bounce is seen;
+	# the forearm then beats downwards from there.
+	var bounce_left := _solve_limb("LeftArm", "LeftHand", -0.35, 1.0)
+	var bounce_fore := _solve_limb("LeftForeArm", "LeftHand", -1.0)
+	_restore_pose(saved)
+	for name in CEREMONIES:
+		var anim: Animation = idle.duplicate(true)
+		anim.length = {&"cheer": 0.9, &"dejected": 2.4, &"serve_bounce": 0.62}[name]
+		anim.loop_mode = Animation.LOOP_LINEAR
+		# Freeze the underlying idle, exactly as the footwork does.
+		for track in anim.get_track_count():
+			var value: Variant = anim.track_get_key_value(track, 0)
+			while anim.track_get_key_count(track) > 0:
+				anim.track_remove_key(track, 0)
+			anim.track_insert_key(track, 0.0, value)
+			anim.track_insert_key(track, anim.length, value)
+		for step in range(13):
+			var phase := float(step) / 12.0
+			var at := phase * anim.length
+			var pose := {}
+			if name == &"cheer":
+				# Racket arm up, pumped twice per loop; knees give a small bounce.
+				var pump := 0.82 + 0.18 * absf(sin(phase * TAU))
+				pose["RightArm"] = Quaternion.IDENTITY.slerp(raise_right, pump)
+				pose["LeftArm"] = Quaternion.IDENTITY.slerp(drop_left, 0.6)
+				pose["Spine"] = Quaternion.from_euler(Vector3(deg_to_rad(-4.0), 0, 0))
+				var dip := absf(sin(phase * TAU))
+				pose["LeftUpLeg"] = Quaternion.from_euler(Vector3(deg_to_rad(-6.0 * dip), 0, 0))
+				pose["RightUpLeg"] = pose["LeftUpLeg"]
+				pose["LeftLeg"] = Quaternion.from_euler(Vector3(deg_to_rad(11.0 * dip), 0, 0))
+				pose["RightLeg"] = pose["LeftLeg"]
+			elif name == &"dejected":
+				# Chest and head drop, arms hang, a slow shake of the head.
+				# Sized for the match camera, not a close-up: at 14 degrees the drop
+				# measured 10-14 cm at the head and did not read at 34 m.
+				pose["Spine"] = Quaternion.from_euler(Vector3(deg_to_rad(24.0), 0, 0))
+				pose["neck"] = Quaternion.from_euler(Vector3(deg_to_rad(26.0), deg_to_rad(sin(phase * TAU) * 12.0), 0))
+				pose["RightArm"] = Quaternion.IDENTITY.slerp(drop_right, 0.85)
+				pose["LeftArm"] = Quaternion.IDENTITY.slerp(drop_left, 0.85)
+				pose["LeftUpLeg"] = Quaternion.from_euler(Vector3(deg_to_rad(-6.0), 0, 0))
+				pose["RightUpLeg"] = pose["LeftUpLeg"]
+				pose["LeftLeg"] = Quaternion.from_euler(Vector3(deg_to_rad(10.0), 0, 0))
+				pose["RightLeg"] = pose["LeftLeg"]
+			else:
+				# One bounce per loop: the hand goes down with the ball and comes
+				# back up to meet it; the knees follow the hand.
+				var down := 0.5 - 0.5 * cos(phase * TAU)
+				pose["LeftArm"] = Quaternion.IDENTITY.slerp(bounce_left, 0.85)
+				pose["LeftForeArm"] = Quaternion.IDENTITY.slerp(bounce_fore, 0.05 + 0.45 * down)
+				pose["RightArm"] = Quaternion.IDENTITY.slerp(drop_right, 0.5)
+				pose["Spine"] = Quaternion.from_euler(Vector3(deg_to_rad(6.0 + 3.0 * down), 0, 0))
+				pose["LeftUpLeg"] = Quaternion.from_euler(Vector3(deg_to_rad(-5.0 * down), 0, 0))
+				pose["RightUpLeg"] = pose["LeftUpLeg"]
+				pose["LeftLeg"] = Quaternion.from_euler(Vector3(deg_to_rad(9.0 * down), 0, 0))
+				pose["RightLeg"] = pose["LeftLeg"]
+			for bone in pose:
+				var path := NodePath("%s:%s" % [_track_prefix, _resolve_bone_name(bone)])
+				var track := anim.find_track(path, Animation.TYPE_ROTATION_3D)
+				if track < 0:
+					continue
+				var neutral: Quaternion = idle.rotation_track_interpolate(track, 0.0)
+				if step == 0:
+					while anim.track_get_key_count(track) > 0:
+						anim.track_remove_key(track, 0)
+				anim.rotation_track_insert_key(track, at, (neutral * pose[bone]).normalized())
+		lib.add_animation(name, anim)
+
+
+## Poses the live skeleton like `anim` at `time` (rotation tracks only) and returns
+## what it overwrote, so `_restore_pose` can put the rest pose back afterwards.
+func _pose_like(anim: Animation, time: float) -> Dictionary:
+	var saved := {}
+	for track in anim.get_track_count():
+		if anim.track_get_type(track) != Animation.TYPE_ROTATION_3D:
+			continue
+		var bone := _skeleton.find_bone(String(anim.track_get_path(track).get_concatenated_subnames()))
+		if bone < 0:
+			continue
+		saved[bone] = _skeleton.get_bone_pose_rotation(bone)
+		_skeleton.set_bone_pose_rotation(bone, anim.rotation_track_interpolate(track, time))
+	return saved
+
+
+func _restore_pose(saved: Dictionary) -> void:
+	for bone in saved:
+		_skeleton.set_bone_pose_rotation(bone, saved[bone])
+
+
+## Forward kinematics from the bone POSES, parent by parent. Not
+## `get_bone_global_pose()`: the rig is built before it enters the tree
+## (`AthleteSpawn.make` builds, then the caller adds it), and out of the tree the
+## skeleton never refreshes its global-pose cache — every trial rotation measured
+## the same and the solver kept "no rotation". Measured, not assumed.
+func _bone_in_skeleton(bone: int) -> Transform3D:
+	var out := Transform3D.IDENTITY
+	var b := bone
+	while b >= 0:
+		var basis := Basis(_skeleton.get_bone_pose_rotation(b)) * Basis.from_scale(_skeleton.get_bone_pose_scale(b))
+		out = Transform3D(basis, _skeleton.get_bone_pose_position(b)) * out
+		b = _skeleton.get_bone_parent(b)
+	return out
+
+
+## The rotation of `bone` about one of its own axes (at most 170 degrees) that moves
+## `end` highest (`direction` > 0) or lowest (< 0), measured in the athlete's own
+## space (+Y up, +Z facing) on the skeleton as `_pose_like` left it. `forward` > 0
+## also rewards `end` coming out in front of the body. Returned as an OFFSET to
+## post-multiply onto the idle rotation — the footwork's own key convention. A small
+## cost per degree keeps the smallest rotation that does the job.
+func _solve_limb(bone: String, end: String, direction: float, forward := 0.0) -> Quaternion:
+	var b := _skeleton.find_bone(_resolve_bone_name(bone))
+	var e := _skeleton.find_bone(_resolve_bone_name(end))
+	if b < 0 or e < 0:
+		return Quaternion.IDENTITY
+	# Skeleton space -> athlete space, walking the node chain like get_world_extent.
+	var chain := Transform3D.IDENTITY
+	var n: Node = _skeleton
+	while n != null and n != self:
+		if n is Node3D:
+			chain = (n as Node3D).transform * chain
+		n = n.get_parent()
+	var neutral := _skeleton.get_bone_pose_rotation(b)
+	var best := Quaternion.IDENTITY
+	var best_score := -INF
+	for axis in [Vector3.RIGHT, Vector3.UP, Vector3.BACK]:
+		for deg in range(-170, 171, 10):
+			var offset := Quaternion(axis, deg_to_rad(float(deg)))
+			_skeleton.set_bone_pose_rotation(b, neutral * offset)
+			var p: Vector3 = chain * _bone_in_skeleton(e).origin
+			var score := p.y * direction + p.z * forward - absf(float(deg)) * 0.0004
+			if score > best_score:
+				best_score = score
+				best = offset
+	_skeleton.set_bone_pose_rotation(b, neutral)
+	return best
 
 
 ## The exported restpose is a T-pose, not an idle. Keep its planted lower body

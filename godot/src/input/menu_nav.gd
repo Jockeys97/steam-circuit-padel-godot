@@ -327,7 +327,7 @@ static func direction(state: Dictionary) -> String:
 ## what happened, so a caller can render or log it:
 ##   {"dir": …, "focus_moved": bool, "scrolled": float, "confirm": bool, "back": bool}
 func poll_pad(state: Dictionary) -> Dictionary:
-	var result := {"dir": "", "focus_moved": false, "scrolled": 0.0, "confirm": false, "back": false}
+	var result := {"dir": "", "focus_moved": false, "scrolled": 0.0, "direction_scrolled": 0.0, "confirm": false, "back": false}
 	nav.ensure_focus()
 	if context_kind() == CONTEXT_NONE:
 		return result
@@ -352,6 +352,9 @@ func poll_pad(state: Dictionary) -> Dictionary:
 			var delta := FOCUS_SCROLL_SPEED if dir == "down" else -FOCUS_SCROLL_SPEED
 			nav.scroll(delta)
 			result["scrolled"] += delta
+			# Kept separate from the right stick, which the live host applies once
+			# through its delta-timed scrolling helper.
+			result["direction_scrolled"] = delta
 			_menu_dir = dir
 		elif dir != _menu_dir:
 			_menu_dir = dir

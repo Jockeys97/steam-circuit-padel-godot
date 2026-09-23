@@ -882,10 +882,75 @@ static func ai_responder_forecast(paddle: Ent.SimPaddle, ball: Ent.SimBall) -> D
 
 ## Pure decision used by movement and the final legal contact gate.
 static func ai_contact_plan(state: State, paddle: Ent.SimPaddle, ball: Ent.SimBall) -> Dictionary:
+	var plan: Dictionary = _ai_contact_plan_base(state, paddle, ball)
+	if not state.aiGlassPlay or bool(plan["wait"]):
+		return plan
+	# Glass-aware bounce play (`ai_glass.gd`), only where the old planner said "take it
+	# in the air" for a player out of the volley zone: at the net the air stays right.
+	# Only where the old planner said "take it now": "emergency" before the bounce, or
+	# "bounced" after it. A comfortable volley ("volley") stays a volley: overriding it
+	# pulled mid-court players back and emptied the net (measured, level 2: net
+	# contacts 774 -> 454).
+	var reason := String(plan["reason"])
+	if reason != "emergency" and reason != "bounced":
+		return plan
+	if float(Frozen.court()["netY"]) - paddle.y < AI_VOLLEY_ZONE_PX:
+		return plan
+	if ball.shotType.begins_with("smash-x") or ball.wallKill > 0.0:
+		return plan                             # glass cases decided by dice: not forecast
+	var already_bounced := int(ball.bounces["ai"]) > 0
+	# A ball on the racket NOW at a playable height is played now, bounced or not: the
+	# glass is for the ball that cannot be taken before it (too deep, high or fast),
+	# as in padel. Gambling a reachable ball on the glass cost the AI its point in 57
+	# of 62 double bounces at level 1 and 24 of 27 at level 2 (measured): after the
+	# glass the receiver is re-locked with a reaction that is partly pressure and
+	# partly dice (`lock_ai_receiver_for_incoming_shot`), so it cannot be planned.
+	var glass_module := preload("res://src/sim/ai_glass.gd")
+	if can_hit(paddle, ball) and ball.z >= glass_module.CONTACT_MIN_Z:
+		# ...but a ball still RISING after its bounce is let climb to near the top of its
+		# arc first (exact apex: z + vz^2 / 2g). Taking it on the way up at ~20 px left
+		# the AI's shots 4-7% slower and 6-8 px lower than today's volleys (measured).
+		var gravity: float = float(Frozen.balance()["ballGravity"])
+		var apex: float = ball.z + (ball.vz * ball.vz / (2.0 * gravity) if ball.vz > 0.0 else 0.0)
+		var target_z: float = apex * glass_module.TOP_SHARE
+		if not (already_bounced and ball.vz > 0.0 and ball.z < target_z):
+			return plan
+		# Only if the ball will STILL be on the racket when it gets there (straight-line
+		# x/y over the time to climb; a margin inside the contact box). Otherwise the
+		# wait lets it out of reach and the point goes on a double bounce (measured).
+		var rise_t: float = (ball.vz - sqrt(maxf(0.0, ball.vz * ball.vz - 2.0 * gravity * (target_z - ball.z)))) / gravity
+		var then_x: float = ball.x + ball.vx * rise_t
+		var then_y: float = ball.y + ball.vy * rise_t
+		var depth_reach: float = paddle.reach * float(Frozen.balance()["aiDepthReach"])
+		if absf(then_x - paddle.x) < contact_width(paddle, ball) * 0.8 and absf(then_y - paddle.y) < depth_reach * 0.8:
+			return {"wait": true, "reason": "bounce-rising", "x": paddle.x, "y": paddle.y}
+		return plan
+	var glass: Dictionary = preload("res://src/sim/ai_glass.gd").plan({
+		"x": paddle.x, "y": paddle.y, "speed": paddle.speed * Stamina.speed_factor(paddle.staminaEnergy),
+		"reaction": state.aiReactionDelay, "width": contact_width(paddle, ball),
+		"depth": paddle.reach * float(Frozen.balance()["aiDepthReach"]),
+		# The deterministic part of the reaction the glass will impose
+		# (`lock_ai_receiver_for_incoming_shot`: base reaction, pressure excluded).
+		"glass_relock": clampf(0.28 - (float(state.ai["reactionSkill"]) if state.ai.has("reactionSkill") else float(state.ai["skill"])) * 0.25, 0.07, 0.42),
+	}, {
+		"x": ball.x, "y": ball.y, "z": ball.z, "vx": ball.vx, "vy": ball.vy, "vz": ball.vz,
+		"spin": ball.spin, "backspin": ball.backspin, "topspin": ball.topspin, "r": ball.r,
+	}, Frozen.court(), Frozen.balance(), float(state.arena["wallBounce"]), already_bounced)
+	if glass.is_empty():
+		return plan                             # nothing better ahead: play it now
+	# The planned moment is (about) now: play it. Without this the AI, standing on the
+	# spot, would keep "waiting" for a point it has already reached.
+	if float(glass["t"]) <= AI_BOUNCE_HIT_NOW_S:
+		return plan
+	return {"wait": true, "reason": "glass-play" if bool(glass["glass"]) else "bounce-play",
+		"x": float(glass["x"]), "y": float(glass["y"])}
+
+
+static func _ai_contact_plan_base(state: State, paddle: Ent.SimPaddle, ball: Ent.SimBall) -> Dictionary:
 	return preload("res://src/sim/ai_contact.gd").plan({
 		"x": paddle.x, "y": paddle.y, "speed": paddle.speed * Stamina.speed_factor(paddle.staminaEnergy), "skill": paddle.skill,
 		"width": contact_width(paddle, ball), "depth": paddle.reach * float(Frozen.balance()["aiDepthReach"]),
-		"reaction": state.aiReactionDelay,
+		"reaction": state.aiReactionDelay, "bounce_bias": state.aiBounceBias,
 	}, {
 		"x": ball.x, "y": ball.y, "z": ball.z, "vx": ball.vx, "vy": ball.vy, "vz": ball.vz,
 		"spin": ball.spin, "backspin": ball.backspin, "topspin": ball.topspin,
@@ -2349,6 +2414,32 @@ static func move_paddle_to(paddle: Ent.SimPaddle, target_x: float, target_y: flo
 	)
 
 
+## How far behind the predicted bounce a defending AI waits when `aiBounceBias` is
+## on, in sim px: roughly the ball's travel in the first 0.18 s after the bounce,
+## the window `ai_contact.gd` plans the post-bounce contact in.
+const AI_BOUNCE_SETBACK_PX := 64.0
+## The net player's zone, in sim px from the net: the same 130 px `ai_contact.gd`
+## treats as a comfortable volley at skill 0. Inside it the bias does nothing.
+const AI_VOLLEY_ZONE_PX := 130.0
+## A planned post-bounce contact this close in time is "now" (1.5 sim ticks).
+const AI_BOUNCE_HIT_NOW_S := 1.5 / 120.0
+
+
+## Depth (sim y) where an incoming ball first reaches the floor on the AI's half,
+## or null when it will not (rising too long, already past, or landing on the other
+## half). Straight-line in y, like `ai_contact.gd`'s own forecast. Pure read.
+static func predicted_landing_y(ball: Ent.SimBall) -> Variant:
+	var court: Dictionary = Frozen.court()
+	var gravity: float = float(Frozen.balance()["ballGravity"])
+	var ground_time: float = (ball.vz + sqrt(maxf(0.0, ball.vz * ball.vz + 2.0 * gravity * maxf(0.0, ball.z)))) / gravity
+	if ground_time <= 0.0 or ground_time > 1.6:
+		return null
+	var y: float = ball.y + ball.vy * ground_time
+	if y < float(court["top"]) or y > float(court["netY"]):
+		return null
+	return y
+
+
 static func move_opponent_team(state: State, dt: float) -> void:
 	var court: Dictionary = Frozen.court()
 	var ball := state.ball
@@ -2395,6 +2486,22 @@ static func move_opponent_team(state: State, dt: float) -> void:
 			primary_target_y = float(court["top"]) + 66.0
 		else:
 			primary_target_y = clampf(ball.y + glass_return_offset, float(court["top"]) + 76.0, float(court["netY"]) - 104.0)
+			# `aiBounceBias` > 0: stop walking INTO the incoming ball. The line above
+			# sends the defender towards the ball's current depth, so it meets the ball
+			# in the air; measured 2026-09-23, the back player volleys ~82% of what it
+			# touches, and relaxing `ai_contact.gd` alone changed nothing because by
+			# then the defender is already on top of the ball. With a bias, it settles
+			# BEHIND the predicted bounce instead — never further forward than today —
+			# and the bounce planner then picks the post-bounce contact. At 0 this
+			# block is skipped entirely: the golden matches do not move.
+			# Only a defender already out of the volley zone: at the net, taking the
+			# ball in the air is the right play and stays exactly as it was.
+			var volley_zone: bool = float(court["netY"]) - primary.y < AI_VOLLEY_ZONE_PX
+			if state.aiBounceBias > 0.0 and not volley_zone and int(ball.bounces["ai"]) == 0 and ball.postGlassSide == null:
+				var landing_y: Variant = predicted_landing_y(ball)
+				if landing_y != null:
+					var behind_bounce: float = clampf(float(landing_y) - AI_BOUNCE_SETBACK_PX, float(court["top"]) + 60.0, float(court["netY"]) - 104.0)
+					primary_target_y = lerpf(primary_target_y, minf(primary_target_y, behind_bounce), clampf(state.aiBounceBias, 0.0, 1.0))
 		if x3_read:
 			support_target_y = float(court["top"]) + 98.0
 		else:
@@ -2418,6 +2525,16 @@ static func move_opponent_team(state: State, dt: float) -> void:
 		if bool(plan["wait"]):
 			primary_target_x = float(plan["x"])
 			primary_target_y = float(plan["y"])
+			# Glass/bounce play: the receiver drops back for the ball, the partner does NOT
+			# follow it. A partner already near the net keeps the net (the padel "one up,
+			# one back"); before this, `support_target_y` trailed the receiver and the pair
+			# left the net (measured, level 2: net contacts 774 -> 454). Only with the new
+			# play: the recorded behaviour's `reachable-bounce` wait is untouched.
+			var reason := String(plan["reason"])
+			if (reason == "glass-play" or reason == "bounce-play") \
+					and float(court["netY"]) - support.y < AI_VOLLEY_ZONE_PX + 40.0:
+				var style := Tactics.style(String(athlete_for(state, support).get("id", "")))
+				support_target_y = float(court["netY"]) - float(style.net_depth)
 	var reading_incoming_shot: bool = defending and state.aiReceiverLocked and state.aiReactionDelay > 0.0
 	if not reading_incoming_shot:
 		move_paddle_to(primary, primary_target_x, primary_target_y, dt)
@@ -2521,8 +2638,23 @@ static func update_doubles_ai(state: State, dt: float) -> void:
 			break
 	if responder != null and controllable_height and state.aiReactionDelay <= 0.0:
 		var plan := ai_contact_plan(state, responder, ball)
-		if not bool(plan["wait"]):
+		if not bool(plan["wait"]) and not ai_lets_it_go_out(state, ball):
 			hit_ball(state, responder, 0.88 + float(ai["skill"]) * 0.12)
+
+
+## True when the human's ball, not yet bounced on the AI half, is going to reach a
+## glass before the floor: out, the point is the AI's (`handle_walls`). A padel player
+## lets it go; this AI used to volley it back into play and so rescued the human's
+## own errors (owner's match 2026-09-23: 2 of his 3 "long" errors were volleyed back
+## by the AI at the net). Exact forecast (`ai_glass.gd` first_contact), no RNG.
+static func ai_lets_it_go_out(state: State, ball: Ent.SimBall) -> bool:
+	if ball.serveInFlight or int(ball.bounces["ai"]) > 0 or state.lastHitterSide != "player" or not ball.crossedNet:
+		return false
+	var glass := preload("res://src/sim/ai_glass.gd")
+	return glass.first_contact({
+		"x": ball.x, "y": ball.y, "z": ball.z, "vx": ball.vx, "vy": ball.vy, "vz": ball.vz,
+		"spin": ball.spin, "r": ball.r,
+	}, Frozen.court(), Frozen.balance()) == glass.OUT
 
 
 static func control_paddle_charge(state: State, paddle: Ent.SimPaddle, input: Dictionary, dt: float) -> void:

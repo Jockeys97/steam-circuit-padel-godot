@@ -351,6 +351,38 @@ static func build_glass_cage(parent: Node3D, tint: Color, wall_bounce: float) ->
 	var near_right := box(parent, "GlassPostNR", Vector3(0.07, GLASS_H, 0.07), Vector3(hl, GLASS_H * 0.5, hd), corner, 0.18)
 	near_left.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	near_right.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	build_backstop_mesh(parent, hl, hd)
+
+
+## Presentation only: one batched wire mesh per end, no collision or extra shadows.
+## The camera-side end inherits the near glass's subdued treatment.
+static func build_backstop_mesh(parent: Node3D, hl: float, hd: float) -> void:
+	for end in [-1.0, 1.0]:
+		var mesh := ImmediateMesh.new()
+		mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+		var z: float = hd * end
+		# A one-metre wire extension above the existing three-metre glass.
+		# Short corner returns leave the central sidelines unchanged.
+		for segment in [
+			[Vector3(-hl, GLASS_H, z), Vector3(hl, GLASS_H, z)],
+			[Vector3(-hl, GLASS_H, z), Vector3(-hl, GLASS_H, z - end * 2.0)],
+			[Vector3(hl, GLASS_H, z), Vector3(hl, GLASS_H, z - end * 2.0)],
+		]:
+			var a: Vector3 = segment[0]
+			var b: Vector3 = segment[1]
+			var divisions := int(ceil(a.distance_to(b) / 0.25))
+			for i in range(divisions + 1):
+				var foot := a.lerp(b, float(i) / divisions)
+				mesh.surface_add_vertex(foot)
+				mesh.surface_add_vertex(foot + Vector3.UP)
+			for i in range(5):
+				var lift := Vector3.UP * float(i) * 0.25
+				mesh.surface_add_vertex(a + lift)
+				mesh.surface_add_vertex(b + lift)
+		mesh.surface_end()
+		var wire := unshaded(parent, "BackstopFar" if end < 0.0 else "BackstopNear",
+			mesh, Vector3.ZERO, FRAME_POST, 0.38 if end < 0.0 else 0.10)
+		wire.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 ## The rear wall: six glass panes with the reference's frame between them, a

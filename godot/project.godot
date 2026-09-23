@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Steam Circuit Padel Pro (harness)"
-run/main_scene="res://tests/SmokeTest.tscn"
+run/main_scene="res://game/Main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [input]

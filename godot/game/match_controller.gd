@@ -91,11 +91,34 @@ const Config := preload("res://game/match_config.gd")
 const ScriptedPlayer := preload("res://game/scripted_player.gd")
 const MatchAudioScript := preload("res://game/match_audio.gd")
 const AthletesView := preload("res://game/athletes_view.gd")
+const MatchLog := preload("res://game/match_log.gd")
+## Glass-aware bounce play for the AI back player (`src/sim/ai_glass.gd`). On in the
+## game for the owner's second play test (2026-09-23). The first version, tried the
+## same day, made the AI weaker and pulled it off the net; this one takes the ball
+## near the top of its post-bounce arc, never gambles a reachable ball on the glass,
+## and keeps the partner at the net. Measured against the switch off, levels 1-3:
+## back-court volleys 63-97% -> 36-47%, shot pace within 5%, time at the net
+## unchanged or up. The simulation's own default stays off, so the golden matches
+## (`tools/parity-godot/run-golden.sh`) do not move. docs/agent-work/ai-bounce/.
+## Set false to go back to the recorded behaviour.
+## OFF again after the owner's second play test (same day): "much weaker than before,
+## at Leggenda it used to be far stronger; it almost never comes to the net". The
+## scripted-player measurement had said "as strong, as much at the net": it does not
+## represent a human opponent, so it cannot be the judge of this change.
+const AI_GLASS_PLAY := false
+## The owner's play-test recorder (`game/match_log.gd`): null unless the game was
+## launched with PADEL_MATCH_LOG=1. Launching with PADEL_AI_GLASS=1 / =0 overrides
+## AI_GLASS_PLAY for that session, so both AIs can be tried without editing code.
+var _match_log = null
 const Lineup := preload("res://game/lineup.gd")
 const AthleteSpawn := preload("res://src/character/athlete_spawn.gd")
 const AthleteRig := preload("res://src/character/athlete_rig.gd")
 const ModeSession := preload("res://game/mode_session.gd")
 const ModesSave := preload("res://src/modes/modes_save.gd")
+## The Emporio OST's economy service: the completion reward is awarded through it at
+## the end-of-match boundary (see `_award_economy`).
+const Economy := preload("res://src/economy/economy_service.gd")
+const Gate := preload("res://game/content_gate.gd")
 const ModeHudScript := preload("res://game/mode_hud.gd")
 ## UIR-22: the card's range rows are read through the shared component's own accessors
 ## (`focus_node`), never through a node-path guess.
@@ -175,6 +198,15 @@ var finished: bool = false
 ## Quick matches do not own a ModeSession. Their outfit award is cached here on
 ## the result edge so repeated payload/render calls cannot increment athleteWins.
 var _quick_outfit_award: Dictionary = {}
+## Emporio OST: this match's own award id and the award it produced. The id is
+## generated once per match (never from the simulation's RNG) and is the receipt key,
+## so the reward is paid once across a repeated finish, a re-opened result screen and
+## a restart. A rematch is a new scene and therefore a new id.
+var _economy_match_id: String = ""
+var _economy_award: Dictionary = {}
+## Off for a fixture that plays a match it must not be paid for (a probe/dry run). The
+## shipped game never clears it; the eligibility rule is in `Economy.award_eligible`.
+var economy_award_enabled: bool = true
 
 ## The playable mode session this scene is running, or null for a quick match.
 ## `Config.pending_mode` decides which: a mode entry on the menu sets it, and the
@@ -555,6 +587,8 @@ func _adopt_session() -> void:
 	# The saved switching mode, on the state the mode session built: the reference
 	# copies it onto the match before its loop starts (`js/main.js:1184`).
 	state.controlMode = Config.control_mode()
+	state.aiGlassPlay = AI_GLASS_PLAY
+	_start_play_test(state)
 	pace_factor = Config.pace_factor()
 	ticks = 0
 	crossings = 0
@@ -564,6 +598,9 @@ func _adopt_session() -> void:
 	score_history = []
 	finished = false
 	_quick_outfit_award = {}
+	# A new match is a new receipt key: the previous award must not block this one.
+	_economy_match_id = ""
+	_economy_award = {}
 	# A new match starts at `all` (the visibility profile is a per-match view, not a
 	# stored preference): the profile, its restore memory and the clean flag reset
 	# together, and `_apply_hud_visibility` below repaints every surface.
@@ -724,6 +761,7 @@ func _build_scene() -> void:
 	# built in headless runs too, on the Dummy driver: the wiring is engine state and
 	# the slice test asserts on it, so it must not depend on a display.
 	_audio = MatchAudioScript.new()
+	_audio.use_ost = true
 	_audio.name = "MatchAudio"
 	add_child(_audio)
 
@@ -896,6 +934,12 @@ func _build_scene() -> void:
 			ai_color
 		)
 		_ui_hud.pause_requested.connect(_on_ui_pause)
+		_ui_hud.mute_toggled.connect(func(muted: bool) -> void:
+			_audio.port.set_muted(muted)
+			# Apply immediately, including while simulation is paused or in replay.
+			if _audio.ost != null:
+				_audio.ost.set_muted(muted)
+		)
 		# The restore hint: a sibling of the HUD, added BEFORE the card so the card
 		# draws over it. It carries no state of its own — `_apply_ui_hint` decides
 		# when it shows.
@@ -961,6 +1005,8 @@ func _on_replay_requested() -> void:
 ## match is paused, and a second identical echo is a no-op inside the overlay.
 func set_match_paused(paused: bool) -> bool:
 	_paused = paused
+	if _audio != null and _audio.ost != null:
+		_audio.ost.set_held(paused)
 	_reset_transient_input()
 	if _hud != null:
 		_hud.set_paused(_paused)
@@ -1146,7 +1192,7 @@ func _refresh_ui(state_ref, meta_ref: Dictionary) -> void:
 ## `load_models` off deliberately: no display, no texture upload) without driving the
 ## whole scene twice. Returns how many rigs were built.
 func build_athletes() -> int:
-	_lineup = Lineup.resolve(Config.athlete())
+	_lineup = Lineup.resolve(Config.athlete(), null, ModesSave.load_career(Config.save_store()))
 	if _athletes == null:
 		_athletes = AthletesView.new()
 		_athletes.name = "Athletes"
@@ -1240,6 +1286,8 @@ func start_match() -> void:
 	# The setup screen's match-length selection applies only to a quick match;
 	# tournament and career keep the fixed rules their sessions construct.
 	Config.apply_quick_match_format(state)
+	state.aiGlassPlay = AI_GLASS_PLAY
+	_start_play_test(state)
 	state.rng_state = Config.seed_value
 	state.running = true
 	# The saved switching mode (`js/main.js:1184`,
@@ -1529,6 +1577,22 @@ func one_shot_armed(key: String) -> bool:
 
 ## The single tick entry point. The engine-driven loop and the headless harness
 ## both come through here, so there is exactly one code path from input to state.
+## Play-test switches, read once per match from the environment (see `_match_log`).
+func _start_play_test(match_state) -> void:
+	var glass := OS.get_environment("PADEL_AI_GLASS")
+	if glass != "":
+		match_state.aiGlassPlay = glass == "1"
+	_match_log = null
+	if MatchLog.enabled():
+		_match_log = MatchLog.new()
+		_match_log.start(match_state, {
+			"mode": String(Config.pending_mode),
+			"athlete": String(Config.athlete().get("id", "?")),
+			"arena": String(Config.arena().get("id", "?")),
+			"seed": Config.seed_value,
+		})
+
+
 func tick_fixed(dt: float, input: Dictionary, input2: Dictionary) -> Variant:
 	if state == null:
 		return null
@@ -1548,6 +1612,8 @@ func tick_fixed(dt: float, input: Dictionary, input2: Dictionary) -> Variant:
 	meta["tick"] = ticks
 	last_tick_input = input
 	_observe(prev_y)
+	if _match_log != null:
+		_match_log.observe(state)
 	# The sounds this tick produced. `match_audio.gd` owns the whole routing
 	# decision; this is the one call site, on the one tick path, so the engine-driven
 	# build and the headless harness hear the same match.
@@ -1611,6 +1677,11 @@ func _observe(prev_y: float) -> void:
 			_finish_mode()
 		else:
 			_finish_quick_outfits()
+		# Emporio OST: the completion reward is awarded HERE, at the authoritative
+		# end-of-match boundary — a real, engine-driven playable match. A drill never
+		# reaches this block (`_mode_runs_by_points`), an aborted game never produces a
+		# `state.result`, and a headless probe/harness is skipped inside `_award_economy`.
+		_award_economy()
 		if _hud != null:
 			_hud.refresh(state, meta)
 			_hud.show_result(state)
@@ -1654,6 +1725,50 @@ func _finish_quick_outfits() -> Dictionary:
 ## True when the mode's own end has been reached — a drill that the player left.
 func _page_finished() -> bool:
 	return session != null and session.finished
+
+
+# ---------------------------------------------------------------------------
+# Emporio OST: the completion reward
+# ---------------------------------------------------------------------------
+
+## Award the completed match's credits, once. Called only from the end-of-match block,
+## and only for a real playable match: the headless harness and the probe runs set
+## `engine_driven`/`load_models` off, and they are skipped here so a test or a capture
+## never writes a wallet. The id is this match's own; the service's persisted receipt
+## makes a second call (a re-rendered result, a restart) award nothing.
+func _award_economy() -> Dictionary:
+	if not Economy.award_eligible(
+		session.mode if session != null else "quick",
+		Gate.is_demo(), engine_driven, load_models, economy_award_enabled,
+		state != null and state.result != null
+	):
+		return {}
+	if _economy_match_id == "":
+		_economy_match_id = _new_economy_match_id()
+	var won := String(state.result.get("winner", "")) == "player"
+	# The ACCUMULATED totals, not the tennis scoreboard: `state.points` resets every game.
+	var played := Economy.points_played(state.stats)
+	_economy_award = Economy.award_completion(Config.save_store(), _economy_match_id, played, won)
+	return _economy_award
+
+
+## A match id that is unique across processes, non-simulation and stable for the life of
+## this match. The wall clock separates processes (a monotonic uptime clock would repeat
+## after a reboot) and OS entropy separates two matches in the same second. Deliberately
+## NOT the simulation's RNG: nothing here may perturb the match's own determinism.
+func _new_economy_match_id() -> String:
+	var nonce := Crypto.new().generate_random_bytes(8).hex_encode()
+	return "m%d-%s" % [int(Time.get_unix_time_from_system()), nonce]
+
+
+## This match's award (`{}` before the end, or in a harness run). The result payload
+## reads it so the screen can show the reward and the balance.
+func economy_award() -> Dictionary:
+	return _economy_award.duplicate(true)
+
+
+func economy_match_id() -> String:
+	return _economy_match_id
 
 
 # ---------------------------------------------------------------------------
@@ -1707,6 +1822,25 @@ func _sync_ball_cues(ball) -> void:
 				# that axis is sideways. This quarter turn puts it down the view direction,
 				# which is what makes the ring read as a circle rather than an edge.
 				_spin_ring.rotate_object_local(Vector3.RIGHT, PI * 0.5)
+
+
+## Seconds to hand the drawn ball between the simulation's parked serve ball and the
+## server's bouncing hand, both ways, so neither edge of the ritual is a jump.
+const SERVE_BALL_BLEND_S := 0.15
+var _serve_ball_weight := 0.0
+var _serve_ball_at := Vector3.ZERO
+
+
+## The server's bounce ritual, drawn (`AthletesView.serve_ball_override`). Blends by
+## wall-clock time, so a headless run (no frame delta) never moves the ball at all.
+func _sync_serve_ball() -> void:
+	var over: Variant = _athletes.serve_ball_override(state)
+	if over != null:
+		_serve_ball_at = over
+	var step: float = get_process_delta_time() / SERVE_BALL_BLEND_S
+	_serve_ball_weight = move_toward(_serve_ball_weight, 1.0 if over != null else 0.0, step)
+	if _serve_ball_weight > 0.0:
+		_ball_view.position = _ball_view.position.lerp(_serve_ball_at, _serve_ball_weight)
 
 
 func _sync_views() -> void:
@@ -1786,6 +1920,7 @@ func _sync_views() -> void:
 	# racket (`game/athletes_view.gd`); only the capsule fallback is moved here.
 	if _athletes != null and _athletes.spawn_rigs > 0:
 		_athletes.sync(state)
+		_sync_serve_ball()
 		return
 	for key in ["player", "playerMate", "opponent", "opponentMate"]:
 		var root: Node3D = _athlete_roots.get(key, null)
@@ -2139,6 +2274,10 @@ func _unhandled_input(event: InputEvent) -> void:
 ## own. `main_menu.gd:963-968` states the same rule for every menu screen and is why
 ## this card is the only place the walk used to run.
 func _input(event: InputEvent) -> void:
+	if _audio != null and _audio.ost != null and event is InputEventJoypadButton:
+		if (_input_source == null or _input_source.device == InputSource.NO_DEVICE or event.device == _input_source.device) and _audio.ost.handle_skip(event):
+			get_viewport().set_input_as_handled()
+			return
 	# Options (PS5) / Menu (Xbox) always use the pause route, even with HUD hidden.
 	if state != null and event is InputEventJoypadButton and event.pressed and event.button_index == JOY_BUTTON_START:
 		var pause_event := InputEventAction.new()
@@ -2758,6 +2897,15 @@ func result_payload() -> Dictionary:
 		# or the rest of the season waiting, which is what the session has already
 		# advanced its bracket/calendar to. A quick match never continues.
 		facts["continue_pending"] = bool(facts["won"]) and mode in ["tournament", "career"]
+	# Emporio OST: the reward this match paid and the resulting balance, for the result
+	# screen's own row. Absent in a harness run (no award) — the screen then shows none.
+	if not _economy_award.is_empty():
+		facts["reward"] = {
+			"awarded": int(_economy_award.get("awarded", 0)),
+			"balance": int(_economy_award.get("balance", 0)),
+			"already": bool(_economy_award.get("already", false)),
+			"ok": bool(_economy_award.get("ok", false)),
+		}
 	var builder := load("res://src/ui/screens/ResultScreen.gd") as GDScript
 	return builder.payload_from_state(state, facts)
 

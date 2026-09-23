@@ -465,6 +465,9 @@ func _run_native_phase() -> void:
 	_check(screen._manager.is_playing(), "native: l'audio sta suonando davvero")
 	_check(screen._record.get("_spin_tween") != null, "native: la rotazione e guidata dal tween di riproduzione")
 
+	# One window resize per native run, as the ported capture harness does: on macOS the
+	# second resize-and-draw in one process is not reliable, so the two 1280x720 states
+	# (collapsed, then the expanded prompt) are taken first and the 1920x1080 state last.
 	for res in RESOLUTIONS:
 		root.size = res
 		await _settle(6)
@@ -475,16 +478,15 @@ func _run_native_phase() -> void:
 		_check(progress > 0.0 and progress <= 1.0, "native %dx%d: progress reale %.4f" % [res.x, res.y, progress])
 		_check(screen._progress_bar.value > 0.0, "native %dx%d: barra sopra zero mentre suona" % [res.x, res.y])
 		await _capture(dir, res)
-
-	# The expanded prompt at 1280x720 — the state the collapsed default hides, and the
-	# one that has to prove the column still contains itself.
-	root.size = Vector2i(1280, 720)
-	await _settle(4)
-	if not screen._prompt_section.visible:
-		screen._on_prompt_toggle_pressed()
-	await _settle(5)
-	screen._refresh_readout()
-	await _capture(dir, Vector2i(1280, 720), "-prompt")
+		if res == Vector2i(1280, 720):
+			# The expanded prompt at 1280x720 — the state the collapsed default hides, and
+			# the one that has to prove the column still contains itself.
+			screen._on_prompt_toggle_pressed()
+			await _settle(5)
+			screen._refresh_readout()
+			await _capture(dir, res, "-prompt")
+			screen._on_prompt_toggle_pressed()
+			await _settle(3)
 
 	screen._on_stop_pressed()
 	await _settle(3)
