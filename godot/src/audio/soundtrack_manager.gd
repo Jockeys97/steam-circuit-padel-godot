@@ -673,6 +673,51 @@ func current_track_id() -> String:
 	return _current_track_id
 
 
+## ---------------------------------------------------------------------------
+## Playback readout (additive).
+##
+## The Jukebox player card shows real elapsed/duration/progress, so it needs to
+## read the state `play_track()` and `stop()` already own. These five readers are
+## views over that same dual-player state — no playback path changes here, and a
+## caller that never asks for a readout behaves exactly as before.
+## ---------------------------------------------------------------------------
+
+## The player currently carrying the music, or null before `_setup_players()`.
+func active_player() -> AudioStreamPlayer:
+	return _active_player
+
+
+## True while the active player is really emitting audio (during the crossfade
+## out of `stop()` this stays true until the fade completes, which is honest).
+func is_playing() -> bool:
+	return _active_player != null and _active_player.playing
+
+
+## Elapsed seconds of the active stream; 0.0 while stopped or absent.
+func playback_position() -> float:
+	if _active_player == null or not _active_player.playing:
+		return 0.0
+	return maxf(_active_player.get_playback_position(), 0.0)
+
+
+## Duration in seconds of the active stream; 0.0 when there is no stream or the
+## stream reports no length. A 0.0 here means "unknown", never "finished".
+func playback_duration() -> float:
+	if _active_player == null or _active_player.stream == null:
+		return 0.0
+	return maxf(_active_player.stream.get_length(), 0.0)
+
+
+## Fraction of the active stream already played, clamped to [0, 1]. Returns 0.0
+## when stopped or when the duration is unknown, so a caller can drive a bar
+## straight from this without inventing a value.
+func playback_progress() -> float:
+	var duration := playback_duration()
+	if duration <= 0.0 or not is_playing():
+		return 0.0
+	return clampf(playback_position() / duration, 0.0, 1.0)
+
+
 ## Plays an OST track with an optional crossfade duration in seconds.
 func play_track(track_id: String, fade_duration: float = 1.0) -> bool:
 	_setup_players()

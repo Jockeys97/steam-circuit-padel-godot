@@ -53,9 +53,7 @@ func run() -> void:
 			var worst_bone := ""
 			var sk: Skeleton3D = rig.get_skeleton()
 			for bone in lay.prep_pose:
-				var neutral: Quaternion = rig._anim.get_animation(stroke).rotation_track_interpolate(
-					rig._anim.get_animation(stroke).find_track(NodePath("%s:%s" % [rig._track_prefix, sk.get_bone_name(bone)]), Animation.TYPE_ROTATION_3D), 0.0)
-				var a := rad_to_deg(neutral.angle_to(lay.prep_pose[bone]))
+				var a := rad_to_deg(Quaternion.IDENTITY.angle_to(lay.prep_pose[bone]))   # prep_pose holds deltas
 				if a > worst:
 					worst = a
 					worst_bone = sk.get_bone_name(bone)

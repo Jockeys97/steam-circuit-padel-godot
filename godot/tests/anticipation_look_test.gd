@@ -164,5 +164,44 @@ func run() -> void:
 	check(float(view._anticipation["player"]) == 0.0, "no wind-up during service")
 	view.free()
 
+	# --- Regression: the wind-up never folds the athlete ---------------------
+	# The layer once stored the stroke clip's ABSOLUTE spine rotations and
+	# slerped the locomotion pose towards them; on pantera and steamer, whose
+	# stroke and locomotion clips disagree on the spine's frame, that folded the
+	# torso to 82 deg from vertical mid-rally. Now it composes a bounded delta.
+	# Every athlete of the roster, every locomotion clip the wind-up can ride
+	# on, the strongest wind-up: the RENDERED torso (Hips->Head) may not lean
+	# more than FOLD_MAX_DEG further than the very same frame without it.
+	const FOLD_MAX_DEG := 8.0
+	var worst_fold := 0.0
+	var worst_fold_where := ""
+	for id in Spawn.ids():
+		var rig = Spawn.make(StringName(id), &"base")
+		if rig == null:
+			check(false, "missing rig " + String(id))
+			continue
+		root.add_child(rig)
+		var names: Array = rig.get_stroke_names()
+		for clip in [&"ready", &"prepare", &"shuffle_left", &"shuffle_right", &"backpedal", &"run", &"brake"]:
+			for stroke in [&"meshy_drive", &"meshy_backhand", &"meshy_slice", &"meshy_smash"]:
+				if not stroke in names:
+					continue
+				var pitches := []
+				for weight in [0.0, 1.0]:
+					rig.play_locomotion(clip)
+					rig._anim.seek(0.09, true, true)
+					rig._anim.pause()
+					rig.set_anticipation(stroke, weight, 0.46 if stroke == &"meshy_smash" else 0.34)
+					await _settle(rig)
+					var torso: Vector3 = _rendered(rig, "Head") - _rendered(rig, "Hips")
+					pitches.append(rad_to_deg(torso.normalized().angle_to(rig.global_transform.basis.y.normalized())))
+				var extra: float = float(pitches[1]) - float(pitches[0])
+				if extra > worst_fold:
+					worst_fold = extra
+					worst_fold_where = "%s %s+%s (%.0f -> %.0f deg)" % [id, clip, stroke, pitches[0], pitches[1]]
+				check(extra <= FOLD_MAX_DEG, "%s: wind-up %s over %s leans the torso %.1f deg further (%.0f -> %.0f)" % [id, stroke, clip, extra, pitches[0], pitches[1]])
+		rig.free()
+	print("ANTICIPATION_FOLD worst_extra_deg=%.1f at %s" % [worst_fold, worst_fold_where])
+
 	print("ANTICIPATION_LOOK ", checks - failures, "/", checks)
 	quit(0 if failures == 0 else 1)

@@ -79,6 +79,38 @@ Instruments: `game/tools/low_contact_probe.gd` (knee flexion, clip vs adapted), 
 
 Suites after both passes: `low_contact_pose_test` 495/495, `anticipation_look_test` 97/97, `fluidity_animation_test` 163/163, `meshy_strokes_test` 611/611, `roster_ready_pose_test` 156/156, `athlete_rig_test` 42/42, `athlete_stroke_bridge_test` 75/75; `game_slice_test` 319/327 with the **same eight reds** (outfit lineup, shipping pack, locale sizes, timing marks, energy fill, energy colour, `_arena_library` section, object count); M1 digest `135cc16a…5e66f41` unchanged at 30000 ticks (run with the args from `tools/parity-godot/README.md` — the wrapper needs `flock`, which macOS does not have). `anticipation_probe.gd --ticks=12000`: 92 % of strokes still wound before contact, median weight 0.85 → 0.60 after the cap.
 
+### Third pass: the athlete folded in half (owner's screenshot, 2026-09-23)
+
+The screenshot showed an athlete bent at the waist, torso near horizontal, head
+at hip height. **It was a bug of the anticipation layer, not an animation**:
+
+- Reproduced in the real match scene (`game/tools/fold_capture.gd`): torso
+  (Hips→Head) 80–94° from vertical on **163 + 53 + 40 samples** out of 12 000,
+  always with the wind-up on, always on `shuffle_*`/`prepare`/`run`/`brake`,
+  never on a stroke. The athletes in that match were maestro, **pantera**,
+  **steamer**, fiamma — the earlier probes only covered fiamma, maestro,
+  oracolo, colosso, which is why they measured nothing.
+- Cause: the layer stored the stroke clip's **absolute** spine/arm rotations
+  and slerped the locomotion pose towards them. On pantera and steamer the
+  stroke and locomotion clips disagree on the spine's frame, so "blend
+  towards the stroke's spine" meant "rotate the spine ~80° forward".
+- Fix: `prep_pose` now holds a **delta** from the stroke's own first frame
+  (already bounded by `PREP_LIMIT_DEG`), post-multiplied onto whatever the
+  athlete is doing (`athlete_rig.gd::_prep_pose_for`,
+  `athlete_pose_layer.gd`). The layer can no longer turn a bone further than
+  its limit from the clip underneath.
+
+| | old layer | new layer |
+|--|--|--|
+| match, torso ≥ 40° from vertical | 393 samples | **0** (max 38°, on the backhand clip itself) |
+| pantera / steamer, `prepare` + wind-up | **82°** | **3°** |
+| roster × 7 locomotion clips × 4 strokes, extra lean from the wind-up | up to **+79°** | at most **+3.5°** |
+| racket-hand travel at the cap | 0.30–0.58 m | **0.14–0.31 m** |
+
+`tests/anticipation_look_test.gd` now carries that roster sweep as a
+regression (`FOLD_MAX_DEG = 8`): **checked red against the old layer**
+(pantera 3° → 82°), green on the new one — 265/265.
+
 ## What this does NOT prove
 
 - **The feel.** Whether the wind-up reads as smoother on screen at 60 fps is the owner's verdict at the pad; no suite measures that.

@@ -1104,7 +1104,14 @@ func _prep_pose_for(stroke: StringName, contact_phase: float = 0.5) -> Dictionar
 		var track: int = tracks[index]
 		var neutral: Quaternion = anim.rotation_track_interpolate(track, 0.0)
 		var target: Quaternion = anim.rotation_track_interpolate(track, best_t)
-		pose[index] = _clamp_to_neutral(neutral, target, index)
+		# Stored as a DELTA from the clip's own first frame, not as an absolute
+		# rotation: the layer composes it on top of whatever the athlete is doing
+		# (shuffle, run, prepare). An absolute target was transplanting the
+		# stroke clip's spine onto the locomotion clip's, and on rigs whose two
+		# clips disagree on the spine's frame that folded the athlete in half
+		# (measured in a match: torso 80-94 deg from vertical on shuffle/prepare/
+		# run with the wind-up on, 0-10 deg with it off).
+		pose[index] = (neutral.inverse() * _clamp_to_neutral(neutral, target, index)).normalized()
 	var chosen := _hand_local_at(anim, best_t)
 	_prep_meta[key] = {"t": best_t, "z": chosen.z / scale, "y": chosen.y / scale,
 		"raised": (chosen.y - ready_hand.y) / scale, "score": best_score, "bones": pose.size()}

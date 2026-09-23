@@ -21,7 +21,10 @@ extends SkeletonModifier3D
 ##
 ## Nothing here reads or writes the simulation.
 
-## bone index -> Quaternion target (local), filled by the rig per stroke.
+## bone index -> Quaternion DELTA (local, post-multiplied onto the current pose),
+## filled by the rig per stroke; each is already bounded by PREP_LIMIT_DEG, so
+## the layer can never rotate a bone further than that from what the clip
+## underneath is doing.
 var prep_pose: Dictionary = {}
 var prep_weight: float = 0.0
 ## [bone index, share] in parent-first order; shares sum to 1.
@@ -39,7 +42,8 @@ func _process_modification_with_delta(_delta: float) -> void:
 		var w := clampf(prep_weight, 0.0, 1.0)
 		for bone in prep_pose:
 			var current: Quaternion = skeleton.get_bone_pose_rotation(bone)
-			skeleton.set_bone_pose_rotation(bone, current.slerp(prep_pose[bone], w).normalized())
+			var delta: Quaternion = Quaternion.IDENTITY.slerp(prep_pose[bone], w)
+			skeleton.set_bone_pose_rotation(bone, (current * delta).normalized())
 	if absf(look_yaw_degrees) > 0.01 and not look_chain.is_empty() and rig != null and rig.is_inside_tree():
 		# The rig's up axis expressed in skeleton space (the skeleton may sit
 		# under a scaled or rotated Armature node).

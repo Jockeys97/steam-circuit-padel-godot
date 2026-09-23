@@ -61,7 +61,7 @@ func run() -> void:
 			for bone in _prep_indices(r):
 				var q: Quaternion = sk.get_bone_pose_rotation(bone)
 				clip[bone] = q
-				rendered[bone] = q.slerp(lay.prep_pose[bone], lay.prep_weight).normalized() if lay.prep_pose.has(bone) and lay.prep_weight > 0.0 else q
+				rendered[bone] = (q * Quaternion.IDENTITY.slerp(lay.prep_pose[bone], lay.prep_weight)).normalized() if lay.prep_pose.has(bone) and lay.prep_weight > 0.0 else q
 			before_rendered[role] = rendered
 			before_clip[role] = clip
 		view.sync(node.state, TICK)
