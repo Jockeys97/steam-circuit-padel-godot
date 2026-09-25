@@ -27,6 +27,7 @@ func run() -> void:
 	var juke = load("res://src/ui/jukebox/JukeboxScreen.tscn").instantiate()
 	juke.set_store(store)
 	root.add_child(juke)
+	juke._set_scope("menu")
 	for frame in 3:
 		await process_frame
 	juke._select_track(juke._track_ids.find("ost_menu"))
@@ -93,6 +94,7 @@ func run() -> void:
 	juke = load("res://src/ui/jukebox/JukeboxScreen.tscn").instantiate()
 	juke.set_store(store)
 	root.add_child(juke)
+	juke._set_scope("menu")
 	var menu_only: bool = juke._only_favorites.button_pressed
 	juke._scope_buttons.match.pressed.emit()
 	check(menu_only and juke._only_favorites.button_pressed, "both filters restored when switching tabs")
@@ -107,9 +109,9 @@ func run() -> void:
 	skip.button_index = JOY_BUTTON_RIGHT_STICK
 	skip.pressed = true
 	music.handle_skip(skip)
-	check(music._track == "classic_match", "random R3 safely handles single favourite")
 	skip.pressed = false
 	music.handle_skip(skip)
+	check(music._track == "classic_match", "random R3 safely handles single favourite")
 	Prefs.toggle(store, "match", "ost_training")
 	Prefs.toggle(store, "match", "ost_roster")
 	var valid_random := true
@@ -117,9 +119,9 @@ func run() -> void:
 		var previous := music._track
 		skip.pressed = true
 		music.handle_skip(skip)
-		valid_random = valid_random and music._track != previous and music.playlist().has(music._track) and music._track != "ost_officina"
 		skip.pressed = false
 		music.handle_skip(skip)
+		valid_random = valid_random and music._track != previous and music.playlist().has(music._track) and music._track != "ost_officina"
 	check(valid_random, "random R3 avoids immediate repeat and respects favourite ownership")
 	juke.free()
 	juke = load("res://src/ui/jukebox/JukeboxScreen.tscn").instantiate()
@@ -131,6 +133,8 @@ func run() -> void:
 	var items := music.playlist()
 	var expected := items[(items.find(music._track) + 1) % items.size()]
 	skip.pressed = true
+	music.handle_skip(skip)
+	skip.pressed = false
 	music.handle_skip(skip)
 	check(music._track == expected and not Prefs.random_skip(store), "switching back restores fixed R3 sequence")
 	Prefs.set_only(store, "menu", false)
@@ -152,22 +156,20 @@ func run() -> void:
 	check(Prefs.belongs(store, "ost_menu", "menu") and not Prefs.belongs(store, "ost_menu", "match"), "reverse move restores menu-only membership")
 	Prefs.transfer(store, "ost_roster", "menu", true)
 	check(not Prefs.favorites(store, "menu").has("ost_roster") and Prefs.favorites(store, "match").has("ost_roster"), "moving a favourite carries its star to destination")
-	var sawano_index := -1
-	for index in juke._genre.item_count:
-		if juke._genre.get_item_text(index).to_lower().contains("sawano"):
-			sawano_index = index
-	check(sawano_index >= 0, "genre dropdown derives Sawano label from catalogue")
-	juke._genre.select(sawano_index)
-	juke._genre.item_selected.emit(sawano_index)
+	var sawano := ""
+	for category in juke._genre_values:
+		if category.to_lower().contains("sawano"):
+			sawano = category
+	check(sawano != "", "genre dropdown derives Sawano label from catalogue")
+	juke._set_genre(sawano)
 	var filtered: Array = juke._visible_ids()
-	check(not filtered.is_empty() and filtered.all(func(id): return juke.SoundtrackManager.track_info(id).get("category") == juke._genre.get_item_metadata(sawano_index)), "genre filter shows only matching tracks")
+	check(not filtered.is_empty() and filtered.all(func(id): return juke.SoundtrackManager.track_info(id).get("category") == sawano), "genre filter shows only matching tracks")
 	var song: String = filtered[0]
 	juke._select_track(juke._track_ids.find(song))
 	juke._copy_context.pressed.emit()
 	juke._set_scope("menu")
 	check(juke._visible_ids().has(song), "copied match song appears under same genre in menu tab")
-	juke._genre.select(0)
-	juke._genre.item_selected.emit(0)
+	juke._set_genre("")
 	check(juke._visible_ids().has("ost_menu"), "clearing genre restores unrelated menu songs")
 	if "--capture" in OS.get_cmdline_user_args() and DisplayServer.get_name() != "headless":
 		music.set_held(true)

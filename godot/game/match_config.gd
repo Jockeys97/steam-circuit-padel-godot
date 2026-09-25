@@ -53,6 +53,27 @@ static var pending_mode: String = "quick"
 ## Which drill exercise a drill session starts on (`js/drill.js` `DRILL_EXERCISES`,
 ## the id the drill screen's rows carry). Unused by the other two modes.
 static var pending_exercise: String = "precision"
+## Which TRAINING DIFFICULTY the next drill run plays at (`drill_hub.gd`'s own four). The
+## drill screen's difficulty row writes it; `mode_session.gd` reads it when it resolves the
+## run's AI profile. It is deliberately NOT a preference: the reference keeps
+## `ui.drillDifficulty` in memory only (`collectPrefs`, `js/ui.js:422-442`, has no such key),
+## so choosing a training difficulty writes nothing to the save and changes no global match
+## difficulty. Empty means "the hub's default".
+static var pending_drill_difficulty: String = ""
+## Where a drill run returns when the player leaves its summary ("choose another exercise"
+## or the pause overlay's quit). The hub sets it when it starts a run — the recreated route
+## lives under the router host (`Main.tscn`), the ported one is its own scene — so the
+## player lands back on the hub they came from instead of a fixed screen. Empty means the
+## ported hub, which is what every legacy caller expects.
+static var pending_training_return: String = ""
+static var pending_menu_screen: String = ""
+
+
+## Where a finished training run returns: the hub that started it
+## (`pending_training_return`), or the ported hub, which is what a caller that never set the
+## seam expects.
+static func training_return_scene() -> String:
+	return pending_training_return if pending_training_return != "" else "res://game/ModeScreen.tscn"
 ## The human mode a QUICK match opens with (`ui.playerMode`, `js/main.js:1156`):
 ## `"solo"`, `"coop"` or `"pvp"` — two humans on the same keyboard/pad when it is not
 ## `solo`. Written by the arena screen's start, read once by `match_controller`'s

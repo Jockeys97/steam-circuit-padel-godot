@@ -37,9 +37,6 @@
 extends "res://src/ui/screens/ScreenContract.gd"
 
 const UiStrings := preload("res://src/ui/UiStrings.gd")
-## The locale, for the Emporio reward row's own two-line text: the OST lane carries its
-## own IT/EN pair rather than a generated locale key (the Jukebox screen does the same).
-const Locale := preload("res://src/locale/locale.gd")
 const UiData := preload("res://src/ui/data/UiData.gd")
 const DemoGate := preload("res://src/ui/data/DemoGateAdapter.gd")
 const Config := preload("res://game/match_config.gd")
@@ -115,9 +112,16 @@ var _store_kind := CTA_WISHLIST
 var _objective_stars := 0
 var _match_objective: Dictionary = {}
 var _constructed := false
-## Emporio OST: the credits this match paid and the resulting balance (see
-## `_render_reward`). Hidden when the payload carries no reward.
+## The actual saved match payout, shown as a compact post-match receipt.
+var _reward_panel: PanelContainer = null
 var _reward_label: Label = null
+var _reward_title: Label = null
+var _reward_breakdown: Label = null
+var _reward_balance: Label = null
+var _reward_tween: Tween = null
+var _reward_count := 0
+var _reward_target := 0
+var _animated_reward_id := ""
 ## The coach block mounted under the card's own content, or null before `_build()`.
 var _coach = null
 ## The exercise the coach's last advice links to, kept so the route can be asserted
@@ -152,6 +156,7 @@ func enter(payload: Dictionary) -> void:
 
 
 func exit() -> void:
+	_stop_reward_animation()
 	# The coach's own rule: a reply that arrives after the player left is dropped, not
 	# painted (`godot/src/coach/coach_client.gd::cancel`).
 	if _coach != null:
@@ -457,10 +462,11 @@ func go_to_menu() -> bool:
 func _render_texts() -> void:
 	(_control("Badge") as Label).text = UiStrings.t("matchOver")
 	var title := _control("ResultTitle") as Label
-	title.text = UiStrings.t(title_key())
+	title.text = UiStrings.t("resultLossTitle") if not bool(_view.get("won", false)) else UiStrings.t(title_key())
 	if theme != null:
-		title.add_theme_color_override("font_color", theme.get_color("win_green", "Palette") \
-			if bool(_view.get("won", false)) else theme.get_color("loss_red", "Palette"))
+		var accent := theme.get_color("win_green", "Palette") if bool(_view.get("won", false)) else theme.get_color("rival", "Palette")
+		title.add_theme_color_override("font_color", accent)
+		(_control("OutcomeAccent") as ColorRect).color = accent
 	(_control("Message") as Label).text = message_text()
 	(_control("ScoreYouLabel") as Label).text = UiStrings.t("statYou")
 	(_control("ScoreOppLabel") as Label).text = UiStrings.t("statOpp")
@@ -471,27 +477,81 @@ func _render_texts() -> void:
 	(_control("MenuButton") as Button).text = UiStrings.t("menu")
 
 
-## Emporio OST: the credits this match paid and the resulting balance. The payload
-## carries `reward` only for a real played match — a harness run and a constructed
-## capture payload have none — so the row is hidden rather than showing a fake zero.
+## A saved, real match gets a visible payout receipt. Constructed captures and
+## harness matches have no reward and therefore no receipt. A failed save must never
+## look like credited currency; a duplicate award reports the original receipt.
 func _render_reward() -> void:
-	if _reward_label == null:
+	if _reward_panel == null:
 		return
 	var reward: Variant = _payload.get("reward", null)
 	if not (reward is Dictionary):
-		_reward_label.visible = false
-		_reward_label.text = ""
+		_stop_reward_animation()
+		_reward_panel.visible = false
+		return
+	_reward_panel.visible = true
+	_reward_title.text = UiStrings.t("resultCreditsTitle")
+	var balance := int((reward as Dictionary).get("balance", 0))
+	_reward_balance.text = UiStrings.t("resultCreditsBalance", {"n": balance})
+	if not bool((reward as Dictionary).get("ok", false)):
+		_stop_reward_animation()
+		_reward_label.text = "—"
+		_reward_breakdown.text = UiStrings.t("resultCreditsUnavailable")
 		return
 	var awarded := int((reward as Dictionary).get("awarded", 0))
-	var balance := int((reward as Dictionary).get("balance", 0))
-	var italian := Locale.current_lang() != "en"
-	_reward_label.visible = true
-	if awarded > 0:
-		_reward_label.text = ("Crediti Circuito +%d — Saldo: %d" % [awarded, balance]) \
-			if italian else ("Circuit Credits +%d — Balance: %d" % [awarded, balance])
+	var earned := int((reward as Dictionary).get("earned", awarded))
+	var match_id := String((reward as Dictionary).get("match_id", ""))
+	if bool((reward as Dictionary).get("animate", false)) and earned > 0 and match_id != "" and match_id != _animated_reward_id:
+		_start_reward_animation(earned, match_id)
+	elif _reward_tween != null and _reward_tween.is_running() and match_id == _animated_reward_id:
+		_show_reward_count(_reward_count)
 	else:
-		_reward_label.text = ("Crediti Circuito — Saldo: %d" % balance) \
-			if italian else ("Circuit Credits — Balance: %d" % balance)
+		_stop_reward_animation()
+		_show_reward_count(earned)
+	if bool((reward as Dictionary).get("already", false)):
+		_reward_breakdown.text = UiStrings.t("resultCreditsAlready")
+		return
+	var parts: Variant = (reward as Dictionary).get("breakdown", {})
+	if parts is Dictionary and not (parts as Dictionary).is_empty():
+		var key := "resultCreditsBreakdownWin" if int(parts.get("victory_bonus", 0)) > 0 else "resultCreditsBreakdownLoss"
+		_reward_breakdown.text = UiStrings.t(key, {
+			"base": int(parts.get("base", 0)),
+			"points": int(parts.get("points_played", 0)),
+			"per": int(parts.get("per_point", 0)),
+			"play": int(parts.get("play_bonus", 0)),
+			"win": int(parts.get("victory_bonus", 0)),
+		})
+	else:
+		_reward_breakdown.text = ""
+
+
+func _start_reward_animation(amount: int, match_id: String) -> void:
+	_stop_reward_animation()
+	_animated_reward_id = match_id
+	_reward_target = amount
+	_show_reward_count(0)
+	_reward_label.modulate.a = 0.58
+	_reward_tween = create_tween()
+	_reward_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_reward_tween.tween_method(_set_reward_count, 0.0, float(amount), 0.85)
+	_reward_tween.parallel().tween_property(_reward_label, "modulate:a", 1.0, 0.5)
+	_reward_tween.tween_callback(func(): _show_reward_count(amount))
+
+
+func _set_reward_count(value: float) -> void:
+	_show_reward_count(mini(_reward_target, maxi(0, int(round(value)))))
+
+
+func _show_reward_count(value: int) -> void:
+	_reward_count = value
+	_reward_label.text = UiStrings.t("resultCreditsAmount", {"n": value})
+
+
+func _stop_reward_animation() -> void:
+	if _reward_tween != null and _reward_tween.is_running():
+		_reward_tween.kill()
+	_reward_tween = null
+	if _reward_label != null:
+		_reward_label.modulate.a = 1.0
 
 
 func _render_scores() -> void:
@@ -796,29 +856,73 @@ func _build() -> void:
 	column.add_child(panel)
 	var card := VBoxContainer.new()
 	card.name = "CardBody"
-	card.add_theme_constant_override("separation", 16)
+	card.add_theme_constant_override("separation", 13)
 	card.alignment = BoxContainer.ALIGNMENT_CENTER
 	panel.add_child(card)
 	card.add_child(_badge_pill())
 	var title := _label(card, "ResultTitle")
-	title.add_theme_font_size_override("font_size", 42)
+	title.theme_type_variation = &"HeroTitle"
+	title.add_theme_font_size_override("font_size", 51)
+	var outcome_accent := ColorRect.new()
+	outcome_accent.name = "OutcomeAccent"
+	outcome_accent.custom_minimum_size = Vector2(72, 3)
+	outcome_accent.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	outcome_accent.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(outcome_accent)
 	var message := _label(card, "Message")
 	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message.add_theme_font_size_override("font_size", 17)
 	message.modulate.a = 0.82
 	card.add_child(_score_panel())
-	# Emporio OST: the reward row sits with the score, above the stats — it is the
-	# match's payout, and it is hidden when the payload carries none.
-	_reward_label = _label(card, "RewardRow")
-	_reward_label.add_theme_font_size_override("font_size", 15)
-	_reward_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_reward_label.modulate.a = 0.9
+	card.add_child(_reward_block())
 	card.add_child(_stats_panel())
 	card.add_child(_objectives_block())
 	card.add_child(_cta_block())
 	card.add_child(_coach_block())
 	card.add_child(_actions_row())
 	_register_focus()
+
+
+func _reward_block() -> PanelContainer:
+	_reward_panel = PanelContainer.new()
+	_reward_panel.name = "RewardPanel"
+	_reward_panel.visible = false
+	_reward_panel.add_theme_stylebox_override("panel", _reward_style())
+	var content := VBoxContainer.new()
+	content.add_theme_constant_override("separation", 5)
+	_reward_panel.add_child(content)
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", 12)
+	content.add_child(top)
+	_reward_title = _label(top, "RewardTitle")
+	_reward_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_reward_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_reward_title.add_theme_font_size_override("font_size", 14)
+	if theme != null:
+		_reward_title.add_theme_color_override("font_color", theme.get_color("trophy_yellow", "Palette"))
+	_reward_label = _label(top, "RewardRow")
+	_reward_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_reward_label.theme_type_variation = &"HeroTitle"
+	_reward_label.add_theme_font_size_override("font_size", 32)
+	if theme != null:
+		_reward_label.add_theme_color_override("font_color", theme.get_color("trophy_yellow", "Palette"))
+	_reward_breakdown = _label(content, "RewardBreakdown")
+	_reward_breakdown.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_reward_breakdown.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_reward_breakdown.add_theme_font_size_override("font_size", 13)
+	_reward_breakdown.modulate.a = 0.76
+	var divider := ColorRect.new()
+	divider.name = "RewardDivider"
+	divider.custom_minimum_size.y = 1
+	divider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	divider.color = Color(1.0, 0.82, 0.3, 0.2)
+	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	content.add_child(divider)
+	_reward_balance = _label(content, "RewardBalance")
+	_reward_balance.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_reward_balance.add_theme_font_size_override("font_size", 14)
+	_reward_balance.modulate.a = 0.88
+	return _reward_panel
 
 
 ## The optional coach, mounted the way every other block is: one block under the card's
@@ -932,6 +1036,19 @@ func _section_style(accented: bool = false) -> StyleBoxFlat:
 	box.content_margin_right = 18.0
 	box.content_margin_top = 14.0
 	box.content_margin_bottom = 14.0
+	return box
+
+
+func _reward_style() -> StyleBoxFlat:
+	var box := _section_style()
+	if theme != null:
+		var gold := theme.get_color("trophy_yellow", "Palette")
+		box.bg_color = Color(0.085, 0.105, 0.16, 0.98)
+		box.border_color = Color(gold.r, gold.g, gold.b, 0.48)
+		box.shadow_color = Color(gold.r, gold.g, gold.b, 0.10)
+		box.shadow_size = 8
+	box.content_margin_top = 16.0
+	box.content_margin_bottom = 16.0
 	return box
 
 

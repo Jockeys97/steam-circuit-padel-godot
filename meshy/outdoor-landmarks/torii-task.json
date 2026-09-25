@@ -1,0 +1,22 @@
+{
+  "arena": "torii",
+  "status": "SUCCEEDED",
+  "reservedCredits": 30,
+  "referenceSha256": "ff11ae079cb3251fdc7ac15ae1184c438fdbd63a69ed05519390176031509e7e",
+  "options": {
+    "ai_model": "meshy-7.1",
+    "should_texture": true,
+    "enable_pbr": true,
+    "texture_resolution": "2k",
+    "should_remesh": true,
+    "topology": "triangle",
+    "target_polycount": 10000,
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "id": "01a0d02b-60ae-7772-95dc-b7259ce90016",
+  "progress": 100,
+  "consumedCredits": 30
+}

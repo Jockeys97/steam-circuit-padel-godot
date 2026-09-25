@@ -65,6 +65,7 @@ const MARK_NAMES := [
 	"TimingEnergyBar", "TimingEnergyFill",
 	"TimingAdvice", "TimingAdvicePanel",
 	"TimingVerdict", "TimingVerdictMode",
+	"TimingGlassExit",
 ]
 
 # ---------------------------------------------------------------------------
@@ -212,6 +213,12 @@ var _advice_panel: MeshInstance3D
 var _precision: MeshInstance3D
 var _precision_track: MeshInstance3D
 var _energy: MeshInstance3D
+## The wall exit (2026-09-24): a flat ring on the floor where the ball, back off the
+## human's own glass, comes down to hitting height (`state.glassExit`, from the sim).
+var _glass_exit: MeshInstance3D
+const GLASS_EXIT_RADIUS := 0.34
+const GLASS_EXIT_WIDTH := 0.10
+const GLASS_EXIT_COLOR := Color(1.0, 0.78, 0.25, 1.0)
 var _energy_track: MeshInstance3D
 var _other_energy: Dictionary = {}
 ## The verdict over the athlete who hit (`js/render.js:1041-1069`). The mode line is
@@ -274,6 +281,12 @@ func mount(parent: Node3D) -> int:
 		_material(Vocabulary.PRECISION_CYAN, true, 2))
 	# The energy bar under the athlete's feet, with the reference's own three bands
 	# (`js/render.js:1031-1037`).
+	# Flat on the floor, so its own material: not billboarded like the others.
+	var exit_mat := _material(Color(1.0, 1.0, 1.0, 1.0), true, 1)
+	exit_mat.billboard_mode = BaseMaterial3D.BILLBOARD_DISABLED
+	_glass_exit = _build_mesh("TimingGlassExit",
+		_arc_mesh(GLASS_EXIT_RADIUS, GLASS_EXIT_WIDTH, TAU, GLASS_EXIT_COLOR, false), exit_mat)
+	_glass_exit.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
 	_energy_track = _build_mesh("TimingEnergyBar", _bar_mesh(false),
 		_material(Color(0.016, 0.055, 0.125, 0.72), true, 1))
 	_energy = _build_mesh("TimingEnergyFill", _bar_mesh(true),
@@ -442,6 +455,18 @@ func update(state, finished: bool, preparation: Dictionary = {}) -> Dictionary:
 			maxf(line_m * TIMING_ADVICE_BOX_LINES, text_px * TIMING_ADVICE_M_PER_PX + line_m * TIMING_ADVICE_PAD_LINES),
 			line_m * TIMING_ADVICE_BOX_LINES, 1.0)
 
+	# --- the wall exit: where the ball comes back off the glass -----------------
+	var exit: Dictionary = state.glassExit if "glassExit" in state else {}
+	var exit_on: bool = live and not exit.is_empty()
+	_glass_exit.visible = exit_on
+	if exit_on:
+		_glass_exit.position = Court.world_pos(float(exit["x"]), float(exit["y"]), 0.0) + Vector3(0.0, 0.02, 0.0)
+		# Brightens as the moment comes: the last 0.6 s before the ball gets there.
+		var left: float = float(exit["at"]) - clock
+		var near := 1.0 - clampf(left / 0.6, 0.0, 1.0)
+		(_glass_exit.material_override as StandardMaterial3D).albedo_color = Color(1.0, 1.0, 1.0, 0.75 + 0.25 * near)
+		_glass_exit.scale = Vector3.ONE * (1.25 - 0.25 * near)
+
 	# --- the energy bar: every frame, under the active athlete ----------------
 	_energy_track.visible = live
 	_energy.visible = live
@@ -508,6 +533,8 @@ func update(state, finished: bool, preparation: Dictionary = {}) -> Dictionary:
 		"verdict_alpha": report_verdict["alpha"],
 		"verdict_paddle": report_verdict["paddle"],
 		"verdict_at": report_verdict["at"],
+		"glass_exit_visible": exit_on,
+		"glass_exit_at": _glass_exit.position if exit_on else Vector3.ZERO,
 	}
 	return report()
 

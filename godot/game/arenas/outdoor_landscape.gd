@@ -1,6 +1,7 @@
 extends RefCounted
 ## Static peripheral landscape: no gameplay nodes, animation, lights or shadows.
 const Shapes = preload("res://game/arenas/egeo_environment.gd")
+const ArenaLook = preload("res://game/arenas/arena_look.gd")
 
 static func build(scenery: Node3D, id: String) -> void:
 	var root := Node3D.new()
@@ -77,13 +78,15 @@ static func build(scenery: Node3D, id: String) -> void:
 				Shapes.box(root, "LanternWindow", Vector3(0.65,0.55,0.65), pos+Vector3(0,1.1,0), lantern)
 				Shapes.box(root, "LanternCap", Vector3(1.0,0.16,1.0), pos+Vector3(0,1.45,0), stone)
 	elif id == "aurora":
+		_build_aurora_terrain(root)
 		var basalt := Shapes.material(Color("344650"))
 		var snow := Shapes.material(Color("a4b7bf"))
 		# Broken basalt clusters, outside the stands; no animated particles or lights.
 		for side in [-1.0, 1.0]:
 			for i in 12:
 				var h: float = 1.2 + 2.4 * absf(sin(i * 1.71))
-				var pos := Vector3(side * (27.0 + 2.5 * sin(i)), h * 0.5 - 0.5, -22.0 - i * 2.3)
+				var pos := Vector3(side * (27.0 + 2.5 * sin(i)), h * 0.5 - 0.5,
+					-22.0 - float(i) * 2.3)
 				var pillar := CylinderMesh.new()
 				pillar.radial_segments = 6
 				pillar.rings = 1
@@ -99,6 +102,53 @@ static func build(scenery: Node3D, id: String) -> void:
 					cap.bottom_radius = 1.0
 					cap.height = 0.14
 					Shapes.part(root,"SnowCap",cap,pos+Vector3(0,h*0.5,0),snow)
+
+
+## The court's 80 m black apron used to end against an almost identical dark
+## background, making the whole arena appear to float. Keep the playable floor
+## untouched and continue its terrain outward with snow and basalt at real depth.
+static func _build_aurora_terrain(root: Node3D) -> void:
+	var rock := Shapes.material(Color("748895"))
+	ArenaLook.apply_ground_texture(rock, "aurora", Vector2(210.0, 210.0))
+	var far_rock := Shapes.material(Color("425866"))
+	var snow := Shapes.material(Color("8daab4"))
+	var ice := Shapes.material(Color("557b88"))
+	# The top is just below the court's Surround plane (-0.02 m). Its edge is
+	# beyond all match cameras; the distant ridges continue the terrain after it.
+	Shapes.box(root, "AuroraPlateau", Vector3(210.0, 0.5, 210.0),
+		Vector3(0, -0.28, 0), rock)
+	# Low snowdrifts have actual shoulders and shading instead of flat cards.
+	# Keep them beyond the glass and spectator rows.
+	for side in [-1.0, 1.0]:
+		for i in 4:
+			var z := -23.0 + float(i) * 16.0
+			var x: float = side * (23.0 + float(i % 2) * 3.0)
+			var drift := Shapes.part(root, "AuroraSideSnow_%d_%d" % [int(side), i],
+				ridge_mesh(6.0 + float(i % 2), 0.9, i + (0 if side < 0.0 else 13)),
+				Vector3(x, -0.25, z), ice if i % 2 == 0 else snow)
+			drift.scale.z = 0.73
+	for i in 3:
+		var drift := Shapes.part(root, "AuroraRearSnow_%d" % i,
+			ridge_mesh(7.0, 1.2, i + 31),
+			Vector3(float(i - 1) * 23.0, -0.3, -31.0), snow)
+		drift.scale.z = 0.65
+	# A few small basalt outcrops give the near side depth without a dense prop field.
+	for side in [-1.0, 1.0]:
+		for i in 2:
+			var outcrop := Shapes.part(root, "AuroraOutcrop_%d_%d" % [int(side), i],
+				ridge_mesh(6.0, 3.5 + float(i) * 0.6, i + (4 if side < 0.0 else 9)),
+				Vector3(side * 19.0, -0.5, -12.0 + float(i) * 30.0), far_rock)
+			outcrop.scale.z = 0.8
+	# A connected mid-distance volcanic bank is visible above the back glass
+	# from the playable and wide cameras, without putting silhouettes on court.
+	for i in 7:
+		var x := float(i - 3) * 30.0
+		var z := -95.0 - float(i % 2) * 10.0
+		var height := 7.0 + float((i * 3) % 5) * 1.5
+		var ridge := Shapes.part(root, "AuroraMidRidge_%d" % i,
+			ridge_mesh(24.0 + float(i % 3) * 3.0, height, i + 54),
+			Vector3(x, -1.5, z), far_rock)
+		ridge.scale.z = 0.62
 
 
 ## One image-derived architectural/geological anchor per arena, behind the playable

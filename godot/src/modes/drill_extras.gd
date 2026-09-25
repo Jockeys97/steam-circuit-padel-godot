@@ -23,11 +23,31 @@
 ##
 ## NOTHING HERE SIMULATES ANYTHING. The row is data: the engine, the drill session and the
 ## scoring module do all the work exactly as they do for the frozen four.
+##
+## THE TRAINING OVERHAUL's THREE CHALLENGES. `glass_recovery`, `net_play` and
+## `doubles_tactics` are rows of the same shape — they add no physics either. Two of the
+## fields below are the only things the wider training work needed:
+##
+##   `formation` — where the drill's own `placeTeams` puts the human pair. `net` steps the
+##     controlled player up to the net (the position a volley/bandeja drill is played
+##     from), `deep` leaves him at the back for the glass recovery; the frozen four and
+##     `return` keep the reference's own placement (no `formation` key at all).
+##   `objective` — which grading branch `drill_session.gd` runs. It is NOT inferred from
+##     the id, for the same reason `opponentServe` is not: a second serving exercise must
+##     not land on the first one's branch.
+##
+## WHAT THE PRODUCT READS. Group, goal, success rule, controls and the run length live in
+## `drill_objective.gd` (one owner for the player-facing facts) and are joined with these
+## rows by `drill_hub.gd`.
 extends RefCounted
 
-## The one exercise this build adds. The id is the coach's own advice target
+## The first exercise this build adds. The id is the coach's own advice target
 ## (`godot/src/coach/coach_advice.gd`: `serve_return` -> `return`).
 const RETURN_ID := "return"
+## The training overhaul's three challenges, in the order the hub shows them.
+const GLASS_RECOVERY_ID := "glass_recovery"
+const NET_PLAY_ID := "net_play"
+const DOUBLES_TACTICS_ID := "doubles_tactics"
 
 const RETURN_EXERCISE := {
 	"id": RETURN_ID,
@@ -37,13 +57,60 @@ const RETURN_EXERCISE := {
 	"targets": false,
 	"kinds": [],
 	"godotOnly": true,
+	"objective": "return",
+}
+
+## Back-glass recovery: the point is played out, so the ball that reaches the human's own
+## glass is a real engine ball with the arena's own `wallBounce`. The human pair stands at
+## the back (`formation`), where a recovery off the glass is actually played.
+const GLASS_RECOVERY_EXERCISE := {
+	"id": GLASS_RECOVERY_ID,
+	"feed": "flat",
+	"rivals": false,
+	"targets": false,
+	"kinds": [],
+	"godotOnly": true,
+	"formation": "deep",
+	"objective": "glass_recovery",
+}
+
+## Net play: the human pair starts at the net (`formation`), so the attacking shots the
+## exercise grades — volley family, bandeja, vibora, smash — are the ones the position
+## actually offers.
+const NET_PLAY_EXERCISE := {
+	"id": NET_PLAY_ID,
+	"feed": "flat",
+	"rivals": false,
+	"targets": false,
+	"kinds": [],
+	"godotOnly": true,
+	"formation": "net",
+	"objective": "net_play",
+}
+
+## Doubles decision-making: the opponents play the point back (`rivals`), the human side
+## has to call a pair tactic (`input.teamTactic`) while the ball is live and then close the
+## point legally.
+const DOUBLES_TACTICS_EXERCISE := {
+	"id": DOUBLES_TACTICS_ID,
+	"feed": "flat",
+	"rivals": true,
+	"targets": false,
+	"kinds": [],
+	"godotOnly": true,
+	"objective": "doubles_tactics",
 }
 
 
 ## Every Godot-only exercise, in the order they are appended after the frozen ones. A copy
 ## per call, so a caller that mutates a row cannot corrupt the table for the next one.
 static func exercises() -> Array:
-	return [RETURN_EXERCISE.duplicate(true)]
+	return [
+		RETURN_EXERCISE.duplicate(true),
+		GLASS_RECOVERY_EXERCISE.duplicate(true),
+		NET_PLAY_EXERCISE.duplicate(true),
+		DOUBLES_TACTICS_EXERCISE.duplicate(true),
+	]
 
 
 ## True when this id is one of the Godot-only rows rather than a reference one.

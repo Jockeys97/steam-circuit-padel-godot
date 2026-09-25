@@ -54,7 +54,7 @@ extends Node
 ##     port renders a deterministic noise buffer with a fixed seed and the test compares
 ##     only the hat's structural parameters;
 ##   - sample-accurate scheduling: the reference schedules oscillators at exact sample
-##     positions; this module renders voice samples in engine memory with the reference's
+##     positions; this module uses offline-rendered voice samples with the reference's
 ##     oscillator shapes and exponential envelopes, but triggers them from the frame
 ##     clock. Per-sample identity is neither claimed nor tested — and with the dummy
 ##     audio driver nothing about the *sound* is claimed at all;
@@ -69,14 +69,17 @@ extends Node
 ## SFX module is the natural owner and music.gd only needs its own bus.
 
 const MixerContract := preload("res://src/audio/mixer_contract.gd")
+## Baked by tests/audio/build_classic_voice_bank.gd from this module's own _render().
+## Loading once with the script keeps waveform synthesis out of match frames.
+const VOICE_BANK := preload("res://src/audio/classic_voice_bank.res")
 
 ## The canonical bus names live in the shared reader; these alias them.
 const MASTER_BUS := MixerContract.MASTER_BUS
 const MUSIC_BUS := MixerContract.MUSIC_BUS
 ## The reference builds fresh oscillators per call, so the same voice can overlap itself.
 const MAX_POLYPHONY := 16
-## Upper bound on the pooled per-signature players (54 distinct signatures exist:
-## 32 arp + 12 pad + 8 bass + 1 kick + 1 hat).
+## Upper bound on the pooled per-signature players; the current full-intensity
+## progression bakes 36 distinct signatures.
 const MAX_VOICE_POOL := 64
 
 # --- sequencer constants: ported from js/audio.js, anchors are the reference's ---
@@ -464,9 +467,14 @@ func _voice_for(e: Dictionary) -> AudioStreamPlayer:
 	if _pool.size() >= MAX_VOICE_POOL:
 		last_error = "voice pool full at %d signatures" % MAX_VOICE_POOL
 		return null
+	var sample: Variant = VOICE_BANK.voices.get(key)
+	if not sample is AudioStreamWAV:
+		# A stale/missing bake must not reintroduce a synthesis stall in the match.
+		last_error = "original theme sample missing: %s" % key
+		return null
 	p = AudioStreamPlayer.new()
 	p.name = "music_" + key.replace("|", "_").replace(".", "p")
-	p.stream = _render(e)
+	p.stream = sample
 	p.bus = MUSIC_BUS
 	p.volume_db = 0.0
 	p.max_polyphony = MAX_POLYPHONY
@@ -491,6 +499,10 @@ func pool_size() -> int:
 	return _pool.size()
 
 
+func bank_size() -> int:
+	return VOICE_BANK.voices.size()
+
+
 func player_for_layer(layer: String) -> AudioStreamPlayer:
 	for key in _pool_order:
 		if key.begins_with(layer + "|"):
@@ -504,7 +516,7 @@ func stop_all() -> void:
 			p.stop()
 
 
-## Renders the voice into an in-memory 16-bit mono WAV at unit peak, using the
+## Offline baker only: renders the voice into a 16-bit mono WAV at unit peak, using the
 ## reference's oscillator shape (`sine`/`triangle`/`square`), its exponential envelope
 ## (`setValueAtTime` + two `exponentialRampToValueAtTime`, `js/audio.js:30-32, 165-167`)
 ## and a one-pole approximation of its biquad filter. The gain is applied by the player,

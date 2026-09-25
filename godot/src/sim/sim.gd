@@ -883,7 +883,36 @@ static func ai_responder_forecast(paddle: Ent.SimPaddle, ball: Ent.SimBall) -> D
 ## Pure decision used by movement and the final legal contact gate.
 static func ai_contact_plan(state: State, paddle: Ent.SimPaddle, ball: Ent.SimBall) -> Dictionary:
 	var plan: Dictionary = _ai_contact_plan_base(state, paddle, ball)
-	if not state.aiGlassPlay or bool(plan["wait"]):
+	# A good human lob is not volleyed (2026-09-23, owner: "a well-made lob must, depending
+	# on where they stand, go over the AI and make it let the ball bounce or chase it").
+	# If nobody can take it overhead (`ai_overhead_receiver` finds no chance), the AI may
+	# not play it in the air: it goes back and waits for the bounce — or the glass — where
+	# it can reach the ball at a playable height, or runs to where it lands. Standing deep
+	# already, that is easy; caught at the net, it is a chase, and a late chase loses the
+	# point on a double bounce. The recorded matches had the back player volley every deep
+	# lob back with a drive (15 of 15).
+	if state.aiLobOver and not ball.serveInFlight and int(ball.bounces["ai"]) == 0:
+		var lob_forecast: Dictionary = {
+			"x": ball.x, "y": ball.y, "z": ball.z, "vx": ball.vx, "vy": ball.vy, "vz": ball.vz,
+			"spin": ball.spin, "backspin": ball.backspin, "topspin": ball.topspin, "r": ball.r,
+		}
+		var after_bounce: Dictionary = preload("res://src/sim/ai_glass.gd").plan({
+			"x": paddle.x, "y": paddle.y, "speed": paddle.speed * Stamina.speed_factor(paddle.staminaEnergy),
+			"reaction": state.aiReactionDelay, "width": contact_width(paddle, ball),
+			"depth": paddle.reach * float(Frozen.balance()["aiDepthReach"]),
+		}, lob_forecast, Frozen.court(), Frozen.balance(), float(state.arena["wallBounce"]))
+		if not after_bounce.is_empty():
+			return {"wait": true, "reason": "lob-glass" if bool(after_bounce["glass"]) else "lob-bounce",
+				"x": float(after_bounce["x"]), "y": float(after_bounce["y"])}
+		# No comfortable contact within reach: chase the landing spot anyway.
+		for s in preload("res://src/sim/ai_glass.gd").forecast(lob_forecast, Frozen.court(), Frozen.balance(), float(state.arena["wallBounce"]), 3.0):
+			if bool(s.bounced):
+				return {"wait": true, "reason": "lob-chase", "x": float(s.x), "y": float(s.y)}
+		return {"wait": true, "reason": "lob-chase", "x": ball.x, "y": ball.y}
+	# After the bounce, a lob that went over them is played like glass play: near the top
+	# of its bounce or off the back glass, not scooped at the first tick after the bounce.
+	var glass_on: bool = state.aiGlassPlay or (state.aiLobOver and int(ball.bounces["ai"]) > 0)
+	if not glass_on or bool(plan["wait"]):
 		return plan
 	# Glass-aware bounce play (`ai_glass.gd`), only where the old planner said "take it
 	# in the air" for a player out of the volley zone: at the net the air stays right.
@@ -951,6 +980,7 @@ static func _ai_contact_plan_base(state: State, paddle: Ent.SimPaddle, ball: Ent
 		"x": paddle.x, "y": paddle.y, "speed": paddle.speed * Stamina.speed_factor(paddle.staminaEnergy), "skill": paddle.skill,
 		"width": contact_width(paddle, ball), "depth": paddle.reach * float(Frozen.balance()["aiDepthReach"]),
 		"reaction": state.aiReactionDelay, "bounce_bias": state.aiBounceBias,
+		"overhead_zone": 126.0 + ai_overhead_stretch(paddle) * AI_OVERHEAD_ZONE_PER_SKILL,
 	}, {
 		"x": ball.x, "y": ball.y, "z": ball.z, "vx": ball.vx, "vy": ball.vy, "vz": ball.vz,
 		"spin": ball.spin, "backspin": ball.backspin, "topspin": ball.topspin,
@@ -1001,6 +1031,52 @@ static func lock_receiver_for_incoming_shot(state: State, is_serve: bool = false
 	state.manualReceiverOverride = false
 
 
+## The AI player who can meet the incoming ball OVERHEAD (on its way down, between
+## the overhead minimum and his reach height, inside his overhead zone) in time, or {}.
+## Earliest such contact wins. Exact trajectory (`ai_glass.gd` forecast), pure.
+static func ai_overhead_receiver(state: State) -> Dictionary:
+	var ball := state.ball
+	if ball.serveInFlight or int(ball.bounces["ai"]) > 0:
+		return {}
+	var court: Dictionary = Frozen.court()
+	var net_y := float(court["netY"])
+	var samples: Array = preload("res://src/sim/ai_glass.gd").forecast({
+		"x": ball.x, "y": ball.y, "z": ball.z, "vx": ball.vx, "vy": ball.vy, "vz": ball.vz,
+		"spin": ball.spin, "backspin": ball.backspin, "topspin": ball.topspin, "r": ball.r,
+	}, court, Frozen.balance(), float(state.arena["wallBounce"]), 2.4)
+	var best := {}
+	var best_t := INF
+	for key in ["opponent", "opponentMate"]:
+		var p := state.paddle(key)
+		# Reading the lob (2026-09-24, owner): the overhead zone used to be a fixed depth
+		# from the net, so with ~1.4 s of flight anyone backed into it and the lob paid off
+		# the same wherever the pair stood. Backing up is slow and blind: an athlete can
+		# smash only up to where they stand plus a backpedal allowance. Both ways: a lob
+		# over a pair glued to the net passes, while a player already deep takes even a
+		# good lob overhead (bandeja depth, capped by AI_OVERHEAD_MAX_DEPTH_PX).
+		var zone: float = minf(AI_OVERHEAD_MAX_DEPTH_PX,
+			(net_y - p.y) + AI_OVERHEAD_BACKPEDAL_PX + ai_overhead_stretch(p) * AI_OVERHEAD_BACKPEDAL_PER_SKILL)
+		var reach := ai_reach_height(p)
+		var speed: float = maxf(1.0, p.speed * Stamina.speed_factor(p.staminaEnergy))
+		var prev_z := INF
+		for s in samples:
+			var z := float(s.z)
+			var descending := z < prev_z
+			prev_z = z
+			if bool(s.bounced) or not descending or z < 58.0 or z > reach:
+				continue
+			if net_y - float(s.y) >= zone:
+				continue
+			var travel_x: float = maxf(0.0, absf(float(s.x) - p.x) - contact_width(p, ball) * 0.45) / speed
+			var travel_y: float = maxf(0.0, absf(float(s.y) - p.y) - p.reach * float(Frozen.balance()["aiDepthReach"]) * 0.45) / (speed * 0.56)
+			if 0.25 + maxf(travel_x, travel_y) <= float(s.t):
+				if float(s.t) < best_t:
+					best_t = float(s.t)
+					best = {"key": key, "x": float(s.x), "y": float(s.y)}
+				break
+	return best
+
+
 static func lock_ai_receiver_for_incoming_shot(state: State, is_serve: bool = false) -> void:
 	var balance: Dictionary = Frozen.balance()
 	if not ball_playable_direction("ai", state.ball):
@@ -1031,6 +1107,23 @@ static func lock_ai_receiver_for_incoming_shot(state: State, is_serve: bool = fa
 		else:
 			key = "opponentMate"
 			forecast = mate
+	# A high ball one of them can take OVERHEAD goes to that player (2026-09-23): the
+	# receiver used to be whoever met the ball best at his own depth, which handed a
+	# short lob to the back player — he backed off and played it low after the bounce,
+	# while the net player, the one who smashes, was not allowed to touch it (only the
+	# locked receiver may hit). Deterministic; the zone and reach grow with level.
+	state.aiOverheadPlan = {}
+	state.aiLobOver = false
+	if not is_serve:
+		var overhead := ai_overhead_receiver(state)
+		if not overhead.is_empty():
+			key = String(overhead["key"])
+			forecast = {"contactX": float(overhead["x"])}
+			state.aiOverheadPlan = overhead
+		# Only a human strike brings the ball here unbounced (`lastHitterSide` is written
+		# after this call in hit_ball, so it cannot be the test: it still named the AI).
+		elif state.ball.shotType in ["lob", "defensive-lob", "globo"] and int(state.ball.bounces["ai"]) == 0:
+			state.aiLobOver = true
 	state.aiPrimaryKey = String(key) if key != null else "opponent"
 	state.aiTargetX = float(forecast["contactX"]) if forecast.has("contactX") else state.paddle(state.aiPrimaryKey).x
 	state.aiReceiverLocked = true
@@ -1041,8 +1134,36 @@ static func lock_ai_receiver_for_incoming_shot(state: State, is_serve: bool = fa
 	var wrong_footed: bool = Rng.next_random(state) < wrong_footed_chance
 	var wrong_footed_delay: float = 0.28 + state.aiShotPressure * 0.22 if wrong_footed else 0.0
 	state.aiReactionDelay = 0.0 if is_serve else clampf(base_reaction + pressure_penalty, 0.07, 0.42) + wrong_footed_delay
+	state.aiWrongFooted = wrong_footed
+	state.aiReflexTried = false
 	if wrong_footed:
 		add_event(state, "evCounter")
+
+
+## How much a stronger AI can stretch for an overhead (2026-09-23, owner: "a short
+## lob must be attacked and smashed, above all at the high levels"). Measured on his
+## matches: the AI smashed only from within 126 px of the net and up to 108 px high,
+## so a short lob got punished only when it happened to fall to the net player
+## (11 of 26 below 170 px). Level skill above Rivale's 0.46 widens both, so Leggenda
+## (0.90) smashes from up to ~161 px off the net and up to ~130 px high, like a
+## player who steps back and jumps; Rivale is unchanged. AI only.
+const AI_OVERHEAD_BASE_SKILL := 0.46
+const AI_OVERHEAD_ZONE_PER_SKILL := 25.0
+const AI_OVERHEAD_REACH_PER_SKILL := 25.0
+## How far behind their own spot an athlete can still get under a lob to smash it.
+const AI_OVERHEAD_BACKPEDAL_PX := 30.0
+const AI_OVERHEAD_BACKPEDAL_PER_SKILL := 40.0
+const AI_OVERHEAD_MAX_DEPTH_PX := 200.0
+## Smash chance on a human lob taken overhead, at Leggenda (skill 0.9); scales to 0 at Rivale.
+const AI_LOB_SMASH_TOP := 0.85
+
+static func ai_overhead_stretch(paddle: Ent.SimPaddle) -> float:
+	if paddle.isPlayer:
+		return 0.0
+	return maxf(0.0, paddle.skill - AI_OVERHEAD_BASE_SKILL)
+
+static func ai_reach_height(paddle: Ent.SimPaddle) -> float:
+	return float(Frozen.balance()["playableHitHeight"]) + ai_overhead_stretch(paddle) * AI_OVERHEAD_REACH_PER_SKILL
 
 
 static func can_hit(paddle: Ent.SimPaddle, ball: Ent.SimBall) -> bool:
@@ -1053,7 +1174,7 @@ static func can_hit(paddle: Ent.SimPaddle, ball: Ent.SimBall) -> bool:
 	var depth_reach: float = float(balance["playerDepthReach"]) if paddle.isPlayer else float(balance["aiDepthReach"])
 	var within_y: bool = absf(ball.y - paddle.y) < paddle.reach * depth_reach
 	var side := "player" if paddle.isPlayer else "ai"
-	return within_x and within_y and ball_playable_direction(side, ball) and ball.z <= float(balance["playableHitHeight"])
+	return within_x and within_y and ball_playable_direction(side, ball) and ball.z <= ai_reach_height(paddle)
 
 
 static func crossed_paddle(paddle: Ent.SimPaddle, ball: Ent.SimBall, previous_ball: Variant) -> bool:
@@ -1109,12 +1230,40 @@ static func contextual_perfect_window(state: State, paddle: Ent.SimPaddle, charg
 
 
 ## Returns `null` or a float, like the JavaScript (`js/game.js:866-881`).
+## How far the ball has gone PAST the athlete, along the way it travels. A ball from
+## the net is past once it is deeper than the athlete; a ball coming back off the
+## athlete's own back glass travels towards the net, so it is past once it is in
+## FRONT of them (2026-09-24). Before, a wall exit taken on time still behind the
+## athlete read as "late": scripted rallies graded 2% of them perfect (91% of other
+## shots) and 58% of them rolled an error.
+const WALL_EXIT_PACE := 0.14       # up to ~14% faster at quality 1
+const WALL_EXIT_MIN_Z := 22.0
+static func ball_passed_distance(paddle: Ent.SimPaddle, ball: Ent.SimBall) -> float:
+	var deeper: float = (ball.y - paddle.y) * (1.0 if paddle.isPlayer else -1.0)
+	if returning_off_own_glass(paddle, ball):
+		return maxf(0.0, -deeper)
+	return maxf(0.0, deeper)
+
+
+## The ball is coming back towards the net after bouncing off this athlete's own back glass.
+static func returning_off_own_glass(paddle: Ent.SimPaddle, ball: Ent.SimBall) -> bool:
+	var side := "player" if paddle.isPlayer else "ai"
+	if ball.postGlassSide == null or String(ball.postGlassSide) != side:
+		return false
+	return ball.vy < 0.0 if paddle.isPlayer else ball.vy > 0.0
+
+
 static func playable_eta(state: State, paddle: Ent.SimPaddle) -> Variant:
 	var balance: Dictionary = Frozen.balance()
 	var ball := state.ball
-	if not (ball.vy > 28.0):
+	# Off the back glass the ball comes at the player from behind (vy < 0): the ring
+	# used to read only a ball coming from the net, so a wall exit had no timing cue.
+	var off_glass: bool = returning_off_own_glass(paddle, ball)
+	if not (ball.vy > 28.0 or (off_glass and ball.vy < -28.0)):
 		return null
 	var time_to_line: float = (paddle.y - ball.y) / ball.vy
+	if time_to_line < 0.0:
+		return null
 	if not is_finite(time_to_line):
 		return null
 	var ceiling: float = float(balance["playableHitHeight"])
@@ -1127,6 +1276,44 @@ static func playable_eta(state: State, paddle: Ent.SimPaddle) -> Variant:
 		return time_to_line
 	var descending_crossing: float = (ball.vz + sqrt(discriminant)) / g
 	return maxf(time_to_line, descending_crossing)
+
+
+## The wall exit, made readable (2026-09-24): once the AI's ball has bounced on the
+## human's half, forecast it through the back glass with the same exact physics the
+## AI plans with (`ai_glass.forecast`, which models the AI half: the human half is
+## its mirror image across the net) and keep the first point where the ball comes
+## back off the glass descending to a comfortable height. Recomputed only when the
+## bounce/glass state changes, never every tick; consumes no RNG.
+const GLASS_EXIT_TOP := 60.0      # "comfortable": at or below waist-chest height
+const GLASS_EXIT_MIN_Z := 20.0
+static func update_glass_exit(state: State) -> void:
+	var ball := state.ball
+	var court: Dictionary = Frozen.court()
+	var net_y := float(court["netY"])
+	var live: bool = not state.serving and not ball.serveInFlight and state.lastHitterSide == "ai" \
+		and ball.y > net_y and int(ball.bounces["player"]) > 0
+	var key := ("%d|%s|%d" % [int(ball.bounces["player"]), str(ball.postGlassSide), int(state.rallyHits)]) if live else ""
+	if key == state.glassExitKey:
+		return
+	state.glassExitKey = key
+	state.glassExit = {}
+	if not live:
+		return
+	var mirrored := {"x": ball.x, "y": 2.0 * net_y - ball.y, "z": ball.z, "vx": ball.vx, "vy": -ball.vy, "vz": ball.vz,
+		"spin": ball.spin, "backspin": ball.backspin, "topspin": ball.topspin, "r": ball.r}
+	var samples: Array = preload("res://src/sim/ai_glass.gd").forecast(mirrored, court, Frozen.balance(),
+		float(state.arena["wallBounce"]), 2.4, true)
+	var already_off_glass: bool = ball.postGlassSide != null and String(ball.postGlassSide) == "player"
+	var prev_z := INF
+	for smp in samples:
+		var z := float(smp.z)
+		var descending := z < prev_z
+		prev_z = z
+		if not (bool(smp.glass) or already_off_glass):
+			continue
+		if descending and z <= GLASS_EXIT_TOP and z >= GLASS_EXIT_MIN_Z:
+			state.glassExit = {"x": float(smp.x), "y": 2.0 * net_y - float(smp.y), "z": z, "at": float(state.elapsed) + float(smp.t)}
+			return
 
 
 static func update_shot_read(state: State, paddle: Ent.SimPaddle) -> void:
@@ -1212,7 +1399,7 @@ static func evaluate_shot_quality(state: State, paddle: Ent.SimPaddle, options: 
 	var ai_timing: Variant = options.get("aiTiming", null)
 
 	var side := shot_side(paddle)
-	var passed_distance: float = maxf(0.0, (ball.y - paddle.y) * (1.0 if paddle.isPlayer else -1.0))
+	var passed_distance: float = ball_passed_distance(paddle, ball)
 	var lateral_distance: float = absf(ball.x - paddle.x) / maxf(1.0, contact_width(paddle, ball))
 	var longitudinal_distance: float = absf(ball.y - paddle.y) / maxf(1.0, paddle.reach * 1.3)
 	var contact_distance := hypot2(lateral_distance * 0.82, longitudinal_distance * 0.58)
@@ -1376,13 +1563,24 @@ static func choose_computer_shot(state: State, paddle: Ent.SimPaddle, profile: D
 		0.85,
 	)
 	var choice: float = Rng.next_random(state)
-	var overhead_ready: bool = at_net and contact_height >= 58.0 and state.rallyHits > 0
+	# The overhead zone is the net zone, stretched for stronger AI (`ai_overhead_stretch`);
+	# the other net choices below (volley, vibora, lob) keep the plain `at_net`.
+	var overhead_zone: float = 126.0 + ai_overhead_stretch(paddle) * AI_OVERHEAD_ZONE_PER_SKILL
+	var in_overhead_zone: bool = paddle.y < float(court["netY"]) + overhead_zone if paddle.isPlayer else paddle.y > float(court["netY"]) - overhead_zone
+	var overhead_ready: bool = in_overhead_zone and contact_height >= 58.0 and state.rallyHits > 0
 	var attack := attack_read(state, paddle, contact_height)
 	var smash_chance: float = clampf(
 		0.08 + float(profile["skill"]) * 0.14 + attack * (float(balance["attackReadSmashGain"]) + float(profile["skill"]) * float(balance["attackReadSmashSkillGain"])) + float(style.smash),
 		0.0,
 		float(balance["attackReadSmashCap"]),
 	)
+	# A human lob taken on the full overhead (2026-09-24): the generic smash chance falls
+	# with the distance from the net, so once lobs came down deeper Leggenda met them at
+	# 110-150 px and swung a soft high drive 7 times in 9. A strong AI that chose to take
+	# the lob in the air now finishes it: the floor rises with level (Rivale unchanged).
+	if overhead_ready and String(state.ball.shotType) in ["lob", "defensive-lob", "globo"] \
+			and int(state.ball.bounces[shot_side(paddle)]) == 0:
+		smash_chance = maxf(smash_chance, clampf(ai_overhead_stretch(paddle) / 0.44, 0.0, 1.0) * AI_LOB_SMASH_TOP)
 	var returning_smash := is_smash_shot(state.incomingShot)
 	if returning_smash and ai_timing < float(balance["smashReturnCounterTiming"]):
 		return {
@@ -1458,18 +1656,43 @@ static func ai_shot_error(state: State, profile: Dictionary, assessment: Diction
 	return null
 
 
-static func roll_shot_error(state: State, assessment: Dictionary, aimed_offset: float, tight: float = 0.0, tight_depth: float = 0.0) -> Variant:
+## The human's error curve (2026-09-23, owner's call after his recorded matches: a
+## badly timed shot stayed in far too often). Only `roll_shot_error` uses it, and only
+## the human-controlled paddle reaches `roll_shot_error`; the AI's `ai_shot_error`
+## keeps reading the frozen `shotError*` balance keys, so the AI is unchanged.
+## Targets, chance of an error by shot quality: 0.75 -> 8% (was 3%), 0.60 -> 33%
+## (was 23%; the owner's typical late/early shot), 0.50 or less -> 60% (was 50%).
+## A "perfect" shot (quality >= 0.87) stays below 0.3%.
+const HUMAN_ERROR_THRESHOLD := 0.90
+const HUMAN_ERROR_SPAN := 0.40
+const HUMAN_ERROR_CURVE := 2.08
+const HUMAN_ERROR_MAX_CHANCE := 0.60
+## The globo for the human (2026-09-23, owner: "must be hard to calibrate"): success
+## needs this shot quality (the frozen globoMinQuality is 0.72), a charge above
+## GLOBO_MAX_CHARGE sends it past the baseline, and the second tap must come within
+## GLOBO_TAP_WINDOW_3D seconds (frozen globoTapWindow 0.7).
+const GLOBO_MIN_QUALITY_3D := 0.82
+const GLOBO_MAX_CHARGE := 0.85
+const GLOBO_TAP_WINDOW_3D := 0.5
+
+
+static func roll_shot_error(state: State, assessment: Dictionary, aimed_offset: float, tight: float = 0.0, tight_depth: float = 0.0, contact_z: float = 60.0, charge: float = 0.0) -> Variant:
 	var balance: Dictionary = Frozen.balance()
 	var miss: float = clampf(
-		(float(balance["shotErrorThreshold"]) - float(assessment["quality"])) / float(balance["shotErrorSpan"]),
+		(HUMAN_ERROR_THRESHOLD - float(assessment["quality"])) / HUMAN_ERROR_SPAN,
 		0.0,
 		1.0,
 	)
+	state.lastShotErrorRoll = {"quality": float(assessment["quality"]), "chance": 0.0, "draw": -1.0, "error": ""}
 	if miss <= 0.0:
 		return null
-	var chance: float = pow(miss, float(balance["shotErrorCurve"])) * float(balance["shotErrorMaxChance"])
-	if Rng.next_random(state) >= chance:
+	var chance: float = pow(miss, HUMAN_ERROR_CURVE) * HUMAN_ERROR_MAX_CHANCE
+	var draw: float = Rng.next_random(state)
+	state.lastShotErrorRoll["chance"] = chance
+	state.lastShotErrorRoll["draw"] = draw
+	if draw >= chance:
 		return null
+	state.lastShotErrorRoll["error"] = "rolled"
 	var wide_share: float = float(balance["shotErrorWideShare"])
 	if tight > 0.0:
 		wide_share = wide_share + clampf(tight, 0.0, 1.0) * (float(balance["tightAngleWideShare"]) - float(balance["shotErrorWideShare"]))
@@ -1477,7 +1700,38 @@ static func roll_shot_error(state: State, assessment: Dictionary, aimed_offset: 
 		return {"type": "long"}
 	if absf(aimed_offset) >= float(balance["shotErrorWideAim"]) and Rng.next_random(state) < wide_share:
 		return {"type": "wide"}
-	return {"type": "long"} if float(assessment["timingBias"]) > 0.05 else {"type": "net"}
+	# Late (any late) goes long, into the back glass; early or on time goes into the
+	# net. The frozen threshold was 0.05, so a shot graded "late" on screen but only a
+	# little late went into the net like an early one: 6 of 7 late lob errors did
+	# (measured). The owner asked for late shots to hit the glass. Human-only function.
+	# Late splits by height and charge (2026-09-24, owner): a ball scooped late from
+	# below the net with a soft swing dies in the net; a late ball taken higher, or any
+	# late swing with real charge behind it, flies long - further the more charged.
+	if shot_is_late(assessment) and late_error_goes_long(contact_z, charge):
+		return {"type": "long", "beyond": LATE_LONG_BEYOND_PX + clampf(charge, 0.0, 1.0) * LATE_LONG_CHARGE_EXTRA_PX}
+	return {"type": "net"}
+
+
+## The human lob's knee: `power_ratio` at charge ~0.45 (defensive ~0.4), where the depth curve stops
+## climbing fast (see the lob branch of `hit_ball`).
+const LOB_KNEE_RATIO := 0.386
+const LOB_KNEE_RATIO_DEFENSIVE := 0.347
+
+## Where a late error goes: long unless the ball was below the net AND the swing soft.
+const LATE_LONG_CHARGE := 0.5
+const LATE_LONG_BEYOND_PX := 30.0
+const LATE_LONG_CHARGE_EXTRA_PX := 40.0
+static func late_error_goes_long(contact_z: float, charge: float) -> bool:
+	return charge >= LATE_LONG_CHARGE or contact_z >= float(Frozen.court()["netHeight"])
+
+
+## A shot is late when the screen says so OR the timing leans late. The grade reads
+## only how far the ball passed the athlete, the bias weighs that against pressing
+## early: against a smash both happen, and 5 "late" shots went into the net in one
+## of the owner's matches (2026-09-24) because the early press outweighed the pass.
+## The error now follows what the player read.
+static func shot_is_late(assessment: Dictionary) -> bool:
+	return String(assessment.get("grade", "")) == "late" or float(assessment["timingBias"]) > 0.0
 
 
 static func report_shot_error(state: State, paddle: Ent.SimPaddle, shot_error: Dictionary) -> void:
@@ -1514,6 +1768,12 @@ static func apply_computer_shot(state: State, paddle: Ent.SimPaddle, contact_hei
 		1.0,
 	)
 	var target := choose_computer_shot(state, paddle, profile, contact_height, ai_timing)
+	if state.aiReflexBlock:
+		# Blocked, not played: no placement, a poor contact (more errors), short and slow.
+		state.aiReflexBlock = false
+		ai_timing = minf(ai_timing, 0.5)
+		target = {"kind": "volley", "x": clampf(center_x + (Rng.next_random(state) - 0.5) * 140.0, float(court["left"]) + 120.0, float(court["right"]) - 120.0),
+			"y": target_y_for_side(opponent_side, 104.0), "flightTime": 1.12}
 	var ai_charge: float = (0.38 + float(profile["skill"]) * 0.34) if (String(target["kind"]) == "lob" or String(target["kind"]) == "drive") else (0.62 + float(profile["skill"]) * 0.28)
 	var target_aim: float = clampf(
 		(float(target["x"]) - center_x) / ((float(court["right"]) - float(court["left"])) * 0.42),
@@ -1630,6 +1890,8 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 	ball.shotType = "drive"
 	ball.smashStage = 0
 	ball.smashTargetSide = null
+	# Read before the glass flag is cleared: this contact is a wall exit.
+	var wall_exit: bool = returning_off_own_glass(paddle, ball)
 	ball.postGlassSide = null
 	ball.wallAngleResolved = false
 
@@ -1696,7 +1958,7 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 			0.0,
 			1.0,
 		)
-		var shot_error: Variant = roll_shot_error(state, assessment, aimed_offset, tight, tight_depth)
+		var shot_error: Variant = roll_shot_error(state, assessment, aimed_offset, tight, tight_depth, contact_height, raw_charge)
 		var raw_target_x: float = center_x + aimed_offset * (float(court["right"]) - float(court["left"])) * aim_reach + lateral_jitter
 		var target_x: float
 		if shot_error != null and String(shot_error["type"]) == "wide":
@@ -1722,13 +1984,21 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 		var opponent_side := "ai" if paddle.isPlayer else "player"
 		var target_y: float
 		if shot_error != null and String(shot_error["type"]) == "long":
-			target_y = (float(court["top"]) - 30.0) if opponent_side == "ai" else (float(court["bottom"]) + 30.0)
+			var beyond_px: float = float(shot_error.get("beyond", 30.0))
+			target_y = (float(court["top"]) - beyond_px) if opponent_side == "ai" else (float(court["bottom"]) + beyond_px)
 		else:
 			target_y = target_y_for_side(opponent_side, target_depth)
 		var quality_pace: float = float(balance["qualityPaceBase"]) + float(assessment["quality"]) * float(balance["qualityPaceSpan"])
 		var defence_arc: float = float(balance["smashReturnScrambleArc"]) if scrambled else (float(balance["smashReturnDefenceArc"]) if smash_defence else 0.0)
 		var base_flight: float = (1.14 - shot_power * 0.20) if slice else (1.12 - shot_power * 0.26)
 		var flight_time: float = (base_flight + defence_arc) / quality_pace
+		# The offensive wall exit (2026-09-24): a ball met cleanly as it comes back off
+		# one's own glass carries its own pace into the shot, the padel "salida de
+		# pared". Only a clean one: perfect/good timing, not scooped off the floor.
+		if wall_exit and shot_error == null and String(assessment["grade"]) in ["perfect", "good"] \
+				and contact_height >= WALL_EXIT_MIN_Z and shot_variant not in ["lob", "defensive-lob", "globo", "chiquita"]:
+			flight_time /= 1.0 + WALL_EXIT_PACE * float(assessment["quality"])
+			add_event(state, "evWallExit")
 		if shot_error != null and String(shot_error["type"]) == "net":
 			set_computer_trajectory(ball, target_x, float(court["netY"]), flight_time * 0.66)
 		else:
@@ -1755,12 +2025,72 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 			var control_error: float = clampf(1.28 - control, 0.05, 0.42)
 			var lob_risk: float = float(assessment["risk"]) * (0.7 + overcharge * 0.8)
 			var lateral_error: float = (Rng.next_random(state) - 0.5) * (overcharge * control_error * 340.0 + lob_risk * 150.0)
-			var depth_error: float = (Rng.next_random(state) - 0.46) * (overcharge * control_error * 320.0 + lob_risk * 190.0)
+			# The random part of the depth follows the timing (2026-09-23): a symmetric spread
+			# let a badly timed lob come down DEEPER than a good one - in the owner's matches
+			# the deepest lobs (184-206 px) were all early, uncharged mishits. Early now only
+			# shortens it, late only lengthens it (towards the glass, i.e. out), on time keeps
+			# the symmetric spread. Same single draw as before, so the RNG stream is unchanged.
+			var depth_draw: float = Rng.next_random(state) - 0.46
+			var depth_spread: float = overcharge * control_error * 320.0 + lob_risk * 190.0
+			var lob_timing: float = float(assessment["timingBias"])
+			var depth_error: float = depth_draw * depth_spread
+			if shot_is_late(assessment):
+				depth_error = absf(depth_draw) * depth_spread
+			elif lob_timing < 0.0:
+				depth_error = -absf(depth_draw) * depth_spread
 			var lob_target_x: float = center_x + aimed_offset * (float(court["right"]) - float(court["left"])) * (0.31 + overcharge * 0.12) + lateral_error
-			var lob_depth: float = (112.0 if defensive_lob else 96.0) + power_ratio * (98.0 if defensive_lob else 118.0) - aimed_depth * 24.0 + overcharge * 70.0 + depth_error
+			# The human lob's depth curve, moved deeper on 2026-09-23 from the owner's 34
+			# recorded lobs: below 170 px from the net the AI smashed 11 of 26, beyond it none
+			# of 8, and the old curve needed ~0.8 charge to get there (he charges 0-0.3). The
+			# AI's own lob aims at 202 px (`apply_computer_shot`), so the human's was the
+			# weaker of the two. Charge 0 / 0.5 / 1.0 now lands ~124 / 176 / 227 px (was
+			# 101 / 147 / 198); defensive ~133 / 174 / 215 (was 116 / 153 / 199). The touch
+			# stays short and punishable; full charge nears the back glass, where overcharge
+			# and a late error can put it out.
+			# Second pass, same day, on the owner's call: a medium-charge lob that is always
+			# safe is a free breather. The lob must be CALIBRATED: the curve is steep, so the
+			# good window is narrow and a full charge is an error, not the safest lob.
+			#   normal:    charge ~0.45-0.85 lands 175-245 px (good); below it is short and
+			#              attackable; ~0.9 and above goes past the baseline, out on the full.
+			#   defensive: wider window (~0.35-0.9), a little shorter; it saves you, it does
+			#              not win you the net; full charge is out too.
+			# Third pass (2026-09-24): in three matches the owner charged 50 lobs between 0
+			# and 0.35 - none reached 205 px and Leggenda attacked them all. The curve now
+			# has a knee at charge ~0.35 (power_ratio 0.31): it climbs fast to 205 px there
+			# (normal; 200 defensive), then slowly, so 0.35-0.75 is the good window and ~0.8
+			# goes out on the full (defensive: ~0.3-0.85, out from ~0.9). A touch (<0.2)
+			# stays at 120-170 px, short and attackable.
+			# Fourth pass, same day: with the knee at 0.35 a 0.2-0.3 lob already reached
+			# 200+ px and Leggenda smashed 2 of 20 (owner's 15:06 match). Knee moved to
+			# ~0.45 (defensive ~0.4) and the far slope steepened: normal good window
+			# ~0.45-0.7, out from ~0.75; defensive ~0.4-0.85, out from ~0.9.
+			var knee: float = LOB_KNEE_RATIO_DEFENSIVE if defensive_lob else LOB_KNEE_RATIO
+			var lob_near: float = minf(power_ratio, knee) / knee
+			var lob_far: float = maxf(0.0, power_ratio - knee)
+			var lob_curve: float = (125.0 + lob_near * 75.0 + lob_far * 128.0) if defensive_lob \
+				else (95.0 + lob_near * 110.0 + lob_far * 205.0)
+			var lob_depth: float = lob_curve - aimed_depth * 24.0 + overcharge * 70.0 + depth_error
 			var lob_target_y := target_y_for_side("ai" if paddle.isPlayer else "player", lob_depth)
 			var lob_flight_time: float = (1.68 if defensive_lob else 1.5) - power_ratio * (0.12 if defensive_lob else 0.18)
 			set_computer_trajectory(ball, lob_target_x, lob_target_y, lob_flight_time)
+			# The lob used to ignore the error roll entirely, so even a late, overcharged
+			# lob always came down in (owner's match: 18 lobs, none out). Now a rolled
+			# error spoils it like any other shot: late -> long, over the baseline and into
+			# the back glass on the full (out); early -> into the net; very wide aim -> out
+			# wide. Same roll the drive uses, so the new human curve applies.
+			if shot_error != null:
+				var lob_side := "ai" if paddle.isPlayer else "player"
+				var kind := String(shot_error["type"])
+				if kind == "long":
+					var beyond_px: float = float(shot_error.get("beyond", 30.0))
+					var beyond: float = (float(court["top"]) - beyond_px) if lob_side == "ai" else (float(court["bottom"]) + beyond_px)
+					set_computer_trajectory(ball, lob_target_x, beyond, lob_flight_time)
+				elif kind == "wide":
+					var wide_x: float = center_x + js_sign_or(aimed_offset, 1.0) * ((float(court["right"]) - float(court["left"])) * 0.5 + 52.0)
+					set_computer_trajectory(ball, wide_x, lob_target_y, lob_flight_time)
+				else:
+					set_computer_trajectory(ball, lob_target_x, float(court["netY"]), lob_flight_time * 0.66)
+				report_shot_error(state, paddle, shot_error)
 			ball.shotType = "defensive-lob" if defensive_lob else "lob"
 			add_event(state, "evLobOver" if overcharge > 0.06 else ("evLobShort" if power_ratio < 0.3 else ("evDefensiveLob" if defensive_lob else "evLobHigh")))
 		elif smash_type != null and String(smash_type) == "smash-x3" and float(assessment["quality"]) >= float(balance["smashX3MinQuality"]):
@@ -1811,18 +2141,27 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 			ball.spin = aimed_offset * 68.0 * control
 			add_event(state, "evAngleWall")
 		elif shot_variant == "globo":
-			var globo_riuscito: bool = float(assessment["quality"]) >= float(balance["globoMinQuality"])
-			var globo_depth: float = float(balance["globoDepth"]) if globo_riuscito else float(balance["globoFailDepth"])
-			set_computer_trajectory(
-				ball,
-				clampf(center_x + aimed_offset * (float(court["right"]) - float(court["left"])) * 0.26, float(court["left"]) + 96.0, float(court["right"]) - 96.0),
-				target_y_for_side("ai" if paddle.isPlayer else "player", globo_depth),
-				float(balance["globoFlightTime"]) if globo_riuscito else float(balance["globoFailFlightTime"]),
-			)
-			ball.shotType = "globo" if globo_riuscito else "lob"
-			if globo_riuscito and paddle.isPlayer:
-				state.aiRecoveryMode = true
-			add_event(state, "evGlobo" if globo_riuscito else "evGloboShort")
+			# The globo, harder on 2026-09-23 (owner): it needs a well-taken shot (quality
+			# GLOBO_MIN_QUALITY_3D, was the frozen 0.72), and an overcharged one flies past the
+			# baseline and out. A failed globo still comes down short, where it is attacked.
+			var globo_x: float = clampf(center_x + aimed_offset * (float(court["right"]) - float(court["left"])) * 0.26, float(court["left"]) + 96.0, float(court["right"]) - 96.0)
+			var globo_side := "ai" if paddle.isPlayer else "player"
+			if raw_charge > GLOBO_MAX_CHARGE:
+				set_computer_trajectory(ball, globo_x,
+					(float(court["top"]) - 30.0) if globo_side == "ai" else (float(court["bottom"]) + 30.0),
+					float(balance["globoFlightTime"]))
+				ball.shotType = "lob"
+				add_event(state, "evGloboLong")
+				report_shot_error(state, paddle, {"type": "long"})
+			else:
+				var globo_riuscito: bool = float(assessment["quality"]) >= GLOBO_MIN_QUALITY_3D
+				var globo_depth: float = float(balance["globoDepth"]) if globo_riuscito else float(balance["globoFailDepth"])
+				set_computer_trajectory(ball, globo_x, target_y_for_side(globo_side, globo_depth),
+					float(balance["globoFlightTime"]) if globo_riuscito else float(balance["globoFailFlightTime"]))
+				ball.shotType = "globo" if globo_riuscito else "lob"
+				if globo_riuscito and paddle.isPlayer:
+					state.aiRecoveryMode = true
+				add_event(state, "evGlobo" if globo_riuscito else "evGloboShort")
 		elif shot_variant == "cut-volley" and float(assessment["quality"]) >= float(balance["cutVolleyMinQuality"]):
 			var cut_side: float = js_sign_or(aimed_offset, 1.0)
 			set_computer_trajectory(
@@ -1853,6 +2192,30 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 			else:
 				ball.shotType = "slice"
 				add_event(state, "evSlice")
+		# Overheads recompute their trajectory in their own branches above, which used to
+		# throw the rolled error away: a mistimed bandeja or smash never missed (owner's
+		# match, 2 of 9 rolled errors lost this way). Now the error spoils them too, the
+		# same way as a drive: long -> over the baseline into the glass on the full (out),
+		# wide -> out past the side, net -> into the net. Their smash-specific glass play
+		# is switched off for the spoiled ball, so it is judged as a plain miss.
+		var overhead_shot: bool = ball.shotType in ["smash-x2", "smash-x3", "smash-flat", "bandeja", "vibora"]
+		if shot_error != null and overhead_shot:
+			var err_side := "ai" if paddle.isPlayer else "player"
+			var err_kind := String(shot_error["type"])
+			var err_x: float = clampf(ball.x + ball.vx * 0.55, float(court["left"]) + 40.0, float(court["right"]) - 40.0)
+			ball.smashTargetSide = null
+			ball.smashStage = 0
+			ball.topspin = 0.0
+			ball.backspin = 0.0
+			if err_kind == "long":
+				var err_beyond: float = float(shot_error.get("beyond", 30.0))
+				set_computer_trajectory(ball, err_x, (float(court["top"]) - err_beyond) if err_side == "ai" else (float(court["bottom"]) + err_beyond), 0.75)
+			elif err_kind == "wide":
+				var err_wide_x: float = center_x + js_sign_or(aimed_offset, 1.0) * ((float(court["right"]) - float(court["left"])) * 0.5 + 52.0)
+				set_computer_trajectory(ball, err_wide_x, target_y_for_side(err_side, 150.0), 0.75)
+			else:
+				set_computer_trajectory(ball, err_x, float(court["netY"]), 0.5)
+			report_shot_error(state, paddle, shot_error)
 		if shot_error != null and (ball.shotType == "drive" or ball.shotType == "slice" or ball.shotType == "wall-angle"):
 			report_shot_error(state, paddle, shot_error)
 		if is_special:
@@ -1877,6 +2240,8 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 		apply_computer_shot(state, paddle, contact_height)
 		if not paddle.isPlayer:
 			state.aiPrimaryKey = "opponent" if paddle == state.opponent else "opponentMate"
+			state.aiOverheadPlan = {}
+			state.aiLobOver = false
 			state.aiServiceReceiverKey = null
 			state.aiReceiverLocked = false
 			state.aiReactionDelay = 0.0
@@ -2421,6 +2786,10 @@ const AI_BOUNCE_SETBACK_PX := 64.0
 ## The net player's zone, in sim px from the net: the same 130 px `ai_contact.gd`
 ## treats as a comfortable volley at skill 0. Inside it the bias does nothing.
 const AI_VOLLEY_ZONE_PX := 130.0
+## Reflex block odds for a wrong-footed net player with the ball on the racket, before
+## the "how centred" factor: Rivale ~0.38, Leggenda ~0.60.
+const AI_REFLEX_BASE := 0.20
+const AI_REFLEX_SKILL := 0.44
 ## A planned post-bounce contact this close in time is "now" (1.5 sim ticks).
 const AI_BOUNCE_HIT_NOW_S := 1.5 / 120.0
 
@@ -2515,6 +2884,18 @@ static func move_opponent_team(state: State, dt: float) -> void:
 		primary_target_y = float(court["netY"]) - float(style.net_depth)
 		support_target_y = primary_target_y - 8.0
 		state.aiTeamShape = "attack"
+	elif ai_defending_direction and not ball.serveInFlight and int(state.rallyHits) <= 2 \
+			and float(court["netY"]) - primary.y < AI_VOLLEY_ZONE_PX and float(court["netY"]) - support.y < AI_VOLLEY_ZONE_PX:
+		# Hold the net on the RETURN of serve (2026-09-24): with the return still on the
+		# human's half and coming, a pair at the net used to walk back to the "reset" spot and meet the
+		# ball half-way, frozen by its reaction delay (traced: 74 -> 184 px from the net
+		# while the return flew). A net pair holds its depth; the lob read below
+		# (`aiOverheadPlan`, `lob-*` plans) still moves it when the ball goes over.
+		# Only the return: held in every exchange it took net time from ~48% to ~70% and
+		# halved the scripted human's points at the lower levels (measured).
+		primary_target_y = primary.y
+		support_target_y = support.y
+		state.aiTeamShape = "hold"
 	else:
 		primary_target_y = float(court["top"]) + 92.0
 		support_target_y = float(court["top"]) + 84.0
@@ -2531,10 +2912,25 @@ static func move_opponent_team(state: State, dt: float) -> void:
 			# left the net (measured, level 2: net contacts 774 -> 454). Only with the new
 			# play: the recorded behaviour's `reachable-bounce` wait is untouched.
 			var reason := String(plan["reason"])
+			# A lob that went over (2026-09-24): the partner used to track the ball's
+			# CURRENT depth, so as the lob crossed the net it ran back to the net and then
+			# chased back again (support 170 -> 114 -> 184 px, traced). It now drops back
+			# with the receiver's own plan, once: both defend the lob.
+			if reason.begins_with("lob-"):
+				support_target_y = clampf(primary_target_y - 10.0, float(court["top"]) + 70.0, float(court["netY"]) - 112.0)
 			if (reason == "glass-play" or reason == "bounce-play") \
 					and float(court["netY"]) - support.y < AI_VOLLEY_ZONE_PX + 40.0:
 				var style := Tactics.style(String(athlete_for(state, support).get("id", "")))
 				support_target_y = float(court["netY"]) - float(style.net_depth)
+	# An overhead chance (`ai_overhead_receiver`) is walked TO, from the moment the lob
+	# leaves the human's racket. Without this the pair went to its "reset" spot at the
+	# back while the ball was still on the human's half, and met a short lob too deep
+	# to smash it (traced tick by tick, 2026-09-23).
+	if state.aiReceiverLocked and ai_defending_direction and int(ball.bounces["ai"]) == 0 and not ball.serveInFlight:
+		var overhead: Dictionary = state.aiOverheadPlan
+		if not overhead.is_empty() and String(overhead["key"]) == state.aiPrimaryKey:
+			primary_target_x = float(overhead["x"])
+			primary_target_y = float(overhead["y"])
 	var reading_incoming_shot: bool = defending and state.aiReceiverLocked and state.aiReactionDelay > 0.0
 	if not reading_incoming_shot:
 		move_paddle_to(primary, primary_target_x, primary_target_y, dt)
@@ -2636,7 +3032,30 @@ static func update_doubles_ai(state: State, dt: float) -> void:
 		if can_hit(paddle, ball):
 			responder = paddle
 			break
-	if responder != null and controllable_height and state.aiReactionDelay <= 0.0:
+	# The reflex block (2026-09-24, owner: Leggenda gave away returns). A wrong-footed
+	# receiver stood frozen for up to 0.68 s even with the ball on its racket at the net,
+	# and a hard return past it was a free point: 16 of 92 returns against Leggenda. A
+	# net player who has the ball ON the racket now gets one reflex roll for it; the
+	# ball closer to the body and a stronger AI block more often. A block is a short,
+	# slow, central volley: the counter still earns the human an easy ball to attack.
+	var reflex := false
+	if responder != null and state.aiReactionDelay > 0.0 and state.aiWrongFooted and not state.aiReflexTried \
+			and float(court["netY"]) - responder.y < AI_VOLLEY_ZONE_PX and controllable_height:
+		state.aiReflexTried = true
+		var centred: float = 1.0 - clampf(absf(ball.x - responder.x) / maxf(1.0, contact_width(responder, ball)), 0.0, 1.0)
+		var chance: float = clampf(AI_REFLEX_BASE + float(ai["skill"]) * AI_REFLEX_SKILL, 0.0, 0.9) * (0.35 + 0.65 * centred)
+		reflex = Rng.next_random(state) < chance
+		if reflex:
+			state.aiReactionDelay = 0.0
+			state.aiReflexBlock = true
+			add_event(state, "evReflexBlock")
+	if reflex:
+		# A reflex is not a plan: the ball is on the racket, it is blocked now (unless
+		# it is flying out, which even a reflex lets go).
+		if not ai_lets_it_go_out(state, ball):
+			hit_ball(state, responder, 0.88 + float(ai["skill"]) * 0.12)
+		state.aiReflexBlock = false
+	elif responder != null and (controllable_height or ball.z <= ai_reach_height(responder)) and state.aiReactionDelay <= 0.0:
 		var plan := ai_contact_plan(state, responder, ball)
 		if not bool(plan["wait"]) and not ai_lets_it_go_out(state, ball):
 			hit_ball(state, responder, 0.88 + float(ai["skill"]) * 0.12)
@@ -3037,7 +3456,7 @@ static func update_match(state: State, dt_in: float, input: Dictionary, input2: 
 			state.cutVolleyPrimed = can_prime_cut_volley
 			state.cutVolleyTapWindow = float(balance["cutVolleyTapWindow"]) if can_prime_cut_volley else 0.0
 			state.globoPrimed = can_prime_globo
-			state.globoTapWindow = float(balance["globoTapWindow"]) if can_prime_globo else 0.0
+			state.globoTapWindow = GLOBO_TAP_WINDOW_3D if can_prime_globo else 0.0
 			if can_prime_smash:
 				state.playerSwingBuffer = float(balance["smashBufferWindow"])
 			elif can_prime_cut_volley:
@@ -3108,6 +3527,7 @@ static func update_match(state: State, dt_in: float, input: Dictionary, input2: 
 	state.shieldTimer = maxf(0.0, state.shieldTimer - dt)
 
 	update_shot_read(state, state.active_player())
+	update_glass_exit(state)
 
 	var previous_ball := {"x": ball.x, "y": ball.y, "z": ball.z}
 	var previous_vz := ball.vz

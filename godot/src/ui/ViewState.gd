@@ -245,6 +245,9 @@ static func match_info(state, meta: Dictionary) -> Dictionary:
 		season = _int(meta.get("career_season"), 0)
 	var round_index := _int(_field(state, "tournamentRound"), 0)
 	var parts := {"mode": mode, "career_season": season, "round": round_index, "human": ""}
+	if mode == "drill" or String(meta.get("mode", "")) == "drill":
+		parts.merge({"mode": "drill", "points_to_win": 0, "tie_break": false, "line": ""}, true)
+		return {"text": UiStrings.t("drillTitle"), "parts": parts}
 	var base := ""
 	if mode == "tournament":
 		base = UiStrings.t("tournamentMatch") + _space() + "%d/3" % (round_index + 1)

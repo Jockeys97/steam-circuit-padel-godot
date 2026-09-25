@@ -78,7 +78,7 @@ static func ids() -> Array:
 
 
 static func outfit_ids(athlete_id: StringName) -> Array:
-	return Catalogue.outfit_ids(athlete_id)
+	return Catalogue.playable_outfit_ids(athlete_id)
 
 
 static func display_name(athlete_id: StringName) -> String:

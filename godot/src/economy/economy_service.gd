@@ -1,6 +1,6 @@
-## economy_service.gd — the ONE wallet/ownership service for the Emporio OST.
+## economy_service.gd — the ONE wallet/ownership service for OSTs and outfits.
 ##
-## WHAT IT OWNS. A profile's Circuit Credits, the OST ids it owns, the migration
+## WHAT IT OWNS. A profile's Circuit Credits, the OST and outfit ids it owns, the migration
 ## marker and the match-award receipts. All four live in ONE saved record — the port's
 ## own `economy` save group (`godot/src/save/save_schema.gd::ECONOMY_DEFAULTS`) — and
 ## every mutation is a SINGLE `SaveStore.write_group("economy", payload)`. That write
@@ -12,9 +12,9 @@
 ## `SaveSchema.port_group_names()` is the six the whole-profile read/write and the cloud
 ## backup enumerate, so the wallet is part of a real backup.
 ##
-## PRICES ARE NEVER TRUSTED FROM A CALLER. `purchase()` re-derives the price from
-## `ost_catalog.gd` (which reads the catalog's own category) and refuses anything that
-## is not a known, sellable catalog id — a UI cannot name its own price.
+## PRICES ARE NEVER TRUSTED FROM A CALLER. `purchase()` derives OST prices from
+## `ost_catalog.gd`; `purchase_outfit()` uses the outfit shop catalog and refuses
+## outfits the 3D wardrobe cannot apply. A UI cannot name its own price.
 ##
 ## MIGRATION, AND WHY THE TIMING MATTERS. `ensure_initialized()` must run at BOOT,
 ## before any other group is written. Its one dangerous decision is "is this a genuine
@@ -45,6 +45,7 @@ extends RefCounted
 
 const Schema := preload("res://src/save/save_schema.gd")
 const Catalog := preload("res://src/economy/ost_catalog.gd")
+const OutfitShop := preload("res://src/economy/outfit_shop_catalog.gd")
 
 ## The save group this service owns. Named once; `SaveSchema` declares the file/type.
 const GROUP: String = "economy"
@@ -76,8 +77,23 @@ const PREFS_INIT_KEY: String = "economyInit"
 
 ## The credits a completed match pays. Pure: no store, no clock, no difficulty.
 static func reward_for(points_played: int, won: bool) -> int:
-	var variable := mini(maxi(points_played, 0) * REWARD_PER_POINT, REWARD_VARIABLE_CAP)
-	return REWARD_BASE + variable + (REWARD_VICTORY if won else 0)
+	return int(reward_breakdown(points_played, won)["total"])
+
+
+## One source for both the credited amount and the result screen's explanation.
+## `points_played` counts rallies won by both sides, not the resettable scoreboard.
+static func reward_breakdown(points_played: int, won: bool) -> Dictionary:
+	var played := maxi(points_played, 0)
+	var variable := mini(played * REWARD_PER_POINT, REWARD_VARIABLE_CAP)
+	var victory := REWARD_VICTORY if won else 0
+	return {
+		"base": REWARD_BASE,
+		"points_played": played,
+		"per_point": REWARD_PER_POINT,
+		"play_bonus": variable,
+		"victory_bonus": victory,
+		"total": REWARD_BASE + variable + victory,
+	}
 
 
 ## True when a completed match may be awarded at all. Pure, so the exclusions are
@@ -134,6 +150,17 @@ static func _payload_of(read: Dictionary) -> Dictionary:
 			if s != "" and Catalog.is_known(s) and not owned.has(s):
 				owned.append(s)
 	out["owned"] = owned
+	var owned_outfits: Array = []
+	var raw_outfits: Variant = out.get("ownedOutfits", [])
+	if raw_outfits is Array and not (raw_outfits as Array).is_empty():
+		var known_outfits := {}
+		for row in OutfitShop.shop_rows():
+			known_outfits[String(row["id"])] = true
+		for key in (raw_outfits as Array):
+			var outfit_key := String(key)
+			if known_outfits.has(outfit_key) and not owned_outfits.has(outfit_key):
+				owned_outfits.append(outfit_key)
+	out["ownedOutfits"] = owned_outfits
 	var receipts: Dictionary = {}
 	var raw_receipts: Variant = out.get("receipts", {})
 	if raw_receipts is Dictionary:
@@ -161,6 +188,7 @@ static func read_state(store) -> Dictionary:
 		"future": int(payload["migrationVersion"]) > MIGRATION_VERSION,
 		"credits": int(payload["credits"]),
 		"owned": payload["owned"],
+		"owned_outfits": payload["ownedOutfits"],
 		"migration_version": int(payload["migrationVersion"]),
 		"receipts": payload["receipts"],
 		"path": String(read.get("path", "")),
@@ -174,6 +202,13 @@ static func balance(store) -> int:
 
 static func owned_ids(store) -> Array:
 	return read_state(store)["owned"]
+
+
+static func owned_outfit_keys(store) -> Array:
+	var state := read_state(store)
+	if bool(state["refused"]) or bool(state["future"]):
+		return []
+	return state["owned_outfits"]
 
 
 ## True when the profile OWNS the track outright (a starter or a purchased id).
@@ -229,6 +264,33 @@ static func shop_rows(store) -> Array:
 			"affordable": credits >= int(row["price"]),
 			"accessible": not relocked and (is_owned_row or override),
 		})
+	return out
+
+
+## The outfit shelf shares the wallet, but purchased ownership never impersonates
+## `career.outfitsWon`: challenges and purchases remain distinct routes.
+static func outfit_shop_rows(store) -> Array:
+	var state := read_state(store)
+	var owned: Array = state["owned_outfits"]
+	var credits := int(state["credits"])
+	var override := unlock_all(store)
+	var relocked := relock_all(store)
+	var career_read: Dictionary = store.read_group("career")
+	var career_unavailable := bool(career_read.get("refused", false)) or (not bool(career_read.get("ok", false)) and not bool(career_read.get("recovered", false)))
+	var career: Variant = career_read.get("payload", {})
+	var won: Variant = career.get("outfitsWon", {}) if career is Dictionary else {}
+	var won_map: Dictionary = won if won is Dictionary else {}
+	var out: Array = []
+	for entry in OutfitShop.shop_rows():
+		var row: Dictionary = entry.duplicate(true)
+		var key := String(row["id"])
+		row["owned"] = owned.has(key)
+		row["won"] = not bool(row.get("shop_only", false)) and bool(won_map.get(key, false))
+		row["relocked"] = relocked
+		row["unavailable"] = bool(state["refused"]) or bool(state["future"]) or career_unavailable
+		row["affordable"] = not bool(row["unavailable"]) and bool(row["supported"]) and credits >= int(row["price"])
+		row["accessible"] = not bool(row["unavailable"]) and not relocked and (bool(row["owned"]) or bool(row["won"]) or override)
+		out.append(row)
 	return out
 
 
@@ -433,6 +495,62 @@ static func purchase(store, track_id: String) -> Dictionary:
 	}
 
 
+## Purchase one challenge outfit as an expensive alternative to earning it. The
+## wallet and outfit ledger are one `economy` write; no career challenge is forged.
+static func purchase_outfit(store, unlock_key: String) -> Dictionary:
+	var init := ensure_initialized(store)
+	if not bool(init.get("ok", false)):
+		return _outfit_refusal(store, unlock_key, "store_unavailable", 0)
+	var state := read_state(store)
+	if bool(state["refused"]):
+		return _outfit_refusal(store, unlock_key, "refused", 0)
+	var catalog_row := OutfitShop.row_for(unlock_key)
+	if catalog_row.is_empty():
+		return _outfit_refusal(store, unlock_key, "unknown", 0)
+	var price := OutfitShop.price_of(unlock_key)
+	if price <= 0:
+		return _outfit_refusal(store, unlock_key, "not_for_sale", 0)
+	if relock_all(store):
+		return _outfit_refusal(store, unlock_key, "relocked", price)
+	if (state["owned_outfits"] as Array).has(unlock_key):
+		return _outfit_refusal(store, unlock_key, "owned", price)
+	if unlock_all(store):
+		return _outfit_refusal(store, unlock_key, "unlocked", price)
+	var career_read: Dictionary = store.read_group("career")
+	if bool(career_read.get("refused", false)) or (not bool(career_read.get("ok", false)) and not bool(career_read.get("recovered", false))):
+		return _outfit_refusal(store, unlock_key, "store_unavailable", price)
+	var career: Variant = career_read.get("payload", {})
+	var won: Variant = career.get("outfitsWon", {}) if career is Dictionary else {}
+	if not bool(catalog_row.get("shop_only", false)) and won is Dictionary and bool(won.get(unlock_key, false)):
+		return _outfit_refusal(store, unlock_key, "unlocked", price)
+	var credits := int(state["credits"])
+	if credits < price:
+		return _outfit_refusal(store, unlock_key, "insufficient", price)
+	var read: Dictionary = store.read_group(GROUP)
+	var raw: Variant = read.get("payload", null)
+	var payload: Dictionary = (raw as Dictionary).duplicate(true) if raw is Dictionary else Schema.ECONOMY_DEFAULTS.duplicate(true)
+	var owned: Array = (state["owned_outfits"] as Array).duplicate()
+	owned.append(unlock_key)
+	payload["ownedOutfits"] = owned
+	payload["credits"] = credits - price
+	payload["migrationVersion"] = MIGRATION_VERSION
+	var write: Dictionary = store.write_group(GROUP, payload)
+	if not bool(write.get("ok", false)):
+		return _outfit_refusal(store, unlock_key, "write_failed", price)
+	return {
+		"ok": true, "reason": "purchased", "id": unlock_key, "price": price,
+		"balance": credits - price, "owned": owned, "debited": price,
+	}
+
+
+static func _outfit_refusal(store, unlock_key: String, reason: String, price: int) -> Dictionary:
+	var state := read_state(store)
+	return {
+		"ok": false, "reason": reason, "id": unlock_key, "price": price,
+		"balance": int(state["credits"]), "owned": state["owned_outfits"], "debited": 0,
+	}
+
+
 static func _refusal(track_id: String, reason: String, price: int, store) -> Dictionary:
 	var state := read_state(store)
 	return {
@@ -464,10 +582,11 @@ static func award_completion(store, match_id: String, points_played: int, won: b
 	if receipts.has(match_id):
 		return {
 			"ok": true, "reason": "already_awarded", "already": true, "awarded": 0,
-			"balance": int(state["credits"]), "match_id": match_id,
+			"earned": int(receipts[match_id]), "balance": int(state["credits"]), "match_id": match_id,
 		}
 
-	var reward := reward_for(points_played, won)
+	var breakdown := reward_breakdown(points_played, won)
+	var reward := int(breakdown["total"])
 	var credits := int(state["credits"]) + reward
 	receipts[match_id] = reward
 	receipts = _prune_receipts(receipts)
@@ -488,6 +607,7 @@ static func award_completion(store, match_id: String, points_played: int, won: b
 		}
 	return {
 		"ok": true, "reason": "awarded", "already": false, "awarded": reward,
+		"earned": reward, "breakdown": breakdown,
 		"balance": credits, "match_id": match_id,
 	}
 

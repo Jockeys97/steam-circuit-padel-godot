@@ -54,6 +54,7 @@
 extends RefCounted
 
 const Sim := preload("res://src/sim/sim.gd")
+const Config := preload("res://game/match_config.gd")
 const Locale := preload("res://src/locale/locale.gd")
 const Frozen := preload("res://src/sim/frozen.gd")
 const Gate := preload("res://game/content_gate.gd")
@@ -62,6 +63,9 @@ const Tables := preload("res://src/modes/mode_tables.gd")
 const DrillSession := preload("res://src/modes/drill_session.gd")
 const DrillTarget := preload("res://src/modes/drill_target.gd")
 const DrillScoring := preload("res://src/modes/drill_scoring.gd")
+const DrillText := preload("res://src/modes/drill_text.gd")
+const DrillHub := preload("res://src/modes/drill_hub.gd")
+const DrillObjective := preload("res://src/modes/drill_objective.gd")
 const TournamentRules := preload("res://src/modes/tournament_rules.gd")
 const CareerRules := preload("res://src/modes/career_rules.gd")
 const CareerProgress := preload("res://src/modes/career_progress.gd")
@@ -119,6 +123,15 @@ var arenas: Array = []
 ## The outfit the player wears in this session (the menu's choice). Kept so the
 ## report answers with it and the scenes have one place to read it from.
 var outfit: StringName = &"base"
+## The TRAINING difficulty a drill run plays at (`drill_hub.gd`'s own four). Transient: it
+## is resolved from the caller (the hub's choice, `Config.pending_drill_difficulty`) and it
+## writes no preference — the reference's `ui.drillDifficulty` is not persisted either.
+var difficulty: String = ""
+## The bounded record for THIS run's key (`training_v1:<id>:<difficulty>:<attempts>`), read
+## when the session starts and refreshed when a run is persisted. It is what the drill HUD
+## and the summary compare against: the legacy `<id>` record measured endless runs and is
+## shown separately, as historical.
+var training_best: int = 0
 
 
 # ---------------------------------------------------------------------------
@@ -199,11 +212,23 @@ static func start(mode_id: String, store_ref, opts: Dictionary = {}) -> RefCount
 ## reference resolves for the free modes (`getAiForMatch("drill", …)`).
 func _start_drill(opts: Dictionary) -> void:
 	arena = opts.get("arena", {})
-	ai = CareerRules.ai_for_match("drill", 0, "", 1, 0)
+	# Il profilo AI dell'allenamento: la difficolta' scelta nell'hub, risolta dal modulo
+	# che possiede quella tabella (`DrillHub.ai_profile` -> `CareerRules.ai_for_match`).
+	# Senza scelta vale il primo avversario, cioe' esattamente quello che questa riga
+	# risolveva prima: nessuna difficolta' globale viene toccata.
+	# La difficolta' del run: quella scelta nell'hub, o il default dell'hub quando nessuno ha
+	# scelto — cosi' il run registra SEMPRE la difficolta' con cui ha giocato, e il default
+	# resta il primo avversario di prima (`seed_difficulty("")` e' "easy", cioe' `tiers[0]`).
+	difficulty = DrillHub.seed_difficulty(String(opts.get("difficulty", Config.pending_drill_difficulty)))
+	var profile: Dictionary = DrillHub.ai_profile(difficulty)
+	ai = profile if not profile.is_empty() else CareerRules.ai_for_match("drill", 0, "", 1, 0)
 	lineup = Lineup.resolve(athlete)
 	drill = DrillSession.create(
 		String(opts.get("exercise", DEFAULT_EXERCISE)), athlete, arena, ai,
 		{"seed": seed_value, "lineup": lineup}
+	)
+	training_best = ModesSave.training_best(
+		store, String(drill.exercise.get("id", "")), difficulty, int(drill.run_limit)
 	)
 	state = drill.state
 	state.rng_state = seed_value
@@ -310,6 +335,8 @@ func finish() -> Dictionary:
 
 
 func _finish_drill() -> Dictionary:
+	var run: Dictionary = drill.summary()
+	var record: Dictionary = persist_training_record()
 	awarded = {
 		"mode": "drill",
 		"exercise": String(drill.exercise.get("id", "")),
@@ -319,11 +346,33 @@ func _finish_drill() -> Dictionary:
 		"hits": int(drill.hits),
 		"grade": drill.grade,
 		"score_line": drill.score_line(),
+		"summary": run,
+		"run_done": bool(drill.run_done),
+		"run_limit": int(drill.run_limit),
+		# The BOUNDED record is the run's own (`training_v1:…`); the legacy `<id>` key keeps
+		# the reference's "best ever" meaning and is still written through the same
+		# improvement-only door, so a caller that has always read it keeps working. The hub
+		# and the summary compare the bounded one, and label the legacy one as historical.
+		"training_record": record,
+		"training_best": training_best,
 		"record": ModesSave.drill_record_after(store, drill),
 	}
 	awarded["best"] = int(drill.best)
 	awarded["persisted_best"] = ModesSave.drill_best(store, String(drill.exercise.get("id", "")))
 	return awarded
+
+
+## Writes the BOUNDED training record WITHOUT ending the session: a finished run's best
+## belongs in the save the moment its summary is on screen (leaving through Back must not
+## lose it). Improvement-only, so calling it again writes nothing new. Training awards
+## nothing else — no outfit challenges, no career progress, no history entry.
+func persist_training_record() -> Dictionary:
+	if drill == null:
+		return {}
+	var result := ModesSave.training_record_after(store, drill, difficulty)
+	training_best = int(result.get("best", training_best))
+	saved = result
+	return result
 
 
 func _finish_tournament(won: bool) -> Dictionary:
@@ -415,6 +464,12 @@ func _score_text() -> String:
 ## The mode HUD's model. One call, no side effects: the drill case reads the live
 ## `DrillSession` (phase, target, metrics, score line) and the two match cases read
 ## the state and the mode's own fixture.
+##
+## The drill case is the TRAINING HUD: the exercise's own objective line, the run's progress
+## and the record it is measured against (the BOUNDED one, `training_best`), the last
+## attempt's verdict in words, and — once the run has closed — its summary plus the three
+## actions the player has (retry / change exercise / exit). Every string is resolved through
+## `drill_text.gd`, so no id, coordinate or field name reaches the screen.
 func hud() -> Dictionary:
 	match mode:
 		"drill":
@@ -429,23 +484,43 @@ func hud() -> Dictionary:
 func _hud_drill() -> Dictionary:
 	var lines: Array = []
 	if drill == null:
-		return {"mode": "drill", "title": "ALLENAMENTO", "phase": phase, "lines": lines, "metrics": []}
+		return {"mode": "drill", "title": DrillText.t("drillTitle"), "phase": phase, "lines": lines, "metrics": []}
 	var target: Dictionary = drill.target
-	lines.append("%s  ·  fase %s  ·  round %d" % [
-		String(drill.exercise.get("id", "")).to_upper(), String(drill.phase), int(drill.round),
-	])
-	lines.append("PUNTEGGIO %d  ·  record %d  ·  %s" % [
-		int(drill.score), int(drill.best), drill.score_line(),
-	])
-	lines.append("BERSAGLIO  %s" % _target_line(target))
-	lines.append("COLPI %d/%d  ·  serie %d  ·  rally %d" % [
-		int(drill.hits), int(drill.attempts), int(drill.streak), int(drill.best_rally),
+	var id := String(drill.exercise.get("id", ""))
+	var run: Dictionary = drill.summary()
+	# L'obiettivo dell'esercizio, in parole: la stessa riga che l'hub mostra prima di
+	# iniziare, cosi' il giocatore ritrova a schermo quello che ha scelto.
+	lines.append(DrillText.t(String(DrillObjective.for_exercise(id).get("watch_key", "")), {}))
+	# Il progresso della run e il punteggio su una riga sola: numeri veri, non testo di
+	# debug, e abbastanza compatti da stare nel pannello senza spingerne il contenuto fuori
+	# dal bordo. Il record mostrato accanto alla run e' quello della SFIDA, non quello
+	# storico delle run illimitate: due numeri misurati allo stesso modo sono gli unici
+	# confrontabili.
+	lines.append("%s · %s" % [
+		DrillText.t("drillHudProgress", {
+			"attempt": int(drill.attempts) + 1 if String(drill.phase) == "live" else int(drill.attempts),
+			"limit": int(drill.run_limit),
+			"hits": int(drill.hits),
+			"accuracy": int(round(float(run["accuracy"]) * 100.0)),
+		}),
+		DrillText.t("drillHudScore", {"score": int(drill.score), "best": training_best}),
 	])
 	if drill.diagnosis != null:
-		lines.append("ESITO  %s" % String(drill.diagnosis))
+		lines.append(DrillText.t("drillHudLast", {
+			"grade": _grade_text(drill.grade),
+			"why": DrillText.t(String(drill.diagnosis)),
+		}))
+	if String(drill.phase) == "summary":
+		lines.append(DrillText.t("drillHudSummary", {
+			"hits": int(drill.hits),
+			"attempts": int(drill.attempts),
+			"accuracy": int(round(float(run["accuracy"]) * 100.0)),
+			"score": int(drill.score),
+			"best": training_best,
+		}))
 	return {
 		"mode": "drill",
-		"title": "ALLENAMENTO",
+		"title": DrillText.t("drillTitle"),
 		"phase": String(drill.phase),
 		"lines": lines,
 		"metrics": drill.metrics(),
@@ -455,16 +530,32 @@ func _hud_drill() -> Dictionary:
 		"attempts": int(drill.attempts),
 		"hits": int(drill.hits),
 		"grade": drill.grade,
+		"exercise": id,
+		"objective": DrillText.t(String(DrillObjective.for_exercise(id).get("watch_key", "")), {}),
+		"progress": DrillText.t("drillHudProgress", {
+			"attempt": int(drill.attempts) + 1 if String(drill.phase) == "live" else int(drill.attempts),
+			"limit": int(drill.run_limit),
+			"hits": int(drill.hits),
+			"accuracy": int(round(float(run["accuracy"]) * 100.0)),
+		}),
+		"run": run,
+		"summary": run,
+		"run_done": bool(drill.run_done),
+		"training_best": training_best,
+		"difficulty": difficulty,
+		"actions": DrillText.t("drillHudActions") if String(drill.phase) == "summary" else "",
 	}
 
 
-func _target_line(target: Dictionary) -> String:
-	if not bool(target.get("active", false)):
+## The engine's own shot grade (`perfect`/`good`/`early`/`late`), in words. An absent grade
+## is a dash, never a made-up word.
+func _grade_text(grade: Variant) -> String:
+	if grade == null:
 		return "—"
-	return "%s (%.0f, %.0f) r%.0f" % [
-		String(target.get("kind", "?")), float(target.get("x", 0.0)),
-		float(target.get("y", 0.0)), float(target.get("r", 0.0)),
-	]
+	# Le stesse etichette del motore (`shotPerfect`, `shotGood`, `shotEarly`, `shotLate`),
+	# risolte dalla tabella della lingua: `shot:<grade>` e' l'id del motore, non una
+	# traduzione.
+	return DrillText.t("shot%s" % String(grade).capitalize())
 
 
 func _hud_tournament() -> Dictionary:
@@ -592,6 +683,11 @@ func _drill_report() -> Dictionary:
 		"hits": int(drill.hits),
 		"score": int(drill.score),
 		"best": int(drill.best),
+		"training_best": training_best,
+		"difficulty": difficulty,
+		"run_done": bool(drill.run_done),
+		"run_limit": int(drill.run_limit),
+		"summary": drill.summary(),
 		"streak": int(drill.streak),
 		"rally_hits": int(drill.rally_hits),
 		"grade": drill.grade,

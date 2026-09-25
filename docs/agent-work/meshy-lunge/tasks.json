@@ -1,0 +1,37 @@
+{
+  "rig": {
+    "reserved": 5,
+    "request_started": true,
+    "id": "01a0d54f-d796-710b-94c5-6b0ca30c8b9d",
+    "status": "SUCCEEDED",
+    "credits": 5
+  },
+  "lunge_forehand_motion": {
+    "reserved": 10,
+    "request_started": true,
+    "id": "01a0d550-cb1c-7268-9390-a158ece508a7",
+    "status": "SUCCEEDED",
+    "credits": 10
+  },
+  "lunge_forehand_animation": {
+    "reserved": 3,
+    "request_started": true,
+    "id": "01a0d551-177e-7532-ac86-58b60703fc54",
+    "status": "SUCCEEDED",
+    "credits": 3
+  },
+  "wall_exit_forehand_motion": {
+    "reserved": 10,
+    "request_started": true,
+    "id": "01a0d56d-5581-7716-9fe9-22f61cc77795",
+    "status": "SUCCEEDED",
+    "credits": 10
+  },
+  "wall_exit_forehand_animation": {
+    "reserved": 3,
+    "request_started": true,
+    "id": "01a0d56d-9bbb-7199-9c15-ae08742d77fd",
+    "status": "SUCCEEDED",
+    "credits": 3
+  }
+}

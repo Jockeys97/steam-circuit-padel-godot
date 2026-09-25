@@ -8,6 +8,16 @@ func _initialize() -> void:
 		Landscape.build(scenery, id)
 		var landscape := scenery.get_node("OutdoorLandscape")
 		assert(landscape.get_child_count() < 180)
+		if id == "aurora":
+			var plateau := landscape.get_node("AuroraPlateau") as MeshInstance3D
+			assert(plateau.position.y + (plateau.mesh as BoxMesh).size.y * 0.5 < -0.02)
+			assert((plateau.material_override as StandardMaterial3D).albedo_texture != null)
+			assert(landscape.find_children("AuroraSideSnow*", "MeshInstance3D", false, false).size() == 8)
+			assert(landscape.find_children("AuroraRearSnow*", "MeshInstance3D", false, false).size() == 3)
+			assert(landscape.find_children("AuroraOutcrop*", "MeshInstance3D", false, false).size() == 4)
+			assert(landscape.find_children("AuroraMidRidge*", "MeshInstance3D", false, false).size() == 7)
+		else:
+			assert(landscape.get_node_or_null("AuroraPlateau") == null)
 		var landmarks := 0
 		for child in landscape.get_children():
 			if child.name == "BeachCrabs":

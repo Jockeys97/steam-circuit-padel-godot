@@ -1,32 +1,26 @@
-## mode_training_screen_audit.gd — the LEGACY training screen's contract audit.
+## mode_training_screen_audit.gd — the PORTED training screen's contract audit.
 ##
-## WHICH SCREEN THIS OWNS. `godot/game/mode_screen.gd` is the page a player reaches
-## with `Config.pending_mode == "drill"` (`godot/game/ModeScreen.tscn`). The recreated
-## `godot/src/ui/screens/DrillScreen.gd` is a different screen with its own audit
-## (`tests/ui/screen_drill_audit.gd`); this file owns the legacy one the owner's
-## screenshot came from.
+## WHICH SCREEN THIS OWNS. `godot/game/mode_screen.gd` is the page a player reaches with
+## `Config.pending_mode == "drill"` (`godot/game/ModeScreen.tscn`). The recreated
+## `godot/src/ui/screens/DrillScreen.gd` is a different host of the SAME hub body and has its
+## own audit (`tests/ui/screen_drill_audit.gd`); this file owns the ported one.
 ##
 ## WHAT IT PROVES, and why each question is asked:
 ##
-##   1. the five exercises `Tables.drill_catalog()` carries are all on screen, in the
-##      catalogue's own order, under `DrillText`'s own names — and every name,
-##      description and hint RESOLVES in both locales (a raw id on screen is the
-##      failure `DrillText.has` exists to catch);
-##   2. the five rows, the primary start action and the back control are all reachable
-##      through the SAME `MenuFocus` model the menu uses, and the model focuses an
-##      exercise first;
-##   3. choosing an exercise writes `Config.pending_exercise` by BOTH routes: the
-##      mouse (the Button's own `pressed`) and the model's keyboard confirm — the path
-##      that used to leave the seam untouched;
-##   4. the live `DrillSession` is real: `screen_report()` still answers `drill_phase`
-##      and `drill_target` with the session's own values, while the PAGE paints none of
-##      the debug text the old screen printed (no repository path, no JSON, no
-##      `feed`/`rivals`/`targets`/`kinds` field, no session readout);
-##   5. `start` keeps its gate and its seams: `start_mode(true)` reports the drill mode,
-##      the chosen exercise and `res://game/Match.tscn`, and touches nothing else;
-##   6. the layout fits a 1280x720 frame — and a larger one — with nothing clipped:
-##      every control's rect is inside the frame and every button is wider than its own
-##      label.
+##   1. the catalog's EIGHT exercises are all on screen, grouped into the three families the
+##      mode module declares, under `DrillText`'s own names — and every name, goal, success
+##      rule, scored fact, control and hint resolves in both locales (a raw id on screen is
+##      the failure `DrillText.has` exists to catch);
+##   2. the cards, the difficulty row, the primary start action and the back control are all
+##      reachable through the SAME `MenuFocus` model the menu uses;
+##   3. choosing an exercise writes `Config.pending_exercise` by BOTH routes: the mouse (the
+##      card's own `pressed`) and the model's keyboard confirm;
+##   4. the live `DrillSession` is real: `screen_report()` still answers `drill_phase` and
+##      `drill_target` with the session's own values, while the PAGE paints none of the debug
+##      text the old screen printed (no repository path, no JSON, no session readout);
+##   5. `start` keeps its gate and its seams: `start_mode(true)` reports the drill mode, the
+##      chosen exercise and `res://game/Match.tscn`, and touches nothing else;
+##   6. the layout fits a 1280x720 frame — and a larger one — with nothing clipped.
 ##
 ## Read-only apart from the two seams the screen's own contract owns
 ## (`Config.pending_mode` / `Config.pending_exercise`) and the locale A/B; it mounts the
@@ -36,6 +30,8 @@ extends SceneTree
 const AuditBase := preload("res://src/audits/audit_base.gd")
 const Locale := preload("res://src/locale/locale.gd")
 const Tables := preload("res://src/modes/mode_tables.gd")
+const DrillHub := preload("res://src/modes/drill_hub.gd")
+const DrillObjective := preload("res://src/modes/drill_objective.gd")
 const DrillText := preload("res://src/modes/drill_text.gd")
 const Config := preload("res://game/match_config.gd")
 const Gate := preload("res://game/content_gate.gd")
@@ -45,26 +41,17 @@ const ModeScene := preload("res://game/ModeScreen.tscn")
 const FRAME := Vector2(1280.0, 720.0)
 const WIDE_FRAME := Vector2(1600.0, 900.0)
 const SETTLE_FRAMES := 3
-const ROW_PREFIX := "Row_"
 const SCENE_PATH := "res://game/Match.tscn"
 
-## The keys `screen_report()` promised before this screen was redesigned. The redesign
-## may change what the rows SAY, never what the report ANSWERS.
+## The keys `screen_report()` promised before this screen was redesigned. The redesign may
+## change what the rows SAY, never what the report ANSWERS.
 const REPORT_KEYS := ["mode", "screen", "declared_back", "locked", "startable", "rows", "detail",
 	"drill_phase", "drill_target", "focus", "saved"]
 
-## Every step `_run` performs. A GDScript runtime error aborts only the function it
-## happens in and the engine keeps going (the same silent-abort class
-## `game_slice_test.gd` names in M-1), so each step reports itself at its end and the
-## run asserts the list is complete — a step that threw is a FAILED check, not a
-## smaller green count.
-const SECTIONS := ["exercises", "reachability", "selection", "session", "start", "no_debug_text",
+const SECTIONS := ["catalog", "reachability", "selection", "session", "start", "no_debug_text",
 	"reports", "fit_1280x720", "fit_1600x900", "other_locale"]
 
-## The shapes the old screen printed and this one must never show. `feed`/`rivals`/
-## `kinds` are matched as themselves — no exercise prose uses them — while `targets` is
-## matched only as a printed field, because the reference's own English description
-## legitimately reads "Targets in the opponent half".
+## The shapes the old screen printed and this one must never show.
 const DEBUG_MARKERS := [
 	"godot/src", "res://", "drill_phase", "drill_target", "JSON", "{", "}", "[", "]",
 	"RECORD SALVATI", "SESSIONE", "ESERCIZI", "ALLENATI", "Torna al menu",
@@ -93,16 +80,13 @@ func _run(audit: AuditBase) -> void:
 	root.add_child(_host)
 
 	if Gate.is_demo():
-		# `DEMO_CONTENT.modes` grants quick match only, so every mode screen — training
-		# included — renders the locked line instead of its rows (`ModeScreen.is_locked`).
-		# The open-screen contract needs a full build.
 		audit.not_ported("training/the_open_screen_contract",
 			"a DEMO build locks the drill (ModeSession.can_start) and shows no rows; run without --demo")
 		return
 
 	_screen = _mount()
 	await _settle()
-	await _exercises(audit)
+	await _catalog(audit)
 	await _reachability(audit)
 	await _selection(audit)
 	await _session(audit)
@@ -122,33 +106,57 @@ func _done(section: String) -> void:
 
 
 # ---------------------------------------------------------------------------
-# 1. The five exercises
+# 1. The eight exercises, in their three families
 # ---------------------------------------------------------------------------
 
-func _exercises(audit: AuditBase) -> void:
+func _catalog(audit: AuditBase) -> void:
 	var catalogue: Array = Tables.drill_catalog()
-	audit.check_eq(catalogue.size(), 5, "training/the_catalogue_carries_five_exercises")
+	audit.check_eq(catalogue.size(), 8, "training/the_catalogue_carries_eight_exercises")
 	audit.check_eq(Tables.drill_exercises().size(), 4,
 		"training/the_frozen_reference_still_lists_its_own_four")
-	var seen: Array = []
-	for exercise_id in Tables.drill_catalog_ids():
-		var button := _row(exercise_id)
-		audit.check_true(button != null, "training/%s_row_exists" % exercise_id)
-		if button == null:
-			continue
-		seen.append(exercise_id)
-		audit.check_eq(button.text, DrillText.exercise_name(exercise_id),
-			"training/%s_shows_its_DrillText_name" % exercise_id)
-		audit.check_true(button.toggle_mode and button.button_group != null,
-			"training/%s_is_a_selection_row" % exercise_id)
-		for suffix in ["name", "desc", "hint"]:
+	var hub = _screen.get("_hub")
+	audit.check_true(hub != null, "training/the_page_mounts_the_shared_hub_view")
+	var report: Dictionary = _screen.hub_report()
+	var painted: Array = []
+	for group in (report.get("groups", []) as Array):
+		var entry: Dictionary = group
+		audit.check_true(String(entry.get("label", "")) != "",
+			"training/the_family_%s_has_a_name_on_the_page" % String(entry.get("id", "")))
+		for id in (entry.get("ids", []) as Array):
+			var exercise_id := String(id)
+			painted.append(exercise_id)
+			var card := _card(exercise_id)
+			audit.check_true(card != null, "training/%s_card_exists" % exercise_id)
+			if card == null:
+				continue
+			audit.check_eq(card.text, DrillText.exercise_name(exercise_id),
+				"training/%s_shows_its_DrillText_name" % exercise_id)
+			audit.check_true(card.toggle_mode and card.button_group != null,
+				"training/%s_is_a_selection_card" % exercise_id)
+			var objective := DrillObjective.for_exercise(exercise_id)
+			for suffix in ["goal", "success", "scores", "watch"]:
+				for lang in ["it", "en"]:
+					audit.check_true(DrillText.has(String(objective["%s_key" % suffix]), String(lang)),
+						"training/%s_has_a_%s_in_%s" % [exercise_id, suffix, String(lang)])
+			for control in DrillObjective.controls_for(exercise_id):
+				for lang in ["it", "en"]:
+					audit.check_true(DrillText.has(String((control as Dictionary)["label"]), String(lang)),
+						"training/%s_lists_a_control_that_resolves_in_%s" % [exercise_id, String(lang)])
 			for lang in ["it", "en"]:
-				audit.check_true(DrillText.has("drill_%s_%s" % [exercise_id, suffix], String(lang)),
-					"training/%s_has_a_%s_in_%s" % [exercise_id, suffix, String(lang)])
-	audit.check_eq(seen, Array(Tables.drill_catalog_ids()), "training/the_rows_are_the_catalogue_order")
+				audit.check_true(DrillText.has("drill_%s_hint" % exercise_id, String(lang)),
+					"training/%s_has_a_hint_in_%s" % [exercise_id, String(lang)])
+	var sorted_painted := painted.duplicate()
+	sorted_painted.sort()
+	var sorted_catalog := Array(Tables.drill_catalog_ids())
+	sorted_catalog.sort()
+	audit.check_eq(sorted_painted, sorted_catalog, "training/the_cards_are_the_catalogue")
+	audit.check_eq((report.get("groups", []) as Array).size(), DrillObjective.GROUPS.size(),
+		"training/the_cards_are_grouped_into_the_three_families")
 	audit.check_true(Tables.drill_catalog_ids().has("return"),
 		"training/the_Godot_only_return_exercise_is_offered")
-	_done("exercises")
+	for challenge in ["glass_recovery", "net_play", "doubles_tactics"]:
+		audit.check_true(Tables.drill_catalog_ids().has(challenge), "training/the_%s_challenge_is_offered" % challenge)
+	_done("catalog")
 
 
 # ---------------------------------------------------------------------------
@@ -167,6 +175,7 @@ func _reachability(audit: AuditBase) -> void:
 	audit.check_eq(missing, [], "training/every_exercise_is_focusable_and_reachable")
 	audit.check_true(reachable.has("start"), "training/the_start_action_is_reachable")
 	audit.check_true(reachable.has("back"), "training/the_back_control_is_reachable")
+	audit.check_true(reachable.has("difficulty:legend"), "training/the_difficulty_row_is_reachable")
 	var report: Dictionary = _screen.screen_report()
 	audit.check_true(String(report["focus"]).begins_with("drill:"),
 		"training/the_model_focuses_an_exercise_first")
@@ -179,41 +188,35 @@ func _reachability(audit: AuditBase) -> void:
 
 func _selection(audit: AuditBase) -> void:
 	var clicked := "rally"
-	var click_row := _row(clicked)
-	audit.check_true(click_row != null, "training/the_click_target_exists")
-	if click_row != null:
-		# The mouse route: the Button's own `pressed`, exactly what a click emits.
-		click_row.emit_signal("pressed")
-	audit.check_eq(String(Config.pending_exercise), clicked,
-		"training/a_click_writes_pending_exercise")
-	audit.check_eq(bool(click_row.button_pressed), true, "training/the_clicked_row_is_the_selection")
+	var click_card := _card(clicked)
+	audit.check_true(click_card != null, "training/the_click_target_exists")
+	if click_card != null:
+		click_card.emit_signal("pressed")
+	audit.check_eq(String(Config.pending_exercise), clicked, "training/a_click_writes_pending_exercise")
+	audit.check_eq(bool(click_card.button_pressed), true, "training/the_clicked_card_is_the_selection")
+	audit.check_eq(String(_screen.get("_selected_exercise")), clicked, "training/and_the_screen_agrees")
 
-	# The navigation route: the model focuses a row, the keyboard confirms it, and the
-	# screen's own `_input` dispatches — the path that used to leave the seam untouched.
-	var confirmed := "return"
+	# The navigation route: the model focuses a card, the keyboard confirms it, and the
+	# screen's own `_input` dispatches.
+	var confirmed := "glass_recovery"
 	var model = _screen.focus_model()
 	model.menu.nav.set_focus("drill:%s" % confirmed)
 	var event := InputEventKey.new()
 	event.keycode = KEY_ENTER
 	event.pressed = true
 	_screen.call("_input", event)
-	audit.check_eq(String(Config.pending_exercise), confirmed,
-		"training/a_model_confirm_writes_pending_exercise")
-	audit.check_eq(bool(_row(confirmed).button_pressed), true,
-		"training/the_confirmed_row_is_the_selection")
-	audit.check_eq(bool(_row(clicked).button_pressed), false,
-		"training/only_one_row_is_the_selection")
+	audit.check_eq(String(Config.pending_exercise), confirmed, "training/a_model_confirm_writes_pending_exercise")
+	audit.check_eq(bool(_card(confirmed).button_pressed), true, "training/the_confirmed_card_is_the_selection")
+	audit.check_eq(bool(_card(clicked).button_pressed), false, "training/only_one_card_is_the_selection")
 
-	# The detail panel and the hint line follow the choice, in the locale's own words.
-	audit.check_eq(_text_of("DrillName"), DrillText.exercise_name(confirmed),
-		"training/the_detail_names_the_choice")
-	audit.check_eq(_text_of("DrillDesc"), DrillText.t(DrillText.exercise_desc_key(confirmed)),
-		"training/the_detail_describes_the_choice")
-	audit.check_eq(_text_of("DrillHint"), DrillText.t(DrillText.exercise_hint_key(confirmed)),
-		"training/the_hint_is_the_choices_own")
-	audit.check_true(_text_of("DrillBest").contains(DrillText.exercise_name(confirmed)) or
-		_text_of("DrillBest").contains(Locale.t("drillBest")),
-		"training/the_record_line_uses_the_reference_best_label")
+	# The detail panel follows the choice, in the locale's own words, and the hint line too.
+	var painted: Dictionary = _screen.hub_report()
+	var model_detail: Dictionary = DrillHub.detail(confirmed, Config.save_store(), String(painted["difficulty"]))
+	audit.check_eq(String(painted["name"]), String(model_detail["name"]), "training/the_detail_names_the_choice")
+	audit.check_true(String(painted["goal"]).contains(String(model_detail["goal"])), "training/the_detail_shows_the_goal")
+	audit.check_true(String(painted["success"]).contains(String(model_detail["success"])), "training/the_detail_shows_the_success_rule")
+	audit.check_true(String(painted["controls"]).contains("LS"), "training/the_detail_lists_the_controls")
+	audit.check_eq(_text_of("DrillHint"), DrillText.t(DrillText.exercise_hint_key(confirmed)), "training/the_hint_is_the_choices_own")
 	_done("selection")
 
 
@@ -228,12 +231,9 @@ func _session(audit: AuditBase) -> void:
 	if session == null:
 		return
 	audit.check_true(String(report["drill_phase"]) != "", "training/the_report_carries_a_phase")
-	audit.check_eq(String(report["drill_phase"]), String(session.phase),
-		"training/the_reported_phase_is_the_sessions_own")
-	audit.check_true(not (report["drill_target"] as Dictionary).is_empty(),
-		"training/the_report_carries_a_target")
-	audit.check_eq(str(report["drill_target"]), str(session.target),
-		"training/the_reported_target_is_the_sessions_own")
+	audit.check_eq(String(report["drill_phase"]), String(session.phase), "training/the_reported_phase_is_the_sessions_own")
+	audit.check_true(not (report["drill_target"] as Dictionary).is_empty(), "training/the_report_carries_a_target")
+	audit.check_eq(str(report["drill_target"]), str(session.target), "training/the_reported_target_is_the_sessions_own")
 	_done("session")
 
 
@@ -244,16 +244,19 @@ func _session(audit: AuditBase) -> void:
 func _start(audit: AuditBase) -> void:
 	var chosen := String(Config.pending_exercise)
 	var round_before: Variant = Config.pending_round
+	var difficulty_before := String(Config.pending_drill_difficulty)
 	var outcome: Dictionary = _screen.start_mode(true)
 	audit.check_eq(ModeSession.can_start("drill"), true, "training/the_gate_grants_the_drill")
 	audit.check_eq(String(outcome.get("mode", "")), "drill", "training/start_names_the_drill")
-	# `str()` and not `String()`: GDScript has no `String(bool)` constructor.
 	audit.check_eq(str(outcome.get("started", false)), "true", "training/start_is_granted")
-	audit.check_eq(String(outcome.get("exercise", "")), chosen,
-		"training/start_carries_the_chosen_exercise")
-	audit.check_eq(String(outcome.get("scene", "")), SCENE_PATH,
-		"training/start_names_the_match_scene")
+	audit.check_eq(String(outcome.get("exercise", "")), chosen, "training/start_carries_the_chosen_exercise")
+	audit.check_eq(String(outcome.get("scene", "")), SCENE_PATH, "training/start_names_the_match_scene")
 	audit.check_eq(Config.pending_round, round_before, "training/start_touches_nothing_else")
+	# The difficulty the hub row shows is the one the run will play: the choice is transient
+	# (`Config.pending_drill_difficulty`), and it never becomes a stored preference.
+	audit.check_eq(String(Config.pending_drill_difficulty), difficulty_before, "training/start_does_not_invent_a_difficulty")
+	var hub = _screen.get("_hub")
+	audit.check_true(DrillHub.difficulties().has(String(hub.difficulty())), "training/the_hub_difficulty_is_one_of_the_four")
 	_done("start")
 
 
@@ -289,13 +292,21 @@ func _reports(audit: AuditBase) -> void:
 			missing.append(key)
 	audit.check_eq(missing, [], "training/screen_report_keeps_every_promised_key")
 	audit.check_eq(String(report["screen"]), "screen-modes", "training/the_screen_declares_its_own_id")
-	audit.check_eq(String(report["declared_back"]), "to-menu",
-		"training/the_declared_back_is_the_reference_return")
+	audit.check_eq(String(report["declared_back"]), "to-menu", "training/the_declared_back_is_the_reference_return")
 	audit.check_eq(bool(report["locked"]), false, "training/a_full_build_does_not_lock_the_drill")
 	var names: Array = []
 	for exercise_id in Tables.drill_catalog_ids():
 		names.append(DrillText.exercise_name(exercise_id))
-	audit.check_eq(Array(report["rows"]), names, "training/the_reported_rows_are_player_facing_names")
+	var rows: Array = report["rows"]
+	# The rows the page reports are the cards (player-facing names) plus the difficulty row
+	# and the one action — data, in the order the page shows them.
+	var cards_on_page: Array = []
+	for row in rows:
+		if names.has(String(row)):
+			cards_on_page.append(String(row))
+	audit.check_eq(cards_on_page.size(), names.size(), "training/the_reported_rows_carry_every_exercise_name")
+	for name in names:
+		audit.check_true(cards_on_page.has(String(name)), "training/the_report_lists_%s" % String(name))
 	_done("reports")
 
 
@@ -323,8 +334,7 @@ func _fit(audit: AuditBase, frame: Vector2, section: String) -> void:
 	_done(section)
 
 
-## The engine's own font metrics, the same rule `game_slice_test.gd::_ui_text()` applies
-## to the menu's rows: a button narrower than its label plus its padding clips.
+## The engine's own font metrics: a button narrower than its label plus its padding clips.
 func _clip_offenders(button: Button) -> Array:
 	var text := String(button.text)
 	if text == "":
@@ -366,22 +376,19 @@ func _other_locale(audit: AuditBase) -> void:
 	_screen = await _remount()
 	var wrong: Array = []
 	for exercise_id in Tables.drill_catalog_ids():
-		var button := _row(exercise_id)
+		var card := _card(exercise_id)
 		var expected := DrillText.exercise_name(exercise_id)
-		var got := String(button.text) if button != null else "<missing>"
+		var got := String(card.text) if card != null else "<missing>"
 		if got != expected:
 			wrong.append("%s expected <%s> got <%s>" % [exercise_id, expected, got])
 	audit.check_eq(wrong, [], "training/a_rebuild_shows_the_other_tables_own_names")
 	audit.check_eq(_text_of("DrillHint"),
 		DrillText.t(DrillText.exercise_hint_key(String(Config.pending_exercise)), {}, other),
 		"training/the_hint_is_the_other_locales_own")
-	audit.check_eq(_text_of("DrillDesc"),
-		DrillText.t(DrillText.exercise_desc_key(String(Config.pending_exercise)), {}, other),
-		"training/the_description_is_the_other_locales_own")
 
 	Locale.set_lang(original)
 	_screen = await _remount()
-	var restored := _row(String(Tables.drill_catalog_ids()[0]))
+	var restored := _card(String(Tables.drill_catalog_ids()[0]))
 	var restored_text := String(restored.text) if restored != null else "<missing>"
 	audit.check_eq(restored_text, DrillText.exercise_name(String(Tables.drill_catalog_ids()[0]), original),
 		"training/the_original_locale_comes_back")
@@ -419,10 +426,11 @@ func _drop(screen: Node) -> void:
 	screen.free()
 
 
-func _row(exercise_id: String) -> Button:
+## One exercise's card on the shared hub, by the name the view gives it.
+func _card(exercise_id: String) -> Button:
 	if _screen == null:
 		return null
-	return _screen.find_child(ROW_PREFIX + exercise_id, true, false) as Button
+	return _screen.find_child("HubCard_%s" % exercise_id, true, false) as Button
 
 
 func _text_of(node_name: String) -> String:

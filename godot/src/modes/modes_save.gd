@@ -30,6 +30,19 @@
 ##       and that is the persisted record, which may be higher than the run's own
 ##       score when the run did not beat the record. Reproduced as written, not
 ##       "normalised" into something tidier.
+##   ModesSave.training_key(exercise_id, difficulty, attempts) -> String
+##   ModesSave.training_best(store, exercise_id, difficulty, attempts) -> int
+##   ModesSave.save_training_score(store, exercise_id, difficulty, attempts, score)
+##   ModesSave.training_record_after(store, session, difficulty) -> Dictionary
+##       The BOUNDED challenge's own record. The legacy `<exercise id>` key above is the
+##       reference's "best score ever" and the old drills ran until the player left, so a
+##       bounded 8-attempt score is NOT comparable with it: a fresh install that plays one
+##       training run would otherwise look like a record was broken. Bounded scores
+##       therefore live under their own stable key — `training_v1:<id>:<difficulty>:
+##       <attempts>` — through the same `SaveStore.write_drill_record` door, so the record
+##       policy (improvement-only) and the file format are unchanged. The legacy key keeps
+##       its own meaning and is never rewritten by this path; the hub shows it, clearly
+##       labelled, as the historical best.
 ##   ModesSave.load_history(store) -> Array
 ##   ModesSave.record_match(store, entry) -> Dictionary      newest first, cap 20
 ##   ModesSave.history_entry(...) -> Dictionary              the entry shape
@@ -61,6 +74,11 @@ extends RefCounted
 const Store := preload("res://src/save/save_store.gd")
 const Schema := preload("res://src/save/save_schema.gd")
 const CareerProgress := preload("res://src/modes/career_progress.gd")
+const Economy := preload("res://src/economy/economy_service.gd")
+
+## The prefix of a bounded challenge record. Versioned so a future change to what a run
+## measures can add `training_v2:` without reinterpreting v1 numbers.
+const TRAINING_KEY_PREFIX := "training_v1"
 
 ## `js/ui.js:12-36` field by field, plus `outfitsWon` / `athleteWins`
 ## (`js/ui.js:629-630`).
@@ -85,13 +103,21 @@ static func load_career(store) -> Dictionary:
 	if raw is Dictionary:
 		for key in (raw as Dictionary):
 			career[key] = (raw as Dictionary)[key]
+	# A read-only access view: the wallet and bought outfits remain together in the
+	# economy file. This transient key is never written into the career file.
+	var purchased := {}
+	for key in Economy.owned_outfit_keys(store):
+		purchased[String(key)] = true
+	career["outfitsPurchased"] = purchased
 	return career
 
 
 ## `saveCareer(career)` (`js/ui.js:48-54`): the whole career object, written to
 ## the `career` group.
 static func save_career(store, career: Dictionary) -> Dictionary:
-	return store.write_group("career", career)
+	var persisted := career.duplicate(true)
+	persisted.erase("outfitsPurchased")
+	return store.write_group("career", persisted)
 
 
 ## The browser calls `awardOutfitChallenges` before branching by mode
@@ -157,6 +183,56 @@ static func drill_record_after(store, session) -> Dictionary:
 	if int(session.score) > int(session.best):
 		session.best = maxi(int(session.best), int(stored["best"]))
 	return stored
+
+
+# ---------------------------------------------------------------------------
+# Training: the BOUNDED challenge's own records
+# ---------------------------------------------------------------------------
+
+## The stable key a bounded run's record lives under: the exercise, the training difficulty
+## it was played at and the number of attempts its run lasts. Two runs are comparable only
+## when all three match, which is exactly what the key says.
+static func training_key(exercise_id: String, difficulty: String, attempts: int) -> String:
+	return "%s:%s:%s:%d" % [TRAINING_KEY_PREFIX, exercise_id, difficulty, int(attempts)]
+
+
+## The bounded record for one exercise/difficulty/run length, 0 when it was never played.
+static func training_best(store, exercise_id: String, difficulty: String, attempts: int) -> int:
+	return int(load_drill_records(store).get(training_key(exercise_id, difficulty, attempts), 0))
+
+
+## Writes one bounded score through the save module's own improvement-only door. Same
+## policy, same format, a different key.
+static func save_training_score(store, exercise_id: String, difficulty: String, attempts: int, score: int) -> Dictionary:
+	var key := training_key(exercise_id, difficulty, attempts)
+	var result: Dictionary = store.write_drill_record(key, score)
+	var skipped: bool = bool(result.get("skipped", false))
+	return {
+		"key": key,
+		"best": training_best(store, exercise_id, difficulty, attempts),
+		"written": bool(result.get("ok", false)) and not skipped,
+		"skipped": skipped,
+		"result": result,
+	}
+
+
+## The training session's own record step: writes the run's score under the bounded key and
+## never touches the legacy one. `session.run_limit` is the run length the score was
+## actually produced with, so the key cannot disagree with the drill that produced it.
+static func training_record_after(store, session, difficulty: String) -> Dictionary:
+	var exercise_id: String = String(session.exercise.get("id", ""))
+	var attempts: int = int(session.run_limit)
+	return save_training_score(store, exercise_id, difficulty, attempts, int(session.score))
+
+
+## Every bounded record the save holds, keyed by its full key — the reader an audit uses to
+## prove the legacy keys and the bounded ones are separate namespaces.
+static func load_training_records(store) -> Dictionary:
+	var out: Dictionary = {}
+	for key in load_drill_records(store):
+		if String(key).begins_with(TRAINING_KEY_PREFIX + ":"):
+			out[String(key)] = int((load_drill_records(store) as Dictionary)[key])
+	return out
 
 
 # ---------------------------------------------------------------------------

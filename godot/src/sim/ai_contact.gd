@@ -35,7 +35,11 @@ static func plan(p: Dictionary, b: Dictionary, court: Dictionary, balance: Dicti
 	var ground_time: float = (float(b.vz) + impact) / gravity
 	# A short descending lob is an attacking opportunity, not a reason to retreat.
 	var landing_y: float = float(b.y) + float(b.vy) * ground_time
-	if float(b.vz) < 0.0 and float(b.z) >= 58.0 and net_distance < 170.0 and lateral < 1.2 and landing_y > float(court.netY) - 126.0:
+	# `overhead_zone` (px from the net) is 126 for Rivale and wider for stronger AI
+	# (`sim.gd` ai_overhead_stretch); without it the planner made the net player wait
+	# for the bounce on a short lob the stronger AI is now meant to smash.
+	var overhead_zone: float = float(p.get("overhead_zone", 126.0))
+	if float(b.vz) < 0.0 and float(b.z) >= 58.0 and net_distance < maxf(170.0, overhead_zone + 44.0) and lateral < 1.2 and landing_y > float(court.netY) - overhead_zone:
 		out.reason = "overhead"
 		return out
 	# Short forecasts only; reject any possible wall contact before our target.

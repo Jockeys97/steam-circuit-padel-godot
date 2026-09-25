@@ -35,15 +35,16 @@
 ## to its locked mode entries.
 ##
 ## THE TRAINING SCREEN IS THE ONE THAT READS AS A MENU. When `pending_mode` is
-## `drill` this file builds the shipped `padel_theme.tres` around a two-column
-## layout: the five `Tables.drill_catalog()` exercises on the left (one selected,
-## `Config.pending_exercise` on confirm), the chosen exercise's own name, prose and
-## saved record beside them, one primary start action, and the locale's own Back.
-## Every name, description and hint resolves through `DrillText`/`Locale`, so the
-## page is translated and carries no repository path, JSON or raw session numbers —
-## the live `DrillSession` still runs and `screen_report()` still reports it as
-## data, it is simply not painted. Tournament and career keep the presentation and
-## logic they shipped with.
+## `drill` this file mounts the SHARED hub body (`godot/src/ui/training/DrillHubView.gd`),
+## the same view the recreated `godot/src/ui/screens/DrillScreen.gd` mounts: the eight
+## `Tables.drill_catalog()` exercises grouped into Technique / Defence / Match play, one
+## selected (`Config.pending_exercise` on confirm), with the chosen exercise's own goal,
+## success rule, scored facts, controls, both records and run length beside them, one primary
+## start action, and the locale's own Back. Every string resolves through `DrillText`/
+## `Locale`, so the page is translated and carries no repository path, JSON or raw session
+## numbers — the live `DrillSession` still runs and `screen_report()` still reports it as
+## data, it is simply not painted. Tournament and career keep the presentation and logic they
+## shipped with.
 ##
 ## `--capture=mode` renders this screen and quits
 ## (`godot/game/out/mode-<mode>-screen.png`), the same shape as the menu's capture.
@@ -57,8 +58,11 @@ const MenuFocus := preload("res://game/menu_focus.gd")
 const InputSource := preload("res://game/input_map.gd")
 const NavRoutes := preload("res://src/input/nav_routes.gd")
 const Tables := preload("res://src/modes/mode_tables.gd")
+const UiData := preload("res://src/ui/data/UiData.gd")
 const DrillSession := preload("res://src/modes/drill_session.gd")
 const DrillText := preload("res://src/modes/drill_text.gd")
+const DrillHub := preload("res://src/modes/drill_hub.gd")
+const HubView := preload("res://src/ui/training/DrillHubView.gd")
 const TournamentRules := preload("res://src/modes/tournament_rules.gd")
 const CareerRules := preload("res://src/modes/career_rules.gd")
 const CareerProgress := preload("res://src/modes/career_progress.gd")
@@ -71,12 +75,6 @@ const Lineup := preload("res://game/lineup.gd")
 ## screen's own body and back control only, which leaves the tournament and career
 ## screens on the default skin they have always had.
 const PadelTheme := preload("res://src/ui/theme/padel_theme.tres")
-
-## The node-name prefix of an exercise row. `game_slice_test.gd::_mode_screens()`
-## reads the rows back through their REGISTERED ids (`drill:<id>`, below), so the
-## Control name only has to be unique and stable — and colon-free, because Godot
-## strips `:` out of a node name.
-const EXERCISE_ROW_PREFIX := "Row_"
 
 ## The reference's three mode cards (`index.html:108-125`), with the locale id of
 ## each label: the same ids the menu's mode row uses.
@@ -102,15 +100,12 @@ var _layout_seen := Vector2.ZERO
 ## The drill session this screen runs, when the mode is drill. Public so a test can
 ## read the live numbers the screen is showing.
 var session
-## The training screen's own controls: the selected exercise, the five rows by id,
-## the exclusive group that makes one of them the selection, and the three lines of
-## the detail panel. `_exercise_buttons` is only filled on the drill branch.
+## The training screen's own controls: the selected exercise and the shared hub body
+## (`godot/src/ui/training/DrillHubView.gd`), which owns the cards, the detail panel and the
+## start action. `_hub` is only built on the drill branch.
 var _selected_exercise := ""
-var _exercise_group: ButtonGroup
-var _exercise_buttons: Dictionary = {}
-var _drill_name: Label
-var _drill_desc: Label
-var _drill_best: Label
+## The shared hub body when the mode is drill (`godot/src/ui/training/DrillHubView.gd`).
+var _hub: Control = null
 ## Set by `--capture=…`: render this screen and quit, instead of waiting for a
 ## human. Same shape as the menu's own capture (`game/main_menu.gd`), because this
 ## host renders software GL (`xvfb-run` + `opengl3`) and every engine start-up is
@@ -361,47 +356,13 @@ func _on_row(id: String, detail: String) -> void:
 
 
 # ---------------------------------------------------------------------------
-# The training screen: five exercises, one chosen, one action
+# The training screen: the shared hub body, one chosen exercise, one action
 # ---------------------------------------------------------------------------
 
-## One exercise in the list. The name is the drill table's own
-## (`DrillText.exercise_name` — the reference's `drill_<id>_name` for its four rows,
-## this build's `drill_strings.json` for the Godot-only ones), so the page and the
-## coach can never name the same exercise differently.
-func _make_exercise_row(list: VBoxContainer, exercise_id: String) -> void:
-	var b := Button.new()
-	b.name = EXERCISE_ROW_PREFIX + exercise_id
-	b.text = DrillText.exercise_name(exercise_id)
-	# `toggle_mode` + one `ButtonGroup` is the reference's segmented control: exactly
-	# one row is the selection, and clicking another moves it. The variation carries
-	# the visible selected state (`SegmentedActive` fills cyan, `SegmentedInactive`
-	# stays quiet), which the theme's shared `Button/styles/pressed` does not.
-	b.toggle_mode = true
-	b.button_group = _exercise_group
-	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	b.focus_mode = Control.FOCUS_ALL
-	b.add_theme_font_size_override("font_size", 16)
-	b.custom_minimum_size = Vector2(0.0, 44.0)
-	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	b.pressed.connect(_on_exercise.bind(exercise_id))
-	list.add_child(b)
-	_rows.append(b)
-	_exercise_buttons[exercise_id] = b
-	# The id the model reports on confirm stays `drill:<id>` — `screen_report()`'s
-	# rows and `game_slice_test.gd::_mode_screens()` both read that shape.
-	_register("drill:%s" % exercise_id, b, "drill:%s" % exercise_id)
-	_style_exercise_row(b, exercise_id == _selected_exercise)
-
-
-func _style_exercise_row(button: Button, selected: bool) -> void:
-	button.set_pressed_no_signal(selected)
-	button.theme_type_variation = "SegmentedActive" if selected else "SegmentedInactive"
-
-
-## The exercise the screen opens on: the one already pending, when the catalogue
-## still carries it, otherwise the catalogue's own first row — the same default
-## `ModeSession.start` falls back to. Nothing is written to `Config` here: the seam
-## is only touched when the player actually chooses.
+## The exercise the screen opens on: the one already pending, when the catalogue still carries
+## it, otherwise the catalogue's own first row — the same default `ModeSession.start` falls
+## back to. Nothing is written to `Config` here: the seam is only touched when the player
+## actually chooses.
 func _initial_exercise(exercises: Array) -> String:
 	var ids: Array[String] = []
 	for exercise in exercises:
@@ -413,37 +374,38 @@ func _initial_exercise(exercises: Array) -> String:
 
 
 ## A row was activated — by the mouse (`pressed`) or by the navigation model
-## (`_run_action`), which suppress the other.
+## (`_run_action`), which suppress the other. The hub owns the choice; this keeps the
+## screen's own seam (`Config.pending_exercise`) in step with it.
 func _on_exercise(exercise_id: String) -> void:
-	if not _exercise_buttons.has(exercise_id):
+	if not _hub_has(exercise_id):
 		return
 	_select_exercise(exercise_id)
 
 
-## Makes one exercise the screen's choice. This is the ONE place the choice is
-## written, and it writes exactly what the shipped gate/`screen_report()` expect:
-## `Config.pending_exercise`, which `start_mode()` and the match scene read.
+## Makes one exercise the screen's choice. This is the ONE place the choice is written, and it
+## writes exactly what the shipped gate/`screen_report()` expect: `Config.pending_exercise`,
+## which `start_mode()` and the match scene read.
 func _select_exercise(exercise_id: String) -> void:
+	if _hub == null or not _hub.select_exercise(exercise_id):
+		return
 	_selected_exercise = exercise_id
 	Config.pending_exercise = exercise_id
-	for id in _exercise_buttons.keys():
-		_style_exercise_row(_exercise_buttons[id], String(id) == exercise_id)
 	_refresh_drill_detail()
 
 
-## The detail panel and the hint line for the selected exercise: its prose, its
-## saved record, and nothing else. Every string resolves through `DrillText` in the
-## current locale, so a language flip moves all of it.
+func _hub_has(exercise_id: String) -> bool:
+	for row in Tables.drill_catalog():
+		if String((row as Dictionary).get("id", "")) == exercise_id:
+			return true
+	return false
+
+
+## The hint line under the hub. The panel's own prose (goal, success rule, scored facts,
+## controls, records, run length) is written by the shared view; this screen adds the
+## reference's per-exercise hint, which the old page also carried.
 func _refresh_drill_detail() -> void:
-	if _drill_name == null:
-		return
-	var exercise_id := _selected_exercise
-	_drill_name.text = DrillText.exercise_name(exercise_id)
-	_drill_desc.text = DrillText.t(DrillText.exercise_desc_key(exercise_id))
-	var records: Dictionary = ModesSave.load_drill_records(Config.save_store())
-	_drill_best.text = "%s: %d" % [_text("drillBest", "Record"), int(records.get(exercise_id, 0))]
 	if _detail != null:
-		_detail.text = DrillText.t(DrillText.exercise_hint_key(exercise_id))
+		_detail.text = DrillText.t(DrillText.exercise_hint_key(_selected_exercise))
 
 
 ## The row that actually plays the mode. Everything else on these screens reads
@@ -576,73 +538,71 @@ func _col_make_drill(col: VBoxContainer) -> void:
 			session.step(1.0 / 120.0, {"hit": true} if _i == 0 else {})
 
 	_selected_exercise = _initial_exercise(exercises)
-	_exercise_group = ButtonGroup.new()
 
-	var body := HBoxContainer.new()
+	# The SHARED hub body (`godot/src/ui/training/DrillHubView.gd`): the same view the
+	# recreated `DrillScreen` mounts, so the two routes cannot describe an exercise
+	# differently. The shipped theme is scoped to this screen's own subtree (see `PadelTheme`),
+	# so the view's variations resolve here exactly as they do there.
+	var body := MarginContainer.new()
 	body.name = "DrillBody"
-	# The shipped theme, scoped to this screen's own subtree (see `PadelTheme`).
 	body.theme = PadelTheme
-	body.add_theme_constant_override("separation", 28)
-	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	col.add_child(body)
+	_hub = HubView.new()
+	_hub.name = "DrillHub"
+	_hub.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_hub.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.add_child(_hub)
+	_hub.setup(Config.save_store(), _initial_difficulty(), Locale.current_lang())
+	_hub.select_exercise(_selected_exercise)
+	_hub.exercise_selected.connect(_on_hub_exercise)
+	_hub.start_requested.connect(_on_hub_start)
+	_hub.difficulty_changed.connect(_on_hub_difficulty)
 
-	# Left: the five exercises, one row each, in the catalogue's own order.
-	var left := VBoxContainer.new()
-	left.name = "DrillListColumn"
-	left.add_theme_constant_override("separation", 10)
-	left.custom_minimum_size = Vector2(300.0, 0.0)
-	left.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	left.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	body.add_child(left)
-	var heading := _label(_text("drillExercise", "Esercizio"), 15, Color(0.72, 0.78, 0.86))
-	heading.theme_type_variation = "LabelSmall"
-	left.add_child(heading)
-	var box := PanelContainer.new()
-	box.name = "DrillListBox"
-	box.theme_type_variation = "SegmentedContainer"
-	left.add_child(box)
-	var list := VBoxContainer.new()
-	list.name = "DrillList"
-	list.add_theme_constant_override("separation", 4)
-	box.add_child(list)
-	for exercise in exercises:
-		_make_exercise_row(list, String((exercise as Dictionary).get("id", "")))
+	# The rows the model navigates and `screen_report()` lists: the hub's own cards, in the
+	# order the page shows them, under the ids the ports already use (`drill:<id>`), plus the
+	# difficulty row and the one start action.
+	for row in _hub.focus_rows():
+		var entry: Dictionary = row
+		var action := String(entry["action"])
+		var focus_id := "drill:%s" % action.substr(action.find(":") + 1) if action.begins_with("exercise:") else action
+		if action.begins_with("difficulty:"):
+			focus_id = action
+		_rows.append(entry["control"] as Button)
+		_register(focus_id, entry["control"], focus_id)
+	_refresh_drill_detail()
 
-	# Right: the chosen exercise's own prose, its saved record, and the one action.
-	var right := VBoxContainer.new()
-	right.name = "DrillDetailColumn"
-	right.add_theme_constant_override("separation", 16)
-	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	body.add_child(right)
-	var panel := PanelContainer.new()
-	panel.name = "DrillDetailPanel"
-	panel.theme_type_variation = "PanelDark"
-	right.add_child(panel)
-	var info := VBoxContainer.new()
-	info.name = "DrillDetail"
-	info.add_theme_constant_override("separation", 12)
-	panel.add_child(info)
-	_drill_name = _label("", 24, Color(0.0, 0.898, 1.0))
-	_drill_name.name = "DrillName"
-	_drill_name.theme_type_variation = "CardTitle"
-	info.add_child(_drill_name)
-	_drill_desc = _label("", 16, Color(0.80, 0.86, 0.92))
-	_drill_desc.name = "DrillDesc"
-	info.add_child(_drill_desc)
-	_drill_best = _label("", 16, Color(1.0, 0.8, 0.0))
-	_drill_best.name = "DrillBest"
-	_drill_best.theme_type_variation = "LabelSmall"
-	info.add_child(_drill_best)
-	# The card hugs its own three lines at the top of the column and the action sits at
-	# the bottom, so neither floats in a panel taller than the text it holds and the
-	# primary button still reads as the page's own end point.
-	var spacer := Control.new()
-	spacer.name = "DrillDetailSpacer"
-	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	right.add_child(spacer)
-	# The reference's own primary-action id (`playNow`: "GIOCA ORA" / "PLAY NOW"), the
-	# same word the menu's play button wears.
-	_start_row(right, _text("playNow", "Play now"), true)
+
+## The shared hub body's own report, so a test (and `screen_report()`) can read the page as
+## data without reaching into the view's internals. `{}` in the two other modes.
+func hub_report() -> Dictionary:
+	if _hub == null:
+		return {}
+	return _hub.report()
+
+
+## The difficulty the hub opens on: the stored `aiDifficulty` when it is one of the four
+## (`js/main.js:2162`), otherwise the first. Read-only — choosing one here writes no
+## preference (`DrillHub.seed_difficulty`).
+func _initial_difficulty() -> String:
+	var snapshot: Dictionary = UiData.settings_snapshot(Config.save_store())
+	return DrillHub.seed_difficulty(String(snapshot.get("ai_difficulty", "")))
+
+
+func _on_hub_exercise(exercise_id: String) -> void:
+	_selected_exercise = exercise_id
+	Config.pending_exercise = exercise_id
+	_refresh_drill_detail()
+
+
+func _on_hub_start(_exercise_id: String) -> void:
+	start_mode()
+
+
+## A difficulty row row: the choice is transient (no preference is written) and travels to the
+## run through `Config.pending_drill_difficulty`, which `game/mode_session.gd` resolves into
+## the drill's AI profile.
+func _on_hub_difficulty(difficulty_id: String) -> void:
+	Config.pending_drill_difficulty = difficulty_id
 
 
 func _col_make_tournament(col: VBoxContainer) -> void:

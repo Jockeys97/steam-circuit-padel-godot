@@ -1,0 +1,23 @@
+{
+  "id": "01a0cf3e-46d1-7386-be9c-acc57789d1f4",
+  "type": "text-to-3d-preview",
+  "mode": "preview",
+  "name": "",
+  "model_type": "standard",
+  "seed": 3010144938,
+  "prompt": "Single isolated tropical coastal granite mountain inspired by Sugarloaf Mountain in Rio de Janeiro. Recognizable tall rounded asymmetrical granite dome, steep weathered gray rock faces, irregular dark green vegetation patches on lower slopes and crown, attached smaller rocky foothill. Stylized realistic game environment landmark, readable large silhouette, broad natural irregular base, no rectangular pedestal. No ocean, no sky, no buildings, no text, no people. Solid static terrain prop viewed from all sides.",
+  "texture_prompt": "",
+  "texture_image_url": "",
+  "status": "SUCCEEDED",
+  "created_at": 1790183362091,
+  "progress": 100,
+  "started_at": 1790183362101,
+  "finished_at": 1790183459291,
+  "task_error": null,
+  "model_urls": {
+    "glb": "[redacted signed asset URL]"
+  },
+  "thumbnail_url": "[redacted signed asset URL]",
+  "texture_urls": [],
+  "consumed_credits": 20
+}

@@ -42,6 +42,7 @@ extends RefCounted
 const DATA_PATH := "res://src/modes/data/modes.json"
 const GENERATOR := "tools/modes-port/extract-modes.mjs"
 const DrillExtras := preload("res://src/modes/drill_extras.gd")
+const ConceptOutfits := preload("res://src/character/concept_outfits.gd")
 
 static var _data: Dictionary = {}
 
@@ -120,6 +121,14 @@ static func outfits() -> Dictionary:
 ## unknown athlete.
 static func outfits_for_athlete(athlete_id: String) -> Array:
 	return outfits().get(athlete_id, [])
+
+
+## Wardrobe and match selectors include Godot-only cosmetic kits; the generated
+## reference table above stays untouched for parity and challenge accounting.
+static func playable_outfits_for_athlete(athlete_id: String) -> Array:
+	var out: Array = outfits_for_athlete(athlete_id).duplicate()
+	out.append_array(ConceptOutfits.menu_rows(athlete_id))
+	return out
 
 
 ## The outfit with this `unlockKey`, or `{}`. `js/data.js:799-804`.

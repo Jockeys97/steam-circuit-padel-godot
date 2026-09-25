@@ -1,0 +1,306 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok training/the_frozen_reference_still_has_its_own_four
+ok training/the_catalog_offers_eight
+ok training/every_catalog_exercise_has_an_objective
+ok training/no_objective_is_orphaned
+ok training/precision/objective_is_well_formed
+ok training/precision/has_a_bounded_run
+ok training/precision/lists_the_controls_it_uses
+ok training/smash/objective_is_well_formed
+ok training/smash/has_a_bounded_run
+ok training/smash/lists_the_controls_it_uses
+ok training/rally/objective_is_well_formed
+ok training/rally/has_a_bounded_run
+ok training/rally/lists_the_controls_it_uses
+ok training/serve/objective_is_well_formed
+ok training/serve/has_a_bounded_run
+ok training/serve/lists_the_controls_it_uses
+ok training/return/objective_is_well_formed
+ok training/return/has_a_bounded_run
+ok training/return/lists_the_controls_it_uses
+ok training/glass_recovery/objective_is_well_formed
+ok training/glass_recovery/has_a_bounded_run
+ok training/glass_recovery/lists_the_controls_it_uses
+ok training/net_play/objective_is_well_formed
+ok training/net_play/has_a_bounded_run
+ok training/net_play/lists_the_controls_it_uses
+ok training/doubles_tactics/objective_is_well_formed
+ok training/doubles_tactics/has_a_bounded_run
+ok training/doubles_tactics/lists_the_controls_it_uses
+ok training/the_groups_hold_every_catalog_exercise_exactly_once
+ok training/the_family_technique_keeps_catalog_order
+ok training/the_family_defence_keeps_catalog_order
+ok training/the_family_match_play_keeps_catalog_order
+ok training/the_hub_has_three_families
+ok training/every_family_has_a_name
+ok training/every_family_has_a_name
+ok training/every_family_has_a_name
+ok training/every_player_facing_id_resolves_in_both_languages
+ok training/no_exercise_advertises_the_right_trigger_as_sprint
+ok training/glass_recovery/the_run_length_is_the_objective's
+ok training/glass_recovery/the_run_reaches_its_summary
+ok training/glass_recovery/the_run_closes_exactly_its_own_attempts
+ok training/glass_recovery/the_run_reports_itself_finished
+ok training/glass_recovery/the_summary_counts_the_attempts
+ok training/glass_recovery/the_summary_counts_the_hits
+ok training/glass_recovery/the_accuracy_is_hits_over_attempts
+ok training/glass_recovery/the_summary_carries_the_score
+ok training/glass_recovery/the_summary_carries_the_run_length
+ok training/glass_recovery/a_finished_run_does_not_restart_itself
+ok training/glass_recovery/a_retry_clears_the_attempts
+ok training/glass_recovery/a_retry_clears_the_hits
+ok training/glass_recovery/a_retry_clears_the_score
+ok training/glass_recovery/a_retry_keeps_the_record
+ok training/glass_recovery/a_retry_starts_a_live_run
+ok training/glass_recovery/a_retry_does_not_double_count
+# report glass_recovery run: attempts=0 hits=0 score=0 best=20
+ok training/net_play/the_run_length_is_the_objective's
+ok training/net_play/the_run_reaches_its_summary
+ok training/net_play/the_run_closes_exactly_its_own_attempts
+ok training/net_play/the_run_reports_itself_finished
+ok training/net_play/the_summary_counts_the_attempts
+ok training/net_play/the_summary_counts_the_hits
+ok training/net_play/the_accuracy_is_hits_over_attempts
+ok training/net_play/the_summary_carries_the_score
+ok training/net_play/the_summary_carries_the_run_length
+ok training/net_play/a_finished_run_does_not_restart_itself
+ok training/net_play/a_retry_clears_the_attempts
+ok training/net_play/a_retry_clears_the_hits
+ok training/net_play/a_retry_clears_the_score
+ok training/net_play/a_retry_keeps_the_record
+ok training/net_play/a_retry_starts_a_live_run
+ok training/net_play/a_retry_does_not_double_count
+# report net_play run: attempts=0 hits=0 score=0 best=10
+ok training/doubles_tactics/the_run_length_is_the_objective's
+ok training/doubles_tactics/the_run_reaches_its_summary
+ok training/doubles_tactics/the_run_closes_exactly_its_own_attempts
+ok training/doubles_tactics/the_run_reports_itself_finished
+ok training/doubles_tactics/the_summary_counts_the_attempts
+ok training/doubles_tactics/the_summary_counts_the_hits
+ok training/doubles_tactics/the_accuracy_is_hits_over_attempts
+ok training/doubles_tactics/the_summary_carries_the_score
+ok training/doubles_tactics/the_summary_carries_the_run_length
+ok training/doubles_tactics/a_finished_run_does_not_restart_itself
+ok training/doubles_tactics/a_retry_clears_the_attempts
+ok training/doubles_tactics/a_retry_clears_the_hits
+ok training/doubles_tactics/a_retry_clears_the_score
+ok training/doubles_tactics/a_retry_keeps_the_record
+ok training/doubles_tactics/a_retry_starts_a_live_run
+ok training/doubles_tactics/a_retry_does_not_double_count
+# report doubles_tactics run: attempts=0 hits=0 score=0 best=9
+ok training/glass_recovery/seed_4242/a_hit_required_a_human_contact
+ok training/glass_recovery/seed_4242/a_hit_scores
+ok training/glass_recovery/seed_4242/the_success_names_its_own_objective
+ok training/glass_recovery/seed_7/a_hit_required_a_human_contact
+ok training/glass_recovery/seed_7/a_hit_scores
+ok training/glass_recovery/seed_7/the_success_names_its_own_objective
+ok training/glass_recovery/the_challenge_is_winnable_by_a_scripted_player
+# report glass_recovery scripted: 2 of 3 succeeded, diagnoses ["drillWhyGlassMissed", "drillWhyGlassIn", "drillWhyGlassIn"]
+ok training/glass_recovery/an_untouched_ball_is_never_a_hit
+SCRIPT ERROR: Invalid operands 'int' and 'bool' in operator '=='.
+          at: check_eq (res://src/audits/audit_base.gd:54)
+          GDScript backtrace (most recent call first):
+              [0] check_eq (res://src/audits/audit_base.gd:54)
+              [1] _play (res://tests/modes/drill_training_challenge_audit.gd:247)
+              [2] _initialize (res://tests/modes/drill_training_challenge_audit.gd:72)
+ok training/glass_recovery/the_passive_attempt_still_closes_once
+ok training/glass_recovery/and_counts_as_one
+ok training/glass_recovery/the_failure_diagnosis_resolves_in_both_languages
+ok training/glass_recovery/no_input_is_not_graded_as_the_success
+ok training/glass_recovery/the_next_attempt_opens
+ok training/glass_recovery/the_next_attempt_has_no_stale_contact
+ok training/glass_recovery/the_next_attempt_has_no_stale_glass_mark
+SCRIPT ERROR: Invalid operands 'int' and 'bool' in operator '=='.
+          at: check_eq (res://src/audits/audit_base.gd:54)
+          GDScript backtrace (most recent call first):
+              [0] check_eq (res://src/audits/audit_base.gd:54)
+              [1] _play (res://tests/modes/drill_training_challenge_audit.gd:259)
+              [2] _initialize (res://tests/modes/drill_training_challenge_audit.gd:72)
+ok training/glass_recovery/the_next_attempt_has_no_stale_tactic
+ok training/net_play/seed_1234/a_hit_required_a_human_contact
+ok training/net_play/seed_1234/a_hit_scores
+ok training/net_play/seed_1234/the_success_names_its_own_objective
+ok training/net_play/the_challenge_is_winnable_by_a_scripted_player
+# report net_play scripted: 1 of 3 succeeded, diagnoses ["drillWhyNetIn", "drillWhyNoContact", "drillWhyNoContact"]
+ok training/net_play/an_untouched_ball_is_never_a_hit
+SCRIPT ERROR: Invalid operands 'int' and 'bool' in operator '=='.
+          at: check_eq (res://src/audits/audit_base.gd:54)
+          GDScript backtrace (most recent call first):
+              [0] check_eq (res://src/audits/audit_base.gd:54)
+              [1] _play (res://tests/modes/drill_training_challenge_audit.gd:247)
+              [2] _initialize (res://tests/modes/drill_training_challenge_audit.gd:72)
+ok training/net_play/the_passive_attempt_still_closes_once
+ok training/net_play/and_counts_as_one
+ok training/net_play/the_failure_diagnosis_resolves_in_both_languages
+ok training/net_play/no_input_is_not_graded_as_the_success
+ok training/net_play/the_next_attempt_opens
+ok training/net_play/the_next_attempt_has_no_stale_contact
+ok training/net_play/the_next_attempt_has_no_stale_glass_mark
+SCRIPT ERROR: Invalid operands 'int' and 'bool' in operator '=='.
+          at: check_eq (res://src/audits/audit_base.gd:54)
+          GDScript backtrace (most recent call first):
+              [0] check_eq (res://src/audits/audit_base.gd:54)
+              [1] _play (res://tests/modes/drill_training_challenge_audit.gd:259)
+              [2] _initialize (res://tests/modes/drill_training_challenge_audit.gd:72)
+ok training/net_play/the_next_attempt_has_no_stale_tactic
+ok training/doubles_tactics/seed_1234/a_hit_required_a_human_contact
+ok training/doubles_tactics/seed_1234/a_hit_scores
+ok training/doubles_tactics/seed_1234/the_success_names_its_own_objective
+ok training/doubles_tactics/seed_4242/a_hit_required_a_human_contact
+ok training/doubles_tactics/seed_4242/a_hit_scores
+ok training/doubles_tactics/seed_4242/the_success_names_its_own_objective
+ok training/doubles_tactics/the_challenge_is_winnable_by_a_scripted_player
+# report doubles_tactics scripted: 2 of 3 succeeded, diagnoses ["drillWhyTacticIn", "drillWhyTacticIn", "drillWhyNoContact"]
+ok training/doubles_tactics/an_untouched_ball_is_never_a_hit
+SCRIPT ERROR: Invalid operands 'int' and 'bool' in operator '=='.
+          at: check_eq (res://src/audits/audit_base.gd:54)
+          GDScript backtrace (most recent call first):
+              [0] check_eq (res://src/audits/audit_base.gd:54)
+              [1] _play (res://tests/modes/drill_training_challenge_audit.gd:247)
+              [2] _initialize (res://tests/modes/drill_training_challenge_audit.gd:72)
+ok training/doubles_tactics/the_passive_attempt_still_closes_once
+ok training/doubles_tactics/and_counts_as_one
+ok training/doubles_tactics/the_failure_diagnosis_resolves_in_both_languages
+ok training/doubles_tactics/no_input_is_not_graded_as_the_success
+ok training/doubles_tactics/the_next_attempt_opens
+ok training/doubles_tactics/the_next_attempt_has_no_stale_contact
+ok training/doubles_tactics/the_next_attempt_has_no_stale_glass_mark
+SCRIPT ERROR: Invalid operands 'int' and 'bool' in operator '=='.
+          at: check_eq (res://src/audits/audit_base.gd:54)
+          GDScript backtrace (most recent call first):
+              [0] check_eq (res://src/audits/audit_base.gd:54)
+              [1] _play (res://tests/modes/drill_training_challenge_audit.gd:259)
+              [2] _initialize (res://tests/modes/drill_training_challenge_audit.gd:72)
+ok training/doubles_tactics/the_next_attempt_has_no_stale_tactic
+ok training/glass_recovery/a_stalled_attempt_is_closed_by_the_timeout
+ok training/glass_recovery/and_counts_once
+ok training/glass_recovery/and_is_not_a_hit
+ok training/net_play/a_stalled_attempt_is_closed_by_the_timeout
+ok training/net_play/and_counts_once
+ok training/net_play/and_is_not_a_hit
+ok training/doubles_tactics/a_stalled_attempt_is_closed_by_the_timeout
+ok training/doubles_tactics/and_counts_once
+ok training/doubles_tactics/and_is_not_a_hit
+ok training/glass_recovery/no_bounded_record_yet
+ok training/glass_recovery/the_bounded_record_is_written
+ok training/glass_recovery/another_difficulty_is_another_record
+ok training/glass_recovery/another_run_length_is_another_record
+ok training/glass_recovery/the_key_is_stable
+ok training/glass_recovery/the_bounded_write_does_not_touch_the_legacy_record
+ok training/glass_recovery/a_worse_run_is_not_written
+ok training/glass_recovery/and_the_record_stands
+ok training/net_play/no_bounded_record_yet
+ok training/net_play/the_bounded_record_is_written
+ok training/net_play/another_difficulty_is_another_record
+ok training/net_play/another_run_length_is_another_record
+ok training/net_play/the_key_is_stable
+ok training/net_play/the_bounded_write_does_not_touch_the_legacy_record
+ok training/net_play/a_worse_run_is_not_written
+ok training/net_play/and_the_record_stands
+ok training/doubles_tactics/no_bounded_record_yet
+ok training/doubles_tactics/the_bounded_record_is_written
+ok training/doubles_tactics/another_difficulty_is_another_record
+ok training/doubles_tactics/another_run_length_is_another_record
+ok training/doubles_tactics/the_key_is_stable
+ok training/doubles_tactics/the_bounded_write_does_not_touch_the_legacy_record
+ok training/doubles_tactics/a_worse_run_is_not_written
+ok training/doubles_tactics/and_the_record_stands
+ok training/only_the_challenges_wrote_bounded_records
+ok training/the_mode_session_starts_a_drill
+ok training/the_run_persists_its_own_bounded_key
+ok training/and_the_record_reads_back
+ok training/the_finish_reports_the_drill
+ok training/finishing_a_run_awards_no_career
+ok training/finishing_a_run_awards_no_outfits
+ok training/finishing_a_run_awards_no_trophy
+ok training/finishing_a_run_awards_no_economy
+ok training/finishing_a_run_awards_no_objectives
+ok training/finishing_a_run_awards_no_history
+ok training/a_run_writes_no_history_entry
+ok training/a_run_does_not_touch_the_career
+ok training/the_session_starts_with_a_chosen_difficulty
+ok training/the_run_records_the_chosen_difficulty
+ok training/the_run_plays_the_profile_that_difficulty_names
+ok training/no_choice_keeps_the_original_opponent
+ok training/no_choice_records_the_default
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+MODE_RESOLVED {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"difficulty":"easy","exercise":"net_play","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillHits","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"run_done":false,"run_limit":8,"score":0,"score_line":"—","streak":0,"summary":{"accuracy":0.0,"attempts":0,"best":0,"exercise":"net_play","grade":null,"hits":0,"run_done":false,"run_limit":8,"score":0},"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0},"training_best":0},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=112 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=249 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready().
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:1064)
+         [4] _ready (res://game/match_controller.gd:525)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready().
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:1064)
+         [4] _ready (res://game/match_controller.gd:525)
+MODE_START {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"difficulty":"easy","exercise":"net_play","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillHits","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"run_done":false,"run_limit":8,"score":0,"score_line":"—","streak":0,"summary":{"accuracy":0.0,"attempts":0,"best":0,"exercise":"net_play","grade":null,"hits":0,"run_done":false,"run_limit":8,"score":0},"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0},"training_best":0},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+FAIL summary/the_run_reaches_its_summary_on_the_match_path: expected true, got false
+FAIL summary/the_run_played_its_attempts: expected "> 0", got 0
+ok summary/the_ending_shot_does_not_retry_the_run
+FAIL summary/and_the_summary_is_still_up: expected true, got false
+ok summary/A_retries_the_run
+ok summary/and_the_retry_is_live
+ok summary/so_the_summary_is_gone
+ok summary/the_retried_run_reaches_its_summary
+ok summary/the_panel_offers_three_real_buttons
+ok summary/a_mouse_click_on_Retry_retries_the_run
+ok summary/and_leaves_the_summary
+ok summary/the_second_retry_reaches_its_summary
+MODE_FINISH {"attempts":8,"best":11,"exercise":"net_play","grade":null,"hits":1,"mode":"drill","persisted_best":11,"record":{"best":11,"result":{"bytes":180,"message":"atomic write (temp + rename)","ok":true,"path":"user://training-summary-audit/drill.json"},"skipped":false,"written":true},"run_done":true,"run_limit":8,"score":11,"score_line":"—","summary":{"accuracy":0.125,"attempts":8,"best":11,"exercise":"net_play","grade":null,"hits":1,"run_done":true,"run_limit":8,"score":11},"training_best":11,"training_record":{"best":11,"key":"training_v1:net_play:easy:8","result":{"bytes":0,"message":"no improvement over 11: record kept (js/ui.js:219-230)","ok":true,"path":"user://training-summary-audit/drill.json","skipped":true},"skipped":true,"written":false}}
+ok summary/B_ends_the_run
+ok summary/and_asks_for_the_training_hub
+ok summary/the_end_is_the_drills_own
+MATCH_BUILD_GATE refused={} effective={"arena":"officina","arena_index":0,"athlete":"maestro","athlete_index":0,"tier":"rivale","tier_index":0}
+MATCH_START tier=rivale athlete=maestro arena=officina seed=20260916 camera=default models=false headless=true switch=semi
+MODE_RESOLVED {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"difficulty":"easy","exercise":"net_play","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillHits","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"run_done":false,"run_limit":8,"score":0,"score_line":"—","streak":0,"summary":{"accuracy":0.0,"attempts":0,"best":0,"exercise":"net_play","grade":null,"hits":0,"run_done":false,"run_limit":8,"score":0},"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0},"training_best":11},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=104 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=234 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready().
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _build (res://src/ui/screens/ReplayOverlay.gd:416)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:356)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:1064)
+         [4] _ready (res://game/match_controller.gd:525)
+         [5] _match_node (res://tests/modes/drill_training_challenge_audit.gd:436)
+         [6] _summary_actions (res://tests/modes/drill_training_challenge_audit.gd:412)
+         [7] _match_node (res://tests/modes/drill_training_challenge_audit.gd:440)
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready().
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _apply_progress (res://src/ui/screens/ReplayOverlay.gd:435)
+         [1] _ensure (res://src/ui/screens/ReplayOverlay.gd:358)
+         [2] _ready (res://src/ui/screens/ReplayOverlay.gd:155)
+         [3] _build_scene (res://game/match_controller.gd:1064)
+         [4] _ready (res://game/match_controller.gd:525)
+         [5] _match_node (res://tests/modes/drill_training_challenge_audit.gd:436)
+         [6] _summary_actions (res://tests/modes/drill_training_challenge_audit.gd:412)
+         [7] _match_node (res://tests/modes/drill_training_challenge_audit.gd:440)
+MODE_START {"ai":"rivale","arena":"officina","arenas":9,"awarded":{},"demo":false,"drill":{"attempts":0,"best":0,"diagnosis":null,"difficulty":"easy","exercise":"net_play","grade":null,"hits":0,"landing":null,"metrics":[{"key":"drillScore","value":"0"},{"key":"drillBest","value":"0"},{"key":"drillHits","value":"0/0"},{"key":"drillStreak","value":"0"}],"phase":"ready","rally_hits":0,"round":0,"run_done":false,"run_limit":8,"score":0,"score_line":"—","streak":0,"summary":{"accuracy":0.0,"attempts":0,"best":0,"exercise":"net_play","grade":null,"hits":0,"run_done":false,"run_limit":8,"score":0},"target":{"active":false,"kind":"short","r":46.0,"x":0.0,"y":0.0},"training_best":11},"finished":false,"lineup":{"opponent":"steamer","opponentMate":"fiamma","player":"maestro","playerMate":"pantera"},"match_index":0,"mode":"drill","objective":{},"outfit":"base","phase":"live","round":0,"saved":{},"season":1,"seed":20260916,"winner":""}
+FAIL summary/the_exit_run_reaches_its_summary: expected true, got false
+FAIL summary/the_exit_button_ends_the_run: expected true, got false
+FAIL summary/and_asks_for_the_menu: expected "exit", got ""
+ok summary/no_action_writes_a_history_entry
+FAIL 195/201
+FAIL 195/201
+# first failure FAIL summary/the_run_reaches_its_summary_on_the_match_path: expected true, got false
+# first failure FAIL summary/the_run_reaches_its_summary_on_the_match_path: expected true, got false

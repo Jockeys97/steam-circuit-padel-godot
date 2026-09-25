@@ -52,6 +52,7 @@ const InputSource := preload("res://game/input_map.gd")
 ## The verified audio module, for the one job the host has in it: applying the stored
 ## master volume at boot (`js/main.js:2278`). The bus derivation stays in the module.
 const AudioPortScript := preload("res://src/audio/audio_port.gd")
+const MusicSettings := preload("res://src/audio/music_settings.gd")
 
 const TIER_NAMES := ["Rivale del Circuito", "Ingegnere del Vapore", "Campione Steampunk", "Leggenda del Circuito"]
 ## The three mode entries: the keyboard/pad action id, the locale id of the label,
@@ -106,6 +107,12 @@ var _router: Control = null
 ## True once the playable host is mounted (the recreated path). Every branch below
 ## that has two shapes asks this flag once.
 var _playable := false
+## The feedback transport (`src/feedback/feedback_delivery.gd`), or null in a run that
+## must not post. It is owned by this host — not by the feedback screen — so a message
+## whose send is still in flight when the player leaves the form is still delivered and
+## its confirmation still written. `_arm_feedback_delivery()` is the only place it is
+## built, and it refuses to build one for a headless or capture run.
+var _feedback_delivery: Node = null
 ## UIR-05's bridge over the same `_focus` model the ported column uses: the screens
 ## declare their controls, the model decides, and the bridge turns a verdict into a
 ## `ScreenRouter.go_to` or one of its two signals.
@@ -150,6 +157,7 @@ func _ready() -> void:
 	_init_economy()
 	_runtime_ost = preload("res://src/audio/runtime_soundtrack.gd").new()
 	add_child(_runtime_ost)
+	_runtime_ost.music_enabled_changed.connect(_on_music_enabled_changed)
 	_runtime_ost.set_screen("menu")
 	_capture = "--capture=menu" in OS.get_cmdline_user_args()
 	_out_name = _arg("--out=", "menu")
@@ -605,9 +613,16 @@ func _mount_ui_prototype() -> void:
 	# so a value the settings screen wrote is already in force before any screen reads
 	# it — including the language above, which the reference applies in the same block.
 	_apply_stored_audio_prefs()
+	# The feedback transport exists BEFORE the first route is mounted: a launch that goes
+	# straight back to the feedback form (`Config.pending_menu_screen`) has to be handed a
+	# transport by its own mount, and the launch queue retry belongs to the same moment.
+	# A headless or capture run still arms nothing (`_arm_feedback_delivery`).
+	_arm_feedback_delivery()
 	# A finished match left its payload behind; everything else starts at the menu.
 	if Config.pending_result.is_empty():
-		if not _router.go_to("menu"):
+		var destination := Config.pending_menu_screen if Config.pending_menu_screen != "" else "menu"
+		Config.pending_menu_screen = ""
+		if not _router.go_to(destination):
 			push_error("main_menu: the router refused to mount the menu screen")
 	else:
 		var payload := Config.take_pending_result()
@@ -615,6 +630,42 @@ func _mount_ui_prototype() -> void:
 			push_error("main_menu: the router refused to mount the result screen")
 	_on_screen_changed("", String(_router.active_id()))
 	_refresh_pending = 2
+
+
+## The feedback transport, built once per playable run and owned here.
+##
+## A HEADLESS OR CAPTURE RUN NEVER ARMS IT, and that is the whole guard: the endpoint is
+## a real address, so an automated pass over the menu — an audit, a screenshot lane, the
+## slice gate — must not be able to post a message or write a confirmation. With no
+## transport the form keeps the honest save-and-copy ladder it ships with.
+##
+## Called once, before the first route is mounted, so the launch retry below is not racing
+## the feedback screen's own mount: a relaunch that asks to reopen the feedback form gets
+## a screen whose transport is already there. `PLAN.md`'s "Al riavvio ritentare le voci
+## pendenti una volta, senza loop aggressivi" is that one retry — the transport itself
+## refuses a second pass (`boot_retry`), so this is not a poll — and because the screen is
+## bound to the transport's own signal, this run's verdict still reaches it if it was the
+## screen the launch opened.
+func _arm_feedback_delivery() -> void:
+	if DisplayServer.get_name() == "headless" or _capture:
+		return
+	var script := load("res://src/feedback/feedback_delivery.gd") as GDScript
+	if script == null:
+		push_error("main_menu: the feedback transport did not load")
+		return
+	var delivery: Node = script.new()
+	delivery.name = "FeedbackDelivery"
+	add_child(delivery)
+	# Read from the script's own constant map instead of repeating the address: one
+	# source for the endpoint, and a rename cannot leave this copy behind.
+	var endpoint := String(script.get_script_constant_map().get("ENDPOINT", ""))
+	if endpoint == "":
+		push_error("main_menu: the feedback transport declares no endpoint")
+		delivery.queue_free()
+		return
+	delivery.call("configure", endpoint)
+	_feedback_delivery = delivery
+	delivery.call("boot_retry")
 
 
 ## `styles.css:24-26` body background: two radial washes over `--bg`. Loaded, not
@@ -763,8 +814,11 @@ func _ensure_emporio_focus() -> void:
 
 func toggle_emporio() -> void:
 	if _emporio_overlay != null and is_instance_valid(_emporio_overlay):
+		_emporio_overlay.call("_stop_preview")
 		_emporio_overlay.queue_free()
 		_emporio_overlay = null
+		if is_instance_valid(_runtime_ost):
+			_runtime_ost.set_held(is_instance_valid(_jukebox_overlay))
 		return
 	var scene := load("res://src/ui/screens/EmporioScreen.tscn") as PackedScene
 	if scene == null:
@@ -777,8 +831,12 @@ func toggle_emporio() -> void:
 		if _emporio_overlay != null and is_instance_valid(_emporio_overlay):
 			_emporio_overlay.queue_free()
 			_emporio_overlay = null
+		if is_instance_valid(_runtime_ost):
+			_runtime_ost.set_held(is_instance_valid(_jukebox_overlay))
 	)
 	add_child(_emporio_overlay)
+	if is_instance_valid(_runtime_ost):
+		_runtime_ost.set_held(true)
 
 
 ## The live Emporio overlay, or null. The acceptance audit reads it the way it reads
@@ -819,6 +877,8 @@ func _apply_stored_audio_prefs() -> void:
 		_audio_port.name = "UiAudioPort"
 		add_child(_audio_port)
 	_audio_port.set_master_gain(float(prefs.get("volume", 0.5)))
+	# AudioPort builds the buses; apply the independent saved music state after it.
+	MusicSettings.apply(prefs)
 	InputSource.set_deadzone(float(prefs.get("gamepadDeadzone", 0.15)))
 
 
@@ -846,6 +906,10 @@ func _on_screen_changed(_from_id: String, _to_id: String) -> void:
 		return
 	if screen.has_method("set_store"):
 		screen.set_store(Config.save_store())
+	# The feedback screen posts through the host's own transport, so a send already in
+	# flight is not cut short by this swap. Screens without the door are untouched.
+	if screen.has_method("set_async_delivery"):
+		screen.call("set_async_delivery", _feedback_delivery)
 	_restore_menu_focus = String(screen.call("preferred_focus_id")) if screen.has_method("preferred_focus_id") else ""
 	_bridge.attach(screen as Control, _focus, _router)
 	# `attach()` rebuilds the bridge's registry from the mounted screen, which drops the
@@ -864,6 +928,13 @@ func _on_screen_changed(_from_id: String, _to_id: String) -> void:
 	# A freshly mounted screen's containers sort at the end of this frame; the model
 	# is re-measured two frames later, not on the rectangles `_ready()` saw.
 	_refresh_pending = 2
+
+
+func _on_music_enabled_changed(_enabled: bool) -> void:
+	if _router != null and _router.active_id() == "settings":
+		var screen: Node = _router.active_screen()
+		if screen != null and screen.has_method("refresh_values"):
+			screen.refresh_values()
 
 
 ## A control the bridge activated but did not route: the action belongs to the screen
@@ -1348,7 +1419,7 @@ func _emporio_shortcut_available() -> bool:
 func _process(delta: float) -> void:
 	if _runtime_ost != null:
 		_runtime_ost.set_screen(_router.active_id() if _playable and _router != null else "menu")
-		_runtime_ost.set_held(is_instance_valid(_jukebox_overlay))
+		_runtime_ost.set_held(is_instance_valid(_jukebox_overlay) or is_instance_valid(_emporio_overlay))
 	if _capture or _focus == null:
 		return
 	if _playable:

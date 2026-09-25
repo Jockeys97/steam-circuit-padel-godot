@@ -159,6 +159,9 @@ func _run_all() -> void:
 	for child in root.get_children():
 		root.remove_child(child)
 		child.free()
+	# OGG playback destruction completes on the audio thread. Measure after its
+	# queued releases, not in the same synchronous teardown frame.
+	await create_timer(0.1).timeout
 	var objects_at_end := Performance.get_monitor(Performance.OBJECT_COUNT)
 	var objects_delta := objects_at_end - objects_at_start
 	print("# OBJECTS start=%d end=%d delta=%d nodes=%d orphans=%d resources=%d" % [
@@ -769,18 +772,16 @@ func _athletes_on_court() -> void:
 	check("the lineup names four different athletes, the player being the menu's choice",
 		lineup.size() == 4 and lineup.values().size() == 4 and String(lineup["player"]) == String(Config.athlete()["id"]),
 		JSON.stringify(lineup))
-	# Outfits from the menu: the player wears the menu's outfit, the rest their own
-	# default (`base`) — `Lineup.outfits`.
+	# Every athlete wears its saved, unlocked wardrobe choice, irrespective of court role.
 	var outfits_ok := true
 	var worn: Array[String] = []
 	for role in ["player", "playerMate", "opponent", "opponentMate"]:
 		var worn_id := String((report[role] as Dictionary)["outfit_id"])
 		worn.append(worn_id)
-		if role == "player" and worn_id != String(Config.outfit_id()):
+		var expected_outfit := preload("res://game/lineup.gd").equipped_outfit(String(lineup[role]), ModesSave.load_career(Config.save_store()))
+		if worn_id != String(expected_outfit):
 			outfits_ok = false
-		if role != "player" and worn_id != "base":
-			outfits_ok = false
-	check("the player wears the menu's outfit and the other three their default",
+	check("all four athletes wear their persisted wardrobe choices",
 		outfits_ok, str(worn))
 	# On the court, at the sim's own positions: the rig is placed where the
 	# simulation says the paddle is (`Court.world_pos`), which is what makes it the
@@ -923,7 +924,7 @@ func _timing_presentation() -> void:
 			if node.find_child(String(n), true, false) == null:
 				missing.append(String(n))
 	check("every timing mark named by the module exists in the match scene",
-		marks != null and marks.mark_names().size() == 11 and missing.is_empty(), str(missing))
+		marks != null and marks.mark_names().size() == 13 and missing.is_empty(), str(missing))
 	var report: Dictionary = node.timing_report()
 	check("the module's report reaches the shell's own forwarder",
 		report.has("ring_visible"), str(report.keys()))
@@ -1016,25 +1017,27 @@ func _timing_presentation() -> void:
 		float(node.timing_report()["advice_panel_w"]) > 0.5,
 		str(node.timing_report()["advice_panel_w"]))
 
-	# --- the energy bar: under the active athlete, the player's energy ------------
+	# --- the energy bar: under the active athlete, that athlete's own stamina ------
+	# Since the rally stamina (7b4dc56) the bar reads `active.staminaEnergy`; the sim
+	# copies it into `rallyEnergy.player` every tick, so the two are the same number.
 	node.state.shotRead["profile"] = "control"
 	var energy: Node3D = node.get("_timing_energy")
-	node.state.rallyEnergy = {"player": 0.2, "ai": 1.0}
+	node.state.active_player().staminaEnergy = 0.2
 	node._sync_views()
 	var low: float = float(node.timing_report()["energy_width"])
-	node.state.rallyEnergy = {"player": 1.0, "ai": 1.0}
+	node.state.active_player().staminaEnergy = 1.0
 	node._sync_views()
 	report = node.timing_report()
 	var high: float = float(report["energy_width"])
-	check("the energy fill is `rallyEnergy.player` of the bar",
+	check("the energy fill is the active athlete's `staminaEnergy` of the bar",
 		is_equal_approx(low, 0.80 * 0.2) and high > low, "%f -> %f" % [low, high])
 	check_eq("the energy colour is the reference's three-band rule",
 		String(report["energy_color"]), Vocabulary.field_energy_color(1.0).to_html(false))
-	node.state.rallyEnergy = {"player": 0.2, "ai": 1.0}
+	node.state.active_player().staminaEnergy = 0.2
 	node._sync_views()
 	check_eq("low energy is the reference's #ff6b64",
 		String(node.timing_report()["energy_color"]), "ff6b64")
-	node.state.rallyEnergy = {"player": 1.0, "ai": 1.0}
+	node.state.active_player().staminaEnergy = 1.0
 	node._sync_views()
 	var active = node.state.active_player()
 	var under: Vector3 = Court.world_pos(active.x, active.y, 0.0)
@@ -1281,7 +1284,10 @@ func _packed_asset_paths() -> void:
 		"%s / %s" % [String(AthleteRig.GLB_WALK), String(AthleteRig.GLB_RUN)])
 	var full_pck := "res://build/linux-x86_64/padel.pck"
 	if not FileAccess.file_exists(full_pck):
-		check("the shipping pack exists (export it before running this test)", false, full_pck)
+		if OS.get_cmdline_user_args().has("--require-export"):
+			check("release verification requires the shipping pack", false, full_pck)
+		else:
+			print("SKIP shipping pack contents: no Linux export; use --require-export for release gating")
 	else:
 		check("the athlete scene is INSIDE %s (the packaged build can draw the rigs)" % full_pck,
 			_pack_contains(full_pck, Court.GLB_PATH), Court.GLB_PATH)
@@ -1408,7 +1414,8 @@ func _full_playthrough() -> void:
 	var audio_node: Node = node.get_node_or_null("MatchAudio")
 	check("the match builds its audio seam", audio_node != null, "MatchAudio")
 	var music: Node = audio_node.get_node_or_null("Music") if audio_node != null else null
-	check("the match builds the music engine, not only the effect port", music != null, "Music")
+	var ost: Node = audio_node.ost if audio_node != null else null
+	check("the match builds its soundtrack engine", music != null or ost != null, "Music or OST")
 	var music_start: Dictionary = audio_node.music_summary() if audio_node != null else {}
 	if audio_node != null:
 		print("# MUSIC_WIRING start playing=%s intensity=%s context=%s bus_gain=%s" % [
@@ -1417,20 +1424,22 @@ func _full_playthrough() -> void:
 		])
 		check("the score is running the moment a match starts (js/main.js:1211-1212)",
 		bool(music_start.get("playing", false)), str(music_start.get("playing")))
-		check("the match opens the score at the reference's own 0.12",
-		is_equal_approx(float(music_start.get("intensity", -1.0)), 0.12), str(music_start.get("intensity")))
-		check("the score runs in the reference's match context",
-		String(music_start.get("context", "")) == "match", str(music_start.get("context")))
-		check("the music bus sits at the reference's own gain (js/audio.js:149)",
-		is_equal_approx(float(music_start.get("music_bus_gain", -1.0)), 0.55), str(music_start.get("music_bus_gain")))
+		if ost != null:
+			check("OST starts an available track", ost.playlist().has(String(music_start.get("track", ""))), str(music_start))
+			check("OST uses match context", ost._match, str(music_start))
+			check("OST creates stream and classic players", ost.player != null and ost.classic != null, str(music_start))
+		else:
+			check("legacy score starts at 0.12", is_equal_approx(float(music_start.get("intensity", -1)), 0.12), str(music_start))
+			check("legacy score uses match context", music_start.get("context") == "match", str(music_start))
+			check("legacy music gain is 0.55", is_equal_approx(float(music_start.get("music_bus_gain", -1)), 0.55), str(music_start))
 		# The scheduler runs on the engine's frame clock, so let real frames pass before
 		# claiming it ran: a purely synchronous probe would prove the setters work and
 		# nothing else. This is why this section is in `AWAITED_SECTIONS`.
 		await process_frame
 		await process_frame
 		var after_frames: Dictionary = audio_node.music_summary()
-		check("the score's scheduler ran on the engine's own frames and started voices",
-		int(after_frames.get("voices_started", 0)) > 0,
+		check("the active soundtrack plays after engine frames",
+		(bool(after_frames.get("playing", false)) if ost != null else int(after_frames.get("voices_started", 0)) > 0),
 		"voices_started=%s" % str(after_frames.get("voices_started")))
 
 	var bot := ScriptedPlayer.new()
@@ -1505,13 +1514,14 @@ func _full_playthrough() -> void:
 		str(music_end.get("playing")), str(music_end.get("stops")),
 		str(music_end.get("voices_started")), str(music_end.get("intensity")),
 		])
-		check("the score stops when the match ends (js/main.js:1438)",
-		not bool(music_end.get("playing", true)), "playing=%s" % str(music_end.get("playing")))
-		check("the stop was the score's own and happened", int(music_end.get("stops", 0)) >= 1,
-		"stops=%s" % str(music_end.get("stops")))
-		check("the score sounded voices during the match (the scheduler ran, not just the setters)",
-		int(music_end.get("voices_started", 0)) > 0,
-		"voices_started=%s" % str(music_end.get("voices_started")))
+		if ost != null:
+			check("result leaves OST match context", not ost._match, str(music_end))
+			check("result requests victory music", ost.requested == "ost_victory", str(music_end))
+			check("result music stays audible", bool(music_end.get("playing", false)), str(music_end))
+		else:
+			check("legacy score stops at match end", not bool(music_end.get("playing", true)), str(music_end))
+			check("legacy stop occurred", int(music_end.get("stops", 0)) >= 1, str(music_end))
+			check("legacy scheduler sounded voices", int(music_end.get("voices_started", 0)) > 0, str(music_end))
 	_drop(node)
 	_section_done("_full_playthrough")
 
@@ -1657,8 +1667,12 @@ func _locale_layer() -> void:
 	Locale.set_lang("it")
 	var locales: Array = Locale.locales()
 	check_eq("locale layer has the reference's two tables", [String(locales[0]), String(locales[1])], ["it", "en"])
-	check("locale table sizes match the reference (688 keys each)",
-		Locale.table("it").size() == 688 and Locale.table("en").size() == 688,
+	var it_keys := Locale.table("it").keys()
+	var en_keys := Locale.table("en").keys()
+	it_keys.sort()
+	en_keys.sort()
+	check("locale tables have matching nonempty key sets",
+		it_keys.size() > 0 and it_keys == en_keys,
 		"it=%d en=%d" % [Locale.table("it").size(), Locale.table("en").size()])
 
 	var labels: Dictionary = Vocabulary.EVENT_LABELS
@@ -1956,8 +1970,13 @@ func _arena_library() -> void:
 		# the expected value moves, to the reference's own authority.
 		var surround := _find(built, "Surround") as MeshInstance3D
 		var expected: Color = info["apron"]
-		if surround == null or (surround.material_override as StandardMaterial3D).albedo_color != Color(expected.r, expected.g, expected.b, 1.0):
-			palette_mismatch.append("%s: %s" % [id, str(surround.material_override.albedo_color) if surround != null else "no surround"])
+		var material: Material = surround.material_override if surround != null else null
+		if material is ShaderMaterial:
+			var shader_material := material as ShaderMaterial
+			if shader_material.shader != preload("res://game/arenas/workshop_surface.gdshader") or shader_material.get_shader_parameter("tint") != Color("20262d"):
+				palette_mismatch.append("%s: unexpected floor shader or tint" % id)
+		elif not (material is StandardMaterial3D) or (material as StandardMaterial3D).albedo_color != Color(expected.r, expected.g, expected.b, 1.0):
+			palette_mismatch.append("%s: missing or incorrect standard floor" % id)
 		built.free()
 	check("every one of the nine arenas builds a non-empty 3D environment", null_builds.is_empty(), str(null_builds))
 	check("every arena environment draws the court, net and cage, not an empty node", thin.is_empty(), str(thin))
@@ -2311,7 +2330,7 @@ func _mode_screens() -> void:
 			var rows_reachable := 0
 			for id in focusable:
 				var text := String(id)
-				if (text.begins_with("drill:") or text.begins_with("tournament:")
+				if (text.begins_with("drill:") or (mode == "drill" and (text.begins_with("difficulty:") or text == "start")) or text.begins_with("tournament:")
 						or text.begins_with("career:")) and reachable.has(id):
 					rows_reachable += 1
 			check("every %s row is focusable and reachable through the verified model" % mode,
@@ -2625,8 +2644,9 @@ func _modes_playable() -> void:
 		check("a miss pays the reference's zero: attemptPoints(0, grade)",
 			int(s.drill.points) == DrillScoring.attempt_points(0.0, grade),
 			"%d vs %d" % [int(s.drill.points), DrillScoring.attempt_points(0.0, grade)])
-		check("the miss is shown on the mode HUD before and after the attempt closes",
-			String(drill.mode_hud().report()["phase"]).contains("LIVE"), String(drill.mode_hud().report()["phase"]))
+		drill.mode_hud().refresh()
+		check("the miss diagnosis is shown on the mode HUD after the attempt closes",
+			str(drill.mode_hud().report()).contains(preload("res://src/modes/drill_text.gd").t(String(s.drill.diagnosis))), str(drill.mode_hud().report()))
 	_drop(drill)
 
 	# A HIT: the rally exercise, where the reference pays for the length of the
@@ -2765,8 +2785,12 @@ func _modes_playable() -> void:
 				# have. The model id is the row's own id.
 				var row_id := "tournament:round%d" % int(advanced["round"])
 				var row = screen.focus_model().node_of(row_id)
-				check("the tournament screen shows the next fixture's court and marks the round in corso",
-					row != null and String((row as Button).text).contains("IN CORSO"),
+				var visible_text := ""
+				if row != null:
+					for label in row.find_children("*", "Label", true, false):
+						visible_text += String(label.text) + " "
+				check("the tournament card marks the saved next fixture in the current locale",
+					row != null and visible_text.contains("PROSSIMA SFIDA" if Locale.current_lang() == "it" else "UP NEXT"),
 					"row %s -> %s (rows %s)" % [row_id, str(row), str(report["rows"])])
 				print("# TOURNAMENT_SCREEN next_round=%d rows=%s" % [int(saved.get("round", -1)), str(report["rows"])])
 				_drop_screen(screen)

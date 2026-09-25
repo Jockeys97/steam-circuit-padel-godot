@@ -55,7 +55,7 @@ const READOUT_INTERVAL := 0.1
 
 signal closed
 const MusicPreferences := preload("res://src/audio/music_preferences.gd")
-var _scope := "menu"
+var _scope := "match"
 var _scope_buttons: Dictionary = {}
 var _only_favorites: CheckButton
 var _show_favorites_only := false
@@ -64,9 +64,15 @@ var _star_buttons: Dictionary = {}
 var _track_rows: Array[Control] = []
 var _r3_order: OptionButton
 var _playlist_hint: Label
+var _options_button: Button
+var _options_body: VBoxContainer
 var _playlist_preview := false
 var _classic_row: Control
-var _genre: OptionButton
+var _genre: Button
+var _genre_popup: PanelContainer
+var _genre_buttons: Array[Button] = []
+var _genre_values: Array[String] = []
+var _selected_genre := ""
 var _copy_context: Button
 var _move_context: Button
 ## Emitted when the player tries to play a LOCKED track: the host routes this to the
@@ -200,7 +206,7 @@ func _build_ui() -> void:
 	add_child(_shell)
 	_shell.setup("jukebox")
 	_shell.set_title_text("JUKEBOX & SOUND TEST")
-	_shell.set_subtitle_text("Colonna sonora originale — 63 tracce (Standard, Epiche, Sawano, Dragon Ball GT, Automata, Hunter x Hunter)")
+	_shell.set_subtitle_text("Colonna sonora originale — 78 tracce (Standard, Epiche, Sawano, Dragon Ball GT, Automata, Hunter x Hunter, Menu Legends)")
 	_shell.set_back_target("menu")
 
 	var back_btn: Button = _shell.back_control()
@@ -243,7 +249,7 @@ func _build_list_column(split_hbox: HBoxContainer) -> void:
 	list_card.add_child(list_margin)
 
 	var list_vbox := VBoxContainer.new()
-	list_vbox.add_theme_constant_override("separation", 8)
+	list_vbox.add_theme_constant_override("separation", 6)
 	list_margin.add_child(list_vbox)
 
 	var list_header := Label.new()
@@ -268,37 +274,26 @@ func _build_list_column(split_hbox: HBoxContainer) -> void:
 	_populate_track_list()
 
 func _build_favorites(parent: VBoxContainer) -> void:
-	_r3_order = OptionButton.new()
-	_r3_order.add_item("R3: ordine fisso")
-	_r3_order.add_item("R3: ordine casuale")
-	_r3_order.select(1 if MusicPreferences.random_skip(_economy()) else 0)
-	_r3_order.tooltip_text = "Vale per R3 nei menu e in partita. Rispetta i preferiti e le tracce sbloccate; non cambia l'avanzamento automatico."
-	_r3_order.item_selected.connect(func(index: int): MusicPreferences.set_random_skip(_economy(), index == 1))
-	parent.add_child(_r3_order)
 	var tabs := HBoxContainer.new()
+	tabs.add_theme_constant_override("separation", 4)
 	parent.add_child(tabs)
 	for scope in ["menu", "match"]:
 		var tab := Button.new()
 		tab.text = "Musiche menu" if scope == "menu" else "Musiche partita"
-		tab.custom_minimum_size.y = 40
+		tab.custom_minimum_size.y = 34
 		tab.add_theme_font_size_override("font_size", 13)
 		tab.size_flags_horizontal = SIZE_EXPAND_FILL
 		tab.pressed.connect(_set_scope.bind(scope))
 		tabs.add_child(tab)
 		_scope_buttons[scope] = tab
-	_only_favorites = CheckButton.new()
-	_only_favorites.text = "Riproduci solo i preferiti"
-	_only_favorites.add_theme_font_size_override("font_size", 13)
-	_only_favorites.tooltip_text = "Solo per la scheda aperta. Senza preferiti disponibili la musica resta silenziosa. La lista resta visibile per aggiungerne altri."
-	_only_favorites.toggled.connect(func(on: bool): _set_only_favorites(on, _scope))
-	parent.add_child(_only_favorites)
-	var catalog_caption := Label.new()
-	catalog_caption.text = "MOSTRA NELL'ELENCO"
-	catalog_caption.add_theme_font_size_override("font_size", 10)
-	parent.add_child(catalog_caption)
 	var catalog_filter := HBoxContainer.new()
 	catalog_filter.add_theme_constant_override("separation", 4)
 	parent.add_child(catalog_filter)
+	var catalog_caption := Label.new()
+	catalog_caption.text = "ELENCO"
+	catalog_caption.add_theme_font_size_override("font_size", 10)
+	catalog_caption.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	catalog_filter.add_child(catalog_caption)
 	var catalog_filter_group := ButtonGroup.new()
 	for entry in [{"label": "Tutti", "favorites": false}, {"label": "Preferiti", "favorites": true}]:
 		var filter_button := Button.new()
@@ -306,36 +301,162 @@ func _build_favorites(parent: VBoxContainer) -> void:
 		filter_button.toggle_mode = true
 		filter_button.button_group = catalog_filter_group
 		filter_button.set_pressed_no_signal(not entry.favorites)
-		filter_button.custom_minimum_size.y = 36
+		filter_button.custom_minimum_size.y = 32
 		filter_button.size_flags_horizontal = SIZE_EXPAND_FILL
 		filter_button.theme_type_variation = &"SegmentedActive" if not entry.favorites else &"SegmentedInactive"
 		filter_button.tooltip_text = "Mostra solo i brani preferiti della playlist selezionata." if entry.favorites else "Mostra tutti i brani della playlist selezionata."
 		filter_button.pressed.connect(_set_catalog_filter.bind(entry.favorites))
 		catalog_filter.add_child(filter_button)
 		_catalog_filter_buttons[entry.favorites] = filter_button
-	_genre = OptionButton.new()
-	_genre.add_item("Tutti i generi")
-	_genre.set_item_metadata(0, "")
-	var categories: Array[String] = []
+	_genre_values.append("")
 	for id in _track_ids:
 		var category := String(SoundtrackManager.track_info(id).get("category", "Altro"))
-		if not categories.has(category):
-			categories.append(category)
-	for category in categories:
-		_genre.add_item(category)
-		_genre.set_item_metadata(_genre.item_count - 1, category)
+		if not _genre_values.has(category):
+			_genre_values.append(category)
+	_genre = Button.new()
+	_genre.name = "GenreFilter"
+	_genre.text = "Tutti i generi  ▾"
+	_genre.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_genre.theme_type_variation = &"SegmentedInactive"
+	_genre.focus_mode = Control.FOCUS_ALL
 	_genre.clip_text = true
-	_genre.item_selected.connect(func(_index): _filter_playlist())
+	_genre.custom_minimum_size.y = 36
+	_genre.tooltip_text = "Filtra il catalogo per genere"
+	_genre.pressed.connect(_toggle_genre_popup)
 	parent.add_child(_genre)
+	_build_genre_popup()
+	var actions := HBoxContainer.new()
+	actions.add_theme_constant_override("separation", 4)
+	parent.add_child(actions)
 	var listen := Button.new()
 	listen.text = "Ascolta playlist"
+	listen.custom_minimum_size.y = 34
+	listen.size_flags_horizontal = SIZE_EXPAND_FILL
 	listen.pressed.connect(func(): _play_playlist(0))
-	parent.add_child(listen)
+	actions.add_child(listen)
+	_options_button = Button.new()
+	_options_button.text = "Opzioni ▸"
+	_options_button.tooltip_text = "Ordinamento R3 / N, riproduzione dei soli preferiti · Stella: aggiungi/rimuovi · Controller: △ / Y"
+	_options_button.toggle_mode = true
+	_options_button.custom_minimum_size.y = 34
+	_options_button.toggled.connect(_toggle_options)
+	actions.add_child(_options_button)
+	_options_body = VBoxContainer.new()
+	_options_body.add_theme_constant_override("separation", 4)
+	_options_body.visible = false
+	parent.add_child(_options_body)
+	_r3_order = OptionButton.new()
+	_r3_order.add_item("R3 / N: ordine fisso")
+	_r3_order.add_item("R3 / N: ordine casuale")
+	_r3_order.select(1 if MusicPreferences.random_skip(_economy()) else 0)
+	_r3_order.tooltip_text = "R3 breve o N: brano successivo nei menu e in partita; R3 lungo: musica attiva/disattiva. Rispetta i preferiti e le tracce sbloccate; non cambia l'avanzamento automatico."
+	_r3_order.item_selected.connect(func(index: int): MusicPreferences.set_random_skip(_economy(), index == 1))
+	_options_body.add_child(_r3_order)
+	_only_favorites = CheckButton.new()
+	_only_favorites.text = "Riproduci solo i preferiti"
+	_only_favorites.add_theme_font_size_override("font_size", 13)
+	_only_favorites.tooltip_text = "Solo per la scheda aperta. Senza preferiti disponibili la musica resta silenziosa. La lista resta visibile per aggiungerne altri."
+	_only_favorites.toggled.connect(func(on: bool): _set_only_favorites(on, _scope))
+	_options_body.add_child(_only_favorites)
 	_playlist_hint = Label.new()
-	_playlist_hint.text = "Stella: aggiungi/rimuovi · Controller: △ / Y"
 	_playlist_hint.add_theme_font_size_override("font_size", 11)
 	_playlist_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_playlist_hint.visible = false
 	parent.add_child(_playlist_hint)
+
+
+func _build_genre_popup() -> void:
+	_genre_popup = PanelContainer.new()
+	_genre_popup.name = "GenreFilterPanel"
+	_genre_popup.visible = false
+	_genre_popup.z_index = 20
+	_genre_popup.mouse_filter = Control.MOUSE_FILTER_STOP
+	_genre_popup.add_theme_stylebox_override("panel", _panel_style(NAVY_CARD, CYAN.darkened(0.35), 12, 2, Color(0, 0, 0, 0.45), 12))
+	add_child(_genre_popup)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_bottom", 8)
+	_genre_popup.add_child(margin)
+	var scroll := ScrollContainer.new()
+	scroll.name = "GenreFilterScroll"
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true
+	margin.add_child(scroll)
+	var choices := VBoxContainer.new()
+	choices.size_flags_horizontal = SIZE_EXPAND_FILL
+	choices.add_theme_constant_override("separation", 4)
+	scroll.add_child(choices)
+	var heading := Label.new()
+	heading.text = "GENERE MUSICALE"
+	heading.add_theme_font_size_override("font_size", 11)
+	heading.add_theme_color_override("font_color", CYAN)
+	choices.add_child(heading)
+	for category in _genre_values:
+		var item := Button.new()
+		item.text = "Tutti i generi" if category == "" else category
+		item.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		item.clip_text = true
+		item.focus_mode = Control.FOCUS_ALL
+		item.custom_minimum_size.y = 36
+		item.pressed.connect(_set_genre.bind(category))
+		choices.add_child(item)
+		_genre_buttons.append(item)
+	for i in _genre_buttons.size():
+		var item: Button = _genre_buttons[i]
+		item.focus_neighbor_top = item.get_path_to(_genre_buttons[maxi(i - 1, 0)])
+		item.focus_neighbor_bottom = item.get_path_to(_genre_buttons[mini(i + 1, _genre_buttons.size() - 1)])
+		item.focus_neighbor_left = item.get_path_to(item)
+		item.focus_neighbor_right = item.get_path_to(item)
+	_update_genre_style()
+
+
+func _toggle_genre_popup() -> void:
+	if _genre_popup.visible:
+		_close_genre_popup()
+		return
+	var trigger := _genre.get_global_rect()
+	var viewport_height := get_viewport_rect().size.y
+	var height := minf(400.0, 36.0 + _genre_values.size() * 40.0)
+	var below := viewport_height - trigger.end.y - 8.0
+	var above := trigger.position.y - 8.0
+	var open_above := below < minf(height, 240.0) and above > below
+	height = minf(height, above if open_above else below)
+	_genre_popup.size = Vector2(trigger.size.x, maxf(height, 120.0))
+	var global_position := Vector2(trigger.position.x, trigger.position.y - _genre_popup.size.y - 4.0 if open_above else trigger.end.y + 4.0)
+	_genre_popup.global_position = global_position
+	_genre_popup.visible = true
+	_genre_buttons[_genre_values.find(_selected_genre)].grab_focus()
+
+
+func _close_genre_popup() -> void:
+	_genre_popup.visible = false
+	_genre.grab_focus()
+
+
+func _set_genre(category: String) -> void:
+	_selected_genre = category
+	_genre.text = ("Tutti i generi" if category == "" else category) + "  ▾"
+	_update_genre_style()
+	_filter_playlist()
+	if _genre_popup.visible:
+		_close_genre_popup()
+
+
+func _update_genre_style() -> void:
+	for i in _genre_buttons.size():
+		_genre_buttons[i].theme_type_variation = &"SegmentedActive" if _genre_values[i] == _selected_genre else &"SegmentedInactive"
+		_genre_buttons[i].text = ("✓  " if _genre_values[i] == _selected_genre else "     ") + ("Tutti i generi" if _genre_values[i] == "" else _genre_values[i])
+
+
+func _toggle_options(expanded: bool) -> void:
+	if not expanded:
+		var focus_owner := get_viewport().gui_get_focus_owner()
+		if focus_owner != null and _options_body.is_ancestor_of(focus_owner):
+			_options_button.grab_focus()
+	_options_body.visible = expanded
+	_options_button.text = "Opzioni ▾" if expanded else "Opzioni ▸"
 
 func _set_scope(scope: String) -> void:
 	_scope = scope
@@ -388,7 +509,7 @@ func _set_catalog_filter(favorites_only: bool) -> void:
 
 func _scope_genre_ids() -> Array[String]:
 	var ids: Array[String] = []
-	var category := String(_genre.get_item_metadata(_genre.selected))
+	var category := _selected_genre
 	for id in _track_ids:
 		if MusicPreferences.belongs(_economy(), id, _scope) and (category == "" or SoundtrackManager.track_info(id).get("category", "") == category):
 			ids.append(id)
@@ -418,14 +539,16 @@ func _filter_playlist() -> void:
 			child.visible = false
 	for index in _track_buttons.size():
 		_track_rows[index].visible = ids.has(_track_ids[index])
-	var classic_visible := MusicPreferences.belongs(_economy(), "classic_match", _scope) and String(_genre.get_item_metadata(_genre.selected)) == ""
+	var classic_visible := MusicPreferences.belongs(_economy(), "classic_match", _scope) and _selected_genre == ""
 	if _show_favorites_only:
 		classic_visible = classic_visible and MusicPreferences.favorites(_economy(), _scope).has("classic_match")
 	_classic_row.visible = classic_visible
 	_sync_favorites()
-	_playlist_hint.text = "Stella: aggiungi/rimuovi · Controller: △ / Y"
+	_playlist_hint.text = ""
+	_playlist_hint.visible = false
 	if ids.is_empty() and not _classic_row.visible:
 		_playlist_hint.text = "Nessun preferito in questa playlist." if _show_favorites_only else "Nessun brano di questo genere nella scheda. Prova l'altra scheda o Tutti i generi."
+		_playlist_hint.visible = true
 	if not ids.is_empty() and not ids.has(_track_ids[_selected_idx]):
 		_select_track(_track_ids.find(ids[0]))
 	var focus_owner := get_viewport().gui_get_focus_owner()
@@ -440,6 +563,7 @@ func _play_playlist(direction: int) -> void:
 	if ids.is_empty():
 		_on_stop_pressed()
 		_playlist_hint.text = "Nessuna traccia sbloccata disponibile in questa playlist."
+		_playlist_hint.visible = true
 		return
 	var current := ids.find(_manager.current_track_id())
 	var next := posmod(current + direction, ids.size()) if current >= 0 else 0
@@ -726,7 +850,7 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 	_volume_slider.value_changed.connect(_on_volume_changed)
 	controls_bar.add_child(_volume_slider)
 
-	# Collapsed secondary section: BPM/key, style and the generative prompt.
+	# Collapsed secondary section: BPM/key, style and the track description.
 	_prompt_toggle_btn = Button.new()
 	_prompt_toggle_btn.theme_type_variation = &"SegmentedInactive"
 	_prompt_toggle_btn.custom_minimum_size = Vector2(0, 32)
@@ -755,7 +879,7 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 	_prompt_section.add_child(prompt_bar)
 
 	var prompt_title := Label.new()
-	prompt_title.text = "PROMPT GENERATIVO PER LYRIA / MUSICFX"
+	prompt_title.text = "DESCRIZIONE"
 	prompt_title.size_flags_horizontal = SIZE_EXPAND_FILL
 	prompt_title.size_flags_vertical = SIZE_SHRINK_CENTER
 	prompt_title.theme_type_variation = &"LabelSmall"
@@ -763,7 +887,7 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 	prompt_bar.add_child(prompt_title)
 
 	_copy_btn = Button.new()
-	_copy_btn.text = "📋 Copia Prompt"
+	_copy_btn.text = "📋 Copia descrizione"
 	_copy_btn.theme_type_variation = &"SegmentedInactive"
 	_copy_btn.custom_minimum_size = Vector2(130, 30)
 	_copy_btn.pressed.connect(_on_copy_prompt_pressed)
@@ -807,7 +931,7 @@ func _populate_track_list() -> void:
 		# Emporio OST: a track the profile does not own is marked here, honestly, and the
 		# marker lives in the base text so the ▶ playback marker cannot erase it.
 		var lock := " 🔒" if is_locked(tid) else ""
-		var base_text := title + lock + (" [PROMPT]" if not has_file else "")
+		var base_text := title + lock + (" [SENZA AUDIO]" if not has_file else "")
 		btn.text = base_text
 		btn.tooltip_text = title + (" · Da sbloccare" if is_locked(tid) else "")
 		# A long title trims inside the column instead of forcing the row wider.
@@ -1202,8 +1326,8 @@ func _on_prompt_toggle_pressed() -> void:
 
 func _apply_prompt_toggle_text() -> void:
 	var open := _prompt_section.visible
-	_prompt_toggle_btn.text = "▾ Metadati & Prompt (BPM, chiave, prompt)" if open else "▸ Metadati & Prompt (BPM, chiave, prompt)"
-	_prompt_toggle_btn.tooltip_text = "Nascondi metadati e prompt" if open else "Mostra metadati e prompt"
+	_prompt_toggle_btn.text = "▾ Metadati e descrizione" if open else "▸ Metadati e descrizione"
+	_prompt_toggle_btn.tooltip_text = "Nascondi metadati e descrizione" if open else "Mostra metadati e descrizione"
 
 
 func _on_copy_prompt_pressed() -> void:
@@ -1212,7 +1336,7 @@ func _on_copy_prompt_pressed() -> void:
 	_copy_btn.text = "✔ Copiato!"
 	get_tree().create_timer(1.5).timeout.connect(func():
 		if is_instance_valid(_copy_btn):
-			_copy_btn.text = "📋 Copia Prompt"
+			_copy_btn.text = "📋 Copia descrizione"
 	)
 
 
@@ -1228,6 +1352,9 @@ func _apply_saved_music_volume() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if _genre_popup != null and _genre_popup.visible and event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if not _genre_popup.get_global_rect().has_point(event.position) and not _genre.get_global_rect().has_point(event.position):
+			_close_genre_popup()
 	if is_visible_in_tree() and event is InputEventJoypadButton and event.pressed and event.button_index == JOY_BUTTON_Y:
 		var focused := get_viewport().gui_get_focus_owner()
 		if focused != null and is_ancestor_of(focused) and focused.has_meta("favorite_track_id"):
@@ -1236,7 +1363,10 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE):
-		_on_back_pressed()
+		if _genre_popup != null and _genre_popup.visible:
+			_close_genre_popup()
+		else:
+			_on_back_pressed()
 		get_viewport().set_input_as_handled()
 
 

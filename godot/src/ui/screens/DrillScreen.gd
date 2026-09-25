@@ -1,37 +1,36 @@
-## DrillScreen.gd — `screen-drill`, the reference's own training page (`index.html:366-395`).
+## DrillScreen.gd — `screen-drill`, the reference's own training page (`index.html:366-395`),
+## rebuilt as the TRAINING HUB.
 ##
-## WHAT THIS SCREEN IS. The exercise segmented control (four, the drill table's own
-## ids), the difficulty control (four, the reference's own values), the four metric
-## boxes, the court area and the instruction line. The header's subtitle and the
-## instruction line are per-exercise and come from the drill table's own ids
-## (`drill_<id>_desc`, `drill_<id>_hint` — `syncDrillChrome`, `js/main.js:1681-1690`).
+## WHAT THIS SCREEN IS NOW. The eight exercises the build can actually play — the frozen
+## reference's four (`js/drill.js:53-71`), the Jev coach's `return` and the training
+## overhaul's three challenges — grouped into Technique / Defence / Match play, with a detail
+## panel that says what each one asks for: the goal, the measurable success rule, what is
+## scored, the controls that matter, both records and how long a run lasts. The BODY is the
+## shared `godot/src/ui/training/DrillHubView.gd`, the same view the ported drill branch of
+## `godot/game/mode_screen.gd` mounts, so the two routes cannot describe an exercise
+## differently.
 ##
-## WHERE THE METRICS COME FROM. `DrillScoring.metrics()` — the same function the live
-## drill calls every frame — asked of a drill created for the chosen exercise, with its
-## `best` read from the save contract (`UiData.drill_records()` over `ModesSave`, the
-## "write only on improvement" record of `save_store.gd::write_drill_record`). Nothing
-## here scores, ranks or thresholds anything: a second copy of the drill's rules is the
-## defect this ticket exists to avoid.
+## WHERE THE FACTS COME FROM. `godot/src/modes/drill_hub.gd` (catalog + objectives + records)
+## and `drill_text.gd` (the reference's generated strings for its own four, this build's
+## `drill_strings.json` for the rest). Nothing here scores, ranks or thresholds anything.
 ##
-## WHAT THE PORT DECIDES, AND WHY. The reference starts a drill inside the same page
-## (`to-drill` → `startDrill`), because its canvas *is* the court. The port plays the
-## drill in the match scene, so this page is the setup step: the court area is the
-## reference's own frame treatment (`#drillCanvas`: `1px var(--line)`, radius 12,
-## `#0a1633` — `styles.css:1401-1407`) with the arena's name and one prominent start
-## action. Starting sets the two fields the mode flow already reads
-## (`Config.pending_mode`, `Config.pending_exercise`) and changes to `Match.tscn`; the
-## payload is returned before the scene change so a test can assert it in-process
-## (`start(true)`), and the engine is touched by two lines at the end.
+## WHAT THIS SCREEN STILL OWNS. The shell (`ScreenShell`: title, subtitle, hint, back), the
+## focus registration, and the start route — the reference starts a drill inside the same page
+## (`to-drill` -> `startDrill`) because its canvas *is* the court, and the port plays the drill
+## in the match scene instead, so this page is the setup step. `start()` writes the seams the
+## mode flow reads (`Config.pending_mode`, `pending_exercise`, `pending_drill_difficulty`) plus
+## the return route, then changes scene; the payload is returned first so a test can assert it
+## in-process (`start(true)`).
 ##
-## DIFFICULTY IS THIS SCREEN'S OWN STATE, and it stays that way: the reference keeps it
-## in `ui.drillDifficulty`, which is not persisted (`collectPrefs`, `js/ui.js:422-442`,
-## has no such key), seeded from the stored `aiDifficulty` (`js/main.js:2162`). Choosing
-## a drill difficulty therefore writes nothing — and the port's mode flow does not read
-## it yet, which the hand-back names as a seam for the integrator, not a change to make
-## here.
+## DIFFICULTY IS TRANSIENT, AND NOW WIRED. The reference keeps `ui.drillDifficulty` in memory
+## (`collectPrefs`, `js/ui.js:422-442`, has no such key), seeded from the stored `aiDifficulty`
+## (`js/main.js:2162`): choosing one here writes no preference and never touches the global
+## match difficulty. The choice reaches the run through `Config.pending_drill_difficulty`,
+## which `game/mode_session.gd` resolves into the run's AI profile (`DrillHub.ai_profile`) —
+## so the row is no longer a control that does nothing.
 ##
-## LITERALS. None: ids, keys and numbers only, and the separators a `GridContainer`
-## needs are structural, not text.
+## LITERALS. None: ids, keys and numbers only, and the separators a container needs are
+## structural, not text.
 extends "res://src/ui/screens/ScreenContract.gd"
 
 const UiStrings := preload("res://src/ui/UiStrings.gd")
@@ -39,13 +38,15 @@ const UiData := preload("res://src/ui/data/UiData.gd")
 const Tables := preload("res://src/modes/mode_tables.gd")
 const DrillText := preload("res://src/modes/drill_text.gd")
 const DrillScoring := preload("res://src/modes/drill_scoring.gd")
+const DrillHub := preload("res://src/modes/drill_hub.gd")
 const DrillSession := preload("res://src/modes/drill_session.gd")
+const HubView := preload("res://src/ui/training/DrillHubView.gd")
 const Config := preload("res://game/match_config.gd")
 const ModeSession := preload("res://game/mode_session.gd")
 const Gate := preload("res://game/content_gate.gd")
 
-## `.mode-card--locked { opacity: 0.55 }` — the same presentation the mode cards use,
-## applied to the start action when this build does not grant the drill.
+## `.mode-card--locked { opacity: 0.55 }` — the same presentation the mode cards use, applied
+## to the start action when this build does not grant the drill.
 const LOCKED_ALPHA := 0.55
 
 const SCREEN_ID := "drill"
@@ -53,29 +54,18 @@ const SCREEN_ID := "drill"
 ## The router's own row for this screen (`ScreenRouter.SCREENS[9]`).
 const DECLARED_BACK := "menu"
 
-const CAPTURE_STATES: Array[String] = ["default", "precision", "smash", "rally", "serve", "return", "hard", "legend"]
+## The declared capture states: the default view plus the two difficulty pins. Every exercise
+## the catalog carries is ALSO a state, accepted at `apply_capture_state` time from the table
+## rather than listed here, so a new exercise arrives with its own pin.
+const CAPTURE_STATES: Array[String] = ["default", "hard", "legend"]
 
 ## The scenario the mode flow loads (`godot/game/ModeScreen.tscn`'s own target).
 const SCENE_PATH := "res://game/Match.tscn"
 
-## `index.html:381-385`: the four difficulty values, in the reference's order.
-const DIFFICULTIES: Array[String] = ["easy", "medium", "hard", "legend"]
-const DIFFICULTY_LABELS := {
-	"easy": "diffEasy",
-	"medium": "diffMedium",
-	"hard": "diffHard",
-	"legend": "diffLegend",
-}
-## `js/ui.js:469`: the pref the reference seeds the drill difficulty from.
+## `js/ui.js:469`: the pref the reference seeds the drill difficulty from (read-only here).
 const DIFFICULTY_SEED_KEY := "aiDifficulty"
 
-## `styles.css:1381-1385`: the difficulty row is the same segmented control, quieter.
-const DIFFICULTY_ALPHA := 0.86
-
-const MAX_COLUMN := 560.0
-const METRICS_COLUMNS := 4
-const METRICS_MIN_CELL := 120.0
-const METRIC_BOXES := 4
+const MAX_COLUMN := 1180.0
 
 var router_id: String = ""
 var back_target_id: String = ""
@@ -83,17 +73,9 @@ var back_target_id: String = ""
 var _shell: Control
 var _store: RefCounted = null
 var _built := false
-var _exercise := ""
-var _difficulty := ""
-var _drills: Dictionary = {}
-var _exercise_buttons: Dictionary = {}
-var _difficulty_buttons: Dictionary = {}
-var _metric_boxes: Array = []
-var _metrics_grid: GridContainer = null
-## Re-entrancy guard for the `resized` handlers: setting a theme-constant override from
-## inside the layout pass can re-enter this handler synchronously, and an unguarded
-## write loop there is a stack overflow (found by the engine, not the static pass).
-var _applying_width := false
+var _hub: Control = null
+var _hint: Label = null
+var _previews: Dictionary = {}
 
 
 func _ready() -> void:
@@ -108,18 +90,14 @@ func back_target() -> String:
 	return back_target_id
 
 
-## The router mounted this page: the reference syncs the chrome and starts nothing
-## (`js/main.js:2214-2217` is the feedback case; `to-drill` starts a drill there, and
-## the port's decision moves that to the start action — see this file's header).
+## The router mounted this page: the hub is refreshed so a record written by the run the
+## player just left shows (the records are read from the save on every refresh).
 func enter(payload: Dictionary) -> void:
 	_ensure()
 	router_id = String(payload.get("router_id", router_id))
 	back_target_id = String(payload.get("back_target", DECLARED_BACK))
 	_shell.set_back_target(back_target_id)
-	# A record written by the session the player just left has to show: the preview
-	# drills are rebuilt and the values re-read on every entry.
-	_drills.clear()
-	refresh_metrics()
+	_previews.clear()
 	refresh_strings()
 
 
@@ -131,34 +109,23 @@ func capture_states() -> Array[String]:
 	return CAPTURE_STATES.duplicate()
 
 
-## Every exercise the catalog carries and the two difficulty pins a capture may ask for;
-## anything else is not declared and answers false.
+## Applies a capture state: `default`, an exercise id the catalog carries, or one of the two
+## difficulty pins. Anything else answers false — "not declared" — so a harness can tell the
+## difference instead of guessing.
 func apply_capture_state(state_id: String) -> bool:
 	_ensure()
 	if state_id == "default":
 		select_difficulty(seed_difficulty())
-		select_exercise(first_exercise_id())
-		return true
-	# An exercise capture is any id the catalog holds — the reference's four and the
-	# Godot-only ones — read from the table instead of retyped, so a new exercise cannot
-	# arrive at the screen without its own pin.
+		return select_exercise(first_exercise_id())
 	if exercise_ids().has(state_id):
 		return select_exercise(state_id)
-	match state_id:
-		"hard":
-			return select_difficulty("hard")
-		"legend":
-			return select_difficulty("legend")
+	if DrillHub.difficulties().has(state_id):
+		return select_difficulty(state_id)
 	return false
 
 
-## Every exercise id the catalog carries, in order. The pins and the screen both read it.
-func exercise_ids() -> Array[String]:
-	return Tables.drill_catalog_ids()
-
-
 # ---------------------------------------------------------------------------
-# The table (read-only: the frozen drill table owns the exercises)
+# The table (read-only: the mode modules own the exercises, the objectives and the records)
 # ---------------------------------------------------------------------------
 
 func store() -> RefCounted:
@@ -167,98 +134,83 @@ func store() -> RefCounted:
 
 func set_store(store_in: RefCounted) -> void:
 	_store = store_in
-	_drills.clear()
+	_previews.clear()
 	if _built:
-		refresh_metrics()
+		_hub.setup(store(), _hub.difficulty())
 
 
-## The whole catalog: the frozen reference's own four rows, then the Godot-only ones
-## (`godot/src/modes/drill_extras.gd`). `Tables.drill_exercises()` still answers the
-## reference's own four for anything auditing the reference; this screen offers what the
-## build can actually play.
+## Every exercise id the catalog carries, in order. The pins and the hub both read it.
+func exercise_ids() -> Array[String]:
+	return Tables.drill_catalog_ids()
+
+
+## The whole catalog: the frozen reference's own four rows, then the Godot-only ones.
 func exercise_rows() -> Array:
 	return Tables.drill_catalog()
 
 
 func first_exercise_id() -> String:
-	var rows := exercise_rows()
-	return String((rows[0] as Dictionary).get("id", "")) if not rows.is_empty() else ""
+	return DrillHub.first_id()
 
 
 func exercise() -> String:
-	return _exercise
+	return String((_hub as Control).selected_exercise())
 
 
 func exercise_name_key() -> String:
-	return "drill_%s_name" % _exercise
+	return "drill_%s_name" % exercise()
 
 
 func exercise_desc_key() -> String:
-	return "drill_%s_desc" % _exercise
+	return "drill_%s_desc" % exercise()
 
 
 func exercise_hint_key() -> String:
-	return "drill_%s_hint" % _exercise
+	return "drill_%s_hint" % exercise()
 
 
-## One exercise's visible name, whichever table owns it: the reference's generated
-## locale table for its own four, this build's `drill_strings.json` for the extras
-## (`drill_text.gd`).
+## One exercise's visible name, whichever table owns it (`drill_text.gd`).
 func exercise_name(drill_id: String) -> String:
 	return DrillText.exercise_name(drill_id)
 
 
+## Makes one exercise the screen's choice. The hub refuses an id the catalog does not carry;
+## the screen then re-reads the strings so the header and the hint follow the selection.
 func select_exercise(id: String) -> bool:
-	var known := false
-	for row in exercise_rows():
-		if String((row as Dictionary).get("id", "")) == id:
-			known = true
-	if not known:
+	if not _hub.select_exercise(id):
 		return false
-	_exercise = id
-	_refresh_segments()
-	refresh_metrics()
 	refresh_strings()
 	return true
 
 
 func difficulty() -> String:
-	return _difficulty
+	return String(_hub.difficulty())
 
 
+## The four difficulty values the row offers, in the reference's own order.
 func difficulty_rows() -> Array:
 	var out: Array = []
-	for id in DIFFICULTIES:
-		out.append({"id": id, "label_key": String(DIFFICULTY_LABELS[id])})
+	for id in DrillHub.difficulties():
+		out.append({"id": id, "label_key": DrillHub.difficulty_label(id)})
 	return out
 
 
-## The reference's seed: the stored `aiDifficulty` when it is one of the four, else the
-## first value on the list (`js/main.js:2162`).
+## The reference's seed: the stored `aiDifficulty` when it is one of the four, else the first
+## value on the list (`js/main.js:2162`). Read-only: nothing here writes a preference.
 func seed_difficulty() -> String:
 	if not _built:
-		return DIFFICULTIES[0]
-	var snap := UiData.settings_snapshot(store())
-	var stored := String(snap.get("ai_difficulty", ""))
-	return stored if DIFFICULTIES.has(stored) else DIFFICULTIES[0]
+		return DrillHub.seed_difficulty("")
+	var snapshot := UiData.settings_snapshot(store())
+	return DrillHub.seed_difficulty(String(snapshot.get("ai_difficulty", "")))
 
 
-## Changing the drill difficulty writes nothing (`ui.drillDifficulty` is not persisted):
-## the pref the screen was seeded from is left exactly as it was.
 func select_difficulty(id: String) -> bool:
-	if not DIFFICULTIES.has(id):
-		return false
-	_difficulty = id
-	_refresh_segments()
-	return true
+	return _hub.select_difficulty(id)
 
 
-# ---------------------------------------------------------------------------
-# The metric boxes (`drillMetrics(drill)`, `js/drill.js:440-470`)
-# ---------------------------------------------------------------------------
-
-## The records the boxes read their `best` from — the same reader the drill session
-## writes through (`ModesSave.save_drill_score` → `write_drill_record`).
+## The records the panel reads: the legacy `<exercise id>` map (`UiData.drill_records` over
+## `ModesSave`, unchanged) — the BOUNDED challenge records are read by the hub itself, keyed
+## by difficulty and run length, and the panel shows both.
 func records() -> Dictionary:
 	return UiData.drill_records(store())
 
@@ -270,14 +222,26 @@ func record_for(id: String) -> int:
 	return 0
 
 
-## The live metric rows for the chosen exercise: `{key, label, value}` per box, in the
-## order the scoring module produces them. The values are a fresh drill's own — the
-## reference shows `0` before a drill starts — with `best` seeded from the stored record.
+## What the detail panel actually shows for the two records, read back from the painted
+## labels — what an audit compares instead of the function it is checking.
+func shown_record_rows() -> Dictionary:
+	var entry: Dictionary = _hub.detail()
+	return {
+		"challenge": int(entry.get("best", 0)),
+		"historical": int(entry.get("historical_best", 0)),
+		"key": String(entry.get("training_key", "")),
+		"text": String((_hub.report() as Dictionary).get("record", "")),
+	}
+
+
+## The metric rows of a preview drill for the selection: the same `DrillScoring.metrics()` the
+## live drill calls, so the numbers the panel's record rows are labelled with are the drill's
+## own and not a second vocabulary.
 func metric_rows() -> Array:
-	var drill = _drill_for(_exercise)
+	var drill = _drill_for(exercise())
 	if drill == null:
 		return []
-	drill.best = record_for(_exercise)
+	drill.best = int(shown_record_rows()["challenge"])
 	var out: Array = []
 	for metric in DrillScoring.metrics(drill):
 		var row: Dictionary = metric
@@ -289,63 +253,35 @@ func metric_rows() -> Array:
 	return out
 
 
-## What the four boxes actually show, label and value, read back from the scene — what
-## the audit compares instead of the function it is checking.
-func shown_metric_rows() -> Array:
-	var out: Array = []
-	for index in _metric_boxes.size():
-		var box := _metric_boxes[index] as Control
-		var label := box.find_child("MetricLabel%d" % index, true, false) as Label
-		var value := box.find_child("MetricValue%d" % index, true, false) as Label
-		out.append({
-			"label": label.text if label != null else "",
-			"value": value.text if value != null else "",
-		})
-	return out
-
-
-func refresh_metrics() -> void:
-	_ensure()
-	var rows := metric_rows()
-	for index in _metric_boxes.size():
-		var box := _metric_boxes[index] as Control
-		var label := box.find_child("MetricLabel%d" % index, true, false) as Label
-		var value := box.find_child("MetricValue%d" % index, true, false) as Label
-		if label == null or value == null:
-			continue
-		if index < rows.size():
-			label.text = String((rows[index] as Dictionary)["label"])
-			value.text = String((rows[index] as Dictionary)["value"])
-		else:
-			label.text = ""
-			value.text = ""
-
-
-## One preview drill per exercise, created through the frozen module and reused until
-## the screen is entered again. Creating one builds a match state; it never steps it,
-## so nothing here simulates a match.
+## One preview drill per exercise, created through the frozen module and reused until the
+## screen is entered again. Creating one builds a match state; it never steps it, so nothing
+## here simulates a match.
 func _drill_for(id: String) -> Variant:
 	if id == "":
 		return null
-	if _drills.has(id):
-		return _drills[id]
+	if _previews.has(id):
+		return _previews[id]
 	var drill = DrillSession.create(String(id), Config.athlete(), Config.arena(), Config.tier(), {"seed": 0})
-	_drills[id] = drill
+	_previews[id] = drill
 	return drill
+
+
+## The hub's own report, so a test reads the painted hub rather than the table behind it.
+func hub_report() -> Dictionary:
+	_ensure()
+	return _hub.report()
 
 
 # ---------------------------------------------------------------------------
 # Start (the port's own decision: the drill plays in the match scene)
 # ---------------------------------------------------------------------------
 
-## The renderer the flow uses and the two fields it reads, then the scene change.
-## `dry_run` stops before the engine call so an audit can assert the payload in-process.
+## The renderer the flow uses and the seams it reads, then the scene change. `dry_run` stops
+## before the engine call so an audit can assert the payload in-process.
 ##
-## The demo/scope gate is asked FIRST (`ModeSession.can_start`, the same source of
-## truth `game/mode_screen.gd::start_mode` asks): a build that does not grant `drill`
-## refuses it here, visibly — no config write and no scene change — instead of letting
-## the mode flow substitute another mode after the fact (review F8: the controller used
-## to answer `MODE_REFUSED` and silently open a quick match).
+## The demo/scope gate is asked FIRST (`ModeSession.can_start`, the same source of truth
+## `game/mode_screen.gd::start_mode` asks): a build that does not grant `drill` refuses it
+## here, visibly — no config write and no scene change.
 func start(dry_run := false) -> Dictionary:
 	var payload := start_payload()
 	payload["dry_run"] = dry_run
@@ -355,15 +291,15 @@ func start(dry_run := false) -> Dictionary:
 		payload["scene"] = ""
 		return payload
 	Config.pending_mode = "drill"
-	Config.pending_exercise = _exercise
+	Config.pending_exercise = exercise()
+	Config.pending_drill_difficulty = difficulty()
+	Config.pending_training_return = DrillHub.RETURN_SCENE_ROUTED
 	if not dry_run:
 		get_tree().change_scene_to_file(SCENE_PATH)
 	return payload
 
 
-## Whether this build grants the drill. The reference locks only `.mode-card`s and
-## keeps the drill entry as a header button, but the port plays the drill in the match
-## scene, so the gate must be asked here too.
+## Whether this build grants the drill.
 func granted() -> bool:
 	return ModeSession.can_start(SCREEN_ID)
 
@@ -373,14 +309,12 @@ func refusal() -> String:
 	return ModeSession.refusal(SCREEN_ID)
 
 
-## What `start()` hands the flow, without touching the tree or the config: the mode,
-## the exercise, the difficulty and the scene. The two `Config` writes moved into
-## `start()`, after the gate, so a refused press leaves no seam behind.
+## What `start()` hands the flow, without touching the tree or the config.
 func start_payload() -> Dictionary:
 	return {
 		"mode": "drill",
-		"exercise": _exercise,
-		"difficulty": _difficulty,
+		"exercise": exercise(),
+		"difficulty": difficulty(),
 		"scene": SCENE_PATH,
 	}
 
@@ -389,25 +323,18 @@ func start_payload() -> Dictionary:
 # Strings
 # ---------------------------------------------------------------------------
 
+## The chrome follows the choice exactly as `syncDrillChrome` does (`js/main.js:2146-2185`):
+## the subtitle is the exercise's `desc` id, the hint line its `hint` id, both resolved
+## through `drill_text.gd` in the current locale. `refresh()` on the hub also rewrites every
+## card's own name, so a language flip moves the whole page.
 func refresh_strings() -> void:
 	_ensure()
 	_shell.set_title("drillTitle")
-	# The subtitle and the hint go through `drill_text.gd`, which asks the reference's own
-	# locale table first: the frozen four keep the generated strings, the Godot-only rows
-	# get this build's own (`godot/src/modes/drill_strings.json`).
 	_shell.set_subtitle_text(DrillText.t(exercise_desc_key()))
-	(_control("Hint") as Label).text = DrillText.t(exercise_hint_key())
-	(_control("StartButton") as Button).text = UiStrings.t("training")
-	(_control("CourtCaption") as Label).text = UiStrings.t(arena_name_key())
+	if _hint != null:
+		_hint.text = DrillText.t(exercise_hint_key())
+	_hub.refresh()
 	_apply_gate()
-	for id in _exercise_buttons:
-		# The reference's four come from the generated locale table; the Godot-only ones
-		# from this build's own `drill_strings.json` (`drill_text.gd` resolves both).
-		(_exercise_buttons[id] as Button).text = DrillText.exercise_name(String(id))
-	for id in _difficulty_buttons:
-		(_difficulty_buttons[id] as Button).text = UiStrings.t(String(DIFFICULTY_LABELS[id]))
-	(_metrics_grid as Control).tooltip_text = UiStrings.t("drillExercise")
-	_refresh_segments()
 
 
 func arena_name_key() -> String:
@@ -425,245 +352,54 @@ func _ensure() -> void:
 	_shell = $Shell
 	_shell.setup(SCREEN_ID)
 	_shell.set_back_target(DECLARED_BACK)
-	_exercise = first_exercise_id()
 	_build()
-	_difficulty = seed_difficulty()
-	refresh_metrics()
 	refresh_strings()
 
 
 func _build() -> void:
-	var column := _centered_column()
-	column.add_child(_segment("ExerciseSeg", "drillExercise", exercise_rows(), "Exercise_%s", "drill_%s_name", _exercise_buttons, select_exercise))
-	var difficulty_seg := _segment("DifficultySeg", "difficulty", difficulty_rows(), "Difficulty_%s", "", _difficulty_buttons, select_difficulty)
-	difficulty_seg.modulate.a = DIFFICULTY_ALPHA
-	column.add_child(difficulty_seg)
-	column.add_child(_metrics())
-	column.add_child(_court_frame())
-	_label(column, "Hint")
-	_register_focus()
-	resized.connect(_apply_metrics_columns)
-
-
-func _centered_column() -> VBoxContainer:
 	var content: MarginContainer = _shell.content()
-	var centering := MarginContainer.new()
-	centering.name = "Centering"
-	centering.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	centering.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	centering.set_meta("max_width", MAX_COLUMN)
-	content.add_child(centering)
 	var column := VBoxContainer.new()
 	column.name = "DrillColumn"
-	column.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	column.add_theme_constant_override("separation", 16)
-	centering.add_child(column)
-	centering.resized.connect(_apply_column_width.bind(centering, column))
-	_apply_column_width(centering, column)
-	return column
+	column.add_theme_constant_override("separation", 14)
+	content.add_child(column)
+	_hub = HubView.new()
+	_hub.name = "DrillHub"
+	_hub.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_hub.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	column.add_child(_hub)
+	_hub.setup(store(), seed_difficulty())
+	_hub.exercise_selected.connect(_on_hub_exercise)
+	_hint = Label.new()
+	_hint.name = "Hint"
+	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	column.add_child(_hint)
+	_register_focus()
 
 
-func _apply_column_width(centering: MarginContainer, column: VBoxContainer) -> void:
-	if _applying_width:
-		return
-	_applying_width = true
-	var max_width := float(centering.get_meta("max_width", 0.0))
-	# The column centres itself (`SIZE_SHRINK_CENTER`) instead of the centering carrying
-	# side margins: margins are part of a container's own minimum size, so a width the
-	# screen once had could never be given back and the shell stayed wider than its frame.
-	var available := centering.get_parent_area_size().x
-	var want_min := minf(max_width, available)
-	if not is_equal_approx(column.custom_minimum_size.x, want_min):
-		column.custom_minimum_size.x = want_min
-	_applying_width = false
+func _on_hub_exercise(_exercise_id: String) -> void:
+	refresh_strings()
 
 
-## One segmented control. `label_pattern` is `""` for rows whose labels come from the
-## difficulty table instead of `drill_<id>_name`.
-func _segment(node_name: String, aria_key: String, rows: Array, name_pattern: String, label_pattern: String, registry: Dictionary, handler: Callable) -> Control:
-	var box := PanelContainer.new()
-	box.name = "%sBox" % node_name
-	box.theme_type_variation = &"SegmentedContainer"
-	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var seg := HBoxContainer.new()
-	seg.name = node_name
-	seg.add_theme_constant_override("separation", 0)
-	seg.tooltip_text = UiStrings.t(aria_key)
-	seg.alignment = BoxContainer.ALIGNMENT_CENTER
-	seg.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	box.add_child(seg)
-	for row in rows:
-		var id := String((row as Dictionary).get("id", ""))
-		var button := Button.new()
-		button.name = name_pattern % id
-		button.toggle_mode = true
-		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		button.custom_minimum_size = Vector2(0.0, 36.0)
-		button.pressed.connect(handler.bind(id))
-		seg.add_child(button)
-		registry[id] = button
-	return box
-
-
-## The four boxes (`styles.css:1370-1383`): border `--line`, radius 10, over
-## `rgba(255,255,255,0.03)`, a muted caption and a bright figure.
-func _metrics() -> GridContainer:
-	var grid := GridContainer.new()
-	grid.name = "Metrics"
-	grid.columns = METRICS_COLUMNS
-	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_metrics_grid = grid
-	var theme: Theme = self.theme
-	for index in METRIC_BOXES:
-		var box := VBoxContainer.new()
-		box.name = "MetricBox%d" % index
-		var label := Label.new()
-		label.name = "MetricLabel%d" % index
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		box.add_child(label)
-		var value := Label.new()
-		value.name = "MetricValue%d" % index
-		value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		box.add_child(value)
-		if theme != null:
-			value.add_theme_font_override("font", theme.get_font("font", "HeroTitle"))
-			value.add_theme_font_size_override("font_size", 22)
-			value.add_theme_color_override("font_color", theme.get_color("cyan", "Palette"))
-			label.modulate.a = 0.62
-		var panel := PanelContainer.new()
-		panel.name = "MetricPanel%d" % index
-		panel.add_theme_stylebox_override("panel", _metric_box_style())
-		panel.add_child(box)
-		grid.add_child(panel)
-		_metric_boxes.append(box)
-	return grid
-
-
-## `#drillCanvas` (`styles.css:1401-1407`): the frame treatment the port keeps while the
-## court itself lives in the match scene.
-func _metric_box_style() -> StyleBoxFlat:
-	var box := StyleBoxFlat.new()
-	var theme: Theme = self.theme
-	if theme == null:
-		return box
-	box.bg_color = _alpha(theme.get_color("ink", "Palette"), 0.03)
-	box.border_color = theme.get_color("line", "Palette")
-	box.set_border_width_all(1)
-	box.set_corner_radius_all(10)
-	box.content_margin_left = 14.0
-	box.content_margin_right = 14.0
-	box.content_margin_top = 10.0
-	box.content_margin_bottom = 10.0
-	return box
-
-
-func _court_frame() -> PanelContainer:
-	var panel := PanelContainer.new()
-	panel.name = "CourtFrame"
-	panel.custom_minimum_size = Vector2(0.0, 240.0)
-	panel.add_theme_stylebox_override("panel", _court_style())
-	var inner := VBoxContainer.new()
-	inner.name = "CourtInner"
-	inner.alignment = BoxContainer.ALIGNMENT_CENTER
-	inner.add_theme_constant_override("separation", 12)
-	panel.add_child(inner)
-	_label(inner, "CourtCaption")
-	var start_button := Button.new()
-	start_button.name = "StartButton"
-	start_button.theme_type_variation = &"ButtonPrimary"
-	start_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	start_button.pressed.connect(start)
-	inner.add_child(start_button)
-	return panel
-
-
-## The gate's own presentation, read off `granted()`: a refused build dims and
-## disables the start action and swaps the caption for the lock tag key the mode cards
-## use (`Gate.locked_key`). A granted build leaves both alone.
+## The gate's own presentation, read off `granted()`: a refused build dims and disables the
+## start action. A granted build leaves it alone.
 func _apply_gate() -> void:
 	var ok := granted()
-	var start_button := _control("StartButton") as Button
+	var start_button := find_child("HubStart", true, false) as Button
 	if start_button != null:
 		start_button.disabled = not ok
 		start_button.modulate = Color(1, 1, 1, 1) if ok else Color(1, 1, 1, LOCKED_ALPHA)
 		start_button.tooltip_text = "" if ok else refusal()
-	var caption := _control("CourtCaption") as Label
-	if caption != null and not ok:
-		caption.text = UiStrings.t(Gate.locked_key())
-
-
-func _court_style() -> StyleBoxFlat:
-	var box := StyleBoxFlat.new()
-	var theme: Theme = self.theme
-	if theme == null:
-		return box
-	box.bg_color = theme.get_color("panel", "Palette")
-	box.border_color = theme.get_color("line", "Palette")
-	box.set_border_width_all(1)
-	box.set_corner_radius_all(12)
-	return box
-
-
-func _label(parent: Node, node_name: String) -> Label:
-	var label := Label.new()
-	label.name = node_name
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	parent.add_child(label)
-	return label
-
-
-func _refresh_segments() -> void:
-	for id in _exercise_buttons:
-		_style_segment(_exercise_buttons[id] as Button, String(id) == _exercise)
-	for id in _difficulty_buttons:
-		_style_segment(_difficulty_buttons[id] as Button, String(id) == _difficulty)
-
-
-func _style_segment(button: Button, active: bool) -> void:
-	if button == null:
-		return
-	button.set_pressed_no_signal(active)
-	var theme: Theme = self.theme
-	if theme == null:
-		return
-	var variation := "SegmentedActive" if active else "SegmentedInactive"
-	button.add_theme_stylebox_override("normal", theme.get_stylebox("normal", variation))
-	button.add_theme_stylebox_override("hover", theme.get_stylebox("hover", variation))
-	button.add_theme_stylebox_override("pressed", theme.get_stylebox("pressed", variation))
-	button.add_theme_stylebox_override("focus", theme.get_stylebox("normal", variation))
-	button.add_theme_font_override("font", theme.get_font("font", variation))
-	button.add_theme_font_size_override("font_size", theme.get_font_size("font_size", variation))
-	for slot in ["font_color", "font_hover_color", "font_pressed_color"]:
-		button.add_theme_color_override(String(slot), theme.get_color(String(slot), variation))
-
-
-## `repeat(auto-fit, minmax(120px, 1fr))`: four boxes at the design frame, two when the
-## frame is narrower than three cells.
-func _apply_metrics_columns() -> void:
-	if _metrics_grid == null:
-		return
-	var width := size.x
-	if width <= 0.0:
-		width = 1280.0
-	_metrics_grid.columns = maxi(2, mini(METRICS_COLUMNS, int(width / (METRICS_MIN_CELL * 3.0))))
-
-
-func _alpha(color: Color, alpha: float) -> Color:
-	var out := color
-	out.a = alpha
-	return out
 
 
 # ---------------------------------------------------------------------------
-# Focus
+# Focus: the host's own model (`ScreenShell` -> the router bridge), one row per hub control
 # ---------------------------------------------------------------------------
 
 func _register_focus() -> void:
-	for id in _exercise_buttons:
-		_shell.add_focus("Exercise_%s" % id, _exercise_buttons[id], "exercise:%s" % id, {"kind": "button"})
-	for id in _difficulty_buttons:
-		_shell.add_focus("Difficulty_%s" % id, _difficulty_buttons[id], "difficulty:%s" % id, {"kind": "button"})
-	_shell.add_focus("StartButton", _control("StartButton"), "start", {"kind": "button"})
+	for row in _hub.focus_rows():
+		var entry: Dictionary = row
+		_shell.add_focus(String(entry["id"]), entry["control"], String(entry["action"]), {"kind": "button"})
 
 
 func focus_controls() -> Array:
@@ -674,7 +410,3 @@ func focus_controls() -> Array:
 func focus_id(suffix: String) -> String:
 	_ensure()
 	return _shell.focus_id(suffix)
-
-
-func _control(node_name: String) -> Control:
-	return find_child(node_name, true, false) as Control

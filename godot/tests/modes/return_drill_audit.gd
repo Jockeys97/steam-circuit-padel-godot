@@ -23,6 +23,12 @@
 ##   4. A NON-RETURN FAILS: the same scripted player, with no swing at all, closes the
 ##      attempt as a failure with a measured diagnosis. Across seeds the audit runs both
 ##      directions, so the exercise has been observed to succeed and to fail.
+##   4b. THE OTHER LEGAL ENDING (root integration probe, 2026-09-24): a return the OPPONENT
+##      plays back — a volley before it bounces — is a good return, not a net fault. The
+##      seeded trajectory below (seed 1234, a drive) contacts the serve and is then volleyed
+##      by the opponents, and this audit requires it to close as a SUCCESS with the distinct
+##      diagnosis `drillWhyReturnPlayed` and with NO depth bonus: the deep tier is only ever
+##      read off a measured landing.
 ##   5. THE METRICS ARE USEFUL AND THE DIAGNOSES RESOLVE in both languages — including the
 ##      ones this extension added (`drillWhyReturnIn`, `drillWhyAceAgainst`, …), which live
 ##      in `godot/src/modes/drill_strings.json` and are resolved by `drill_text.gd`.
@@ -41,6 +47,7 @@ extends SceneTree
 
 const AuditBase := preload("res://src/audits/audit_base.gd")
 const DrillExtras := preload("res://src/modes/drill_extras.gd")
+const Sim := preload("res://src/sim/sim.gd")
 const DrillScoring := preload("res://src/modes/drill_scoring.gd")
 const DrillSession := preload("res://src/modes/drill_session.gd")
 const DrillTarget := preload("res://src/modes/drill_target.gd")
@@ -84,12 +91,27 @@ func _catalog(audit: AuditBase) -> void:
 	for row in frozen_rows:
 		frozen_ids.append(String((row as Dictionary).get("id", "")))
 	audit.check_eq(frozen_ids.has("return"), false, "return/the_frozen_table_does_not_carry_it")
-	audit.check_eq(String(Tables.source_sha256().get("js/drill.js", "")), "b3f346f65029e0a402eda2f6e73a1fd7897b0c1ee0c812e701eee911a89c8703", "return/the_generated_document_is_untouched")
+	# `the_generated_document_is_untouched`: the document records the sha256 of the two
+	# reference files it was generated from, and the honest check is against the SOURCE,
+	# not against a constant this file happens to remember. A hardcoded digest went stale
+	# when `js/drill.js` moved on (the recorded one is correct, the constant was not), which
+	# is exactly the failure mode a relationship check cannot have.
+	for source in ["js/drill.js", "js/data.js"]:
+		var recorded := String(Tables.source_sha256().get(String(source), ""))
+		var actual := _source_sha256(String(source))
+		audit.check_eq(recorded, actual, "return/the_document_records_the_real_sha256_of_%s" % String(source).replace("/", "_"))
+		audit.check_true(recorded != "", "return/the_document_records_a_digest_for_%s" % String(source).replace("/", "_"))
 
 	var catalog: Array = Tables.drill_catalog()
-	audit.check_eq(catalog.size(), 5, "return/the_catalog_offers_five_exercises")
+	# The training overhaul's three challenges are catalog rows of this same Godot-only
+	# family (`drill_extras.gd`), so the catalog this build OFFERS is the frozen four plus
+	# four extension rows — `Tables.drill_exercises()` above is still the reference's four.
+	audit.check_eq(catalog.size(), 8, "return/the_catalog_offers_eight_exercises")
 	var catalog_ids := Tables.drill_catalog_ids()
 	audit.check_true(catalog_ids.has(DrillExtras.RETURN_ID), "return/the_extension_is_one_of_them")
+	for challenge in [DrillExtras.GLASS_RECOVERY_ID, DrillExtras.NET_PLAY_ID, DrillExtras.DOUBLES_TACTICS_ID]:
+		audit.check_true(catalog_ids.has(String(challenge)), "return/%s_is_offered" % String(challenge))
+		audit.check_eq(bool(DrillExtras.is_extra(String(challenge))), true, "return/%s_is_a_godot_only_row" % String(challenge))
 	audit.check_eq(String(Tables.drill_exercise("return").get("id", "")), "return", "return/the_id_resolves_to_the_exercise")
 	audit.check_eq(String(Tables.drill_exercise("inesistente").get("id", "")), String(frozen_ids[0]), "return/an_unknown_id_still_falls_back_to_the_reference_first")
 	audit.check_eq(bool(DrillExtras.is_extra("return")), true, "return/it_is_marked_as_the_godot_only_one")
@@ -135,7 +157,10 @@ func _grading(audit: AuditBase) -> void:
 		var engine_verdict := String(returning["session"].return_ball_diagnosis())
 		audit.check_true(engine_verdict != "none", "return/seed_%d/the_human_side_reached_the_serve" % seed_value)
 		audit.check_true(bool(returning["session"].return_cleared), "return/seed_%d/the_return_cleared_the_net" % seed_value)
-		if String(returning["session"].diagnosis) == "drillWhyReturnIn" or String(returning["session"].diagnosis) == "drillWhyReturnDeep":
+		var diagnosis := String(returning["session"].diagnosis)
+		var landed := diagnosis == "drillWhyReturnIn" or diagnosis == "drillWhyReturnDeep"
+		var played_back := diagnosis == "drillWhyReturnPlayed"
+		if landed:
 			successes += 1
 			audit.check_eq(int(returning["session"].hits), 1, "return/seed_%d/a_return_that_landed_in_the_opponent_court_is_a_hit" % seed_value)
 			audit.check_gt(int(returning["session"].points), 0, "return/seed_%d/and_scores" % seed_value)
@@ -144,6 +169,16 @@ func _grading(audit: AuditBase) -> void:
 			audit.check_eq(DrillTarget.in_return_zone(float(returning["landing"]["y"])), true, "return/seed_%d/and_the_graded_landing_is_inside_the_opponent_court" % seed_value)
 			audit.check_ge(float(returning["session"].squash), 0.0, "return/seed_%d/the_execution_scale_is_measured" % seed_value)
 			audit.check_le(float(returning["session"].squash), 1.0, "return/seed_%d/and_stays_in_scale" % seed_value)
+		elif played_back:
+			# The opponents played the return before it bounced: a legal, playable return.
+			# It scores, its verdict is its own, and — the point of the split — it carries
+			# NO depth bonus, because no landing was measured to read one from.
+			successes += 1
+			var grade: Variant = returning["session"].grade if returning["session"].grade != null else "good"
+			audit.check_eq(int(returning["session"].hits), 1, "return/seed_%d/a_return_the_opponent_played_is_a_hit" % seed_value)
+			audit.check_eq(int(returning["session"].points), DrillScoring.attempt_points(DrillSession.RETURN_PLAYED_TIER, grade), "return/seed_%d/and_pays_the_flat_played_back_tier_with_no_depth_bonus" % seed_value)
+			audit.check_eq(returning["session"].landing, null, "return/seed_%d/and_measured_no_landing_to_bonus" % seed_value)
+			audit.check_true(DrillText.has("drillWhyReturnPlayed", "it") and DrillText.has("drillWhyReturnPlayed", "en"), "return/seed_%d/the_opponent_volley_diagnosis_is_its_own_and_localized" % seed_value)
 		else:
 			audit.check_eq(int(returning["session"].hits), 0, "return/seed_%d/a_return_that_did_not_land_is_not_a_hit" % seed_value)
 
@@ -157,6 +192,23 @@ func _grading(audit: AuditBase) -> void:
 		audit.check_true(DrillText.has(String(passive["session"].diagnosis), "en"), "return/seed_%d/and_in_english" % seed_value)
 	audit.check_gt(successes, 0, "return/at_least_one_seed_graded_a_real_return_as_success")
 	audit.check_gt(failures, 0, "return/and_at_least_one_attempt_graded_a_non_return_as_failure")
+
+	# THE DRIVE REGRESSION (root probe, `/tmp/training-return-review.5C0Y3C/probe.gd`, drive
+	# variant, seed 1234): the human's controlled drive contacts the serve and the opponents
+	# volley it AT y < netY on the very next contact — in the same tick the ball crossed the
+	# net, so the engine's own `crossedNet` flag was cleared by that volley before the drill
+	# could read it. Requiring a previously latched `crossedNet` made this legal return a
+	# "net" miss; the objective now accepts the legal opponent contact in the opponents' half
+	# and raises `return_cleared` itself. This is the trajectory that regression exists for.
+	var drive := _play_drive(1234)
+	audit.check_eq(String(drive["session"].diagnosis), "drillWhyReturnPlayed", "return/drive_seed_1234/the_opponent_volley_of_a_legal_drive_is_a_success")
+	audit.check_eq(bool(drive["session"].return_cleared), true, "return/drive_seed_1234/the_accepted_volley_marks_the_return_as_cleared")
+	audit.check_eq(int(drive["session"].hits), 1, "return/drive_seed_1234/and_it_is_a_hit")
+	audit.check_gt(int(drive["session"].points), 0, "return/drive_seed_1234/and_it_scores")
+	audit.check_eq(drive["session"].landing, null, "return/drive_seed_1234/and_no_landing_was_measured_to_bonus")
+	audit.check_true(drive["contacted_frame"] > 0 and drive["opponent_frame"] > drive["contacted_frame"], "return/drive_seed_1234/the_engine_saw_the_human_contact_then_the_opponent_contact")
+	audit.report("drive regression: contact frame %d, opponent contact frame %d, verdict %s" % [
+		int(drive["contacted_frame"]), int(drive["opponent_frame"]), String(drive["session"].diagnosis)])
 
 	# Boundary outcomes are driven through the drill's grading seam with engine-owned
 	# marks. A contacted ball that closes before crossing is a net failure; a contacted
@@ -294,6 +346,40 @@ func _play(seed_value: int, swing: bool) -> Dictionary:
 	return {"session": session, "frames": frames, "landing": session.landing if session.landing is Dictionary else {}}
 
 
+## The root probe's own drive trajectory, frame by frame: the paddle is kept under the ball,
+## `aimY` is 0.6, the variant is a drive, nothing is charged, and the human swings ONCE (the
+## probe's `not session.return_contact` gate). It reports the frame of the human's contact and
+## the frame of the opponents' contact, so the regression can assert the ORDER the engine saw
+## rather than only the verdict.
+func _play_drive(seed_value: int) -> Dictionary:
+	var session := seeded("return", seed_value)
+	session.step(STEP, input({"hit": true}))
+	var contact_frame := -1
+	var opponent_frame := -1
+	var frames := 0
+	while frames < ATTEMPT_FRAMES and session.phase not in ["result", "summary"]:
+		var s = session.state
+		var pad = s.active_player()
+		var ball = s.ball
+		var over := {
+			"moveX": clampf((float(ball.x) - float(pad.x)) / 30.0, -1.0, 1.0) if absf(float(ball.y) - float(pad.y)) > 80.0 else 0.0,
+			"moveY": clampf((float(ball.y) - float(pad.y)) / 60.0, -1.0, 1.0) if absf(float(ball.y) - float(pad.y)) > 45.0 else 0.0,
+			"aimY": 0.6,
+			"shotVariant": "drive",
+			"charging": false,
+			"hit": Sim.can_hit(pad, ball) and absf(float(ball.y) - float(pad.y)) < 45.0 and not session.return_contact,
+		}
+		var before := int(s.rallyHits)
+		session.step(STEP, input(over))
+		if int(s.rallyHits) != before:
+			if String(s.lastHitterSide) == "player" and contact_frame < 0:
+				contact_frame = frames
+			elif String(s.lastHitterSide) == "ai" and opponent_frame < 0:
+				opponent_frame = frames
+		frames += 1
+	return {"session": session, "frames": frames, "contacted_frame": contact_frame, "opponent_frame": opponent_frame}
+
+
 func seeded(exercise_id: String, seed_value: int) -> RefCounted:
 	var athlete: Dictionary = Frozen.athletes()[0]
 	var arena: Dictionary = Frozen.arenas()[0]
@@ -336,3 +422,19 @@ func _wipe() -> void:
 			entry = dir.get_next()
 		dir.list_dir_end()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEMP_DIR))
+
+
+## The sha256 of one reference source file, read from the checkout: `res://` is `godot/`,
+## so the reference tree is one level up. `""` when the file cannot be read — a missing
+## source is a failed check, not a pass.
+static func _source_sha256(relative_path: String) -> String:
+	var root := ProjectSettings.globalize_path("res://")
+	var path := root.path_join("../%s" % relative_path)
+	var bytes: PackedByteArray = FileAccess.get_file_as_bytes(path)
+	if bytes.is_empty():
+		return ""
+	var context := HashingContext.new()
+	if context.start(HashingContext.HASH_SHA256) != OK:
+		return ""
+	context.update(bytes)
+	return context.finish().hex_encode()

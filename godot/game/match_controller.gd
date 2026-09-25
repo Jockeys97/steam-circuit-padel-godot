@@ -88,7 +88,7 @@ const CourtTiming := preload("res://game/court_timing_marks.gd")
 ## since UIR-22, and since gate 4 the only mount whose construction does not depend
 ## on the clock.
 const Config := preload("res://game/match_config.gd")
-const MixerContract := preload("res://src/audio/mixer_contract.gd")
+const MusicSettings := preload("res://src/audio/music_settings.gd")
 const ScriptedPlayer := preload("res://game/scripted_player.gd")
 const MatchAudioScript := preload("res://game/match_audio.gd")
 const AthletesView := preload("res://game/athletes_view.gd")
@@ -144,6 +144,11 @@ const MAX_SIM_STEPS := 8
 ## `Math.min(dt, 0.25)` (`js/main.js:1189`): a frame longer than a quarter second
 ## (a breakpoint, a stall, a window drag) contributes a quarter second, not itself.
 const MAX_FRAME_DELTA := 0.25
+
+## The summary's grace before a pad/keyboard action is accepted (`_tick_training_summary`):
+## long enough that the shot which ended the run cannot also press Retry, short enough that
+## the player does not feel the pause.
+const TRAINING_SUMMARY_GRACE := 0.35
 ## The one-shot fields, `consumeOneShot` (`js/main.js:1167-1180`) plus the port's
 ## `globo`, which `input_map.gd` fills from the same pad press.
 const ONE_SHOTS := ["hit", "special", "switchPlayer", "switchDirection", "smashUpgrade", "cutVolley", "globo", "teamTactic"]
@@ -407,6 +412,16 @@ var _points_total_prev: int = 0
 ## left alone. Presentation only — no simulation state, no pause state and no match
 ## persistence reads or writes this flag, and every reset path clears it.
 var _hud_hidden: bool = false
+## Training: the finished run's own two flags. `_training_persisted` keeps the record write
+## to once per run (a retry clears it); `_training_choice` is the action a finished run left
+## behind for the engine clock, consumed once by `take_training_choice()`.
+var _training_persisted: bool = false
+var _training_choice: String = ""
+## The summary's own guard: how long it has been up, and whether a quiet tick has armed it.
+## A held button from the shot that ended the run therefore cannot press "retry" for the
+## player.
+var _training_elapsed: float = 0.0
+var _training_armed: bool = false
 ## The profile in force, one entry per `UI_COMPONENTS` entry. Empty means `all`:
 ## `ui_visibility_snapshot()` resolves the default rather than storing a copy of it.
 var _ui_visibility: Dictionary = {}
@@ -598,6 +613,9 @@ func _adopt_session() -> void:
 	seen_events = {}
 	score_history = []
 	finished = false
+	# A new session is a new training run: the finished-run flags start clean.
+	_training_persisted = false
+	_training_choice = ""
 	_quick_outfit_award = {}
 	# A new match is a new receipt key: the previous award must not block this one.
 	_economy_match_id = ""
@@ -667,6 +685,133 @@ func end_drill() -> Dictionary:
 	if _hud != null and state.result != null:
 		_hud.show_result(state)
 	return awarded
+
+
+# ---------------------------------------------------------------------------
+# Training: the finished run, its record and its three actions
+# ---------------------------------------------------------------------------
+
+## True while the BOUNDED training run is over and waiting for the player. The drill's own
+## `summary` phase is the mode's end (`drill_session.gd`); the match's `finished` flag stays
+## false, so nothing here travels the generic end-of-match path: no result panel, no economy
+## award, no history entry, no outfit challenge — training pays a record and nothing else.
+func training_summary_up() -> bool:
+	if session == null or session.mode != "drill" or session.drill == null or finished:
+		return false
+	return String(session.drill.phase) == "summary"
+
+
+## The finished run's own numbers, or `{}` while the run is still on. Public so a test (and
+## the summary panel) can read the same model the HUD draws.
+func training_summary() -> Dictionary:
+	if not training_summary_up():
+		return {}
+	return session.drill.summary()
+
+
+## The one tick a finished run consumes: persist the record once (an improved best must
+## survive whatever the player does next), then read the action.
+## `ARMED` IS WHAT KEEPS THE LAST SHOT OUT OF THE MENU. A drill's attempt closes on the very
+## tick the player's swing produced, and the same button (or a held trigger, or a mouse press)
+## is still down on the next one: without a guard the run would retry itself the instant it
+## ended. So the summary accepts a pad/keyboard action only after a tick with no action input
+## has been observed AND the grace below has passed — the rule a click on the panel's own
+## buttons already has, because a click is a fresh press.
+func _tick_training_summary(input: Dictionary, dt: float) -> Variant:
+	if _mode_hud != null:
+		_mode_hud.visible = not _paused
+	if not _training_persisted:
+		session.persist_training_record()
+		_training_persisted = true
+		if _mode_hud != null:
+			_mode_hud.refresh()
+	ticks += 1
+	_training_elapsed += dt
+	var hit := bool(input.get("hit", false))
+	var special := bool(input.get("special", false))
+	if not hit and not special and _training_elapsed >= TRAINING_SUMMARY_GRACE:
+		_training_armed = true
+	if _training_armed:
+		if hit:
+			if _mode_hud != null:
+				_mode_hud.activate_training_action()
+			else:
+				training_retry()
+		elif special:
+			training_choose()
+	if _mode_hud != null:
+		_mode_hud.refresh()
+	return null
+
+
+## `A` on the summary: the same exercise, a fresh run. The attempt counters go back to zero
+## and the record does not (`DrillSession.restart_run`), so a retry can never silently
+## discard an improved best, and the next run is measured like-for-like again.
+func training_retry() -> Dictionary:
+	if not training_summary_up():
+		return {}
+	session.persist_training_record()
+	session.drill.restart_run()
+	_training_persisted = false
+	_training_armed = false
+	_training_elapsed = 0.0
+	if _mode_hud != null:
+		_mode_hud.refresh()
+	if _hud != null:
+		_hud.refresh(state, meta)
+	_refresh_ui(state, meta)
+	return session.drill.summary()
+
+
+## `B` on the summary: leave with the run's record written and report where the player goes
+## next. The scene change belongs to `training_leave()`, which only the engine-driven clock
+## performs — a harness reads `_training_choice` instead of losing its own scene.
+func training_choose() -> Dictionary:
+	if not training_summary_up():
+		return {}
+	var run: Dictionary = session.drill.summary()
+	session.persist_training_record()
+	_training_persisted = true
+	var awarded := end_drill()
+	_training_choice = "choose"
+	return {"summary": run, "awarded": awarded, "scene": Config.training_return_scene(), "left": true}
+
+
+## Leave training altogether: the run's record is written (as in `training_choose`), the session
+## ends, and the player goes to the menu rather than to another exercise. The scene change,
+## like the other two routes, belongs to `training_leave`.
+func training_exit() -> Dictionary:
+	if not training_summary_up():
+		return {}
+	var run: Dictionary = session.drill.summary()
+	session.persist_training_record()
+	_training_persisted = true
+	var awarded := end_drill()
+	_training_choice = "exit"
+	return {"summary": run, "awarded": awarded, "scene": "res://game/Main.tscn", "left": true}
+
+
+## The route back to the training hub the run started from (`Config.training_return_scene`):
+## the routed hub is mounted by the menu host, the ported one is its own scene. Nothing here
+## decides the destination per call — the hub that started the run wrote it.
+func training_leave(choice: String = "choose") -> void:
+	var destination := training_destination(choice)
+	Config.pending_menu_screen = String(destination["screen"])
+	get_tree().change_scene_to_file(String(destination["scene"]))
+
+
+func training_destination(choice: String) -> Dictionary:
+	return {
+		"scene": "res://game/Main.tscn" if choice == "exit" else Config.training_return_scene(),
+		"screen": "menu" if choice == "exit" else "drill",
+	}
+
+
+## The choice a finished run left behind, consumed once by the engine clock.
+func take_training_choice() -> String:
+	var held := _training_choice
+	_training_choice = ""
+	return held
 
 
 ## The mode HUD this run built, or null in a quick match.
@@ -907,6 +1052,12 @@ func _build_scene() -> void:
 	_mode_hud = ModeHudScript.new()
 	_mode_hud.name = "ModeHud"
 	layer.add_child(_mode_hud)
+	# The finished training run's own three actions: the panel's buttons are the MOUSE route,
+	# and the controller's input (A/B/ESC) is the pad and keyboard one. Both go through the
+	# same three methods, so a click and a button press cannot diverge.
+	_mode_hud.training_retry_requested.connect(training_retry)
+	_mode_hud.training_choose_requested.connect(training_choose)
+	_mode_hud.training_exit_requested.connect(training_exit)
 	if session != null:
 		_mode_hud.bind_session(session)
 	if _ui_new:
@@ -977,7 +1128,7 @@ func _build_scene() -> void:
 		# this one its facts are the recreated strip's (the recreated HUD is what a
 		# player reads). The ported column is not built at all in this mode, so
 		# there is nothing to hide.
-		_mode_hud.visible = false
+		_mode_hud.visible = session != null and session.mode == "drill"
 
 
 ## The prototype overlay's pause button asks the same question the key does: it emits,
@@ -1169,7 +1320,9 @@ func _apply_pause_range() -> void:
 
 
 func _on_pause_music_volume_changed(value: float) -> void:
-	MixerContract.new().apply_music_volume(value)
+	var prefs := Config.stored_prefs()
+	prefs["musicVolume"] = value
+	MusicSettings.apply(prefs)
 
 
 ## The stored mixer/input prefs, applied at match boot the way the reference applies
@@ -1180,7 +1333,7 @@ func _apply_stored_audio_prefs() -> void:
 	var prefs: Dictionary = Config.stored_prefs()
 	if _audio != null and _audio.port != null:
 		_audio.port.set_master_gain(float(prefs.get("volume", 0.5)))
-	MixerContract.new().apply_music_volume(float(prefs.get("musicVolume", 1.0)))
+	MusicSettings.apply(prefs)
 	InputSource.set_deadzone(float(prefs.get("gamepadDeadzone", 0.15)))
 
 
@@ -1405,6 +1558,11 @@ func advance_frame(delta: float) -> Dictionary:
 	# The sub-steps consumed the latch. A frame that justified no sub-step keeps it.
 	if steps > 0:
 		queued_one_shots.clear()
+	# The training summary's own choice, on the FRAME (not inside a sub-step): a finished
+	# run that asked to change exercise leaves here, once. A harness owns its own scene and
+	# never sets `engine_driven`, so this is inert for it.
+	if engine_driven and _training_choice != "":
+		training_leave(take_training_choice())
 	last_frame_steps = steps
 	max_frame_steps = maxi(max_frame_steps, steps)
 	return {"steps": steps, "accumulator": sim_accumulator, "ticks": ticks}
@@ -1456,6 +1614,8 @@ func apply_frame(sample: Dictionary, delta: float) -> Dictionary:
 		_ui_hud.refresh(state, meta)
 	if _mode_hud != null and session != null and not finished:
 		_mode_hud.refresh()
+		if session.mode == "drill":
+			_mode_hud.visible = not _paused and (training_summary_up() or _ui_component_on("guidance"))
 	_sync_views()
 	return result
 
@@ -1609,6 +1769,12 @@ func _start_play_test(match_state) -> void:
 func tick_fixed(dt: float, input: Dictionary, input2: Dictionary) -> Variant:
 	if state == null:
 		return null
+	# TRAINING: a FINISHED run has no clock of its own. The bounded run closes its eighth
+	# attempt and parks in `summary`; from there the three actions are the player's — retry,
+	# choose another exercise, or leave — so the tick path does not step the engine and does
+	# not let the run restart itself. This is the only input the summary consumes.
+	if training_summary_up():
+		return _tick_training_summary(input, dt)
 	var prev_y: float = state.ball.y
 	var result = null
 	if session != null:
@@ -2287,8 +2453,15 @@ func _unhandled_input(event: InputEvent) -> void:
 ## own. `main_menu.gd:963-968` states the same rule for every menu screen and is why
 ## this card is the only place the walk used to run.
 func _input(event: InputEvent) -> void:
-	if _audio != null and _audio.ost != null and event is InputEventJoypadButton:
-		if (_input_source == null or _input_source.device == InputSource.NO_DEVICE or event.device == _input_source.device) and _audio.ost.handle_skip(event):
+	if training_summary_up() and not _paused and event.is_action("ui_accept"):
+		# Pad confirm is sampled by the gameplay input source on release. Do not also
+		# activate the focused native Button on press.
+		if event is InputEventKey and event.is_pressed() and not event.is_echo() and _training_armed:
+			_mode_hud.activate_training_action()
+		get_viewport().set_input_as_handled()
+		return
+	if _audio != null and _audio.ost != null and (event is InputEventJoypadButton or event is InputEventKey):
+		if (event is InputEventKey or _input_source == null or _input_source.device == InputSource.NO_DEVICE or event.device == _input_source.device) and _audio.ost.handle_skip(event):
 			get_viewport().set_input_as_handled()
 			return
 	# Options (PS5) / Menu (Xbox) always use the pause route, even with HUD hidden.
@@ -2546,7 +2719,7 @@ func _apply_hud_visibility() -> void:
 	# clean mode ends would be exactly the regression the mount policy forbids. It is
 	# the `guidance` component where it does show.
 	if _mode_hud != null:
-		_mode_hud.visible = _ui_component_on("guidance") and (not _ui_new)
+		_mode_hud.visible = training_summary_up() or (_ui_component_on("guidance") and (not _ui_new or (session != null and session.mode == "drill")))
 	# The court timing presentation (the ring, the window, the two bars, the advice
 	# word and the verdict) through the module's own mute seam — the same flag the
 	# A/B capture flips.
@@ -2858,7 +3031,14 @@ func to_menu() -> void:
 
 ## The road back from a mode match: the mode's own screen, so the player sees the
 ## advanced bracket or the season state they just changed.
+##
+## A TRAINING run goes back to the hub THAT STARTED IT (`Config.training_return_scene`):
+## the recreated hub is mounted by the menu host, the ported one is its own scene, and both
+## write the seam before the match opens.
 func to_mode_screen() -> void:
+	if session != null and session.mode == "drill":
+		training_leave("choose")
+		return
 	get_tree().change_scene_to_file("res://game/ModeScreen.tscn")
 
 
@@ -2915,7 +3095,11 @@ func result_payload() -> Dictionary:
 	if not _economy_award.is_empty():
 		facts["reward"] = {
 			"awarded": int(_economy_award.get("awarded", 0)),
+			"earned": int(_economy_award.get("earned", 0)),
+			"breakdown": _economy_award.get("breakdown", {}),
 			"balance": int(_economy_award.get("balance", 0)),
+			"match_id": String(_economy_award.get("match_id", "")),
+			"animate": bool(_economy_award.get("ok", false)) and not bool(_economy_award.get("already", false)) and int(_economy_award.get("awarded", 0)) > 0,
 			"already": bool(_economy_award.get("already", false)),
 			"ok": bool(_economy_award.get("ok", false)),
 		}

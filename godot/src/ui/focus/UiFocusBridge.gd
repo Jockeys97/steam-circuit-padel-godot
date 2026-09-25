@@ -227,7 +227,13 @@ func last_dispatch() -> Dictionary:
 func metadata_of(id: String) -> Dictionary:
 	for entry in _registry:
 		if String(entry["id"]) == id:
-			return _carried(entry["opts"])
+			var meta := _carried(entry["opts"])
+			# A settings slider can change with the mouse between pad steps. Opt-in
+			# ranges follow the visible control instead of the registration snapshot.
+			var node: Variant = entry["node"]
+			if bool((entry["opts"] as Dictionary).get("value_from_control", false)) and node is Range and is_instance_valid(node):
+				meta["value"] = (node as Range).value
+			return meta
 	return {}
 
 

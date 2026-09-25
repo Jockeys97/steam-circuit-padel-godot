@@ -312,6 +312,7 @@ const PROFILE_TARGET_UNIFORMS := {
 ## the reference's six, and `resolve()`'s shape is untouched — a special's colors
 ## arrive through the same `colors[0] -> primary, colors[1] -> trim` mapping.
 const Specials := preload("res://src/character/specials.gd")
+const ConceptOutfits := preload("res://src/character/concept_outfits.gd")
 
 ## Measured mask constants, carried over verbatim from the previous slice's
 ## tools/character/outfits-strong.json `defaults`. Not re-tuned in this lane.
@@ -425,7 +426,14 @@ static func outfit_ids(athlete_id: StringName) -> Array:
 
 
 static func has_outfit(athlete_id: StringName, outfit_id: StringName) -> bool:
-	return outfit_id in outfit_ids(athlete_id)
+	return outfit_id in outfit_ids(athlete_id) or not ConceptOutfits.record(athlete_id, outfit_id).is_empty()
+
+
+## Player-facing list: frozen reference first, then the Godot-only kits.
+static func playable_outfit_ids(athlete_id: StringName) -> Array:
+	var out := outfit_ids(athlete_id)
+	out.append_array(ConceptOutfits.ids(athlete_id))
+	return out
 
 
 static func unlock_key(athlete_id: StringName, outfit_id: StringName) -> String:
@@ -455,7 +463,8 @@ static func _outfit_record(athlete_id: StringName, outfit_id: StringName) -> Dic
 			for e in (lists[String(athlete_id)] as Array):
 				if StringName((e as Dictionary)["id"]) == outfit_id:
 					return e as Dictionary
-	return Specials.outfit_record(athlete_id, outfit_id)
+	var concept := ConceptOutfits.catalogue_record(athlete_id, outfit_id)
+	return concept if not concept.is_empty() else Specials.outfit_record(athlete_id, outfit_id)
 
 
 # =========================================================================
@@ -676,9 +685,10 @@ static func profile_targets(athlete_id: StringName, outfit_id: StringName) -> Di
 	if prof.is_empty():
 		return {}
 	var outfits: Dictionary = prof.get("outfits", {})
-	if not outfits.has(outfit_id):
+	var concept := ConceptOutfits.record(athlete_id, outfit_id)
+	if not outfits.has(outfit_id) and concept.is_empty():
 		return {}
-	var record: Dictionary = outfits[outfit_id]
+	var record: Dictionary = concept["targets"] if not concept.is_empty() else outfits[outfit_id]
 	var out := {}
 	for key in PROFILE_TARGET_UNIFORMS:
 		var hex := String(record.get(key, ""))
@@ -692,6 +702,8 @@ static func profile_targets(athlete_id: StringName, outfit_id: StringName) -> Di
 ## Which of an outfit's targets are port additions rather than reference colours.
 ## Reported so a reviewer can tell the two apart without reading this file's history.
 static func profile_port_only(athlete_id: StringName, outfit_id: StringName) -> Array:
+	if not ConceptOutfits.record(athlete_id, outfit_id).is_empty():
+		return PROFILE_TARGET_UNIFORMS.keys()
 	var prof := profile(athlete_id)
 	var outfits: Dictionary = prof.get("outfits", {})
 	if not outfits.has(outfit_id):
@@ -786,6 +798,13 @@ static func _apply_profile(rig: Node, athlete_id: StringName, entry: Dictionary)
 	mat.resource_name = "Outfit_%s" % entry["unlock_key"]
 	for uniform in targets:
 		mat.set_shader_parameter(uniform, _srgb_vec(targets[uniform]))
+	# A rig reuses its material while cycling outfits; explicitly clear the design
+	# when returning to any reference kit so no concept detail can leak into it.
+	var concept := ConceptOutfits.record(athlete_id, outfit_id)
+	mat.set_shader_parameter("concept_style", int(concept.get("style", 0)))
+	if not concept.is_empty():
+		mat.set_shader_parameter("concept_panel", _srgb_vec(_hex(String(concept["panel"]))))
+		mat.set_shader_parameter("concept_piping", _srgb_vec(_hex(String(concept["piping"]))))
 	# Reinstalls the cached material if something else (a previous `base`) owns the
 	# surface right now. One material per rig, no matter how often it is switched.
 	if rig.has_method("set_catalogue_surface"):

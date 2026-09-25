@@ -1,0 +1,19 @@
+{
+  "status": "SUBMITTING",
+  "reference": "reference-v2.png",
+  "sha256": "a19527272eab480bf5299dd39ae0094a2636f07195d6e708a99327d3db3e477a",
+  "options": {
+    "ai_model": "meshy-7",
+    "should_texture": true,
+    "enable_pbr": true,
+    "texture_resolution": "2k",
+    "should_remesh": true,
+    "topology": "triangle",
+    "target_polycount": 8000,
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "id": "01a0cf48-080c-7300-8734-0550cdb2d7a0"
+}

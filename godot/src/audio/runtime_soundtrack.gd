@@ -4,11 +4,14 @@ const Manager := preload("res://src/audio/soundtrack_manager.gd")
 const Economy := preload("res://src/economy/economy_service.gd")
 const Config := preload("res://game/match_config.gd")
 const Mixer := preload("res://src/audio/mixer_contract.gd")
+const MusicSettings := preload("res://src/audio/music_settings.gd")
 const Legacy := preload("res://src/audio/music.gd")
 const CLASSIC := "classic_match"
 const CLASSIC_SECONDS := 120.0
+const R3_HOLD_SECONDS := 0.8
 const Preferences := preload("res://src/audio/music_preferences.gd")
 signal track_changed(id: String)
+signal music_enabled_changed(enabled: bool)
 
 var player: Node
 var requested := ""
@@ -17,6 +20,7 @@ var _held := false
 var _muted := false
 var _elapsed := 0.0
 var _gain := -1.0
+var _music_gain := -1.0
 var classic: Node
 var toast: Control
 var _track := ""
@@ -25,6 +29,8 @@ var _classic_elapsed := 0.0
 var _playlist_key := ""
 var _playlist_cache: Array[String] = []
 var _skip_down := false
+var _skip_hold_seconds := 0.0
+var _skip_long_fired := false
 
 func _ready() -> void:
 	player = Manager.new()
@@ -37,7 +43,8 @@ func _ready() -> void:
 	add_child(layer)
 	toast = preload("res://src/audio/now_playing.gd").new()
 	layer.add_child(toast)
-	Mixer.new().apply_music_volume(float(Config.stored_prefs().get("musicVolume", 1.0)))
+	_music_gain = MusicSettings.effective_volume(Config.stored_prefs())
+	Mixer.new().apply_music_volume(_music_gain)
 
 func set_screen(id: String) -> void:
 	_match = false
@@ -108,11 +115,28 @@ func advance_track(random_order := false) -> void:
 		_play(items[(items.find(_track) + 1) % items.size()])
 
 func handle_skip(event: InputEvent) -> bool:
+	if event is InputEventKey:
+		var key := event as InputEventKey
+		if key.physical_keycode != KEY_N or key.ctrl_pressed or key.meta_pressed or key.alt_pressed:
+			return false
+		if get_viewport().gui_get_focus_owner() is LineEdit or get_viewport().gui_get_focus_owner() is TextEdit:
+			return false
+		if key.pressed and not key.echo:
+			advance_track(Preferences.random_skip(Config.save_store()))
+		return true
 	if not event is InputEventJoypadButton or event.button_index != JOY_BUTTON_RIGHT_STICK:
 		return false
-	if event.pressed and not _skip_down:
-		advance_track(Preferences.random_skip(Config.save_store()))
-	_skip_down = event.pressed
+	if event.pressed:
+		if not _skip_down:
+			_skip_down = true
+			_skip_hold_seconds = 0.0
+			_skip_long_fired = false
+	else:
+		if _skip_down and not _skip_long_fired:
+			advance_track(Preferences.random_skip(Config.save_store()))
+		_skip_down = false
+		_skip_hold_seconds = 0.0
+		_skip_long_fired = false
 	return true
 
 func _silence() -> void:
@@ -168,12 +192,18 @@ func refresh() -> void:
 	if not is_equal_approx(gain, _gain):
 		_gain = gain
 		Mixer.new().apply_master_gain(gain)
+	var music_gain := MusicSettings.effective_volume(Config.stored_prefs())
+	if not is_equal_approx(music_gain, _music_gain):
+		_music_gain = music_gain
+		Mixer.new().apply_music_volume(music_gain)
 	_sync_hold()
 
 func set_held(held: bool) -> void:
 	_held = held
 	if held:
 		_skip_down = false
+		_skip_hold_seconds = 0.0
+		_skip_long_fired = false
 	_sync_hold()
 
 func set_muted(muted: bool) -> void:
@@ -197,6 +227,14 @@ func _sync_hold() -> void:
 		player.resume()
 
 func _process(delta: float) -> void:
+	if _skip_down and not _skip_long_fired:
+		_skip_hold_seconds += delta
+		if _skip_hold_seconds >= R3_HOLD_SECONDS:
+			_skip_long_fired = true
+			var enabled := bool(Config.stored_prefs().get("musicMuted", false))
+			Preferences.Save.save_pref(Config.save_store(), "musicMuted", not enabled)
+			refresh()
+			music_enabled_changed.emit(enabled)
 	if _track == CLASSIC and not _held and not _muted:
 		_classic_elapsed += delta
 		if _classic_elapsed >= CLASSIC_SECONDS:

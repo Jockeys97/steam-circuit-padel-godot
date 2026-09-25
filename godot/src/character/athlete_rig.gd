@@ -168,6 +168,9 @@ var _skeleton: Skeleton3D = null
 var _mesh_instance: MeshInstance3D = null
 var _anim: AnimationPlayer = null
 var _model_root: Node3D = null
+var _model_root_base := Vector3.ZERO
+var _reach := Vector2.ZERO      # stretch towards the ball, rig-local x/z, length 0..1
+var _lift := 0.0                # split-step lift, metres
 
 var _facing_degrees: float = 0.0
 var _outfit: StringName = &"base"
@@ -296,6 +299,7 @@ func _build() -> int:
 		return ERR_CANT_OPEN
 	_model_root = base_root
 	add_child(_model_root)
+	_model_root_base = _model_root.position
 
 	_skeleton = _find_first(_model_root, "Skeleton3D") as Skeleton3D
 	_mesh_instance = _find_first(_model_root, "MeshInstance3D") as MeshInstance3D
@@ -377,7 +381,7 @@ func _build() -> int:
 	_author_ceremonies(lib)
 	_author_strokes(lib)
 	if _athlete_id in [&"fiamma", &"colosso", &"oracolo", &"maestro", &"fornaio", &"pantera", &"steamer"]:
-		for shot in ["drive", "smash", "bandeja", "backhand", "slice"]:
+		for shot in ["drive", "smash", "bandeja", "backhand", "slice", "lunge_forehand", "wall_exit_forehand"]:
 			var motion_path := "res://assets/athletes/animations/%s_meshy_%s.tres" % [_motion_id,shot]
 			if ResourceLoader.exists(motion_path):
 				var motion := load(motion_path) as Animation
@@ -1085,13 +1089,42 @@ func get_facing_degrees() -> float:
 ## Yaw remains owned by facing. Do not layer this tilt onto shot contact poses.
 func set_movement_lean(local_degrees: Vector2) -> void:
 	var lean := local_degrees.limit_length(6.0) if not is_stroking() else Vector2.ZERO
+	# The stretch is the exception to "no tilt on contact": a ball at the edge of the
+	# reach is met leaning over the lead foot.
+	lean += _reach * REACH_TILT_DEG
 	rotation_degrees.x = lean.y
 	rotation_degrees.z = -lean.x
 
 
 func set_split_step_lift(metres: float) -> void:
+	_lift = clampf(metres, 0.0, 0.025)
+	_apply_root_offset()
+
+
+## Stretch for a ball at the edge of the reach (2026-09-24, presentation only): the
+## whole body tilts towards the ball and slides a little over the lead foot. The tilt
+## pivots on the feet, so the body is raised by what the lead foot would sink: it
+## stays on the floor and the trailing foot comes up onto its toes. The crouch is the
+## stroke's own leg bend (`play_stroke_at(..., low_contact)`), never a rigid drop,
+## which pushed both shoes through the floor in the rendered frames.
+## `reach` is rig-local (x = side, y = towards local +Z), length 0 (comfortable) to 1
+## (at the limit). The view drives it around contact; the sim never reads it.
+const REACH_TILT_DEG := 0.0   # owner 2026-09-24: a whole-body tilt read as falling over
+const REACH_STANCE_HALF_M := 0.24  # lead foot's distance from the rig origin
+const REACH_SLIDE_M := 0.22
+func set_stroke_reach(reach: Vector2) -> void:
+	_reach = reach.limit_length(1.0)
+	_apply_root_offset()
+
+
+func get_stroke_reach() -> Vector2:
+	return _reach
+
+
+func _apply_root_offset() -> void:
 	if _model_root != null:
-		_model_root.position.y = clampf(metres, 0.0, 0.025)
+		var keep_foot_down := absf(sin(deg_to_rad(_reach.length() * REACH_TILT_DEG))) * REACH_STANCE_HALF_M
+		_model_root.position = _model_root_base + Vector3(_reach.x * REACH_SLIDE_M, _lift + keep_foot_down, _reach.y * REACH_SLIDE_M)
 
 
 func face_towards(target: Vector3) -> void:
@@ -1396,7 +1429,7 @@ func play_stroke(stroke: StringName) -> bool:
 ## same semantic instant as `hit_ball`, while the authored follow-through keeps
 ## playing normally afterwards.
 func play_stroke_at(stroke: StringName, contact_phase: float = 0.0,
-		speed_scale: float = 1.0, low_contact: float = 0.0) -> bool:
+		speed_scale: float = 1.0, low_contact: float = 0.0, blend: float = 0.0) -> bool:
 	_ensure_built()
 	if not _strokes.has(stroke):
 		return false
@@ -1410,7 +1443,10 @@ func play_stroke_at(stroke: StringName, contact_phase: float = 0.0,
 	_stroke_speed_scale = maxf(speed_scale, 0.05)
 	_anim.speed_scale = _stroke_speed_scale
 	var visual_clip := _low_contact_clip(stroke, contact_phase, low_contact)
-	_anim.play(visual_clip, 0.0) # Contact is authoritative: never blend away its first pose.
+	# Contact is authoritative: never blend away its first pose. The one exception is
+	# a stroke whose body drops far from the stance (the lunge), given a short blend
+	# so the pelvis travels there instead of snapping (`blend`, seconds).
+	_anim.play(visual_clip, maxf(blend, 0.0))
 	var length: float = float(_strokes[stroke])
 	_stroke_contact_time = clampf(contact_phase, 0.0, 1.0) * length
 	_anim.seek(_stroke_contact_time, true, true)

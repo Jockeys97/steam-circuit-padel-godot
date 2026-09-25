@@ -1,43 +1,9 @@
-## SettingsScreen.gd — `screen-settings`, the reference's own page (`index.html:398-441`).
-##
-## WHAT THIS SCREEN IS. Three groups, exactly as the markup has them: the language
-## segmented control, the accessibility toggles (reduce motion, colour-blind) and the
-## audio/controller group (volume, deadzone, vibration). Values come from the save
-## contract's own reader — `UiData.settings_snapshot()` — and every change goes back
-## through `ModesSave.save_pref()`, the module the rest of the port already reads
-## (`Config.control_mode()` reads the same group). No new storage, no second table of
-## defaults: the bounds are the reference's own markup attributes
-## (`index.html:433`, `:437`) and the labels are message ids.
-##
-## APPLIED IMMEDIATELY, the reference's own semantics:
-##   - the language switches the session locale and re-resolves every string here
-##     (`js/main.js:2421`);
-##   - reduce motion and colour-blind drive this screen's `AccessibilitySettings`
-##     object (`godot/src/accessibility/accessibility_settings.gd`), read through
-##     `UiMotionPolicy`, so a UI effect asking the policy follows the toggle at once
-##     (`js/ui.js:471-473`);
-##   - volume and deadzone are persisted through the same contract; their consumers
-##     live outside the UI lane (`js/audio.js` `setVolume`, `js/main.js:2529` for the
-##     deadzone) and the hand-back names the port's call sites for the integrator,
-##     because the port reads neither pref anywhere yet.
-##
-## PERSISTENCE IS PER-KEY. `ModesSave.save_pref(store, key, value)` is read-modify-write
-## over the `prefs` group, so this screen cannot drop a key another lane wrote
-## (`controlMode`, `tournamentRound`, the lineup). The stored keys are the reference's
-## camelCase ones (`volume`, `gamepadDeadzone`, `vibration`, `reduceMotion`,
-## `colorblind`, `lang`), the same ones `UiData.settings_snapshot()` reads back.
-##
-## THE ROWS ARE SHARED. `godot/src/ui/components/SettingsRows.gd` builds them, because
-## the pause overlay's controller tab (UIR-20) repeats the same two rows in the
-## reference and both copies read one state (`js/main.js:2455-2470`).
-##
-## THE THEME GAP THIS FILE CARRIES. The theme (UIR-02) has the segmented styleboxes and
-## the type roles used here, but no variation for the settings group's own title line;
-## `_style_group_titles()` composes it from `Palette`, and `godot/src/ui/theme/README.md`
-## §7 carries the follow-up. No literal colour, size or sentence lives in this file.
-##
-## CAPTURE STATES. One: `default`. The reference has no alternate settings page; the
-## language flip and the row values are asserted by the audit, not pinned into states.
+## SettingsScreen.gd — settings with an audio hero card and responsive control cards.
+## All values read the shared save profile through UiData and persist per key through
+## ModesSave. Music volume and the independent music switch affect only the Music bus:
+## switching it off preserves the slider level for later. Master volume and deadzone
+## apply immediately, as do the existing accessibility controls. Labels resolve through
+## locale ids; the pace preset keeps its own module's localized ladder.
 extends "res://src/ui/screens/ScreenContract.gd"
 
 const UiStrings := preload("res://src/ui/UiStrings.gd")
@@ -50,6 +16,9 @@ const Rows := preload("res://src/ui/components/SettingsRows.gd")
 const Pace := preload("res://src/sim/pace.gd")
 const AccessibilitySettings := preload("res://src/accessibility/accessibility_settings.gd")
 const UiMotionPolicy := preload("res://src/ui/accessibility/UiMotionPolicy.gd")
+const MusicSettings := preload("res://src/audio/music_settings.gd")
+const Mixer := preload("res://src/audio/mixer_contract.gd")
+const InputSource := preload("res://game/input_map.gd")
 
 const SCREEN_ID := "settings"
 
@@ -65,26 +34,28 @@ const LANGS: Array[String] = ["it", "en"]
 ## and its text are `src/sim/pace.gd`'s; this screen only shows them and writes the
 ## chosen id through the same save door every other row uses.
 const PACE_KEY := "pacePreset"
-## The pace group's own title, taken from the pace module rather than from
-## `TEXT_SLOTS`: `locale_data.gd` is generated from the frozen `js/i18n.js` and its
-## verifier rejects any key the reference does not carry, so a port addition brings
-## its own strings.
+## The pace group's own title comes from the pace module's localized ladder.
 const PACE_TITLE_KEY := "pacePreset"
 
 ## `index.html:433`: `min=0 max=1 step=0.01`.
 const VOLUME_MIN := 0.0
 const VOLUME_MAX := 1.0
 const VOLUME_STEP := 0.01
+const MUSIC_VOLUME_MIN := 0.0
+const MUSIC_VOLUME_MAX := 1.0
+const MUSIC_VOLUME_STEP := 0.01
 ## `index.html:437`: `min=0.08 max=0.30 step=0.01`.
 const DEADZONE_MIN := 0.08
 const DEADZONE_MAX := 0.30
 const DEADZONE_STEP := 0.01
 
-## The group titles: node name -> locale id (`index.html:411`, `:421`, `:428`).
+## The section headings and audio hint: node name -> locale id.
 const TEXT_SLOTS := {
 	"LanguageTitle": "language",
 	"AccessibilityTitle": "accessibility",
-	"AudioTitle": "audioSettings",
+	"AudioTitle": "settingsAudio",
+	"ControllerTitle": "settingsController",
+	"AudioHint": "settingsAudioHint",
 }
 
 ## The row keys, by node name. One place, so the screen, the audit and the rows agree.
@@ -92,16 +63,18 @@ const ROW_KEYS := {
 	"ReduceMotionRow": "reduceMotion",
 	"ColorblindRow": "colorblind",
 	"VolumeRow": "volume",
+	"MusicVolumeRow": "musicVolume",
+	"MusicEnabledRow": "settingsMusicEnabled",
+	"NowPlayingRow": "settingsNowPlaying",
 	"DeadzoneRow": "gamepadDeadzone",
 	"VibrationRow": "vibration",
 }
 
-## `.settings-grid` (`styles.css:2730`) is `auto-fit minmax(240px, 1fr)`: three columns
-## at the design frame, one when the frame cannot hold two.
-const GRID_MIN_CELL := 240.0
-const GRID_COLUMNS := 3
-## The screen's own reading column, matching the reference's content width.
-const MAX_COLUMN := 980.0
+## The lower cards and audio controls use two columns when there is enough room.
+const GRID_MIN_CELL := 430.0
+const GRID_COLUMNS := 2
+## Cap the reading width on large displays without wasting small screens.
+const MAX_COLUMN := 1120.0
 
 var router_id: String = ""
 var back_target_id: String = ""
@@ -114,6 +87,8 @@ var _built := false
 ## (proven in-engine on DrillScreen, which shares this exact code shape).
 var _applying_width := false
 var _grid: GridContainer = null
+var _audio_grid: GridContainer = null
+var _scroll: ScrollContainer = null
 var _rows: Dictionary = {}
 var _lang_buttons: Dictionary = {}
 var _pace_buttons: Dictionary = {}
@@ -205,6 +180,18 @@ func volume_text() -> String:
 	return str(roundi(volume() * 100.0)) + Rows.PERCENT_SIGN
 
 
+func music_volume() -> float:
+	return float(snapshot().get("music_volume", Schema.PREFS_DEFAULTS.get("musicVolume", 1.0)))
+
+
+func music_enabled() -> bool:
+	return not bool(snapshot().get("music_muted", false))
+
+
+func now_playing() -> bool:
+	return bool(snapshot().get("now_playing", true))
+
+
 func deadzone() -> float:
 	return float(snapshot().get("deadzone", Schema.PREFS_DEFAULTS.get("gamepadDeadzone", 0.15)))
 
@@ -277,13 +264,41 @@ func set_pace(id: String) -> bool:
 func set_volume(raw: float) -> Dictionary:
 	var value := clampf(raw, VOLUME_MIN, VOLUME_MAX)
 	_rows_set("VolumeRow", value)
-	return _persist("volume", value)
+	var result := _persist("volume", value)
+	Mixer.new().apply_master_gain(value)
+	return result
+
+
+func set_music_volume(raw: float) -> Dictionary:
+	var value := clampf(raw, MUSIC_VOLUME_MIN, MUSIC_VOLUME_MAX)
+	_rows_set("MusicVolumeRow", value)
+	var result := _persist("musicVolume", value)
+	_apply_music_volume()
+	return result
+
+
+func set_music_enabled(on: bool) -> Dictionary:
+	_rows_set("MusicEnabledRow", on)
+	var result := _persist("musicMuted", not on)
+	_apply_music_volume()
+	return result
+
+
+func set_now_playing(on: bool) -> Dictionary:
+	_rows_set("NowPlayingRow", on)
+	return _persist("nowPlaying", on)
+
+
+func _apply_music_volume() -> void:
+	MusicSettings.apply(_stored_prefs())
 
 
 func set_deadzone(raw: float) -> Dictionary:
 	var value := clampf(raw, DEADZONE_MIN, DEADZONE_MAX)
 	_rows_set("DeadzoneRow", value)
-	return _persist("gamepadDeadzone", value)
+	var result := _persist("gamepadDeadzone", value)
+	InputSource.set_deadzone(value)
+	return result
 
 
 func set_vibration(on: bool) -> Dictionary:
@@ -328,6 +343,9 @@ func rows() -> Dictionary:
 func set_row_value(row_name: String, value: Variant) -> bool:
 	if not _rows.has(row_name):
 		return false
+	if row_name == "MusicVolumeRow":
+		set_music_volume(float(value))
+		return true
 	_rows_set(row_name, value)
 	return true
 
@@ -336,12 +354,12 @@ func set_row_value(row_name: String, value: Variant) -> bool:
 # Strings and values
 # ---------------------------------------------------------------------------
 
-## Re-resolves every string: the three group titles, the two language buttons, the rows
-## and the shell's own header.
+## Re-resolves every heading, language choice, row and the shell header.
 func refresh_strings() -> void:
 	_ensure()
 	_shell.set_title("settingsTitle")
 	_shell.set_subtitle("settingsSub")
+	_shell.refresh_strings()
 	for node_name in TEXT_SLOTS:
 		var label := _control(String(node_name)) as Label
 		if label != null:
@@ -360,6 +378,9 @@ func refresh_values() -> void:
 	_rows_set("ReduceMotionRow", snap.get("reduce_motion", false))
 	_rows_set("ColorblindRow", snap.get("colorblind", false))
 	_rows_set("VolumeRow", snap.get("volume", 0.5))
+	_rows_set("MusicVolumeRow", snap.get("music_volume", 1.0))
+	_rows_set("MusicEnabledRow", not bool(snap.get("music_muted", false)))
+	_rows_set("NowPlayingRow", snap.get("now_playing", true))
 	_rows_set("DeadzoneRow", snap.get("deadzone", 0.15))
 	_rows_set("VibrationRow", snap.get("vibration", true))
 	_access.apply_prefs(_stored_prefs())
@@ -417,14 +438,17 @@ func _ensure() -> void:
 
 func _build() -> void:
 	_content_root = _centered_column(MAX_COLUMN)
+	_content_root.add_child(_group("AudioGroup", "AudioTitle", _audio_body(), true))
 	_grid = GridContainer.new()
 	_grid.name = "SettingsGrid"
 	_grid.columns = GRID_COLUMNS
 	_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_grid.add_theme_constant_override("h_separation", 18)
+	_grid.add_theme_constant_override("v_separation", 18)
 	_content_root.add_child(_grid)
 	_grid.add_child(_group("LanguageGroup", "LanguageTitle", _language_body()))
 	_grid.add_child(_group("AccessibilityGroup", "AccessibilityTitle", _accessibility_body()))
-	_grid.add_child(_group("AudioGroup", "AudioTitle", _audio_body()))
+	_grid.add_child(_group("ControllerGroup", "ControllerTitle", _controller_body()))
 	_grid.add_child(_group("PaceGroup", "PaceTitle", _pace_body()))
 	_register_focus()
 	resized.connect(_apply_grid_columns)
@@ -432,21 +456,24 @@ func _build() -> void:
 	refresh_strings()
 
 
-## The shell's content region, wrapped in a `MarginContainer` whose side margins centre
-## a `MAX_COLUMN`-wide reading column: the reference's `max-width` on a page that must
-## also survive a 1024-wide frame (the margins go to zero before anything overflows).
+## A scrollable, centred reading column survives short and narrow viewports.
 func _centered_column(max_width: float) -> VBoxContainer:
 	var content: MarginContainer = _shell.content()
+	_scroll = ScrollContainer.new()
+	_scroll.name = "SettingsScroll"
+	_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	content.add_child(_scroll)
 	var centering := MarginContainer.new()
 	centering.name = "Centering"
 	centering.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	centering.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	centering.set_meta("max_width", max_width)
-	content.add_child(centering)
+	_scroll.add_child(centering)
 	var column := VBoxContainer.new()
 	column.name = "Column"
 	column.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	column.add_theme_constant_override("separation", 22)
+	column.add_theme_constant_override("separation", 18)
 	centering.add_child(column)
 	centering.resized.connect(_apply_column_width.bind(centering, column))
 	_apply_column_width(centering, column)
@@ -468,16 +495,41 @@ func _apply_column_width(centering: MarginContainer, column: VBoxContainer) -> v
 	_applying_width = false
 
 
-func _group(node_name: String, title_node: String, body: Control) -> VBoxContainer:
-	var group := VBoxContainer.new()
+func _group(node_name: String, title_node: String, body: Control, featured := false) -> PanelContainer:
+	var group := PanelContainer.new()
 	group.name = node_name
-	group.add_theme_constant_override("separation", 10)
+	group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	group.add_theme_stylebox_override("panel", _card_style(featured))
+	var content := VBoxContainer.new()
+	content.add_theme_constant_override("separation", 12)
+	group.add_child(content)
+	var accent := ColorRect.new()
+	accent.name = "CardAccent"
+	accent.color = theme.get_color("gold", "Palette") if featured else theme.get_color("cyan", "Palette")
+	accent.custom_minimum_size = Vector2(38, 3)
+	accent.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	accent.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	content.add_child(accent)
 	var title := Label.new()
 	title.name = title_node
-	title.theme_type_variation = &"LabelSmall"
-	group.add_child(title)
-	group.add_child(body)
+	title.add_theme_font_size_override("font_size", 18)
+	title.add_theme_color_override("font_color", theme.get_color("text_soft", "Palette"))
+	content.add_child(title)
+	content.add_child(body)
 	return group
+
+
+func _card_style(featured: bool) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = theme.get_color("surface_0", "Palette")
+	var accent := theme.get_color("gold", "Palette") if featured else theme.get_color("tab_border", "Palette")
+	box.border_color = Color(accent.r, accent.g, accent.b, 0.48 if featured else 0.72)
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(16)
+	box.set_content_margin_all(22)
+	box.shadow_color = Color(0.0, 0.0, 0.0, 0.24)
+	box.shadow_size = 9
+	return box
 
 
 func _language_body() -> Control:
@@ -509,13 +561,17 @@ func _pace_body() -> Control:
 	var column := VBoxContainer.new()
 	column.name = "PaceRows"
 	column.add_theme_constant_override("separation", 8)
-	var seg := VBoxContainer.new()
+	var seg := GridContainer.new()
 	seg.name = "PaceSeg"
-	seg.add_theme_constant_override("separation", 0)
+	seg.columns = 2
+	seg.add_theme_constant_override("h_separation", 6)
+	seg.add_theme_constant_override("v_separation", 6)
 	for id in Pace.ids():
 		var button := Button.new()
 		button.name = "Pace_%s" % id
 		button.toggle_mode = true
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.custom_minimum_size.y = 42
 		button.pressed.connect(set_pace.bind(String(id)))
 		seg.add_child(button)
 		_pace_buttons[String(id)] = button
@@ -544,12 +600,46 @@ func _accessibility_body() -> Control:
 func _audio_body() -> Control:
 	var column := VBoxContainer.new()
 	column.name = "AudioRows"
-	column.add_theme_constant_override("separation", 12)
+	column.add_theme_constant_override("separation", 15)
+	var hint := Label.new()
+	hint.name = "AudioHint"
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.add_theme_font_size_override("font_size", 14)
+	hint.modulate.a = 0.75
+	column.add_child(hint)
+	_audio_grid = GridContainer.new()
+	_audio_grid.name = "AudioGrid"
+	_audio_grid.columns = 2
+	_audio_grid.add_theme_constant_override("h_separation", 38)
+	_audio_grid.add_theme_constant_override("v_separation", 10)
+	column.add_child(_audio_grid)
+	var levels := VBoxContainer.new()
+	levels.add_theme_constant_override("separation", 14)
+	levels.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_audio_grid.add_child(levels)
+	var switches := VBoxContainer.new()
+	switches.add_theme_constant_override("separation", 10)
+	switches.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_audio_grid.add_child(switches)
 	var snap := snapshot()
-	_add_row(column, Rows.make_range("volume", VOLUME_MIN, VOLUME_MAX, VOLUME_STEP, float(snap.get("volume", 0.5)), "VolumeRow"))
+	_add_row(levels, Rows.make_range("settingsMasterVolume", VOLUME_MIN, VOLUME_MAX, VOLUME_STEP, float(snap.get("volume", 0.5)), "VolumeRow"))
+	_add_row(levels, Rows.make_range("musicVolume", MUSIC_VOLUME_MIN, MUSIC_VOLUME_MAX, MUSIC_VOLUME_STEP, float(snap.get("music_volume", 1.0)), "MusicVolumeRow"))
+	_add_row(switches, Rows.make_toggle("settingsMusicEnabled", not bool(snap.get("music_muted", false)), "MusicEnabledRow"))
+	_add_row(switches, Rows.make_toggle("settingsNowPlaying", bool(snap.get("now_playing", true)), "NowPlayingRow"))
+	(_rows["VolumeRow"] as Rows.RangeRow).changed.connect(_on_volume)
+	(_rows["MusicVolumeRow"] as Rows.RangeRow).changed.connect(_on_music_volume)
+	(_rows["MusicEnabledRow"] as Rows.ToggleRow).changed.connect(_on_music_enabled)
+	(_rows["NowPlayingRow"] as Rows.ToggleRow).changed.connect(_on_now_playing)
+	return column
+
+
+func _controller_body() -> Control:
+	var column := VBoxContainer.new()
+	column.name = "ControllerRows"
+	column.add_theme_constant_override("separation", 14)
+	var snap := snapshot()
 	_add_row(column, Rows.make_range("deadzone", DEADZONE_MIN, DEADZONE_MAX, DEADZONE_STEP, float(snap.get("deadzone", 0.15)), "DeadzoneRow"))
 	_add_row(column, Rows.make_toggle("vibration", bool(snap.get("vibration", true)), "VibrationRow"))
-	(_rows["VolumeRow"] as Rows.RangeRow).changed.connect(_on_volume)
 	(_rows["DeadzoneRow"] as Rows.RangeRow).changed.connect(_on_deadzone)
 	(_rows["VibrationRow"] as Rows.ToggleRow).changed.connect(_on_vibration)
 	return column
@@ -557,16 +647,50 @@ func _audio_body() -> Control:
 
 func _add_row(parent: Control, row: Control) -> void:
 	parent.add_child(row)
+	if row is Rows.RangeRow:
+		(row as Rows.RangeRow).slider.custom_minimum_size.y = 28
+		(row as Rows.RangeRow).value_label.add_theme_font_size_override("font_size", 17)
+	elif row is Rows.ToggleRow:
+		var check := (row as Rows.ToggleRow).check
+		check.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		check.custom_minimum_size.y = 44
+		check.add_theme_font_size_override("font_size", 15)
+		check.add_theme_stylebox_override("normal", _toggle_style(false))
+		check.add_theme_stylebox_override("hover", _toggle_style(true))
+		check.add_theme_stylebox_override("pressed", _toggle_style(true))
 	_store_row(row.name, row)
+
+
+func _toggle_style(hovered: bool) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = theme.get_color("surface_2", "Palette") if hovered else theme.get_color("surface_1", "Palette")
+	box.border_color = theme.get_color("card_hover_border", "Palette") if hovered else theme.get_color("tab_border", "Palette")
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(9)
+	box.content_margin_left = 12
+	box.content_margin_right = 12
+	return box
 
 
 ## A player's own change: the row already moved itself, so only the store is written.
 func _on_volume(raw: float) -> void:
-	_persist("volume", clampf(raw, VOLUME_MIN, VOLUME_MAX))
+	set_volume(raw)
+
+
+func _on_music_volume(raw: float) -> void:
+	set_music_volume(raw)
+
+
+func _on_music_enabled(on: bool) -> void:
+	set_music_enabled(on)
+
+
+func _on_now_playing(on: bool) -> void:
+	set_now_playing(on)
 
 
 func _on_deadzone(raw: float) -> void:
-	_persist("gamepadDeadzone", clampf(raw, DEADZONE_MIN, DEADZONE_MAX))
+	set_deadzone(raw)
 
 
 func _on_vibration(on: bool) -> void:
@@ -583,7 +707,7 @@ func _on_colorblind(on: bool) -> void:
 	_persist("colorblind", on)
 
 
-## `.settings-grid`'s `auto-fit`: as many 240 px cells as the frame holds, up to three.
+## Switch between one and two columns with the available screen width.
 func _apply_grid_columns() -> void:
 	if _grid == null:
 		return
@@ -591,6 +715,8 @@ func _apply_grid_columns() -> void:
 	if width <= 0.0:
 		width = 1280.0
 	_grid.columns = maxi(1, mini(GRID_COLUMNS, int(width / GRID_MIN_CELL)))
+	if _audio_grid != null:
+		_audio_grid.columns = _grid.columns
 
 
 ## The segmented look: the theme's own two styleboxes, swapped on the active one
@@ -636,6 +762,7 @@ func _register_focus() -> void:
 			opts["max"] = slider.max_value
 			opts["step"] = slider.step
 			opts["value"] = slider.value
+			opts["value_from_control"] = true
 		_shell.add_focus(row_name, Rows.focus_node(row), row_name, opts)
 
 

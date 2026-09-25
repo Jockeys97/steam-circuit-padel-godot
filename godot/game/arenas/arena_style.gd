@@ -372,14 +372,15 @@ const STYLES := {
 	},
 	"aurora": {
 		# Banco Aurora, Iceland at night. Deck: `04-aurora.png`, sky stops
-		# `#04060f -> #0a1b33 -> #123a3c`, apron `#0d0f12` volcanic black, glow
+		# `#04060f -> #0a1b33 -> #123a3c`; the moonlit basalt apron tint
+		# must not multiply its detailed ground texture down to near-black. Glow
 		# `#4dffc3` aurora green. Scenery: basalt colonnade, snow-capped ridge,
 		# geyser steam plumes, aurora ribbons, stars.
 		"family": "world",
 		"name": "Banco Aurora",
 		"desc": "Notte islandese: colonne di basalto, neve e nastri d'aurora.",
 		"sky": [["0.00", "#04060f"], ["0.60", "#0a1b33"], ["1.00", "#123a3c"]],
-		"apron": "#0d0f12",
+		"apron": "#748895",
 		"glow": "#4dffc3",
 		"palette": {"floor": "#0d0f12", "accent": "#4dffc3", "gear": "#7a5cff"},
 		"artwork": "",

@@ -235,12 +235,18 @@ static func _js_round(value: float) -> int:
 ## `isUnlocked(item, career)` (`js/data.js:702-710`).
 static func is_unlocked(item: Dictionary, career: Dictionary) -> bool:
 	# Reversible content lock: earned progress is retained, starter content stays open.
-	if bool(career.get("lockAll", false)) and (item.get("unlock") != null or item.get("challenge") != null):
+	if bool(career.get("lockAll", false)) and (item.get("unlock") != null or item.get("challenge") != null or bool(item.get("shopOnly", false))):
 		return false
 	if bool(career.get("unlockAll", false)):
 		return true
-	# I completi non si comprano: si vincono.
+	if bool(item.get("shopOnly", false)):
+		var purchased: Dictionary = career.get("outfitsPurchased", {}) if career.get("outfitsPurchased") is Dictionary else {}
+		return bool(purchased.get(String(item.get("unlockKey", "")), false))
+	# A challenge is the free route; an Emporio purchase is an independent unlock.
 	if item.get("challenge") != null:
+		var purchased: Dictionary = career.get("outfitsPurchased", {}) if career.get("outfitsPurchased") is Dictionary else {}
+		if bool(purchased.get(String(item.get("unlockKey", "")), false)):
+			return true
 		var won: Dictionary = career.get("outfitsWon", {}) if career.get("outfitsWon") is Dictionary else {}
 		return bool(won.get(String(item.get("unlockKey", "")), false))
 	if item.get("unlock") == null:

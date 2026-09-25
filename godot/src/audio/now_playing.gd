@@ -3,6 +3,7 @@ extends PanelContainer
 var _timer := 0.0
 var _title: Label
 var _cover: TextureRect
+var _caption: Label
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -30,11 +31,10 @@ func _ready() -> void:
 	words.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(words)
-	var caption := Label.new()
-	caption.text = "♫  NOW PLAYING · R3 NEXT"
-	caption.add_theme_font_size_override("font_size", 10)
-	caption.modulate = Color(0.3, 0.85, 0.9)
-	words.add_child(caption)
+	_caption = Label.new()
+	_caption.add_theme_font_size_override("font_size", 10)
+	_caption.modulate = Color(0.3, 0.85, 0.9)
+	words.add_child(_caption)
 	_title = Label.new()
 	_title.add_theme_font_size_override("font_size", 13)
 	_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
@@ -42,6 +42,7 @@ func _ready() -> void:
 	hide()
 
 func show_track(id: String, in_match: bool) -> void:
+	_caption.text = "♫  R3/N PROSSIMO · R3 LUNGO MUTE" if preload("res://src/locale/locale.gd").current_lang() == "it" else "♫  R3/N NEXT · HOLD R3 MUTE"
 	var manager = preload("res://src/audio/soundtrack_manager.gd")
 	_title.text = "Steam Circuit · Original Match Theme" if id == "classic_match" else String(manager.TRACK_METADATA.get(id, {}).get("title", id))
 	tooltip_text = _title.text

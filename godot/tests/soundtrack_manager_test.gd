@@ -19,9 +19,9 @@ func _initialize() -> void:
 func _run() -> void:
 	print("[soundtrack_manager_test] Starting verification suite...")
 
-	# 1. Catalog integrity & count (63 OST tracks: 22 standard + 8 epic + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH)
+	# 1. Catalog integrity & count (78 OST tracks: 22 standard + 8 epic + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends)
 	var all_tracks := SoundtrackManager.all_track_ids()
-	_assert_eq(all_tracks.size(), 63, "Catalog contains exactly 63 distinct OST track IDs")
+	_assert_eq(all_tracks.size(), 78, "Catalog contains exactly 78 distinct OST track IDs")
 
 	# 2. Frozen 9 Arena Mappings
 	_assert_eq(SoundtrackManager.track_id_for_arena("officina"), "ost_officina", "Arena officina maps to ost_officina")
@@ -104,6 +104,23 @@ func _run() -> void:
 	# 5f. Hunter x Hunter Special Vocal Anthem
 	_assert_eq(SoundtrackManager.track_id_for_context("hyori_ittai_vocal"), "ost_hyori_ittai_vocal", "Context hyori_ittai_vocal maps to ost_hyori_ittai_vocal")
 
+	# 5g. Legendary Game Menu Themes Context Mappings
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_velvet_lounge"), "ost_menu_velvet_lounge", "Context menu_velvet_lounge maps to ost_menu_velvet_lounge")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_grand_touring"), "ost_menu_grand_touring", "Context menu_grand_touring maps to ost_menu_grand_touring")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_astral_solitude"), "ost_menu_astral_solitude", "Context menu_astral_solitude maps to ost_menu_astral_solitude")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_dearly_reminiscent"), "ost_menu_dearly_reminiscent", "Context menu_dearly_reminiscent maps to ost_menu_dearly_reminiscent")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_cyber_terminal"), "ost_menu_cyber_terminal", "Context menu_cyber_terminal maps to ost_menu_cyber_terminal")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_breeze_plaza"), "ost_menu_breeze_plaza", "Context menu_breeze_plaza maps to ost_menu_breeze_plaza")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_sacred_spring"), "ost_menu_sacred_spring", "Context menu_sacred_spring maps to ost_menu_sacred_spring")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_ancient_sanctum"), "ost_menu_ancient_sanctum", "Context menu_ancient_sanctum maps to ost_menu_ancient_sanctum")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_rainy_atrium"), "ost_menu_rainy_atrium", "Context menu_rainy_atrium maps to ost_menu_rainy_atrium")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_chronicle_winds"), "ost_menu_chronicle_winds", "Context menu_chronicle_winds maps to ost_menu_chronicle_winds")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_subaquatic_drift"), "ost_menu_subaquatic_drift", "Context menu_subaquatic_drift maps to ost_menu_subaquatic_drift")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_northern_aurora"), "ost_menu_northern_aurora", "Context menu_northern_aurora maps to ost_menu_northern_aurora")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_champions_pavilion"), "ost_menu_champions_pavilion", "Context menu_champions_pavilion maps to ost_menu_champions_pavilion")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_orbital_vanguard"), "ost_menu_orbital_vanguard", "Context menu_orbital_vanguard maps to ost_menu_orbital_vanguard")
+	_assert_eq(SoundtrackManager.track_id_for_context("menu_third_strike"), "ost_menu_third_strike", "Context menu_third_strike maps to ost_menu_third_strike")
+
 	# 6. Candidate Paths Formatting
 	var paths := SoundtrackManager.candidate_paths("ost_officina")
 	_assert(paths.has("res://assets/audio/music/ost_officina.ogg"), "Candidate paths include .ogg")
@@ -148,6 +165,8 @@ func _run() -> void:
 
 	sm.queue_free()
 	await process_frame
+	# Decoder disposal is queued on the audio thread, not the scene-tree frame.
+	await create_timer(0.1).timeout
 
 	print("\n[soundtrack_manager_test] Results: %d checks, %d failures." % [_checks, _failures])
 	if _failures == 0:

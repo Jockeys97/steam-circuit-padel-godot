@@ -1,0 +1,6 @@
+rig created 01a0d54f-d796-710b-94c5-6b0ca30c8b9d
+rig IN_PROGRESS 1
+rig IN_PROGRESS 47
+rig SUCCEEDED 100
+RIG_VERIFIED 01a0d54f-d796-710b-94c5-6b0ca30c8b9d
+Meshy HTTP 400 text-to-motion {"message":"Invalid values: Prompt must be a maximum of 400 characters in length"}

@@ -106,6 +106,21 @@ var _was_stroking: Dictionary = {}
 var _previous_hitter: String = ""
 var _anticipation: Dictionary = {}   # role -> float, smoothed weight
 var _look: Dictionary = {}           # role -> float, smoothed degrees
+var _chase_turn: Dictionary = {}     # role -> float 0..1, turned towards the back glass
+var _chase_sign: Dictionary = {}     # role -> +1/-1, which shoulder the turn goes over
+var _chase_hold: Dictionary = {}     # role -> seconds the turn survives a pause
+var _reach: Dictionary = {}          # role -> Vector2, smoothed stretch sent to the rig
+var _stroke_reach: Dictionary = {}   # role -> Vector2, the stretch this stroke met the ball with
+var _stroke_age: Dictionary = {}     # role -> seconds since the stroke started
+var _anticipation_reach: Dictionary = {} # role -> Vector2, stretch towards the guessed contact
+var _lunging: Dictionary = {}        # role -> bool, this stroke is the generated lunge
+## The ball's `postGlassSide` as the previous sync saw it: the sim clears it on the
+## strike, so the swing edge reads it from here (wall exit, 2026-09-24).
+var _glass_side_seen := ""
+const LUNGE_MIN_STRETCH := 0.5       # half-way into the stretch band (~1.0 m to the side)
+const LUNGE_CONTACT_PHASE := 0.30    # bake_meshy_fiamma.gd contacts["lunge_forehand"]
+const LUNGE_BLEND_S := 0.08
+const WALL_EXIT_CONTACT_PHASE := 0.34  # bake_meshy_fiamma.gd contacts["wall_exit_forehand"]
 var _racket_on_hand: Dictionary = {} # role -> bool; standard and legacy rigs
 
 ## The racket root is the centre of its face. Its grip centre is 0.2405 m below
@@ -142,6 +157,14 @@ func spawn(lineup: Dictionary, outfit_map: Dictionary, colors: Dictionary,
 	_was_stroking.clear()
 	_anticipation.clear()
 	_look.clear()
+	_chase_turn.clear()
+	_chase_sign.clear()
+	_chase_hold.clear()
+	_reach.clear()
+	_stroke_reach.clear()
+	_stroke_age.clear()
+	_anticipation_reach.clear()
+	_lunging.clear()
 	spawn_rigs = 0
 	for role in ROLES:
 		if not lineup.has(role):
@@ -253,7 +276,6 @@ func sync(state, delta: float = -1.0) -> void:
 		# Facing: the side's base yaw plus the sim's own run-phase sway.
 		var base_yaw: float = 180.0 if role.begins_with("player") else 0.0
 		var sway: float = sin(float(paddle.runPhase) * 0.8) * 7.0 * float(paddle.motion)
-		rig.set_facing_degrees(base_yaw + sway)
 		var current := Vector2(paddle.x, paddle.y)
 		var movement: Vector2 = current - _previous_positions.get(role, current)
 		_previous_positions[role] = current
@@ -262,6 +284,10 @@ func sync(state, delta: float = -1.0) -> void:
 		var reset_movement: bool = teleported or state.serving
 		if teleported:
 			movement = Vector2.ZERO
+		# Chasing a lob that went over: turn and run to the glass instead of backing up
+		# five metres facing the net. Presentation only; the sim position is untouched.
+		var chase := _sync_chase_turn(role, rig, paddle, state, movement, delta, reset_movement)
+		rig.set_facing_degrees(base_yaw + sway * (1.0 - 2.0 * chase) + 180.0 * chase * float(_chase_sign.get(role, 1.0)))
 		if reset_movement:
 			_visual_velocity[role] = Vector2.ZERO
 			_visual_lean[role] = Vector2.ZERO
@@ -285,15 +311,22 @@ func sync(state, delta: float = -1.0) -> void:
 			_split_remaining[role] = 0.0
 			_recovery_remaining[role] = 0.0
 		_sync_gait(role, rig, paddle, movement, prepare, delta, ceremony_for(role, state, paddle, _celebrate_point))
-		_sync_stroke(role, rig, paddle, float(state.ball.x), float(state.ball.z) if not reset_movement else NAN)
+		_sync_stroke(role, rig, paddle, float(state.ball.x), float(state.ball.z) if not reset_movement else NAN,
+			_glass_side_seen == ("player" if role.begins_with("player") else "ai"))
+		if rig.is_stroking() and not _was_stroking.get(role, false):
+			_stroke_reach[role] = Vector2.ZERO if String(paddle.actionIntent).contains("serve") or bool(_lunging.get(role, false)) \
+				else reach_towards(role, float(paddle.x), float(state.ball.x))
+			_stroke_age[role] = 0.0
 		_was_stroking[role] = rig.is_stroking()
 		_sync_movement_weight(role, rig, movement, delta, reset_movement)
 		_sync_anticipation(role, rig, paddle, state, delta, reset_movement)
 		_sync_look(role, rig, state, delta, teleported)
+		_sync_reach(role, rig, delta, reset_movement)
 		# Small visual split step; never changes the simulated paddle coordinates.
 		var lift := sin(float(_split_remaining[role]) / 0.28 * PI) * 0.025
 		rig.set_split_step_lift(lift if receiving and not state.serving and not rig.is_stroking() else 0.0)
 		_sync_racket(role, paddle)
+	_glass_side_seen = String(state.ball.postGlassSide) if state.ball.postGlassSide != null else ""
 
 
 func _sync_gait(role: String, rig: Node3D, paddle, movement := Vector2.ZERO, prepare := false, delta: float = 1.0 / 60.0, ceremony: StringName = &"") -> void:
@@ -320,6 +353,8 @@ func _sync_gait(role: String, rig: Node3D, paddle, movement := Vector2.ZERO, pre
 	# when translation has stopped; never delay or move the simulated paddle.
 	elif motion > 0.03 and movement.length() < 0.01:
 		want = &"brake"
+	if moving and float(_chase_turn.get(role, 0.0)) > 0.5:
+		want = &"run"
 	if not moving and not rig.is_stroking():
 		if float(_split_remaining.get(role, 0.0)) > 0.0:
 			want = &"split_step"
@@ -341,6 +376,112 @@ func _sync_gait(role: String, rig: Node3D, paddle, movement := Vector2.ZERO, pre
 		rig.recover_to_movement()
 
 
+## Chase turn (2026-09-24): an athlete retreating while the ball will come down
+## well behind them (a lob that is going over) turns its back to the net and runs,
+## like a player who has read the lob. It turns back to the net once it is nearly
+## at the landing spot, stops, or strikes. Returns the smoothed 0..1 turn; the sim
+## never reads it.
+const CHASE_TURN_RATE := 11.0     # ~0.2 s for a half turn
+const CHASE_START_PX := 45.0      # landing this much deeper than the athlete starts it
+const CHASE_KEEP_PX := 12.0       # ...and it holds until this close
+const CHASE_HOLD_S := 0.12        # a pause in the run shorter than this keeps the turn
+const CHASE_FACE_BACK_S := 0.4    # this long before the ball lands, face the net again
+func _sync_chase_turn(role: String, rig: Node3D, paddle, state, movement: Vector2, delta: float, reset: bool) -> float:
+	var turn: float = float(_chase_turn.get(role, 0.0))
+	var want := 0.0
+	var hold: float = maxf(0.0, float(_chase_hold.get(role, 0.0)) - delta)
+	if not reset and not rig.is_stroking() and movement.length() > 0.01:
+		var near_side := role.begins_with("player")
+		var net_y := float(Frozen.court()["netY"])
+		var forward := -movement.y if near_side else movement.y
+		var retreating: bool = forward < 0.0 and -forward > absf(movement.x) * 0.75
+		# Only a ball still in the air towards this side is chased: once it has bounced
+		# here the athlete waits for it facing the net, as it must to strike.
+		var bounced_here: bool = int(state.ball.bounces["player" if near_side else "ai"]) > 0
+		var landing := NAN if bounced_here or landing_time(state.ball) < CHASE_FACE_BACK_S else landing_y(state.ball)
+		var moving_on: bool = float(paddle.motion) > (WALK_MOTION if turn > 0.5 else RUN_MOTION)
+		if retreating and moving_on and is_finite(landing):
+			var land_depth: float = (landing - net_y) if near_side else (net_y - landing)
+			var own_depth: float = (float(paddle.y) - net_y) if near_side else (net_y - float(paddle.y))
+			if land_depth - own_depth > (CHASE_KEEP_PX if turn > 0.5 else CHASE_START_PX):
+				want = 1.0
+				hold = CHASE_HOLD_S
+				if turn < 0.01:
+					# Turn over the shoulder on the ball's side (mirrored for the far team).
+					var side := (float(state.ball.x) - float(paddle.x)) * (1.0 if near_side else -1.0)
+					_chase_sign[role] = 1.0 if side >= 0.0 else -1.0
+	if reset or rig.is_stroking():
+		hold = 0.0
+	elif want == 0.0 and hold > 0.0 and turn > 0.5 and int(state.ball.bounces["player" if role.begins_with("player") else "ai"]) == 0 \
+			and landing_time(state.ball) >= CHASE_FACE_BACK_S:
+		want = 1.0 # a stutter in the run, not the end of the chase
+	_chase_hold[role] = hold
+	turn = want if reset else lerpf(turn, want, 1.0 - exp(-CHASE_TURN_RATE * delta))
+	if absf(turn - want) < 0.01:
+		turn = want
+	_chase_turn[role] = turn
+	return turn
+
+
+## Where an airborne ball first comes down (plain ballistics, no drag or walls);
+## NAN when it is on the ground or has already bounced on the side it is over.
+static func landing_y(ball) -> float:
+	var t := landing_time(ball)
+	return float(ball.y) + float(ball.vy) * t if is_finite(t) else NAN
+
+
+## Seconds until an airborne ball first comes down; NAN on the ground.
+static func landing_time(ball) -> float:
+	var z := float(ball.z)
+	var vz := float(ball.vz)
+	if z <= 1.0 and vz <= 0.0:
+		return NAN
+	var g := float(Frozen.balance()["ballGravity"])
+	return (vz + sqrt(maxf(0.0, vz * vz + 2.0 * g * z))) / g
+
+
+## The stretch (2026-09-24): a ball met at the edge of the reach is struck leaning
+## over the lead foot. It grows with the anticipation towards the guessed contact,
+## peaks at the stroke's first frame (contact), and fades through the follow-through.
+## Lateral only: at the swing the sim has already moved the ball in front of the
+## racket, so only its x still says where it was met. Presentation only.
+# Measured on scripted rallies: the sim meets balls up to ~1.2 m to the side (arm and
+# racket), and most strokes land within 0.7 m; the stretch is for the last third.
+const REACH_START_M := 0.85   # closer than this the ball is comfortable
+const REACH_FULL_M := 1.20    # the edge of the sim's contact width
+const REACH_RATE := 16.0
+func _sync_reach(role: String, rig: Node3D, delta: float, reset: bool) -> void:
+	if not rig.has_method("set_stroke_reach"):
+		return
+	var target := Vector2.ZERO
+	if not reset:
+		if rig.is_stroking():
+			var age: float = float(_stroke_age.get(role, 0.0)) + delta
+			_stroke_age[role] = age
+			target = _stroke_reach.get(role, Vector2.ZERO) * (1.0 - smoothstep(0.10, 0.42, age))
+		else:
+			target = _anticipation_reach.get(role, Vector2.ZERO)
+	var reach: Vector2 = _reach.get(role, Vector2.ZERO)
+	reach = target if reset else reach.lerp(target, 1.0 - exp(-REACH_RATE * delta))
+	if reach.length() < 0.005 and target == Vector2.ZERO:
+		reach = Vector2.ZERO
+	_reach[role] = reach
+	rig.set_stroke_reach(reach)
+
+
+## Side stretch towards a ball at `ball_x`, in the team's facing frame (the rig's
+## local x), 0 when comfortable and 1 at the edge of the reach.
+func reach_towards(role: String, paddle_x: float, ball_x: float) -> Vector2:
+	var d := Court.world_pos(ball_x, 0.0, 0.0) - Court.world_pos(paddle_x, 0.0, 0.0)
+	var side: float = d.x * (-1.0 if role.begins_with("player") else 1.0)
+	# A ball far beyond any racket is not a contact being stretched for (no stroke in
+	# the sim meets one): no stretch rather than a full one.
+	if absf(side) > REACH_FULL_M * 1.6:
+		return Vector2.ZERO
+	var amount := clampf((absf(side) - REACH_START_M) / (REACH_FULL_M - REACH_START_M), 0.0, 1.0)
+	return Vector2(signf(side) * amount, 0.0)
+
+
 ## Metres/second in each team's facing frame; this never feeds the simulation.
 func _movement_velocity(role: String, movement: Vector2, delta: float) -> Vector2:
 	if delta <= 0.0:
@@ -354,6 +495,8 @@ func _sync_movement_weight(role: String, rig: Node3D, movement: Vector2, delta: 
 	if delta <= 0.0:
 		return
 	var velocity := _movement_velocity(role, movement, delta).limit_length(8.0)
+	if float(_chase_turn.get(role, 0.0)) > 0.5:
+		velocity = -velocity # the body faces the glass: its own frame is reversed
 	var previous: Vector2 = _visual_velocity.get(role, Vector2.ZERO)
 	_visual_velocity[role] = velocity
 	# A short acceleration impulse sells starts/stops and reversals. Exponential
@@ -371,7 +514,7 @@ func _sync_movement_weight(role: String, rig: Node3D, movement: Vector2, delta: 
 ## The stroke is a one-shot on the rising edge of `paddle.swing`. `actionIntent`
 ## is the sim's own word for the shot; the mapping onto the rig's four strokes is
 ## this view's, and it is the only place it decides anything.
-func _sync_stroke(role: String, rig: Node3D, paddle, ball_x: float = NAN, ball_height: float = NAN) -> void:
+func _sync_stroke(role: String, rig: Node3D, paddle, ball_x: float = NAN, ball_height: float = NAN, off_own_glass: bool = false) -> void:
 	var swinging := float(paddle.swing) > 0.0
 	if swinging and not _swing_seen[role]:
 		var recipe := stroke_recipe(String(paddle.actionIntent))
@@ -379,12 +522,35 @@ func _sync_stroke(role: String, rig: Node3D, paddle, ball_x: float = NAN, ball_h
 		var imported := meshy_stroke_for(String(paddle.actionIntent), role, float(paddle.x), ball_x)
 		if imported in rig.get_stroke_names():
 			stroke = imported
-		var played: bool = rig.play_stroke_at(
-			stroke,
-			float(recipe["contact_phase"]),
-			float(recipe["speed_scale"]),
-			low_contact_amount(String(paddle.actionIntent), ball_height),
-		) if rig.has_method("play_stroke_at") else rig.play_stroke(stroke)
+		var contact_phase := float(recipe["contact_phase"])
+		var speed_scale := float(recipe["speed_scale"])
+		var blend := 0.0
+		# A stretched contact below head height bends the legs like a low one (the
+		# lunge's crouch); a high ball is reached for, not crouched under.
+		var low_enough: bool = is_finite(ball_height) and ball_height < OVERHEAD_HEIGHT_PX \
+			and not String(paddle.actionIntent).contains("serve") \
+			and low_contact_amount(String(paddle.actionIntent), 0.0) > 0.0
+		var stretch := reach_towards(role, float(paddle.x), ball_x).length() if is_finite(ball_x) and low_enough else 0.0
+		var low := maxf(low_contact_amount(String(paddle.actionIntent), ball_height), stretch * 0.67)
+		# A forehand at the edge of the reach is the generated lunge (2026-09-24): it
+		# carries its own step and pelvis drop, so no extra crouch and no slide.
+		_lunging[role] = false
+		if stroke == &"meshy_drive" and stretch >= LUNGE_MIN_STRETCH and &"meshy_lunge_forehand" in rig.get_stroke_names():
+			stroke = &"meshy_lunge_forehand"
+			contact_phase = LUNGE_CONTACT_PHASE
+			speed_scale = 1.0
+			low = 0.0
+			blend = LUNGE_BLEND_S
+			_lunging[role] = true
+		# A forehand met coming back off one's own back glass is the generated wall exit.
+		if not _lunging[role] and off_own_glass and stroke in [&"meshy_drive", &"meshy_slice", &"drive", &"slice"] \
+				and &"meshy_wall_exit_forehand" in rig.get_stroke_names() and not is_backhand_side(role, float(paddle.x), ball_x):
+			stroke = &"meshy_wall_exit_forehand"
+			contact_phase = WALL_EXIT_CONTACT_PHASE
+			speed_scale = 1.0
+			blend = LUNGE_BLEND_S
+		var played: bool = rig.play_stroke_at(stroke, contact_phase, speed_scale, low, blend) \
+			if rig.has_method("play_stroke_at") else rig.play_stroke(stroke)
 		if played:
 			_last_stroke[role] = stroke
 	_swing_seen[role] = swinging
@@ -400,18 +566,31 @@ func _sync_anticipation(role: String, rig: Node3D, paddle, state, delta: float, 
 	var stroke: StringName = &""
 	var contact_phase := 0.5
 	var guess := _contact_guess(role, paddle, state)
-	if not reset and not guess.is_empty() and not rig.is_stroking():
+	if not reset and not guess.is_empty() and not rig.is_stroking() and float(_chase_turn.get(role, 0.0)) < 0.5:
 		var t: float = guess["t"]
 		target = 1.0 - smoothstep(ANTICIPATION_FULL_S, ANTICIPATION_START_S, t)
+		_anticipation_reach[role] = reach_towards(role, float(paddle.x), float(guess["x"])) * target
 		var recipe := anticipation_stroke(rig.get_stroke_names(), role, float(paddle.x), float(guess["x"]), float(guess["z"]))
 		stroke = recipe["clip"]
 		contact_phase = float(recipe["contact_phase"])
+		# A forehand coming back off one's own back glass winds up as the wall exit
+		# (2026-09-24): side-on, racket back, waiting. The stroke itself starts at
+		# contact, so without this the wall exit read as a plain drive.
+		var side := "player" if role.begins_with("player") else "ai"
+		var off_glass: bool = state.ball.postGlassSide != null and String(state.ball.postGlassSide) == side \
+			and (float(state.ball.vy) < 0.0 if side == "player" else float(state.ball.vy) > 0.0)
+		if off_glass and &"meshy_wall_exit_forehand" in rig.get_stroke_names() \
+				and not is_backhand_side(role, float(paddle.x), float(guess["x"])) and float(guess["z"]) < OVERHEAD_HEIGHT_PX:
+			stroke = &"meshy_wall_exit_forehand"
+			contact_phase = WALL_EXIT_CONTACT_PHASE
 		# A clip with no frame that reads as a preparation would silently drop the
 		# wind-up: fall back to one that has it (the smash, e.g., on a rig whose
 		# overhead clip holds only the strike).
 		stroke = anticipation_fallback(rig, stroke, contact_phase)
 		if stroke == &"":
 			target = 0.0
+	if target == 0.0:
+		_anticipation_reach[role] = Vector2.ZERO
 	var weight: float = float(_anticipation.get(role, 0.0))
 	if reset or rig.is_stroking():
 		weight = 0.0
@@ -617,6 +796,12 @@ static func low_contact_amount(intent: String, height: float) -> float:
 ## Presentation only: use contact side, NOT swingSide (human swingSide is aim).
 ## A +Z-facing right-handed rig holds its racket on local -X. The near team
 ## faces the opposite direction, hence the sign reversal.
+## The same side test `meshy_stroke_for` uses for the backhand.
+static func is_backhand_side(role: String, paddle_x: float, ball_x: float) -> bool:
+	var local_side := (ball_x - paddle_x) * (-1.0 if role.begins_with("player") else 1.0)
+	return is_finite(local_side) and local_side > 6.0
+
+
 static func meshy_stroke_for(intent: String, role: String, paddle_x: float, ball_x: float) -> StringName:
 	var word := intent.to_lower()
 	if word in ["drive", "safe-drive"]:

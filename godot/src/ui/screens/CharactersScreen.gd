@@ -586,10 +586,10 @@ func outfit_athlete_id() -> String:
 func equipped_outfit_id(athlete_id: String) -> String:
 	var equipped: Dictionary = _career.get("equippedOutfits", {}) if _career.get("equippedOutfits") is Dictionary else {}
 	var wanted := String(equipped.get(athlete_id, AthleteSpawn.DEFAULT_OUTFIT))
-	for outfit in ModeTables.outfits_for_athlete(athlete_id):
+	for outfit in ModeTables.playable_outfits_for_athlete(athlete_id):
 		if String((outfit as Dictionary).get("id", "")) == wanted and _outfit_unlocked(outfit):
 			return wanted
-	var first := ModeTables.outfits_for_athlete(athlete_id)
+	var first := ModeTables.playable_outfits_for_athlete(athlete_id)
 	if first.is_empty():
 		return ""
 	# `selectedOutfit` (`js/ui.js:609-616`): an equipped outfit that is not unlocked (or
@@ -605,11 +605,11 @@ func _outfit_unlocked(outfit: Dictionary) -> bool:
 ## of outfits, else the first athlete in roster order who does.
 func _wardrobe_athlete_id() -> String:
 	var player_id := String(Config.athlete().get("id", ""))
-	if ModeTables.outfits_for_athlete(player_id).size() > 1:
+	if ModeTables.playable_outfits_for_athlete(player_id).size() > 1:
 		return player_id
 	for athlete in Frozen.athletes():
 		var id := String((athlete as Dictionary).get("id", ""))
-		if ModeTables.outfits_for_athlete(id).size() > 1 and not athlete_locked_shown(id):
+		if ModeTables.playable_outfits_for_athlete(id).size() > 1 and not athlete_locked_shown(id):
 			return id
 	return player_id
 
@@ -694,7 +694,7 @@ func _build_team() -> void:
 		var actions := card["actions"] as HBoxContainer
 		if not dictated:
 			actions.add_child(_action_button(SLOT_ATHLETE_ACTION_PREFIX + role, "slotChangeAthlete"))
-		if ModeTables.outfits_for_athlete(id).size() > 1:
+		if ModeTables.playable_outfits_for_athlete(id).size() > 1:
 			actions.add_child(_action_button(SLOT_OUTFIT_ACTION_PREFIX + role, "slotChangeOutfit"))
 		_wire_team_card(card["panel"], role, id, dictated)
 		# `.team-slot:hover` (`styles.css:3040-3042`) fires for the pointer anywhere inside
@@ -790,7 +790,7 @@ func _build_picker() -> void:
 
 func _build_outfits() -> void:
 	var athlete_id := _outfit_athlete_id
-	for outfit_in in ModeTables.outfits_for_athlete(athlete_id):
+	for outfit_in in ModeTables.playable_outfits_for_athlete(athlete_id):
 		var outfit: Dictionary = outfit_in
 		var outfit_id := String(outfit.get("id", ""))
 		var unlocked := _outfit_unlocked(outfit)
@@ -826,7 +826,10 @@ func _build_outfits() -> void:
 			_bind(tag, "outfitUnavailable3d")
 		elif not unlocked:
 			var challenge: Variant = outfit.get("challenge", null)
-			if challenge is Dictionary and not (challenge as Dictionary).is_empty():
+			if bool(outfit.get("shopOnly", false)):
+				line.visible = false
+				_bind(tag, "outfitEmporioUnlock")
+			elif challenge is Dictionary and not (challenge as Dictionary).is_empty():
 				line.add_theme_color_override("font_color", _palette("rival_soft"))
 				tag.visible = false
 				_bind_parts(line, _challenge_label_parts(challenge))
@@ -1423,7 +1426,7 @@ func open_picker(role: String) -> bool:
 ## `showOutfits` (`js/ui.js:856-870`): the wardrobe belongs to an athlete, not to a slot.
 func open_outfits(role: String) -> bool:
 	var athlete_id := slot_athlete_id(role)
-	if athlete_id == "" or ModeTables.outfits_for_athlete(athlete_id).size() < 2:
+	if athlete_id == "" or ModeTables.playable_outfits_for_athlete(athlete_id).size() < 2:
 		return false
 	_outfit_athlete_id = athlete_id
 	_outfit_role = role
@@ -1989,7 +1992,7 @@ func challenge_line(challenge: Dictionary) -> String:
 
 
 func _outfit_of(athlete_id: String, outfit_id: String) -> Dictionary:
-	for outfit in ModeTables.outfits_for_athlete(athlete_id):
+	for outfit in ModeTables.playable_outfits_for_athlete(athlete_id):
 		if String((outfit as Dictionary).get("id", "")) == outfit_id:
 			return outfit
 	return {}

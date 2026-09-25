@@ -1,0 +1,22 @@
+{
+  "arena": "aurora",
+  "status": "SUCCEEDED",
+  "reservedCredits": 30,
+  "referenceSha256": "b6f68c86df91c7acc390c43f43a7a97c7fea7d3000e022a52b645d07ac05bcf7",
+  "options": {
+    "ai_model": "meshy-7.1",
+    "should_texture": true,
+    "enable_pbr": true,
+    "texture_resolution": "2k",
+    "should_remesh": true,
+    "topology": "triangle",
+    "target_polycount": 10000,
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "id": "01a0d02b-a4b2-724e-986b-15618804fe3c",
+  "progress": 100,
+  "consumedCredits": 30
+}

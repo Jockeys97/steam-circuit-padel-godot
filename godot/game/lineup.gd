@@ -98,6 +98,13 @@ static func outfits(lineup: Dictionary, player_outfit: StringName, career: Varia
 			continue
 		if career is Dictionary:
 			out[role] = equipped_outfit(String(lineup[role]["id"]), career)
+			# Quick-match's explicit outfit cycle may override the wardrobe choice,
+			# but never bypass an achievement lock. Base means no explicit override.
+			if role == "player" and player_outfit != &"base":
+				for outfit in ModeTables.playable_outfits_for_athlete(String(lineup[role]["id"])):
+					if StringName(outfit.get("id", "")) == player_outfit and CareerRules.is_unlocked(outfit, career):
+						out[role] = player_outfit
+						break
 		elif role == "player":
 			out[role] = player_outfit
 		else:
@@ -110,7 +117,7 @@ static func outfits(lineup: Dictionary, player_outfit: StringName, career: Varia
 static func equipped_outfit(athlete_id: String, career: Dictionary) -> StringName:
 	var equipped: Variant = career.get("equippedOutfits", {})
 	var wanted := String(equipped.get(athlete_id, "base")) if equipped is Dictionary else "base"
-	for outfit in ModeTables.outfits_for_athlete(athlete_id):
+	for outfit in ModeTables.playable_outfits_for_athlete(athlete_id):
 		if String(outfit.get("id", "")) == wanted and CareerRules.is_unlocked(outfit, career):
 			return StringName(wanted)
 	return &"base"

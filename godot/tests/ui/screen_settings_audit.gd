@@ -1,26 +1,5 @@
-## screen_settings_audit.gd — UIR-19's contract audit: the settings screen in a router.
-##
-## WHAT IT PROVES, and the reference each question comes from:
-##
-##   1. the router mounts the screen and the screen declares its own facts;
-##   2. the three groups the markup has (`index.html:398-441`) exist, with the language
-##      segmented control (IT/EN, the reference's own literals) and the two
-##      accessibility toggles (`optReduceMotion`, `optColorblind`);
-##   3. the audio group is the reference's own pair of rows: the volume range, the
-##      controller dead-zone range with the reference's own bounds and step
-##      (`index.html:452-460`), and the vibration toggle;
-##   4. **every write goes through the authoritative save contract** — the audit reads
-##      the keys back out of a temp profile with `ModesSave`/`UiData` rather than trusting
-##      the screen's own words, so a screen that only changed its own widgets fails;
-##   5. the percentage text is the reference's integer percent (`js/main.js:2431-2438`);
-##   6. reduce-motion applies immediately: the screen's own accessibility settings and
-##      its motion policy both follow the toggle (`godot/src/ui/accessibility/UiMotionPolicy.gd`);
-##   7. colour-blind applies immediately to the same settings object;
-##   8. a language flip moves every visible string the two tables differ on, and the
-##      choice is persisted;
-##   9. the rows are focusable through UIR-05's bridge, so UIR-20 can host them;
-##  10. zero prose literals in `SettingsScreen.gd` and in `SettingsRows.gd`;
-##  11. the declared capture states walk (`["default"]`).
+## screen_settings_audit.gd — settings contract in a router, including the premium
+## layout, per-key persistence, live audio/input application, localization and focus.
 ##
 ## THIS AUDIT WRITES ONLY TO A TEMP PROFILE (`user://uir19-settings-audit`) and removes it
 ## again. The real `user://save` is never touched.
@@ -41,6 +20,8 @@ const UiData := preload("res://src/ui/data/UiData.gd")
 const ModesSave := preload("res://src/modes/modes_save.gd")
 const SaveStore := preload("res://src/save/save_store.gd")
 const Schema := preload("res://src/save/save_schema.gd")
+const MusicSettings := preload("res://src/audio/music_settings.gd")
+const InputSource := preload("res://game/input_map.gd")
 
 const SCREEN_PATH := "res://src/ui/screens/SettingsScreen.gd"
 const ROWS_PATH := "res://src/ui/components/SettingsRows.gd"
@@ -123,25 +104,29 @@ func _mount(audit: AuditBase) -> void:
 
 
 # ---------------------------------------------------------------------------
-# 2. The three groups
+# 2. The settings cards
 # ---------------------------------------------------------------------------
 
 func _groups(audit: AuditBase) -> void:
 	await process_frame
 	var screen: Node = _screen()
-	for group in ["LanguageGroup", "AccessibilityGroup", "AudioGroup"]:
+	for group in ["LanguageGroup", "AccessibilityGroup", "AudioGroup", "ControllerGroup", "PaceGroup"]:
 		audit.check_true(screen.find_child(group, true, false) != null, "settings/the_%s_exists" % group)
 	for button_name in ["Lang_it", "Lang_en"]:
 		var button := screen.find_child(button_name, true, false) as Button
 		audit.check_true(button != null, "settings/the_%s_button_exists" % button_name)
 		if button != null:
 			audit.check_eq(button.text, button_name.substr(5).to_upper(), "settings/%s_is_capitalised" % button_name)
-	for row_name in ["ReduceMotionRow", "ColorblindRow", "VolumeRow", "DeadzoneRow", "VibrationRow"]:
+	for row_name in ["ReduceMotionRow", "ColorblindRow", "VolumeRow", "MusicVolumeRow", "MusicEnabledRow", "NowPlayingRow", "DeadzoneRow", "VibrationRow"]:
 		audit.check_true(screen.find_child(row_name, true, false) != null, "settings/the_%s_exists" % row_name)
 	var rows: Dictionary = screen.rows()
-	audit.check_eq(rows.keys().size(), 5, "settings/five_rows_are_registered")
+	audit.check_eq(rows.keys().size(), 8, "settings/eight_rows_are_registered")
 	audit.check_eq(RowsClass.kind_of(rows["VolumeRow"]), "range", "settings/the_volume_row_is_a_range")
+	audit.check_eq(RowsClass.kind_of(rows["MusicVolumeRow"]), "range", "settings/music_volume_is_a_range")
+	audit.check_eq(RowsClass.kind_of(rows["MusicEnabledRow"]), "toggle", "settings/music_enabled_is_a_toggle")
 	audit.check_eq(RowsClass.kind_of(rows["VibrationRow"]), "toggle", "settings/the_vibration_row_is_a_toggle")
+	audit.check_true(screen.find_child("SettingsScroll", true, false) is ScrollContainer, "settings/long_page_has_a_scroll_container")
+	audit.check_eq((screen.find_child("SettingsGrid", true, false) as GridContainer).columns, 2, "settings/cards_use_two_columns_at_1280")
 	audit.check_eq((screen.find_child("VibrationRow", true, false) as Control).get_child_count(), 1, "settings/the_toggle_row_wraps_one_control")
 	var check := (screen.find_child("VibrationRow", true, false) as Control).get_child(0) as CheckBox
 	audit.check_true(check != null, "settings/the_toggle_row_wraps_a_checkbox")
@@ -160,6 +145,10 @@ func _bounds(audit: AuditBase) -> void:
 	audit.check_eq(_slider_of(volume_row).min_value, 0.0, "settings/the_volume_floor_is_the_reference_own")
 	audit.check_eq(_slider_of(volume_row).max_value, 1.0, "settings/the_volume_ceiling_is_the_reference_own")
 	audit.check_eq(_slider_of(volume_row).step, 0.01, "settings/the_volume_step_is_the_reference_own")
+	var music_row: Control = rows["MusicVolumeRow"]
+	audit.check_eq(_slider_of(music_row).min_value, 0.0, "settings/music_volume_reaches_silence")
+	audit.check_eq(_slider_of(music_row).max_value, 1.0, "settings/music_volume_reaches_full")
+	audit.check_eq(_slider_of(music_row).step, 0.01, "settings/music_volume_steps_by_one_percent")
 	audit.check_eq(_slider_of(deadzone_row).min_value, 0.08, "settings/the_dead_zone_floor_is_the_reference_own")
 	audit.check_eq(_slider_of(deadzone_row).max_value, 0.30, "settings/the_dead_zone_ceiling_is_the_reference_own")
 	audit.check_eq(_slider_of(deadzone_row).step, 0.01, "settings/the_dead_zone_step_is_the_reference_own")
@@ -192,9 +181,22 @@ func _slider_of(row: Control) -> HSlider:
 func _persistence(audit: AuditBase) -> void:
 	var screen: Node = _screen()
 	screen.set_volume(0.4)
+	screen.set_music_volume(0.37)
+	screen.set_music_enabled(false)
+	screen.set_now_playing(false)
 	screen.set_deadzone(0.12)
 	screen.set_vibration(false)
 	audit.check_true(is_equal_approx(float(_snapshot()["volume"]), 0.4), "settings/the_volume_is_in_the_profile")
+	audit.check_true(is_equal_approx(float(_snapshot()["music_volume"]), 0.37), "settings/music_level_is_saved_separately")
+	audit.check_eq(_stored_prefs().get("musicMuted", false), true, "settings/music_can_be_disabled_without_zeroing_its_level")
+	audit.check_eq(_snapshot()["music_muted"], true, "settings/music_disabled_reads_back")
+	audit.check_eq(_stored_prefs().get("nowPlaying", true), false, "settings/now_playing_choice_is_saved")
+	audit.check_eq(_snapshot()["now_playing"], false, "settings/now_playing_reads_back")
+	audit.check_eq(MusicSettings.effective_volume(_stored_prefs()), 0.0, "settings/disabled_music_is_effectively_silent")
+	screen.set_music_volume(0.58)
+	audit.check_eq(MusicSettings.effective_volume(_stored_prefs()), 0.0, "settings/moving_the_music_slider_while_disabled_stays_silent")
+	screen.set_music_enabled(true)
+	audit.check_true(is_equal_approx(MusicSettings.effective_volume(_stored_prefs()), 0.58), "settings/re_enabling_music_restores_the_saved_level")
 	audit.check_true(is_equal_approx(float(_stored_prefs().get("gamepadDeadzone", 0.0)), 0.12), "settings/the_dead_zone_is_in_the_profile_under_the_reference_key")
 	audit.check_eq(_stored_prefs().get("vibration", true), false, "settings/the_vibration_pref_is_in_the_profile")
 	screen.set_reduce_motion(true)
@@ -223,6 +225,28 @@ func _snapshot() -> Dictionary:
 
 func _applies_now(audit: AuditBase) -> void:
 	var screen: Node = _screen()
+	screen.set_volume(0.4)
+	var master := AudioServer.get_bus_index("Master")
+	audit.check_true(master >= 0 and is_equal_approx(AudioServer.get_bus_volume_db(master), linear_to_db(0.8)), "settings/master_volume_applies_on_the_bus_immediately")
+	screen.set_deadzone(0.12)
+	audit.check_true(is_equal_approx(InputSource.DEADZONE, 0.12), "settings/deadzone_applies_to_the_pad_immediately")
+	var music_bus := AudioServer.get_bus_index("Music")
+	screen.set_music_enabled(false)
+	audit.check_true(music_bus >= 0 and AudioServer.is_bus_mute(music_bus), "settings/music_switch_silences_only_music_immediately")
+	screen.set_music_volume(0.58)
+	audit.check_true(AudioServer.is_bus_mute(music_bus), "settings/music_slider_cannot_unmute_an_off_switch")
+	screen.set_music_enabled(true)
+	audit.check_true(not AudioServer.is_bus_mute(music_bus), "settings/music_switch_restores_the_bus")
+	audit.check_true(is_equal_approx(AudioServer.get_bus_volume_db(music_bus), linear_to_db(0.55 * 0.58)), "settings/restored_music_uses_saved_slider_level")
+	_slider_of(screen.rows()["MusicVolumeRow"]).value = 0.43
+	audit.check_true(is_equal_approx(float(_stored_prefs().get("musicVolume", -1.0)), 0.43), "settings/mouse_music_slider_persists_its_change")
+	audit.check_true(is_equal_approx(AudioServer.get_bus_volume_db(music_bus), linear_to_db(0.55 * 0.43)), "settings/mouse_music_slider_applies_immediately")
+	var music_check := (screen.rows()["MusicEnabledRow"] as RowsClass.ToggleRow).check
+	music_check.button_pressed = false
+	audit.check_eq(_stored_prefs().get("musicMuted", false), true, "settings/mouse_music_switch_persists_off")
+	audit.check_true(AudioServer.is_bus_mute(music_bus), "settings/mouse_music_switch_applies_off")
+	music_check.button_pressed = true
+	audit.check_eq(_stored_prefs().get("musicMuted", true), false, "settings/mouse_music_switch_persists_on")
 	screen.set_reduce_motion(true)
 	audit.check_eq(screen.motion_policy().reduced_motion(), true, "settings/the_motion_policy_follows_reduce_motion_on")
 	audit.check_eq(screen.accessibility().is_enabled(screen.accessibility().REDUCE_MOTION), true, "settings/the_accessibility_settings_follow_too")
@@ -243,8 +267,9 @@ func _strings(audit: AuditBase) -> void:
 	var screen: Node = _screen()
 	var language_at_start := Locale.current_lang()
 	var unresolved: Array = []
-	for key in ["settingsTitle", "settingsSub", "language", "accessibility", "audioSettings",
-			"volume", "deadzone", "vibration", "reduceMotion", "colorblind"]:
+	for key in ["settingsTitle", "settingsSub", "language", "accessibility", "settingsAudio", "settingsAudioHint",
+			"settingsMasterVolume", "musicVolume", "settingsMusicEnabled", "settingsNowPlaying", "settingsController",
+			"deadzone", "vibration", "reduceMotion", "colorblind"]:
 		for lang in Locale.locales():
 			if not Locale.is_resolvable(key, String(lang)):
 				unresolved.append("%s/%s" % [key, lang])
@@ -293,8 +318,13 @@ func _slots() -> Dictionary:
 	return {
 		"language": "language",
 		"accessibility": "accessibility",
-		"audio": "audioSettings",
-		"volume": "volume",
+		"audio": "settingsAudio",
+		"audio_hint": "settingsAudioHint",
+		"controller": "settingsController",
+		"volume": "settingsMasterVolume",
+		"music_volume": "musicVolume",
+		"music_enabled": "settingsMusicEnabled",
+		"now_playing": "settingsNowPlaying",
 		"deadzone": "deadzone",
 		"vibration": "vibration",
 		"reduce_motion": "reduceMotion",
@@ -304,10 +334,12 @@ func _slots() -> Dictionary:
 
 func _visible_texts(screen: Node) -> Dictionary:
 	var out := {}
-	for group in [["language", "LanguageTitle"], ["accessibility", "AccessibilityTitle"], ["audio", "AudioTitle"]]:
+	for group in [["language", "LanguageTitle"], ["accessibility", "AccessibilityTitle"], ["audio", "AudioTitle"],
+			["audio_hint", "AudioHint"], ["controller", "ControllerTitle"]]:
 		out[group[0]] = _text_of(screen, String(group[1]))
 	for row in [["volume", "VolumeRow"], ["deadzone", "DeadzoneRow"], ["vibration", "VibrationRow"],
-			["reduce_motion", "ReduceMotionRow"], ["colorblind", "ColorblindRow"]]:
+			["reduce_motion", "ReduceMotionRow"], ["colorblind", "ColorblindRow"],
+			["music_volume", "MusicVolumeRow"], ["music_enabled", "MusicEnabledRow"], ["now_playing", "NowPlayingRow"]]:
 		out[row[0]] = _row_text(screen, String(row[1]))
 	return out
 
@@ -344,7 +376,7 @@ func _focus(audit: AuditBase) -> void:
 	var nav: MenuNav = focus.menu
 	focus.refresh()
 	var ids: Array = focus.ids()
-	for suffix in ["VolumeRow", "DeadzoneRow", "VibrationRow", "ReduceMotionRow", "ColorblindRow", "Lang_it", "Lang_en"]:
+	for suffix in ["VolumeRow", "MusicVolumeRow", "MusicEnabledRow", "NowPlayingRow", "DeadzoneRow", "VibrationRow", "ReduceMotionRow", "ColorblindRow", "Lang_it", "Lang_en"]:
 		audit.check_true(ids.has(screen.focus_id(suffix)), "settings/the_bridge_reads_%s" % suffix)
 	audit.check_eq(_duplicates(ids), [], "settings/no_row_registers_twice")
 	var volume_target := _target_of(nav, screen.focus_id("VolumeRow"))
@@ -359,6 +391,15 @@ func _focus(audit: AuditBase) -> void:
 	audit.check_true(is_equal_approx(screen.volume(), stepped), "settings/the_screen_steps_its_own_range")
 	audit.check_true(is_equal_approx(float(_stored_prefs().get("volume", -1.0)), stepped), "settings/the_step_lands_on_the_grid")
 	audit.check_true(is_equal_approx(float(_stored_prefs().get("volume", -1.0)), screen.volume()), "settings/a_stepped_range_is_persisted_at_once")
+	bridge.range_changed.connect(func(id: String, value: float) -> void:
+		if id == screen.focus_id("MusicVolumeRow"):
+			screen.set_row_value("MusicVolumeRow", value)
+	)
+	screen.set_music_volume(0.43)
+	audit.check_true(bridge.set_focus(screen.focus_id("MusicVolumeRow")), "settings/gamepad_can_focus_music_volume")
+	audit.check_eq(bridge.dispatch(_key_event(KEY_LEFT)), true, "settings/gamepad_music_step_is_handled")
+	audit.check_true(is_equal_approx(screen.music_volume(), 0.42), "settings/gamepad_music_step_uses_the_visible_slider_value")
+	audit.check_true(is_equal_approx(float(_stored_prefs().get("musicVolume", -1.0)), 0.42), "settings/gamepad_music_step_is_saved")
 	audit.report("bridge focusables: %d, volume target kind=%s" % [ids.size(), volume_target.get("kind", "")])
 	audit.note("recorded seam request for the integrator: menu_focus._target() drops min/max/step/value (and the OSK seed keys value/max_length/field_label), so the focused range's copy in the model steps from the model's own defaults — volume target seen by the model: %s" % str(volume_target))
 

@@ -1,0 +1,34 @@
+{
+  "id": "01a0cf48-080c-7300-8734-0550cdb2d7a0",
+  "type": "image-to-3d",
+  "name": "",
+  "art_style": "",
+  "object_prompt": "",
+  "style_prompt": "",
+  "negative_prompt": "",
+  "texture_prompt": "",
+  "texture_image_url": "",
+  "text_style_prompt": "",
+  "image_style_url": "",
+  "status": "SUCCEEDED",
+  "created_at": 1790184001106,
+  "progress": 100,
+  "started_at": 1790184001115,
+  "finished_at": 1790184157979,
+  "expires_at": 1790443357979,
+  "task_error": null,
+  "model_url": "[redacted signed asset URL]",
+  "model_urls": {
+    "glb": "[redacted signed asset URL]"
+  },
+  "thumbnail_url": "[redacted signed asset URL]",
+  "texture_urls": [
+    {
+      "base_color": "[redacted signed asset URL]",
+      "metallic": "[redacted signed asset URL]",
+      "roughness": "[redacted signed asset URL]",
+      "normal": "[redacted signed asset URL]"
+    }
+  ],
+  "consumed_credits": 30
+}

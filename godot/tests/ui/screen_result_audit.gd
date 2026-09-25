@@ -56,6 +56,7 @@ const Locale := preload("res://src/locale/locale.gd")
 const ModesSave := preload("res://src/modes/modes_save.gd")
 const CareerRules := preload("res://src/modes/career_rules.gd")
 const SaveStore := preload("res://src/save/save_store.gd")
+const Economy := preload("res://src/economy/economy_service.gd")
 const Sim := preload("res://src/sim/sim.gd")
 const ScriptedPlayer := preload("res://game/scripted_player.gd")
 
@@ -105,6 +106,7 @@ func _run(audit: AuditBase) -> void:
 	await _titles(audit)
 	await _scores(audit)
 	await _stats(audit)
+	await _reward(audit)
 	await _narrative(audit)
 	await _objectives(audit)
 	await _cta(audit)
@@ -174,7 +176,9 @@ func _titles(audit: AuditBase) -> void:
 	audit.check_eq(screen.shown_message(), UiStrings.t("winArena", {"arena": UiStrings.t("arena_%s_name" % arena_id)}), "result/a_won_quick_match_names_the_arena")
 	screen.enter(_payload({"result": _result(5, 11, 11, false, _mixed_stats())}))
 	audit.check_eq(screen.title_key(), "defeat", "result/a_lost_match_takes_the_defeat_key")
-	audit.check_eq(screen.shown_title(), UiStrings.t("defeat"), "result/the_title_shows_the_lost_string")
+	audit.check_eq(screen.shown_title(), UiStrings.t("resultLossTitle"), "result/the_title_shows_the_lost_string")
+	audit.check_eq((screen.find_child("ResultTitle", true, false) as Label).theme_type_variation, &"HeroTitle", "result/outcome_uses_display_font")
+	audit.check_true((screen.find_child("OutcomeAccent", true, false) as ColorRect).visible, "result/outcome_has_a_subtle_accent")
 	audit.check_eq(screen.shown_message(), UiStrings.t("defeatMsg"), "result/a_lost_quick_match_says_defeat")
 	audit.check_eq(_text_of(screen, "Badge"), UiStrings.t("matchOver"), "result/the_badge_says_the_match_is_over")
 	audit.check_eq(screen.shown_rematch_label(), UiStrings.t("rematch"), "result/without_a_continuation_the_action_is_rematch")
@@ -304,6 +308,62 @@ func _cell_mark(screen: Node, node_name: String, green: Color, ink: Color) -> St
 	if colour.is_equal_approx(ink):
 		return "plain"
 	return "other:%s" % str(colour)
+
+
+# ---------------------------------------------------------------------------
+# Circuit Credits receipt: actual payout, transparent breakdown and safe failure
+# ---------------------------------------------------------------------------
+
+func _reward(audit: AuditBase) -> void:
+	var screen: Node = _screen()
+	var breakdown := Economy.reward_breakdown(18, true)
+	audit.check_eq(int(breakdown["total"]), 71, "result/credits_formula_matches_the_wallet")
+	audit.check_eq(int(Economy.reward_breakdown(500, false)["play_bonus"]), 80, "result/credits_play_bonus_is_capped")
+	var before := Economy.balance(_store)
+	var award := Economy.award_completion(_store, "uir21-result-reward", 18, true)
+	audit.check_true(bool(award.get("ok", false)), "result/credits_are_saved_by_the_economy_service")
+	audit.check_eq(int(award.get("awarded", 0)), 71, "result/credits_saved_amount_matches_the_breakdown")
+	audit.check_eq(int(award.get("balance", 0)), before + 71, "result/credits_saved_balance_includes_one_reward")
+	screen.enter(_payload({"reward": award}))
+	var panel := screen.find_child("RewardPanel", true, false) as PanelContainer
+	audit.check_true(panel != null and panel.visible, "result/credits_receipt_is_visible")
+	audit.check_eq(_text_of(screen, "RewardRow"), UiStrings.t("resultCreditsAmount", {"n": 71}), "result/credits_earned_is_prominent")
+	audit.check_eq(_text_of(screen, "RewardBalance"), UiStrings.t("resultCreditsBalance", {"n": before + 71}), "result/credits_balance_is_separate")
+	audit.check_eq(_text_of(screen, "RewardBreakdown"), UiStrings.t("resultCreditsBreakdownWin", {
+		"base": 20, "points": 18, "per": 2, "play": 36, "win": 15,
+	}), "result/credits_breakdown_uses_the_wallet_components")
+	var animated := award.duplicate(true)
+	animated["animate"] = true
+	animated["match_id"] = "uir21-visual-animation"
+	screen.enter(_payload({"reward": animated}))
+	audit.check_eq(_text_of(screen, "RewardRow"), UiStrings.t("resultCreditsAmount", {"n": 0}), "result/credits_visual_count_starts_at_zero")
+	await create_timer(0.25).timeout
+	var in_flight := int(screen.get("_reward_count"))
+	audit.check_true(in_flight > 0 and in_flight < 71, "result/credits_visual_count_progresses")
+	await create_timer(0.75).timeout
+	audit.check_eq(_text_of(screen, "RewardRow"), UiStrings.t("resultCreditsAmount", {"n": 71}), "result/credits_visual_count_reaches_saved_amount")
+	screen.render(_payload({"reward": animated}))
+	audit.check_eq(_text_of(screen, "RewardRow"), UiStrings.t("resultCreditsAmount", {"n": 71}), "result/credits_rerender_does_not_replay_count")
+	audit.check_eq(int(Economy.balance(_store)), before + 71, "result/credits_animation_never_writes_the_wallet")
+	var loss_parts := Economy.reward_breakdown(8, false)
+	screen.enter(_payload({"reward": {
+		"ok": true, "already": false, "awarded": 36, "earned": 36,
+		"balance": 386, "breakdown": loss_parts,
+	}}))
+	audit.check_eq(_text_of(screen, "RewardBreakdown"), UiStrings.t("resultCreditsBreakdownLoss", {
+		"base": 20, "points": 8, "per": 2, "play": 16,
+	}), "result/loss_receipt_has_no_victory_bonus")
+	var repeat := Economy.award_completion(_store, "uir21-result-reward", 18, true)
+	audit.check_eq(int(repeat.get("awarded", -1)), 0, "result/reopen_does_not_pay_twice")
+	audit.check_eq(int(Economy.balance(_store)), before + 71, "result/reopen_leaves_the_balance_unchanged")
+	screen.enter(_payload({"reward": repeat}))
+	audit.check_eq(_text_of(screen, "RewardRow"), UiStrings.t("resultCreditsAmount", {"n": 71}), "result/reopen_shows_original_credits")
+	audit.check_eq(_text_of(screen, "RewardBreakdown"), UiStrings.t("resultCreditsAlready"), "result/reopen_does_not_claim_a_second_payment")
+	screen.enter(_payload({"reward": {"ok": false, "awarded": 0, "balance": 350}}))
+	audit.check_eq(_text_of(screen, "RewardRow"), "—", "result/failed_save_does_not_show_earned_credits")
+	audit.check_eq(_text_of(screen, "RewardBreakdown"), UiStrings.t("resultCreditsUnavailable"), "result/failed_save_explains_no_credit")
+	screen.enter(_payload({}))
+	audit.check_true(not panel.visible, "result/constructed_result_without_award_hides_receipt")
 
 
 # ---------------------------------------------------------------------------
@@ -715,7 +775,7 @@ func _captures(audit: AuditBase) -> void:
 	audit.check_eq(screen.view().get("constructed", false), true, "result/a_capture_is_flagged_constructed")
 	audit.check_eq(screen.apply_capture_state("loss-points"), true, "result/the_loss_points_capture_applies")
 	audit.check_eq(screen.shown_score(), ["8", "11"], "result/the_loss_points_capture_shows_its_points")
-	audit.check_eq(screen.shown_title(), UiStrings.t("defeat"), "result/the_loss_points_capture_is_a_loss")
+	audit.check_eq(screen.shown_title(), UiStrings.t("resultLossTitle"), "result/the_loss_points_capture_is_a_loss")
 	audit.check_eq(screen.apply_capture_state("win-set"), true, "result/the_win_set_capture_applies")
 	audit.check_eq(screen.shown_score(), ["6", "4"], "result/the_win_set_capture_is_the_game_score")
 	audit.check_eq(screen.apply_capture_state("loss-set"), true, "result/the_loss_set_capture_applies")

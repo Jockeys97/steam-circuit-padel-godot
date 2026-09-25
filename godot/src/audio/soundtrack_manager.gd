@@ -92,9 +92,25 @@ const CONTEXT_TRACK_MAP := {
 	"cradle_of_waves": "ost_cradle_of_waves",
 	# 1 Hunter x Hunter Special Vocal Anthem
 	"hyori_ittai_vocal": "ost_hyori_ittai_vocal",
+	# 15 Legendary Game Menu Themes
+	"menu_velvet_lounge": "ost_menu_velvet_lounge",
+	"menu_grand_touring": "ost_menu_grand_touring",
+	"menu_astral_solitude": "ost_menu_astral_solitude",
+	"menu_dearly_reminiscent": "ost_menu_dearly_reminiscent",
+	"menu_cyber_terminal": "ost_menu_cyber_terminal",
+	"menu_breeze_plaza": "ost_menu_breeze_plaza",
+	"menu_sacred_spring": "ost_menu_sacred_spring",
+	"menu_ancient_sanctum": "ost_menu_ancient_sanctum",
+	"menu_rainy_atrium": "ost_menu_rainy_atrium",
+	"menu_chronicle_winds": "ost_menu_chronicle_winds",
+	"menu_subaquatic_drift": "ost_menu_subaquatic_drift",
+	"menu_northern_aurora": "ost_menu_northern_aurora",
+	"menu_champions_pavilion": "ost_menu_champions_pavilion",
+	"menu_orbital_vanguard": "ost_menu_orbital_vanguard",
+	"menu_third_strike": "ost_menu_third_strike",
 }
 
-## Complete metadata dictionary for all 63 OST tracks (22 Standard + 8 Epic/Anime + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH)
+## Complete metadata dictionary for all 78 OST tracks (22 Standard + 8 Epic/Anime + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends)
 const TRACK_METADATA := {
 	"ost_menu": {
 		"id": "ost_menu",
@@ -729,6 +745,156 @@ const TRACK_METADATA := {
 		"style": "Inno shonen vocale epico con chitarre acustiche furiose a 12 corde, archi sinfonici, ottoni da battaglia e duo vocale armonizzato",
 		"prompt": "Passionate, high-intensity shonen anime ending anthem inspired by Hyori Ittai (Hunter x Hunter Chimera Ant Arc). Furious 12-string acoustic guitar strumming at 154 BPM, dramatic soaring orchestral strings, heavy brass stabs, driving rock drums with taiko, and emotional dual-voice shonen vocal harmony."
 	},
+	"ost_menu_velvet_lounge": {
+		"id": "ost_menu_velvet_lounge",
+		"title": "Velvet Velvet (Midnight Lounge)",
+		"scene": "Menu Principale & Guardaroba Notturno",
+		"category": "Menu & Sistema",
+		"bpm": 96,
+		"key": "E minor / G major",
+		"style": "Acid Jazz / Neo-Soul Lounge con piano Fender Rhodes, walking bass e tromba con sordina Harmon",
+		"prompt": "Ultra-stylish, laid-back Tokyo rooftop jazz lounge theme inspired by Persona 5. Lush Fender Rhodes MK I electric piano 7th and 9th chords, silky electric walking bass, singing harmon-muted jazz trumpet hooks, mellow hip-hop downtempo beat with wooden rimshots and vintage vinyl tape warmth."
+	},
+	"ost_menu_grand_touring": {
+		"id": "ost_menu_grand_touring",
+		"title": "Moon Over the Circuit (Prestige Pavilion)",
+		"scene": "Showroom Circuiti & Padiglione Prestige",
+		"category": "Menu & Sistema",
+		"bpm": 108,
+		"key": "D major / B minor",
+		"style": "Nu-Jazz Fusion giapponese con Rhodes scintillante, chitarra nylon e basso fretless",
+		"prompt": "Sophisticated luxury automotive showroom lounge inspired by Gran Turismo. Sparkling bell-like Rhodes electric piano chords, smooth acoustic nylon jazz guitar arpeggios, fluid melodic fretless bass, bossa-fusion brush snare with ride cymbal and delicate soprano flute phrases."
+	},
+	"ost_menu_astral_solitude": {
+		"id": "ost_menu_astral_solitude",
+		"title": "Quiet Horizons (Meditative Solitude)",
+		"scene": "Pausa & Menu Meditativo",
+		"category": "Menu & Sistema",
+		"bpm": 72,
+		"key": "C major / A minor",
+		"style": "Minimalismo acustico ambient con felt piano intimo, celesta e archi caldi",
+		"prompt": "Deeply peaceful, therapeutic ambient acoustic solitude inspired by Minecraft C418. Intimate felt upright piano with soft hammer thuds, warm analog string drone breathing underneath, crystalline celesta bell drops, and spacious meditative room acoustics."
+	},
+	"ost_menu_dearly_reminiscent": {
+		"id": "ost_menu_dearly_reminiscent",
+		"title": "Silver Moon Reflections (Fantasy Prelude)",
+		"scene": "Schermata Titolo & Preludio Fantastico",
+		"category": "Menu & Sistema",
+		"bpm": 84,
+		"key": "F major / D minor",
+		"style": "Preludio sinfonico fantasy con arpa a cascata, risacca oceanica e pianoforte nostalgico",
+		"prompt": "Tender, emotional fantasy title screen prelude inspired by Kingdom Hearts Dearly Beloved and Final Fantasy Prelude. Cascading concert harp arpeggios rolling up and down, gentle soothing ocean wave wash, emotional grand piano lullaby melody, and warm French horn swells."
+	},
+	"ost_menu_cyber_terminal": {
+		"id": "ost_menu_cyber_terminal",
+		"title": "Neon Grid Terminal (Data Terminal)",
+		"scene": "Terminale Dati & Personalizzazione HUD",
+		"category": "Menu & Sistema",
+		"bpm": 90,
+		"key": "D minor",
+		"style": "Chill Synthwave / Ambient Sci-Fi HUD con Moog sub-bass e pad Juno-106",
+		"prompt": "Futuristic, immersive high-tech data terminal ambiance inspired by Metroid Prime and Cyberpunk 2077. Deep 45Hz analog Moog sub-bass pulse, lush Roland Juno-106 analog string pad sweeps, digital crystalline chime arpeggios, downtempo electronic beat with high-tech HUD tick accents."
+	},
+	"ost_menu_breeze_plaza": {
+		"id": "ost_menu_breeze_plaza",
+		"title": "Breeze Plaza (Sunshine Pavilion)",
+		"scene": "Padiglione Resort & Menu Soleggiato",
+		"category": "Menu & Sistema",
+		"bpm": 112,
+		"key": "F major",
+		"style": "Bossa Nova spensierata con nylon guitar, vibrafono e fischiettio da resort",
+		"prompt": "Carefree sunny resort lobby bossa nova inspired by Wii Sports and Mii Channel. Breezy nylon acoustic guitar chords, warm vibraphone leads, cheerful melodic whistling, playful shaker and congas, bouncy electric bass groove."
+	},
+	"ost_menu_sacred_spring": {
+		"id": "ost_menu_sacred_spring",
+		"title": "Sacred Spring (Fairy Sanctuary)",
+		"scene": "Santuario delle Fate & Sorgente Sacra",
+		"category": "Menu & Sistema",
+		"bpm": 76,
+		"key": "Db major / F minor",
+		"style": "Arpeggi d'arpa eterea e flauto di cristallo in armonie fiabesche",
+		"prompt": "Mystical crystal spring oasis inspired by Zelda Great Fairy Fountain. Enchanting cascading concert harp arpeggios, gentle silver flute melody, shimmering celestial choir pads, warm ambient resonance."
+	},
+	"ost_menu_ancient_sanctum": {
+		"id": "ost_menu_ancient_sanctum",
+		"title": "Sanctum of the Ring (Choral Vault)",
+		"scene": "Cattedrale dei Precursori & Cripta Sacra",
+		"category": "Menu & Sistema",
+		"bpm": 68,
+		"key": "E minor",
+		"style": "Canto gregoriano solenne con riverbero da cattedrale e violoncello intimo",
+		"prompt": "Echoing primordial cathedral expanse inspired by Halo Monk Chant. Resonant male Gregorian choir harmony humming in a massive stone vaulted nave, warm solo cello playing a solemn counterpoint melody."
+	},
+	"ost_menu_rainy_atrium": {
+		"id": "ost_menu_rainy_atrium",
+		"title": "Rainy Atrium (Cafe Reverie)",
+		"scene": "Caffè della Pioggia & Relax del Club",
+		"category": "Menu & Sistema",
+		"bpm": 80,
+		"key": "Bb major / G minor",
+		"style": "Cozy acoustic lo-fi jazz con chitarra acustica, pioggia e rhodes intimo",
+		"prompt": "Warm cozy coffee shop rain theme inspired by Animal Crossing and Persona Rain. Gentle falling rain soundscape, sweet acoustic guitar fingerpicking, subtle Fender Rhodes chords, relaxed brushed drums."
+	},
+	"ost_menu_chronicle_winds": {
+		"id": "ost_menu_chronicle_winds",
+		"title": "Timeless Winds (Chronicle of the Ages)",
+		"scene": "Mappa del Tempo & Memorie del Circuito",
+		"category": "Menu & Sistema",
+		"bpm": 88,
+		"key": "G major / E minor",
+		"style": "Folk celtico nostalgico con chitarra acustica a 12 corde e tin whistle",
+		"prompt": "Poignant, nostalgic acoustic folk title theme inspired by Chrono Trigger and Chrono Cross. Intricate 12-string acoustic guitar picking, soaring tin whistle and pan flute melody, lush string quartet backing."
+	},
+	"ost_menu_subaquatic_drift": {
+		"id": "ost_menu_subaquatic_drift",
+		"title": "Coral Drift (Deep Oceanic Current)",
+		"scene": "Acquario del Circuito & Correnti Sottomarine",
+		"category": "Menu & Sistema",
+		"bpm": 78,
+		"key": "Eb major / C minor",
+		"style": "Ambient sottomarino onirico con synth pad galleggianti e campane marine",
+		"prompt": "Dreamlike, floating deep ocean ambiance inspired by Donkey Kong Country Aquatic Ambience. Ethereal detuned analog synth pads, crystal marine chime arpeggios, gentle bubble FX, serene expansive underwater acoustics."
+	},
+	"ost_menu_northern_aurora": {
+		"id": "ost_menu_northern_aurora",
+		"title": "Northern Frost (Halls of Whiterun)",
+		"scene": "Taverna del Nord & Fuoco del Focolare",
+		"category": "Menu & Sistema",
+		"bpm": 70,
+		"key": "A minor",
+		"style": "Folk nordico intimo con hammered dulcimer, viola da gamba e flauto di legno",
+		"prompt": "Cozy Nordic tavern and frozen landscape theme inspired by Skyrim The Streets of Whiterun. Delicate hammered dulcimer melodies, deep expressive viola da gamba lines, warm fireplace crackle, soft timber flute."
+	},
+	"ost_menu_champions_pavilion": {
+		"id": "ost_menu_champions_pavilion",
+		"title": "Champions Hall (Tournament Fanfare)",
+		"scene": "Hall dei Campioni & Selezione Torneo",
+		"category": "Menu & Sistema",
+		"bpm": 128,
+		"key": "D major",
+		"style": "Fanfara orchestrale trionfale con ottoni eroici e percussioni da torneo",
+		"prompt": "Epic, heroic tournament main menu fanfare inspired by Super Smash Bros Melee and Brawl. Punchy brass fanfare, driving orchestral snare and timpani cadence, sweeping violins, triumphant competitive spirit."
+	},
+	"ost_menu_orbital_vanguard": {
+		"id": "ost_menu_orbital_vanguard",
+		"title": "Orbital Vista (Galaxy Map Lounge)",
+		"scene": "Osservatorio Orbitale & Mappa Stellare",
+		"category": "Menu & Sistema",
+		"bpm": 85,
+		"key": "F# minor",
+		"style": "Sci-fi cosmico contemplativo con pad Juno-60 e arpeggio analogico spaziale",
+		"prompt": "Meditative deep space exploration theme inspired by Mass Effect Galaxy Map Vigil. Warm pulsing analog synthesizer sequencer, expansive Roland Juno lush string pads, glistening crystal arp bells, profound celestial awe."
+	},
+	"ost_menu_third_strike": {
+		"id": "ost_menu_third_strike",
+		"title": "Street Select (Underground Cipher)",
+		"scene": "Schermata Selezione Personaggio & Club Underground",
+		"category": "Menu & Sistema",
+		"bpm": 160,
+		"key": "F minor",
+		"style": "Liquid Drum & Bass con piano jazz sincopato e 808 sub-bass profondo",
+		"prompt": "High-fashion urban character selection groove inspired by Street Fighter III 3rd Strike. Crisp rolling liquid drum and bass breakbeats, syncopated jazz piano stabs, deep 808 sub-bass, slick urban arcade attitude."
+	},
 }
 
 const SUPPORTED_EXTENSIONS := [".ogg", ".mp3", ".wav"]
@@ -775,7 +941,7 @@ func _setup_players() -> void:
 	add_child(_player_b)
 
 
-## Returns all 63 registered OST track IDs.
+## Returns all 78 registered OST track IDs.
 static func all_track_ids() -> PackedStringArray:
 	var out := PackedStringArray()
 	for k in CONTEXT_TRACK_MAP:
@@ -1097,6 +1263,19 @@ func _hard_stop_players() -> void:
 			continue
 		player.stop()
 		player.stream_paused = false
+
+
+func _exit_tree() -> void:
+	# A scene may disappear while a crossfade is pending. Release both stream
+	# references explicitly, including a paused/outgoing decoder.
+	if _tween != null and _tween.is_valid():
+		_tween.kill()
+	_tween = null
+	_hard_stop_players()
+	for player in [_player_a, _player_b]:
+		if is_instance_valid(player):
+			player.stream = null
+	_active_player = null
 
 
 ## Updates match intensity (0.0 to 1.0) for dynamic audio adjustments.

@@ -101,6 +101,17 @@ uniform bool roughness_enabled = false;
 uniform sampler2D roughness_tex : filter_linear_mipmap;
 uniform int roughness_channel = 1;
 
+// Optional geometric design on top of the colour families. Existing outfits
+// leave this at zero. Bind-space position avoids overlapping UV atlas islands.
+uniform int concept_style = 0; // 1 = Solar Sprint, 2 = Polar Ace
+uniform vec3 concept_panel = vec3(0.125, 0.278, 0.490);
+uniform vec3 concept_piping = vec3(0.718, 0.435, 0.227);
+varying vec3 concept_bind_position;
+
+void vertex() {
+	concept_bind_position = VERTEX;
+}
+
 const float LUMA_EPS = 1e-4;
 
 vec3 lin_to_srgb(vec3 c) {
@@ -196,6 +207,28 @@ void fragment() {
 	cur = apply_anchor(cur, anchor_b, target_hip_b, region.g * fam_b * strength);
 	cur = apply_anchor(cur, anchor_a, target_foot_a, region.b * fam_a * strength);
 	cur = apply_anchor(cur, anchor_b, target_foot_b, region.b * fam_b * strength);
+
+	if (concept_style != 0) {
+		// Maestro's import is in centimetres; Fiamma's is already in metres.
+		vec3 p = concept_bind_position * (concept_style == 2 ? 0.01 : 1.0);
+		if (concept_style == 2) {
+			float torso = region.r * smoothstep(1.10, 1.17, p.y) * (1.0 - smoothstep(1.64, 1.70, p.y));
+			float edge = p.x - (0.55 * p.y - 0.80);
+			float panel = torso * smoothstep(-0.026, 0.012, edge);
+			float piping = torso * (1.0 - smoothstep(0.008, 0.025, abs(edge)));
+			float shorts_panel = region.g * smoothstep(0.65, 0.75, p.y) * (1.0 - smoothstep(1.07, 1.13, p.y)) * smoothstep(0.07, 0.15, p.x);
+			cur = apply_anchor(cur, target_torso_a, concept_panel, panel);
+			cur = apply_anchor(cur, target_torso_a, concept_piping, piping);
+			cur = apply_anchor(cur, target_hip_a, concept_panel, shorts_panel);
+		} else {
+			float torso = region.r * smoothstep(1.10, 1.18, p.y) * (1.0 - smoothstep(1.61, 1.68, p.y));
+			float edge = p.x + 0.33 * (p.y - 1.28) + 0.03;
+			float panel = torso * (1.0 - smoothstep(-0.015, 0.025, edge));
+			float piping = torso * (1.0 - smoothstep(0.010, 0.028, abs(edge)));
+			cur = apply_anchor(cur, target_torso_a, concept_panel, panel);
+			cur = apply_anchor(cur, target_torso_a, concept_piping, piping);
+		}
+	}
 
 	ALBEDO = OUTPUT_IS_SRGB ? cur : srgb_to_lin(cur);
 	METALLIC = pbr_metallic;

@@ -1,0 +1,105 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="showroom_wall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#020617"/>
+      <stop offset="40%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="floor_marble" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="50%" stop-color="#030712"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="softbox" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="car_body" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="45%" stop-color="#38bdf8"/>
+      <stop offset="70%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Showroom Background -->
+  <rect width="1024" height="1024" fill="url(#showroom_wall)"/>
+
+  <!-- Ceiling Diffuser Softbox Lighting -->
+  <polygon points="260,0 764,0 710,180 314,180" fill="url(#softbox)" opacity="0.6"/>
+  <rect x="330" y="20" width="364" height="130" rx="8" fill="#ffffff" opacity="0.9" stroke="#38bdf8" stroke-width="4"/>
+
+  <!-- Floor Horizon & Marble -->
+  <rect x="0" y="520" width="1024" height="504" fill="url(#floor_marble)"/>
+  <line x1="0" y1="520" x2="1024" y2="520" stroke="#475569" stroke-width="2"/>
+
+  <!-- Marble Reflection of Softbox -->
+  <polygon points="314,520 710,520 764,700 260,700" fill="#38bdf8" opacity="0.08"/>
+
+  <!-- Luxury Supercar Profile Silhouette -->
+  <!-- Car Shadow -->
+  <ellipse cx="512" cy="625" rx="360" ry="25" fill="#000000" opacity="0.85"/>
+
+  <!-- Car Bodywork (Sleek Gran Turismo GT3 silhouette) -->
+  <path d="M 180,600 C 220,580 310,565 370,545 C 440,515 570,515 650,540 C 730,555 810,585 840,600 C 820,612 770,615 720,615 C 670,615 620,590 570,590 C 520,590 470,615 410,615 C 350,615 300,590 250,590 C 200,590 170,605 180,600 Z" fill="url(#car_body)" stroke="#7dd3fc" stroke-width="3"/>
+
+  <!-- Glass Cockpit & Canopy -->
+  <path d="M 390,545 C 440,522 530,520 590,528 C 630,534 650,545 650,545 C 580,542 470,543 390,545 Z" fill="#0f172a" stroke="#bae6fd" stroke-width="2"/>
+
+  <!-- Wheels & Rims -->
+  <!-- Front Wheel -->
+  <circle cx="290" cy="605" r="42" fill="#020617" stroke="#94a3b8" stroke-width="6"/>
+  <circle cx="290" cy="605" r="24" fill="#334155" stroke="#38bdf8" stroke-width="3"/>
+  <!-- Rear Wheel -->
+  <circle cx="730" cy="605" r="42" fill="#020617" stroke="#94a3b8" stroke-width="6"/>
+  <circle cx="730" cy="605" r="24" fill="#334155" stroke="#38bdf8" stroke-width="3"/>
+
+  <!-- Laser Taillight Streak -->
+  <path d="M 810,585 L 835,595" stroke="#ef4444" stroke-width="6" stroke-linecap="round"/>
+  <line x1="835" y1="595" x2="890" y2="598" stroke="#f87171" stroke-width="2" opacity="0.7"/>
+
+  <!-- Laser Headlight Beam -->
+  <path d="M 190,595 L 210,588" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
+  <polygon points="190,595 50,615 60,635" fill="#38bdf8" opacity="0.18"/>
+
+  <g id="title_banner">
+<rect x="116.4" y="851.4" width="791.2" height="97.2" rx="18" fill="rgba(0,0,0,0.5)" opacity="0.6"/>
+<rect x="120.4" y="855.4" width="783.2" height="89.2" rx="14" fill="rgba(14,17,22,0.88)" stroke="#38bdf8" stroke-width="2" stroke-opacity="0.45"/>
+<line x1="150.4" y1="863.4" x2="873.6" y2="863.4" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.3"/>
+<line x1="150.4" y1="936.6" x2="873.6" y2="936.6" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.3"/>
+<polygon points="136.4,900 142.4,894 148.4,900 142.4,906" fill="#38bdf8" opacity="0.7"/>
+<polygon points="875.6,900 881.6,894 887.6,900 881.6,906" fill="#38bdf8" opacity="0.7"/>
+<g transform="translate(172.4,880.4) scale(0.36)"><path d="M 15,110 L 15,15 L 55,15 C 80,15 80,65 55,65 L 15,65" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(216.0,880.4) scale(0.36)"><path d="M 15,110 L 15,15 L 55,15 C 80,15 80,62 55,62 L 15,62 M 50,62 L 85,110" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(259.6,880.4) scale(0.36)"><path d="M 85,15 L 15,15 L 15,110 L 85,110 M 15,62 L 70,62" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(303.2,880.4) scale(0.36)"><path d="M 80,35 C 70,14 30,14 25,40 C 20,60 80,65 80,88 C 80,112 35,115 20,95" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(346.8,880.4) scale(0.36)"><path d="M 10,15 L 90,15 M 50,15 L 50,110" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(390.4,880.4) scale(0.36)"><path d="M 20,15 L 80,15 M 50,15 L 50,110 M 20,110 L 80,110" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(423.2,880.4) scale(0.36)"><path d="M 85,35 C 70,12 30,12 20,62 C 10,105 60,115 85,95 L 85,62 L 55,62" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(466.8,880.4) scale(0.36)"><path d="M 85,15 L 15,15 L 15,110 L 85,110 M 15,62 L 70,62" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(541.4,880.4) scale(0.36)"><path d="M 15,110 L 15,15 L 55,15 C 80,15 80,65 55,65 L 15,65" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(585.0,880.4) scale(0.36)"><path d="M 10,110 L 50,15 L 90,110 M 26,75 L 74,75" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(628.6,880.4) scale(0.36)"><path d="M 10,15 L 50,110 L 90,15" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(672.2,880.4) scale(0.36)"><path d="M 20,15 L 80,15 M 50,15 L 50,110 M 20,110 L 80,110" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(705.0,880.4) scale(0.36)"><path d="M 15,15 L 15,110 L 85,110" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(748.6,880.4) scale(0.36)"><path d="M 20,15 L 80,15 M 50,15 L 50,110 M 20,110 L 80,110" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(781.4,880.4) scale(0.36)"><path d="M 50,15 C 15,15 15,110 50,110 C 85,110 85,15 50,15 Z" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(825.0,880.4) scale(0.36)"><path d="M 15,110 L 15,15 L 85,110 L 85,15" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(170.4,878.4) scale(0.36)"><path d="M 15,110 L 15,15 L 55,15 C 80,15 80,65 55,65 L 15,65" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(214.0,878.4) scale(0.36)"><path d="M 15,110 L 15,15 L 55,15 C 80,15 80,62 55,62 L 15,62 M 50,62 L 85,110" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(257.6,878.4) scale(0.36)"><path d="M 85,15 L 15,15 L 15,110 L 85,110 M 15,62 L 70,62" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(301.2,878.4) scale(0.36)"><path d="M 80,35 C 70,14 30,14 25,40 C 20,60 80,65 80,88 C 80,112 35,115 20,95" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(344.8,878.4) scale(0.36)"><path d="M 10,15 L 90,15 M 50,15 L 50,110" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(388.4,878.4) scale(0.36)"><path d="M 20,15 L 80,15 M 50,15 L 50,110 M 20,110 L 80,110" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(421.2,878.4) scale(0.36)"><path d="M 85,35 C 70,12 30,12 20,62 C 10,105 60,115 85,95 L 85,62 L 55,62" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(464.8,878.4) scale(0.36)"><path d="M 85,15 L 15,15 L 15,110 L 85,110 M 15,62 L 70,62" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(539.4,878.4) scale(0.36)"><path d="M 15,110 L 15,15 L 55,15 C 80,15 80,65 55,65 L 15,65" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(583.0,878.4) scale(0.36)"><path d="M 10,110 L 50,15 L 90,110 M 26,75 L 74,75" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(626.6,878.4) scale(0.36)"><path d="M 10,15 L 50,110 L 90,15" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(670.2,878.4) scale(0.36)"><path d="M 20,15 L 80,15 M 50,15 L 50,110 M 20,110 L 80,110" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(703.0,878.4) scale(0.36)"><path d="M 15,15 L 15,110 L 85,110" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(746.6,878.4) scale(0.36)"><path d="M 20,15 L 80,15 M 50,15 L 50,110 M 20,110 L 80,110" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(779.4,878.4) scale(0.36)"><path d="M 50,15 C 15,15 15,110 50,110 C 85,110 85,15 50,15 Z" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(823.0,878.4) scale(0.36)"><path d="M 15,110 L 15,15 L 85,110 L 85,15" fill="none" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+</g>
+</svg>

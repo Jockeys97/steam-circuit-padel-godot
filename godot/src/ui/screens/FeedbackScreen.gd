@@ -46,6 +46,9 @@ const Schema := preload("res://src/save/save_schema.gd")
 const Config := preload("res://game/match_config.gd")
 const DemoGate := preload("res://src/ui/data/DemoGateAdapter.gd")
 const Osk := preload("res://src/input/osk.gd")
+## The playable build's transport (`feedback_delivery.gd`). Read for its own reason
+## spellings, never owned here.
+const Delivery := preload("res://src/feedback/feedback_delivery.gd")
 
 const SCREEN_ID := "feedback"
 
@@ -114,6 +117,9 @@ var _topic := DEFAULT_TOPIC
 var _diagnostics_extras: Dictionary = {}
 var _delivery: Callable = Callable()
 var _endpoint := ""
+## The host's long-lived transport, or null. It is not owned by this screen: the host
+## that mounts it keeps it across screen swaps, so a run survives this screen closing.
+var _transport: Node = null
 var _clipboard_writer: Callable = Callable()
 var _community_steam := ""
 var _community_discord := ""
@@ -246,7 +252,9 @@ func queue_feedback(topic: String, message: String, contact: String, attach: boo
 	}
 	var list := queued_entries()
 	list.push_front(entry)
-	store().write_feedback(list)
+	var write: Dictionary = store().write_feedback(list)
+	if not bool(write.get("ok", false)):
+		return {}
 	return entry
 
 
@@ -285,14 +293,44 @@ func set_delivery(sender: Callable, endpoint: String) -> void:
 		refresh_strings()
 
 
+## The host's own transport (the playable build's async path). The screen hands a run
+## to it and is told the verdict later; the object is owned by the host, so closing this
+## screen neither cancels nor duplicates a delivery already in flight.
+func set_async_delivery(transport: Node) -> void:
+	# One connection, to the previous transport only, and only if it was really connected:
+	# a host that re-installs the same transport on every screen swap must not accumulate
+	# handlers, and a freed one has no signal left to leave.
+	if _transport != null and is_instance_valid(_transport) and _transport.is_connected("run_finished", _on_delivery_finished):
+		_transport.disconnect("run_finished", _on_delivery_finished)
+	_transport = transport
+	if _transport != null and is_instance_valid(_transport) and not _transport.is_connected("run_finished", _on_delivery_finished):
+		_transport.connect("run_finished", _on_delivery_finished)
+	if _built:
+		refresh_strings()
+
+
+func delivery_transport() -> Node:
+	return _transport
+
+
+## The transport is usable when it exists and has somewhere to post. A freed or
+## unconfigured transport is not a reason to promise the player a send.
+func transport_ready() -> bool:
+	if _transport == null or not is_instance_valid(_transport):
+		return false
+	return bool(_transport.call("has_endpoint"))
+
+
 func delivery_status() -> String:
-	if _endpoint == "" or not _delivery.is_valid():
+	if not has_endpoint():
 		return REASON_NONE
 	return "configured"
 
 
 func has_endpoint() -> bool:
-	return _endpoint != "" and _delivery.is_valid()
+	if _endpoint != "" and _delivery.is_valid():
+		return true
+	return transport_ready()
 
 
 ## `flushFeedback(deliver, endpoint)` (`js/ui.js:350-393`), same state machine and the
@@ -532,14 +570,21 @@ func submit() -> Dictionary:
 		return {"queued": false, "status_key": _status_key}
 	var entry := queue_feedback(_topic, text, contact(), attach())
 	if entry.is_empty():
-		_status_key = STATUS_EMPTY
-		request_focus(FIELD_MESSAGE)
+		# Keep the typed message intact when local storage failed. It was not queued,
+		# so neither a network send nor a "saved" claim would be honest.
+		_offer_fallback(_constructed_entry_from_form())
+		_status_key = STATUS_MANUAL
 		refresh_status()
 		return {"queued": false, "status_key": _status_key}
 	_status_key = STATUS_SAVED
 	refresh_status()
 	set_message("")
 	set_contact("")
+	# The playable host's transport answers later, so a submit that has one leaves the
+	# honest pending line and lets the completion write the verdict (`_on_delivery_finished`).
+	# The seam below stays the synchronous one a headless audit drives.
+	if transport_ready():
+		return _submit_async(entry)
 	var outcome := flush_feedback()
 	var manual := false
 	if bool(outcome.get("ok", false)) and int(outcome.get("sent", 0)) > 0:
@@ -563,6 +608,62 @@ func submit() -> Dictionary:
 		"manual": manual,
 		"status_key": _status_key,
 	}
+
+
+## The async door to the host's transport. The queue is already written, so the run is
+## handed over as-is: the transport re-reads the store on every step, which is why a
+## second submit while one is in flight still goes out (the running pass picks it up)
+## and is never posted twice (only a receipt removes an entry from the pending set).
+##
+## NO CALLBACK TRAVELS WITH THE RUN. The screen is bound to the transport's own
+## `run_finished` (`set_async_delivery`), so a run that started before this screen existed
+## — a launch retry, or a send the player began on an earlier visit — still leaves its
+## verdict on the line a live screen carries.
+func _submit_async(entry: Dictionary) -> Dictionary:
+	# HTTPRequest.request() can fail synchronously (for example, no network). Set
+	# the pending line before starting the run so its immediate verdict is not
+	# overwritten by this method on the way back to the form.
+	_status_key = STATUS_QUEUED
+	refresh_queue_status()
+	refresh_status()
+	var started: Variant = _transport.call("submit_pending")
+	var running := started is Dictionary and bool((started as Dictionary).get("started", false))
+	return {
+		"queued": true,
+		"entry": entry,
+		"sent": false,
+		"pending": true,
+		"manual": false,
+		"started": running,
+		"reason": String((started as Dictionary).get("reason", "")) if started is Dictionary else "",
+		"status_key": _status_key,
+	}
+
+
+## The transport's own report, once its run has finished. This is the only place an
+## async verdict becomes a visible claim, and the claim is the transport's: `sent` means
+## a receipt confirmed entries, offline and manual mean it did not and the text is offered
+## back for the clipboard — the same rung the synchronous ladder ends on.
+func _on_delivery_finished(summary: Dictionary) -> void:
+	var reason := String(summary.get("reason", ""))
+	var accepted: Variant = summary.get("sent", null)
+	var sent: Array = accepted if accepted is Array else []
+	_status_key = STATUS_SAVED
+	if not sent.is_empty() and reason == "":
+		_status_key = STATUS_SENT
+	elif reason == Delivery.REASON_OFFLINE or reason == Delivery.REASON_TIMEOUT:
+		_status_key = STATUS_OFFLINE
+	elif reason == Delivery.REASON_REJECTED or reason == Delivery.REASON_UNCONFIRMED:
+		_status_key = STATUS_MANUAL
+	if reason != "" and reason != Delivery.REASON_EMPTY and reason != Delivery.REASON_NONE:
+		# Something is still pending: offer the one that did not make it, through the
+		# same ladder the seam's failures use.
+		var waiting := pending_entries()
+		if not waiting.is_empty():
+			_offer_fallback(waiting[0])
+	if _built:
+		refresh_queue_status()
+		refresh_status()
 
 
 ## The copy button (`js/main.js:2127-2138`): collects, copies, and when the clipboard

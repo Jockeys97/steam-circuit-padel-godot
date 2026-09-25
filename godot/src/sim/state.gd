@@ -110,6 +110,30 @@ var aiBounceBias: float = 0.0
 ## Off by default: the golden matches and the shipped game are unchanged until a
 ## level turns it on on purpose.
 var aiGlassPlay: bool = false
+## The last error roll of a human shot (`sim.gd` roll_shot_error): quality, chance,
+## the draw and the outcome. Diagnostic only, read by `game/match_log.gd`; no rule
+## reads it and it is not in the parity digest. Added 2026-09-23 because a recorded
+## match showed 5 errors where the curve predicted ~14 and the simulation alone
+## could not reproduce it.
+var lastShotErrorRoll: Dictionary = {}
+## The AI's read of the human ball it has just locked a receiver for, decided ONCE at
+## that moment (`sim.gd` lock_ai_receiver_for_incoming_shot), as a player decides:
+## an overhead chance ({key, x, y}: smash it there) or, for a lob with no such chance,
+## `aiLobOver` (it goes over them: let it bounce, play it off the bounce or the glass).
+## Re-evaluating every tick flipped the decision mid-flight and lost smashes.
+var aiOverheadPlan: Dictionary = {}
+var aiLobOver: bool = false
+## Where the human can take the ball as it comes back off their own back glass
+## (`Sim.update_glass_exit`): {x, y, z, at} in court px and match seconds, or {}.
+## Presentation reads it; no rule does. `glassExitKey` caches the forecast per bounce.
+var glassExit: Dictionary = {}
+var glassExitKey: String = ""
+## The AI receiver was wrong-footed by the last human shot (`evCounter`), and whether
+## its net player already tried the reflex block for this ball (one roll per shot).
+var aiWrongFooted: bool = false
+var aiReflexTried: bool = false
+## The strike in progress is a reflex block: a short, slow, central volley.
+var aiReflexBlock: bool = false
 var playerX3Recovery: float = 0.0
 var playerSwingBuffer: float = 0.0
 var queuedShotPower: float = 1.0

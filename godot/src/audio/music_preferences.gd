@@ -37,11 +37,32 @@ static func random_skip(store) -> bool:
 static func set_random_skip(store, enabled: bool) -> void:
 	Save.save_pref(store, "musicRandomR3", enabled)
 
+const MENU_DEFAULT_TRACKS: Array[String] = [
+	"ost_menu",
+	"ost_roster",
+	"ost_career",
+	"ost_menu_velvet_lounge",
+	"ost_menu_grand_touring",
+	"ost_menu_astral_solitude",
+	"ost_menu_dearly_reminiscent",
+	"ost_menu_cyber_terminal",
+	"ost_menu_breeze_plaza",
+	"ost_menu_sacred_spring",
+	"ost_menu_ancient_sanctum",
+	"ost_menu_rainy_atrium",
+	"ost_menu_chronicle_winds",
+	"ost_menu_subaquatic_drift",
+	"ost_menu_northern_aurora",
+	"ost_menu_champions_pavilion",
+	"ost_menu_orbital_vanguard",
+	"ost_menu_third_strike",
+]
+
 static func belongs(store, id: String, scope: String) -> bool:
 	var overrides: Variant = read(store).get("musicContexts", {})
 	if overrides is Dictionary and overrides.get(id) is Array:
 		return overrides[id].has(scope)
-	var menu := id in ["ost_menu", "ost_roster", "ost_career"]
+	var menu := id in MENU_DEFAULT_TRACKS or id.begins_with("ost_menu")
 	return menu == (scope == "menu") or favorites(store, scope).has(id)
 
 static func transfer(store, id: String, source: String, move: bool) -> void:

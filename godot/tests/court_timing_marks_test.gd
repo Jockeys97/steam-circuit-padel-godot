@@ -92,6 +92,7 @@ const MARK_NAMES := [
 	"TimingEnergyBar", "TimingEnergyFill",
 	"TimingAdvice", "TimingAdvicePanel",
 	"TimingVerdict", "TimingVerdictMode",
+	"TimingGlassExit",
 ]
 ## The marks that are meshes with a shared material contract, and the two labels.
 const MESH_MARKS := [

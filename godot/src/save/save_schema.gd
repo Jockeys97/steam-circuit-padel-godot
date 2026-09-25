@@ -141,6 +141,8 @@ const PREFS_DEFAULTS: Dictionary = {
 	"muted": false, ## js/audio.js:4
 	"volume": 0.5, ## js/audio.js:5
 	"musicVolume": 1.0, ## Port addition: multiplier for the Music bus only.
+	"musicMuted": false, ## Port addition: silence music without losing its chosen level.
+	"nowPlaying": true, ## Port addition: show the soundtrack title and cover toast.
 	"controlMode": "semi", ## js/ui.js:466
 	"gamepadDeadzone": 0.15, ## js/ui.js:467
 	"vibration": true, ## js/ui.js:468
@@ -162,8 +164,8 @@ const PREFS_DEFAULTS: Dictionary = {
 	},
 }
 
-## The port's own `economy` group (Emporio OST): a wallet, the OST ids the profile
-## owns, the migration marker and the award receipts. No reference line — this group
+## The port's own `economy` group (Emporio): a wallet, owned OST/outfit ids,
+## the migration marker and the award receipts. No reference line — this group
 ## has no browser counterpart, so it carries no reference default and is merged over
 ## exactly this object. `migrationVersion` starts at 0 ("not yet initialized"); the
 ## economy service writes 1 on its first successful initialization and never lowers
@@ -171,6 +173,7 @@ const PREFS_DEFAULTS: Dictionary = {
 const ECONOMY_DEFAULTS: Dictionary = {
 	"credits": 0,
 	"owned": [],
+	"ownedOutfits": [],
 	"migrationVersion": 0,
 	"receipts": {},
 }

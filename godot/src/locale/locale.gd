@@ -30,6 +30,12 @@ extends RefCounted
 
 const Data := preload("res://src/locale/locale_data.gd")
 
+## Godot-only outfit names and shop label. Keep the generated browser-reference table intact.
+const PORT_OUTFIT_NAMES := {
+	"it": {"outfitSolarSprint": "Scatto Solare", "outfitPolarAce": "Asso Polare", "outfitEmporioUnlock": "Sblocca nell'Emporio"},
+	"en": {"outfitSolarSprint": "Solar Sprint", "outfitPolarAce": "Polar Ace", "outfitEmporioUnlock": "Unlock in Emporio"},
+}
+
 const RULES_PATH := "res://src/locale/locale_rules.json"
 
 static var _lang: String = ""
@@ -91,7 +97,9 @@ static func table(lang: String) -> Dictionary:
 
 static func has_key(key: String, lang: String = "") -> bool:
 	var target := lang if lang != "" else current_lang()
-	return table(target).has(key) or table(fallback_lang()).has(key)
+	return (table(target).has(key) or table(fallback_lang()).has(key)
+		or (PORT_OUTFIT_NAMES.get(target, {}) as Dictionary).has(key)
+		or (PORT_OUTFIT_NAMES.get(fallback_lang(), {}) as Dictionary).has(key))
 
 
 ## `t(key, params)` (js/i18n.js:1408-1414).
@@ -132,9 +140,15 @@ static func lookup(key: String, lang: String) -> String:
 	var primary := table(lang)
 	if primary.has(key):
 		return String(primary[key])
+	var port_primary: Dictionary = PORT_OUTFIT_NAMES.get(lang, {})
+	if port_primary.has(key):
+		return String(port_primary[key])
 	var secondary := table(fallback_lang())
 	if secondary.has(key):
 		return String(secondary[key])
+	var port_secondary: Dictionary = PORT_OUTFIT_NAMES.get(fallback_lang(), {})
+	if port_secondary.has(key):
+		return String(port_secondary[key])
 	return key
 
 

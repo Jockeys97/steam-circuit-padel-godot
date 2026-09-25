@@ -166,6 +166,14 @@ func _contact(state, side: String) -> Dictionary:
 func _your_shot(state) -> Dictionary:
 	var fb: Variant = state.shotFeedback
 	var out := {"charge": snappedf(float(_prev.get("charge", 0.0)), 0.01)}
+	# The error roll itself, as the simulation made it for this strike (diagnostic).
+	# A serve never rolls: the field still holds the previous shot's roll, so it is not
+	# recorded for a serve (it counted that roll twice in the owner's 23:10 match).
+	var roll: Dictionary = state.lastShotErrorRoll
+	if not roll.is_empty() and String(state.ball.shotType) != "serve":
+		out["roll"] = {"quality": snappedf(float(roll.get("quality", 0.0)), 0.001),
+			"chance": snappedf(float(roll.get("chance", 0.0)), 0.001),
+			"draw": snappedf(float(roll.get("draw", -1.0)), 0.001), "error": String(roll.get("error", ""))}
 	if fb is Dictionary:
 		out["grade"] = String(fb.get("grade", ""))
 		out["quality"] = snappedf(float(fb.get("quality", 0.0)), 0.001)
@@ -181,7 +189,7 @@ func _your_shot(state) -> Dictionary:
 		if rest == before.slice(0, rest.size()):
 			fresh = now.slice(0, i)
 			break
-	out["events"] = fresh.filter(func(e): return String(e).begins_with("evShot") or String(e).begins_with("evLob") or String(e).begins_with("evDefensive") or String(e).begins_with("evGlobo"))
+	out["events"] = fresh.filter(func(e): return String(e).begins_with("evShot") or String(e).begins_with("evLob") or String(e).begins_with("evDefensive") or String(e).begins_with("evGlobo") or String(e) == "evWallExit")
 	var b = state.ball
 	if String(b.shotType) in ["lob", "defensive-lob", "globo"]:
 		var f: Array = Glass.forecast({"x": b.x, "y": b.y, "z": b.z, "vx": b.vx, "vy": b.vy, "vz": b.vz,

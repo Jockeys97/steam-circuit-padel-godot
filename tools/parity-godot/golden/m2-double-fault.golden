@@ -16,7 +16,7 @@ tick=000750 rngState=1703684418 rngCalls=0 ball=(580.910745,260.370713,106.76389
 # ev tick=000858 family=wall timer=1.400000
 # ev tick=000858 family=message msg="evWallValid"
 # ev tick=000913 family=message msg="msgDoubleBounce"
-tick=001000 rngState=1703684418 rngCalls=0 ball=(223.433855,434.271093,-1.321488) v=(381.439532,-251.969717,-249.739906) spin=-1.157044 bounces=2/0 shotType=drive smashStage=0 player=(392.000000,352.000000) playerMate=(656.000000,398.000000) opponent=(640.000000,159.478533) opponentMate=(289.954945,163.977600) points=0-2 games=0-0 sets=0-0 playerScore=0 aiScore=30 pointsWon=0-2 rallyHits=0 serveAttempts=0 longestRally=1
+tick=001000 rngState=1703684418 rngCalls=0 ball=(223.433855,434.271093,-1.321488) v=(381.439532,-251.969717,-249.739906) spin=-1.157044 bounces=2/0 shotType=drive smashStage=0 player=(392.000000,352.000000) playerMate=(656.000000,398.000000) opponent=(640.000000,240.000000) opponentMate=(289.954945,248.000000) points=0-2 games=0-0 sets=0-0 playerScore=0 aiScore=30 pointsWon=0-2 rallyHits=0 serveAttempts=0 longestRally=1
 # ev tick=001082 family=glass glassSide=null y=462.000000 z=34.000000
 # ev tick=001082 family=strike serveKind=first charge=1.000000 serveSide=player
 # ev tick=001083 family=message msg="serveHint"
@@ -26,7 +26,7 @@ tick=001250 rngState=1007907551 rngCalls=0 ball=(218.803977,166.939352,69.168869
 # ev tick=001417 family=glass glassSide=player y=553.000000 z=40.725351
 # ev tick=001417 family=wall timer=1.400000
 # ev tick=001417 family=message msg="evWallValid"
-tick=001500 rngState=1007907551 rngCalls=0 ball=(841.571778,403.067963,6.321505) v=(262.407598,-210.008481,-298.740501) spin=-1.047943 bounces=1/0 shotType=lob smashStage=0 player=(509.516142,352.000000) playerMate=(304.000000,398.000000) opponent=(808.000000,148.000000) opponentMate=(320.000000,140.000000) points=0-2 games=0-0 sets=0-0 playerScore=0 aiScore=30 pointsWon=0-2 rallyHits=1 serveAttempts=0 longestRally=1
+tick=001500 rngState=1007907551 rngCalls=0 ball=(841.571778,403.067963,6.321505) v=(262.407598,-210.008481,-298.740501) spin=-1.047943 bounces=1/0 shotType=lob smashStage=0 player=(509.516142,352.000000) playerMate=(304.000000,398.000000) opponent=(808.000000,248.000000) opponentMate=(320.000000,240.000000) points=0-2 games=0-0 sets=0-0 playerScore=0 aiScore=30 pointsWon=0-2 rallyHits=1 serveAttempts=0 longestRally=1
 # ev tick=001503 family=message msg="msgDoubleBounce"
 # ev tick=001672 family=glass glassSide=null y=462.000000 z=34.000000
 # ev tick=001672 family=strike serveKind=first charge=1.000000 serveSide=player
@@ -37,7 +37,7 @@ tick=001750 rngState=-2087329602 rngCalls=0 ball=(564.181680,302.194518,101.4430
 # ev tick=001987 family=glass glassSide=player y=553.000000 z=44.947895
 # ev tick=001987 family=wall timer=1.400000
 # ev tick=001987 family=message msg="evWallValid"
-tick=002000 rngState=312130684 rngCalls=0 ball=(292.851379,529.524922,58.570779) v=(-208.274482,-215.556674,86.749697) spin=1.342946 bounces=1/0 shotType=lob smashStage=0 player=(392.000000,352.000000) playerMate=(656.000000,398.000000) opponent=(612.959624,219.503627) opponentMate=(251.196483,226.612480) points=0-3 games=0-0 sets=0-0 playerScore=0 aiScore=40 pointsWon=0-3 rallyHits=1 serveAttempts=0 longestRally=1
+tick=002000 rngState=312130684 rngCalls=0 ball=(292.851379,529.524922,58.570779) v=(-208.274482,-215.556674,86.749697) spin=1.342946 bounces=1/0 shotType=lob smashStage=0 player=(392.000000,352.000000) playerMate=(656.000000,398.000000) opponent=(612.959624,240.000000) opponentMate=(251.196483,248.000000) points=0-3 games=0-0 sets=0-0 playerScore=0 aiScore=40 pointsWon=0-3 rallyHits=1 serveAttempts=0 longestRally=1
 # ev tick=002065 family=message msg="msgDoubleBounce"
 # ev tick=002234 family=glass glassSide=null y=158.000000 z=34.000000
 # ev tick=002234 family=message msg="controlMsg:roleBackPos"
@@ -79,7 +79,7 @@ tick=004250 rngState=-1015481853 rngCalls=0 ball=(579.991888,300.724846,94.24840
 # ev tick=004458 family=glass glassSide=player y=553.000000 z=35.483809
 # ev tick=004458 family=wall timer=1.400000
 # ev tick=004458 family=message msg="evWallValid"
-tick=004500 rngState=1383978433 rngCalls=0 ball=(138.774203,460.588315,19.459601) v=(334.919868,-255.866045,-171.783451) spin=-1.125051 bounces=1/0 shotType=drive smashStage=0 player=(392.000000,352.000000) playerMate=(656.000000,398.000000) opponent=(640.000000,177.046853) opponentMate=(205.689498,182.309760) points=0-0 games=0-2 sets=0-0 playerScore=0 aiScore=0 pointsWon=0-8 rallyHits=1 serveAttempts=0 longestRally=1
+tick=004500 rngState=1383978433 rngCalls=0 ball=(138.774203,460.588315,19.459601) v=(334.919868,-255.866045,-171.783451) spin=-1.125051 bounces=1/0 shotType=drive smashStage=0 player=(392.000000,352.000000) playerMate=(656.000000,398.000000) opponent=(640.000000,240.000000) opponentMate=(205.689498,248.000000) points=0-0 games=0-2 sets=0-0 playerScore=0 aiScore=0 pointsWon=0-8 rallyHits=1 serveAttempts=0 longestRally=1
 # ev tick=004512 family=message msg="msgDoubleBounce"
 # ev tick=004681 family=glass glassSide=null y=462.000000 z=34.000000
 # ev tick=004681 family=strike serveKind=first charge=1.000000 serveSide=player
@@ -94,7 +94,7 @@ tick=005000 rngState=1887931709 rngCalls=0 ball=(509.455146,337.619367,97.412952
 # ev tick=005082 family=wall timer=1.400000
 # ev tick=005082 family=message msg="evWallValid"
 # ev tick=005130 family=message msg="msgDoubleBounce"
-tick=005250 rngState=1887931709 rngCalls=0 ball=(827.396221,449.332687,-0.251341) v=(-310.011766,-250.130923,-233.208863) spin=0.975255 bounces=2/0 shotType=drive smashStage=0 player=(597.877250,352.000000) playerMate=(304.000000,398.000000) opponent=(767.932026,177.726720) opponentMate=(320.000000,166.671360) points=0-2 games=0-2 sets=0-0 playerScore=0 aiScore=30 pointsWon=0-10 rallyHits=0 serveAttempts=0 longestRally=1
+tick=005250 rngState=1887931709 rngCalls=0 ball=(827.396221,449.332687,-0.251341) v=(-310.011766,-250.130923,-233.208863) spin=0.975255 bounces=2/0 shotType=drive smashStage=0 player=(597.877250,352.000000) playerMate=(304.000000,398.000000) opponent=(767.932026,248.000000) opponentMate=(320.000000,240.000000) points=0-2 games=0-2 sets=0-0 playerScore=0 aiScore=30 pointsWon=0-10 rallyHits=0 serveAttempts=0 longestRally=1
 # ev tick=005299 family=glass glassSide=null y=462.000000 z=34.000000
 # ev tick=005299 family=strike serveKind=first charge=1.000000 serveSide=player
 # ev tick=005300 family=message msg="serveHint"
@@ -105,7 +105,7 @@ tick=005500 rngState=1192154842 rngCalls=0 ball=(542.541689,314.290671,162.24094
 # ev tick=005606 family=wall timer=1.400000
 # ev tick=005606 family=message msg="evWallValid"
 # ev tick=005688 family=message msg="msgDoubleBounce"
-tick=005750 rngState=1192154842 rngCalls=0 ball=(160.793501,405.535612,-0.064802) v=(-219.894129,-209.150280,-303.250303) spin=0.884568 bounces=2/0 shotType=lob smashStage=0 player=(421.602517,352.000000) playerMate=(656.000000,398.000000) opponent=(640.000000,140.000000) opponentMate=(152.000000,148.000000) points=0-3 games=0-2 sets=0-0 playerScore=0 aiScore=40 pointsWon=0-11 rallyHits=0 serveAttempts=0 longestRally=1
+tick=005750 rngState=1192154842 rngCalls=0 ball=(160.793501,405.535612,-0.064802) v=(-219.894129,-209.150280,-303.250303) spin=0.884568 bounces=2/0 shotType=lob smashStage=0 player=(421.602517,352.000000) playerMate=(656.000000,398.000000) opponent=(640.000000,240.000000) opponentMate=(152.000000,248.000000) points=0-3 games=0-2 sets=0-0 playerScore=0 aiScore=40 pointsWon=0-11 rallyHits=0 serveAttempts=0 longestRally=1
 # ev tick=005857 family=glass glassSide=null y=462.000000 z=34.000000
 # ev tick=005857 family=strike serveKind=first charge=1.000000 serveSide=player
 # ev tick=005858 family=message msg="serveHint"
@@ -115,7 +115,7 @@ tick=006000 rngState=496377975 rngCalls=0 ball=(264.172857,175.417869,47.505665)
 # ev tick=006142 family=wall timer=1.400000
 # ev tick=006142 family=message msg="evWallValid"
 # ev tick=006187 family=message msg="msgDoubleBounce"
-tick=006250 rngState=496377975 rngCalls=0 ball=(801.161025,458.500999,-0.251341) v=(-350.715169,-244.580256,-233.208863) spin=1.102885 bounces=2/0 shotType=drive smashStage=0 player=(597.156075,352.000000) playerMate=(304.000000,398.000000) opponent=(736.580490,182.118800) opponentMate=(320.000000,171.254400) points=0-0 games=0-3 sets=0-0 playerScore=0 aiScore=0 pointsWon=0-12 rallyHits=0 serveAttempts=0 longestRally=1
+tick=006250 rngState=496377975 rngCalls=0 ball=(801.161025,458.500999,-0.251341) v=(-350.715169,-244.580256,-233.208863) spin=1.102885 bounces=2/0 shotType=drive smashStage=0 player=(597.156075,352.000000) playerMate=(304.000000,398.000000) opponent=(736.580490,248.000000) opponentMate=(320.000000,240.000000) points=0-0 games=0-3 sets=0-0 playerScore=0 aiScore=0 pointsWon=0-12 rallyHits=0 serveAttempts=0 longestRally=1
 # ev tick=006356 family=glass glassSide=null y=158.000000 z=34.000000
 # ev tick=006356 family=message msg="controlMsg:roleBackPos"
 # ev tick=006446 family=strike serveKind=first charge=1.000000 serveSide=ai
@@ -154,7 +154,7 @@ tick=008500 rngState=1568225724 rngCalls=0 ball=(660.441680,299.950017,167.71759
 # ev tick=008613 family=wall timer=1.400000
 # ev tick=008613 family=message msg="evWallValid"
 # ev tick=008697 family=message msg="msgDoubleBounce"
-tick=008750 rngState=1568225724 rngCalls=0 ball=(540.767742,402.297462,-1.501900) v=(-65.534987,-208.495689,-313.905354) spin=0.257921 bounces=2/0 shotType=lob smashStage=0 player=(304.000000,398.000000) playerMate=(718.742225,352.000000) opponent=(320.000000,140.000000) opponentMate=(528.197264,148.000000) points=0-1 games=0-4 sets=0-0 playerScore=0 aiScore=15 pointsWon=0-17 rallyHits=0 serveAttempts=0 longestRally=1
+tick=008750 rngState=1568225724 rngCalls=0 ball=(540.767742,402.297462,-1.501900) v=(-65.534987,-208.495689,-313.905354) spin=0.257921 bounces=2/0 shotType=lob smashStage=0 player=(304.000000,398.000000) playerMate=(718.742225,352.000000) opponent=(320.000000,240.000000) opponentMate=(528.197264,248.000000) points=0-1 games=0-4 sets=0-0 playerScore=0 aiScore=15 pointsWon=0-17 rallyHits=0 serveAttempts=0 longestRally=1
 # ev tick=008866 family=glass glassSide=null y=462.000000 z=34.000000
 # ev tick=008866 family=message msg="controlMsg:roleBackPos"
 # ev tick=008866 family=strike serveKind=first charge=1.000000 serveSide=player
@@ -165,7 +165,7 @@ tick=009000 rngState=872448857 rngCalls=0 ball=(275.784362,173.545242,45.180098)
 # ev tick=009137 family=wall timer=1.400000
 # ev tick=009137 family=message msg="evWallValid"
 # ev tick=009188 family=message msg="msgDoubleBounce"
-tick=009250 rngState=872448857 rngCalls=0 ball=(289.259925,440.203092,-0.251341) v=(7.738045,-260.259542,-233.208863) spin=-0.048168 bounces=2/0 shotType=drive smashStage=0 player=(656.000000,398.000000) playerMate=(193.454175,352.000000) opponent=(290.744196,173.334640) opponentMate=(640.000000,162.088320) points=0-2 games=0-4 sets=0-0 playerScore=0 aiScore=30 pointsWon=0-18 rallyHits=0 serveAttempts=0 longestRally=1
+tick=009250 rngState=872448857 rngCalls=0 ball=(289.259925,440.203092,-0.251341) v=(7.738045,-260.259542,-233.208863) spin=-0.048168 bounces=2/0 shotType=drive smashStage=0 player=(656.000000,398.000000) playerMate=(193.454175,352.000000) opponent=(290.744196,248.000000) opponentMate=(640.000000,240.000000) points=0-2 games=0-4 sets=0-0 playerScore=0 aiScore=30 pointsWon=0-18 rallyHits=0 serveAttempts=0 longestRally=1
 # ev tick=009357 family=glass glassSide=null y=462.000000 z=34.000000
 # ev tick=009357 family=message msg="controlMsg:roleBackPos"
 # ev tick=009357 family=strike serveKind=first charge=1.000000 serveSide=player
@@ -186,7 +186,7 @@ tick=010000 rngState=744566463 rngCalls=0 ball=(270.863301,248.259810,22.502585)
 # ev tick=010185 family=wall timer=1.400000
 # ev tick=010185 family=message msg="evWallValid"
 # ev tick=010237 family=message msg="msgDoubleBounce"
-tick=010250 rngState=-1150940547 rngCalls=0 ball=(740.980495,442.205918,-0.861321) v=(-398.292640,-248.884847,-246.086768) spin=1.216775 bounces=2/0 shotType=drive smashStage=0 player=(568.000000,352.000000) playerMate=(304.000000,398.000000) opponent=(673.896859,171.870613) opponentMate=(320.000000,160.560640) points=1-3 games=0-4 sets=0-0 playerScore=15 aiScore=40 pointsWon=1-19 rallyHits=0 serveAttempts=0 longestRally=1
+tick=010250 rngState=-1150940547 rngCalls=0 ball=(740.980495,442.205918,-0.861321) v=(-398.292640,-248.884847,-246.086768) spin=1.216775 bounces=2/0 shotType=drive smashStage=0 player=(568.000000,352.000000) playerMate=(304.000000,398.000000) opponent=(673.896859,248.000000) opponentMate=(320.000000,240.000000) points=1-3 games=0-4 sets=0-0 playerScore=15 aiScore=40 pointsWon=1-19 rallyHits=0 serveAttempts=0 longestRally=1
 # ev tick=010406 family=glass glassSide=null y=462.000000 z=34.000000
 # ev tick=010406 family=strike serveKind=first charge=1.000000 serveSide=player
 # ev tick=010407 family=message msg="serveHint"
@@ -200,7 +200,7 @@ tick=010750 rngState=-646987271 rngCalls=0 ball=(443.594862,342.880186,101.68237
 # ev tick=010830 family=wall timer=1.400000
 # ev tick=010830 family=message msg="evWallValid"
 # ev tick=010881 family=message msg="msgDoubleBounce"
-tick=011000 rngState=-646987271 rngCalls=0 ball=(152.908215,443.459296,-0.497456) v=(320.055177,-249.207942,-242.560792) spin=-0.985078 bounces=2/0 shotType=drive smashStage=0 player=(399.795558,352.000000) playerMate=(656.000000,398.000000) opponent=(640.000000,165.334640) opponentMate=(214.298850,170.088320) points=0-0 games=0-5 sets=0-0 playerScore=0 aiScore=0 pointsWon=1-20 rallyHits=0 serveAttempts=0 longestRally=1
+tick=011000 rngState=-646987271 rngCalls=0 ball=(152.908215,443.459296,-0.497456) v=(320.055177,-249.207942,-242.560792) spin=-0.985078 bounces=2/0 shotType=drive smashStage=0 player=(399.795558,352.000000) playerMate=(656.000000,398.000000) opponent=(640.000000,240.000000) opponentMate=(214.298850,248.000000) points=0-0 games=0-5 sets=0-0 playerScore=0 aiScore=0 pointsWon=1-20 rallyHits=0 serveAttempts=0 longestRally=1
 # ev tick=011050 family=glass glassSide=null y=158.000000 z=34.000000
 # ev tick=011050 family=message msg="controlMsg:roleBackPos"
 # ev tick=011140 family=strike serveKind=first charge=1.000000 serveSide=ai
@@ -236,4 +236,4 @@ tick=012500 rngState=1752473015 rngCalls=0 ball=(540.000000,158.000000,34.000000
 tick=012750 rngState=1120637345 rngCalls=0 ball=(262.136133,444.347877,41.291078) v=(-191.558555,194.306020,107.153085) spin=-2.710776 bounces=1/0 shotType=serve smashStage=0 player=(194.450083,456.000000) playerMate=(656.000000,490.000000) opponent=(640.000000,240.000000) opponentMate=(223.824422,248.000000) points=0-3 games=0-5 sets=0-0 playerScore=0 aiScore=40 pointsWon=1-23 rallyHits=0 serveAttempts=0 longestRally=1
 # ev tick=012812 family=set-closed sets=0-1 games=0-0
 # ev tick=012813 family=result winner=ai
-PARITY-DIGEST GD PASS seed=999 ticks=14000 sampledTicks=12813 every=1 finalRngState=1120637345 digestSha256=c10fb5936d27d7df64c3a240a422920a6ae1c936a8b9a33754f4109215861ff2
+PARITY-DIGEST GD PASS seed=999 ticks=14000 sampledTicks=12813 every=1 finalRngState=1120637345 digestSha256=1782f6c1eab6456d574f5e13da58b2ee457920e7ef1422711726aff930197483

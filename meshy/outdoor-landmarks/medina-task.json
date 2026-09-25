@@ -1,0 +1,22 @@
+{
+  "arena": "medina",
+  "status": "SUCCEEDED",
+  "reservedCredits": 30,
+  "referenceSha256": "15202712cfb19bcbd2051067ec51ce151ffb9ac02cfc52186f46aeeffeb4728e",
+  "options": {
+    "ai_model": "meshy-7.1",
+    "should_texture": true,
+    "enable_pbr": true,
+    "texture_resolution": "2k",
+    "should_remesh": true,
+    "topology": "triangle",
+    "target_polycount": 10000,
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "id": "01a0d02b-a4ae-766a-8bf2-dad462a9f076",
+  "progress": 100,
+  "consumedCredits": 30
+}
