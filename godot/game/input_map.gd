@@ -7,12 +7,25 @@
 ## at `js/main.js:1204-1206`: a one-shot is delivered to the FIRST sub-step of a
 ## rendered frame and cleared before the second.
 ##
-## WHICH STICK AIMS. The left one. While a shot button is held the athlete STOPS
-## (`js/main.js:924`, `g.move = { x: 0, y: 0 }`) and the left stick becomes the
-## absolute aim through `shotAimAxis` (`js/main.js:301-304`, read at `:920-923`);
-## the right stick is only ever the directional switch (`:941-951`). This file used
-## to aim with the right stick and to keep the athlete moving through the charge,
-## which is a different game to play.
+## WHICH STICK AIMS, AND WHAT THE FEET DO. The left one aims: while a shot button is
+## held the left stick is the absolute aim through `shotAimAxis` (`js/main.js:301-304`,
+## read at `:920-923`), and the right stick is only ever the directional switch
+## (`:941-951`).
+##
+## **PORT ADDITION (owner's request): the athlete KEEPS MOVING through the charge.**
+## The reference freezes him for as long as a shot button is held
+## (`js/main.js:924`, `g.move = { x: 0, y: 0 }`), which made the pad the only device
+## on which you could not run and charge at once — the keyboard has always moved
+## through a charge, because the simulation prices the charge in itself: `moveX` is
+## multiplied by `chargeMovement` (0.58 solo, 0.32 co-op, `js/game.js:3072` / `:2748`,
+## `sim.gd:2816` / `:2673`). Dropping the freeze makes the pad match the keyboard
+## instead of the keyboard being the exception. The cost, stated plainly: the stick
+## that aims now also walks, so lining a shot up drifts the feet that way at
+## 0.58 * 317 px/s (`basePaddleSpeed`, `js/data.js:137`) — about 184 px/s, a quarter of
+## the 800 px court across a full 1.05 s charge.
+##
+## The same rule removed the one-tick freeze on the upgrade taps (`js/main.js:880`):
+## the left stick moves the athlete, always.
 ##
 ## WHICH PAD, AND THE TWO NUMBERINGS. Two facts this file has to carry, because
 ## both were wrong here once:
@@ -201,7 +214,6 @@ func sample(state) -> Dictionary:
 		input["smashUpgrade"] = true
 		_smash_consumed = true
 		upgrade_aim = true
-		move = Vector2.ZERO
 	if x and not _prev_pad_slice and _seat_flag(state, "cutVolleyPrimed"):
 		input["cutVolley"] = true
 		_cut_consumed = true
@@ -221,7 +233,8 @@ func sample(state) -> Dictionary:
 	if shot != null:
 		if _charge_action == null: _charge_action = shot
 		_last_aim = Vector2(shot_aim_axis(left.x), shot_aim_axis(left.y))
-		move = Vector2.ZERO
+		# No `move = Vector2.ZERO` here: the athlete runs through the charge (PORT
+		# ADDITION, see the header). The stick's other job, the aim, is unaffected.
 		_switch_latched = false
 	elif _charge_action != null:
 		input["hit"] = true

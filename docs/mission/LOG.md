@@ -299,3 +299,28 @@ stays the owner's decision.
   to `origin/main`; remote read-back verified; no force push; unrelated dirt (`.hermes/`, `art/**`,
   `meshy/**`, generated sidecars, probe files) left untouched. Spend $0.
 - 2026-09-18 fornaio special (Godot-only athlete) — IL FORNAIO rides his own additive path, never the frozen roster: overlay `godot/assets/athletes/specials_catalogue.json` + `godot/src/character/specials.gd`, `Gate.special_athletes()` (full build only, never merged into `selectable_athletes()`), a dedicated `Config` special seat with demo clearing, `SPECIAL (n)` strips in the menu and the characters picker (own node prefixes, so the frozen `PickCard_<id>` / toggle counts are untouched), the `Lineup` pref pool widened to `Gate.roster() + Gate.special_athletes()` so he can be fielded in any of the four slots, portrait copied byte-identical from `meshy/views/fornaio-front.png` (sha256 `78c9f22a9c73f7e857b956cee9d0e5f773578f9ffde8cab0f773be38b2115a18`), `athlete_fornaio_name` added to both locale tables as a marked PORT ADDITION. `Frozen.athletes` is still the original six and `git diff` over `js/`, `frozen/`, `reference_catalogue.json`, `tools/` is zero files — measured, not asserted: `frozen_athletes=6`, `catalogue_entries=26` in the run below. **No Meshy GLB**: no `fornaio.glb` exists, so the on-court body is the MAESTRO mesh as a temporary human stand-in, stated plainly in `docs/wayfinder/evidence/fornaio-special.md`. Engine runs, one at a time on a busy machine (a play session and another lane's runs held the single engine; my runs waited): `tests/fornaio_special_test.gd` full build `PASS 77/77` exit 0, `-- --demo` `PASS 65/65` exit 0 (in demo the strip never builds, the seat refuses him and a forced seat is cleared), plus the UIR-11 `tests/ui/screen_characters_audit.gd` regression `PASS 148/148` exit 0; the menu measurement shows the strip costs 0 px of the setup row's 1056 px budget (row min 1044.0, unchanged). gdlint against a `git show HEAD:` baseline: 0 new findings. Nothing committed and nothing staged for this lane (only the port addition's own files are new; the staged `art/world/*.png` in the index belongs to another lane).
+- 2026-09-20 charge movement on a pad (owner's report: *"I should be able to move/run and
+  charge a shot without the character stopping to charge"*) — root cause in the input layer,
+  not the sim: `godot/game/input_map.gd` zeroed the left stick's movement while a shot button
+  was held (`js/main.js:924`, plus the one-tick version on the upgrade taps, `:880`), which
+  made the pad the only device where charging and running were exclusive — the simulation
+  prices the charge itself (`chargeMovement` 0.58 solo / 0.32 co-op) and the keyboard always
+  ran through it. Both assignments removed; the deviation is marked **PORT ADDITION** in the
+  file header with its cost in the open (the aiming stick also walks, ~184 px/s at full
+  charge). Measured with an ad-hoc probe that injects pad events and reads them back, on the
+  shipping sampler + sim + rig, 60 ticks: committed sampler `moveX=0.000`, travel `0.00 px`,
+  rig gait `idle` → after: `moveX=0.852` (aim kept `0.891`), `75.19 px` (150.4 px/s = 0.852 ×
+  304.3 × 0.58), gait `run`; keyboard rows identical before and after (88.25 px charging vs
+  152.16 px free). Guard added as `switch_mode_audit` question 7 (6 checks: behavioural 0.58
+  band + `RUN_MOTION`, plus a line scan that no stripped line is `move = Vector2.ZERO` and
+  that the port-addition note survives; negative control with the committed sampler,
+  `FAIL 89/91`, with the change `PASS 91/91`). Sweep on a `/private/tmp` clone, one engine at
+  a time, the owner's live game untouched: input `PASS 5/5` (399 checks, 0 failures), audits
+  `PASS 10/10`, slice `FAIL 344/345`, demo `FAIL 295/296`, timing `100/100`, save `137/137`,
+  shot parity `675/675`, court marks `87/87`, 0 `SCRIPT ERROR` everywhere. The one red is
+  pre-existing locale drift (`688 keys each: got it=689 en=689`, from `8398e4c`'s
+  `athlete_fornaio_name`), proved not mine by scope: `git diff --stat` is the sampler plus the
+  audit section, and `godot/src/locale`, `tools/i18n-port`, `js/` are clean. Feel verdict is
+  the owner's (pad running at 58 % of the stick, and full-speed charging, are his calls, both
+  parked). **Nothing committed, nothing pushed**; evidence
+  `docs/wayfinder/evidence/charge-movement-pad-freeze.{md,log}`.

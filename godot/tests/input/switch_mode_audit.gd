@@ -4,7 +4,7 @@
 ##   $GODOT --headless --path godot/ --script res://tests/input/switch_mode_audit.gd
 ##   … or through the runner, `res://tests/input/run_all.gd`.
 ##
-## Six questions, all answerable headless, none of them re-implementing a rule:
+## Seven questions, all answerable headless, none of them re-implementing a rule:
 ##
 ##   1. **Does a flick fire once?** `InputSource.switch_flick` is the pure form of
 ##      `pollGamepadGameplay`'s latch (`js/main.js:941-951`): the flick asks for a
@@ -36,6 +36,16 @@
 ##      the second seat gets the next connected pad (`js/main.js:258-276`, `:784`), and
 ##      a pad that takes over mid-match does not fire the shot it was holding
 ##      (`awaitingGameplayRelease`, `js/main.js:838-843`).
+##   7. **Can the athlete run while charging?** Yes, and it is a PORT ADDITION: the
+##      reference freezes him for as long as a shot button is held (`js/main.js:924`,
+##      `g.move = { x: 0, y: 0 }`), which made the pad the only device on which a charge
+##      and a run were mutually exclusive. The simulation already prices the charge in
+##      (`chargeMovement`, 0.58 solo / 0.32 co-op, `js/game.js:3072` / `:2748`,
+##      `sim.gd:2816`), so the sampler's only job is to pass the stick through. The
+##      behavioural half is measured through the real core; the sampler half is a source
+##      scan, because a headless engine enumerates no pads at all — the pad-driven charge
+##      cannot be sampled on a machine without a controller, and a guard that only exists
+##      on a desk with a pad attached is not a guard.
 ##
 ## What this file cannot assert, stated rather than dropped: with no controller
 ## attached, every pad read is neutral, so the *feel* of a real pad — and whether the
@@ -87,6 +97,7 @@ static func run(audit: AuditBase) -> void:
 	_control_mode(audit)
 	_pad_bindings(audit)
 	_devices(audit)
+	_charge_keeps_the_feet(audit)
 	audit.note(
 		"the saved mode reaches the match through `game/match_controller.gd::start_match` and `::_adopt_session`, both of which assign `state.controlMode = Config.control_mode()`; the pad policy runs once per frame in `::_refresh_pads` (`js/main.js:780-784`). This audit asserts the values and the validation — the assignments are the lines above them"
 	)
@@ -318,3 +329,88 @@ static func _devices(audit: AuditBase) -> void:
 		InputSource.STICK_CURVE, InputSource.AIM_CURVE, empty.keys().size(),
 		first.device, second.device,
 	])
+
+
+## The owner's request, kept (question 7). Two halves, because neither one alone would
+## catch the failure: the SIMULATION has to keep moving a charging athlete (behaviour,
+## through the real core), and the SAMPLER has to stop swallowing the stick's movement
+## (source, because a headless engine enumerates no pads at all — the pad-driven charge
+## cannot be sampled on this machine, and this repo has already measured what a
+## "connected controller" check does on a desk that has one: `_devices` above refuses to
+## assert anything about the desk for exactly that reason).
+static func _charge_keeps_the_feet(audit: AuditBase) -> void:
+	var free_state: Variant = _rally_state()
+	var charge_state: Variant = _rally_state()
+	var free_start: float = free_state.player.x
+	var charge_start: float = charge_state.player.x
+	for _i in 60:
+		var free_tick: Dictionary = Sim.empty_input()
+		free_tick["moveX"] = 1.0
+		Sim.update_match(free_state, DT, free_tick)
+		var charged_tick: Dictionary = Sim.empty_input()
+		charged_tick["moveX"] = 1.0
+		charged_tick["charging"] = true
+		Sim.update_match(charge_state, DT, charged_tick)
+	var free_travel: float = free_state.player.x - free_start
+	var charged_travel: float = charge_state.player.x - charge_start
+	audit.check_gt(
+		charged_travel, 0.0,
+		"charge/a charging tick still moves the athlete (the owner's request, a PORT ADDITION)",
+	)
+	audit.check_lt(
+		charged_travel, free_travel,
+		"charge/the charge still costs speed (`chargeMovement`, `js/game.js:3072`)",
+	)
+	audit.check_between(
+		charged_travel / maxf(0.001, free_travel), 0.5, 0.62,
+		"charge/and it costs the reference's own share, solo (0.58) — not co-op's 0.32",
+	)
+	audit.check_gt(
+		float(charge_state.player.motion), 0.55,
+		"charge/the run clip stays selected while charging (`athletes_view.gd` RUN_MOTION)",
+	)
+
+	# A line scan, not a substring one: the file's own comment on that line names the
+	# assignment to explain its absence, so the test is the executable form alone —
+	# a stripped line that IS the assignment.
+	var text := FileAccess.get_file_as_string("res://game/input_map.gd")
+	var freeze_lines := 0
+	for line in text.split("\n"):
+		if String(line).strip_edges() == "move = Vector2.ZERO":
+			freeze_lines += 1
+	audit.check_eq(
+		freeze_lines, 0,
+		"charge/the sampler does not freeze the athlete (`js/main.js:924` is deliberately not ported)",
+	)
+	audit.check_true(
+		text.contains("PORT ADDITION"),
+		"charge/and the deviation from the reference is written down where the next reader looks",
+	)
+	audit.report("travel charging=%.2fpx free=%.2fpx ratio=%.3f motion=%.2f" % [
+		charged_travel, free_travel, charged_travel / maxf(0.001, free_travel),
+		float(charge_state.player.motion),
+	])
+
+
+## A rally tick, not a serve: nothing human moves during a serve, so a probe that never
+## serves measures the serve positioner instead (the recipe is
+## `tests/audits/controller_tactics_audit.gd::state_at_contact`, `:114-132`).
+static func _rally_state() -> Variant:
+	var court: Dictionary = Frozen.court()
+	var state: Variant = Sim.create_match_state(
+		"quick", Frozen.athletes()[0], Frozen.arenas()[0], Frozen.ai_opponents()[1])
+	state.running = true
+	state.serving = false
+	state.player.x = 480.0
+	state.player.y = float(court["bottom"]) - 70.0
+	state.player.hitCooldown = 0.0
+	state.player.moveRatio = 0.0
+	state.ball.x = 480.0
+	state.ball.y = float(court["netY"]) - 130.0
+	state.ball.z = 80.0
+	state.ball.vx = 0.0
+	state.ball.vy = -80.0
+	state.ball.vz = 0.0
+	state.ball.bounces = {"player": 0, "ai": 1}
+	state.ball.serveInFlight = false
+	return state

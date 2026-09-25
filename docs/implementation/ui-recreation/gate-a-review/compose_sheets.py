@@ -11,7 +11,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-REPO = Path("/Users/lucafantini/Desktop/Personal/Padel-3D/steam-circuit-padel-godot")
+REPO = Path("/Users/lucafantini/Desktop/Desktop - Luca's MacBook Air/Personal/Padel-3D/steam-circuit-padel-godot")
 UIR = REPO / "docs/implementation/ui-recreation"
 OUT = UIR / "gate-a-review"
 PAIRS = OUT / "pairs"
