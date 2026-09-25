@@ -2021,10 +2021,12 @@ func _arena_library() -> void:
 		if String(ArenaStyle.artwork_path(String(r["id"]))) != "":
 			with_art.append(String(r["id"]))
 	check_eq("every arena the reference paints is painted here", with_art, Array(want))
-	check_eq("the two arenas that reuse another arena's backdrop reuse it here too",
+	# 2026-09-25, owner: Cathedral and Forge got their own paintings (no longer the
+	# reference's borrowed depot/clockwork backdrops), and the depot became the skyway.
+	check_eq("cathedral and forge carry their own paintings",
 		[String(ArenaStyle.artwork_path("cattedrale")).get_file(),
 			String(ArenaStyle.artwork_path("forgia")).get_file()],
-		["deposito-locomotive.webp", "clockwork-factory.webp"])
+		["cattedrale-vapore.webp", "forgia-abyssal.webp"])
 	var missing_art: Array[String] = []
 	var using_art: Array[String] = []
 	for id in with_art:

@@ -37,6 +37,8 @@ const ARENAS := {
 	"officina": "officina-vapore-standard",
 	"locomotive": "sopraelevata-della-luna",
 	"clockwork": "clockwork-factory",
+	"cattedrale": "cattedrale-vapore",
+	"forgia": "forgia-abyssal",
 	"tempesta": "bastione-tempesta",
 	"abissale": "santuario-abissale",
 	"caldera": "caldera-titano",

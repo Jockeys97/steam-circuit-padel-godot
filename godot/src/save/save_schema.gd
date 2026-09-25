@@ -174,6 +174,7 @@ const ECONOMY_DEFAULTS: Dictionary = {
 	"credits": 0,
 	"owned": [],
 	"ownedOutfits": [],
+	"ownedArenas": [],
 	"migrationVersion": 0,
 	"receipts": {},
 }

@@ -109,6 +109,11 @@ static func load_career(store) -> Dictionary:
 	for key in Economy.owned_outfit_keys(store):
 		purchased[String(key)] = true
 	career["outfitsPurchased"] = purchased
+	# Arenas bought in the Emporio, the same read-only view: never written to the career.
+	var arenas := {}
+	for id in Economy.owned_arena_ids(store):
+		arenas[String(id)] = true
+	career["arenasPurchased"] = arenas
 	return career
 
 
@@ -117,6 +122,7 @@ static func load_career(store) -> Dictionary:
 static func save_career(store, career: Dictionary) -> Dictionary:
 	var persisted := career.duplicate(true)
 	persisted.erase("outfitsPurchased")
+	persisted.erase("arenasPurchased")
 	return store.write_group("career", persisted)
 
 

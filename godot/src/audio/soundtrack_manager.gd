@@ -108,15 +108,31 @@ const CONTEXT_TRACK_MAP := {
 	"menu_champions_pavilion": "ost_menu_champions_pavilion",
 	"menu_orbital_vanguard": "ost_menu_orbital_vanguard",
 	"menu_third_strike": "ost_menu_third_strike",
-	# 5 Canzoni Cantate Speciali (Suno Vocal Anthems)
+	# 15 Canzoni Cantate Speciali (Suno Vocal Anthems)
 	"vocal_overdrive_line": "ost_vocal_overdrive_line",
 	"vocal_break_point_riot": "ost_vocal_break_point_riot",
 	"vocal_reach_for_the_sun": "ost_vocal_reach_for_the_sun",
 	"vocal_neon_velocity": "ost_vocal_neon_velocity",
 	"vocal_girei": "ost_vocal_girei",
+	"vocal_gleiches_blut": "ost_vocal_gleiches_blut",
+	"vocal_tie_break_burn": "ost_vocal_tie_break_burn",
+	"vocal_maschine_jagd": "ost_vocal_maschine_jagd",
+	"vocal_schwarzmarkt": "ost_vocal_schwarzmarkt",
+	"vocal_nullpunkt": "ost_vocal_nullpunkt",
+	"vocal_zheleznaia_volya": "ost_vocal_zheleznaia_volya",
+	"vocal_double_rebond": "ost_vocal_double_rebond",
+	"vocal_oltre_il_vetro": "ost_vocal_oltre_il_vetro",
+	"vocal_padelista_energy": "ost_vocal_padelista_energy",
+	"vocal_balle_de_match": "ost_vocal_balle_de_match",
+	# 5 Nuove Tracce Boss & Battle Champions Special (Epico / Anime Special)
+	"apex_victory": "ost_apex_victory",
+	"clash_of_champions": "ost_clash_of_champions",
+	"reflex_strike": "ost_reflex_strike",
+	"iron_juggernaut": "ost_iron_juggernaut",
+	"thunder_strike": "ost_thunder_strike",
 }
 
-## Complete metadata dictionary for all 83 OST tracks (22 Standard + 8 Epic/Anime + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends + 5 Canzoni Cantate)
+## Complete metadata dictionary for all 98 OST tracks (22 Standard + 13 Epic/Anime + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends + 15 Canzoni Cantate)
 const TRACK_METADATA := {
 	"ost_menu": {
 		"id": "ost_menu",
@@ -956,6 +972,167 @@ const TRACK_METADATA := {
 		"style": "Gothic Symphonic Metal cantato con coro gregoriano, organo a canne, chitarre metal pesanti e voce operatica",
 		"prompt": "Gothic symphonic metal, ominous sacred Gregorian choir chanting, massive church pipe organ, heavy 8-string distorted guitars, thunderous timpani drums, soaring operatic lead vocals, dramatic dark anime boss climax, 135 BPM",
 		"preview_offset": 115.5
+	},
+	"ost_vocal_gleiches_blut": {
+		"id": "ost_vocal_gleiches_blut",
+		"title": "Gleiches Blut (Same Blood)",
+		"scene": "Arena Torneo & Scontro Fraterno",
+		"category": "Canzoni Cantate",
+		"bpm": 130,
+		"key": "D minor",
+		"style": "Neue Deutsche Härte / Industrial Metal cantato in tedesco con riff pesanti di chitarra, sintetizzatori marziali e voce profonda",
+		"prompt": "Neue Deutsche Härte, Industrial Metal vocal track in German, 130 BPM, chugging low-tuned guitars, martial electronic sequence, deep powerful baritone vocals, dramatic operatic synths",
+		"preview_offset": 50.0
+	},
+	"ost_vocal_tie_break_burn": {
+		"id": "ost_vocal_tie_break_burn",
+		"title": "Tie-Break Burn",
+		"scene": "Match Point ad Alta Tensione & Tie-Break",
+		"category": "Canzoni Cantate",
+		"bpm": 158,
+		"key": "E minor",
+		"style": "High-Energy Anime Rock cantato con doppia cassa, chitarre incendiarie, melodie vocali adrenaliniche e basso slap",
+		"prompt": "High-energy anime sports vocal rock, 158 BPM, explosive double-kick drums, blazing electric guitars, soaring passionate vocals, intense tie-break match climax tension",
+		"preview_offset": 40.0
+	},
+	"ost_vocal_maschine_jagd": {
+		"id": "ost_vocal_maschine_jagd",
+		"title": "Maschine Jagd (Machine Hunt)",
+		"scene": "Fonderia & Caccia al Mecha",
+		"category": "Canzoni Cantate",
+		"bpm": 140,
+		"key": "C minor",
+		"style": "Cyber-Industrial Rock cantato con ritmi a pistone, arpeggi acidi, chitarre taglienti e voce energica",
+		"prompt": "Cyberpunk Industrial Rock with driving German vocals, 140 BPM, mechanical piston rhythm, aggressive guitar riffs, pulsing synth bass, relentless pursuit anthem",
+		"preview_offset": 35.0
+	},
+	"ost_vocal_schwarzmarkt": {
+		"id": "ost_vocal_schwarzmarkt",
+		"title": "Schwarzmarkt (Black Market)",
+		"scene": "Distretto d'Ombra & Bazar Steampunk",
+		"category": "Canzoni Cantate",
+		"bpm": 128,
+		"key": "A minor",
+		"style": "Dark Electro-Rock cantato con basso synth distorto, fisarmonica darkwave, riff cupi e voce carismatica",
+		"prompt": "Dark cabaret electro-rock in German, 128 BPM, distorted synth bass, dark accordion touches, infectious driving groove, charismatic theatrical vocals, shady steampunk underworld",
+		"preview_offset": 30.0
+	},
+	"ost_vocal_nullpunkt": {
+		"id": "ost_vocal_nullpunkt",
+		"title": "Nullpunkt (Zero Point)",
+		"scene": "Caldera & Azzeramento Finale",
+		"category": "Canzoni Cantate",
+		"bpm": 165,
+		"key": "F minor",
+		"style": "Symphonic Darksynth Metal cantato con breakbeat, synth laser, percussioni taiko e ritornello epico",
+		"prompt": "Fast symphonic darksynth metal vocal anthem, 165 BPM, frantic breakcore drums, laser-sharp arpeggios, epic choir accents, powerful anthemic vocals at the zero point",
+		"preview_offset": 20.0
+	},
+	"ost_vocal_zheleznaia_volya": {
+		"id": "ost_vocal_zheleznaia_volya",
+		"title": "Железная Воля (Iron Will)",
+		"scene": "Arena Invernale & Duello delle Leggende",
+		"category": "Canzoni Cantate",
+		"bpm": 145,
+		"key": "G minor",
+		"style": "Epic Slavic Folk Metal cantato in russo con chitarre pesanti, coro marziale, fisarmonica epica e voce titanica",
+		"prompt": "Epic Slavic Folk Metal vocal anthem in Russian, 145 BPM, heavy distorted guitar riffs, thunderous marching drums, heroic choir, soaring passionate lead vocals, indomitable spirit of iron will",
+		"preview_offset": 50.0
+	},
+	"ost_vocal_double_rebond": {
+		"id": "ost_vocal_double_rebond",
+		"title": "Le Double Rebond",
+		"scene": "Arena Torneo & Open di Parigi",
+		"category": "Canzoni Cantate",
+		"bpm": 128,
+		"key": "G minor / Bb major",
+		"style": "French Electro-Pop / Dance Chanson cantato in francese con beat house alla francese, piano e voce accattivante",
+		"prompt": "French Electro-Pop / Dance Chanson, 128 BPM, catchy French vocals, groovy four-on-the-floor beat, funky bass, French touch house synth chords, padel tournament anthem about the double bounce",
+		"preview_offset": 45.0
+	},
+	"ost_vocal_oltre_il_vetro": {
+		"id": "ost_vocal_oltre_il_vetro",
+		"title": "Oltre il Vetro",
+		"scene": "Climax Caldera & Gran Finale",
+		"category": "Canzoni Cantate",
+		"bpm": 135,
+		"key": "E minor / G major",
+		"style": "Pop Rock Epico italiano in crescendo con chitarre acustiche ed elettriche, batteria arena e voce appassionata",
+		"prompt": "Epic Italian Pop-Rock anthem, 135 BPM, passionate Italian vocals, emotive acoustic guitar building into soaring electric guitars, driving arena drums, inspiring sports lyrics about breaking past the court glass wall",
+		"preview_offset": 45.0
+	},
+	"ost_vocal_padelista_energy": {
+		"id": "ost_vocal_padelista_energy",
+		"title": "Padelista Energy",
+		"scene": "Arena Carioca & Match Festivo",
+		"category": "Canzoni Cantate",
+		"bpm": 125,
+		"key": "A minor / C major",
+		"style": "Latin Dance-Pop / Reggaeton elettronico con percussioni tropicali, ottoni sintetici e voce solare",
+		"prompt": "High-energy Latin Dance-Pop / Padel anthem, 125 BPM, infectious Latin urban rhythm, syncopated brass stabs, tropical percussion, charismatic energetic vocals, vibrant court celebration",
+		"preview_offset": 15.0
+	},
+	"ost_vocal_balle_de_match": {
+		"id": "ost_vocal_balle_de_match",
+		"title": "Balle de Match",
+		"scene": "Match Point Decisivo & Tie-Break",
+		"category": "Canzoni Cantate",
+		"bpm": 140,
+		"key": "D minor",
+		"style": "Dramatic French Alternative Rock cantato con riff taglienti di chitarra, percussioni incalzanti e ritornello mozzafiato",
+		"prompt": "Dramatic French Alternative Rock, 140 BPM, tense guitar ostinatos, urgent driving bassline, passionate French vocals building to explosive climax for match point victory",
+		"preview_offset": 60.0
+	},
+	# 5 Boss & Battle Champions Special Tracks (Epico / Anime Special)
+	"ost_apex_victory": {
+		"id": "ost_apex_victory",
+		"title": "Apex Victory",
+		"scene": "Boss Fight & Circuito Cyber",
+		"category": "Epico / Anime Special",
+		"bpm": 174,
+		"key": "F minor",
+		"style": "Cyberpunk Darksynth / Breakcore ad alta velocità con synth acidi e percussioni frenetiche",
+		"prompt": "High-speed Cyberpunk Darksynth / Breakcore boss theme, 174 BPM, distorted acid synth bass, relentless amen break-inspired percussion, dark cinematic stabs, futuristic neon adrenaline sports battle"
+	},
+	"ost_clash_of_champions": {
+		"id": "ost_clash_of_champions",
+		"title": "Clash of Champions",
+		"scene": "Gran Finale & Climax Caldera",
+		"category": "Epico / Anime Special",
+		"bpm": 160,
+		"key": "E minor",
+		"style": "Symphonic Rock da battaglia epico con ottoni maestosi, archi impetuosi e chitarre trionfali",
+		"prompt": "Epic symphonic battle rock, 160 BPM, soaring triumphant brass fanfare, driving distorted power chords, frantic cinematic staccato strings, massive taiko impacts, grand tournament finals climax"
+	},
+	"ost_reflex_strike": {
+		"id": "ost_reflex_strike",
+		"title": "Reflex Strike",
+		"scene": "Duello Riflessi & Match Point",
+		"category": "Epico / Anime Special",
+		"bpm": 174,
+		"key": "A minor",
+		"style": "Fast Action Darksynth con beat incalzante, riff di chitarra elettrica e percussioni taiko",
+		"prompt": "Fast-paced adrenaline darksynth action track, 174 BPM, relentless electronic pulse, aggressive electric guitar riffs, heavy taiko drum hits, dramatic tension for critical reflex duel"
+	},
+	"ost_iron_juggernaut": {
+		"id": "ost_iron_juggernaut",
+		"title": "Iron Juggernaut",
+		"scene": "Boss Meccanico & Fonderia a Vapore",
+		"category": "Epico / Anime Special",
+		"bpm": 142,
+		"key": "D minor",
+		"style": "Industrial Steampunk Metal con chitarre a 8 corde, ritmi meccanici e sfiatatoi a vapore",
+		"prompt": "Industrial Steampunk Metal boss fight theme, 142 BPM, low-tuned 8-string mechanical guitar chugs, hydraulic piston rhythms, steam release sound effects, unstoppable iron machine march"
+	},
+	"ost_thunder_strike": {
+		"id": "ost_thunder_strike",
+		"title": "Thunder Strike",
+		"scene": "Arena Torii & Scontro dei Campioni",
+		"category": "Epico / Anime Special",
+		"bpm": 155,
+		"key": "G minor",
+		"style": "Anime Battle Rock con shamisen tradizionale, batteria doppia cassa e chitarre sferzanti",
+		"prompt": "High-voltage Japanese Anime Battle Rock, 155 BPM, blazing electric guitar lead dueling with aggressive shamisen, galloping double-kick drums, thunderstorm ambience, electrifying tournament clash"
 	},
 }
 

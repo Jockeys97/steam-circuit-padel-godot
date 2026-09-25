@@ -229,7 +229,10 @@ func _drill(audit: AuditBase, store: RefCounted) -> void:
 	ModesSave.save_drill_score(store, exercise_id, 9)
 	var records: Dictionary = UiData.drill_records(store)
 	var rows: Array = records["rows"]
-	audit.check_eq(rows.size(), Tables.drill_exercises().size(), "data/one_drill_row_per_frozen_exercise")
+	# The records screen lists what the PLAYER can play: the frozen rows plus the Godot-only
+	# extras (`Tables.drill_catalog()`), in that order, so the frozen ones come first.
+	audit.check_eq(rows.size(), Tables.drill_catalog().size(), "data/one_drill_row_per_catalog_exercise")
+	audit.check_eq(String((rows[0] as Dictionary)["id"]), exercise_id, "data/the_frozen_exercises_lead_the_records")
 	var first := {}
 	for row in rows:
 		if String(row["id"]) == exercise_id:
@@ -348,7 +351,8 @@ func _art_convention(audit: AuditBase) -> void:
 	audit.check_eq(Art.candidate_for("modes", "quick"), "res://assets/ui/modes/quick-match.webp", "data/the_quick_mode_art_stem_is_quick_match")
 	audit.check_eq(Art.path_for("arenas", "nope"), "", "data/an_arena_with_no_art_name_answers_empty")
 	audit.check_eq(Art.path_for("modes", "nope"), "", "data/an_unknown_mode_answers_empty")
-	audit.check_eq(Art.candidate_for("arenas", "cattedrale"), "", "data/an_arena_without_ui_art_has_no_candidate_path")
+	# 2026-09-25: Cathedral (and Forge) got their own cover; every frozen arena now has art.
+	audit.check_eq(Art.candidate_for("arenas", "cattedrale"), "res://assets/ui/arenas/cattedrale-vapore.webp", "data/the_cathedral_has_its_own_cover")
 	audit.report("art names known: arenas=%d/9 modes=3" % Art.named_ids("arenas").size())
 
 

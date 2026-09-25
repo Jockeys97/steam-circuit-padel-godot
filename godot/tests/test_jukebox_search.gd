@@ -132,6 +132,52 @@ func _run() -> void:
 	_assert_eq(visible_girei[0], "ost_vocal_girei", "Matches ost_vocal_girei")
 	_assert_eq(screen.get("_title_label").text, "Girei (Almighty Judgment)", "Auto-selected Girei")
 
+	# 5d. Search for 'Apex Victory'
+	search_input.text = "Apex Victory"
+	search_input.text_changed.emit("Apex Victory")
+	await process_frame
+
+	var visible_apex: Array = screen.call("_visible_ids")
+	_assert_eq(visible_apex.size(), 1, "Matches 'Apex Victory'")
+	_assert_eq(visible_apex[0], "ost_apex_victory", "Matches ost_apex_victory")
+	_assert_eq(screen.get("_title_label").text, "Apex Victory", "Auto-selected Apex Victory")
+
+	# 5e. Search for 'Gleiches Blut'
+	search_input.text = "Gleiches"
+	search_input.text_changed.emit("Gleiches")
+	await process_frame
+
+	var visible_gleiches: Array = screen.call("_visible_ids")
+	_assert_eq(visible_gleiches.size(), 1, "Matches 'Gleiches'")
+	_assert_eq(visible_gleiches[0], "ost_vocal_gleiches_blut", "Matches ost_vocal_gleiches_blut")
+
+	# 5f. Search for 'Железная Воля'
+	search_input.text = "Железная"
+	search_input.text_changed.emit("Железная")
+	await process_frame
+
+	var visible_volya: Array = screen.call("_visible_ids")
+	_assert_eq(visible_volya.size(), 1, "Matches Cyrillic query 'Железная'")
+	_assert_eq(visible_volya[0], "ost_vocal_zheleznaia_volya", "Matches ost_vocal_zheleznaia_volya")
+
+	# 5g. Search for 'Double Rebond'
+	search_input.text = "Double Rebond"
+	search_input.text_changed.emit("Double Rebond")
+	await process_frame
+
+	var visible_dr: Array = screen.call("_visible_ids")
+	_assert_eq(visible_dr.size(), 1, "Matches 'Double Rebond'")
+	_assert_eq(visible_dr[0], "ost_vocal_double_rebond", "Matches ost_vocal_double_rebond")
+
+	# 5h. Search for 'Oltre il Vetro'
+	search_input.text = "Oltre il Vetro"
+	search_input.text_changed.emit("Oltre il Vetro")
+	await process_frame
+
+	var visible_oiv: Array = screen.call("_visible_ids")
+	_assert_eq(visible_oiv.size(), 1, "Matches 'Oltre il Vetro'")
+	_assert_eq(visible_oiv[0], "ost_vocal_oltre_il_vetro", "Matches ost_vocal_oltre_il_vetro")
+
 	# 6. Cross-scope search hint: search for 'velvet' while in 'match' scope
 	search_input.text = "velvet"
 	search_input.text_changed.emit("velvet")

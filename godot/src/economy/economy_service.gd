@@ -46,6 +46,8 @@ extends RefCounted
 const Schema := preload("res://src/save/save_schema.gd")
 const Catalog := preload("res://src/economy/ost_catalog.gd")
 const OutfitShop := preload("res://src/economy/outfit_shop_catalog.gd")
+const ArenaShop := preload("res://src/economy/arena_shop_catalog.gd")
+const CareerRules := preload("res://src/modes/career_rules.gd")
 
 ## The save group this service owns. Named once; `SaveSchema` declares the file/type.
 const GROUP: String = "economy"
@@ -161,6 +163,14 @@ static func _payload_of(read: Dictionary) -> Dictionary:
 			if known_outfits.has(outfit_key) and not owned_outfits.has(outfit_key):
 				owned_outfits.append(outfit_key)
 	out["ownedOutfits"] = owned_outfits
+	var owned_arenas: Array = []
+	var raw_arenas: Variant = out.get("ownedArenas", [])
+	if raw_arenas is Array:
+		for id in (raw_arenas as Array):
+			var arena_id := String(id)
+			if ArenaShop.is_known(arena_id) and not owned_arenas.has(arena_id):
+				owned_arenas.append(arena_id)
+	out["ownedArenas"] = owned_arenas
 	var receipts: Dictionary = {}
 	var raw_receipts: Variant = out.get("receipts", {})
 	if raw_receipts is Dictionary:
@@ -189,6 +199,7 @@ static func read_state(store) -> Dictionary:
 		"credits": int(payload["credits"]),
 		"owned": payload["owned"],
 		"owned_outfits": payload["ownedOutfits"],
+		"owned_arenas": payload["ownedArenas"],
 		"migration_version": int(payload["migrationVersion"]),
 		"receipts": payload["receipts"],
 		"path": String(read.get("path", "")),
@@ -209,6 +220,14 @@ static func owned_outfit_keys(store) -> Array:
 	if bool(state["refused"]) or bool(state["future"]):
 		return []
 	return state["owned_outfits"]
+
+
+## Arenas bought in the Emporio. Like the outfits, a refused or newer record grants nothing.
+static func owned_arena_ids(store) -> Array:
+	var state := read_state(store)
+	if bool(state["refused"]) or bool(state["future"]):
+		return []
+	return state["owned_arenas"]
 
 
 ## True when the profile OWNS the track outright (a starter or a purchased id).
@@ -292,6 +311,41 @@ static func outfit_shop_rows(store) -> Array:
 		row["accessible"] = not bool(row["unavailable"]) and not relocked and (bool(row["owned"]) or bool(row["won"]) or override)
 		out.append(row)
 	return out
+
+
+## The arena shelf shares the wallet. `earned` is the career route (trophies/stars) on the
+## stored career alone, so a purchase never impersonates progress and progress is never
+## sold: an arena the career already opened is not for sale.
+static func arena_shop_rows(store) -> Array:
+	var state := read_state(store)
+	var owned: Array = state["owned_arenas"]
+	var credits := int(state["credits"])
+	var override := unlock_all(store)
+	var relocked := relock_all(store)
+	var career_read: Dictionary = store.read_group("career")
+	var career_unavailable := bool(career_read.get("refused", false)) or (not bool(career_read.get("ok", false)) and not bool(career_read.get("recovered", false)))
+	var career: Dictionary = _career_only(career_read)
+	var out: Array = []
+	for entry in ArenaShop.shop_rows():
+		var row: Dictionary = (entry as Dictionary).duplicate(true)
+		var id := String(row["id"])
+		row["owned"] = owned.has(id)
+		row["earned"] = not relocked and CareerRules.is_unlocked(ArenaShop.frozen_row(id), career) and not override
+		row["relocked"] = relocked
+		row["unavailable"] = bool(state["refused"]) or bool(state["future"]) or career_unavailable
+		row["affordable"] = not bool(row["unavailable"]) and credits >= int(row["price"])
+		row["accessible"] = not bool(row["unavailable"]) and not relocked and (bool(row["owned"]) or bool(row["earned"]) or override)
+		out.append(row)
+	return out
+
+
+## The stored career with no purchase overlay: what the player has EARNED.
+static func _career_only(career_read: Dictionary) -> Dictionary:
+	var payload: Variant = career_read.get("payload", {})
+	var career: Dictionary = (payload as Dictionary).duplicate(true) if payload is Dictionary else {}
+	career.erase("arenasPurchased")
+	career.erase("outfitsPurchased")
+	return career
 
 
 # ---------------------------------------------------------------------------
@@ -540,6 +594,59 @@ static func purchase_outfit(store, unlock_key: String) -> Dictionary:
 	return {
 		"ok": true, "reason": "purchased", "id": unlock_key, "price": price,
 		"balance": credits - price, "owned": owned, "debited": price,
+	}
+
+
+## Buy one career-gated arena as an expensive alternative to earning it. The wallet and
+## the arena ledger are one `economy` write; no trophy or star is forged.
+static func purchase_arena(store, arena_id: String) -> Dictionary:
+	var init := ensure_initialized(store)
+	if not bool(init.get("ok", false)):
+		return _arena_refusal(store, arena_id, "store_unavailable", 0)
+	var state := read_state(store)
+	if bool(state["refused"]):
+		return _arena_refusal(store, arena_id, "refused", 0)
+	if not ArenaShop.is_known(arena_id):
+		return _arena_refusal(store, arena_id, "unknown", 0)
+	var price := ArenaShop.price_of(arena_id)
+	if price <= 0:
+		return _arena_refusal(store, arena_id, "not_for_sale", 0)
+	if relock_all(store):
+		return _arena_refusal(store, arena_id, "relocked", price)
+	if (state["owned_arenas"] as Array).has(arena_id):
+		return _arena_refusal(store, arena_id, "owned", price)
+	if unlock_all(store):
+		return _arena_refusal(store, arena_id, "unlocked", price)
+	var career_read: Dictionary = store.read_group("career")
+	if bool(career_read.get("refused", false)) or (not bool(career_read.get("ok", false)) and not bool(career_read.get("recovered", false))):
+		return _arena_refusal(store, arena_id, "store_unavailable", price)
+	if CareerRules.is_unlocked(ArenaShop.frozen_row(arena_id), _career_only(career_read)):
+		return _arena_refusal(store, arena_id, "unlocked", price)
+	var credits := int(state["credits"])
+	if credits < price:
+		return _arena_refusal(store, arena_id, "insufficient", price)
+	var read: Dictionary = store.read_group(GROUP)
+	var raw: Variant = read.get("payload", null)
+	var payload: Dictionary = (raw as Dictionary).duplicate(true) if raw is Dictionary else Schema.ECONOMY_DEFAULTS.duplicate(true)
+	var owned: Array = (state["owned_arenas"] as Array).duplicate()
+	owned.append(arena_id)
+	payload["ownedArenas"] = owned
+	payload["credits"] = credits - price
+	payload["migrationVersion"] = MIGRATION_VERSION
+	var write: Dictionary = store.write_group(GROUP, payload)
+	if not bool(write.get("ok", false)):
+		return _arena_refusal(store, arena_id, "write_failed", price)
+	return {
+		"ok": true, "reason": "purchased", "id": arena_id, "price": price,
+		"balance": credits - price, "owned": owned, "debited": price,
+	}
+
+
+static func _arena_refusal(store, arena_id: String, reason: String, price: int) -> Dictionary:
+	var state := read_state(store)
+	return {
+		"ok": false, "reason": reason, "id": arena_id, "price": price,
+		"balance": int(state["credits"]), "owned": state["owned_arenas"], "debited": 0,
 	}
 
 

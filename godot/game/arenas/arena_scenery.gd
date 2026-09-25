@@ -237,6 +237,42 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 			root.add_child(stars)
 	if id == "egeo":
 		preload("res://game/arenas/egeo_environment.gd").build(root)
+	if id == "orrery":
+		# Rebuilt 2026-09-26 from the owner's cover and Meshy props: a brass platform in space.
+		for child in root.get_children():
+			if String(child.name).begins_with("Backdrop") or String(child.name).begins_with("Dressing_"):
+				(child as Node3D).hide()
+		preload("res://game/arenas/celestial_orrery.gd").build(root, parent)
+	if id == "abissale":
+		# Rebuilt 2026-09-26 from the owner's cover and Meshy props: a brass dome on the ocean floor.
+		for child in root.get_children():
+			if String(child.name).begins_with("Backdrop") or String(child.name).begins_with("Dressing_"):
+				(child as Node3D).hide()
+		preload("res://game/arenas/abyssal_sanctuary.gd").build(root, parent)
+	if id == "cattedrale":
+		# Rebuilt 2026-09-26 from the owner's cover and Meshy props: a steampunk cathedral nave.
+		for child in root.get_children():
+			if String(child.name).begins_with("Backdrop") or String(child.name).begins_with("Dressing_"):
+				(child as Node3D).hide()
+		preload("res://game/arenas/steam_cathedral.gd").build(root, parent)
+	if id == "forgia":
+		# Rebuilt 2026-09-25 from the owner's cover and Meshy props: a forge on the sea floor.
+		for child in root.get_children():
+			if String(child.name).begins_with("Backdrop") or String(child.name).begins_with("Dressing_"):
+				(child as Node3D).hide()
+		preload("res://game/arenas/abyssal_forge.gd").build(root, parent)
+	if id == "tempesta":
+		# Rebuilt 2026-09-25 from the owner's cover and Meshy props: a deck in the storm.
+		for child in root.get_children():
+			if String(child.name).begins_with("Backdrop") or String(child.name).begins_with("Dressing_"):
+				(child as Node3D).hide()
+		preload("res://game/arenas/storm_bastion.gd").build(root, parent)
+	if id == "caldera":
+		# Rebuilt 2026-09-25 from the owner's cover and Meshy props: lava moat, titans.
+		for child in root.get_children():
+			if String(child.name).begins_with("Backdrop") or String(child.name).begins_with("Dressing_"):
+				(child as Node3D).hide()
+		preload("res://game/arenas/titan_caldera.gd").build(root, parent)
 	if id in ["officina","locomotive","clockwork"]:
 		# Pilot replacement is presentation-only and local to this arena.
 		for child in root.get_children():

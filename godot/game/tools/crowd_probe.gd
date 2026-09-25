@@ -72,6 +72,36 @@ func _run() -> void:
 	print("RALLY_END murmuring=%s %s" % [str(not settled), "OK" if settled else "FAIL"])
 	failures += 0 if settled else 1
 
+	# 5-6. Since 2026-09-25 the crowd is 3D (MultiMesh fans, motion in the shader). The
+	#      same two promises, read from the new form: the cheer drives a bounded motion,
+	#      and every spectator sits ON the stands.
+	var fans: Array = crowd.get("_fans")
+	var stand_h3d: float = 3.014
+	if not fans.is_empty():
+		state.stats["pointsWon"]["player"] = 5
+		crowd.observe(state, 4)
+		crowd._process(1.0 / 60.0)
+		var sm := (fans[0] as MultiMeshInstance3D).material_override as ShaderMaterial
+		var jump: float = sm.get_shader_parameter("jump")
+		var bob: float = sm.get_shader_parameter("bob")
+		var moving := jump > 0.5 and bob > 0.0 and bob <= Crowd.IDLE_BOB_M * 2.5 + 0.0001
+		print("BOB jump=%.2f bob=%.4f m %s" % [jump, bob, "OK" if moving else "FAIL"])
+		failures += 0 if moving else 1
+		var lo := 1e9
+		var hi := -1e9
+		for mmi in fans:
+			var mm: MultiMesh = (mmi as MultiMeshInstance3D).multimesh
+			for i in mm.instance_count:
+				var y: float = mm.get_instance_transform(i).origin.y
+				lo = minf(lo, y)
+				hi = maxf(hi, y)
+		var inside3d: bool = lo > 0.0 and hi < stand_h3d
+		print("SEATED y=[%.3f, %.3f] stand_h=%.3f %s" % [lo, hi, stand_h3d, "OK" if inside3d else "FAIL"])
+		failures += 0 if inside3d else 1
+		print("CROWD_PROBE failures=%d %s" % [failures, "PASS" if failures == 0 else "FAIL"])
+		quit(0 if failures == 0 else 1)
+		return
+
 	# 5. The bob must actually move the quads, and stay within its own bounds: a
 	#    spectator that drifts is a spectator that ends up inside the canopy.
 	var quads: Array = crowd.get("_quads")

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    
+    <radialGradient id="apexBg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#1f0933"/>
+      <stop offset="50%" stop-color="#0d0417"/>
+      <stop offset="100%" stop-color="#020005"/>
+    </radialGradient>
+    <linearGradient id="neonGrid" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0"/>
+      <stop offset="60%" stop-color="#00f0ff" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0.9"/>
+    </linearGradient>
+    
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#apexBg)"/>
+  <!-- Perspective Cyber Grid -->
+  <g stroke="url(#neonGrid)" stroke-width="2" opacity="0.6">
+    <line x1="512" y1="280" x2="100" y2="650"/>
+    <line x1="512" y1="280" x2="250" y2="650"/>
+    <line x1="512" y1="280" x2="400" y2="650"/>
+    <line x1="512" y1="280" x2="512" y2="650"/>
+    <line x1="512" y1="280" x2="624" y2="650"/>
+    <line x1="512" y1="280" x2="774" y2="650"/>
+    <line x1="512" y1="280" x2="924" y2="650"/>
+    <line x1="160" y1="520" x2="864" y2="520"/>
+    <line x1="130" y1="570" x2="894" y2="570"/>
+    <line x1="100" y1="630" x2="924" y2="630"/>
+  </g>
+
+  <!-- Glowing Neon Apex Diamond / Polygon -->
+  <polygon points="512,180 660,340 512,500 364,340" fill="#0b0214" stroke="#ff007f" stroke-width="4" filter="url(#glow)"/>
+  <polygon points="512,210 630,340 512,470 394,340" fill="none" stroke="#00f0ff" stroke-width="2.5"/>
+  <circle cx="512" cy="340" r="50" fill="#ff007f" fill-opacity="0.3" filter="url(#glow)"/>
+  <circle cx="512" cy="340" r="20" fill="#00f0ff" filter="url(#softGlow)"/>
+
+  <!-- Speed laser trails -->
+  <line x1="200" y1="340" x2="360" y2="340" stroke="#00f0ff" stroke-width="3" stroke-dasharray="12,8" filter="url(#softGlow)"/>
+  <line x1="664" y1="340" x2="824" y2="340" stroke="#ff007f" stroke-width="3" stroke-dasharray="12,8" filter="url(#softGlow)"/>
+    
+  <!-- Title Badge inside disc radius -->
+  <rect x="200" y="675" width="624" height="40" rx="20" fill="#080d1a" fill-opacity="0.92" stroke="#00f0ff" stroke-width="2.5" filter="url(#softGlow)"/>
+  <text x="512" y="701" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="bold" fill="#00f0ff" text-anchor="middle" letter-spacing="3">CYBERPUNK DARKSYNTH CLIMAX</text>
+
+  <!-- Title in bold high-contrast typography -->
+  <text x="512" y="768" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="3" filter="url(#glow)">APEX VICTORY</text>
+  <text x="512" y="768" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="900" fill="#ff70a6" text-anchor="middle" letter-spacing="3">APEX VICTORY</text>
+
+  <!-- Lore tag below -->
+  <text x="512" y="805" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#90e0ef" text-anchor="middle" letter-spacing="2">BOSS FIGHT • CYBER CIRCUIT NEMESIS</text>
+</svg>

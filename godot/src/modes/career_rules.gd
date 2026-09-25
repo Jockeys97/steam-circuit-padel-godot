@@ -251,6 +251,11 @@ static func is_unlocked(item: Dictionary, career: Dictionary) -> bool:
 		return bool(won.get(String(item.get("unlockKey", "")), false))
 	if item.get("unlock") == null:
 		return true
+	# An arena bought in the Emporio is an independent unlock beside the career wall.
+	# `arenasPurchased` only ever carries arena ids (`arena_shop_catalog.gd`).
+	var arenas_bought: Dictionary = career.get("arenasPurchased", {}) if career.get("arenasPurchased") is Dictionary else {}
+	if bool(arenas_bought.get(String(item.get("id", "")), false)):
+		return true
 	var unlock: Dictionary = item["unlock"]
 	var trophies: int = int(unlock.get("trophies", 0))
 	var stars: int = int(unlock.get("stars", 0))

@@ -407,7 +407,8 @@ func _mapping(audit: AuditBase) -> void:
 	var drills := _drill_ids()
 	audit.check_eq(drills.size(), 4, "coach/the_frozen_drill_table_has_four_exercises")
 	var catalog := _catalog_ids()
-	audit.check_eq(catalog.size(), 5, "coach/the_catalog_offers_five_exercises")
+	# The frozen four plus the four Godot-only extras (`drill_extras.gd`).
+	audit.check_eq(catalog.size(), 8, "coach/the_catalog_offers_eight_exercises")
 	audit.check_true(catalog.has("return"), "coach/the_catalog_carries_the_return_exercise")
 	audit.check_eq(Advice.categories().size(), Contract.drill_categories().size(), "coach/there_is_one_advice_per_drillable_category")
 	var unmapped: Array = []

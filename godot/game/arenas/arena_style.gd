@@ -122,7 +122,7 @@ const STYLES := {
 		"sky": [["0.00", "#071526"], ["0.46", "#1b4d5d"], ["0.47", "#5c5b50"], ["1.00", "#37444d"]],
 		"apron": "#4f5552",
 		"glow": "#78c9da",
-		"artwork": "deposito-locomotive.webp",
+		"artwork": "sopraelevata-della-luna.webp",
 		"props": [
 			{"kind": "loco", "x": 0.0, "tint": "gear"},
 			{"kind": "girder", "x": -6.4, "h": 2.10, "lean": -1.0},
@@ -160,9 +160,10 @@ const STYLES := {
 		# leaving the arena unpainted.
 		"family": "locomotive",
 		"sky": [["0.00", "#071526"], ["0.46", "#1b4d5d"], ["0.47", "#5c5b50"], ["1.00", "#37444d"]],
-		"apron": "#312b4f",
+		# Darker nave stone since the 2026-09-26 rebuild (`steam_cathedral.gd`).
+		"apron": "#241e38",
 		"glow": "#c98bff",
-		"artwork": "deposito-locomotive.webp",
+		"artwork": "cattedrale-vapore.webp",
 		"props": [
 			{"kind": "loco", "x": 0.0, "tint": "gear"},
 			{"kind": "girder", "x": -6.4, "h": 2.10, "lean": -1.0, "tint": "accent"},
@@ -180,9 +181,10 @@ const STYLES := {
 		# (`ARENAS[4].image`), so the port does the same.
 		"family": "clockwork",
 		"sky": [["0.00", "#160f31"], ["0.45", "#3b2048"], ["0.46", "#7b465b"], ["1.00", "#33214b"]],
-		"apron": "#42272b",
+		# Basalt since the 2026-09-25 rebuild (`abyssal_forge.gd`): the sea-floor forge.
+		"apron": "#1d2226",
 		"glow": "#ffd54a",
-		"artwork": "clockwork-factory.webp",
+		"artwork": "forgia-abyssal.webp",
 		"props": [
 			{"kind": "clock", "x": 0.0, "y": 1.3, "r": 0.8, "tint": "gear"},
 			{"kind": "gear", "x": -4.3, "y": 1.0, "r": 0.58, "tint": "gear"},

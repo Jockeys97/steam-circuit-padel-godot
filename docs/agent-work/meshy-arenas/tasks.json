@@ -1,0 +1,162 @@
+{
+  "caldera/hero_landmark": {
+    "request_started": true,
+    "id": "01a0da46-e2bc-762a-b304-387468514318",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "caldera/column_pillar": {
+    "request_started": true,
+    "id": "01a0da48-42c3-7058-b0e7-282e929fc036",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "caldera/light_source": {
+    "request_started": true,
+    "id": "01a0da48-f65d-7123-a076-4068351198e1",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "caldera/volcano": {
+    "request_started": true,
+    "id": "01a0da5e-255c-743f-a2b5-33d8780000ca",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "tempesta/hero_landmark": {
+    "request_started": true,
+    "id": "01a0da62-2ad7-72bc-a423-e5fef193937a",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "tempesta/column_pillar": {
+    "request_started": true,
+    "id": "01a0da62-b35b-7274-b31a-b8512433fd81",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "tempesta/light_source": {
+    "request_started": true,
+    "id": "01a0da63-3b3c-7609-baf3-cebfa24eba2e",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "crowd/fan_1": {
+    "request_started": true,
+    "id": "01a0da71-818c-74a7-9b4c-29a756553ab8",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "crowd/fan_2": {
+    "request_started": true,
+    "id": "01a0da72-096a-7626-8f42-02905d04fc08",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "crowd/fan_3": {
+    "request_started": true,
+    "id": "01a0da72-67b1-7200-af0a-ae012a089e34",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "crowd/fan_4": {
+    "request_started": true,
+    "id": "01a0da72-c68e-756b-8572-d9ac5c6587ed",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "crowd/fan_5": {
+    "request_started": true,
+    "id": "01a0da73-4e2f-7280-bf4f-250d4e8438e5",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "forgia/hero_landmark": {
+    "request_started": true,
+    "id": "01a0da84-9f19-71f5-86e5-5fa5d6436aeb",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "forgia/ornament_accent": {
+    "request_started": true,
+    "id": "01a0da85-7859-74d3-ad8a-f6211d16f7ee",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "forgia/light_source": {
+    "request_started": true,
+    "id": "01a0da86-511f-769b-9982-808cb079b965",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "cattedrale/hero_landmark": {
+    "request_started": true,
+    "id": "01a0da98-ddb9-7225-a75b-3eb85bd15c01",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "abissale/hero_landmark": {
+    "request_started": true,
+    "id": "01a0daae-67cb-7525-84c8-47ddd457cff1",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "abissale/ornament_accent": {
+    "request_started": true,
+    "id": "01a0daaf-55e6-772a-8468-1f3e8c9a364d",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "abissale/vegetation_cluster": {
+    "request_started": true,
+    "id": "01a0daae-67cd-7779-9e8b-340ab0fbe8c8",
+    "status": "SUCCEEDED",
+    "credits": 15,
+    "recovered": "matched by GLB sha256 2026-09-26"
+  },
+  "abissale/light_source": {
+    "request_started": true,
+    "id": "01a0daae-67cd-7790-b908-64e3278d7eba",
+    "status": "SUCCEEDED",
+    "credits": 15,
+    "recovered": "matched by GLB sha256 2026-09-26"
+  },
+  "cattedrale/light_source": {
+    "request_started": true,
+    "id": "01a0da98-de52-713e-b098-51234bedeed9",
+    "status": "SUCCEEDED",
+    "credits": 15,
+    "recovered": "matched by GLB sha256 2026-09-26"
+  },
+  "cattedrale/column_pillar": {
+    "request_started": true,
+    "id": "01a0da98-ddba-732e-b6e1-034a233eb01d",
+    "status": "SUCCEEDED",
+    "credits": 15,
+    "recovered": "matched by GLB sha256 2026-09-26"
+  },
+  "orrery/hero_landmark": {
+    "request_started": true,
+    "id": "01a0dab7-3a52-7101-ba12-dc4b4122e6c8",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "orrery/ornament_accent": {
+    "request_started": true,
+    "id": "01a0dab7-41d2-7226-affb-a4f9b2bac596",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "orrery/light_source": {
+    "request_started": true,
+    "id": "01a0dab7-49b5-7710-80cd-282739526ecc",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "orrery/railing_segment": {
+    "request_started": true,
+    "id": "01a0dab7-5246-751d-872d-c9b8be663040",
+    "status": "SUCCEEDED",
+    "credits": 15
+  }
+}

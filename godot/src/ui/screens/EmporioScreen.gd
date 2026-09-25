@@ -1,4 +1,4 @@
-## EmporioScreen.gd — OST and challenge-outfit storefront.
+## EmporioScreen.gd — OST, challenge-outfit and arena storefront.
 ##
 ## WHAT IT IS. An overlay screen over the initial menu, built the same way the Jukebox
 ## is (`main_menu.gd::toggle_jukebox`): the menu mounts it, it sits in `ScreenShell`
@@ -34,6 +34,7 @@ const DefaultTheme := preload("res://src/ui/theme/padel_theme.tres")
 const Config := preload("res://game/match_config.gd")
 const UiArt := preload("res://src/ui/data/UiArtPaths.gd")
 const Locale := preload("res://src/locale/locale.gd")
+const ArenaLibrary := preload("res://game/arenas/arena_library.gd")
 
 const SCREEN_ID := "emporio"
 const BACK_TARGET := "menu"
@@ -49,6 +50,11 @@ const LINE := Color(1.0, 1.0, 1.0, 0.12)
 const COVERS_DIR := "res://assets/images/jukebox_covers/"
 const FILTERS := ["all", "standard", "special", "vocal"]
 const PREVIEW_SECONDS := 15.0
+## The arena taster: the real arena, built on demand in a small viewport, circled slowly.
+const ARENA_VIEW_SIZE := Vector2i(640, 360)
+const ARENA_ORBIT_RADIUS := 34.0
+const ARENA_ORBIT_HEIGHT := 13.0
+const ARENA_ORBIT_SPEED := 0.16 # radians per second
 
 var _store: RefCounted = null
 var _lang: String = "it"
@@ -92,6 +98,11 @@ var _rows: Array = []
 var _row_buttons: Array[Button] = []
 var _pending_id: String = ""
 var _last_purchase: Dictionary = {}
+var _arena_view: SubViewportContainer = null
+var _arena_viewport: SubViewport = null
+var _arena_camera: Camera3D = null
+var _arena_3d_id: String = ""
+var _arena_orbit: float = 0.0
 ## Set once the player leaves, so a second cancel/back cannot emit `closed` twice.
 var _closing: bool = false
 
@@ -180,8 +191,8 @@ func _build_ui() -> void:
 	_shell.setup(SCREEN_ID)
 	_shell.set_title_text(_t("EMPORIO", "EMPORIUM"))
 	_shell.set_subtitle_text(_t(
-		"OST e outfit: guadagna Crediti Circuito giocando; alcuni outfit si vincono anche con le sfide",
-		"OST and outfits: earn Circuit Credits by playing; some outfits can also be won through challenges"))
+		"OST, outfit e arene: guadagna Crediti Circuito giocando; outfit e arene si sbloccano anche con sfide e carriera",
+		"OST, outfits and arenas: earn Circuit Credits by playing; outfits and arenas also unlock through challenges and the career"))
 	_shell.set_back_target(BACK_TARGET)
 	var back_btn: Button = _shell.back_control()
 	if back_btn != null:
@@ -228,10 +239,10 @@ func _build_ui() -> void:
 	var sections := HBoxContainer.new()
 	sections.add_theme_constant_override("separation", 8)
 	shelf_column.add_child(sections)
-	for kind in ["ost", "outfit"]:
+	for kind in ["ost", "outfit", "arena"]:
 		var section := Button.new()
 		section.name = "EmporioSection_%s" % kind
-		section.text = _t("OST", "OST") if kind == "ost" else _t("OUTFIT", "OUTFITS")
+		section.text = _section_text(kind)
 		section.focus_mode = Control.FOCUS_ALL
 		section.size_flags_horizontal = SIZE_EXPAND_FILL
 		section.custom_minimum_size.y = 36
@@ -309,6 +320,14 @@ func _build_ui() -> void:
 	_preview_fallback = _label("SC / OST", 28, CYAN)
 	_preview_fallback.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	cover_center.add_child(_preview_fallback)
+	# The arena taster lives in the same frame as the cover and replaces it while shown.
+	_arena_view = SubViewportContainer.new()
+	_arena_view.name = "EmporioArena3D"
+	_arena_view.stretch = true
+	_arena_view.visible = false
+	_arena_view.custom_minimum_size = Vector2(320, 180)
+	_arena_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_cover_frame.add_child(_arena_view)
 	_info_panel = PanelContainer.new()
 	_info_panel.name = "EmporioTrackInfo"
 	_info_panel.visible = false
@@ -427,13 +446,20 @@ func _build_confirm_panel() -> void:
 
 func refresh() -> void:
 	_rows = []
-	var source: Array = Economy.outfit_shop_rows(store()) if _shop_kind == "outfit" else Economy.shop_rows(store())
+	var source: Array
+	match _shop_kind:
+		"outfit": source = Economy.outfit_shop_rows(store())
+		"arena": source = Economy.arena_shop_rows(store())
+		_: source = Economy.shop_rows(store())
 	for entry in source:
 		var row: Dictionary = (entry as Dictionary).duplicate(true)
 		row["kind"] = _shop_kind
 		if _shop_kind == "outfit":
 			row["title"] = Locale.t(String(row["name_key"]), {}, _lang)
 			row["category"] = Locale.t("athlete_%s_name" % String(row["athlete_id"]), {}, _lang)
+		elif _shop_kind == "arena":
+			row["title"] = Locale.t(String(row["name_key"]), {}, _lang)
+			row["category"] = _t("Carriera: ", "Career: ") + _career_wall_text(row["unlock"])
 		_rows.append(row)
 	var previous := _selected_id
 	for child in _list_box.get_children():
@@ -452,11 +478,11 @@ func refresh() -> void:
 		_selected_id = String(_row_buttons[0].get_meta("track_id"))
 	if _preview_track_id != "" and _preview_track_id != _selected_id:
 		_stop_preview()
+	if _arena_3d_id != "" and _arena_3d_id != _selected_id:
+		_stop_arena_3d()
 	_sync_preview()
 	if _status_label.text == "":
-		_status_label.text = _t(
-			"Esplora le OST. I brani acquistati sono disponibili nel Jukebox.",
-			"Explore the OSTs. Purchased tracks are available in the Jukebox.")
+		_status_label.text = _default_status()
 
 
 func selected_id() -> String:
@@ -468,22 +494,65 @@ func shop_kind() -> String:
 
 
 func _set_shop_kind(kind: String) -> void:
-	if (kind != "ost" and kind != "outfit") or confirm_visible():
+	if not ["ost", "outfit", "arena"].has(kind) or confirm_visible():
 		return
 	_stop_preview()
+	_stop_arena_3d()
 	_shop_kind = kind
 	_selected_id = ""
+	_status_label.text = _default_status()
 	_ost_filters.visible = kind == "ost"
-	_listen_btn.visible = kind == "ost"
+	_listen_btn.visible = kind != "outfit"
 	_info_panel.visible = false
 	_cover_frame.visible = true
-	_shelf_title.text = _t("COLLEZIONE OST", "OST COLLECTION") if kind == "ost" else _t("OUTFIT SBLOCCABILI", "UNLOCKABLE OUTFITS")
-	_featured_label.text = _t("IN EVIDENZA  /  OST", "FEATURED  /  OST") if kind == "ost" else _t("IN EVIDENZA  /  OUTFIT", "FEATURED  /  OUTFIT")
+	match kind:
+		"outfit":
+			_shelf_title.text = _t("OUTFIT SBLOCCABILI", "UNLOCKABLE OUTFITS")
+			_featured_label.text = _t("IN EVIDENZA  /  OUTFIT", "FEATURED  /  OUTFIT")
+		"arena":
+			_shelf_title.text = _t("ARENE SBLOCCABILI", "UNLOCKABLE ARENAS")
+			_featured_label.text = _t("IN EVIDENZA  /  ARENA", "FEATURED  /  ARENA")
+		_:
+			_shelf_title.text = _t("COLLEZIONE OST", "OST COLLECTION")
+			_featured_label.text = _t("IN EVIDENZA  /  OST", "FEATURED  /  OST")
 	for section_kind in _section_buttons:
 		(_section_buttons[section_kind] as Button).theme_type_variation = &"SegmentedActive" if section_kind == kind else &"SegmentedInactive"
 	_update_info_toggle_text()
 	refresh()
 	_focus_first_row()
+
+
+func _default_status() -> String:
+	match _shop_kind:
+		"arena":
+			return _t("Arene della carriera: sbloccale gratis con trofei e stelle, oppure subito con i Crediti Circuito.",
+				"Career arenas: unlock them for free with trophies and stars, or right away with Circuit Credits.")
+		"outfit":
+			return _t("Outfit delle sfide ed esclusivi dell'Emporio: equipaggiali nel guardaroba.",
+				"Challenge and Emporio-exclusive outfits: equip them in the wardrobe.")
+		_:
+			return _t("Esplora le OST. I brani acquistati sono disponibili nel Jukebox.",
+				"Explore the OSTs. Purchased tracks are available in the Jukebox.")
+
+
+func _section_text(kind: String) -> String:
+	match kind:
+		"outfit": return _t("OUTFIT", "OUTFITS")
+		"arena": return _t("ARENE", "ARENAS")
+		_: return _t("OST", "OST")
+
+
+## "2 trofei · 10 stelle": the career wall an arena purchase skips.
+func _career_wall_text(unlock: Variant) -> String:
+	var parts: Array[String] = []
+	if unlock is Dictionary:
+		var trophies := int((unlock as Dictionary).get("trophies", 0))
+		var stars := int((unlock as Dictionary).get("stars", 0))
+		if trophies > 0:
+			parts.append(_t("%d trofei", "%d trophies") % trophies)
+		if stars > 0:
+			parts.append(_t("%d stelle", "%d stars") % stars)
+	return " · ".join(parts)
 
 
 func _filter_text(key: String) -> String:
@@ -510,7 +579,7 @@ func _update_filter_style() -> void:
 
 
 func _matches_filter(row: Dictionary) -> bool:
-	if _shop_kind == "outfit":
+	if _shop_kind != "ost":
 		return true
 	if _active_filter == "all":
 		return true
@@ -552,7 +621,12 @@ func _make_card(row: Dictionary, index: int) -> Button:
 	cover.custom_minimum_size = Vector2(80, 80)
 	cover.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	cover.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	cover.texture = _load_cover_for_outfit(row) if _shop_kind == "outfit" else _load_cover_for_track(track_id)
+	match _shop_kind:
+		"outfit": cover.texture = _load_cover_for_outfit(row)
+		"arena":
+			cover.texture = _load_cover_for_arena(row)
+			cover.custom_minimum_size = Vector2(128, 80) # the arena covers are 16:9
+		_: cover.texture = _load_cover_for_track(track_id)
 	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	line.add_child(cover)
 	if cover.texture == null:
@@ -590,7 +664,7 @@ func _link_focus() -> void:
 	for i in _row_buttons.size():
 		var card := _row_buttons[i]
 		var action: Control = _purchase_btn if _shop_kind == "outfit" else _listen_btn
-		var top: Control = _row_buttons[i - 2] if i >= 2 else (_section_buttons["outfit"] if _shop_kind == "outfit" else _filter_buttons[_active_filter])
+		var top: Control = _row_buttons[i - 2] if i >= 2 else (_filter_buttons[_active_filter] if _shop_kind == "ost" else _section_buttons[_shop_kind])
 		var bottom: Control = _row_buttons[i + 2] if i + 2 < _row_buttons.size() else action
 		var left: Control = _row_buttons[i - 1] if i % 2 == 1 else card
 		var right: Control = _row_buttons[i + 1] if i % 2 == 0 and i + 1 < _row_buttons.size() else action
@@ -614,6 +688,8 @@ func _select_track(track_id: String) -> void:
 		return
 	if _preview_track_id != "" and _preview_track_id != track_id:
 		_stop_preview()
+	if _arena_3d_id != "" and _arena_3d_id != track_id:
+		_stop_arena_3d()
 	_selected_id = track_id
 	_sync_preview()
 
@@ -621,12 +697,17 @@ func _select_track(track_id: String) -> void:
 func _on_info_pressed() -> void:
 	if confirm_visible():
 		return
+	_stop_arena_3d()
 	_info_panel.visible = not _info_panel.visible
 	_cover_frame.visible = not _info_panel.visible
 	_update_info_toggle_text()
 
 
 func _update_info_toggle_text() -> void:
+	if _shop_kind == "arena":
+		_info_toggle_btn.text = _t("ⓘ CHIUDI", "ⓘ CLOSE") if _info_panel.visible else _t("ⓘ INFO", "ⓘ INFO")
+		_info_toggle_btn.tooltip_text = _t("Mostra/nascondi i dettagli dell'arena", "Show/hide the arena details")
+		return
 	if _shop_kind == "outfit":
 		var shop_only := bool(_find_row(_selected_id).get("shop_only", false))
 		_info_toggle_btn.text = _t("ⓘ CHIUDI", "ⓘ CLOSE") if _info_panel.visible else (_t("ⓘ INFO", "ⓘ INFO") if shop_only else _t("ⓘ SFIDA", "ⓘ CHALLENGE"))
@@ -646,6 +727,10 @@ func _sync_preview() -> void:
 	if _shop_kind == "outfit":
 		_sync_outfit_preview(row)
 		return
+	if _shop_kind == "arena":
+		_sync_arena_preview(row)
+		return
+	_preview_cover.custom_minimum_size = Vector2(220, 220)
 	_preview_cover.texture = _load_cover_for_track(_selected_id)
 	_preview_cover.visible = _preview_cover.texture != null
 	_preview_fallback.visible = not _preview_cover.visible
@@ -665,6 +750,7 @@ func _sync_preview() -> void:
 
 
 func _sync_outfit_preview(row: Dictionary) -> void:
+	_preview_cover.custom_minimum_size = Vector2(220, 220)
 	_preview_cover.texture = _load_cover_for_outfit(row)
 	_preview_cover.visible = _preview_cover.texture != null
 	_preview_fallback.visible = not _preview_cover.visible
@@ -687,6 +773,91 @@ func _sync_outfit_preview(row: Dictionary) -> void:
 	_listen_btn.disabled = true
 	_purchase_btn.disabled = bool(row.get("unavailable", false)) or not bool(row.get("supported", false)) or not bool(row.get("affordable", false)) or bool(row.get("owned", false)) or bool(row.get("accessible", false)) or bool(row.get("relocked", false))
 	_purchase_btn.text = _t("ACQUISTA OUTFIT  ›", "BUY OUTFIT  ›") if not _purchase_btn.disabled else _short_state(row).to_upper()
+
+
+func _sync_arena_preview(row: Dictionary) -> void:
+	_preview_cover.texture = _load_cover_for_arena(row)
+	_preview_cover.custom_minimum_size = Vector2(320, 180)
+	_preview_cover.visible = _preview_cover.texture != null and _arena_3d_id == ""
+	_preview_fallback.visible = _preview_cover.texture == null and _arena_3d_id == ""
+	_preview_fallback.text = "SC / ARENA"
+	_preview_title.text = String(row["title"])
+	_preview_category.text = String(row["category"]).to_upper()
+	_preview_state.text = _short_state(row).to_upper()
+	_preview_price.text = _t("Alternativa: %d CC", "Alternative: %d CC") % int(row["price"])
+	_info_tempo.text = _t("VIA PRINCIPALE: CARRIERA", "MAIN ROUTE: CAREER")
+	_info_style.text = _t("Si sblocca gratis con %s.", "Unlocks for free with %s.") % _career_wall_text(row["unlock"])
+	_info_description.text = Locale.t(String(row["desc_key"]), {}, _lang)
+	_update_info_toggle_text()
+	_listen_btn.disabled = false
+	_listen_btn.text = _t("▣ COPERTINA", "▣ COVER") if _arena_3d_id == _selected_id else _t("▶ ASSAGGIO 3D", "▶ 3D TASTER")
+	_listen_btn.tooltip_text = _t("Guarda l'arena in 3D, senza acquistare", "Look at the arena in 3D without buying")
+	_purchase_btn.disabled = bool(row.get("unavailable", false)) or not bool(row.get("affordable", false)) or bool(row.get("owned", false)) or bool(row.get("accessible", false)) or bool(row.get("relocked", false))
+	_purchase_btn.text = _t("SBLOCCA ARENA  ›", "UNLOCK ARENA  ›") if not _purchase_btn.disabled else _short_state(row).to_upper()
+
+
+## The taster: the real arena (scenery, props, sky) in a small viewport of its own
+## world, the camera circling it. Built only when asked, freed as soon as it is left.
+func _start_arena_3d(arena_id: String) -> void:
+	_stop_arena_3d()
+	_info_panel.visible = false
+	_cover_frame.visible = true
+	_arena_viewport = SubViewport.new()
+	_arena_viewport.name = "EmporioArenaViewport"
+	_arena_viewport.own_world_3d = true
+	_arena_viewport.size = ARENA_VIEW_SIZE
+	_arena_viewport.msaa_3d = Viewport.MSAA_2X
+	_arena_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	_arena_view.add_child(_arena_viewport)
+	var arena := ArenaLibrary.build(arena_id)
+	if arena == null:
+		_stop_arena_3d()
+		return
+	_arena_viewport.add_child(arena)
+	_arena_camera = Camera3D.new()
+	_arena_camera.fov = 45.0
+	_arena_camera.far = 900.0
+	_arena_viewport.add_child(_arena_camera)
+	_arena_camera.current = true
+	_arena_orbit = 0.35
+	_place_arena_camera()
+	_arena_3d_id = arena_id
+	_arena_view.visible = true
+	_preview_cover.visible = false
+	_preview_fallback.visible = false
+	set_process(true)
+
+
+func _stop_arena_3d() -> void:
+	set_process(false)
+	var was_open := _arena_3d_id != ""
+	_arena_3d_id = ""
+	_arena_camera = null
+	if _arena_viewport != null:
+		_arena_viewport.queue_free()
+		_arena_viewport = null
+	if _arena_view != null:
+		_arena_view.visible = false
+	if was_open and _preview_title != null and _shop_kind == "arena":
+		_sync_preview()
+
+
+func arena_3d_id() -> String:
+	return _arena_3d_id
+
+
+func _process(delta: float) -> void:
+	if _arena_camera == null:
+		return
+	_arena_orbit += delta * ARENA_ORBIT_SPEED
+	_place_arena_camera()
+
+
+func _place_arena_camera() -> void:
+	if _arena_camera == null:
+		return
+	_arena_camera.position = Vector3(sin(_arena_orbit) * ARENA_ORBIT_RADIUS, ARENA_ORBIT_HEIGHT, cos(_arena_orbit) * ARENA_ORBIT_RADIUS)
+	_arena_camera.look_at(Vector3(0, 1.5, 0), Vector3.UP)
 
 
 func _challenge_text(challenge: Dictionary) -> String:
@@ -723,6 +894,13 @@ func preview_playing() -> bool:
 
 func _on_preview_pressed() -> void:
 	if confirm_visible() or _selected_id == "":
+		return
+	if _shop_kind == "arena":
+		if _arena_3d_id == _selected_id:
+			_stop_arena_3d()
+		else:
+			_start_arena_3d(_selected_id)
+			_sync_preview()
 		return
 	if _preview_track_id == _selected_id:
 		_stop_preview()
@@ -775,6 +953,20 @@ func _find_row(track_id: String) -> Dictionary:
 
 
 func _short_state(row: Dictionary) -> String:
+	if String(row.get("kind", "")) == "arena":
+		if bool(row.get("unavailable", false)):
+			return _t("Profilo non disponibile", "Profile unavailable")
+		if bool(row.get("relocked", false)):
+			return _t("Bloccata", "Locked")
+		if bool(row.get("earned", false)):
+			return _t("Sbloccata in carriera", "Unlocked in the career")
+		if bool(row.get("owned", false)):
+			return _t("Acquistata", "Purchased")
+		if bool(row.get("accessible", false)):
+			return _t("Sbloccata", "Unlocked")
+		if bool(row.get("affordable", false)):
+			return _t("Carriera o %d CC", "Career or %d CC") % int(row["price"])
+		return _t("Carriera · crediti insufficienti", "Career · not enough credits")
 	if String(row.get("kind", "")) == "outfit":
 		if bool(row.get("unavailable", false)):
 			return _t("Profilo non disponibile", "Profile unavailable")
@@ -827,6 +1019,16 @@ func _load_cover_for_track(track_id: String) -> Texture2D:
 	return texture
 
 
+func _load_cover_for_arena(row: Dictionary) -> Texture2D:
+	var key := "arena:" + String(row["id"])
+	if _cover_cache.has(key):
+		return _cover_cache[key]
+	var path := String(row.get("art_path", ""))
+	var texture: Texture2D = load(path) as Texture2D if path != "" and ResourceLoader.exists(path) else null
+	_cover_cache[key] = texture
+	return texture
+
+
 func _load_cover_for_outfit(row: Dictionary) -> Texture2D:
 	var key := "outfit:" + String(row["id"])
 	if _cover_cache.has(key):
@@ -857,7 +1059,7 @@ func _on_row_pressed(track_id: String) -> void:
 	for row in _rows:
 		if String(row["id"]) != track_id:
 			continue
-		if _shop_kind == "outfit" and bool(row.get("unavailable", false)):
+		if _shop_kind != "ost" and bool(row.get("unavailable", false)):
 			_status_label.text = _t("Profilo non disponibile: nessun addebito.", "Profile unavailable: nothing debited.")
 			return
 		if _shop_kind == "outfit" and not bool(row.get("supported", false)):
@@ -870,7 +1072,10 @@ func _on_row_pressed(track_id: String) -> void:
 			_status_label.text = _t("Già acquistato.", "Already owned.") if _shop_kind == "outfit" else _t("Già acquistata.", "Already owned.")
 			return
 		if bool(row.get("accessible", false)):
-			_status_label.text = _t("Già sbloccato tramite sfida o codice.", "Already unlocked by challenge or code.") if _shop_kind == "outfit" else _t("Sbloccata: disponibile nel Jukebox.", "Unlocked: available in the Jukebox.")
+			match _shop_kind:
+				"outfit": _status_label.text = _t("Già sbloccato tramite sfida o codice.", "Already unlocked by challenge or code.")
+				"arena": _status_label.text = _t("Già sbloccata in carriera o con codice: scegli l'arena prima della partita.", "Already unlocked by the career or a code: pick it before a match.")
+				_: _status_label.text = _t("Sbloccata: disponibile nel Jukebox.", "Unlocked: available in the Jukebox.")
 			return
 		if not bool(row.get("affordable", false)):
 			_status_label.text = _t("Crediti insufficienti.", "Not enough credits.")
@@ -881,8 +1086,14 @@ func _on_row_pressed(track_id: String) -> void:
 
 func _open_confirm(row: Dictionary) -> void:
 	_stop_preview()
+	_stop_arena_3d()
 	_pending_id = String(row["id"])
-	if _shop_kind == "outfit":
+	if _shop_kind == "arena":
+		_confirm_label.text = _t(
+			"Sbloccare l'arena «%s» per %d crediti? La carriera resta una via gratuita. Saldo: %d.",
+			"Unlock the arena \"%s\" for %d credits? The career remains a free route. Balance: %d."
+		) % [String(row["title"]), int(row["price"]), Economy.balance(store())]
+	elif _shop_kind == "outfit":
 		if bool(row.get("shop_only", false)):
 			_confirm_label.text = _t(
 				"Sbloccare l'outfit «%s» per %d crediti? Saldo: %d.",
@@ -906,7 +1117,11 @@ func _open_confirm(row: Dictionary) -> void:
 func _on_confirm_pressed() -> void:
 	if _pending_id == "":
 		return
-	var result: Dictionary = Economy.purchase_outfit(store(), _pending_id) if _shop_kind == "outfit" else Economy.purchase(store(), _pending_id)
+	var result: Dictionary
+	match _shop_kind:
+		"outfit": result = Economy.purchase_outfit(store(), _pending_id)
+		"arena": result = Economy.purchase_arena(store(), _pending_id)
+		_: result = Economy.purchase(store(), _pending_id)
 	_last_purchase = result
 	_confirm_layer.visible = false
 	_set_background_focus(true)
@@ -927,6 +1142,8 @@ func _on_cancel_pressed() -> void:
 func _purchase_status(result: Dictionary) -> String:
 	match String(result.get("reason", "")):
 		"purchased":
+			if _shop_kind == "arena":
+				return _t("Arena sbloccata! Sceglila prima della partita. Saldo: %d.", "Arena unlocked! Pick it before a match. Balance: %d.") % int(result.get("balance", 0))
 			if _shop_kind == "outfit":
 				return _t("Outfit sbloccato! Equipaggialo nel guardaroba. Saldo: %d.", "Outfit unlocked! Equip it in the wardrobe. Balance: %d.") % int(result.get("balance", 0))
 			return _t("Acquisto completato. Saldo: %d.", "Purchase complete. Balance: %d.") % int(result.get("balance", 0))
@@ -937,6 +1154,8 @@ func _purchase_status(result: Dictionary) -> String:
 				return _t("Outfit già acquistato.", "Outfit already purchased.")
 			return _t("Già acquistata.", "Already owned.")
 		"unlocked":
+			if _shop_kind == "arena":
+				return _t("Arena già sbloccata: nessun addebito.", "Arena already unlocked: nothing debited.")
 			if _shop_kind == "outfit":
 				return _t("Outfit già sbloccato: nessun addebito.", "Outfit already unlocked: nothing debited.")
 			return _t("Già sbloccata: nessun addebito.", "Already unlocked: nothing debited.")
@@ -984,11 +1203,13 @@ func _on_back_pressed() -> void:
 		return
 	_closing = true
 	_stop_preview()
+	_stop_arena_3d()
 	closed.emit()
 
 
 func _exit_tree() -> void:
 	_stop_preview()
+	_stop_arena_3d()
 
 
 ## The overlay's own input owner. Cancel/Escape closes the confirmation if one is open

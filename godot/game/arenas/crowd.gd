@@ -1,5 +1,13 @@
 extends Node3D
-## THE CROWD: billboarded sprite spectators on the stands, who react to the match.
+## THE CROWD: spectators on the stands, who react to the match.
+##
+## 2026-09-25, owner: the crowd is now the owner's five Meshy fans (`godot/assets/crowd/`,
+## ~1,600 triangles each), one MultiMesh per fan type, shirts tinted per spectator and all
+## motion in `crowd_fan.gdshader` (bob, lean in long rallies, jump on a point, torso
+## turning to the ball) — 60 spectators ~ 97k triangles in five draw calls. The athletes
+## are 3D models now, so the flat sprites below read as placeholders beside them. The
+## sprite crowd stays as the fallback when a fan GLB is missing (e.g. no LFS checkout).
+## The note below is the sprite design's own rationale, kept for that fallback.
 ##
 ## WHY SPRITES AND NOT MESHES. The stands alone cost ~20 fps for 919,856 triangles
 ## across two copies, and the furniture added 1,152,904 more. A crowd of modelled
@@ -69,6 +77,12 @@ static var enabled := true
 static var report: Dictionary = {}
 
 var _quads: Array[Sprite3D] = []
+## The 3D crowd: one MultiMeshInstance3D per fan type, sharing the uniforms below.
+var _fans: Array[MultiMeshInstance3D] = []
+var _fan_count := 0
+var _ball_z := 0.0
+const FAN_DIR := "res://assets/crowd/"
+const FAN_TYPES := 5
 ## Each spectator's own phase, so the rows do not bob in lockstep.
 var _phases: PackedFloat32Array = PackedFloat32Array()
 var _time := 0.0
@@ -90,11 +104,12 @@ static func build(parent: Node3D) -> Node3D:
 	if not enabled:
 		report["error"] = "disabled"
 		return crowd
-	crowd._populate()
-	report["spectators"] = crowd._quads.size()
-	report["triangles"] = crowd._quads.size() * 2
+	if not crowd._populate_3d():
+		crowd._populate()
+	report["spectators"] = crowd._quads.size() + crowd._fan_count
+	report["triangles"] = crowd._quads.size() * 2 + int(report.get("fan_triangles", 0))
 	print("CROWD spectators=%d triangles=%d rows=%d per_stand=%d height_m=%.2f error=%s" % [
-		crowd._quads.size(), crowd._quads.size() * 2, rows, per_stand, HEIGHT_M,
+		int(report["spectators"]), int(report["triangles"]), rows, per_stand, HEIGHT_M,
 		str(report["error"]),
 	])
 	return crowd
@@ -151,7 +166,84 @@ func _populate() -> void:
 			_phases.append(rng.randf() * TAU)
 
 
+## The 3D crowd over the same seat layout as `_populate()`. False (and nothing added)
+## when any fan GLB is missing, so the sprite crowd takes over.
+func _populate_3d() -> bool:
+	const ArenaKit := preload("res://game/arenas/arena_kit.gd")
+	var meshes: Array[Mesh] = []
+	var textures: Array[Texture2D] = []
+	for k in FAN_TYPES:
+		var scene := ArenaKit._load_scene(FAN_DIR + "fan_%d.glb" % (k + 1))
+		if scene == null:
+			return false
+		var mis: Array = scene.find_children("*", "MeshInstance3D", true, false)
+		if mis.is_empty():
+			return false
+		var mesh: Mesh = (mis[0] as MeshInstance3D).mesh
+		var mat := mesh.surface_get_material(0) as BaseMaterial3D
+		if mat == null or mat.albedo_texture == null:
+			return false
+		meshes.append(mesh)
+		textures.append(mat.albedo_texture)
+	var span: float = Bleachers.span_z()
+	var side_x: float = Court.half_len() + Bleachers.CORRIDOR_M
+	var stand_h: float = Bleachers.UNIT_HEIGHT_M * Bleachers.scale
+	var stand_d: float = Bleachers.UNIT_DEPTH_M * Bleachers.scale
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 20260917
+	var per_type: Array = []
+	for k in FAN_TYPES:
+		per_type.append([])
+	for side in [1.0, -1.0]:
+		for i in per_stand:
+			var row := i % rows
+			var seat := float(i / rows)
+			var seats_per_row := ceilf(float(per_stand) / float(rows))
+			var z := ((seat + 0.5) / seats_per_row - 0.5) * span + rng.randf_range(-0.12, 0.12)
+			var t := float(row) / float(maxf(1.0, float(rows - 1)))
+			# The seat surface of this row; the fan's pivot is its middle, so lift by half.
+			var y := stand_h * (0.30 + 0.38 * t) + HEIGHT_M * 0.5
+			var x := side_x + stand_d * (0.28 + 0.42 * t)
+			var yaw := -PI * 0.5 if side > 0.0 else PI * 0.5 # the model's front (+Z) to the court
+			yaw += rng.randf_range(-0.18, 0.18)
+			var xf := Transform3D(Basis(Vector3.UP, yaw).scaled(Vector3.ONE * HEIGHT_M), Vector3(x * side, y, z))
+			var shirt: Color = SHIRT_COLOURS[rng.randi() % SHIRT_COLOURS.size()]
+			(per_type[rng.randi() % FAN_TYPES] as Array).append([xf, Color(rng.randf(), shirt.r, shirt.g, shirt.b)])
+	var tris := 0
+	for k in FAN_TYPES:
+		var list: Array = per_type[k]
+		if list.is_empty():
+			continue
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.use_custom_data = true
+		mm.mesh = meshes[k]
+		mm.instance_count = list.size()
+		for i in list.size():
+			mm.set_instance_transform(i, list[i][0])
+			mm.set_instance_custom_data(i, list[i][1])
+		var mmi := MultiMeshInstance3D.new()
+		mmi.name = "Fans%d" % (k + 1)
+		mmi.multimesh = mm
+		var sm := ShaderMaterial.new()
+		sm.shader = preload("res://game/arenas/crowd_fan.gdshader")
+		sm.set_shader_parameter("albedo_tex", textures[k])
+		sm.set_shader_parameter("model_h", HEIGHT_M)
+		mmi.material_override = sm
+		# Seated people under a stand roof: their own shadow buys nothing at this size.
+		mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(mmi)
+		_fans.append(mmi)
+		_fan_count += list.size()
+		tris += meshes[k].get_faces().size() / 3 * list.size()
+	report["fan_triangles"] = tris
+	return true
+
+
 func _process(delta: float) -> void:
+	if not _fans.is_empty():
+		_process_3d(delta)
+		return
 	if _quads.is_empty():
 		return
 	_time += delta
@@ -176,12 +268,34 @@ func _process(delta: float) -> void:
 		quad.set_meta("bob", bob)
 
 
+func _process_3d(delta: float) -> void:
+	_time += delta
+	if _cheer_left > 0.0:
+		_cheer_left = maxf(0.0, _cheer_left - delta)
+	var gain := 1.0
+	if _cheer_left > 0.0:
+		gain = 1.0 + (CHEER_GAIN - 1.0) * (_cheer_left / CHEER_SECONDS)
+	elif _murmuring:
+		gain = MURMUR_GAIN
+	var jump := (_cheer_left / CHEER_SECONDS) if _cheer_left > 0.0 else 0.0
+	for mmi in _fans:
+		var sm := mmi.material_override as ShaderMaterial
+		sm.set_shader_parameter("t", _time)
+		sm.set_shader_parameter("bob", IDLE_BOB_M * minf(gain, 2.5))
+		sm.set_shader_parameter("rate", TAU * IDLE_BOB_HZ * (1.0 + 0.8 * (gain - 1.0) / CHEER_GAIN))
+		sm.set_shader_parameter("lean", 1.0 if _murmuring else 0.0)
+		sm.set_shader_parameter("jump", jump)
+		sm.set_shader_parameter("ball_z", _ball_z)
+
+
 ## Reads the match the way `game/match_audio.gd` reads it: the same state, the same
 ## tick, the same edge-from-totals derivation, because the simulation stores no
 ## "cheer now" flag. Presentation only — nothing here is read back by the sim.
 func observe(state, _tick: int) -> void:
-	if _quads.is_empty():
+	if _quads.is_empty() and _fans.is_empty():
 		return
+	if "ball" in state and state.ball != null:
+		_ball_z = Court.world_pos(float(state.ball.x), float(state.ball.y), 0.0).z
 
 	# A point landed: totals rose. The very first observation only primes the
 	# baseline, or the crowd would cheer the score it walked in on.
