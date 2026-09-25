@@ -155,12 +155,18 @@ func _realistic_prefs() -> Dictionary:
 	# non-default for the same reason. The key order is `PREFS_DEFAULTS`'s, because
 	# the comparison below is `JSON.stringify` equality.
 	return {
+		# PORT ADDITION: the match camera preset (`game/court.gd::CAMERAS`).
+		"cameraPreset": "broadcast",
 		"athleteId": "maestro",
 		"arenaId": "arena-centrale",
 		"mode": "career",
 		"tournamentRound": 2,
 		"muted": false,
 		"volume": 0.35,
+		# PORT ADDITIONS: the Music bus level, its mute, and the now-playing toast.
+		"musicVolume": 0.6,
+		"musicMuted": true,
+		"nowPlaying": false,
 		"controlMode": "manual",
 		"gamepadDeadzone": 0.22,
 		"vibration": false,
@@ -295,7 +301,7 @@ func _schema_anchors() -> void:
 	# for every field collectPrefs writes, plus the audio defaults, plus the port's
 	# own additions. Counted apart, so a reference field that goes missing still
 	# fails even while the port adds keys of its own.
-	const PORT_PREF_KEYS := ["pacePreset"]
+	const PORT_PREF_KEYS := ["cameraPreset", "musicVolume", "musicMuted", "nowPlaying", "pacePreset"]
 	var reference_prefs := Schema.PREFS_DEFAULTS.size() - PORT_PREF_KEYS.size()
 	check_eq("prefs defaults carry all 17 collectPrefs fields", reference_prefs, 17)
 	for key in PORT_PREF_KEYS:

@@ -46,11 +46,18 @@ func run() -> void:
 
 
 func _catalog() -> void:
-	audit.check_eq(Catalog.all_ids().size(), 47, "catalog/47_tracks")
+	# Counts as of 2026-09-26 (vocal suite, Bandeja Chic x3, Por Tres): update them when
+	# the soundtrack catalog grows on purpose.
+	audit.check_eq(Catalog.all_ids().size(), 102, "catalog/102_tracks")
 	audit.check_eq(Catalog.starter_ids().size(), 4, "catalog/4_starters")
-	audit.check_eq(Catalog.shop_ids().size(), 43, "catalog/43_shop_items")
-	audit.check_eq(int(Catalog.catalog_report()["standard"]), 18, "catalog/18_standard")
-	audit.check_eq(int(Catalog.catalog_report()["special"]), 25, "catalog/25_special")
+	audit.check_eq(Catalog.shop_ids().size(), 82, "catalog/82_shop_items")
+	var report: Dictionary = Catalog.catalog_report()
+	audit.check_eq(int(report["standard"]), 33, "catalog/33_standard")
+	audit.check_eq(int(report["special"]), 30, "catalog/30_special")
+	audit.check_eq(int(report["vocal"]), 19, "catalog/19_vocal")
+	# Every shop item sits on one of the three price rungs, none in between.
+	audit.check_eq(int(report["standard"]) + int(report["special"]) + int(report["vocal"]), Catalog.shop_ids().size(), "catalog/every_item_on_a_rung")
+	audit.check_eq(Catalog.price_of("ost_vocal_por_tres"), Catalog.PRICE_VOCAL, "catalog/vocal_400")
 	audit.check_eq(Catalog.price_of("ost_officina"), 150, "catalog/arena_150")
 	audit.check_eq(Catalog.price_of("ost_sawano_titan_breach"), 250, "catalog/sawano_250")
 	audit.check_eq(Catalog.price_of("ost_menu"), 0, "catalog/starter_not_sold")
@@ -79,7 +86,7 @@ func _legacy_profile() -> void:
 	store.write_group("career", {"season": 4, "wins": 11, "unlockAll": false})
 	var init: Dictionary = Economy.ensure_initialized(store)
 	audit.check_true(bool(init["ok"]) and bool(init["granted"]), "legacy/granted_once")
-	audit.check_eq((Economy.owned_ids(store) as Array).size(), 47, "legacy/owns_catalog")
+	audit.check_eq((Economy.owned_ids(store) as Array).size(), Catalog.all_ids().size(), "legacy/owns_catalog")
 	audit.check_eq(Economy.balance(store), 0, "legacy/access_not_credits")
 
 
@@ -260,7 +267,7 @@ func _host() -> void:
 	if overlay == null:
 		return
 	audit.check_true(bool(menu.call("_overlay_owns_input")), "host/overlay_owns_input")
-	audit.check_eq((overlay.call("rows") as Array).size(), 43, "host/43_rows")
+	audit.check_eq((overlay.call("rows") as Array).size(), Catalog.shop_ids().size(), "host/one_row_per_shop_item")
 	var target := ""
 	for row in (overlay.call("rows") as Array):
 		if bool(row.get("affordable", false)) and not bool(row.get("owned", false)):
