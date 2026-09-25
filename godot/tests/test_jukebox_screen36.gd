@@ -13,7 +13,7 @@ func _initialize() -> void:
 		
 	var track_count: int = juke._track_buttons.size()
 	print("Track buttons count: %d" % track_count)
-	assert(track_count == 78, "Jukebox should display exactly 78 tracks, got %d" % track_count)
+	assert(track_count == 83, "Jukebox should display exactly 83 tracks, got %d" % track_count)
 	
 	# Find the index of ost_sawano_titan_breach
 	var all_ids := SoundtrackManager.all_track_ids()

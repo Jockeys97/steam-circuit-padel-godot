@@ -75,6 +75,8 @@ var _genre_values: Array[String] = []
 var _selected_genre := ""
 var _copy_context: Button
 var _move_context: Button
+var _search_input: LineEdit = null
+var _search_query: String = ""
 ## Emitted when the player tries to play a LOCKED track: the host routes this to the
 ## Emporio shop. The screen itself never opens another screen.
 signal shop_requested(track_id: String)
@@ -206,7 +208,7 @@ func _build_ui() -> void:
 	add_child(_shell)
 	_shell.setup("jukebox")
 	_shell.set_title_text("JUKEBOX & SOUND TEST")
-	_shell.set_subtitle_text("Colonna sonora originale — 78 tracce (Standard, Epiche, Sawano, Dragon Ball GT, Automata, Hunter x Hunter, Menu Legends)")
+	_shell.set_subtitle_text("Colonna sonora originale — 82 tracce (Standard, Epiche, Sawano, Dragon Ball GT, Automata, Hunter x Hunter, Menu Legends, Canzoni Cantate)")
 	_shell.set_back_target("menu")
 
 	var back_btn: Button = _shell.back_control()
@@ -325,6 +327,30 @@ func _build_favorites(parent: VBoxContainer) -> void:
 	_genre.pressed.connect(_toggle_genre_popup)
 	parent.add_child(_genre)
 	_build_genre_popup()
+
+	# Search bar
+	var search_box := HBoxContainer.new()
+	search_box.name = "SearchContainer"
+	search_box.size_flags_horizontal = SIZE_EXPAND_FILL
+	parent.add_child(search_box)
+
+	_search_input = LineEdit.new()
+	_search_input.name = "SearchInput"
+	_search_input.placeholder_text = "🔍 Cerca traccia per nome..."
+	_search_input.clear_button_enabled = true
+	_search_input.size_flags_horizontal = SIZE_EXPAND_FILL
+	_search_input.custom_minimum_size.y = 34
+	_search_input.add_theme_font_size_override("font_size", 12)
+	_search_input.add_theme_color_override("font_color", INK)
+	_search_input.add_theme_color_override("placeholder_color", MUTED)
+	_search_input.add_theme_color_override("caret_color", CYAN)
+	_search_input.add_theme_stylebox_override("normal", _panel_style(Color(0.015, 0.05, 0.1, 0.85), LINE, 6, 1))
+	_search_input.add_theme_stylebox_override("focus", _panel_style(Color(0.025, 0.08, 0.16, 0.95), CYAN, 6, 1))
+	_search_input.text_changed.connect(_on_search_text_changed)
+	_search_input.text_submitted.connect(_on_search_submitted)
+	_search_input.gui_input.connect(_on_search_gui_input)
+	search_box.add_child(_search_input)
+
 	var actions := HBoxContainer.new()
 	actions.add_theme_constant_override("separation", 4)
 	parent.add_child(actions)
@@ -519,8 +545,14 @@ func _visible_ids() -> Array[String]:
 	var ids: Array[String] = []
 	var favorites := MusicPreferences.favorites(_economy(), _scope)
 	for id in _scope_genre_ids():
-		if not _show_favorites_only or favorites.has(id):
-			ids.append(id)
+		if _show_favorites_only and not favorites.has(id):
+			continue
+		if _search_query != "":
+			var meta := SoundtrackManager.track_info(id)
+			var title := String(meta.get("title", id)).to_lower()
+			if not title.contains(_search_query) and not id.to_lower().contains(_search_query):
+				continue
+		ids.append(id)
 	return ids
 
 func _playlist_ids() -> Array[String]:
@@ -528,8 +560,14 @@ func _playlist_ids() -> Array[String]:
 	var favorites := MusicPreferences.favorites(_economy(), _scope)
 	var only := MusicPreferences.only(_economy(), _scope)
 	for id in _scope_genre_ids():
-		if not only or favorites.has(id):
-			result.append(id)
+		if only and not favorites.has(id):
+			continue
+		if _search_query != "":
+			var meta := SoundtrackManager.track_info(id)
+			var title := String(meta.get("title", id)).to_lower()
+			if not title.contains(_search_query) and not id.to_lower().contains(_search_query):
+				continue
+		result.append(id)
 	return result
 
 func _filter_playlist() -> void:
@@ -542,12 +580,31 @@ func _filter_playlist() -> void:
 	var classic_visible := MusicPreferences.belongs(_economy(), "classic_match", _scope) and _selected_genre == ""
 	if _show_favorites_only:
 		classic_visible = classic_visible and MusicPreferences.favorites(_economy(), _scope).has("classic_match")
+	if _search_query != "":
+		classic_visible = classic_visible and ("tema originale".contains(_search_query) or "classic".contains(_search_query))
 	_classic_row.visible = classic_visible
 	_sync_favorites()
 	_playlist_hint.text = ""
 	_playlist_hint.visible = false
 	if ids.is_empty() and not _classic_row.visible:
-		_playlist_hint.text = "Nessun preferito in questa playlist." if _show_favorites_only else "Nessun brano di questo genere nella scheda. Prova l'altra scheda o Tutti i generi."
+		if _search_query != "":
+			var other_scope := "menu" if _scope == "match" else "match"
+			var exists_in_other := false
+			for id in _track_ids:
+				if MusicPreferences.belongs(_economy(), id, other_scope):
+					var title := String(SoundtrackManager.track_info(id).get("title", id)).to_lower()
+					if title.contains(_search_query) or id.to_lower().contains(_search_query):
+						exists_in_other = true
+						break
+			if exists_in_other:
+				var other_label := "Musiche menu" if other_scope == "menu" else "Musiche partita"
+				_playlist_hint.text = "Nessun risultato qui. Trovato brano in \"%s\"!" % other_label
+			else:
+				_playlist_hint.text = "Nessun brano corrisponde a \"%s\"." % _search_query
+		elif _show_favorites_only:
+			_playlist_hint.text = "Nessun preferito in questa playlist."
+		else:
+			_playlist_hint.text = "Nessun brano di questo genere nella scheda. Prova l'altra scheda o Tutti i generi."
 		_playlist_hint.visible = true
 	if not ids.is_empty() and not ids.has(_track_ids[_selected_idx]):
 		_select_track(_track_ids.find(ids[0]))
@@ -557,6 +614,24 @@ func _filter_playlist() -> void:
 	_update_transfer_buttons()
 	if _playlist_preview and not _playlist_ids().has(_manager.current_track_id()):
 		_manager.stop(0.0)
+
+func _on_search_text_changed(new_text: String) -> void:
+	_search_query = new_text.strip_edges().to_lower()
+	_filter_playlist()
+
+func _on_search_submitted(_text: String) -> void:
+	var ids := _visible_ids()
+	if not ids.is_empty():
+		var target_idx := _track_ids.find(ids[0])
+		if target_idx >= 0 and target_idx < _track_buttons.size():
+			_track_buttons[target_idx].grab_focus()
+
+func _on_search_gui_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		if _search_input != null and _search_input.text != "":
+			_search_input.text = ""
+			_on_search_text_changed("")
+			get_viewport().set_input_as_handled()
 
 func _play_playlist(direction: int) -> void:
 	var ids := _playlist_ids().filter(func(id): return not is_locked(id) and SoundtrackManager.has_track(id))
@@ -1053,6 +1128,8 @@ func _category_color(cat_str: String) -> Color:
 		return Color(0.88, 0.95, 0.82) # Ethereal pale sage / ivory
 	elif cat_str.begins_with("Epico"):
 		return Color(1.0, 0.82, 0.2)
+	elif cat_str.begins_with("Canzoni Cantate") or cat_str.begins_with("Vocal"):
+		return Color(1.0, 0.35, 0.75) # Neon magenta / rose
 	return Color(0.3, 0.8, 0.95)
 
 

@@ -134,6 +134,9 @@ var aiWrongFooted: bool = false
 var aiReflexTried: bool = false
 ## The strike in progress is a reflex block: a short, slow, central volley.
 var aiReflexBlock: bool = false
+## Quality of the strike in progress when a human struck it, -1 otherwise (the AI
+## partner of the human, or the AI). Read by the "ball in the middle" rule.
+var humanShotQuality: float = -1.0
 var playerX3Recovery: float = 0.0
 var playerSwingBuffer: float = 0.0
 var queuedShotPower: float = 1.0

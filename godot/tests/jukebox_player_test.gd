@@ -123,7 +123,7 @@ func _run_checks(headless: bool) -> void:
 ## contracts the existing catalogue suite pins.
 func _check_identity_and_badges(juke: Control) -> void:
 	var ids := _all_ids()
-	_check(juke._track_buttons.size() == 78, "catalogo: 78 righe di lista (got %d)" % juke._track_buttons.size())
+	_check(juke._track_buttons.size() == 83, "catalogo: 83 righe di lista (got %d)" % juke._track_buttons.size())
 
 	var sawano_idx := ids.find(SAWANO_ID)
 	juke._select_track(sawano_idx)

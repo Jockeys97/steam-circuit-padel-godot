@@ -19,9 +19,9 @@ func _initialize() -> void:
 func _run() -> void:
 	print("[soundtrack_manager_test] Starting verification suite...")
 
-	# 1. Catalog integrity & count (78 OST tracks: 22 standard + 8 epic + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends)
+	# 1. Catalog integrity & count (83 OST tracks: 22 standard + 8 epic + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends + 5 Canzoni Cantate)
 	var all_tracks := SoundtrackManager.all_track_ids()
-	_assert_eq(all_tracks.size(), 78, "Catalog contains exactly 78 distinct OST track IDs")
+	_assert_eq(all_tracks.size(), 83, "Catalog contains exactly 83 distinct OST track IDs")
 
 	# 2. Frozen 9 Arena Mappings
 	_assert_eq(SoundtrackManager.track_id_for_arena("officina"), "ost_officina", "Arena officina maps to ost_officina")
@@ -120,6 +120,11 @@ func _run() -> void:
 	_assert_eq(SoundtrackManager.track_id_for_context("menu_champions_pavilion"), "ost_menu_champions_pavilion", "Context menu_champions_pavilion maps to ost_menu_champions_pavilion")
 	_assert_eq(SoundtrackManager.track_id_for_context("menu_orbital_vanguard"), "ost_menu_orbital_vanguard", "Context menu_orbital_vanguard maps to ost_menu_orbital_vanguard")
 	_assert_eq(SoundtrackManager.track_id_for_context("menu_third_strike"), "ost_menu_third_strike", "Context menu_third_strike maps to ost_menu_third_strike")
+	_assert_eq(SoundtrackManager.track_id_for_context("vocal_overdrive_line"), "ost_vocal_overdrive_line", "Context vocal_overdrive_line maps to ost_vocal_overdrive_line")
+	_assert_eq(SoundtrackManager.track_id_for_context("vocal_break_point_riot"), "ost_vocal_break_point_riot", "Context vocal_break_point_riot maps to ost_vocal_break_point_riot")
+	_assert_eq(SoundtrackManager.track_id_for_context("vocal_reach_for_the_sun"), "ost_vocal_reach_for_the_sun", "Context vocal_reach_for_the_sun maps to ost_vocal_reach_for_the_sun")
+	_assert_eq(SoundtrackManager.track_id_for_context("vocal_neon_velocity"), "ost_vocal_neon_velocity", "Context vocal_neon_velocity maps to ost_vocal_neon_velocity")
+	_assert_eq(SoundtrackManager.track_id_for_context("vocal_girei"), "ost_vocal_girei", "Context vocal_girei maps to ost_vocal_girei")
 
 	# 6. Candidate Paths Formatting
 	var paths := SoundtrackManager.candidate_paths("ost_officina")
@@ -162,6 +167,16 @@ func _run() -> void:
 
 	sm.stop(0.0)
 	_assert_eq(sm.get_current_track_id(), "", "stop() resets current track ID")
+
+	# 10. Preview offsets for vocal tracks and defaults
+	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_overdrive_line"), 26.0, "Overdrive Line preview offset is 26.0s")
+	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_break_point_riot"), 40.0, "Break Point Riot preview offset is 40.0s")
+	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_reach_for_the_sun"), 40.0, "Reach for the Sun preview offset is 40.0s")
+	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_neon_velocity"), 60.0, "Neon Velocity preview offset is 60.0s")
+	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_girei"), 115.5, "Girei preview offset is 115.5s")
+	_assert_eq(SoundtrackManager.preview_offset("ost_hyori_ittai_vocal"), 18.7, "Hyori Ittai preview offset is 18.7s")
+	_assert_eq(SoundtrackManager.preview_offset("ost_officina"), 0.0, "Standard track offset defaults to 0.0s")
+	_assert_eq(SoundtrackManager.preview_offset("non_existent_track"), 0.0, "Unknown track offset defaults to 0.0s")
 
 	sm.queue_free()
 	await process_frame

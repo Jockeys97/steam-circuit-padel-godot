@@ -66,6 +66,8 @@ const Config := preload("res://game/match_config.gd")
 const Gate := preload("res://game/content_gate.gd")
 const Pace := preload("res://src/sim/pace.gd")
 const Locale := preload("res://src/locale/locale.gd")
+const CardFocusRing := preload("res://src/ui/components/CardFocusRing.gd")
+const UiMotionPolicy := preload("res://src/ui/accessibility/UiMotionPolicy.gd")
 
 const SCREEN_ID := "modes"
 
@@ -182,6 +184,13 @@ const LOCKED_CARD_ALPHA := 0.55
 ## the card rises 3 px over the reference's own 0.15 s, ease-out.
 const CARD_LIFT_PX := 3.0
 const CARD_LIFT_SECONDS := 0.15
+## A pad focus is intentionally stronger than pointer hover: an outside 4 px
+## frame, a 3 px gap and a compact glow. The mode already chosen keeps its own
+## thinner card border, so the two states remain legible at the same time.
+const PAD_FOCUS_WIDTH := 4
+const PAD_FOCUS_GAP := 3.0
+const PAD_FOCUS_GLOW_SIZE := 10
+const PAD_FOCUS_GLOW_ALPHA := 0.35
 ## `#difficultySeg button.is-active { box-shadow: 0 0 18px var(--step-glow) }`
 ## (`styles.css:2303-2305`): the active chip's glow is the rung's own colour at the
 ## rung's own alpha — `--step-glow` is green 0.4 / cyan 0.42 / gold 0.42 / coral 0.45
@@ -258,9 +267,11 @@ var _difficulty_buttons: Dictionary = {}
 var _length_buttons: Dictionary = {}
 var _pace_buttons: Dictionary = {}
 var _focus_specs: Dictionary = {}
+var _motion: UiMotionPolicy = null
 
 
 func _ready() -> void:
+	_hydrate_motion()
 	_style_chrome()
 	for node_name in HEADER_TEXT_SLOTS:
 		var header_node := _control(String(node_name))
@@ -339,6 +350,7 @@ func apply_capture_state(state_id: String) -> bool:
 ## Re-reads every seam the screen renders and redraws. Called on entry, on a
 ## language change and by the capture states.
 func refresh_data() -> void:
+	_hydrate_motion()
 	_rows = _rows_now()
 	_refresh_cards()
 	_refresh_selection()
@@ -530,6 +542,16 @@ func _make_card(row: Dictionary) -> Control:
 	fixture.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	fixture.visible = false
 	stack.add_child(fixture)
+	# Keep the controller's location unmistakable without changing the card's
+	# selected-mode frame or giving pointer hover the same emphasis.
+	CardFocusRing.attach(card)
+	var ring_box := CardFocusRing.ring_style_of(card)
+	if ring_box != null:
+		var cyan := CardFocusRing.palette_of(card, "cyan")
+		ring_box.set_border_width_all(PAD_FOCUS_WIDTH)
+		ring_box.set_expand_margin_all(PAD_FOCUS_GAP + float(PAD_FOCUS_WIDTH))
+		ring_box.shadow_color = Color(cyan, PAD_FOCUS_GLOW_ALPHA)
+		ring_box.shadow_size = PAD_FOCUS_GLOW_SIZE
 
 	_cards[id] = card
 	return card
@@ -1005,11 +1027,21 @@ func _on_card_focus(mode_id: String) -> void:
 ## the two input methods still land on the same frame.
 func _refresh_card_highlight(mode_id: String) -> void:
 	var card: Control = _cards.get(mode_id, null)
-	if card == null or mode_locked_shown(mode_id):
+	if card == null:
+		return
+	if mode_locked_shown(mode_id):
+		CardFocusRing.set_focused(card, false, _motion)
 		return
 	var highlighted := card.has_focus() or bool(_card_pointer_hover.get(mode_id, false))
 	card.add_theme_stylebox_override("panel", _card_box(highlighted, _card_is_selected(mode_id)))
 	_animate_card_lift(mode_id, highlighted)
+	CardFocusRing.set_focused(card, card.has_focus(), _motion)
+
+
+func _hydrate_motion() -> void:
+	if _motion == null:
+		_motion = UiMotionPolicy.new()
+	_motion.apply_prefs(ModesSave.profile(Config.save_store()).get("prefs", {}))
 
 
 ## The card whose mode the session is in: `Config.pending_mode`, the seam `select_mode`

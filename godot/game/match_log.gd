@@ -189,7 +189,7 @@ func _your_shot(state) -> Dictionary:
 		if rest == before.slice(0, rest.size()):
 			fresh = now.slice(0, i)
 			break
-	out["events"] = fresh.filter(func(e): return String(e).begins_with("evShot") or String(e).begins_with("evLob") or String(e).begins_with("evDefensive") or String(e).begins_with("evGlobo") or String(e) == "evWallExit")
+	out["events"] = fresh.filter(func(e): return String(e).begins_with("evShot") or String(e).begins_with("evLob") or String(e).begins_with("evDefensive") or String(e).begins_with("evGlobo") or String(e) in ["evWallExit", "evMiddleBall", "evReflexBlock"])
 	var b = state.ball
 	if String(b.shotType) in ["lob", "defensive-lob", "globo"]:
 		var f: Array = Glass.forecast({"x": b.x, "y": b.y, "z": b.z, "vx": b.vx, "vy": b.vy, "vz": b.vz,

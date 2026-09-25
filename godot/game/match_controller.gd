@@ -106,7 +106,11 @@ const MatchLog := preload("res://game/match_log.gd")
 ## at Leggenda it used to be far stronger; it almost never comes to the net". The
 ## scripted-player measurement had said "as strong, as much at the net": it does not
 ## represent a human opponent, so it cannot be the judge of this change.
-const AI_GLASS_PLAY := false
+## ON again 2026-09-25, owner's call after three play tests with it on against
+## Leggenda (7-20, 9-24 points; before the wall-exit timing fix 0-3 per match): the
+## wall-exit fix removed what made its glass play weak (the AI's own post-glass
+## contacts were graded as "passed").
+const AI_GLASS_PLAY := true
 ## The owner's play-test recorder (`game/match_log.gd`): null unless the game was
 ## launched with PADEL_MATCH_LOG=1. Launching with PADEL_AI_GLASS=1 / =0 overrides
 ## AI_GLASS_PLAY for that session, so both AIs can be tried without editing code.

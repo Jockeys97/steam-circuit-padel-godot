@@ -19,7 +19,8 @@ func run():
 		return
 	root.size = Vector2i(1280,720)
 	Config.save_dir = "user://heritage-test-%s" % Time.get_ticks_usec()
-	for id in ["locomotive","clockwork"]:
+	# `locomotive` was rebuilt as "Sopraelevata della Luna" (moonlit_highway_test.gd).
+	for id in ["clockwork"]:
 		var arena = Arena.build(id)
 		root.add_child(arena)
 		var name := "LocomotiveDepot" if id == "locomotive" else "ClockworkFactory"

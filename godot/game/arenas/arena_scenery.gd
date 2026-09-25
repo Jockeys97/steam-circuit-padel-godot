@@ -228,6 +228,13 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 		for child in root.get_children():
 			if String(child.name).begins_with("Backdrop"):
 				(child as Node3D).hide()
+		if id == "aurora":
+			# Aurora's night sky, and only Aurora's, gets the occasional shooting
+			# star: real geometry on a 900 m arc, where the sky-facing cameras can
+			# see it and no other view can. See `aurora_shooting_stars.gd`.
+			var stars := preload("res://game/arenas/aurora_shooting_stars.gd").new()
+			stars.name = "AuroraShootingStars"
+			root.add_child(stars)
 	if id == "egeo":
 		preload("res://game/arenas/egeo_environment.gd").build(root)
 	if id in ["officina","locomotive","clockwork"]:
@@ -237,6 +244,9 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 				(child as Node3D).hide()
 		if id == "officina":
 			preload("res://game/arenas/steam_workshop.gd").build(root)
+		elif id == "locomotive":
+			# Rebuilt 2026-09-25 as "Sopraelevata della Luna": night skyway, traffic, skyline.
+			preload("res://game/arenas/moonlit_highway.gd").build(root, parent)
 		else:
 			var hall := preload("res://game/arenas/heritage_hall.gd").new()
 			root.add_child(hall)
@@ -245,8 +255,8 @@ static func build(parent: Node3D, id: String, arena: Dictionary, preset: String)
 		if surround != null:
 			var workshop_floor := ShaderMaterial.new()
 			workshop_floor.shader = preload("res://game/arenas/workshop_surface.gdshader")
-			workshop_floor.set_shader_parameter("tint",Color("20262d"))
-			workshop_floor.set_shader_parameter("floor_tiles",true)
+			workshop_floor.set_shader_parameter("tint",Color("11151d") if id == "locomotive" else Color("20262d"))
+			workshop_floor.set_shader_parameter("floor_tiles",id != "locomotive")
 			surround.material_override = workshop_floor
 	return root
 

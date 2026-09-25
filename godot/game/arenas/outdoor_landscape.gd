@@ -1,7 +1,8 @@
 extends RefCounted
-## Static peripheral landscape: no gameplay nodes, animation, lights or shadows.
+## Peripheral landscape: no gameplay nodes, scripted animation, lights or shadows.
 const Shapes = preload("res://game/arenas/egeo_environment.gd")
 const ArenaLook = preload("res://game/arenas/arena_look.gd")
+const CommunityProps = preload("res://game/arenas/community_props.gd")
 
 static func build(scenery: Node3D, id: String) -> void:
 	var root := Node3D.new()
@@ -31,8 +32,10 @@ static func build(scenery: Node3D, id: String) -> void:
 			ridge.rotation.y = angle
 	if id in ["torii", "medina", "aurora"]:
 		_build_distant_landmark(root, id)
+	CommunityProps.build(root, id)
 	if id == "carioca":
 		_build_sugarloaf(root)
+		_build_carioca_palms(root)
 		var water := ShaderMaterial.new()
 		water.shader = preload("res://game/arenas/egeo_water.gdshader")
 		water.set_shader_parameter("coast_extent", Vector2(40.0, 38.0))
@@ -79,6 +82,7 @@ static func build(scenery: Node3D, id: String) -> void:
 				Shapes.box(root, "LanternCap", Vector3(1.0,0.16,1.0), pos+Vector3(0,1.45,0), stone)
 	elif id == "aurora":
 		_build_aurora_terrain(root)
+		preload("res://game/arenas/aurora_details.gd").build(root)
 		var basalt := Shapes.material(Color("344650"))
 		var snow := Shapes.material(Color("a4b7bf"))
 		# Broken basalt clusters, outside the stands; no animated particles or lights.
@@ -219,6 +223,41 @@ static func _build_sugarloaf(root: Node3D) -> void:
 	mountain.scale = Vector3.ONE * factor
 	# Offset landmark leaves the centre sightline and the whole playable footprint clear.
 	mountain.position = Vector3(-62.0, -0.5 - bounds.position.y * factor, -145.0)
+
+
+## A coastal palm balances the existing vegetation cluster across the court.
+## It adds no collision, script work or real-time shadows to the match.
+static func _build_carioca_palms(root: Node3D) -> void:
+	var scene := load("res://assets/arenas/carioca/community_palm.glb") as PackedScene
+	if scene == null:
+		return
+	var palm := scene.instantiate() as Node3D
+	if palm == null:
+		return
+	palm.name = "CommunityPalm_1"
+	root.add_child(palm)
+	var bounds := AABB()
+	var first := true
+	for child in palm.find_children("*", "MeshInstance3D", true, false):
+		var mesh := child as MeshInstance3D
+		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var transform := mesh.transform
+		var ancestor := mesh.get_parent() as Node3D
+		while ancestor != palm and ancestor != null:
+			transform = ancestor.transform * transform
+			ancestor = ancestor.get_parent() as Node3D
+		var local := transform * mesh.get_aabb()
+		bounds = local if first else bounds.merge(local)
+		first = false
+	if first or bounds.size.y <= 0.0:
+		palm.queue_free()
+		return
+	var factor := 2.8 / bounds.size.y
+	palm.scale = Vector3.ONE * factor
+	var center := Vector2(12.8, -13.8)
+	palm.position = Vector3(center.x - (bounds.position.x + bounds.size.x * 0.5) * factor,
+		-0.5 - bounds.position.y * factor,
+		center.y - (bounds.position.z + bounds.size.z * 0.5) * factor)
 
 
 static func ridge_mesh(radius: float, height: float, seed: int) -> ArrayMesh:

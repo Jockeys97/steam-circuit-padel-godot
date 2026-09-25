@@ -47,7 +47,7 @@ const INK := Color(0.9647059, 0.96862745, 0.98431373)
 const MUTED := Color(1.0, 1.0, 1.0, 0.48)
 const LINE := Color(1.0, 1.0, 1.0, 0.12)
 const COVERS_DIR := "res://assets/images/jukebox_covers/"
-const FILTERS := ["all", "standard", "special"]
+const FILTERS := ["all", "standard", "special", "vocal"]
 const PREVIEW_SECONDS := 15.0
 
 var _store: RefCounted = null
@@ -490,6 +490,7 @@ func _filter_text(key: String) -> String:
 	match key:
 		"standard": return _t("Circuito", "Circuit")
 		"special": return _t("Speciali", "Special")
+		"vocal": return _t("Cantate", "Vocal")
 		_: return _t("Tutte", "All")
 
 
@@ -513,8 +514,12 @@ func _matches_filter(row: Dictionary) -> bool:
 		return true
 	if _active_filter == "all":
 		return true
-	var special := Catalog.SPECIAL_CATEGORIES.has(String(row.get("category", "")))
-	return special if _active_filter == "special" else not special
+	var category := String(row.get("category", ""))
+	if _active_filter == "vocal":
+		return Catalog.VOCAL_CATEGORIES.has(category)
+	if _active_filter == "special":
+		return Catalog.SPECIAL_CATEGORIES.has(category)
+	return Catalog.STANDARD_CATEGORIES.has(category)
 
 
 func _make_card(row: Dictionary, index: int) -> Button:
@@ -736,7 +741,10 @@ func _on_preview_pressed() -> void:
 	_preview_track_id = _selected_id
 	preview_state_changed.emit(true)
 	_preview_player.stream = stream
-	_preview_player.play()
+	var start_offset: float = Soundtrack.preview_offset(_selected_id)
+	if stream.get_length() > 0.0 and start_offset >= stream.get_length():
+		start_offset = 0.0
+	_preview_player.play(start_offset)
 	if not _preview_player.playing:
 		_stop_preview()
 		_status_label.text = _t("Impossibile avviare l'anteprima.", "Could not start preview.")

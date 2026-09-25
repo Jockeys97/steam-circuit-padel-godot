@@ -35,6 +35,7 @@ const STARTER_IDS: Array = ["ost_menu", "ost_roster", "ost_training", "ost_victo
 ## and a special (epic/anime suite) track.
 const PRICE_STANDARD: int = 150
 const PRICE_SPECIAL: int = 250
+const PRICE_VOCAL: int = 400
 
 ## Category -> price. Read left to right; the FIRST matching rung wins. The categories
 ## are the exact strings `soundtrack_manager.gd::TRACK_METADATA` carries.
@@ -49,6 +50,9 @@ const SPECIAL_CATEGORIES: Array = [
 	"Epico / Anime Special",
 	"Sawano / Titan Special",
 	"Dragon Ball GT / 90s Anime",
+]
+const VOCAL_CATEGORIES: Array = [
+	"Canzoni Cantate",
 ]
 
 ## Achievement-linked tracks that must NOT be sold. Empty on purpose: see the header.
@@ -97,10 +101,12 @@ static func price_of(track_id: String) -> int:
 	if not is_known(track_id) or is_starter(track_id) or is_excluded(track_id):
 		return 0
 	var category := category_of(track_id)
-	if STANDARD_CATEGORIES.has(category):
-		return PRICE_STANDARD
+	if VOCAL_CATEGORIES.has(category):
+		return PRICE_VOCAL
 	if SPECIAL_CATEGORIES.has(category):
 		return PRICE_SPECIAL
+	if STANDARD_CATEGORIES.has(category):
+		return PRICE_STANDARD
 	return 0
 
 
@@ -162,9 +168,13 @@ static func catalog_report() -> Dictionary:
 		by_category[category] = int(by_category.get(category, 0)) + 1
 	var standard := 0
 	var special := 0
+	var vocal := 0
 	for id in shop_ids():
-		if price_of(String(id)) == PRICE_STANDARD:
+		var p := price_of(String(id))
+		if p == PRICE_STANDARD:
 			standard += 1
+		elif p == PRICE_VOCAL:
+			vocal += 1
 		else:
 			special += 1
 	return {
@@ -173,6 +183,7 @@ static func catalog_report() -> Dictionary:
 		"shop_items": shop_ids().size(),
 		"standard": standard,
 		"special": special,
+		"vocal": vocal,
 		"excluded": EXCLUDED_IDS.size(),
 		"by_category": by_category,
 	}

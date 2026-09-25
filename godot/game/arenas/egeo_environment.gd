@@ -56,7 +56,49 @@ static func build(scenery: Node3D) -> void:
 			cap.scale.y = 0.65
 		else:
 			box(root,"Roof",Vector3(3.7,0.15,3.3),Vector3(x,base+height,z),white)
-	# Recognisable windmill silhouette above the village, well outside the cage.
+	# Keep the village silhouette even when the optional community GLB is missing.
+	if not _build_community_windmill(root):
+		_build_simple_windmill(root, white, stone)
+
+static func _build_community_windmill(root: Node3D) -> bool:
+	const WINDMILL_PATH := "res://assets/arenas/egeo/community_windmill.glb"
+	if not ResourceLoader.exists(WINDMILL_PATH):
+		return false
+	var scene := load(WINDMILL_PATH) as PackedScene
+	if scene == null:
+		return false
+	var windmill := scene.instantiate() as Node3D
+	if windmill == null:
+		return false
+	windmill.name = "CommunityWindmill"
+	root.add_child(windmill)
+	var bounds := AABB()
+	var first := true
+	for child in windmill.find_children("*", "MeshInstance3D", true, false):
+		var mesh := child as MeshInstance3D
+		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var local_transform := mesh.transform
+		var ancestor := mesh.get_parent() as Node3D
+		while ancestor != windmill and ancestor != null:
+			local_transform = ancestor.transform * local_transform
+			ancestor = ancestor.get_parent() as Node3D
+		var local_bounds := local_transform * mesh.get_aabb()
+		bounds = local_bounds if first else bounds.merge(local_bounds)
+		first = false
+	if first or bounds.size.y <= 0.0:
+		root.remove_child(windmill)
+		windmill.free()
+		return false
+	var factor := 6.5 / bounds.size.y
+	windmill.scale = Vector3.ONE * factor
+	windmill.position = Vector3(
+		12.0 - (bounds.position.x + bounds.size.x * 0.5) * factor,
+		2.25 - bounds.position.y * factor,
+		-34.0 - (bounds.position.z + bounds.size.z * 0.5) * factor
+	)
+	return true
+
+static func _build_simple_windmill(root: Node3D, white: Material, stone: Material) -> void:
 	var tower := CylinderMesh.new()
 	tower.bottom_radius=1.1
 	tower.top_radius=0.75

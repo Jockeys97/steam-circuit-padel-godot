@@ -1077,6 +1077,53 @@ static func ai_overhead_receiver(state: State) -> Dictionary:
 	return best
 
 
+## "Tua o mia" (2026-09-24, owner: no point is ever won through the middle). A
+## clean human shot that will pass about half-way between the two AI players, where
+## both could take it, can make them hesitate: one roll per shot, likelier at the lower
+## levels (Rivale ~25%, Leggenda ~11%), and the effect is an extra read (0.25-0.45 s),
+## capped at 0.7 s in all. Measured before: 0 of 200 clean middle balls won the
+## point, at every level; a precise down-the-line already did (8% at Leggenda) and is
+## left alone.
+const MIDDLE_EQUAL_SHARE := 0.15        # |d1 - d2| under this share of their spacing
+const MIDDLE_MAX_EACH_PX := 230.0       # both within reach-by-movement of the ball's line
+const MIDDLE_MIN_QUALITY := 0.80
+const MIDDLE_CHANCE_TOP := 0.40
+const MIDDLE_CHANCE_PER_SKILL := 0.32
+const MIDDLE_DELAY_CAP := 0.70
+static func ai_middle_hesitation(state: State) -> void:
+	var q: float = state.humanShotQuality
+	if q < MIDDLE_MIN_QUALITY or state.ball.shotType in ["lob", "defensive-lob", "globo", "chiquita"]:
+		return
+	var court: Dictionary = Frozen.court()
+	var net_y := float(court["netY"])
+	var ball := state.ball
+	# Where the ball crosses the pair's depth (straight-line, like the pressure read).
+	var pair_y: float = (state.opponent.y + state.opponentMate.y) * 0.5
+	if absf(ball.vy) < 1.0:
+		return
+	var t: float = (pair_y - ball.y) / ball.vy
+	if t <= 0.0:
+		return
+	var cross_x: float = ball.x + ball.vx * t
+	var x1: float = minf(state.opponent.x, state.opponentMate.x)
+	var x2: float = maxf(state.opponent.x, state.opponentMate.x)
+	if cross_x <= x1 or cross_x >= x2:
+		return
+	var d1: float = cross_x - x1
+	var d2: float = x2 - cross_x
+	if absf(d1 - d2) > (x2 - x1) * MIDDLE_EQUAL_SHARE or maxf(d1, d2) > MIDDLE_MAX_EACH_PX:
+		return
+	var chance: float = clampf(MIDDLE_CHANCE_TOP - float(state.ai["skill"]) * MIDDLE_CHANCE_PER_SKILL, 0.04, 0.4)
+	if Rng.next_random(state) >= chance:
+		return
+	# Each leaves it to the other for a moment: long enough to matter on a ball that
+	# takes ~0.6 s to arrive (0.12-0.25 s was measured to change nothing), short enough
+	# that a slow or central-but-soft ball is still reached.
+	var extra: float = 0.25 + 0.20 * clampf((q - MIDDLE_MIN_QUALITY) / (1.0 - MIDDLE_MIN_QUALITY), 0.0, 1.0)
+	state.aiReactionDelay = minf(state.aiReactionDelay + extra, maxf(state.aiReactionDelay, MIDDLE_DELAY_CAP))
+	add_event(state, "evMiddleBall")
+
+
 static func lock_ai_receiver_for_incoming_shot(state: State, is_serve: bool = false) -> void:
 	var balance: Dictionary = Frozen.balance()
 	if not ball_playable_direction("ai", state.ball):
@@ -1134,6 +1181,8 @@ static func lock_ai_receiver_for_incoming_shot(state: State, is_serve: bool = fa
 	var wrong_footed: bool = Rng.next_random(state) < wrong_footed_chance
 	var wrong_footed_delay: float = 0.28 + state.aiShotPressure * 0.22 if wrong_footed else 0.0
 	state.aiReactionDelay = 0.0 if is_serve else clampf(base_reaction + pressure_penalty, 0.07, 0.42) + wrong_footed_delay
+	if not is_serve:
+		ai_middle_hesitation(state)
 	state.aiWrongFooted = wrong_footed
 	state.aiReflexTried = false
 	if wrong_footed:
@@ -1767,6 +1816,7 @@ static func apply_computer_shot(state: State, paddle: Ent.SimPaddle, contact_hei
 		0.25,
 		1.0,
 	)
+	state.humanShotQuality = -1.0
 	var target := choose_computer_shot(state, paddle, profile, contact_height, ai_timing)
 	if state.aiReflexBlock:
 		# Blocked, not played: no placement, a poor contact (more errors), short and slow.
@@ -1895,6 +1945,7 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 	ball.postGlassSide = null
 	ball.wallAngleResolved = false
 
+	state.humanShotQuality = float(assessment["quality"]) if paddle.controlled else -1.0
 	if paddle.controlled:
 		var shot_power: float = clampf(power_mul, 0.34, 1.5)
 		var read_smash: bool = String(assessment["grade"]) == "perfect" or (String(assessment["grade"]) == "good" and paddle.splitStep >= float(balance["smashCounterSplitStep"]))

@@ -1,0 +1,41 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+# ARENA_CATALOG · Godot 4.7.2-stable (official) · field-law z=-8.0 · presets=["courtside", "immersive", "tactical", "broadcast", "default", "wide", "playable"]
+# build=full frozen=["officina", "locomotive", "clockwork", "cattedrale", "forgia", "tempesta", "abissale", "caldera", "orrery"] world=["torii", "medina", "carioca", "aurora", "egeo"]
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/arena_catalog_test.gd:248)
+         [1] _run (res://tests/arena_catalog_test.gd:100)
+         [2] _initialize (res://tests/arena_catalog_test.gd:75)
+ok A/a_full_build_lists_one_card_per_world_arena_in_the_recreated_grid
+ok A/a_world_card_is_named_by_the_same_row_the_legacy_path_reads
+ok A/a_world_press_selects_and_a_quick_start_lands_the_world_seat
+ok A/a_frozen_press_clears_the_world_seat
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/arena_catalog_test.gd:248)
+         [1] _run (res://tests/arena_catalog_test.gd:148)
+         [2] _mount (res://tests/arena_catalog_test.gd:253)
+ok A/the_calendar_switches_every_world_card_off_like_every_other_card
+ok A/a_career_start_still_uses_the_calendars_arena
+ok B/the_recreated_adapters_frozen_rows_are_the_catalogs_own
+ok B/the_legacy_adapters_world_availability_is_the_catalogs_own
+ok B/a_full_build_offers_the_five_world_arenas_in_table_order
+ok B/both_seats_land_exactly_where_the_catalog_says
+ok C/Arena.ids_is_still_the_frozen_nine
+WARNING: Nodes with non-equal opposite anchors will have their size overridden after _ready(). 
+If you want to set size, change the anchors or consider using set_deferred().
+     at: _set_size (scene/gui/control.cpp:1519)
+     GDScript backtrace (most recent call first):
+         [0] _mount (res://tests/arena_catalog_test.gd:248)
+         [1] _run (res://tests/arena_catalog_test.gd:208)
+         [2] _mount (res://tests/arena_catalog_test.gd:253)
+ok C/the_screens_own_grid_is_still_the_nine_row_catalog
+ok C/the_screens_lock_list_is_still_the_build_wall_plus_the_careers
+ok C/the_world_set_never_entered_the_frozen_roster_or_the_builds_own_list
+ok C/a_full_build_still_grants_the_frozen_nine
+PASS 15/15

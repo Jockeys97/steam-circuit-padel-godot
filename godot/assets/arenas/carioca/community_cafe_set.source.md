@@ -1,0 +1,5 @@
+# Community café set
+
+Source: [Low-poly stylized café table and chairs](https://www.meshy.ai/3d-models/Lowpoly-stylized-3D-model-of-a-small-caf-table-set-cartoonlike-and-simplifiedThe-table-is-round-with-a-thick-tabletop-slightly-beveled-edges-and-very-simple-geometry-It-stands-on-four-chunky-legs-each-made-from-basic-rectangular-prisms-with-no-small-details-The-proportions-are-slightly-exaggerated-the-tabletop-is-wider-than-realistic-and-the-legs-are-a-bit-short-and-sturdy-giving-a-playful-look-All-edges-are-softly-rounded-but-kept-low-in-polygon-countBehind-the-table-are-two-simple-chairs-Each-chair-has-a-flat-rectangular-seat-four-blocky-legs-and-a-tall-backrest-made-from-a-single-solid-piece-The-backrest-is-slightly-curved-backward-using-minimal-geometry-The-overall-model-is-clean-smooth-and-optimized-for-games-v2-019c9243-be76-77e6-a536-be0013df4215).
+
+Creator: swebus999. The Meshy Community page labels this model CC0. Supplied by the project owner as a textured GLB on 2026-09-25. It has one mesh, one material, three embedded textures and 5,023 triangles. Used as a single non-colliding scenery instance in Carioca, with dynamic shadows disabled.

@@ -108,9 +108,15 @@ const CONTEXT_TRACK_MAP := {
 	"menu_champions_pavilion": "ost_menu_champions_pavilion",
 	"menu_orbital_vanguard": "ost_menu_orbital_vanguard",
 	"menu_third_strike": "ost_menu_third_strike",
+	# 5 Canzoni Cantate Speciali (Suno Vocal Anthems)
+	"vocal_overdrive_line": "ost_vocal_overdrive_line",
+	"vocal_break_point_riot": "ost_vocal_break_point_riot",
+	"vocal_reach_for_the_sun": "ost_vocal_reach_for_the_sun",
+	"vocal_neon_velocity": "ost_vocal_neon_velocity",
+	"vocal_girei": "ost_vocal_girei",
 }
 
-## Complete metadata dictionary for all 78 OST tracks (22 Standard + 8 Epic/Anime + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends)
+## Complete metadata dictionary for all 83 OST tracks (22 Standard + 8 Epic/Anime + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends + 5 Canzoni Cantate)
 const TRACK_METADATA := {
 	"ost_menu": {
 		"id": "ost_menu",
@@ -743,7 +749,8 @@ const TRACK_METADATA := {
 		"bpm": 154,
 		"key": "D minor / F major",
 		"style": "Inno shonen vocale epico con chitarre acustiche furiose a 12 corde, archi sinfonici, ottoni da battaglia e duo vocale armonizzato",
-		"prompt": "Passionate, high-intensity shonen anime ending anthem inspired by Hyori Ittai (Hunter x Hunter Chimera Ant Arc). Furious 12-string acoustic guitar strumming at 154 BPM, dramatic soaring orchestral strings, heavy brass stabs, driving rock drums with taiko, and emotional dual-voice shonen vocal harmony."
+		"prompt": "Passionate, high-intensity shonen anime ending anthem inspired by Hyori Ittai (Hunter x Hunter Chimera Ant Arc). Furious 12-string acoustic guitar strumming at 154 BPM, dramatic soaring orchestral strings, heavy brass stabs, driving rock drums with taiko, and emotional dual-voice shonen vocal harmony.",
+		"preview_offset": 18.7
 	},
 	"ost_menu_velvet_lounge": {
 		"id": "ost_menu_velvet_lounge",
@@ -895,6 +902,61 @@ const TRACK_METADATA := {
 		"style": "Liquid Drum & Bass con piano jazz sincopato e 808 sub-bass profondo",
 		"prompt": "High-fashion urban character selection groove inspired by Street Fighter III 3rd Strike. Crisp rolling liquid drum and bass breakbeats, syncopated jazz piano stabs, deep 808 sub-bass, slick urban arcade attitude."
 	},
+	"ost_vocal_overdrive_line": {
+		"id": "ost_vocal_overdrive_line",
+		"title": "Overdrive Line",
+		"scene": "Match Arena & Gran Finale",
+		"category": "Canzoni Cantate",
+		"bpm": 145,
+		"key": "G minor / Bb major",
+		"style": "Indie Rock / Garage Rock cantato con chitarre sferzanti, basso melodico e batteria energica",
+		"prompt": "90s energetic indie rock, driving drums, electric guitar riff, catchy vocal melody, passionate singer. Lyrics: Fast spin on the concrete floor, heat behind the iron door, gears turning and the pulse is high, we watch the spark ignite the midnight sky. Pre-Chorus: No time to hesitate, no time to slow, count down the seconds till we let it go! Chorus: We're burning out on the overdrive line! Catch the rebound, running out of time! Yeah we hit the wall, but we break right through, there's nothing left between me and you!",
+		"preview_offset": 26.0
+	},
+	"ost_vocal_break_point_riot": {
+		"id": "ost_vocal_break_point_riot",
+		"title": "Break Point Riot",
+		"scene": "Match Arena & Climax",
+		"category": "Canzoni Cantate",
+		"bpm": 165,
+		"key": "C minor / Eb major",
+		"style": "Pop Punk / Skate Rock energico con power chord sferzanti, basso martellante e voce grintosa",
+		"prompt": "Fast 2000s energetic pop punk / skate rock, 165 BPM, driving rhythm section, catchy vocal hooks and gritty vocals, intense padel match climax.",
+		"preview_offset": 40.0
+	},
+	"ost_vocal_reach_for_the_sun": {
+		"id": "ost_vocal_reach_for_the_sun",
+		"title": "Reach for the Sun",
+		"scene": "Match Arena & Gran Finale",
+		"category": "Canzoni Cantate",
+		"bpm": 160,
+		"key": "D minor / F major",
+		"style": "Anime Rock / J-Rock trionfale con chitarra solista epica, sezione ritmica galoppante e voce appassionata",
+		"prompt": "Triumphant anime opening J-rock, 160 BPM, soaring guitar leads, dramatic chord progressions, passionate emotional vocals, victory anthem.",
+		"preview_offset": 40.0
+	},
+	"ost_vocal_neon_velocity": {
+		"id": "ost_vocal_neon_velocity",
+		"title": "Neon Velocity",
+		"scene": "Match Arena & Cyber Circuit",
+		"category": "Canzoni Cantate",
+		"bpm": 126,
+		"key": "A minor / C major",
+		"style": "Synthwave / Cyber Rock cantato con arpeggiatori synth, basso funky trascinante, riff di chitarra al neon e voce melodica",
+		"prompt": "Synthwave / Cyber rock vocal track, 126 BPM, funky bassline, neon synth arpeggios, electric guitar fills, smooth confident vocals. Lyrics: Midnight reflections on the court, a game of speed, a brand new sport. You move to the left, I cut to the right, electric silhouettes in violet light. Pre-Chorus: Every heartbeat syncs to the beat, feel the rhythm rising beneath our feet. Chorus: Oh, neon velocity, take the floor! One more touch and we want some more! Spinning around in the golden glow, we set the tempo wherever we go!",
+		"preview_offset": 60.0
+	},
+	"ost_vocal_girei": {
+		"id": "ost_vocal_girei",
+		"title": "Girei (Almighty Judgment)",
+		"scene": "Boss Fight Finale & Cattedrale di Vetro",
+		"category": "Canzoni Cantate",
+		"bpm": 135,
+		"key": "D minor",
+		"style": "Gothic Symphonic Metal cantato con coro gregoriano, organo a canne, chitarre metal pesanti e voce operatica",
+		"prompt": "Gothic symphonic metal, ominous sacred Gregorian choir chanting, massive church pipe organ, heavy 8-string distorted guitars, thunderous timpani drums, soaring operatic lead vocals, dramatic dark anime boss climax, 135 BPM",
+		"preview_offset": 115.5
+	},
 }
 
 const SUPPORTED_EXTENSIONS := [".ogg", ".mp3", ".wav"]
@@ -941,7 +1003,7 @@ func _setup_players() -> void:
 	add_child(_player_b)
 
 
-## Returns all 78 registered OST track IDs.
+## Returns all 82 registered OST track IDs.
 static func all_track_ids() -> PackedStringArray:
 	var out := PackedStringArray()
 	for k in CONTEXT_TRACK_MAP:
@@ -956,6 +1018,13 @@ static func all_track_ids() -> PackedStringArray:
 ## Returns the metadata dictionary for a track ID, or an empty Dictionary if unknown.
 static func track_info(track_id: String) -> Dictionary:
 	return TRACK_METADATA.get(track_id, {})
+
+
+## Returns the starting playback offset (in seconds) for Emporio audio sample preview.
+## Vocal tracks jump straight to their sung hook/chorus, while standard tracks default to 0.0s.
+static func preview_offset(track_id: String) -> float:
+	var info := track_info(track_id)
+	return float(info.get("preview_offset", 0.0))
 
 
 ## Resolves an arena ID to its designated OST track ID.

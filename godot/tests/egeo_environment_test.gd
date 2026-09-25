@@ -18,11 +18,20 @@ func run():
 		if String(node.name).begins_with("Backdrop"): check(not node.visible,"no visible panel")
 	var environment: Environment = arena.find_child("WorldEnvironment",true,false).environment
 	check(environment.background_mode==Environment.BG_SKY and environment.sky.sky_material is ProceduralSkyMaterial,"real sky")
-	var triangles := 0
+	var windmill := scenery.get_node("EgeoEnvironment").get_node_or_null("CommunityWindmill") as Node3D
+	check(windmill != null, "optimized community windmill mounted")
+	var scenery_triangles := 0
+	var windmill_triangles := 0
 	for mi in scenery.get_node("EgeoEnvironment").find_children("*","MeshInstance3D",true,false):
-		triangles += mi.mesh.get_faces().size()/3
-	check(triangles<15000,"geometry budget")
-	print("EGEO_TRIANGLES ",triangles)
+		var count: int = mi.mesh.get_faces().size()/3
+		if windmill != null and windmill.is_ancestor_of(mi):
+			windmill_triangles += count
+			check(mi.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF, "windmill casts no shadow")
+		else:
+			scenery_triangles += count
+	check(scenery_triangles<15000,"procedural geometry budget")
+	check(windmill_triangles>0 and windmill_triangles<=110000,"windmill geometry budget")
+	print("EGEO_TRIANGLES scenery=",scenery_triangles," windmill=",windmill_triangles)
 	var camera := Camera3D.new()
 	root.add_child(camera)
 	camera.current=true

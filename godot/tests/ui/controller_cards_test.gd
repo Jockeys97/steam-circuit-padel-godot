@@ -19,6 +19,7 @@
 extends SceneTree
 
 const Config := preload("res://game/match_config.gd")
+const CardFocusRing := preload("res://src/ui/components/CardFocusRing.gd")
 
 var failures := 0
 var _menu: Control = null
@@ -127,6 +128,7 @@ func _walk_modes() -> void:
 	check(_focus_id() != first_card, "a pad right walks to the next mode card")
 	check(_painted() == _focus_id().get_slice("/", 1), "modes paints the second card")
 	check(_card_uses_controller_highlight(screen, _focus_id()), "the next mode card keeps the cyan controller highlight")
+	check(not CardFocusRing.is_focused(_focus().node_of(first_card)), "the previous mode card loses the controller ring")
 	await _dir("left")
 	check(_focus_id() == first_card, "a pad left walks back to the first mode card")
 
@@ -168,7 +170,9 @@ func _card_uses_controller_highlight(screen: Node, focus_id: String) -> bool:
 	var expected := screen._card_box(true) as StyleBoxFlat
 	return actual != null and expected != null \
 		and actual.border_color == expected.border_color \
-		and actual.bg_color == expected.bg_color
+		and actual.bg_color == expected.bg_color \
+		and CardFocusRing.is_focused(card) \
+		and CardFocusRing.ring_style_of(card).border_width_left >= 4
 
 
 ## The characters screen: the four slots' Atleta/Outfit commands are the targets (the

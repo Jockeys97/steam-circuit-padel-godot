@@ -35,7 +35,7 @@ const MODES := {
 ## `path_for()` reports `""` and the consuming screen shows its own fallback.
 const ARENAS := {
 	"officina": "officina-vapore-standard",
-	"locomotive": "deposito-locomotive",
+	"locomotive": "sopraelevata-della-luna",
 	"clockwork": "clockwork-factory",
 	"tempesta": "bastione-tempesta",
 	"abissale": "santuario-abissale",

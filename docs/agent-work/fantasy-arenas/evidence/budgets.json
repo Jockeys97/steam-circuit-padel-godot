@@ -1,0 +1,72 @@
+{
+	"draw_ceiling": 200,
+	"rows": [
+		{
+			"arena": "cattedrale",
+			"draws": 29,
+			"meshes": 29,
+			"multimesh_draws": 15,
+			"multimesh_instances": 351,
+			"multimesh_nodes": 15,
+			"ordinary_draws": 14,
+			"triangles": 7648,
+			"unique_triangles": 2284
+		},
+		{
+			"arena": "forgia",
+			"draws": 49,
+			"meshes": 49,
+			"multimesh_draws": 14,
+			"multimesh_instances": 174,
+			"multimesh_nodes": 14,
+			"ordinary_draws": 35,
+			"triangles": 6636,
+			"unique_triangles": 3624
+		},
+		{
+			"arena": "tempesta",
+			"draws": 44,
+			"meshes": 44,
+			"multimesh_draws": 17,
+			"multimesh_instances": 111,
+			"multimesh_nodes": 17,
+			"ordinary_draws": 27,
+			"triangles": 7528,
+			"unique_triangles": 3892
+		},
+		{
+			"arena": "abissale",
+			"draws": 45,
+			"meshes": 45,
+			"multimesh_draws": 23,
+			"multimesh_instances": 614,
+			"multimesh_nodes": 23,
+			"ordinary_draws": 22,
+			"triangles": 13648,
+			"unique_triangles": 3060
+		},
+		{
+			"arena": "caldera",
+			"draws": 52,
+			"meshes": 52,
+			"multimesh_draws": 13,
+			"multimesh_instances": 131,
+			"multimesh_nodes": 13,
+			"ordinary_draws": 39,
+			"triangles": 4472,
+			"unique_triangles": 2424
+		},
+		{
+			"arena": "orrery",
+			"draws": 33,
+			"meshes": 33,
+			"multimesh_draws": 12,
+			"multimesh_instances": 251,
+			"multimesh_nodes": 12,
+			"ordinary_draws": 21,
+			"triangles": 10740,
+			"unique_triangles": 5956
+		}
+	],
+	"triangle_ceiling": 100000
+}

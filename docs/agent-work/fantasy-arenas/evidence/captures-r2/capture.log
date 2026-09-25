@@ -1,0 +1,222 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M4
+
+# FANTASY_ARENAS_CAPTURE · Godot 4.7.2-stable (official) · field-law z=-8.0 · presets=["courtside", "immersive", "tactical", "broadcast", "default", "wide", "playable"]
+# display=macOS adapter=Apple M4 api=4.1 Metal - 90.5 size=(1280, 720) out=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2 targets=["cattedrale", "forgia", "tempesta", "abissale", "caldera", "orrery"] presets=["default", "courtside"]
+ok the display server is not headless (a dummy driver renders blank frames)
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=120 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=267 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture default/cattedrale: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture default/cattedrale: the glass cage is intact and visible at capture time
+ok capture default/cattedrale: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/cattedrale: the frame is non-vacuous (1235 colours on a 64x36 grid)
+ok capture default/cattedrale: all court corners + side/rear glass extents inside the frame
+ok capture default/cattedrale: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-cattedrale.png)
+ok capture default/cattedrale: HUD-free WebP preview written for the UI slot (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/preview-cattedrale.webp)
+CAPTURE_RECORD preset=default arena=cattedrale png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-cattedrale.png px=1280x720 colours=1235 min_margin=55.1px(court_corner_left_near) webp=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/preview-cattedrale.webp sha256=003b28dfda87d43561c010f9efbfff9baf6c928435edd4567987abd70ffd109a
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=111 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=264 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture default/forgia: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture default/forgia: the glass cage is intact and visible at capture time
+ok capture default/forgia: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/forgia: the frame is non-vacuous (1054 colours on a 64x36 grid)
+ok capture default/forgia: all court corners + side/rear glass extents inside the frame
+ok capture default/forgia: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-forgia.png)
+ok capture default/forgia: HUD-free WebP preview written for the UI slot (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/preview-forgia.webp)
+CAPTURE_RECORD preset=default arena=forgia png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-forgia.png px=1280x720 colours=1054 min_margin=55.1px(court_corner_left_near) webp=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/preview-forgia.webp sha256=f35c3eb54278c570f17e4efe6a7865e1f02d233be8e4024725236336f163b8e9
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=113 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=260 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture default/tempesta: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture default/tempesta: the glass cage is intact and visible at capture time
+ok capture default/tempesta: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/tempesta: the frame is non-vacuous (781 colours on a 64x36 grid)
+ok capture default/tempesta: all court corners + side/rear glass extents inside the frame
+ok capture default/tempesta: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-tempesta.png)
+CAPTURE_RECORD preset=default arena=tempesta png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-tempesta.png px=1280x720 colours=781 min_margin=55.1px(court_corner_left_near) webp= sha256=0a0b1a284f70db149af352f1f4a04cebc2d02b8c9be13bb22fceaee896104699
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=110 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=257 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ERROR: Node not found: "Jelly_0" (relative to "FantasyEnvironment").
+   at: get_node (scene/main/node.cpp:1976)
+   GDScript backtrace (most recent call first):
+       [0] _abissale (res://game/arenas/fantasy_environment.gd:652)
+       [1] build (res://game/arenas/fantasy_environment.gd:162)
+       [2] build (res://game/arenas/arena_library.gd:261)
+       [3] build_into (res://game/arenas/arena_library.gd:266)
+       [4] _capture_one (res://tests/fantasy_arenas_capture.gd:101)
+       [5] _run (res://tests/fantasy_arenas_capture.gd:83)
+       [6] _capture_one (res://tests/fantasy_arenas_capture.gd:197)
+       [7] _grab (res://tests/fantasy_arenas_capture.gd:236)
+ERROR: Node not found: "Jelly_1" (relative to "FantasyEnvironment").
+   at: get_node (scene/main/node.cpp:1976)
+   GDScript backtrace (most recent call first):
+       [0] _abissale (res://game/arenas/fantasy_environment.gd:652)
+       [1] build (res://game/arenas/fantasy_environment.gd:162)
+       [2] build (res://game/arenas/arena_library.gd:261)
+       [3] build_into (res://game/arenas/arena_library.gd:266)
+       [4] _capture_one (res://tests/fantasy_arenas_capture.gd:101)
+       [5] _run (res://tests/fantasy_arenas_capture.gd:83)
+       [6] _capture_one (res://tests/fantasy_arenas_capture.gd:197)
+       [7] _grab (res://tests/fantasy_arenas_capture.gd:236)
+ERROR: Node not found: "Jelly_2" (relative to "FantasyEnvironment").
+   at: get_node (scene/main/node.cpp:1976)
+   GDScript backtrace (most recent call first):
+       [0] _abissale (res://game/arenas/fantasy_environment.gd:652)
+       [1] build (res://game/arenas/fantasy_environment.gd:162)
+       [2] build (res://game/arenas/arena_library.gd:261)
+       [3] build_into (res://game/arenas/arena_library.gd:266)
+       [4] _capture_one (res://tests/fantasy_arenas_capture.gd:101)
+       [5] _run (res://tests/fantasy_arenas_capture.gd:83)
+       [6] _capture_one (res://tests/fantasy_arenas_capture.gd:197)
+       [7] _grab (res://tests/fantasy_arenas_capture.gd:236)
+ERROR: Node not found: "Jelly_3" (relative to "FantasyEnvironment").
+   at: get_node (scene/main/node.cpp:1976)
+   GDScript backtrace (most recent call first):
+       [0] _abissale (res://game/arenas/fantasy_environment.gd:652)
+       [1] build (res://game/arenas/fantasy_environment.gd:162)
+       [2] build (res://game/arenas/arena_library.gd:261)
+       [3] build_into (res://game/arenas/arena_library.gd:266)
+       [4] _capture_one (res://tests/fantasy_arenas_capture.gd:101)
+       [5] _run (res://tests/fantasy_arenas_capture.gd:83)
+       [6] _capture_one (res://tests/fantasy_arenas_capture.gd:197)
+       [7] _grab (res://tests/fantasy_arenas_capture.gd:236)
+ok capture default/abissale: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture default/abissale: the glass cage is intact and visible at capture time
+ok capture default/abissale: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/abissale: the frame is non-vacuous (1492 colours on a 64x36 grid)
+ok capture default/abissale: all court corners + side/rear glass extents inside the frame
+ok capture default/abissale: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-abissale.png)
+CAPTURE_RECORD preset=default arena=abissale png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-abissale.png px=1280x720 colours=1492 min_margin=55.1px(court_corner_left_near) webp= sha256=0381011ba6cc66d04ac8ed6eebceff16da2dd7a2801a85b56dd9d9e2e2ca5536
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=112 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=264 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture default/caldera: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture default/caldera: the glass cage is intact and visible at capture time
+ok capture default/caldera: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/caldera: the frame is non-vacuous (913 colours on a 64x36 grid)
+ok capture default/caldera: all court corners + side/rear glass extents inside the frame
+ok capture default/caldera: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-caldera.png)
+CAPTURE_RECORD preset=default arena=caldera png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-caldera.png px=1280x720 colours=913 min_margin=55.1px(court_corner_left_near) webp= sha256=7bce6a0570d3f5da7ccb94b1f749e9ce46a8a8109ec212908b3939f05ea7036c
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=112 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=264 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture default/orrery: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture default/orrery: the glass cage is intact and visible at capture time
+ok capture default/orrery: frame is the full render target (1280, 720) (got 1280x720)
+ok capture default/orrery: the frame is non-vacuous (1405 colours on a 64x36 grid)
+ok capture default/orrery: all court corners + side/rear glass extents inside the frame
+ok capture default/orrery: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-orrery.png)
+CAPTURE_RECORD preset=default arena=orrery png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/default/arena-orrery.png px=1280x720 colours=1405 min_margin=55.1px(court_corner_left_near) webp= sha256=5ee7803a0ad505138b63aae959b61615cfae355d694810cd27c139a05fe0e115
+ok preset default: the captured arenas render differently (6 captures, 6 distinct signatures)
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=113 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=264 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture courtside/cattedrale: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture courtside/cattedrale: the glass cage is intact and visible at capture time
+ok capture courtside/cattedrale: frame is the full render target (1280, 720) (got 1280x720)
+ok capture courtside/cattedrale: the frame is non-vacuous (1496 colours on a 64x36 grid)
+ok capture courtside/cattedrale: all court corners + side/rear glass extents inside the frame
+ok capture courtside/cattedrale: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-cattedrale.png)
+CAPTURE_RECORD preset=courtside arena=cattedrale png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-cattedrale.png px=1280x720 colours=1496 min_margin=52.3px(court_corner_left_near) webp= sha256=e84bf38d16c6b73107fd3b237435e8c91929ef3a24b5da4efe95bff12bfe23ac
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=112 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=263 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture courtside/forgia: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture courtside/forgia: the glass cage is intact and visible at capture time
+ok capture courtside/forgia: frame is the full render target (1280, 720) (got 1280x720)
+ok capture courtside/forgia: the frame is non-vacuous (1262 colours on a 64x36 grid)
+ok capture courtside/forgia: all court corners + side/rear glass extents inside the frame
+ok capture courtside/forgia: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-forgia.png)
+CAPTURE_RECORD preset=courtside arena=forgia png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-forgia.png px=1280x720 colours=1262 min_margin=52.3px(court_corner_left_near) webp= sha256=20d8073a1b3ea2270c5bb663e08beffa03f6be53822d38e5473c8bf7f385f23e
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=112 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=265 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture courtside/tempesta: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture courtside/tempesta: the glass cage is intact and visible at capture time
+ok capture courtside/tempesta: frame is the full render target (1280, 720) (got 1280x720)
+ok capture courtside/tempesta: the frame is non-vacuous (872 colours on a 64x36 grid)
+ok capture courtside/tempesta: all court corners + side/rear glass extents inside the frame
+ok capture courtside/tempesta: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-tempesta.png)
+CAPTURE_RECORD preset=courtside arena=tempesta png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-tempesta.png px=1280x720 colours=872 min_margin=52.3px(court_corner_left_near) webp= sha256=2614bb08db8a355cf0ed362f90bf596551d3847379a047d42662c9faf60d31ca
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=114 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=267 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ERROR: Node not found: "Jelly_0" (relative to "FantasyEnvironment").
+   at: get_node (scene/main/node.cpp:1976)
+   GDScript backtrace (most recent call first):
+       [0] _abissale (res://game/arenas/fantasy_environment.gd:652)
+       [1] build (res://game/arenas/fantasy_environment.gd:162)
+       [2] build (res://game/arenas/arena_library.gd:261)
+       [3] build_into (res://game/arenas/arena_library.gd:266)
+       [4] _capture_one (res://tests/fantasy_arenas_capture.gd:101)
+       [5] _run (res://tests/fantasy_arenas_capture.gd:83)
+       [6] _capture_one (res://tests/fantasy_arenas_capture.gd:197)
+       [7] _grab (res://tests/fantasy_arenas_capture.gd:236)
+ERROR: Node not found: "Jelly_1" (relative to "FantasyEnvironment").
+   at: get_node (scene/main/node.cpp:1976)
+   GDScript backtrace (most recent call first):
+       [0] _abissale (res://game/arenas/fantasy_environment.gd:652)
+       [1] build (res://game/arenas/fantasy_environment.gd:162)
+       [2] build (res://game/arenas/arena_library.gd:261)
+       [3] build_into (res://game/arenas/arena_library.gd:266)
+       [4] _capture_one (res://tests/fantasy_arenas_capture.gd:101)
+       [5] _run (res://tests/fantasy_arenas_capture.gd:83)
+       [6] _capture_one (res://tests/fantasy_arenas_capture.gd:197)
+       [7] _grab (res://tests/fantasy_arenas_capture.gd:236)
+ERROR: Node not found: "Jelly_2" (relative to "FantasyEnvironment").
+   at: get_node (scene/main/node.cpp:1976)
+   GDScript backtrace (most recent call first):
+       [0] _abissale (res://game/arenas/fantasy_environment.gd:652)
+       [1] build (res://game/arenas/fantasy_environment.gd:162)
+       [2] build (res://game/arenas/arena_library.gd:261)
+       [3] build_into (res://game/arenas/arena_library.gd:266)
+       [4] _capture_one (res://tests/fantasy_arenas_capture.gd:101)
+       [5] _run (res://tests/fantasy_arenas_capture.gd:83)
+       [6] _capture_one (res://tests/fantasy_arenas_capture.gd:197)
+       [7] _grab (res://tests/fantasy_arenas_capture.gd:236)
+ERROR: Node not found: "Jelly_3" (relative to "FantasyEnvironment").
+   at: get_node (scene/main/node.cpp:1976)
+   GDScript backtrace (most recent call first):
+       [0] _abissale (res://game/arenas/fantasy_environment.gd:652)
+       [1] build (res://game/arenas/fantasy_environment.gd:162)
+       [2] build (res://game/arenas/arena_library.gd:261)
+       [3] build_into (res://game/arenas/arena_library.gd:266)
+       [4] _capture_one (res://tests/fantasy_arenas_capture.gd:101)
+       [5] _run (res://tests/fantasy_arenas_capture.gd:83)
+       [6] _capture_one (res://tests/fantasy_arenas_capture.gd:197)
+       [7] _grab (res://tests/fantasy_arenas_capture.gd:236)
+ok capture courtside/abissale: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture courtside/abissale: the glass cage is intact and visible at capture time
+ok capture courtside/abissale: frame is the full render target (1280, 720) (got 1280x720)
+ok capture courtside/abissale: the frame is non-vacuous (1457 colours on a 64x36 grid)
+ok capture courtside/abissale: all court corners + side/rear glass extents inside the frame
+ok capture courtside/abissale: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-abissale.png)
+CAPTURE_RECORD preset=courtside arena=abissale png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-abissale.png px=1280x720 colours=1457 min_margin=52.3px(court_corner_left_near) webp= sha256=028bf3634f0fc0a40ebe53970bd4aa6df0d27d72093e65f43525e33d1f4475b8
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=114 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=271 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture courtside/caldera: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture courtside/caldera: the glass cage is intact and visible at capture time
+ok capture courtside/caldera: frame is the full render target (1280, 720) (got 1280x720)
+ok capture courtside/caldera: the frame is non-vacuous (1044 colours on a 64x36 grid)
+ok capture courtside/caldera: all court corners + side/rear glass extents inside the frame
+ok capture courtside/caldera: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-caldera.png)
+CAPTURE_RECORD preset=courtside arena=caldera png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-caldera.png px=1280x720 colours=1044 min_margin=52.3px(court_corner_left_near) webp= sha256=dce6b69ecb681493e247c63884d50bde48c8b68761ce03844dfd4bfdbcf1da82
+BLEACHERS glb=res://assets/bleachers/Meshy_AI_Blue_Canopy_Bleachers_0917000231_texture.glb glb_loads=1 load_ms=112 instances=2 tris_per_copy=459928 tris_total=919856 scale=3.15 corridor_m=1.20 glass_x=5.50 front_x=6.70 side_x=8.21 height_m=3.01 span_z=5.99 box=(-0.9518,-0.4868,-0.4833)+(1.9029,0.9569,0.9605)
+ARENA_PROPS shelters=4 boards=3 glb_loads=2 load_ms=266 triangles=1152904 shelter_x=7.65 shelter_z=[5.73318033370972, -5.73318033370972] board_z=-10.75 board_span=11.39 error=
+CROWD spectators=60 triangles=120 rows=3 per_stand=30 height_m=1.15 error=
+ok capture courtside/orrery: the rebuilt environment is present, its legacy panel is hidden, its dome is visible
+ok capture courtside/orrery: the glass cage is intact and visible at capture time
+ok capture courtside/orrery: frame is the full render target (1280, 720) (got 1280x720)
+ok capture courtside/orrery: the frame is non-vacuous (1542 colours on a 64x36 grid)
+ok capture courtside/orrery: all court corners + side/rear glass extents inside the frame
+ok capture courtside/orrery: PNG saved and hashed (/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-orrery.png)
+CAPTURE_RECORD preset=courtside arena=orrery png=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/courtside/arena-orrery.png px=1280x720 colours=1542 min_margin=52.3px(court_corner_left_near) webp= sha256=64394326e4005adbd387816f41b0f1be0e4a01bdcfa5354eb8228c8fa8a35b66
+ok preset courtside: the captured arenas render differently (6 captures, 6 distinct signatures)
+ok every capture was written and recorded
+ok captures.json written (12 records)
+CAPTURE_SUMMARY captures=12 log=/Users/alessiofantini/Documents/steam-circuit-padel-11m/docs/agent-work/fantasy-arenas/evidence/captures-r2/captures.json
+PASS 79/79

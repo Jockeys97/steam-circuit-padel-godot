@@ -5,6 +5,7 @@ const Store := preload("res://src/save/save_store.gd")
 const Economy := preload("res://src/economy/economy_service.gd")
 const Config := preload("res://game/match_config.gd")
 const Soundtrack := preload("res://src/audio/soundtrack_manager.gd")
+const Catalog := preload("res://src/economy/ost_catalog.gd")
 const Shop := preload("res://src/ui/screens/EmporioScreen.tscn")
 
 var audit: AuditBase
@@ -125,7 +126,15 @@ func _run() -> void:
 	screen.call("_set_filter", "special")
 	var special_cards: Array = screen.get("_row_buttons")
 	audit.check_true(special_cards.size() > 0 and special_cards.size() < all_count, "shop/special_filter")
-	audit.check_true(screen.get("_scroll").follow_focus, "shop/focus_scrolls_cards")
+	screen.call("_set_filter", "vocal")
+	var vocal_cards: Array = screen.get("_row_buttons")
+	audit.check_true(vocal_cards.size() == 5, "shop/vocal_filter_five_cards")
+	screen.call("_select_track", "ost_vocal_overdrive_line")
+	audit.check_eq(Catalog.price_of("ost_vocal_overdrive_line"), 400, "shop/vocal_price_400")
+	audit.check_eq(Catalog.price_of("ost_vocal_break_point_riot"), 400, "shop/vocal_break_point_price_400")
+	audit.check_eq(Catalog.price_of("ost_vocal_reach_for_the_sun"), 400, "shop/vocal_reach_sun_price_400")
+	audit.check_eq(Catalog.price_of("ost_vocal_neon_velocity"), 400, "shop/vocal_neon_velocity_price_400")
+	audit.check_eq(Catalog.price_of("ost_vocal_girei"), 400, "shop/vocal_girei_price_400")
 	screen.call("_set_filter", "all")
 	screen.call("_select_track", "ost_officina")
 	(screen.get("_purchase_btn") as Button).pressed.emit()
@@ -162,6 +171,22 @@ func _run() -> void:
 		next_card.pressed.emit()
 	audit.check_true(not bool(screen.call("preview_playing")), "sample/stops_on_selection_change")
 	audit.check_eq(preview_states, [true, false, true, false], "sample/host_pause_resume_signals")
+
+	# Vocal track preview offset check
+	screen.call("_select_track", "ost_vocal_overdrive_line")
+	audit.check_eq(Soundtrack.preview_offset("ost_vocal_overdrive_line"), 26.0, "sample/vocal_overdrive_offset_26")
+	audit.check_eq(Soundtrack.preview_offset("ost_vocal_neon_velocity"), 60.0, "sample/vocal_neon_offset_60")
+	audit.check_eq(Soundtrack.preview_offset("ost_vocal_break_point_riot"), 40.0, "sample/vocal_break_point_offset_40")
+	audit.check_eq(Soundtrack.preview_offset("ost_vocal_reach_for_the_sun"), 40.0, "sample/vocal_reach_sun_offset_40")
+	audit.check_eq(Soundtrack.preview_offset("ost_vocal_girei"), 115.5, "sample/vocal_girei_offset_115_5")
+	audit.check_eq(Soundtrack.preview_offset("ost_hyori_ittai_vocal"), 18.7, "sample/vocal_hyori_ittai_offset_18_7")
+	screen.call("_on_preview_pressed")
+	audit.check_true(bool(screen.call("preview_playing")), "sample/vocal_preview_plays")
+	var vocal_player: AudioStreamPlayer = screen.get("_preview_player")
+	audit.check_true(vocal_player.playing, "sample/vocal_player_active")
+	screen.call("_stop_preview")
+	audit.check_true(not bool(screen.call("preview_playing")), "sample/vocal_preview_stops")
+
 	screen.queue_free()
 	await process_frame
 	Config.save_dir = "user://emporio-sample-host-test"

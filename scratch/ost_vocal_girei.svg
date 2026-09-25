@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <radialGradient id="bgGrad" cx="50%" cy="42%" r="65%">
+      <stop offset="0%" stop-color="#3b0a1a"/>
+      <stop offset="35%" stop-color="#1e040f"/>
+      <stop offset="70%" stop-color="#0d0208"/>
+      <stop offset="100%" stop-color="#040003"/>
+    </radialGradient>
+    <linearGradient id="goldBeam" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffcc00" stop-opacity="0.8"/>
+      <stop offset="60%" stop-color="#ff3366" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#3b0a1a" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="roseWindowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff0055"/>
+      <stop offset="50%" stop-color="#9900cc"/>
+      <stop offset="100%" stop-color="#ffcc00"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#bgGrad)"/>
+
+  <!-- Divine Cathedral Light Beams from high above -->
+  <polygon points="512,0 320,650 400,650" fill="url(#goldBeam)" opacity="0.35"/>
+  <polygon points="512,0 624,650 704,650" fill="url(#goldBeam)" opacity="0.35"/>
+  <polygon points="512,0 460,700 564,700" fill="url(#goldBeam)" opacity="0.5"/>
+
+  <!-- Cathedral Gothic Arches in background -->
+  <path d="M 212,650 L 212,320 Q 512,120 812,320 L 812,650 Z" fill="none" stroke="#ff3366" stroke-width="4" stroke-opacity="0.3"/>
+  <path d="M 280,650 L 280,360 Q 512,190 744,360 L 744,650 Z" fill="none" stroke="#ffcc00" stroke-width="2" stroke-opacity="0.25"/>
+
+  <!-- Pipe Organ Silhouettes on Left & Right -->
+  <g fill="#15050e" stroke="#ff3366" stroke-width="1.5" stroke-opacity="0.4">
+    <!-- Left pipes -->
+    <rect x="70" y="240" width="22" height="410" rx="4"/>
+    <rect x="96" y="210" width="22" height="440" rx="4"/>
+    <rect x="122" y="180" width="22" height="470" rx="4"/>
+    <rect x="148" y="230" width="22" height="420" rx="4"/>
+    <rect x="174" y="270" width="22" height="380" rx="4"/>
+    <!-- Right pipes -->
+    <rect x="828" y="270" width="22" height="380" rx="4"/>
+    <rect x="854" y="230" width="22" height="420" rx="4"/>
+    <rect x="880" y="180" width="22" height="470" rx="4"/>
+    <rect x="906" y="210" width="22" height="440" rx="4"/>
+    <rect x="932" y="240" width="22" height="410" rx="4"/>
+  </g>
+
+  <!-- Central Great Rose Window (Rosone della Cattedrale / Pain Rinnegan Halo) -->
+  <circle cx="512" cy="380" r="190" fill="none" stroke="#ffcc00" stroke-width="3" stroke-opacity="0.6"/>
+  <circle cx="512" cy="380" r="160" fill="none" stroke="#ff0055" stroke-width="2" stroke-opacity="0.5"/>
+  <circle cx="512" cy="380" r="130" fill="none" stroke="#9900cc" stroke-width="2" stroke-opacity="0.6"/>
+  <circle cx="512" cy="380" r="100" fill="none" stroke="#ffcc00" stroke-width="2.5" stroke-opacity="0.7"/>
+  <circle cx="512" cy="380" r="60" fill="none" stroke="#ff3366" stroke-width="3" stroke-opacity="0.8"/>
+  <circle cx="512" cy="380" r="24" fill="#ff0055" fill-opacity="0.7" filter="url(#glow)"/>
+
+  <!-- Petals / Rays of the sacred Rose Window -->
+  <g stroke="url(#roseWindowGrad)" stroke-width="2" stroke-opacity="0.6">
+    <line x1="572.0" y1="380.0" x2="702.0" y2="380.0"/>
+    <line x1="567.4" y1="403.0" x2="687.5" y2="452.7"/>
+    <line x1="554.4" y1="422.4" x2="646.3" y2="514.4"/>
+    <line x1="535.0" y1="435.4" x2="584.7" y2="555.5"/>
+    <line x1="512.0" y1="440.0" x2="512.0" y2="570.0"/>
+    <line x1="489.0" y1="435.4" x2="439.3" y2="555.5"/>
+    <line x1="469.6" y1="422.4" x2="377.7" y2="514.4"/>
+    <line x1="456.6" y1="403.0" x2="336.5" y2="452.7"/>
+    <line x1="452.0" y1="380.0" x2="322.0" y2="380.0"/>
+    <line x1="456.6" y1="357.0" x2="336.5" y2="307.3"/>
+    <line x1="469.6" y1="337.6" x2="377.7" y2="245.6"/>
+    <line x1="489.0" y1="324.6" x2="439.3" y2="204.5"/>
+    <line x1="512.0" y1="320.0" x2="512.0" y2="190.0"/>
+    <line x1="535.0" y1="324.6" x2="584.7" y2="204.5"/>
+    <line x1="554.4" y1="337.6" x2="646.3" y2="245.6"/>
+    <line x1="567.4" y1="357.0" x2="687.5" y2="307.3"/>
+  </g>
+
+  <!-- Shockwave / Shinra Tensei Divine Force Rings -->
+  <ellipse cx="512" cy="540" rx="340" ry="85" fill="none" stroke="#ffcc00" stroke-width="3" stroke-dasharray="16,8" opacity="0.4" filter="url(#softGlow)"/>
+  <ellipse cx="512" cy="550" rx="420" ry="110" fill="none" stroke="#ff0055" stroke-width="2" stroke-dasharray="24,12" opacity="0.3"/>
+
+  <!-- Steampunk Padel Racket & Cross Silhouette in Center -->
+  <g transform="translate(512, 480)">
+    <!-- Divine floating racket with glowing strings -->
+    <path d="M 0,-110 C 50,-110 80,-70 80,-20 C 80,30 40,65 20,80 L 14,140 L -14,140 L -20,80 C -40,65 -80,30 -80,-20 C -80,-70 -50,-110 0,-110 Z"
+          fill="#100208" stroke="#ffcc00" stroke-width="4" filter="url(#glow)"/>
+    <!-- String pattern in gold -->
+    <line x1="-35" y1="-80" x2="-35" y2="40" stroke="#ffcc00" stroke-width="1.5" stroke-opacity="0.7"/>
+    <line x1="-15" y1="-95" x2="-15" y2="60" stroke="#ffcc00" stroke-width="1.5" stroke-opacity="0.7"/>
+    <line x1="0" y1="-100" x2="0" y2="70" stroke="#ffcc00" stroke-width="2" stroke-opacity="0.9"/>
+    <line x1="15" y1="-95" x2="15" y2="60" stroke="#ffcc00" stroke-width="1.5" stroke-opacity="0.7"/>
+    <line x1="35" y1="-80" x2="35" y2="40" stroke="#ffcc00" stroke-width="1.5" stroke-opacity="0.7"/>
+    <line x1="-50" y1="-50" x2="50" y2="-50" stroke="#ffcc00" stroke-width="1.5" stroke-opacity="0.7"/>
+    <line x1="-65" y1="-20" x2="65" y2="-20" stroke="#ffcc00" stroke-width="1.5" stroke-opacity="0.7"/>
+    <line x1="-50" y1="10" x2="50" y2="10" stroke="#ffcc00" stroke-width="1.5" stroke-opacity="0.7"/>
+    <line x1="-30" y1="40" x2="30" y2="40" stroke="#ffcc00" stroke-width="1.5" stroke-opacity="0.7"/>
+    <!-- Central divine glowing core orb -->
+    <circle cx="0" cy="-20" r="16" fill="#ff0055" filter="url(#glow)"/>
+    <circle cx="0" cy="-20" r="8" fill="#ffffff"/>
+  </g>
+
+  <!-- Title Badge inside disc radius -->
+  <rect x="180" y="675" width="664" height="42" rx="21" fill="#080105" fill-opacity="0.92" stroke="#ff0055" stroke-width="2.5" filter="url(#softGlow)"/>
+  <text x="512" y="702" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="bold" fill="#ffcc00" text-anchor="middle" letter-spacing="4">SACRED GOTHIC METAL &amp; CHORAL CLIMAX</text>
+
+  <!-- Title in bold high-contrast typography -->
+  <text x="512" y="768" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="3" filter="url(#glow)">GIREI: ALMIGHTY JUDGMENT</text>
+  <text x="512" y="768" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="900" fill="#ffe699" text-anchor="middle" letter-spacing="3">GIREI: ALMIGHTY JUDGMENT</text>
+
+  <!-- Lore tag below -->
+  <text x="512" y="805" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#ff3366" text-anchor="middle" letter-spacing="2">BOSS FIGHT FINALE • GLASS CATHEDRAL MATCH</text>
+</svg>

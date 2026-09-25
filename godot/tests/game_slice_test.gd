@@ -1973,7 +1973,9 @@ func _arena_library() -> void:
 		var material: Material = surround.material_override if surround != null else null
 		if material is ShaderMaterial:
 			var shader_material := material as ShaderMaterial
-			if shader_material.shader != preload("res://game/arenas/workshop_surface.gdshader") or shader_material.get_shader_parameter("tint") != Color("20262d"):
+			# "Sopraelevata della Luna" (the rebuilt `locomotive`, 2026-09-25) lays a night asphalt.
+			var workshop_tint := Color("11151d") if id == "locomotive" else Color("20262d")
+			if shader_material.shader != preload("res://game/arenas/workshop_surface.gdshader") or shader_material.get_shader_parameter("tint") != workshop_tint:
 				palette_mismatch.append("%s: unexpected floor shader or tint" % id)
 		elif not (material is StandardMaterial3D) or (material as StandardMaterial3D).albedo_color != Color(expected.r, expected.g, expected.b, 1.0):
 			palette_mismatch.append("%s: missing or incorrect standard floor" % id)
