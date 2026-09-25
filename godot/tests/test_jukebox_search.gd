@@ -178,6 +178,26 @@ func _run() -> void:
 	_assert_eq(visible_oiv.size(), 1, "Matches 'Oltre il Vetro'")
 	_assert_eq(visible_oiv[0], "ost_vocal_oltre_il_vetro", "Matches ost_vocal_oltre_il_vetro")
 
+	# 5i. Search for 'Por Tres'
+	search_input.text = "Por Tres"
+	search_input.text_changed.emit("Por Tres")
+	await process_frame
+
+	var visible_pt: Array = screen.call("_visible_ids")
+	_assert_eq(visible_pt.size(), 1, "Matches 'Por Tres'")
+	_assert_eq(visible_pt[0], "ost_vocal_por_tres", "Matches ost_vocal_por_tres")
+
+	# 5j. Search for 'Bandeja Chic' (matches 3 variants)
+	search_input.text = "Bandeja Chic"
+	search_input.text_changed.emit("Bandeja Chic")
+	await process_frame
+
+	var visible_bc: Array = screen.call("_visible_ids")
+	_assert_eq(visible_bc.size(), 3, "Matches 'Bandeja Chic' 3 variants")
+	_assert(visible_bc.has("ost_vocal_bandeja_chic"), "Matches ost_vocal_bandeja_chic")
+	_assert(visible_bc.has("ost_vocal_bandeja_chic_catchy"), "Matches ost_vocal_bandeja_chic_catchy")
+	_assert(visible_bc.has("ost_vocal_bandeja_chic_rap"), "Matches ost_vocal_bandeja_chic_rap")
+
 	# 6. Cross-scope search hint: search for 'velvet' while in 'match' scope
 	search_input.text = "velvet"
 	search_input.text_changed.emit("velvet")

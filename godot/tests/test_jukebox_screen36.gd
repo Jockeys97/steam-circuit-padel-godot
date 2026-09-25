@@ -13,7 +13,7 @@ func _initialize() -> void:
 		
 	var track_count: int = juke._track_buttons.size()
 	print("Track buttons count: %d" % track_count)
-	assert(track_count == 98, "Jukebox should display exactly 98 tracks, got %d" % track_count)
+	assert(track_count == 102, "Jukebox should display exactly 102 tracks, got %d" % track_count)
 	
 	# Find the index of ost_sawano_titan_breach
 	var all_ids := SoundtrackManager.all_track_ids()
@@ -96,7 +96,11 @@ func _initialize() -> void:
 		"ost_vocal_double_rebond",
 		"ost_vocal_oltre_il_vetro",
 		"ost_vocal_padelista_energy",
-		"ost_vocal_balle_de_match"
+		"ost_vocal_balle_de_match",
+		"ost_vocal_por_tres",
+		"ost_vocal_bandeja_chic",
+		"ost_vocal_bandeja_chic_catchy",
+		"ost_vocal_bandeja_chic_rap"
 	]
 	for v_id in vocal_new_targets:
 		var v_idx := all_ids.find(v_id)
@@ -116,5 +120,5 @@ func _initialize() -> void:
 	assert(juke._manager.current_track_id() == "ost_sawano_counterattack", "Track 16 must play properly")
 	
 	juke._on_stop_pressed()
-	print("All Jukebox 98-track features verified successfully!")
+	print("All Jukebox 102-track features verified successfully!")
 	quit(0)

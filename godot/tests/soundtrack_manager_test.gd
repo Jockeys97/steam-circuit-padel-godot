@@ -19,9 +19,9 @@ func _initialize() -> void:
 func _run() -> void:
 	print("[soundtrack_manager_test] Starting verification suite...")
 
-	# 1. Catalog integrity & count (98 OST tracks: 22 standard + 13 epic + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends + 15 Canzoni Cantate)
+	# 1. Catalog integrity & count (102 OST tracks: 22 standard + 13 epic + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends + 19 Canzoni Cantate)
 	var all_tracks := SoundtrackManager.all_track_ids()
-	_assert_eq(all_tracks.size(), 98, "Catalog contains exactly 98 distinct OST track IDs")
+	_assert_eq(all_tracks.size(), 102, "Catalog contains exactly 102 distinct OST track IDs")
 
 	# 2. Frozen 9 Arena Mappings
 	_assert_eq(SoundtrackManager.track_id_for_arena("officina"), "ost_officina", "Arena officina maps to ost_officina")
@@ -135,6 +135,10 @@ func _run() -> void:
 	_assert_eq(SoundtrackManager.track_id_for_context("vocal_oltre_il_vetro"), "ost_vocal_oltre_il_vetro", "Context vocal_oltre_il_vetro maps to ost_vocal_oltre_il_vetro")
 	_assert_eq(SoundtrackManager.track_id_for_context("vocal_padelista_energy"), "ost_vocal_padelista_energy", "Context vocal_padelista_energy maps to ost_vocal_padelista_energy")
 	_assert_eq(SoundtrackManager.track_id_for_context("vocal_balle_de_match"), "ost_vocal_balle_de_match", "Context vocal_balle_de_match maps to ost_vocal_balle_de_match")
+	_assert_eq(SoundtrackManager.track_id_for_context("vocal_por_tres"), "ost_vocal_por_tres", "Context vocal_por_tres maps to ost_vocal_por_tres")
+	_assert_eq(SoundtrackManager.track_id_for_context("vocal_bandeja_chic"), "ost_vocal_bandeja_chic", "Context vocal_bandeja_chic maps to ost_vocal_bandeja_chic")
+	_assert_eq(SoundtrackManager.track_id_for_context("vocal_bandeja_chic_catchy"), "ost_vocal_bandeja_chic_catchy", "Context vocal_bandeja_chic_catchy maps to ost_vocal_bandeja_chic_catchy")
+	_assert_eq(SoundtrackManager.track_id_for_context("vocal_bandeja_chic_rap"), "ost_vocal_bandeja_chic_rap", "Context vocal_bandeja_chic_rap maps to ost_vocal_bandeja_chic_rap")
 	_assert_eq(SoundtrackManager.track_id_for_context("apex_victory"), "ost_apex_victory", "Context apex_victory maps to ost_apex_victory")
 	_assert_eq(SoundtrackManager.track_id_for_context("clash_of_champions"), "ost_clash_of_champions", "Context clash_of_champions maps to ost_clash_of_champions")
 	_assert_eq(SoundtrackManager.track_id_for_context("reflex_strike"), "ost_reflex_strike", "Context reflex_strike maps to ost_reflex_strike")
@@ -199,6 +203,10 @@ func _run() -> void:
 	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_oltre_il_vetro"), 45.0, "Oltre il Vetro preview offset is 45.0s")
 	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_padelista_energy"), 15.0, "Padelista Energy preview offset is 15.0s")
 	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_balle_de_match"), 60.0, "Balle de Match preview offset is 60.0s")
+	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_por_tres"), 35.0, "Por Tres preview offset is 35.0s")
+	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_bandeja_chic"), 25.0, "Bandeja Chic preview offset is 25.0s")
+	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_bandeja_chic_catchy"), 25.0, "Bandeja Chic Catchy preview offset is 25.0s")
+	_assert_eq(SoundtrackManager.preview_offset("ost_vocal_bandeja_chic_rap"), 30.0, "Bandeja Chic Rap preview offset is 30.0s")
 	_assert_eq(SoundtrackManager.preview_offset("ost_hyori_ittai_vocal"), 18.7, "Hyori Ittai preview offset is 18.7s")
 	_assert_eq(SoundtrackManager.preview_offset("ost_officina"), 0.0, "Standard track offset defaults to 0.0s")
 	_assert_eq(SoundtrackManager.preview_offset("non_existent_track"), 0.0, "Unknown track offset defaults to 0.0s")

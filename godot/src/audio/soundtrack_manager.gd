@@ -108,7 +108,7 @@ const CONTEXT_TRACK_MAP := {
 	"menu_champions_pavilion": "ost_menu_champions_pavilion",
 	"menu_orbital_vanguard": "ost_menu_orbital_vanguard",
 	"menu_third_strike": "ost_menu_third_strike",
-	# 15 Canzoni Cantate Speciali (Suno Vocal Anthems)
+	# 19 Canzoni Cantate Speciali (Suno Vocal Anthems)
 	"vocal_overdrive_line": "ost_vocal_overdrive_line",
 	"vocal_break_point_riot": "ost_vocal_break_point_riot",
 	"vocal_reach_for_the_sun": "ost_vocal_reach_for_the_sun",
@@ -124,6 +124,10 @@ const CONTEXT_TRACK_MAP := {
 	"vocal_oltre_il_vetro": "ost_vocal_oltre_il_vetro",
 	"vocal_padelista_energy": "ost_vocal_padelista_energy",
 	"vocal_balle_de_match": "ost_vocal_balle_de_match",
+	"vocal_por_tres": "ost_vocal_por_tres",
+	"vocal_bandeja_chic": "ost_vocal_bandeja_chic",
+	"vocal_bandeja_chic_catchy": "ost_vocal_bandeja_chic_catchy",
+	"vocal_bandeja_chic_rap": "ost_vocal_bandeja_chic_rap",
 	# 5 Nuove Tracce Boss & Battle Champions Special (Epico / Anime Special)
 	"apex_victory": "ost_apex_victory",
 	"clash_of_champions": "ost_clash_of_champions",
@@ -132,7 +136,7 @@ const CONTEXT_TRACK_MAP := {
 	"thunder_strike": "ost_thunder_strike",
 }
 
-## Complete metadata dictionary for all 98 OST tracks (22 Standard + 13 Epic/Anime + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends + 15 Canzoni Cantate)
+## Complete metadata dictionary for all 102 OST tracks (22 Standard + 13 Epic/Anime + 12 Sawano + 5 DBGT + 15 Automata + 1 HxH + 15 Menu Legends + 19 Canzoni Cantate)
 const TRACK_METADATA := {
 	"ost_menu": {
 		"id": "ost_menu",
@@ -1082,6 +1086,50 @@ const TRACK_METADATA := {
 		"style": "Dramatic French Alternative Rock cantato con riff taglienti di chitarra, percussioni incalzanti e ritornello mozzafiato",
 		"prompt": "Dramatic French Alternative Rock, 140 BPM, tense guitar ostinatos, urgent driving bassline, passionate French vocals building to explosive climax for match point victory",
 		"preview_offset": 60.0
+	},
+	"ost_vocal_por_tres": {
+		"id": "ost_vocal_por_tres",
+		"title": "POR TRES!",
+		"scene": "Arena Iberica & Smash Fuori Gabbia",
+		"category": "Canzoni Cantate",
+		"bpm": 150,
+		"key": "A minor",
+		"style": "High-Energy Spanish Latin Rock / Anthem cantato in spagnolo sul colpo smash Por Tres che vola fuori campo",
+		"prompt": "High-energy Spanish vocal rock anthem, 150 BPM, blazing guitars, pounding drums, explosive crowd chants, heroic lead vocals singing Por Tres padel smash out of the court",
+		"preview_offset": 35.0
+	},
+	"ost_vocal_bandeja_chic": {
+		"id": "ost_vocal_bandeja_chic",
+		"title": "Bandeja Chic",
+		"scene": "Club Privé Parigi & Eleganza sulla Senna",
+		"category": "Canzoni Cantate",
+		"bpm": 120,
+		"key": "F# minor",
+		"style": "French Electro-Chanson / Nu-Disco cantato in francese, groove elegante, piano house e archi glamour",
+		"prompt": "French Electro-Chanson, Nu-Disco, 120 BPM, chic seductive French vocals, elegant four-on-the-floor house groove, funky bassline, lush disco strings, Parisian luxury padel club",
+		"preview_offset": 25.0
+	},
+	"ost_vocal_bandeja_chic_catchy": {
+		"id": "ost_vocal_bandeja_chic_catchy",
+		"title": "Bandeja Chic (Catchy Chorus Remix)",
+		"scene": "Dancefloor Notturno & Festa Padel",
+		"category": "Canzoni Cantate",
+		"bpm": 120,
+		"key": "F# minor",
+		"style": "Dance-Pop Remix con hook vocale immediato, beat incalzante e ritornello esteso",
+		"prompt": "Catchy French dance-pop vocal remix, 120 BPM, irresistible melodic hook, driving dance beat, extended euphoric chorus, energetic electro club vibe",
+		"preview_offset": 25.0
+	},
+	"ost_vocal_bandeja_chic_rap": {
+		"id": "ost_vocal_bandeja_chic_rap",
+		"title": "Bandeja Chic (French Rap Remix)",
+		"scene": "Underground Parigi & Street Padel",
+		"category": "Canzoni Cantate",
+		"bpm": 125,
+		"key": "F# minor",
+		"style": "Urban French Rap Remix con flow ritmico incalzante, bassi 808 profondi e percussioni trap-house",
+		"prompt": "Urban French Rap vocal remix, 125 BPM, rhythmic French rap flow, deep 808 sub-bass, snappy trap-house percussion, stylish street padel attitude",
+		"preview_offset": 30.0
 	},
 	# 5 Boss & Battle Champions Special Tracks (Epico / Anime Special)
 	"ost_apex_victory": {
