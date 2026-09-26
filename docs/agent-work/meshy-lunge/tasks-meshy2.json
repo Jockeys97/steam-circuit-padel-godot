@@ -1,0 +1,23 @@
+{
+  "rig": {
+    "reserved": 5,
+    "request_started": true,
+    "id": "01a0dced-e0b1-702e-af93-40d0fab1926b",
+    "status": "SUCCEEDED",
+    "credits": 5
+  },
+  "forehand_volley_motion": {
+    "reserved": 10,
+    "request_started": true,
+    "id": "01a0dcee-7813-704d-92fb-167f00465e33",
+    "status": "SUCCEEDED",
+    "credits": 10
+  },
+  "forehand_volley_animation": {
+    "reserved": 3,
+    "request_started": true,
+    "id": "01a0dcee-bf2f-707b-a9ff-85beba21b8f8",
+    "status": "SUCCEEDED",
+    "credits": 3
+  }
+}

@@ -381,7 +381,7 @@ func _build() -> int:
 	_author_ceremonies(lib)
 	_author_strokes(lib)
 	if _athlete_id in [&"fiamma", &"colosso", &"oracolo", &"maestro", &"fornaio", &"pantera", &"steamer"]:
-		for shot in ["drive", "smash", "bandeja", "backhand", "slice", "lunge_forehand", "wall_exit_forehand"]:
+		for shot in ["drive", "smash", "bandeja", "backhand", "slice", "lunge_forehand", "wall_exit_forehand", "forehand_volley", "backhand_volley"]:
 			var motion_path := "res://assets/athletes/animations/%s_meshy_%s.tres" % [_motion_id,shot]
 			if ResourceLoader.exists(motion_path):
 				var motion := load(motion_path) as Animation

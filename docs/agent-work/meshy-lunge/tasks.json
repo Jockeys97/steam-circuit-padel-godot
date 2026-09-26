@@ -33,5 +33,19 @@
     "id": "01a0d56d-9bbb-7199-9c15-ae08742d77fd",
     "status": "SUCCEEDED",
     "credits": 3
+  },
+  "ready_stance_motion": {
+    "reserved": 10,
+    "request_started": true,
+    "id": "01a0dced-2b27-76fb-a914-e1db7008fff0",
+    "status": "SUCCEEDED",
+    "credits": 10
+  },
+  "ready_stance_animation": {
+    "reserved": 3,
+    "request_started": true,
+    "id": "01a0dced-7235-7062-b866-9f5d2bd1e5ae",
+    "status": "SUCCEEDED",
+    "credits": 3
   }
 }
