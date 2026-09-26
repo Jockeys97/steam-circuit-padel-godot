@@ -1373,10 +1373,26 @@ func _bone_local_at(anim: Animation, t: float, bone_name: String) -> Vector3:
 ## `neutral` until it is no further than PREP_LIMIT_DEG from it.
 func _clamp_to_neutral(neutral: Quaternion, target: Quaternion, bone_index: int) -> Quaternion:
 	var limit := float(PREP_LIMIT_DEG.get(_skeleton.get_bone_name(bone_index).replace("mixamorig_", "").replace("mixamorig:", ""), 10.0))
-	var angle := rad_to_deg(neutral.angle_to(target))
-	if angle <= limit or angle <= 0.001:
-		return target
-	return neutral.slerp(target, limit / angle).normalized()
+	# The cap bounds the SWING and, separately, the TWIST about the bone's own length
+	# axis (local +Y) — with the elbow bent, upper-arm twist is what carries a
+	# forehand's racket back, so it gets the same budget. A single cap on the whole rotation
+	# spent most of it on twist when a clip's backswing rolls the arm (measured
+	# 2026-09-26, drive on Maestro/Fornaio: RightArm 72 deg raw, 16 deg kept, racket
+	# hand moved 0.02 m): the wind-up was capped to nothing instead of to compact.
+	var delta := (neutral.inverse() * target).normalized()
+	var twist := Quaternion(0.0, delta.y, 0.0, delta.w)
+	if twist.length_squared() < 1e-8:
+		twist = Quaternion.IDENTITY
+	twist = twist.normalized()
+	var swing := (delta * twist.inverse()).normalized()
+	return (neutral * _cap_angle(swing, limit) * _cap_angle(twist, limit)).normalized()
+
+
+static func _cap_angle(q: Quaternion, limit_deg: float) -> Quaternion:
+	var angle := rad_to_deg(Quaternion.IDENTITY.angle_to(q))
+	if angle <= limit_deg or angle <= 0.001:
+		return q
+	return Quaternion.IDENTITY.slerp(q, limit_deg / angle).normalized()
 
 
 # =========================================================================

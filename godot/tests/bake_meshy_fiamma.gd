@@ -21,14 +21,19 @@ func run():
 	var athlete := StringName(args[2]) if args.size() > 2 else &"fiamma"
 	var outfit := StringName(args[3]) if args.size() > 3 else &"base"
 	var output_id := String(athlete) if outfit == &"base" else "%s_%s" % [athlete, outfit]
-	var source_contact: float = float(args[1]) if args.size() > 1 and args[1] != "auto" else {"smash":1.0,"bandeja":1.15,"backhand":1.25,"slice":1.1,"lunge_forehand":1.1,"wall_exit_forehand":2.05,"forehand_volley":1.15,"backhand_volley":1.1}.get(stroke,1.5)
+	var source_contact: float = float(args[1]) if args.size() > 1 and args[1] != "auto" else {"drive":1.0,"smash":1.0,"bandeja":1.15,"backhand":1.25,"slice":1.1,"lunge_forehand":1.1,"wall_exit_forehand":2.05,"forehand_volley":1.0,"backhand_volley":1.1}.get(stroke,1.5)
+	# Drive contact moved 1.5 -> 1.0 s (2026-09-26): measured on the rig, the racket hand
+	# crosses in front of the body at source 0.95-1.05 s; at 1.5 s it is already wrapped
+	# behind the left shoulder. A match starts the clip AT the contact frame, so with 1.5
+	# the forward swing was never shown. The forehand volley, cut from the same source,
+	# takes the same contact.
 	# Volleys (2026-09-26) are cut from the Meshy drive and backhand the owner already
 	# plays with: only the end of the backswing, the swing's fastest moment (measured:
 	# drive 1.0-1.1 s, backhand 1.1-1.2 s) and a short follow-through, at a reduced
 	# amplitude (`amplitudes`) so a full groundstroke becomes a compact punch.
 	# The ready stance is a LOOP, not a stroke: sampled 1:1 and closed on its first pose.
-	var source_start: float = {"forehand_volley":0.75,"backhand_volley":0.8}.get(stroke, 0.0)
-	var source_end: float = {"forehand_volley":1.4,"backhand_volley":1.35}.get(stroke, -1.0)
+	var source_start: float = {"forehand_volley":0.7,"backhand_volley":0.8}.get(stroke, 0.0)
+	var source_end: float = {"forehand_volley":1.3,"backhand_volley":1.35}.get(stroke, -1.0)
 	# [spine + racket arm, free (left) arm, legs]: how much of the source motion is kept.
 	# The drive throws the free arm wide for balance; at the net it stays near the body.
 	var amplitudes: Array = {"forehand_volley":[0.55, 0.2, 0.45],"backhand_volley":[0.6, 0.35, 0.45]}.get(stroke, [])
