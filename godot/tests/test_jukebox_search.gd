@@ -118,9 +118,9 @@ func _run() -> void:
 	await process_frame
 
 	var visible_neon: Array = screen.call("_visible_ids")
-	_assert_eq(visible_neon.size(), 1, "Matches 'neon'")
-	_assert_eq(visible_neon[0], "ost_vocal_neon_velocity", "Matches ost_vocal_neon_velocity")
-	_assert_eq(screen.get("_title_label").text, "Neon Velocity", "Auto-selected Neon Velocity")
+	_assert_eq(visible_neon.size(), 2, "Unified search finds both Neon tracks")
+	_assert(visible_neon.has("ost_vocal_neon_velocity"), "Includes match song Neon Velocity")
+	_assert(visible_neon.has("ost_menu_cyber_terminal"), "Includes menu song Neon Grid Terminal")
 
 	# 5c. Search for 'girei' (Girei (Almighty Judgment))
 	search_input.text = "girei"
@@ -199,6 +199,7 @@ func _run() -> void:
 	_assert(visible_bc.has("ost_vocal_bandeja_chic_rap"), "Matches ost_vocal_bandeja_chic_rap")
 
 	# 6. Cross-scope search hint: search for 'velvet' while in 'match' scope
+	screen._set_separate_contexts(true)
 	search_input.text = "velvet"
 	search_input.text_changed.emit("velvet")
 	await process_frame

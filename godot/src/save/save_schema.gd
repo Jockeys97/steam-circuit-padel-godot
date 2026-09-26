@@ -143,6 +143,8 @@ const PREFS_DEFAULTS: Dictionary = {
 	"musicVolume": 1.0, ## Port addition: multiplier for the Music bus only.
 	"musicMuted": false, ## Port addition: silence music without losing its chosen level.
 	"nowPlaying": true, ## Port addition: show the soundtrack title and cover toast.
+	"musicSeparateContexts": false, ## One library unless the legacy split is requested.
+	"musicContinueOutsideJukebox": false, ## Opt-in handoff of the playing Jukebox track.
 	"controlMode": "semi", ## js/ui.js:466
 	"gamepadDeadzone": 0.15, ## js/ui.js:467
 	"vibration": true, ## js/ui.js:468

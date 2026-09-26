@@ -123,8 +123,8 @@ func _ready() -> void:
 	port.name = "AudioPort"
 	add_child(port)
 	if use_ost:
-		ost = preload("res://src/audio/runtime_soundtrack.gd").new()
-		add_child(ost)
+		ost = get_node("/root/BackgroundMusic")
+		ost.set_muted(false)
 		return
 	music = MusicScript.new()
 	music.name = "Music"

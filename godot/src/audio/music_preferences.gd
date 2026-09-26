@@ -1,5 +1,5 @@
 extends RefCounted
-## Independent menu/match favourites; playback access remains Economy's authority.
+## Unified library by default; the optional legacy contexts keep their saved lists.
 const Save := preload("res://src/modes/modes_save.gd")
 const Manager := preload("res://src/audio/soundtrack_manager.gd")
 
@@ -9,7 +9,11 @@ static func read(store) -> Dictionary:
 
 static func favorites(store, scope: String) -> Array[String]:
 	var result: Array[String] = []
-	var raw: Variant = read(store).get("musicFavorites_" + scope, [])
+	var prefs := read(store)
+	var raw: Variant = prefs.get("musicFavorites_" + scope, [])
+	# Seed the unified library from both old lists without overwriting either one.
+	if scope == "all" and not prefs.has("musicFavorites_all"):
+		raw = favorites(store, "menu") + favorites(store, "match")
 	if raw is Array:
 		for value in raw:
 			var id := String(value)
@@ -26,7 +30,15 @@ static func toggle(store, scope: String, id: String) -> void:
 	Save.save_pref(store, "musicFavorites_" + scope, ids)
 
 static func only(store, scope: String) -> bool:
+	if scope == "all" and not read(store).has("musicOnlyFavorites_all"):
+		return only(store, "menu") or only(store, "match")
 	return bool(read(store).get("musicOnlyFavorites_" + scope, false))
+
+static func separate_contexts(store) -> bool:
+	return bool(read(store).get("musicSeparateContexts", false))
+
+static func playback_scope(store, context: String) -> String:
+	return context if separate_contexts(store) else "all"
 
 static func set_only(store, scope: String, enabled: bool) -> void:
 	Save.save_pref(store, "musicOnlyFavorites_" + scope, enabled)
@@ -36,6 +48,12 @@ static func random_skip(store) -> bool:
 
 static func set_random_skip(store, enabled: bool) -> void:
 	Save.save_pref(store, "musicRandomR3", enabled)
+
+static func continue_outside(store) -> bool:
+	return bool(read(store).get("musicContinueOutsideJukebox", false))
+
+static func set_continue_outside(store, enabled: bool) -> void:
+	Save.save_pref(store, "musicContinueOutsideJukebox", enabled)
 
 const MENU_DEFAULT_TRACKS: Array[String] = [
 	"ost_menu",
@@ -59,6 +77,8 @@ const MENU_DEFAULT_TRACKS: Array[String] = [
 ]
 
 static func belongs(store, id: String, scope: String) -> bool:
+	if scope == "all":
+		return id == "classic_match" or Manager.all_track_ids().has(id)
 	var overrides: Variant = read(store).get("musicContexts", {})
 	if overrides is Dictionary and overrides.get(id) is Array:
 		return overrides[id].has(scope)

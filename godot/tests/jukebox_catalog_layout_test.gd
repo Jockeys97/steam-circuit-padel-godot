@@ -12,17 +12,23 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	preload("res://game/match_config.gd").save_dir = "user://jukebox-layout-%d" % Time.get_ticks_usec()
 	root.size = Vector2i(1280, 720)
 	var juke: Control = JukeboxScene.instantiate()
 	root.add_child(juke)
 	await _settle()
-	_check(juke._scope == "match", "Musiche partita predefinita all'apertura")
-	_check(juke._scope_buttons["match"].theme_type_variation == &"SegmentedActive", "scheda partita evidenziata")
+	_check(juke._scope == "all", "catalogo unificato predefinito all'apertura")
+	_check(juke._visible_ids().has("ost_menu") and juke._visible_ids().has("ost_training"), "menu e partita nello stesso elenco")
 	var closed_rows := _fully_visible_rows(juke)
 	_check(not juke._options_body.visible, "Opzioni inizialmente chiuse")
 	_check(closed_rows >= 7, "almeno 7 brani completi a 1280x720 (%d)" % closed_rows)
-	_check(juke._scope_buttons["menu"].is_visible_in_tree(), "schede playlist visibili")
+	_check(not juke._scope_buttons["menu"].is_visible_in_tree(), "vecchie schede nascoste nella modalità unificata")
 	_check(juke._catalog_filter_buttons[false].is_visible_in_tree(), "filtro elenco visibile")
+	var keep_rect: Rect2 = juke._continue_outside.get_global_rect()
+	var player_rect: Rect2 = juke._insp_scroll.get_global_rect()
+	_check(juke._continue_outside.is_visible_in_tree() and keep_rect.end.y <= player_rect.end.y + 1.0, "opzione continua fuori visibile senza scorrere il lettore")
+	juke._continue_outside.grab_focus()
+	_check(juke._continue_outside.has_focus(), "opzione continua fuori raggiungibile col controller")
 	_check(juke._genre.is_visible_in_tree(), "filtro genere visibile")
 	juke._genre.pressed.emit()
 	await _settle()
@@ -55,6 +61,10 @@ func _run() -> void:
 	var open_rows := _fully_visible_rows(juke)
 	_check(juke._options_body.visible, "Opzioni apribili")
 	_check(juke._r3_order.is_visible_in_tree() and juke._only_favorites.is_visible_in_tree(), "ordinamento e soli preferiti accessibili")
+	juke._separate_contexts.button_pressed = true
+	_check(juke._scope == "match" and juke._scope_tabs.visible, "opzione ripristina la vecchia suddivisione")
+	juke._separate_contexts.button_pressed = false
+	_check(juke._scope == "all" and not juke._copy_context.get_parent().visible, "disattivando la suddivisione torna la libreria unificata")
 	_check(closed_rows >= open_rows + 2, "chiudere Opzioni restituisce almeno 2 righe (%d -> %d)" % [open_rows, closed_rows])
 
 	juke._r3_order.grab_focus()

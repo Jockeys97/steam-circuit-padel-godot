@@ -54,8 +54,11 @@ const STATUS_IDLE := Color(0.6447059, 0.7098039, 0.78431374)
 const READOUT_INTERVAL := 0.1
 
 signal closed
+signal continue_requested(id: String, position: float)
 const MusicPreferences := preload("res://src/audio/music_preferences.gd")
-var _scope := "match"
+var _scope := "all"
+var _scope_tabs: HBoxContainer
+var _separate_contexts: CheckButton
 var _scope_buttons: Dictionary = {}
 var _only_favorites: CheckButton
 var _show_favorites_only := false
@@ -113,6 +116,7 @@ var _stop_btn: Button = null
 var _prev_btn: Button = null
 var _next_btn: Button = null
 var _volume_slider: HSlider = null
+var _continue_outside: CheckButton = null
 var _now_playing_label: Label = null
 
 # Player card (the dominant surface)
@@ -137,6 +141,7 @@ var _progress_style_key: String = ""
 
 func _ready() -> void:
 	theme = DefaultTheme
+	_scope = MusicPreferences.playback_scope(_economy(), "match")
 	_track_ids = SoundtrackManager.all_track_ids()
 	_manager = SoundtrackManager.new()
 	add_child(_manager)
@@ -154,6 +159,10 @@ func _ready() -> void:
 func set_store(store: RefCounted) -> void:
 	_economy_store = store
 	if _track_list_container != null:
+		_scope = MusicPreferences.playback_scope(_economy(), "match")
+		_scope_tabs.visible = _scope != "all"
+		_separate_contexts.set_pressed_no_signal(_scope != "all")
+		_continue_outside.set_pressed_no_signal(MusicPreferences.continue_outside(_economy()))
 		for child in _track_list_container.get_children():
 			child.queue_free()
 		_populate_track_list()
@@ -277,6 +286,8 @@ func _build_list_column(split_hbox: HBoxContainer) -> void:
 
 func _build_favorites(parent: VBoxContainer) -> void:
 	var tabs := HBoxContainer.new()
+	_scope_tabs = tabs
+	tabs.visible = MusicPreferences.separate_contexts(_economy())
 	tabs.add_theme_constant_override("separation", 4)
 	parent.add_child(tabs)
 	for scope in ["menu", "match"]:
@@ -371,6 +382,12 @@ func _build_favorites(parent: VBoxContainer) -> void:
 	_options_body.add_theme_constant_override("separation", 4)
 	_options_body.visible = false
 	parent.add_child(_options_body)
+	_separate_contexts = CheckButton.new()
+	_separate_contexts.text = "Separa musica menu e partita"
+	_separate_contexts.add_theme_font_size_override("font_size", 13)
+	_separate_contexts.set_pressed_no_signal(MusicPreferences.separate_contexts(_economy()))
+	_separate_contexts.toggled.connect(_set_separate_contexts)
+	_options_body.add_child(_separate_contexts)
 	_r3_order = OptionButton.new()
 	_r3_order.add_item("R3 / N: ordine fisso")
 	_r3_order.add_item("R3 / N: ordine casuale")
@@ -381,7 +398,7 @@ func _build_favorites(parent: VBoxContainer) -> void:
 	_only_favorites = CheckButton.new()
 	_only_favorites.text = "Riproduci solo i preferiti"
 	_only_favorites.add_theme_font_size_override("font_size", 13)
-	_only_favorites.tooltip_text = "Solo per la scheda aperta. Senza preferiti disponibili la musica resta silenziosa. La lista resta visibile per aggiungerne altri."
+	_only_favorites.tooltip_text = "Riproduci i preferiti della libreria attiva. Senza preferiti disponibili la musica resta silenziosa."
 	_only_favorites.toggled.connect(func(on: bool): _set_only_favorites(on, _scope))
 	_options_body.add_child(_only_favorites)
 	_playlist_hint = Label.new()
@@ -488,8 +505,17 @@ func _set_scope(scope: String) -> void:
 	_scope = scope
 	_filter_playlist()
 
+func _set_separate_contexts(enabled: bool) -> void:
+	MusicPreferences.Save.save_pref(_economy(), "musicSeparateContexts", enabled)
+	_scope_tabs.visible = enabled
+	_scope = "match" if enabled else "all"
+	_filter_playlist()
+
 func _update_transfer_buttons() -> void:
 	if _copy_context == null:
+		return
+	_copy_context.get_parent().visible = _scope != "all"
+	if _scope == "all":
 		return
 	var target := "partita" if _scope == "menu" else "menu"
 	var id := String(_track_ids[_selected_idx])
@@ -591,7 +617,7 @@ func _filter_playlist() -> void:
 			var other_scope := "menu" if _scope == "match" else "match"
 			var exists_in_other := false
 			for id in _track_ids:
-				if MusicPreferences.belongs(_economy(), id, other_scope):
+				if _scope != "all" and MusicPreferences.belongs(_economy(), id, other_scope):
 					var title := String(SoundtrackManager.track_info(id).get("title", id)).to_lower()
 					if title.contains(_search_query) or id.to_lower().contains(_search_query):
 						exists_in_other = true
@@ -604,7 +630,7 @@ func _filter_playlist() -> void:
 		elif _show_favorites_only:
 			_playlist_hint.text = "Nessun preferito in questa playlist."
 		else:
-			_playlist_hint.text = "Nessun brano di questo genere nella scheda. Prova l'altra scheda o Tutti i generi."
+			_playlist_hint.text = "Nessun brano di questo genere. Prova Tutti i generi."
 		_playlist_hint.visible = true
 	if not ids.is_empty() and not ids.has(_track_ids[_selected_idx]):
 		_select_track(_track_ids.find(ids[0]))
@@ -924,6 +950,14 @@ func _build_player_column(split_hbox: HBoxContainer) -> void:
 	_volume_slider.tooltip_text = "Volume musica"
 	_volume_slider.value_changed.connect(_on_volume_changed)
 	controls_bar.add_child(_volume_slider)
+
+	_continue_outside = CheckButton.new()
+	_continue_outside.text = "Continua la traccia fuori dal Junkbox"
+	_continue_outside.tooltip_text = "Uscendo, continua nel gioco la traccia che sta suonando, dal punto raggiunto. Se il lettore è fermo, non cambia la musica."
+	_continue_outside.add_theme_font_size_override("font_size", 13)
+	_continue_outside.set_pressed_no_signal(MusicPreferences.continue_outside(_economy()))
+	_continue_outside.toggled.connect(func(enabled: bool): MusicPreferences.set_continue_outside(_economy(), enabled))
+	player_vbox.add_child(_continue_outside)
 
 	# Collapsed secondary section: BPM/key, style and the track description.
 	_prompt_toggle_btn = Button.new()
@@ -1418,10 +1452,18 @@ func _on_copy_prompt_pressed() -> void:
 
 
 func _on_back_pressed() -> void:
+	var current_id := String(_manager.current_track_id())
+	var continue_track: bool = _continue_outside.button_pressed and _manager.is_active() and not is_locked(current_id)
+	var position: float = _manager.playback_position() if continue_track else 0.0
 	_on_stop_pressed()
-	_apply_saved_music_volume()
+	preload("res://src/audio/music_settings.gd").apply(Config.stored_prefs())
+	if continue_track:
+		continue_requested.emit(current_id, position)
 	closed.emit()
 	queue_free()
+
+func _exit_tree() -> void:
+	preload("res://src/audio/music_settings.gd").apply(Config.stored_prefs())
 
 
 func _apply_saved_music_volume() -> void:

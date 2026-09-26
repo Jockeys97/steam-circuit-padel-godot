@@ -116,6 +116,10 @@ var _tournament_scroll: ScrollContainer
 
 
 func _ready() -> void:
+	var soundtrack := get_node("/root/BackgroundMusic")
+	soundtrack.set_held(false)
+	soundtrack.set_muted(false)
+	soundtrack.set_screen("menu")
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	# Capture-only arguments: which mode to open, and which save root to read it
 	# from. Both exist so a render can show the screen a PLAYER sees (a season with

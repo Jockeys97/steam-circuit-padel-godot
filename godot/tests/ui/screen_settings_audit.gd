@@ -117,10 +117,16 @@ func _groups(audit: AuditBase) -> void:
 		audit.check_true(button != null, "settings/the_%s_button_exists" % button_name)
 		if button != null:
 			audit.check_eq(button.text, button_name.substr(5).to_upper(), "settings/%s_is_capitalised" % button_name)
-	for row_name in ["ReduceMotionRow", "ColorblindRow", "VolumeRow", "MusicVolumeRow", "MusicEnabledRow", "NowPlayingRow", "DeadzoneRow", "VibrationRow"]:
+	for row_name in ["ReduceMotionRow", "ColorblindRow", "VolumeRow", "MusicVolumeRow", "MusicEnabledRow", "NowPlayingRow", "SeparateMusicRow", "DeadzoneRow", "VibrationRow"]:
 		audit.check_true(screen.find_child(row_name, true, false) != null, "settings/the_%s_exists" % row_name)
 	var rows: Dictionary = screen.rows()
-	audit.check_eq(rows.keys().size(), 8, "settings/eight_rows_are_registered")
+	audit.check_eq(rows.keys().size(), 9, "settings/nine_rows_are_registered")
+	var split := (rows["SeparateMusicRow"] as RowsClass.ToggleRow).check
+	audit.check_eq(split.button_pressed, false, "settings/unified_music_is_default")
+	split.button_pressed = true
+	audit.check_eq(_stored_prefs().get("musicSeparateContexts"), true, "settings/split_toggle_persists")
+	split.button_pressed = false
+	audit.check_eq(_stored_prefs().get("musicSeparateContexts"), false, "settings/unified_toggle_persists")
 	audit.check_eq(RowsClass.kind_of(rows["VolumeRow"]), "range", "settings/the_volume_row_is_a_range")
 	audit.check_eq(RowsClass.kind_of(rows["MusicVolumeRow"]), "range", "settings/music_volume_is_a_range")
 	audit.check_eq(RowsClass.kind_of(rows["MusicEnabledRow"]), "toggle", "settings/music_enabled_is_a_toggle")
@@ -376,7 +382,7 @@ func _focus(audit: AuditBase) -> void:
 	var nav: MenuNav = focus.menu
 	focus.refresh()
 	var ids: Array = focus.ids()
-	for suffix in ["VolumeRow", "MusicVolumeRow", "MusicEnabledRow", "NowPlayingRow", "DeadzoneRow", "VibrationRow", "ReduceMotionRow", "ColorblindRow", "Lang_it", "Lang_en"]:
+	for suffix in ["VolumeRow", "MusicVolumeRow", "MusicEnabledRow", "NowPlayingRow", "SeparateMusicRow", "DeadzoneRow", "VibrationRow", "ReduceMotionRow", "ColorblindRow", "Lang_it", "Lang_en"]:
 		audit.check_true(ids.has(screen.focus_id(suffix)), "settings/the_bridge_reads_%s" % suffix)
 	audit.check_eq(_duplicates(ids), [], "settings/no_row_registers_twice")
 	var volume_target := _target_of(nav, screen.focus_id("VolumeRow"))

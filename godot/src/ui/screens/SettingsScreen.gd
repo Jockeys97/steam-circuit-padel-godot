@@ -66,6 +66,7 @@ const ROW_KEYS := {
 	"MusicVolumeRow": "musicVolume",
 	"MusicEnabledRow": "settingsMusicEnabled",
 	"NowPlayingRow": "settingsNowPlaying",
+	"SeparateMusicRow": "settingsSeparateMusic",
 	"DeadzoneRow": "gamepadDeadzone",
 	"VibrationRow": "vibration",
 }
@@ -381,6 +382,7 @@ func refresh_values() -> void:
 	_rows_set("MusicVolumeRow", snap.get("music_volume", 1.0))
 	_rows_set("MusicEnabledRow", not bool(snap.get("music_muted", false)))
 	_rows_set("NowPlayingRow", snap.get("now_playing", true))
+	_rows_set("SeparateMusicRow", _stored_prefs().get("musicSeparateContexts", false))
 	_rows_set("DeadzoneRow", snap.get("deadzone", 0.15))
 	_rows_set("VibrationRow", snap.get("vibration", true))
 	_access.apply_prefs(_stored_prefs())
@@ -626,6 +628,8 @@ func _audio_body() -> Control:
 	_add_row(levels, Rows.make_range("musicVolume", MUSIC_VOLUME_MIN, MUSIC_VOLUME_MAX, MUSIC_VOLUME_STEP, float(snap.get("music_volume", 1.0)), "MusicVolumeRow"))
 	_add_row(switches, Rows.make_toggle("settingsMusicEnabled", not bool(snap.get("music_muted", false)), "MusicEnabledRow"))
 	_add_row(switches, Rows.make_toggle("settingsNowPlaying", bool(snap.get("now_playing", true)), "NowPlayingRow"))
+	_add_row(switches, Rows.make_toggle("settingsSeparateMusic", bool(_stored_prefs().get("musicSeparateContexts", false)), "SeparateMusicRow"))
+	(_rows["SeparateMusicRow"] as Rows.ToggleRow).changed.connect(func(on: bool): _persist("musicSeparateContexts", on))
 	(_rows["VolumeRow"] as Rows.RangeRow).changed.connect(_on_volume)
 	(_rows["MusicVolumeRow"] as Rows.RangeRow).changed.connect(_on_music_volume)
 	(_rows["MusicEnabledRow"] as Rows.ToggleRow).changed.connect(_on_music_enabled)

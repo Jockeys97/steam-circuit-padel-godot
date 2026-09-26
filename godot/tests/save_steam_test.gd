@@ -167,6 +167,8 @@ func _realistic_prefs() -> Dictionary:
 		"musicVolume": 0.6,
 		"musicMuted": true,
 		"nowPlaying": false,
+		"musicSeparateContexts": true,
+		"musicContinueOutsideJukebox": true,
 		"controlMode": "manual",
 		"gamepadDeadzone": 0.22,
 		"vibration": false,
@@ -301,7 +303,7 @@ func _schema_anchors() -> void:
 	# for every field collectPrefs writes, plus the audio defaults, plus the port's
 	# own additions. Counted apart, so a reference field that goes missing still
 	# fails even while the port adds keys of its own.
-	const PORT_PREF_KEYS := ["cameraPreset", "musicVolume", "musicMuted", "nowPlaying", "pacePreset"]
+	const PORT_PREF_KEYS := ["cameraPreset", "musicVolume", "musicMuted", "nowPlaying", "musicSeparateContexts", "musicContinueOutsideJukebox", "pacePreset"]
 	var reference_prefs := Schema.PREFS_DEFAULTS.size() - PORT_PREF_KEYS.size()
 	check_eq("prefs defaults carry all 17 collectPrefs fields", reference_prefs, 17)
 	for key in PORT_PREF_KEYS:

@@ -14,6 +14,10 @@ config/name="Steam Circuit Padel Pro (harness)"
 run/main_scene="res://game/Main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
+[autoload]
+
+BackgroundMusic="*res://src/audio/runtime_soundtrack.gd"
+
 [input]
 
 ; BUTTON NUMBERING — read this before touching any button_index below.

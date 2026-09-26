@@ -1,5 +1,5 @@
 extends Node
-## Scene-owned OST playback. Owners free it on exit; preview/pause hold its position.
+## Session-owned OST playback; scene navigation preserves the stream and position.
 const Manager := preload("res://src/audio/soundtrack_manager.gd")
 const Economy := preload("res://src/economy/economy_service.gd")
 const Config := preload("res://game/match_config.gd")
@@ -31,6 +31,7 @@ var _playlist_cache: Array[String] = []
 var _skip_down := false
 var _skip_hold_seconds := 0.0
 var _skip_long_fired := false
+var _carry_track := false
 
 func _ready() -> void:
 	player = Manager.new()
@@ -65,17 +66,17 @@ func request(track: String, free_track: String) -> void:
 		return
 	requested = track
 	fallback = free_track
-	_track = ""
+	_carry_track = not _track.is_empty()
 	refresh()
 
 func playlist() -> Array[String]:
 	var items: Array[String] = []
 	var store := Config.save_store()
-	var scope := "match" if _match else "menu"
+	var scope := Preferences.playback_scope(store, "match" if _match else "menu")
 	var favorite_ids := Preferences.favorites(store, scope)
 	var only_favorites := Preferences.only(store, scope)
 	# Rebuild only when context or ownership changes, not 47 disk lookups per tick.
-	var key := str([requested, fallback, _match, Economy.unlock_all(store), Economy.relock_all(store), Economy.owned_ids(store), favorite_ids, only_favorites, Preferences.read(store).get("musicContexts", {})])
+	var key := str([requested, fallback, scope, _match, Economy.unlock_all(store), Economy.relock_all(store), Economy.owned_ids(store), favorite_ids, only_favorites, Preferences.read(store).get("musicContexts", {})])
 	if key == _playlist_key:
 		return _playlist_cache
 	_playlist_key = key
@@ -85,7 +86,7 @@ func playlist() -> Array[String]:
 	if Preferences.belongs(store, CLASSIC, scope):
 		items.append(CLASSIC)
 	var candidates: Array = Array(Manager.all_track_ids())
-	if requested == "ost_victory" and not only_favorites:
+	if scope != "all" and requested == "ost_victory" and not only_favorites:
 		items = [first]
 		_playlist_cache = items
 		return items
@@ -114,6 +115,20 @@ func advance_track(random_order := false) -> void:
 	else:
 		_play(items[(items.find(_track) + 1) % items.size()])
 
+func continue_from_jukebox(id: String, position: float) -> bool:
+	var store := Config.save_store()
+	if not Manager.has_track(id) or not Economy.has_access(store, id):
+		return false
+	_play(id)
+	if player.current_track_id() != id:
+		return false
+	if position > 0.0:
+		player.seek(position)
+	# An explicit choice lasts until this song ends even when the optional legacy
+	# context or the favourites-only filter would exclude it from rotation.
+	_carry_track = not playlist().has(id)
+	return true
+
 func handle_skip(event: InputEvent) -> bool:
 	if event is InputEventKey:
 		var key := event as InputEventKey
@@ -140,6 +155,7 @@ func handle_skip(event: InputEvent) -> bool:
 	return true
 
 func _silence() -> void:
+	_carry_track = false
 	classic.stop()
 	classic.stop_all()
 	classic.set_process(false)
@@ -148,6 +164,7 @@ func _silence() -> void:
 	toast.hide()
 
 func _play(id: String) -> void:
+	_carry_track = false
 	# Stop both engines before switching: the original sequencer is a playlist entry.
 	classic.stop()
 	classic.stop_all()
@@ -176,9 +193,14 @@ func refresh() -> void:
 	if player == null or requested == "":
 		return
 	var items := playlist()
-	if items.is_empty():
+	# Carry only a song outside the destination list until it ends. Songs already
+	# in that list must still respond normally to later favourite/filter edits.
+	if items.has(_track):
+		_carry_track = false
+	var carry := _carry_track and (_track == CLASSIC or Economy.has_access(Config.save_store(), _track))
+	if items.is_empty() and not carry:
 		_silence()
-	elif not items.has(_track):
+	elif not items.has(_track) and not carry:
 		var index := 0
 		if not _match and requested != "ost_victory":
 			var last := String(Preferences.read(Config.save_store()).get("musicLastMenu", ""))

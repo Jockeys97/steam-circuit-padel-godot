@@ -155,8 +155,9 @@ func _ready() -> void:
 	# brand-new profile must be initialized while the profile is still empty — a later
 	# init would see its own prefs/career and falsely grandfather all 47 OSTs.
 	_init_economy()
-	_runtime_ost = preload("res://src/audio/runtime_soundtrack.gd").new()
-	add_child(_runtime_ost)
+	_runtime_ost = get_node("/root/BackgroundMusic")
+	_runtime_ost.set_held(false)
+	_runtime_ost.set_muted(false)
 	_runtime_ost.music_enabled_changed.connect(_on_music_enabled_changed)
 	_runtime_ost.set_screen("menu")
 	_capture = "--capture=menu" in OS.get_cmdline_user_args()
@@ -736,11 +737,11 @@ func _create_jukebox_button() -> void:
 
 func toggle_jukebox() -> void:
 	if _jukebox_overlay != null and is_instance_valid(_jukebox_overlay):
-		_jukebox_overlay.queue_free()
-		_jukebox_overlay = null
+		_jukebox_overlay.call("_on_back_pressed")
 		return
 	var scene := load("res://src/ui/jukebox/JukeboxScreen.tscn") as PackedScene
 	if scene != null:
+		_runtime_ost.set_held(true)
 		_jukebox_overlay = scene.instantiate()
 		_jukebox_overlay.z_index = 100
 		# Emporio OST: the Jukebox gates playback on ownership, so it reads the same store
@@ -749,6 +750,9 @@ func toggle_jukebox() -> void:
 			_jukebox_overlay.call("set_store", Config.save_store())
 		if _jukebox_overlay.has_signal("shop_requested"):
 			_jukebox_overlay.connect("shop_requested", _on_jukebox_shop_requested)
+		_jukebox_overlay.continue_requested.connect(func(id: String, position: float):
+			_runtime_ost.continue_from_jukebox(id, position)
+		)
 		_jukebox_overlay.closed.connect(func():
 			if _jukebox_overlay != null and is_instance_valid(_jukebox_overlay):
 				_jukebox_overlay.queue_free()
