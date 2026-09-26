@@ -201,6 +201,13 @@ var _outfit_cache: Dictionary = {}          # id -> {texture: Texture2D, digest:
 var _strokes: Dictionary = {}               # StringName -> length (float)
 const AthletePoseLayer := preload("res://src/character/athlete_pose_layer.gd")
 var _pose_layer: SkeletonModifier3D = null
+const AthleteFootPlanter := preload("res://src/character/athlete_foot_planter.gd")
+var _foot_planter: SkeletonModifier3D = null
+## The footwork that travels with feet barely lifting: here the feet are placed
+## procedurally (`athlete_foot_planter.gd`). Running and walking have real strides,
+## the split step is a hop, strokes carry their own feet.
+const PLANTED_FOOTWORK := [&"shuffle_left", &"shuffle_right", &"backpedal", &"brake", &"prepare", &"ready", &"recover_left", &"recover_right", &"idle"]
+const PLANT_FADE_PER_S := 7.0
 var _anticipation_stroke: StringName = &""
 var _anticipation_phase: float = 0.34
 var _anticipation_weight: float = 0.0
@@ -323,6 +330,26 @@ func _build() -> int:
 	_pose_layer.rig = self
 	_skeleton.add_child(_pose_layer)
 	_pose_layer.look_chain = _look_chain()
+	# Feet pinned to the court on the travelling footwork. Added AFTER the pose layer:
+	# modifiers run in child order. PADEL_FOOT_PLANT=0 turns it off, to compare.
+	if OS.get_environment("PADEL_FOOT_PLANT") != "0":
+		_foot_planter = AthleteFootPlanter.new()
+		_foot_planter.name = "FootPlanter"
+		_foot_planter.rig = self
+		var legs := {}
+		for side in ["Left", "Right"]:
+			var ids := [_skeleton.find_bone(_resolve_bone_name(side + "UpLeg")), _skeleton.find_bone(_resolve_bone_name(side + "Leg")), _skeleton.find_bone(_resolve_bone_name(side + "Foot"))]
+			if not ids.has(-1):
+				legs[side] = ids
+		_foot_planter.legs = legs
+		_foot_planter.hips = _skeleton.find_bone(_resolve_bone_name("Hips"))
+		var spine_ids := []
+		for bone in ["Spine", "Spine01", "Spine02"]:
+			var index := _skeleton.find_bone(_resolve_bone_name(bone))
+			if index >= 0:
+				spine_ids.append(index)
+		_foot_planter.spine = spine_ids
+		_skeleton.add_child(_foot_planter)
 
 	var mesh := _mesh_instance.mesh
 	if mesh != null and mesh.get_surface_count() > 0:
@@ -381,7 +408,7 @@ func _build() -> int:
 	_author_ceremonies(lib)
 	_author_strokes(lib)
 	if _athlete_id in [&"fiamma", &"colosso", &"oracolo", &"maestro", &"fornaio", &"pantera", &"steamer"]:
-		for shot in ["drive", "smash", "bandeja", "backhand", "slice", "lunge_forehand", "wall_exit_forehand", "forehand_volley", "backhand_volley"]:
+		for shot in ["drive", "smash", "bandeja", "backhand", "slice", "lunge_forehand", "wall_exit_forehand", "forehand_volley", "backhand_volley", "forehand_lob", "backhand_lob"]:
 			var motion_path := "res://assets/athletes/animations/%s_meshy_%s.tres" % [_motion_id,shot]
 			if ResourceLoader.exists(motion_path):
 				var motion := load(motion_path) as Animation
@@ -1805,3 +1832,13 @@ func get_triangle_count() -> int:
 		var idx: int = mesh.surface_get_array_index_len(s)
 		total += (idx if idx > 0 else mesh.surface_get_array_len(s)) / 3
 	return total
+
+
+## Fades the foot planter in on the travelling footwork and out everywhere else.
+func _process(delta: float) -> void:
+	if _foot_planter == null:
+		return
+	var want := 1.0 if _stroke == &"" and _locomotion in PLANTED_FOOTWORK else 0.0
+	var w: float = _foot_planter.weight
+	w = move_toward(w, want, PLANT_FADE_PER_S * delta)
+	_foot_planter.weight = w

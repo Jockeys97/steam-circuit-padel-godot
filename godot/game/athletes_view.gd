@@ -122,6 +122,8 @@ const LUNGE_CONTACT_PHASE := 0.30    # bake_meshy_fiamma.gd contacts["lunge_fore
 const LUNGE_BLEND_S := 0.08
 ## The Meshy-cut volleys' contact (their bake's `contacts`, 0.42 of 0.50 s).
 const VOLLEY_CONTACT_PHASE := 0.42
+## The Meshy-cut lobs' contact (their bake's `contacts`, 0.36 of 0.60 s).
+const LOB_CONTACT_PHASE := 0.36
 const WALL_EXIT_CONTACT_PHASE := 0.34  # bake_meshy_fiamma.gd contacts["wall_exit_forehand"]
 var _racket_on_hand: Dictionary = {} # role -> bool; standard and legacy rigs
 
@@ -560,6 +562,15 @@ func _sync_stroke(role: String, rig: Node3D, paddle, ball_x: float = NAN, ball_h
 				contact_phase = VOLLEY_CONTACT_PHASE
 				speed_scale = 1.0
 				low = 0.0
+				blend = LUNGE_BLEND_S
+		# The lob likewise (2026-09-26): cut from the Meshy drive/backhand, low contact and
+		# a high finish in front. PADEL_MESHY_LOB=0 keeps the hand-authored one.
+		if stroke == &"lob" and OS.get_environment("PADEL_MESHY_LOB") != "0":
+			var lob_clip := &"meshy_backhand_lob" if is_backhand_side(role, float(paddle.x), ball_x) else &"meshy_forehand_lob"
+			if lob_clip in rig.get_stroke_names():
+				stroke = lob_clip
+				contact_phase = LOB_CONTACT_PHASE
+				speed_scale = 1.0
 				blend = LUNGE_BLEND_S
 		var played: bool = rig.play_stroke_at(stroke, contact_phase, speed_scale, low, blend) \
 			if rig.has_method("play_stroke_at") else rig.play_stroke(stroke)

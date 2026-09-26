@@ -96,6 +96,15 @@ func run() -> void:
 		rig.play_locomotion(&"ready")
 		rig._anim.pause()
 		await _settle(rig)
+		# The foot planter (`athlete_foot_planter.gd`) may still be stepping the feet to
+		# the new stance (the stroke above ended inside one `advance`): let every foot
+		# land first, so this measures what the LOOK does to the feet, not a step.
+		for i in 120:
+			await process_frame
+			var planter = rig._foot_planter
+			if planter == null or not (planter._feet as Dictionary).values().any(func(f): return bool(f["swing"])):
+				break
+		await _settle(rig)
 		var foot0 := _rendered(rig, "LeftFoot")
 		rig.set_look_yaw(40.0)
 		await _settle(rig)
