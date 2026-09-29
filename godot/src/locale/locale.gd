@@ -36,6 +36,13 @@ const PORT_OUTFIT_NAMES := {
 	"en": {"outfitSolarSprint": "Solar Sprint", "outfitPolarAce": "Polar Ace", "outfitEmporioUnlock": "Unlock in Emporio"},
 }
 
+## Godot-only shortcuts on the in-match pause card. The browser reference has no
+## direct selection shortcuts, so keep its generated locale table untouched.
+const PORT_PAUSE_ACTIONS := {
+	"it": {"changeMode": "CAMBIA MODALITÀ", "changeArena": "CAMBIA ARENA", "viewObjectives": "VEDI OBIETTIVI", "pauseObjectivesBack": "TORNA ALLA PARTITA", "pauseTournamentRound": "Turno {n} di 3", "pauseTournamentGoal": "Vinci questo incontro per avanzare", "pauseTournamentFinalGoal": "Vinci la finale per conquistare il trofeo"},
+	"en": {"changeMode": "CHANGE MODE", "changeArena": "CHANGE ARENA", "viewObjectives": "VIEW OBJECTIVES", "pauseObjectivesBack": "BACK TO MATCH", "pauseTournamentRound": "Round {n} of 3", "pauseTournamentGoal": "Win this match to advance", "pauseTournamentFinalGoal": "Win the final to claim the trophy"},
+}
+
 const RULES_PATH := "res://src/locale/locale_rules.json"
 
 static var _lang: String = ""
@@ -99,7 +106,9 @@ static func has_key(key: String, lang: String = "") -> bool:
 	var target := lang if lang != "" else current_lang()
 	return (table(target).has(key) or table(fallback_lang()).has(key)
 		or (PORT_OUTFIT_NAMES.get(target, {}) as Dictionary).has(key)
-		or (PORT_OUTFIT_NAMES.get(fallback_lang(), {}) as Dictionary).has(key))
+		or (PORT_OUTFIT_NAMES.get(fallback_lang(), {}) as Dictionary).has(key)
+		or (PORT_PAUSE_ACTIONS.get(target, {}) as Dictionary).has(key)
+		or (PORT_PAUSE_ACTIONS.get(fallback_lang(), {}) as Dictionary).has(key))
 
 
 ## `t(key, params)` (js/i18n.js:1408-1414).
@@ -143,12 +152,18 @@ static func lookup(key: String, lang: String) -> String:
 	var port_primary: Dictionary = PORT_OUTFIT_NAMES.get(lang, {})
 	if port_primary.has(key):
 		return String(port_primary[key])
+	var pause_primary: Dictionary = PORT_PAUSE_ACTIONS.get(lang, {})
+	if pause_primary.has(key):
+		return String(pause_primary[key])
 	var secondary := table(fallback_lang())
 	if secondary.has(key):
 		return String(secondary[key])
 	var port_secondary: Dictionary = PORT_OUTFIT_NAMES.get(fallback_lang(), {})
 	if port_secondary.has(key):
 		return String(port_secondary[key])
+	var pause_secondary: Dictionary = PORT_PAUSE_ACTIONS.get(fallback_lang(), {})
+	if pause_secondary.has(key):
+		return String(pause_secondary[key])
 	return key
 
 

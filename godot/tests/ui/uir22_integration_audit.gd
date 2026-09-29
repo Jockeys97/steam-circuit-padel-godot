@@ -236,6 +236,18 @@ func _match_mounts_the_overlay_stack(audit: AuditBase) -> void:
 	audit.check_eq(bool(node.get("_paused")), false, "pause/a_rematch_leaves_the_match_running")
 	audit.check_eq(bool(overlay.call("is_open")), false, "pause/and_the_card_knows_it")
 	audit.check_true(node.has_method("leave_match"), "pause/the_seam_exposes_leave_match")
+	var current_mode := Config.pending_mode
+	var current_arena := Config.arena_id()
+	var mode_route: Dictionary = node.call("selection_route", "modes", false)
+	audit.check_eq(mode_route.get("screen"), "modes", "pause/change_mode_targets_the_mode_screen")
+	audit.check_eq(Config.pending_menu_screen, "modes", "pause/change_mode_hands_the_target_to_the_menu")
+	var arena_route: Dictionary = node.call("selection_route", "arena", false)
+	audit.check_eq(arena_route.get("screen"), "arena", "pause/change_arena_targets_the_arena_screen")
+	audit.check_eq(Config.pending_menu_screen, "arena", "pause/change_arena_hands_the_target_to_the_menu")
+	audit.check_eq(Config.pending_mode, current_mode, "pause/changing_selection_keeps_the_mode_until_a_new_choice")
+	audit.check_eq(Config.arena_id(), current_arena, "pause/changing_selection_keeps_the_arena_until_a_new_choice")
+	audit.check_eq(node.call("selection_route", "invalid", false), {}, "pause/unknown_selection_target_is_refused")
+	Config.pending_menu_screen = ""
 	node.free()
 
 

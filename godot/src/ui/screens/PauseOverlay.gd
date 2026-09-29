@@ -154,6 +154,7 @@ const STEP_TUTORIAL := 2
 const STEP_TAB := 3
 const STEP_RESUME := 4
 const STEP_PAUSE := 5
+const STEP_OBJECTIVES := 6
 
 ## The capture states the ticket's frontmatter declares.
 const CAPTURE_STATES: Array[String] = [
@@ -255,6 +256,9 @@ const NODE_ACTIONS := "PauseActions"
 const NODE_CONTINUE := "ContinueButton"
 const NODE_REPLAY := "ReplayButton"
 const NODE_REMATCH := "RematchButton"
+const NODE_CHANGE_MODE := "ChangeModeButton"
+const NODE_CHANGE_ARENA := "ChangeArenaButton"
+const NODE_OBJECTIVES_PANEL := "PauseObjectives"
 const NODE_QUIT := "QuitButton"
 const NODE_CONTROLLER := "ControllerSettings"
 const NODE_UI := "UiVisibilitySettings"
@@ -274,6 +278,9 @@ const ID_PREFIX := "pause/"
 const ACTION_RESUME := "resume"
 const ACTION_REPLAY := "replay"
 const ACTION_REMATCH := "rematch"
+const ACTION_CHANGE_MODE := "change-mode"
+const ACTION_CHANGE_ARENA := "change-arena"
+const ACTION_OBJECTIVES_BACK := "objectives-back"
 const ACTION_QUIT := "quit-match"
 const ACTION_TUTORIAL_OPEN := "open-smash-tutorial"
 const ACTION_TUTORIAL_CLOSE := "close-smash-tutorial"
@@ -301,6 +308,8 @@ var _pad_layout := LegendClass.DEFAULT_LAYOUT
 var _narrow := false
 var _tight := false
 var _seam: Object = null
+var _objectives: Dictionary = {}
+var _objectives_open := false
 var _missing_seam: Array = []
 var _store: RefCounted = null
 var _palette_misses: Array = []
@@ -325,6 +334,13 @@ var _stick_monitor: Control = null
 var _continue_button: Button
 var _replay_button: Button
 var _rematch_button: Button
+var _change_mode_button: Button
+var _change_arena_button: Button
+var _match_actions: VBoxContainer
+var _objectives_panel: VBoxContainer
+var _objectives_rows: VBoxContainer
+var _objectives_title: Label
+var _objectives_back: Button
 var _quit_button: Button
 var _mode_buttons: Dictionary = {}
 var _deadzone_row: Control = null
@@ -467,6 +483,9 @@ func open() -> void:
 	if _open:
 		return
 	_open = true
+	_objectives = _read_objectives()
+	_objectives_open = false
+	_update_objectives_visibility()
 	visible = true
 	reset_quit_confirm()
 	set_tab(TAB_MATCH, _pad_connected)
@@ -481,6 +500,8 @@ func close() -> void:
 	if not _open:
 		return
 	_open = false
+	_objectives_open = false
+	_update_objectives_visibility()
 	visible = false
 	reset_quit_confirm()
 	if _camera_preview != null:
@@ -521,6 +542,9 @@ func set_tab(tab_id: String, focus_tab: bool = false) -> bool:
 	_ensure()
 	if not _panels.has(tab_id):
 		return false
+	if tab_id != TAB_MATCH and _objectives_open:
+		_objectives_open = false
+		_update_objectives_visibility()
 	if _tutorial_open:
 		close_tutorial(false)
 	_tab = tab_id
@@ -669,6 +693,97 @@ func rematch() -> void:
 	_call_seam("rematch", [])
 
 
+## Leave the current match for the requested selection step. The menu host reads
+## Config.pending_menu_screen when the new scene mounts; the match seam owns that
+## hand-off so this overlay never changes scenes or game state by itself.
+func change_mode() -> bool:
+	_ensure()
+	return _change_selection("modes")
+
+
+func change_arena() -> bool:
+	_ensure()
+	if not _objectives.is_empty():
+		return view_objectives()
+	return _change_selection("arena")
+
+
+func view_objectives() -> bool:
+	_ensure()
+	if _objectives.is_empty() or not _open:
+		return false
+	_objectives = _read_objectives()
+	_objectives_open = true
+	_update_objectives_visibility()
+	_render_objectives()
+	tab_changed.emit(TAB_MATCH)
+	_objectives_back.grab_focus()
+	return true
+
+
+func close_objectives() -> void:
+	if not _objectives_open:
+		return
+	_objectives_open = false
+	_update_objectives_visibility()
+	tab_changed.emit(TAB_MATCH)
+	_change_arena_button.grab_focus()
+
+
+func _read_objectives() -> Dictionary:
+	if _seam != null and _seam.has_method("pause_objectives"):
+		var result: Variant = _seam.call("pause_objectives")
+		if result is Dictionary:
+			return result
+	return {}
+
+
+func _update_objectives_visibility() -> void:
+	if _match_actions != null:
+		_match_actions.visible = not _objectives_open
+	if _objectives_panel != null:
+		_objectives_panel.visible = _objectives_open
+
+
+func _render_objectives() -> void:
+	if _objectives_rows == null:
+		return
+	for child in _objectives_rows.get_children():
+		_objectives_rows.remove_child(child)
+		child.queue_free()
+	_objectives_title.text = UiStrings.t("viewObjectives")
+	_objectives_back.text = UiStrings.t("pauseObjectivesBack")
+	var current_section := ""
+	for entry in _objectives.get("rows", []):
+		if not (entry is Dictionary):
+			continue
+		var row: Dictionary = entry
+		var section := String(row.get("section_key", ""))
+		if section != "" and section != current_section:
+			var section_label := Label.new()
+			section_label.text = UiStrings.t(section)
+			section_label.add_theme_color_override("font_color", _palette("text_soft_3"))
+			_objectives_rows.add_child(section_label)
+			current_section = section
+		var goal := Label.new()
+		goal.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		goal.text = UiStrings.t(String(row.get("label_key", "")), {"n": int(row.get("target", row.get("progress", 0)))})
+		goal.add_theme_color_override("font_color", _palette("ink"))
+		_objectives_rows.add_child(goal)
+		if bool(row.get("show_progress", true)):
+			var progress := Label.new()
+			progress.text = str(int(row.get("progress", 0))) + char(32) + "/" + char(32) + str(int(row.get("target", 0)))
+			progress.add_theme_color_override("font_color", _palette("text_soft_3"))
+			_objectives_rows.add_child(progress)
+
+
+func _change_selection(screen_id: String) -> bool:
+	if not _call_seam("selection_route", [screen_id]):
+		return false
+	close()
+	return true
+
+
 ## RIGUARDA PUNTO: UIR-27's entry point. Gated on UIR-27's two readings (a playback is
 ## up, or one can start); a press on the disabled button is refused here too, so a
 ## programmatic caller cannot fake it.
@@ -742,6 +857,9 @@ func back() -> Dictionary:
 	if _tutorial_open:
 		close_tutorial(false)
 		return {"step": STEP_TUTORIAL, "kind": "tutorial_close", "tab": _tab}
+	if _objectives_open:
+		close_objectives()
+		return {"step": STEP_OBJECTIVES, "kind": "objectives_close", "tab": TAB_MATCH}
 	if _open and _tab != TAB_MATCH:
 		set_tab(TAB_MATCH, _pad_connected)
 		return {"step": STEP_TAB, "kind": "tab_back", "tab": TAB_MATCH}
@@ -1018,7 +1136,7 @@ static func radial(value: Vector2, deadzone_value: float) -> Vector2:
 # ---------------------------------------------------------------------------
 
 ## Every visible string, re-resolved through the seam: the card's title, the tabs,
-## the four actions, the mode strip, the two rows, the stick labels, the legend and
+## the match actions, the mode strip, the controller rows, the stick labels, the legend and
 ## the tutorial. Called on `open()` and on a language flip.
 func refresh_strings() -> void:
 	_ensure()
@@ -1034,6 +1152,10 @@ func refresh_strings() -> void:
 	_continue_button.text = UiStrings.t("continue")
 	_resume_footer.text = UiStrings.t("pauseResumeMatch")
 	_rematch_button.text = UiStrings.t("rematch")
+	_change_mode_button.text = UiStrings.t("changeMode")
+	_change_arena_button.text = UiStrings.t("viewObjectives" if not _objectives.is_empty() else "changeArena")
+	if _objectives_open:
+		_render_objectives()
 	_quit_button.text = UiStrings.t(QUIT_CONFIRM_KEY) if _quit_armed else UiStrings.t(QUIT_KEY)
 	_replay_button.text = UiStrings.t("replayBtn")
 	_replay_button.tooltip_text = replay_disabled_reason()
@@ -1100,6 +1222,7 @@ func report() -> Dictionary:
 	return {
 		"open": _open,
 		"tab": _tab,
+		"objectives_open": _objectives_open,
 		"quit_armed": _quit_armed,
 		"tutorial_open": _tutorial_open,
 		"osk_open": _osk_open,
@@ -1201,10 +1324,15 @@ func focus_controls() -> Array:
 			for id in CAMERA_LABELS:
 				out.append(_focus_row("camera-" + id, _camera_buttons[id]))
 		TAB_MATCH:
-			out.append(_focus_row(ACTION_RESUME, _continue_button))
-			out.append(_focus_row(ACTION_REPLAY, _replay_button))
-			out.append(_focus_row(ACTION_REMATCH, _rematch_button))
-			out.append(_focus_row(ACTION_QUIT, _quit_button))
+			if _objectives_open:
+				out.append(_focus_row(ACTION_OBJECTIVES_BACK, _objectives_back))
+			else:
+				out.append(_focus_row(ACTION_RESUME, _continue_button))
+				out.append(_focus_row(ACTION_REPLAY, _replay_button))
+				out.append(_focus_row(ACTION_REMATCH, _rematch_button))
+				out.append(_focus_row(ACTION_CHANGE_MODE, _change_mode_button))
+				out.append(_focus_row(ACTION_CHANGE_ARENA, _change_arena_button))
+				out.append(_focus_row(ACTION_QUIT, _quit_button))
 		TAB_CONTROLLER:
 			for mode in CONTROL_MODES:
 				out.append(_focus_row(ACTION_MODE_PREFIX + String(mode), _mode_buttons.get(mode, null)))
@@ -1320,8 +1448,8 @@ func _build_tabs(parent: Control) -> void:
 		_tabs[id] = button
 
 
-## `pause-panel--match` (`index.html:577-595`): the status line, then the four
-## actions, 26 px apart, centred.
+## `pause-panel--match` (`index.html:577-595`): the status line, then the match
+## actions including the Godot-only selection shortcuts, centred.
 func _build_match_panel(parent: Control) -> void:
 	var panel := VBoxContainer.new()
 	panel.name = "PanelMatch"
@@ -1353,6 +1481,7 @@ func _build_match_panel(parent: Control) -> void:
 	actions.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	actions.add_theme_constant_override("separation", 10)
 	panel.add_child(actions)
+	_match_actions = actions
 	_continue_button = _action_button(NODE_CONTINUE, "ButtonPrimary", "continue")
 	_continue_button.pressed.connect(resume)
 	actions.add_child(_continue_button)
@@ -1362,9 +1491,34 @@ func _build_match_panel(parent: Control) -> void:
 	_rematch_button = _action_button(NODE_REMATCH, "ButtonSecondary", "rematch")
 	_rematch_button.pressed.connect(rematch)
 	actions.add_child(_rematch_button)
+	_change_mode_button = _action_button(NODE_CHANGE_MODE, "ButtonSecondary", "changeMode")
+	_change_mode_button.pressed.connect(change_mode)
+	actions.add_child(_change_mode_button)
+	_change_arena_button = _action_button(NODE_CHANGE_ARENA, "ButtonSecondary", "changeArena")
+	_change_arena_button.pressed.connect(change_arena)
+	actions.add_child(_change_arena_button)
 	_quit_button = _action_button(NODE_QUIT, "ButtonGhost", QUIT_KEY)
 	_quit_button.pressed.connect(handle_quit)
 	actions.add_child(_quit_button)
+	_objectives_panel = VBoxContainer.new()
+	_objectives_panel.name = NODE_OBJECTIVES_PANEL
+	_objectives_panel.custom_minimum_size = Vector2(520, 0)
+	_objectives_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_objectives_panel.add_theme_constant_override("separation", 12)
+	panel.add_child(_objectives_panel)
+	_objectives_title = Label.new()
+	_objectives_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_objectives_title.add_theme_font_override("font", _font("HeroTitle"))
+	_objectives_title.add_theme_font_size_override("font_size", 22)
+	_objectives_title.add_theme_color_override("font_color", _palette("ink"))
+	_objectives_panel.add_child(_objectives_title)
+	_objectives_rows = VBoxContainer.new()
+	_objectives_rows.add_theme_constant_override("separation", 5)
+	_objectives_panel.add_child(_objectives_rows)
+	_objectives_back = _action_button("ObjectivesBackButton", "ButtonSecondary", "pauseObjectivesBack")
+	_objectives_back.pressed.connect(close_objectives)
+	_objectives_panel.add_child(_objectives_back)
+	_objectives_panel.visible = false
 	_apply_replay_state()
 	_panels[TAB_MATCH] = panel
 

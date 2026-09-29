@@ -3033,6 +3033,57 @@ func to_menu() -> void:
 	get_tree().change_scene_to_file("res://game/Main.tscn")
 
 
+## The pause card's direct shortcuts into the existing selection flow. A valid
+## target is handed to Main before the scene switch, so its router opens that
+## screen instead of sending the player through the home page again.
+func selection_route(screen_id: String, apply_scene := true) -> Dictionary:
+	if screen_id != "modes" and screen_id != "arena":
+		return {}
+	Config.pending_result = {}
+	Config.pending_menu_screen = screen_id
+	var route := {"screen": screen_id, "scene": "res://game/Main.tscn"}
+	if apply_scene:
+		to_menu()
+	return route
+
+
+## Read-only pause snapshot. Career uses the same objective evaluator as the
+## profile, adding this match's live stats to a COPY of saved season progress.
+## Tournament has a bracket goal, not invented stat challenges.
+func pause_objectives() -> Dictionary:
+	if session == null or state == null:
+		return {}
+	if session.mode == "tournament":
+		var round_number: int = int(session.round) + 1
+		var rows: Array[Dictionary] = [
+			{"section_key": "objTitle", "label_key": "pauseTournamentRound", "progress": round_number, "target": 3},
+			{"section_key": "objTitle", "label_key": "pauseTournamentFinalGoal" if round_number == 3 else "pauseTournamentGoal", "show_progress": false},
+		]
+		return {"mode": "tournament", "rows": rows}
+	if session.mode != "career":
+		return {}
+	var progress_rules = preload("res://src/modes/career_progress.gd")
+	var career: Dictionary = session.career.duplicate(true)
+	var match_progress: Dictionary = progress_rules.match_progress(state.stats)
+	var season_progress: Dictionary = progress_rules.accumulate(career, state.stats)
+	var rows: Array[Dictionary] = []
+	if not session.objective.is_empty():
+		var bonus: Dictionary = session.objective
+		var bonus_status: Dictionary = progress_rules.objective_status(bonus, match_progress)
+		rows.append({"section_key": "objMatchTitle", "label_key": "objMatch_%s" % String(bonus.get("id", "")),
+			"progress": int(bonus_status.get("progress", 0)), "target": int(bonus_status.get("target", 0)),
+			"done": bool(bonus_status.get("done", false))})
+	for entry in progress_rules.ensure_season_objectives(career):
+		if not (entry is Dictionary):
+			continue
+		var objective: Dictionary = entry
+		var status: Dictionary = progress_rules.objective_status(objective, season_progress)
+		rows.append({"section_key": "objSeasonTitle", "label_key": "obj_%s" % String(objective.get("id", "")),
+			"progress": int(status.get("progress", 0)), "target": int(status.get("target", 0)),
+			"done": bool(status.get("done", false)), "claimed": bool(objective.get("claimed", false))})
+	return {"mode": "career", "rows": rows}
+
+
 ## The road back from a mode match: the mode's own screen, so the player sees the
 ## advanced bracket or the season state they just changed.
 ##

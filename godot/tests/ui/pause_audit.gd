@@ -129,6 +129,10 @@ class FakeSeam extends RefCounted:
 	func rematch() -> void:
 		calls.append(["rematch", true])
 
+	func selection_route(screen_id: String) -> Dictionary:
+		calls.append(["selection_route", screen_id])
+		return {"screen": screen_id}
+
 	func leave_match() -> void:
 		calls.append(["leave_match", true])
 
@@ -244,13 +248,18 @@ func _tabs(audit: AuditBase) -> void:
 			panels.append(tab)
 	audit.check_eq(panels, ["ui"], "pause/exactly_one_panel_is_visible")
 	audit.check_eq(_overlay.set_tab("match"), true, "pause/back_to_the_match_tab")
-	audit.check_eq(_overlay.focus_controls().size(), 9, "pause/five_tabs_and_four_actions_are_focusable")
+	audit.check_eq(_overlay.focus_controls().size(), 11, "pause/five_tabs_and_six_actions_are_focusable")
 	var focus_ids: Array = []
 	for entry in _overlay.focus_controls():
 		focus_ids.append(String((entry as Dictionary).get("id", "")))
 	for wanted in ["pause/tab-match", "pause/tab-controller", "pause/tab-controls", "pause/tab-ui",
-			"pause/resume", "pause/replay", "pause/rematch", "pause/quit-match"]:
+			"pause/resume", "pause/replay", "pause/rematch", "pause/change-mode",
+			"pause/change-arena", "pause/quit-match"]:
 		audit.check_true(focus_ids.has(wanted), "pause/the_focus_table_carries_%s" % wanted)
+	audit.check_true(focus_ids.find("pause/rematch") < focus_ids.find("pause/change-mode")
+		and focus_ids.find("pause/change-mode") < focus_ids.find("pause/change-arena")
+		and focus_ids.find("pause/change-arena") < focus_ids.find("pause/quit-match"),
+		"pause/the_new_actions_follow_rematch_in_controller_order")
 	await _ui_tab(audit)
 
 
@@ -269,7 +278,7 @@ func _ui_tab(audit: AuditBase) -> void:
 	audit.check_eq(ui_rows.size(), 7, "pause/ui/the_tab_builds_seven_toggle_rows")
 	for id in ["score", "time", "map", "guidance", "indicators", "events"]:
 		audit.check_true(ui_rows.get(id) is RowsClass.ToggleRow, "pause/ui/the_toggle_%s_is_a_toggle_row" % id)
-	audit.check_eq(_overlay.rows().size(), 3, "pause/ui/the_controller_rows_table_is_unchanged")
+	audit.check_eq(_overlay.rows().size(), 5, "pause/ui/the_controller_rows_table_keeps_the_audio_controls")
 	var focus: Array = _overlay.focus_controls()
 	audit.check_eq(focus.size(), OverlayClass.TABS.size() + presets.size() + ui_rows.size() + 1, "pause/ui/tabs_presets_toggles_and_resume_are_focusable")
 	var ids: Array = []
@@ -384,6 +393,13 @@ func _seam_routes(audit: AuditBase) -> void:
 	var rematch_before := (_seam as FakeSeam).count_of("rematch")
 	_overlay.rematch()
 	audit.check_eq((_seam as FakeSeam).count_of("rematch"), rematch_before + 1, "pause/rematch_routes_to_the_match")
+	(_overlay.find_child("ChangeModeButton", true, false) as Button).pressed.emit()
+	audit.check_eq((_seam as FakeSeam).last_args("selection_route"), ["selection_route", "modes"],
+		"pause/the_change_mode_button_opens_the_mode_selection")
+	_overlay.open()
+	(_overlay.find_child("ChangeArenaButton", true, false) as Button).pressed.emit()
+	audit.check_eq((_seam as FakeSeam).last_args("selection_route"), ["selection_route", "arena"],
+		"pause/the_change_arena_button_opens_the_arena_selection")
 	# No seam at all: the action route, and no faked state.
 	var bare: Control = OverlayScene.instantiate()
 	bare.name = "BareOverlay"
@@ -472,7 +488,7 @@ func _controller_rows(audit: AuditBase) -> void:
 	audit.check_eq(_overlay.mode_button("semi").theme_type_variation, &"SegmentedActive", "pause/the_strip_follows_the_foreign_write")
 	audit.check_eq(is_equal_approx(_overlay.deadzone(), 0.11), true, "pause/a_foreign_deadzone_write_is_read_back")
 	audit.check_eq(is_equal_approx(deadzone_row.value(), 0.11), true, "pause/the_row_shows_the_foreign_deadzone")
-	audit.check_eq(_overlay.focus_controls().size(), 12, "pause/the_controller_tab_exposes_modes_rows_tabs_and_resume")
+	audit.check_eq(_overlay.focus_controls().size(), 14, "pause/the_controller_tab_exposes_modes_rows_tabs_and_resume")
 
 
 func _pref(key: String) -> Variant:
@@ -678,7 +694,7 @@ func _strings(audit: AuditBase) -> void:
 			still_wrong.append(String(id))
 	audit.check_eq(still_wrong, [], "pause/the_flip_back_restores_every_slot")
 	audit.check_eq(_overlay.set_language("xx"), false, "pause/an_unknown_locale_is_refused")
-	audit.check_eq(_overlay.focus_controls().size(), 9, "pause/the_match_tab_is_still_focusable_after_the_flip")
+	audit.check_eq(_overlay.focus_controls().size(), 11, "pause/the_match_tab_is_still_focusable_after_the_flip")
 	audit.report("language flip: %d of %d visible slots differ between tables" % [moved, before.size()])
 	_overlay.close()
 
@@ -696,6 +712,8 @@ func _visible_slots() -> Dictionary:
 		"continue": {"key": "continue", "text": _text_of("ContinueButton")},
 		"replay": {"key": "replayBtn", "text": _text_of("ReplayButton")},
 		"rematch": {"key": "rematch", "text": _text_of("RematchButton")},
+		"changeMode": {"key": "changeMode", "text": _text_of("ChangeModeButton")},
+		"changeArena": {"key": "changeArena", "text": _text_of("ChangeArenaButton")},
 		"quit": {"key": "quit", "text": _text_of("QuitButton")},
 		"stickMove": {"key": "stickMove", "text": _text_of("StickLabel")},
 		"tutorialTitle": {"key": "smashTutorialTitle", "text": _text_in(tutorial, "TutorialTitle")},
