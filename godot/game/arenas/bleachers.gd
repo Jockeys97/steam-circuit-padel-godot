@@ -102,6 +102,17 @@ static var cast_shadow := false
 ## cheapest thing that still looks like the model. Measured, not assumed: see the
 ## evidence's cost table.
 static var material_mode := "imported"
+## The light unit (2026-10-01): level 3 of Godot's own LOD chain for this mesh, baked
+## by `game/tools/bleacher_lod_probe.gd` and compacted to the vertices it uses —
+## 28,744 triangles / 32,483 vertices against 459,928 / 271,287. From every match
+## camera, zoomed 3x, the LOD levels down to 14,370 triangles looked the same as the
+## original (`game/tools/bleacher_lod_capture.gd`): the detail is in the 4096 px
+## textures, which it keeps. The Compatibility renderer never switches LODs by itself
+## (measured: the drawn primitives did not move with `lod_bias` or with LODs imported),
+## so the lighter unit is chosen here. `light = false` puts the full mesh back (A/B).
+const LIGHT_MESH_PATH := "res://assets/bleachers/bleachers_light.res"
+const LIGHT_TRIANGLES := 28744
+static var light := true
 static var _plain_material: StandardMaterial3D = null
 
 ## A/B switch for the cost measurement (`game/tools/bleachers_probe.gd`): the game
@@ -146,6 +157,7 @@ static func build(parent: Node3D) -> Node3D:
 	# how far the seating reaches back from there.
 	var front_x := Court.half_len() + CORRIDOR_M
 	var centre_x := front_x + depth * 0.5
+	var light_mesh: Mesh = load(LIGHT_MESH_PATH) as Mesh if light else null
 	var copy := 0
 	for side in ([1.0, -1.0] as Array).slice(0, sides):
 		for i in copies_per_side:
@@ -161,19 +173,19 @@ static func build(parent: Node3D) -> Node3D:
 			var body: Node = base.duplicate()
 			# the unit's own min_y is negative: lift it onto the floor it stands on.
 			body.position = Vector3(0.0, -box.position.y, 0.0)
-			_prepare(body, plain)
+			_prepare(body, plain, light_mesh)
 			stack.add_child(body)
 			group.add_child(stack)
 			copy += 1
 	base.free()
 	report["instances"] = copy
-	report["triangles"] = copy * TRIANGLES
+	report["triangles"] = copy * (LIGHT_TRIANGLES if light_mesh != null else TRIANGLES)
 	report["side_x"] = centre_x
 	report["front_x"] = front_x
 	report["span_z"] = (float(copies_per_side) * width)
 	report["height_m"] = height
 	print("BLEACHERS glb=%s glb_loads=1 load_ms=%d instances=%d tris_per_copy=%d tris_total=%d scale=%.2f corridor_m=%.2f glass_x=%.2f front_x=%.2f side_x=%.2f height_m=%.2f span_z=%.2f box=(%.4f,%.4f,%.4f)+(%.4f,%.4f,%.4f)" % [
-		GLB_PATH, int(report["load_ms"]), copy, TRIANGLES, copy * TRIANGLES, scale, CORRIDOR_M,
+		GLB_PATH, int(report["load_ms"]), copy, int(report["triangles"]) / maxi(1, copy), int(report["triangles"]), scale, CORRIDOR_M,
 		Court.half_len(), front_x, centre_x, height, float(report["span_z"]),
 		box.position.x, box.position.y, box.position.z, box.size.x, box.size.y, box.size.z,
 	])
@@ -218,9 +230,11 @@ static func triangle_count(scene: Node) -> int:
 ## own PBR material with the base colour alone. The material is built by `build()`
 ## and passed in: a material cached in a `static var` would hold its texture past
 ## the scene tree and be reported as leaked at exit.
-static func _prepare(node: Node, plain: StandardMaterial3D) -> void:
+static func _prepare(node: Node, plain: StandardMaterial3D, light_mesh: Mesh = null) -> void:
 	for mi in node.find_children("*", "MeshInstance3D", true, false):
 		var instance := mi as MeshInstance3D
+		if light_mesh != null:
+			instance.mesh = light_mesh
 		if not cast_shadow:
 			instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		if plain != null:

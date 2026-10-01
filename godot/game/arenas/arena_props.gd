@@ -36,6 +36,14 @@ const Bleachers := preload("res://game/arenas/bleachers.gd")
 ## The owner's models, copied into the tracked runtime tree.
 const SHELTER_GLB := "res://assets/arena/sideline-shelter.glb"
 const BOARD_GLB := "res://assets/arena/sponsor-board.glb"
+## The light shelter (2026-10-01): level 2 of Godot's own LOD chain for the 259,882
+## triangle unit, baked by `game/tools/bleacher_lod_probe.gd` (`--glb=` this file,
+## `--ship-level=2`) and compacted — 32,484 triangles. Four copies were 1.04 M of the
+## 1.78 M primitives Torii draws; from every match camera, zoomed 2x, the levels down
+## to 16,242 looked the same as the original. `light_shelters = false` is the A/B.
+const SHELTER_LIGHT_PATH := "res://assets/arena/sideline-shelter-light.res"
+const SHELTER_LIGHT_TRIANGLES := 32484
+static var light_shelters := true
 
 ## Uniform scale of one shelter. The unit is 1.90 m wide as authored; 2.4 makes it
 ## 4.6 m wide and 2.3 m tall — a bench shelter that stands UNDER the 3 m side glass
@@ -120,6 +128,7 @@ static func _place_shelters(group: Node3D) -> int:
 	var stands_half: float = Bleachers.span_z() * 0.5
 	var first_z := stands_half + width * 0.5 + width * 0.1
 
+	var light_mesh: Mesh = load(SHELTER_LIGHT_PATH) as Mesh if light_shelters else null
 	var placed := 0
 	var zs: Array[float] = []
 	for side in [1.0, -1.0]:
@@ -138,12 +147,15 @@ static func _place_shelters(group: Node3D) -> int:
 			# the unit's own min_y is negative: lift it onto the floor it stands on.
 			body.position = Vector3(0.0, -box.position.y, 0.0)
 			_prepare(body)
+			if light_mesh != null:
+				for mi in body.find_children("*", "MeshInstance3D", true, false):
+					(mi as MeshInstance3D).mesh = light_mesh
 			stack.add_child(body)
 			group.add_child(stack)
 			placed += 1
 			if side > 0.0:
 				zs.append(z)
-	report["triangles"] = int(report["triangles"]) + placed * Bleachers.triangle_count(base)
+	report["triangles"] = int(report["triangles"]) + placed * (SHELTER_LIGHT_TRIANGLES if light_mesh != null else Bleachers.triangle_count(base))
 	report["shelter_x"] = centre_x
 	report["shelter_z"] = zs
 	report["shelter_height_m"] = box.size.y * shelter_scale
