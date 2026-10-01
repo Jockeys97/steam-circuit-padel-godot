@@ -48,6 +48,7 @@ const Catalog := preload("res://src/economy/ost_catalog.gd")
 const OutfitShop := preload("res://src/economy/outfit_shop_catalog.gd")
 const ArenaShop := preload("res://src/economy/arena_shop_catalog.gd")
 const CareerRules := preload("res://src/modes/career_rules.gd")
+const Milestones := preload("res://src/economy/milestone_rewards.gd")
 
 ## The save group this service owns. Named once; `SaveSchema` declares the file/type.
 const GROUP: String = "economy"
@@ -675,7 +676,7 @@ static func _refusal(track_id: String, reason: String, price: int, store) -> Dic
 ## The receipt is persisted with the credit in ONE commit, so a crash between the two
 ## is impossible; a repeated call (a re-mounted result screen, a restart) sees the
 ## receipt and awards nothing.
-static func award_completion(store, match_id: String, points_played: int, won: bool) -> Dictionary:
+static func award_completion(store, match_id: String, points_played: int, won: bool, mode_result: Dictionary = {}) -> Dictionary:
 	if match_id == "":
 		return {"ok": false, "reason": "no_match_id", "already": false, "awarded": 0, "balance": balance(store), "match_id": ""}
 	var init := ensure_initialized(store)
@@ -694,15 +695,28 @@ static func award_completion(store, match_id: String, points_played: int, won: b
 
 	var breakdown := reward_breakdown(points_played, won)
 	var reward := int(breakdown["total"])
-	var credits := int(state["credits"]) + reward
-	receipts[match_id] = reward
-	receipts = _prune_receipts(receipts)
 
 	var payload: Dictionary = Schema.ECONOMY_DEFAULTS.duplicate(true)
 	var read: Dictionary = store.read_group(GROUP)
 	var raw: Variant = read.get("payload", null)
 	if raw is Dictionary:
 		payload = (raw as Dictionary).duplicate(true)
+	var claimed: Dictionary = payload.get("milestones", {}).duplicate() if payload.get("milestones", {}) is Dictionary else {}
+	var bonuses: Array = []
+	for row in Milestones.candidates(mode_result):
+		var key := String(row["key"])
+		if key != "" and claimed.has(key):
+			continue
+		if key != "":
+			claimed[key] = true
+		bonuses.append(row)
+		reward += int(row["amount"])
+	breakdown["bonuses"] = bonuses
+	breakdown["total"] = reward
+	var credits := int(state["credits"]) + reward
+	receipts[match_id] = reward
+	receipts = _prune_receipts(receipts)
+	payload["milestones"] = claimed
 	payload["credits"] = credits
 	payload["receipts"] = receipts
 	payload["migrationVersion"] = MIGRATION_VERSION

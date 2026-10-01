@@ -118,7 +118,17 @@ const ATHLETE_GLB := {
 	&"fiamma": "res://assets/athletes/fiamma.glb",
 	&"oracolo": "res://assets/athletes/oracolo.glb",
 	&"fornaio": "res://assets/athletes/maestro-rigged.glb",
+	# "Crea atleta" bodies (2026-09-27): Meshy image-to-3D from the owner's references,
+	# rigged by Meshy (24-joint family, like fiamma/colosso/oracolo). Neutral garments
+	# and skin, recoloured at runtime (`custom_body_skin.gdshader`); bald, hair attached.
+	&"cc_uomo_medio": "res://assets/custom_character/corpo_uomo_medio-rigged.glb",
+	&"cc_uomo_b": "res://assets/custom_character/corpo_uomo_b-rigged.glb",
+	&"cc_uomo_robusto": "res://assets/custom_character/corpo_uomo_robusto-rigged.glb",
+	&"cc_donna_media": "res://assets/custom_character/corpo_donna_media-rigged.glb",
+	&"cc_donna_atletica": "res://assets/custom_character/corpo_donna_atletica-rigged.glb",
 }
+## The custom bodies above, as a list (ids share the `cc_` prefix).
+const CUSTOM_BODIES := [&"cc_uomo_medio", &"cc_uomo_robusto", &"cc_donna_media", &"cc_donna_atletica", &"cc_uomo_b"]
 
 const CLIP_IDLE := &"idle"
 const CLIP_WALK := &"walk"
@@ -135,6 +145,7 @@ const CEREMONIES := [&"cheer", &"dejected", &"serve_bounce"]
 ## clip against this one body and frees the rest. The Volpe fallback keeps its own
 ## GLB_WALK / GLB_RUN constants above and needs no entry here.
 const COMPANION_CLIPS := {
+	&"cc_uomo_b": {CLIP_WALK: "res://assets/custom_character/corpo_uomo_b-walk.tres", CLIP_RUN: "res://assets/custom_character/corpo_uomo_b-run.tres"},
 	&"maestro": {
 		CLIP_IDLE: "res://assets/athletes/maestro-idle.glb",
 		CLIP_WALK: "res://assets/athletes/maestro-walking.glb",
@@ -147,6 +158,10 @@ const COMPANION_CLIPS := {
 		CLIP_WALK: "res://assets/athletes/maestro-walking.glb",
 		CLIP_RUN: "res://assets/athletes/maestro-running.glb",
 	},
+	&"cc_uomo_medio": {CLIP_WALK: "res://assets/custom_character/corpo_uomo_medio-walking.tres", CLIP_RUN: "res://assets/custom_character/corpo_uomo_medio-running.tres"},
+	&"cc_uomo_robusto": {CLIP_WALK: "res://assets/custom_character/corpo_uomo_robusto-walking.tres", CLIP_RUN: "res://assets/custom_character/corpo_uomo_robusto-running.tres"},
+	&"cc_donna_media": {CLIP_WALK: "res://assets/custom_character/corpo_donna_media-walking.tres", CLIP_RUN: "res://assets/custom_character/corpo_donna_media-running.tres"},
+	&"cc_donna_atletica": {CLIP_WALK: "res://assets/custom_character/corpo_donna_atletica-walking.tres", CLIP_RUN: "res://assets/custom_character/corpo_donna_atletica-running.tres"},
 }
 
 ## id -> res:// path of a 2048x2048 recoloured atlas, or "" for the GLB's own texture.
@@ -401,13 +416,13 @@ func _build() -> int:
 	if not lib.has_animation(CLIP_RUN) and _glb_run_path != "":
 		_adopt_clip(lib, _glb_run_path, CLIP_RUN)
 
-	if _athlete_id in [&"fiamma", &"colosso", &"oracolo"] or _glb_base_path == GLB_BASE or _geometry_outfit != &"base":
+	if _athlete_id in [&"fiamma", &"colosso", &"oracolo"] or _athlete_id in CUSTOM_BODIES or _glb_base_path == GLB_BASE or _geometry_outfit != &"base":
 		_author_ready_idle(lib)
 	_complete_idle_tracks(lib)
 	_author_footwork(lib)
 	_author_ceremonies(lib)
 	_author_strokes(lib)
-	if _athlete_id in [&"fiamma", &"colosso", &"oracolo", &"maestro", &"fornaio", &"pantera", &"steamer"]:
+	if _athlete_id in [&"fiamma", &"colosso", &"oracolo", &"maestro", &"fornaio", &"pantera", &"steamer"] or _athlete_id in CUSTOM_BODIES:
 		for shot in ["drive", "smash", "bandeja", "backhand", "slice", "lunge_forehand", "wall_exit_forehand", "forehand_volley", "backhand_volley", "forehand_lob", "backhand_lob"]:
 			var motion_path := "res://assets/athletes/animations/%s_meshy_%s.tres" % [_motion_id,shot]
 			if ResourceLoader.exists(motion_path):
@@ -725,7 +740,7 @@ func _author_ready_idle(lib: AnimationLibrary) -> void:
 				else:
 					idle.scale_track_insert_key(track, time, rest.basis.get_scale())
 	var ready_bones := ["LeftArm", "RightArm", "LeftForeArm", "RightForeArm", "Spine", "Spine1"]
-	var relax_shoulders := _geometry_outfit != &"base" or _glb_base_path == GLB_BASE or _athlete_id in [&"colosso", &"oracolo"]
+	var relax_shoulders := _geometry_outfit != &"base" or _glb_base_path == GLB_BASE or _athlete_id in [&"colosso", &"oracolo"] or _athlete_id in CUSTOM_BODIES
 	if relax_shoulders:
 		# This bind pose also raises the shoulder joints. Arms alone leave the
 		# silhouette in an A-pose despite valid forearm animation.
@@ -754,6 +769,17 @@ func _author_ready_idle(lib: AnimationLibrary) -> void:
 ## Loads `path`, lifts its single animation into `lib` under `clip_name`, frees the
 ## rest. Only one extra GLB is resident at a time (host has 0 swap).
 func _adopt_clip(lib: AnimationLibrary, path: String, clip_name: StringName) -> bool:
+	# A clip extracted to its own `.tres` (the "Crea atleta" bodies, 2026-09-27): Meshy's
+	# walking/running GLBs repeat the whole mesh and texture for one animation.
+	if path.ends_with(".tres"):
+		var clip := load(path) as Animation
+		if clip == null:
+			push_warning("AthleteRig: could not load %s; clip '%s' not registered" % [path, clip_name])
+			return false
+		var looped: Animation = clip.duplicate(true)
+		looped.loop_mode = Animation.LOOP_LINEAR
+		lib.add_animation(clip_name, looped)
+		return true
 	var root := _load_glb(path)
 	if root == null:
 		push_warning("AthleteRig: could not load %s; clip '%s' not registered" % [path, clip_name])
@@ -1180,6 +1206,7 @@ const ANTICIPATION_MAX := 0.60
 ## (PREP_MIN_ABOVE, and then it must not sit further forward than PREP_MAX_FRONT,
 ## which is what makes an arm held out at chest height a shield, not a wind-up).
 const PREP_MIN_BACK := 0.10
+const PREP_MIN_ACROSS := 0.12
 const PREP_MIN_ABOVE := 0.10
 const PREP_MAX_FRONT := 0.10
 ## The knee flexion a low-contact adaptation may reach in total (the clip's own
@@ -1307,6 +1334,12 @@ func _prep_pose_for(stroke: StringName, contact_phase: float = 0.5) -> Dictionar
 		var score := -INF
 		if behind >= PREP_MIN_BACK:
 			score = behind
+		# A backhand's take-back is ACROSS the body: the racket hand on the other side
+		# (+X, the athlete's left), in front of the chest rather than behind it
+		# (2026-09-26, the Mixamo-cut backhand; its wind-up read 0 without this).
+		var across: float = hand.x / scale
+		if across >= PREP_MIN_ACROSS:
+			score = maxf(score, across)
 		if hand.z <= PREP_MAX_FRONT:
 			var above: float = (hand.y - _bone_local_at(anim, t, "RightShoulder").y) / scale
 			if above >= PREP_MIN_ABOVE:

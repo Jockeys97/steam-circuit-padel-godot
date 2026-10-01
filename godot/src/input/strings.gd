@@ -68,7 +68,7 @@ const LEGEND := [
 const KEYBOARD_LEGEND := [
 	{"keys": "WASD", "label_id": "moveNet"},
 	{"keys": "Space", "label_id": "chargeShot"},
-	{"keys": "⌘", "label_id": "chargeSlice"},
+	{"keys": "C", "label_id": "chargeSlice"},
 	{"keys": "A/D/←/→", "label_id": "aimWhile"},
 	{"keys": "Option", "label_id": "specialBtn"},
 	{"keys": "Z", "label_id": "switchBtn"},

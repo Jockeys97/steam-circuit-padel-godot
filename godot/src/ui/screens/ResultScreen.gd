@@ -520,6 +520,8 @@ func _render_reward() -> void:
 			"play": int(parts.get("play_bonus", 0)),
 			"win": int(parts.get("victory_bonus", 0)),
 		})
+		for bonus in parts.get("bonuses", []):
+			_reward_breakdown.text += "\n%s +%d CC" % [UiStrings.t(String(bonus["label"])), int(bonus["amount"])]
 	else:
 		_reward_breakdown.text = ""
 

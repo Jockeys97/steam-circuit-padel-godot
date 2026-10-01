@@ -26,6 +26,7 @@ extends RefCounted
 ##     the 0.01 step belongs to the slider) and `apply_master_gain()`, which sets
 ##     the real Master bus relative to the baked reference — 0 means silence and
 ##     muting the bus, exactly as both adapters used to do line for line;
+##     `apply_music_volume()` and `apply_sfx_volume()` scale only their named child bus;
 ##   - the bus setup facts: the names (`MASTER_BUS`, `SFX_BUS`, `MUSIC_BUS`), the
 ##     graph (`BUS_SENDS`: SFX and Music feed Master) and the levels
 ##     (`bus_volume_db()`: Music at the contract's own gain, the rest at 0 dB),
@@ -223,6 +224,23 @@ func apply_music_volume(gain: float) -> float:
 		AudioServer.set_bus_mute(idx, true)
 		return SILENCE_DB
 	var db := linear_to_db(reference_music_bus_gain() * normalized)
+	AudioServer.set_bus_volume_db(idx, db)
+	AudioServer.set_bus_mute(idx, false)
+	return db
+
+
+## Independent 0-1 multiplier for game effects. SFX is unity at 1.0; the Master
+## parent still owns the global level, and the Music sibling is never touched.
+func apply_sfx_volume(gain: float) -> float:
+	var idx := AudioServer.get_bus_index(SFX_BUS)
+	if idx < 0:
+		idx = ensure_bus(SFX_BUS)
+	var normalized := clampf(gain if not is_nan(gain) else 0.0, 0.0, 1.0)
+	if normalized <= 0.0:
+		AudioServer.set_bus_volume_db(idx, SILENCE_DB)
+		AudioServer.set_bus_mute(idx, true)
+		return SILENCE_DB
+	var db := linear_to_db(normalized)
 	AudioServer.set_bus_volume_db(idx, db)
 	AudioServer.set_bus_mute(idx, false)
 	return db

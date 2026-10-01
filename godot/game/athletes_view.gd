@@ -668,7 +668,8 @@ func _note_point(state) -> void:
 ## simulation's own position stands. Presentation only: the simulation keeps its
 ## ball parked beside the server (`sim.gd` prepare_serve) and never sees this. The
 ## drawn ball follows the left hand and drops to the floor and back once per loop
-## of `serve_bounce`, so ball and hand share one clock: the clip's own position.
+## of `serve_bounce`; the height uses the simulation's bounce clock so the
+## precision window and the visual cue agree.
 func serve_ball_override(state) -> Variant:
 	if not bool(state.serving) or float(state.pointPause) > 0.0 or state.result != null:
 		return null
@@ -680,7 +681,9 @@ func serve_ball_override(state) -> Variant:
 	if anim == null or anim.current_animation != "serve_bounce":
 		return null
 	var length := maxf(anim.current_animation_length, 0.001)
-	var phase := fposmod(anim.current_animation_position / length, 1.0)
+	# Use the simulation's serve clock for the ball height: the same bounce phase
+	# grants the optional precision bonus, so what the player sees matches the rule.
+	var phase := fposmod(float(state.serveBounceTime) / length, 1.0)
 	var skeleton: Skeleton3D = rig.get_skeleton()
 	var bone := skeleton.find_bone(rig._resolve_bone_name("LeftHand"))
 	if bone < 0:

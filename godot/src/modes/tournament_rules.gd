@@ -89,3 +89,10 @@ static func match_config(round: int, available_arenas: Array = []) -> Dictionary
 		"ai": ai_for_round(round),
 		"fixture": fx,
 	}
+
+
+## The game's tournament ladder (2026-09-27): round 0 is one tier below the menu
+## difficulty, each round the next tier, so choosing Legend puts a final PAST the
+## Legend (`CareerRules.ladder_ai_profile`). `ai_for_round` stays the reference's.
+static func ladder_ai_for_round(round: int, chosen_tier: int) -> Dictionary:
+	return CareerRules.ladder_ai_profile(CareerRules.ladder_start(chosen_tier) + clampi(round, 0, FINAL_ROUND))

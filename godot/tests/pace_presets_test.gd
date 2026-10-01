@@ -11,7 +11,7 @@ const Pace = preload("res://src/sim/pace.gd")
 ## The rung labelled `Realistic`, as its `real : game` numerator.
 const REAL_PACE := 1.5
 ## The ladder the labels promise, in table order.
-const EXPECTED_RATIOS := [1.0, 1.5, 2.0, 2.5, 3.0]
+const EXPECTED_RATIOS := [1.0, 1.2, 1.5, 2.0, 2.5, 3.0]
 
 var failures := 0
 var checks := 0

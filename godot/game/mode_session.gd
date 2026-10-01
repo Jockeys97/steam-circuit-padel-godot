@@ -191,7 +191,7 @@ static func start(mode_id: String, store_ref, opts: Dictionary = {}) -> RefCount
 				s.round = ModesSave.tournament_round(store_ref)
 			s.fixture = TournamentRules.fixture(s.round, arenas)
 			s.arena = s.fixture.get("arena", {})
-			s.ai = TournamentRules.ai_for_round(s.round)
+			s.ai = TournamentRules.ladder_ai_for_round(s.round, Config.chosen_tier())
 			s._start_match("tournament")
 		"career":
 			s.career = ModesSave.load_career(store_ref)
@@ -201,7 +201,7 @@ static func start(mode_id: String, store_ref, opts: Dictionary = {}) -> RefCount
 			s.season_objectives = CareerProgress.ensure_season_objectives(s.career)
 			s.fixture = CareerRules.career_fixture(s.season, s.match_index, arenas)
 			s.arena = s.fixture.get("arena", {})
-			s.ai = CareerRules.career_ai_profile(s.season, s.match_index)
+			s.ai = CareerRules.career_ladder_profile(s.season, s.match_index, Config.chosen_tier())
 			s._start_match("career")
 	s.phase = "live"
 	return s

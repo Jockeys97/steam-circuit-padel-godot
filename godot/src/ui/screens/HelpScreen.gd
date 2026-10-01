@@ -18,7 +18,7 @@
 ## HAVE TO TRUST A LAYOUT:
 ##
 ##   * the keyboard guide's caps are the reference's markup, cap by cap
-##     (`index.html:234-238`: W A S D | Space | ⌘ | A D ← → | Option | Z | Esc). The
+##     (`index.html:234-238`: W A S D | Space | ⌘ (C in the port, 2026-09-30) | A D ← → | Option | Z | Esc). The
 ##     input lane's own `KEYBOARD_LEGEND` (`godot/src/input/strings.gd`) carries the
 ##     same seven labels but keeps each row's keys as ONE string ("WASD") because it is
 ##     the inventory of the pause HUD, not of this markup; this screen renders the caps
@@ -77,7 +77,7 @@ const CARDS: Array = [
 const KEYBOARD_ROWS: Array = [
 	{"caps": ["W", "A", "S", "D"], "label_id": "moveNet"},
 	{"caps": ["Space"], "label_id": "chargeShot"},
-	{"caps": ["⌘"], "label_id": "chargeSlice"},
+	{"caps": ["C"], "label_id": "chargeSlice"},
 	{"caps": ["A", "D", "←", "→"], "label_id": "aimWhile"},
 	{"caps": ["Option"], "label_id": "specialBtn"},
 	{"caps": ["Z"], "label_id": "switchBtn"},

@@ -246,6 +246,23 @@ func _host() -> void:
 	var ids: Array = model.call("ids") if model != null else []
 	audit.report("focus ids=%s" % str(ids))
 	audit.check_true(ids.has("emporio"), "host/emporio_in_focus_registry")
+	audit.check_true(ids.has("jukebox"), "host/jukebox_in_focus_registry")
+	var bridge = menu.get("_bridge")
+	var focus_model = menu.get("_focus")
+	audit.check_true(bool(bridge.call("set_focus", "emporio")), "host/pad_focus_starts_on_emporio")
+	var stick := InputEventJoypadMotion.new()
+	stick.device = 0
+	stick.axis = JOY_AXIS_LEFT_X
+	stick.axis_value = 1.0
+	menu.call("_input", stick)
+	audit.check_eq(String(focus_model.call("focus_id")), "jukebox", "host/stick_right_reaches_jukebox")
+	stick.axis_value = 0.0
+	menu.call("_input", stick)
+	_pad_accept()
+	await _settle(3)
+	audit.check_true(menu.get("_jukebox_overlay") != null, "host/pad_accept_opens_jukebox")
+	menu.call("toggle_jukebox")
+	await _settle(2)
 	audit.check_true(bool(menu.call("_emporio_shortcut_available")), "host/menu_allows_shop_shortcut")
 	var code_field := LineEdit.new()
 	menu.add_child(code_field)
@@ -317,8 +334,6 @@ func _host() -> void:
 	# the focus is moved onto the registered `emporio` control through the bridge's own
 	# `set_focus`, then the accept travels the real path (`_input` ->
 	# `handle_pad_event` -> `_bridge.act` -> `action_requested` -> toggle).
-	var bridge = menu.get("_bridge")
-	var focus_model = menu.get("_focus")
 	audit.check_true(bool(bridge.call("has", "emporio")), "host/emporio_registered_in_bridge")
 	audit.check_true(bool(bridge.call("set_focus", "emporio")), "host/set_focus_reaches_emporio")
 	focus_model.call("apply_focus")

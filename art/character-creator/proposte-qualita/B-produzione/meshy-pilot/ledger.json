@@ -1,0 +1,33 @@
+{
+  "account": 2,
+  "limit": 55,
+  "jobs": {
+    "body": {
+      "reserved": 30,
+      "endpoint": "image-to-3d",
+      "status": "SUCCEEDED",
+      "balanceBefore": 1077,
+      "id": "01a0e832-f927-77af-b2b6-218e46209338",
+      "progress": 100,
+      "consumed": 30
+    },
+    "hair": {
+      "reserved": 20,
+      "endpoint": "image-to-3d",
+      "status": "SUCCEEDED",
+      "balanceBefore": 1047,
+      "id": "01a0e833-02bc-75f8-8c4c-cbab3f3e5fc8",
+      "progress": 100,
+      "consumed": 20
+    },
+    "rig": {
+      "reserved": 5,
+      "endpoint": "rigging",
+      "status": "SUCCEEDED",
+      "balanceBefore": 1027,
+      "id": "01a0e836-c150-7570-8b63-f17fc608cd7d",
+      "progress": 100,
+      "consumed": 5
+    }
+  }
+}

@@ -66,7 +66,7 @@ func _run() -> void:
 		seeds, bias, OS.get_environment("AI_GLASS_PLAY") == "1", levels,
 		float(balance["groundRestitution"]), float(balance["minimumBounceVz"])])
 	for level in levels:
-		for policy in ["drive", "slice"]:
+		for policy in ["drive", "slice", "short"]:
 			var m := _measure(int(level), policy, seeds, bias)
 			_report(int(level), policy, bias, m)
 	quit(0)
@@ -79,10 +79,15 @@ func _measure(level: int, policy: String, seeds: int, bias: float) -> Dictionary
 		"detector_agree": 0, "human_shots": 0, "not_returned": 0,
 		"back_refusals": {}, "ai_lost_by": {}, "live_ticks": 0, "ai_net_ticks": 0,
 		"ai_z_sum": 0.0, "ai_pace_sum": 0.0, "ai_shots": 0,
-		"apexes": [], "ai_after_back_glass": 0,
+		"apexes": [], "short_land": [], "errs": {}, "ai_after_back_glass": 0,
 	}
 	var net_y := float(Frozen.court()["netY"])
 	var profile: Dictionary = Frozen.ai_opponents()[level]
+	# PROFILE='{"skill":0.95,...}' plays a hypothetical profile instead of the table's
+	# (merged over the chosen level), to size a tier before it exists.
+	if OS.get_environment("PROFILE") != "":
+		profile = profile.duplicate()
+		profile.merge(JSON.parse_string(OS.get_environment("PROFILE")), true)
 	for seed in range(1, seeds + 1):
 		var state = Sim.create_match_state("quick", Frozen.athletes()[0], Frozen.arenas()[0], profile)
 		state.rng_state = seed * 7919
@@ -112,8 +117,27 @@ func _measure(level: int, policy: String, seeds: int, bias: float) -> Dictionary
 				plans[key] = String(plan["reason"]) if String(plan["reason"]) != "emergency" else "emergency:" + _refusal(state, bias)
 			var input: Dictionary = bot.decide(state)
 			input["slice"] = policy == "slice"
+			if policy == "short" and not bool(state.serving):
+				# RB+A with no charge: the drop shot's own input.
+				input["shotVariant"] = "chiquita"
+				input["charging"] = false
+			var air_before := {"player": int(state.ball.bounces["player"]) == 0 and state.ball.postGlassSide == null,
+				"ai": int(state.ball.bounces["ai"]) == 0 and state.ball.postGlassSide == null}
+			var hits_before := int(state.rallyHits)
 			Sim.update_match(state, DT, input, idle)
 			var ball = state.ball
+			if int(state.rallyHits) > hits_before and hits_before > 0:
+				var hit_side := String(state.lastHitterSide)
+				var key := "%s_%s" % [hit_side, "air" if bool(air_before.get(hit_side, false)) else "bounce"]
+				var failed := false
+				if hit_side == "player":
+					failed = String(state.lastShotErrorRoll.get("error", "")) != ""
+				else:
+					failed = String(ball.shotType) == "error" or (state.events.size() > 0 and String(state.events[0]) in ["evOppOutOfPos", "evAiForced"])
+				var cell: Array = m.errs.get(key, [0, 0])
+				cell[0] += 1
+				if failed: cell[1] += 1
+				m.errs[key] = cell
 			if float(state.pointPause) <= 0.0:
 				rally_peak = maxi(rally_peak, int(state.rallyHits))
 				if not bool(state.serving):
@@ -124,6 +148,8 @@ func _measure(level: int, policy: String, seeds: int, bias: float) -> Dictionary
 			if (prev_vz < 0.0 and float(ball.vz) > 0.0 and float(ball.z) < 6.0 and float(ball.y) < net_y) \
 					or (is_equal_approx(float(ball.landRing), 0.5) and float(ball.y) < net_y):
 				landed = true
+				if String(ball.shotType) == "chiquita":
+					m.short_land.append(net_y - float(ball.y))
 			prev_vz = float(ball.vz)
 			# How high a human ball WOULD rise after its bounce on the AI half: the exact
 			# forecast (`ai_glass.gd`, validated to 0.00 px against the real ball) taken as
@@ -269,6 +295,17 @@ func _report(level: int, policy: String, bias: float, m: Dictionary) -> void:
 	if not ap.is_empty():
 		print("   a human ball would rise after its bounce: median %.0f px  p90 %.0f px   above the net (38 px) %.0f%%   AI plays after the back glass %.1f%% of its contacts" % [
 			ap[ap.size() / 2], ap[int(ap.size() * 0.9)], _pct(above, ap.size()), _pct(m.ai_after_back_glass, m.ai_contacts)])
+	if not m.short_land.is_empty():
+		var sl: Array = m.short_land.duplicate()
+		sl.sort()
+		var inside := sl.filter(func(d): return d > 0.0 and d < 126.0).size()
+		print("   short balls landing: %d, first rectangle (<126 px) %.0f%%, median %.0f px from the net" % [
+			sl.size(), _pct(inside, sl.size()), sl[sl.size() / 2]])
+	var er := []
+	for k in ["player_air", "player_bounce", "ai_air", "ai_bounce"]:
+		var c: Array = m.errs.get(k, [0, 0])
+		er.append("%s %d colpi, errori %.1f%%" % [k, c[0], _pct(c[1], c[0])])
+	print("   errors: " + " | ".join(er))
 	print("   back volleys, planner's reason: %s" % [_top(m.back_refusals)])
 	print("   AI lost its points by: %s" % [_top(m.ai_lost_by)])
 	print("METRICS " + JSON.stringify({

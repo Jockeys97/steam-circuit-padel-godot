@@ -64,6 +64,12 @@ class_name AthleteSpawn
 
 const RigScene := preload("res://src/character/AthleteRig.tscn")
 const Catalogue := preload("res://src/character/outfit_catalogue.gd")
+## ADDITIVE: the player-made athlete. Its id is stable and synthetic; nothing about
+## it is merged into the frozen catalogue, so the six roster ids, their outfit
+## tables and their unlock rules are untouched. See `src/character/custom_character.gd`.
+const CustomCharacter := preload("res://src/character/custom_character.gd")
+const CustomCharacterRig := preload("res://src/character/custom_character_rig.gd")
+const CustomCharacterStore := preload("res://src/character/custom_character_store.gd")
 
 ## Reference order, so a menu that just walks this list matches the browser build.
 const DEFAULT_OUTFIT := &"base"
@@ -77,11 +83,48 @@ static func ids() -> Array:
 	return Catalogue.athlete_ids()
 
 
+## The stable synthetic id of the player-made athlete. One id, everywhere: the
+## roster row, the preview, the match selection and the save file all use this.
+static func custom_id() -> StringName:
+	return CustomCharacter.ID
+
+
+static func is_custom(athlete_id: StringName) -> bool:
+	return athlete_id == CustomCharacter.ID
+
+
+## The saved appearance, or the documented default when nothing is stored yet. Never
+## null. An `opts.appearance` passed to `make()` wins over the stored record, which is
+## how the editor previews an unsaved edit.
+static func custom_appearance(store: RefCounted = null) -> Dictionary:
+	var s: RefCounted = store if store != null else CustomCharacterStore.new()
+	return s.read()
+
+
+## The custom athlete as a SELECTION row — the one the picker and the special seat
+## enumerate. Empty until the player has actually created one: a player who never
+## opened the editor sees exactly the roster that shipped, which keeps every existing
+## roster audit and every existing count untouched.
+static func custom_selection_row(store: RefCounted = null) -> Dictionary:
+	var s: RefCounted = store if store != null else CustomCharacterStore.new()
+	if not s.exists():
+		return {}
+	var row := CustomCharacter.roster_row(s.read())
+	row["selectable"] = true
+	return row
+
+
 static func outfit_ids(athlete_id: StringName) -> Array:
+	if is_custom(athlete_id):
+		# The custom athlete's "outfits" are its garment variants: the same question,
+		# answered from its own table.
+		return CustomCharacter.OUTFITS.duplicate()
 	return Catalogue.playable_outfit_ids(athlete_id)
 
 
 static func display_name(athlete_id: StringName) -> String:
+	if is_custom(athlete_id):
+		return String(custom_appearance()["display_name"])
 	return String(Catalogue.athlete(athlete_id).get("name", ""))
 
 
@@ -89,6 +132,8 @@ static func display_name(athlete_id: StringName) -> String:
 ## a special's overlay record for a Godot-only addition (`specials.gd`), {} for an
 ## unknown id. One door, so a screen never has to ask two tables.
 static func record(athlete_id: StringName) -> Dictionary:
+	if is_custom(athlete_id):
+		return CustomCharacter.roster_row(custom_appearance())
 	return Catalogue.athlete(athlete_id)
 
 
@@ -107,6 +152,8 @@ static func outfit_is_locked_by_default(athlete_id: StringName, outfit_id: Strin
 
 
 static func is_known(athlete_id: StringName, outfit_id: StringName = DEFAULT_OUTFIT) -> bool:
+	if is_custom(athlete_id):
+		return true
 	return Catalogue.has_outfit(athlete_id, outfit_id)
 
 
@@ -126,6 +173,24 @@ static func is_known(athlete_id: StringName, outfit_id: StringName = DEFAULT_OUT
 ##   "name"            String    node name, handy when debugging a scene tree
 static func make(athlete_id: StringName, outfit_id: StringName = DEFAULT_OUTFIT,
 		opts: Dictionary = {}) -> Node3D:
+	# ADDITIVE: the player-made athlete is not in the frozen catalogue and must never
+	# be mistaken for one. `opts.appearance` previews an unsaved record; without it the
+	# saved one is used.
+	if is_custom(athlete_id):
+		var appearance: Dictionary = opts.get("appearance", null) if opts.has("appearance") else custom_appearance()
+		var custom := CustomCharacterRig.make(appearance, {
+			"position": opts.get("position", Vector3.ZERO),
+			"facing_degrees": opts.get("facing_degrees", 0.0),
+			"name": opts.get("name", "CustomAthlete"),
+		})
+		if custom == null:
+			push_error("AthleteSpawn.make: custom athlete could not be built")
+			return null
+		var custom_locomotion := StringName(opts.get("locomotion", &"idle"))
+		if not custom.play_locomotion(custom_locomotion):
+			custom.play_locomotion(&"idle")
+		custom.set_locomotion_speed_scale(float(opts.get("speed_scale", 1.0)))
+		return custom
 	var strict := bool(opts.get("strict", true))
 	if not Catalogue.has_outfit(athlete_id, outfit_id):
 		if strict or not Catalogue.has_outfit(athlete_id, DEFAULT_OUTFIT):
@@ -177,6 +242,10 @@ static func set_outfit(rig: Node3D, athlete_id: StringName, outfit_id: StringNam
 static func describe(rig: Node3D) -> Dictionary:
 	if rig == null:
 		return {}
+	# A custom athlete is not an AthleteRig instance, so it answers with its own
+	# read-back rather than pretending to be one.
+	if rig is CustomCharacterRig:
+		return rig.describe()
 	var skel: Skeleton3D = rig.get_skeleton()
 	return {
 		"name": rig.name,

@@ -14,6 +14,9 @@ signal track_changed(id: String)
 signal music_enabled_changed(enabled: bool)
 
 var player: Node
+## A result announcement must survive the match scene's immediate route to Main.
+var announcer_player: AudioStreamPlayer
+var _announcer_request := 0
 var requested := ""
 var fallback := "ost_menu"
 var _held := false
@@ -36,6 +39,10 @@ var _carry_track := false
 func _ready() -> void:
 	player = Manager.new()
 	add_child(player)
+	announcer_player = AudioStreamPlayer.new()
+	announcer_player.name = "ResultAnnouncer"
+	announcer_player.bus = Mixer.SFX_BUS
+	add_child(announcer_player)
 	classic = Legacy.new()
 	add_child(classic)
 	classic.set_process(false)
@@ -46,6 +53,25 @@ func _ready() -> void:
 	layer.add_child(toast)
 	_music_gain = MusicSettings.effective_volume(Config.stored_prefs())
 	Mixer.new().apply_music_volume(_music_gain)
+
+
+func play_match_end_announcement(stream: AudioStream, muted: bool) -> void:
+	stop_match_end_announcement()
+	if muted or stream == null:
+		return
+	var request := _announcer_request
+	# Both result stings last 1.5 s; start the voice just after them.
+	await get_tree().create_timer(1.55).timeout
+	if request != _announcer_request or not is_inside_tree():
+		return
+	announcer_player.stream = stream
+	announcer_player.play()
+
+
+func stop_match_end_announcement() -> void:
+	_announcer_request += 1
+	if announcer_player != null:
+		announcer_player.stop()
 
 func set_screen(id: String) -> void:
 	_match = false

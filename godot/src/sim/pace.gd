@@ -19,7 +19,9 @@
 ## puts a real full-court crossing at 541 to 689 ms, and the build's own measured
 ## crossing is 876 ms (`tools/audit-port/logs/court_speed_audit.log`), so k = 1.5
 ## lands at 584 ms, inside the real band. Every other rung is stated as its ratio
-## to real pace, `1.5 / factor`: 1.5:1, 2:1, 2.5:1, 3:1.
+## to real pace, `1.5 / factor`: 1.2:1, 1.5:1, 2:1, 2.5:1, 3:1. The labels no longer
+## print that ratio (owner 2026-09-27: a player reads names, the blurb gives the
+## crossing time); the ratio stays in `real_pace_ratio()` and the tests.
 ##
 ## THE DEFAULT IS `brisk`, whose factor is exactly 1.0, so an existing player's
 ## match runs at the tuning it has always run at until they choose otherwise.
@@ -46,6 +48,9 @@ const REAL_PACE_FACTOR := 1.5
 ## The ladder, slowest last. `factor` multiplies the dt that feeds the simulation.
 const PRESETS: Array = [
 	{"id": "realistic", "factor": 1.5, "label_key": "paceRealistic", "blurb_key": "paceRealisticBlurb"},
+	# 2026-09-27: the jump from `brisk` to `realistic` (+50%) was the widest on the
+	# ladder; `fast` is the rung in between (1.2 : 1, about 0.7 s to cross).
+	{"id": "fast", "factor": 1.25, "label_key": "paceFast", "blurb_key": "paceFastBlurb"},
 	{"id": "brisk", "factor": 1.0, "label_key": "paceBrisk", "blurb_key": "paceBriskBlurb"},
 	{"id": "standard", "factor": 0.75, "label_key": "paceStandard", "blurb_key": "paceStandardBlurb"},
 	{"id": "relaxed", "factor": 0.6, "label_key": "paceRelaxed", "blurb_key": "paceRelaxedBlurb"},
@@ -58,28 +63,32 @@ const PRESETS: Array = [
 const STRINGS: Dictionary = {
 	"en": {
 		"pacePreset": "GAME PACE",
-		"paceRealistic": "Realistic (1:1)",
-		"paceRealisticBlurb": "Full real-padel pace. The ball crosses the court in about 0.6 s.",
-		"paceBrisk": "Brisk (1.5:1)",
+		"paceRealistic": "Super fast",
+		"paceRealisticBlurb": "The fastest: real padel pace. The ball crosses the court in about 0.6 s.",
+		"paceFast": "Fast",
+		"paceFastBlurb": "A step quicker than Standard. About 0.7 s to cross.",
+		"paceBrisk": "Standard",
 		"paceBriskBlurb": "The pace this build has always run at. About 0.9 s to cross.",
-		"paceStandard": "Standard (2:1)",
+		"paceStandard": "Moderate",
 		"paceStandardBlurb": "Half real pace. The ball crosses the court in about 1.2 s.",
-		"paceRelaxed": "Relaxed (2.5:1)",
+		"paceRelaxed": "Relaxed",
 		"paceRelaxedBlurb": "More time on every ball. About 1.5 s to cross.",
-		"paceLearning": "Learning (3:1)",
+		"paceLearning": "Learning",
 		"paceLearningBlurb": "A third of real pace. The ball crosses the court in about 1.8 s.",
 	},
 	"it": {
 		"pacePreset": "RITMO DI GIOCO",
-		"paceRealistic": "Realistico (1:1)",
-		"paceRealisticBlurb": "Ritmo reale del padel. La palla attraversa il campo in circa 0,6 s.",
-		"paceBrisk": "Svelto (1.5:1)",
+		"paceRealistic": "Super veloce",
+		"paceRealisticBlurb": "Il più veloce: il ritmo del padel vero. La palla attraversa il campo in circa 0,6 s.",
+		"paceFast": "Veloce",
+		"paceFastBlurb": "Un passo più rapido di Standard. Circa 0,7 s per attraversare.",
+		"paceBrisk": "Standard",
 		"paceBriskBlurb": "Il ritmo con cui questa build ha sempre giocato. Circa 0,9 s per attraversare.",
-		"paceStandard": "Standard (2:1)",
+		"paceStandard": "Moderato",
 		"paceStandardBlurb": "Metà del ritmo reale. La palla attraversa il campo in circa 1,2 s.",
-		"paceRelaxed": "Rilassato (2.5:1)",
+		"paceRelaxed": "Rilassato",
 		"paceRelaxedBlurb": "Più tempo su ogni palla. Circa 1,5 s per attraversare.",
-		"paceLearning": "Didattico (3:1)",
+		"paceLearning": "Didattico",
 		"paceLearningBlurb": "Un terzo del ritmo reale. La palla attraversa il campo in circa 1,8 s.",
 	},
 }

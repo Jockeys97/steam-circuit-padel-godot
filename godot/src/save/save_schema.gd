@@ -140,11 +140,13 @@ const PREFS_DEFAULTS: Dictionary = {
 	"tournamentRound": 0, ## js/ui.js:427, 464
 	"muted": false, ## js/audio.js:4
 	"volume": 0.5, ## js/audio.js:5
+	"sfxVolume": 1.0, ## Independent multiplier for the SFX bus; preserves the current mix.
 	"musicVolume": 1.0, ## Port addition: multiplier for the Music bus only.
 	"musicMuted": false, ## Port addition: silence music without losing its chosen level.
 	"nowPlaying": true, ## Port addition: show the soundtrack title and cover toast.
 	"musicSeparateContexts": false, ## One library unless the legacy split is requested.
 	"musicContinueOutsideJukebox": false, ## Opt-in handoff of the playing Jukebox track.
+	"announcerEnabled": true, ## Bruno's spoken match cues and mode introductions.
 	"controlMode": "semi", ## js/ui.js:466
 	"gamepadDeadzone": 0.15, ## js/ui.js:467
 	"vibration": true, ## js/ui.js:468

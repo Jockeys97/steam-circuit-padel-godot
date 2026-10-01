@@ -58,7 +58,7 @@ const FRAME_TINY := Vector2(540, 600)
 ## copy: the screen's rows must match this and the label ids must match the input
 ## lane's `KEYBOARD_LEGEND` in order.
 const KEYBOARD_CAPS: Array = [
-	["W", "A", "S", "D"], ["Space"], ["⌘"], ["A", "D", "←", "→"], ["Option"], ["Z"], ["Esc"],
+	["W", "A", "S", "D"], ["Space"], ["C"], ["A", "D", "←", "→"], ["Option"], ["Z"], ["Esc"],
 ]
 
 ## Same rule and same probe as `router_audit.gd`/`screen_menu_audit.gd`.

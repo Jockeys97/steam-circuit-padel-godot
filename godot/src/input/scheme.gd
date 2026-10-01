@@ -68,7 +68,7 @@ const ACTIONS := [
 	{
 		"id": "padel_slice", "context": CONTEXT_GAMEPLAY, "devices": ["keyboard", "pad"],
 		"label_id": "sliceLbl", "desc_id": "padSliceDesc", "remappable": true, "port_only": false,
-		"reference": "js/main.js:1013,2573-2585 (meta) · :796 (pad X) · GAMEPLAY_RULES.md:157",
+		"reference": "js/main.js:1013,2573-2585 (meta; the port uses C, 2026-09-30) · :796 (pad X) · GAMEPLAY_RULES.md:157",
 	},
 	{
 		"id": "padel_lob", "context": CONTEXT_GAMEPLAY, "devices": ["pad"],

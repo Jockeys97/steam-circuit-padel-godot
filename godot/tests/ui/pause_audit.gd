@@ -278,7 +278,7 @@ func _ui_tab(audit: AuditBase) -> void:
 	audit.check_eq(ui_rows.size(), 7, "pause/ui/the_tab_builds_seven_toggle_rows")
 	for id in ["score", "time", "map", "guidance", "indicators", "events"]:
 		audit.check_true(ui_rows.get(id) is RowsClass.ToggleRow, "pause/ui/the_toggle_%s_is_a_toggle_row" % id)
-	audit.check_eq(_overlay.rows().size(), 5, "pause/ui/the_controller_rows_table_keeps_the_audio_controls")
+	audit.check_eq(_overlay.rows().size(), 6, "pause/ui/the_controller_audio_rows_remain_available")
 	var focus: Array = _overlay.focus_controls()
 	audit.check_eq(focus.size(), OverlayClass.TABS.size() + presets.size() + ui_rows.size() + 1, "pause/ui/tabs_presets_toggles_and_resume_are_focusable")
 	var ids: Array = []
@@ -453,15 +453,20 @@ func _controller_rows(audit: AuditBase) -> void:
 	var rows: Dictionary = _overlay.rows()
 	var deadzone_row: RowsClass.RangeRow = rows.get("DeadzoneRow", null)
 	var volume_row: RowsClass.RangeRow = rows.get("VolumeRow", null)
+	var sfx_volume_row: RowsClass.RangeRow = rows.get("SfxVolumeRow", null)
 	var vibration_row: RowsClass.ToggleRow = rows.get("VibrationRow", null)
 	audit.check_ne(deadzone_row, null, "pause/the_deadzone_row_is_the_shared_component")
 	audit.check_ne(volume_row, null, "pause/the_volume_row_is_the_shared_component")
+	audit.check_ne(sfx_volume_row, null, "pause/the_sfx_volume_row_is_the_shared_component")
 	audit.check_ne(vibration_row, null, "pause/the_vibration_row_is_the_shared_component")
 	audit.check_eq(deadzone_row.slider.min_value, 0.08, "pause/the_deadzone_min_is_the_references")
 	audit.check_eq(deadzone_row.slider.max_value, 0.30, "pause/the_deadzone_max_is_the_references")
 	audit.check_eq(deadzone_row.slider.step, 0.01, "pause/the_deadzone_step_is_the_references")
 	audit.check_eq(volume_row.slider.min_value, 0.0, "pause/the_volume_min_is_the_references")
 	audit.check_eq(volume_row.slider.max_value, 1.0, "pause/the_volume_max_is_the_references")
+	audit.check_eq(sfx_volume_row.slider.min_value, 0.0, "pause/the_sfx_volume_min_reaches_silence")
+	audit.check_eq(sfx_volume_row.slider.max_value, 1.0, "pause/the_sfx_volume_max_reaches_full")
+	audit.check_eq(sfx_volume_row.slider.step, 0.01, "pause/the_sfx_volume_steps_by_one_percent")
 	# The pause side writes; the settings reader sees it.
 	audit.check_eq(_overlay.set_control_mode("manual"), true, "pause/the_mode_strip_takes_manual")
 	audit.check_eq(_overlay.control_mode(), "manual", "pause/the_mode_strip_reads_back_manual")
@@ -480,6 +485,13 @@ func _controller_rows(audit: AuditBase) -> void:
 	volume_row.slider.value = 0.42
 	await process_frame
 	audit.check_eq(is_equal_approx(float(UiData.settings_snapshot(_store).get("volume", -1.0)), 0.42), true, "pause/settings_snapshot_sees_the_volume")
+	var emitted_sfx_levels: Array[float] = []
+	_overlay.sfx_volume_changed.connect(func(value: float) -> void: emitted_sfx_levels.append(value))
+	sfx_volume_row.slider.value = 0.64
+	await process_frame
+	audit.check_eq(is_equal_approx(float(UiData.settings_snapshot(_store).get("sfx_volume", -1.0)), 0.64), true, "pause/settings_snapshot_sees_the_sfx_volume")
+	audit.check_eq(is_equal_approx(float(_pref("sfxVolume")), 0.64), true, "pause/the_sfx_volume_uses_its_own_saved_pref")
+	audit.check_eq(not emitted_sfx_levels.is_empty() and is_equal_approx(emitted_sfx_levels.back(), 0.64), true, "pause/the_sfx_change_is_emitted_to_the_live_mixer")
 	# The other direction: a write that came from elsewhere is read back.
 	ModesSave.save_pref(_store, "controlMode", "semi")
 	ModesSave.save_pref(_store, "gamepadDeadzone", 0.11)
@@ -488,7 +500,11 @@ func _controller_rows(audit: AuditBase) -> void:
 	audit.check_eq(_overlay.mode_button("semi").theme_type_variation, &"SegmentedActive", "pause/the_strip_follows_the_foreign_write")
 	audit.check_eq(is_equal_approx(_overlay.deadzone(), 0.11), true, "pause/a_foreign_deadzone_write_is_read_back")
 	audit.check_eq(is_equal_approx(deadzone_row.value(), 0.11), true, "pause/the_row_shows_the_foreign_deadzone")
-	audit.check_eq(_overlay.focus_controls().size(), 14, "pause/the_controller_tab_exposes_modes_rows_tabs_and_resume")
+	var controller_focus_ids: Array[String] = []
+	for item in _overlay.focus_controls():
+		controller_focus_ids.append(String((item as Dictionary).get("id", "")))
+	audit.check_true(controller_focus_ids.has("pause/sfx-volume"), "pause/the_sfx_slider_is_controller_focusable")
+	audit.check_eq(controller_focus_ids.size(), 15, "pause/the_controller_tab_exposes_modes_rows_tabs_and_resume")
 
 
 func _pref(key: String) -> Variant:

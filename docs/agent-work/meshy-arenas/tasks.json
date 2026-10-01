@@ -158,5 +158,77 @@
     "id": "01a0dab7-5246-751d-872d-c9b8be663040",
     "status": "SUCCEEDED",
     "credits": 15
+  },
+  "creator/capelli_corti": {
+    "request_started": true,
+    "id": "01a0e270-6d5c-724a-a975-712b938c1b5f",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "creator/capelli_coda": {
+    "request_started": true,
+    "id": "01a0e270-787f-7486-92a0-3a34bb3df9bb",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "creator/capelli_ricci": {
+    "request_started": true,
+    "id": "01a0e270-8428-72d5-891d-955e908216ab",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "creator/capelli_chignon": {
+    "request_started": true,
+    "id": "01a0e270-9010-725d-8a47-50017e197a0d",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "creator/corpo_uomo_medio": {
+    "request_started": true,
+    "id": "01a0e271-8383-77b1-96e7-14ddf2d95a6c",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "creator/corpo_uomo_robusto": {
+    "request_started": true,
+    "id": "01a0e271-8f53-73e9-a80e-dda5267c032d",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "creator/corpo_donna_media": {
+    "request_started": true,
+    "id": "01a0e271-9b5e-71cb-b633-308b23c5d449",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "creator/corpo_donna_atletica": {
+    "request_started": true,
+    "id": "01a0e271-a6da-76be-9828-8a2dfb5c94f1",
+    "status": "SUCCEEDED",
+    "credits": 15
+  },
+  "creator-rig/corpo_uomo_medio": {
+    "request_started": true,
+    "id": "01a0e274-ad0b-733e-8395-bebf5d5f41b1",
+    "status": "SUCCEEDED",
+    "credits": 5
+  },
+  "creator-rig/corpo_uomo_robusto": {
+    "request_started": true,
+    "id": "01a0e274-b8bf-7373-a362-5212012dd966",
+    "status": "SUCCEEDED",
+    "credits": 5
+  },
+  "creator-rig/corpo_donna_media": {
+    "request_started": true,
+    "id": "01a0e274-c478-73e2-b300-34a118a07c6c",
+    "status": "SUCCEEDED",
+    "credits": 5
+  },
+  "creator-rig/corpo_donna_atletica": {
+    "request_started": true,
+    "id": "01a0e274-d080-7794-9179-b62f794a6ab1",
+    "status": "SUCCEEDED",
+    "credits": 5
   }
 }

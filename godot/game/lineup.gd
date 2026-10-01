@@ -161,6 +161,9 @@ static func _pref(role: String) -> Variant:
 	var id: Variant = lineup.get(role)
 	if typeof(id) != TYPE_STRING:
 		return null
+	if AthleteSpawn.is_custom(StringName(id)):
+		var custom := AthleteSpawn.custom_selection_row()
+		return custom if not custom.is_empty() else null
 	for athlete in Gate.roster() + Gate.special_athletes():
 		if String(athlete["id"]) == String(id):
 			return athlete

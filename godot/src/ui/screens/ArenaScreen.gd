@@ -1426,20 +1426,41 @@ func _refresh_fixture_launch() -> void:
 		frame.move_child(area, 1)
 		var button := Button.new()
 		button.name = "PlayFixture"
-		button.custom_minimum_size.y = 60
+		# Owner 2026-09-27: it read as a heading, not a button. The screen's one action
+		# wears the theme's primary look (filled, like "Acquista" in the Emporio).
+		button.theme_type_variation = &"ButtonPrimary"
+		button.focus_mode = Control.FOCUS_ALL
+		button.custom_minimum_size = Vector2(760, 64)
+		button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		button.add_theme_font_size_override("font_size", 22)
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button.pressed.connect(start_match)
-		area.add_child(button)
+		var column := VBoxContainer.new()
+		area.add_child(column)
+		column.add_child(button)
+		for mode in ["tournament", "career"]:
+			var toggle := CheckButton.new()
+			toggle.name = "Intro_" + mode
+			toggle.button_pressed = bool(Config.stored_prefs().get("intro_" + mode, true))
+			toggle.toggled.connect(func(value: bool): ModesSave.save_pref(Config.save_store(), "intro_" + mode, value))
+			column.add_child(toggle)
 	area.visible = _wording == WORDING_CAREER or _wording == WORDING_TOURNAMENT
 	if not area.visible:
 		return
 	var button := _control("PlayFixture") as Button
+	for mode in ["tournament", "career"]:
+		var toggle := _control("Intro_" + mode) as CheckButton
+		toggle.text = UiStrings.t("introSetting_" + mode)
 	button.disabled = not can_start()
 	var row := _row_of(_in_program)
 	var arena_name := UiStrings.t(String(row.get("name_key", "")))
 	button.text = UiStrings.t("arenaPlayFixture", {"arena": arena_name})
 	var sub := _control("SubLabel") as Label
 	sub.text = UiStrings.t("arenaScheduledHint")
+	# The calendar picks the court, so the fixture button is the screen's only action:
+	# the pad lands on it (the first focus target, see `_apply_accessibility`).
+	if not button.disabled:
+		button.call_deferred("grab_focus")
 
 
 func _resolve_entry(entry: Dictionary) -> String:
@@ -1500,12 +1521,16 @@ func focus_controls() -> Array:
 
 func _apply_accessibility() -> void:
 	_focus_specs = []
-	var back := _control("BackButton")
-	if back != null:
-		_focus_specs.append(_focus_spec("BackButton", back, "back"))
+	# In career and tournament the fixture button comes FIRST, so the focus model's
+	# first target (where the pad lands) is the one action this screen offers.
 	var launch := _control("PlayFixture") as Button
 	if launch != null and launch.is_visible_in_tree():
 		_focus_specs.append(_focus_spec("PlayFixture", launch, "play-fixture", {"disabled": launch.disabled}))
+		for mode in ["tournament", "career"]:
+			_focus_specs.append(_focus_spec("Intro_" + mode, _control("Intro_" + mode), "intro:" + mode))
+	var back := _control("BackButton")
+	if back != null:
+		_focus_specs.append(_focus_spec("BackButton", back, "back"))
 	for row in _rows:
 		var arena_id := String((row as Dictionary).get("id", ""))
 		var card := _control(CARD_PREFIX + arena_id)
@@ -1554,6 +1579,11 @@ func _arena_focus_opts(arena_id: String) -> Dictionary:
 ## the handler the mouse path runs (`_on_card_input` calls `activate_arena`, `_wire`
 ## calls `select_player_mode`), so a pad confirm and a click mean the same thing.
 func activate(action: String) -> bool:
+	if action.begins_with("intro:"):
+		var toggle := _control("Intro_" + action.trim_prefix("intro:")) as CheckButton
+		if toggle == null: return false
+		toggle.button_pressed = not toggle.button_pressed
+		return true
 	if action == "play-fixture":
 		return start_match()
 	var parts := action.split(":")

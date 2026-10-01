@@ -60,7 +60,7 @@ func _build_night(arena_root: Node3D) -> void:
 		sky.sky_material = mat
 		env.sky = sky
 		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-		env.ambient_light_color = Color(0.46, 0.40, 0.42)
+		env.ambient_light_color = Color(0.42, 0.42, 0.42)
 		env.ambient_light_energy = 0.36
 		env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 		env.glow_enabled = true
@@ -69,16 +69,17 @@ func _build_night(arena_root: Node3D) -> void:
 		env.glow_hdr_threshold = 1.0
 		env.fog_enabled = true
 		env.fog_light_color = Color(0.28, 0.08, 0.04)
-		env.fog_density = 0.006
+		# Keep the ember haze distant; dense red fog turns the blue court purple.
+		env.fog_density = 0.0015
 		env.fog_sky_affect = 0.0
 	if sun != null:
-		# The caldera's glow as the key: hot orange, low, from beyond the far end.
-		sun.light_color = Color(1.0, 0.58, 0.32)
+		# A gently warm key preserves the court blue; lava carries the orange glow.
+		sun.light_color = Color(1.0, 0.90, 0.80)
 		sun.light_energy = 0.55
 		sun.rotation_degrees = Vector3(-38.0, 160.0, 0.0)
 	if fill != null:
-		# A cool arena fill from behind the camera keeps the blue court legible.
-		fill.light_color = Color(0.70, 0.76, 1.0)
+		# Neutral arena lighting keeps floor, lines and athletes readable.
+		fill.light_color = Color.WHITE
 		fill.light_energy = 0.95
 		fill.rotation_degrees = Vector3(-60.0, -15.0, 0.0)
 

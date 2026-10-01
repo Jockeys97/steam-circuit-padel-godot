@@ -26,6 +26,12 @@ var _stats := {}
 func _initialize() -> void:
 	Config.pending_mode = "quick"
 	Config.pending_round = -1
+	# PACE=<preset id> plays at that pace on a throwaway profile (the real one untouched).
+	if OS.get_environment("PACE") != "":
+		Config.save_dir = "user://probe-pace-%d" % Time.get_ticks_usec()
+		var store = Config.save_store()
+		store.write_group("prefs", {"pacePreset": OS.get_environment("PACE")})
+		print("PACE ", OS.get_environment("PACE"), " factor ", Config.pace_factor())
 	call_deferred("run")
 
 

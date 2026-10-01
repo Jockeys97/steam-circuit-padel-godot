@@ -280,6 +280,30 @@ func sample(state) -> Dictionary:
 	return input
 
 
+## Keys whose release the game never saw (2026-09-30, owner: "la carica parte prima che
+## io prema, ogni volta che registro lo schermo"). The keyboard slice is Command: a
+## macOS shortcut that starts with it (Cmd+Shift+5 to record, Cmd+Tab) is taken by the
+## system, the game misses the key-up, and Command reads as held for the rest of the
+## match — charging every shot. On a focus change the match controller releases every
+## shot key (`release_stuck_keys`) and each seat forgets what it last saw
+## (`forget_keys`), so no phantom release fires a shot either.
+static func release_stuck_keys() -> void:
+	for action in ["padel_drive", "padel_slice", "padel_lob"]:
+		if not InputMap.has_action(action):
+			continue
+		for event in InputMap.action_get_events(action):
+			if event is InputEventKey:
+				var up := InputEventKey.new()
+				up.physical_keycode = event.physical_keycode
+				up.keycode = event.keycode
+				up.pressed = false
+				Input.parse_input_event(up)
+
+
+func forget_keys() -> void:
+	_key_previous.clear()
+
+
 func _key_pressed(action: String) -> bool:
 	for event in InputMap.action_get_events(action):
 		if event is InputEventKey:

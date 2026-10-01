@@ -1,8 +1,8 @@
 ## SettingsScreen.gd — settings with an audio hero card and responsive control cards.
 ## All values read the shared save profile through UiData and persist per key through
-## ModesSave. Music volume and the independent music switch affect only the Music bus:
-## switching it off preserves the slider level for later. Master volume and deadzone
-## apply immediately, as do the existing accessibility controls. Labels resolve through
+## ModesSave. Music and SFX levels affect only their own buses; switching music off
+## preserves its slider level. Master volume, SFX volume and deadzone apply immediately.
+## Labels resolve through
 ## locale ids; the pace preset keeps its own module's localized ladder.
 extends "res://src/ui/screens/ScreenContract.gd"
 
@@ -17,6 +17,7 @@ const Pace := preload("res://src/sim/pace.gd")
 const AccessibilitySettings := preload("res://src/accessibility/accessibility_settings.gd")
 const UiMotionPolicy := preload("res://src/ui/accessibility/UiMotionPolicy.gd")
 const MusicSettings := preload("res://src/audio/music_settings.gd")
+const SfxSettings := preload("res://src/audio/sfx_settings.gd")
 const Mixer := preload("res://src/audio/mixer_contract.gd")
 const InputSource := preload("res://game/input_map.gd")
 
@@ -41,6 +42,9 @@ const PACE_TITLE_KEY := "pacePreset"
 const VOLUME_MIN := 0.0
 const VOLUME_MAX := 1.0
 const VOLUME_STEP := 0.01
+const SFX_VOLUME_MIN := 0.0
+const SFX_VOLUME_MAX := 1.0
+const SFX_VOLUME_STEP := 0.01
 const MUSIC_VOLUME_MIN := 0.0
 const MUSIC_VOLUME_MAX := 1.0
 const MUSIC_VOLUME_STEP := 0.01
@@ -63,8 +67,12 @@ const ROW_KEYS := {
 	"ReduceMotionRow": "reduceMotion",
 	"ColorblindRow": "colorblind",
 	"VolumeRow": "volume",
+	"SfxVolumeRow": "settingsSfxVolume",
 	"MusicVolumeRow": "musicVolume",
 	"MusicEnabledRow": "settingsMusicEnabled",
+	"AnnouncerEnabledRow": "settingsAnnouncerEnabled",
+	"CareerIntroRow": "settingsCareerIntro",
+	"TournamentIntroRow": "settingsTournamentIntro",
 	"NowPlayingRow": "settingsNowPlaying",
 	"SeparateMusicRow": "settingsSeparateMusic",
 	"DeadzoneRow": "gamepadDeadzone",
@@ -181,12 +189,20 @@ func volume_text() -> String:
 	return str(roundi(volume() * 100.0)) + Rows.PERCENT_SIGN
 
 
+func sfx_volume() -> float:
+	return float(snapshot().get("sfx_volume", Schema.PREFS_DEFAULTS.get("sfxVolume", 1.0)))
+
+
 func music_volume() -> float:
 	return float(snapshot().get("music_volume", Schema.PREFS_DEFAULTS.get("musicVolume", 1.0)))
 
 
 func music_enabled() -> bool:
 	return not bool(snapshot().get("music_muted", false))
+
+
+func announcer_enabled() -> bool:
+	return bool(snapshot().get("announcer_enabled", true))
 
 
 func now_playing() -> bool:
@@ -270,6 +286,14 @@ func set_volume(raw: float) -> Dictionary:
 	return result
 
 
+func set_sfx_volume(raw: float) -> Dictionary:
+	var value := clampf(raw, SFX_VOLUME_MIN, SFX_VOLUME_MAX)
+	_rows_set("SfxVolumeRow", value)
+	var result := _persist("sfxVolume", value)
+	SfxSettings.apply(_stored_prefs())
+	return result
+
+
 func set_music_volume(raw: float) -> Dictionary:
 	var value := clampf(raw, MUSIC_VOLUME_MIN, MUSIC_VOLUME_MAX)
 	_rows_set("MusicVolumeRow", value)
@@ -283,6 +307,21 @@ func set_music_enabled(on: bool) -> Dictionary:
 	var result := _persist("musicMuted", not on)
 	_apply_music_volume()
 	return result
+
+
+func set_announcer_enabled(on: bool) -> Dictionary:
+	_rows_set("AnnouncerEnabledRow", on)
+	return _persist("announcerEnabled", on)
+
+
+func set_career_intro(on: bool) -> Dictionary:
+	_rows_set("CareerIntroRow", on)
+	return _persist("intro_career", on)
+
+
+func set_tournament_intro(on: bool) -> Dictionary:
+	_rows_set("TournamentIntroRow", on)
+	return _persist("intro_tournament", on)
 
 
 func set_now_playing(on: bool) -> Dictionary:
@@ -347,6 +386,9 @@ func set_row_value(row_name: String, value: Variant) -> bool:
 	if row_name == "MusicVolumeRow":
 		set_music_volume(float(value))
 		return true
+	if row_name == "SfxVolumeRow":
+		set_sfx_volume(float(value))
+		return true
 	_rows_set(row_name, value)
 	return true
 
@@ -379,8 +421,12 @@ func refresh_values() -> void:
 	_rows_set("ReduceMotionRow", snap.get("reduce_motion", false))
 	_rows_set("ColorblindRow", snap.get("colorblind", false))
 	_rows_set("VolumeRow", snap.get("volume", 0.5))
+	_rows_set("SfxVolumeRow", snap.get("sfx_volume", 1.0))
 	_rows_set("MusicVolumeRow", snap.get("music_volume", 1.0))
 	_rows_set("MusicEnabledRow", not bool(snap.get("music_muted", false)))
+	_rows_set("AnnouncerEnabledRow", snap.get("announcer_enabled", true))
+	_rows_set("CareerIntroRow", snap.get("career_intro", true))
+	_rows_set("TournamentIntroRow", snap.get("tournament_intro", true))
 	_rows_set("NowPlayingRow", snap.get("now_playing", true))
 	_rows_set("SeparateMusicRow", _stored_prefs().get("musicSeparateContexts", false))
 	_rows_set("DeadzoneRow", snap.get("deadzone", 0.15))
@@ -625,14 +671,22 @@ func _audio_body() -> Control:
 	_audio_grid.add_child(switches)
 	var snap := snapshot()
 	_add_row(levels, Rows.make_range("settingsMasterVolume", VOLUME_MIN, VOLUME_MAX, VOLUME_STEP, float(snap.get("volume", 0.5)), "VolumeRow"))
+	_add_row(levels, Rows.make_range("settingsSfxVolume", SFX_VOLUME_MIN, SFX_VOLUME_MAX, SFX_VOLUME_STEP, float(snap.get("sfx_volume", 1.0)), "SfxVolumeRow"))
 	_add_row(levels, Rows.make_range("musicVolume", MUSIC_VOLUME_MIN, MUSIC_VOLUME_MAX, MUSIC_VOLUME_STEP, float(snap.get("music_volume", 1.0)), "MusicVolumeRow"))
 	_add_row(switches, Rows.make_toggle("settingsMusicEnabled", not bool(snap.get("music_muted", false)), "MusicEnabledRow"))
+	_add_row(switches, Rows.make_toggle("settingsAnnouncerEnabled", bool(snap.get("announcer_enabled", true)), "AnnouncerEnabledRow"))
+	_add_row(switches, Rows.make_toggle("settingsCareerIntro", bool(snap.get("career_intro", true)), "CareerIntroRow"))
+	_add_row(switches, Rows.make_toggle("settingsTournamentIntro", bool(snap.get("tournament_intro", true)), "TournamentIntroRow"))
 	_add_row(switches, Rows.make_toggle("settingsNowPlaying", bool(snap.get("now_playing", true)), "NowPlayingRow"))
 	_add_row(switches, Rows.make_toggle("settingsSeparateMusic", bool(_stored_prefs().get("musicSeparateContexts", false)), "SeparateMusicRow"))
 	(_rows["SeparateMusicRow"] as Rows.ToggleRow).changed.connect(func(on: bool): _persist("musicSeparateContexts", on))
 	(_rows["VolumeRow"] as Rows.RangeRow).changed.connect(_on_volume)
+	(_rows["SfxVolumeRow"] as Rows.RangeRow).changed.connect(_on_sfx_volume)
 	(_rows["MusicVolumeRow"] as Rows.RangeRow).changed.connect(_on_music_volume)
 	(_rows["MusicEnabledRow"] as Rows.ToggleRow).changed.connect(_on_music_enabled)
+	(_rows["AnnouncerEnabledRow"] as Rows.ToggleRow).changed.connect(set_announcer_enabled)
+	(_rows["CareerIntroRow"] as Rows.ToggleRow).changed.connect(set_career_intro)
+	(_rows["TournamentIntroRow"] as Rows.ToggleRow).changed.connect(set_tournament_intro)
 	(_rows["NowPlayingRow"] as Rows.ToggleRow).changed.connect(_on_now_playing)
 	return column
 
@@ -679,6 +733,10 @@ func _toggle_style(hovered: bool) -> StyleBoxFlat:
 ## A player's own change: the row already moved itself, so only the store is written.
 func _on_volume(raw: float) -> void:
 	set_volume(raw)
+
+
+func _on_sfx_volume(raw: float) -> void:
+	set_sfx_volume(raw)
 
 
 func _on_music_volume(raw: float) -> void:

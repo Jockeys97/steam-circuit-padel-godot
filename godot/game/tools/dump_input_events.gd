@@ -22,8 +22,10 @@ func _initialize() -> void:
 		# held state.
 		["padel_drive", [_key(KEY_SPACE), _joy_button(0)]],
 		# js/main.js:1086: meta is the slice charge, and its keyup queues a slice
-		# hit. Same "release read separately" note.
-		["padel_slice", [_key(KEY_META), _joy_button(2)]],
+		# hit. Same "release read separately" note. PORT (2026-09-30, owner): C, not
+		# Command: macOS takes Command shortcuts (Cmd+Shift+5 to record the screen)
+		# and the game never saw the key-up, so every shot charged on its own.
+		["padel_slice", [_key(KEY_C), _joy_button(2)]],
 		# js/main.js:1079: the browser wires no keyboard lob. Pad Y keeps the
 		# browser's own button (pollGamepadGameplay, button 3).
 		["padel_lob", [_joy_button(3)]],

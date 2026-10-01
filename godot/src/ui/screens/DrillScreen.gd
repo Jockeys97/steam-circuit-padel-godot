@@ -369,6 +369,7 @@ func _build() -> void:
 	column.add_child(_hub)
 	_hub.setup(store(), seed_difficulty())
 	_hub.exercise_selected.connect(_on_hub_exercise)
+	_hub.start_requested.connect(_on_hub_start)
 	_hint = Label.new()
 	_hint.name = "Hint"
 	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -379,6 +380,10 @@ func _build() -> void:
 
 func _on_hub_exercise(_exercise_id: String) -> void:
 	refresh_strings()
+
+
+func _on_hub_start(_exercise_id: String) -> void:
+	start()
 
 
 ## The gate's own presentation, read off `granted()`: a refused build dims and disables the

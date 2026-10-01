@@ -112,6 +112,7 @@ var _hub: Control = null
 ## paid for once.
 var _capture := false
 var _tournament_details: Dictionary = {}
+var _career_details: Dictionary = {}
 var _tournament_scroll: ScrollContainer
 
 
@@ -136,7 +137,7 @@ func _ready() -> void:
 		Config.save_dir = save_dir_arg
 	_capture = _arg(args, "--capture=", "") != ""
 	_mode = Config.pending_mode
-	if _mode == "tournament":
+	if _mode == "tournament" or _mode == "career":
 		theme = PadelTheme
 	_focus = MenuFocus.new(SCREEN_ID)
 
@@ -178,7 +179,7 @@ func _ready() -> void:
 	col.add_child(_title)
 	var subtitle := _label(_mode_subtitle(), 16, Color(0.72, 0.78, 0.86))
 	col.add_child(subtitle)
-	if _mode == "drill":
+	if _mode == "drill" or _mode == "career":
 		# The two header lines wear the shipped theme's own type on the TRAINING
 		# screen, so the header matches the recreated UI instead of the engine's
 		# default font. Tournament and career keep their current look.
@@ -220,7 +221,7 @@ func _ready() -> void:
 		back.theme_type_variation = "ButtonSecondary"
 	back.custom_minimum_size = Vector2(240.0, 46.0)
 	back.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	if _mode == "drill":
+	if _mode == "drill" or _mode == "career":
 		back.theme = PadelTheme
 		back.theme_type_variation = "ButtonSecondary"
 	back.pressed.connect(to_menu)
@@ -234,7 +235,7 @@ func _ready() -> void:
 	_focus.refresh()
 	_focus.ensure_focus()
 	_focus.apply_focus()
-	if _rows.size() > 0:
+	if _rows.size() > 0 and _mode != "career":
 		_rows[0].grab_focus()
 	if _capture:
 		_run_capture()
@@ -301,14 +302,17 @@ func _mode_title() -> String:
 		return _text("drillTitle", _mode.to_upper())
 	var key := String(MODE_LABELS.get(_mode, ""))
 	var name := Locale.t(key) if key != "" and Locale.is_resolvable(key) else _mode.to_upper()
-	if _mode == "tournament":
+	if _mode == "tournament" or _mode == "career":
 		return name
 	return "%s — %s" % [name, Gate.label()]
 
 
 func _mode_subtitle() -> String:
+	if _mode == "career":
+		var cup := CareerRules.master_cup(int(ModesSave.load_career(Config.save_store()).get("season", 1)))
+		return Locale.t(String(cup.label)) + " · " + Locale.t("cupRules") if not cup.is_empty() else Locale.t("careerRewardGuide")
 	if _mode == "tournament":
-		return "Tre sfide. Un solo trofeo. Vinci ogni turno per arrivare in finale." if Locale.current_lang() == "it" else "Three matches. One trophy. Win each round to reach the final."
+		return Locale.t("tournamentRewardGuide")
 	# `drillSub` is the reference's own training subtitle. It replaces the
 	# "dati da godot/src/modes/**" line on this screen: a player must never read a
 	# repository path or a declared back action, and the mode's data is no longer
@@ -625,7 +629,7 @@ func _build_tournament_cards(col: VBoxContainer) -> void:
 	var fixtures: Array = TournamentRules.path(Config.selectable_arenas())
 	for index in fixtures.size():
 		var arena: Dictionary = fixtures[index].get("arena", {})
-		var ai := TournamentRules.ai_for_round(index)
+		var ai := TournamentRules.ladder_ai_for_round(index, Config.chosen_tier())
 		var id := "tournament:round%d" % index
 		var stages := ["QUALIFICAZIONE", "SEMIFINALE", "FINALE"] if italian else ["QUALIFIER", "SEMI-FINAL", "FINAL"]
 		var stage: String = stages[index]
@@ -683,55 +687,116 @@ func _show_tournament_round(id: String) -> void:
 	if _detail != null:
 		_detail.text = String(_tournament_details.get(id, ""))
 
+## The career board (redesigned 2026-09-27, owner: "la pagina che si apre dopo è
+## terribile" — raw objective ids, a JSON dump, and no way to start the match). Same
+## visual language as the tournament board: the season line, the season's three
+## matches as cards (arena art, opponent, level, status), the season's objectives in
+## the locale's own words, and ONE primary action that starts the next match. That
+## action is registered first, so the pad lands on it; it is placed under the cards.
 func _col_make_career(col: VBoxContainer) -> void:
-	var objectives: Array = CareerRules.season_objectives(1)
+	var italian := Locale.current_lang() == "it"
 	var saved := saved_state()
-	col.add_child(_label("STAGIONE %d  ·  partita %d/%d  ·  %s  ·  %d partite  ·  %d punti per vincere  ·  %d vittorie per la promozione" % [
-		int(saved.get("season", 1)), int(saved.get("matchIndex", 0)) + 1, CareerRules.career_matches(),
-		String(((saved.get("fixture", {}) as Dictionary).get("arena", {}) as Dictionary).get("id", "")),
-		CareerRules.career_matches(), CareerRules.career_points_to_win(), CareerRules.career_promotion_wins()],
-		19, Color(1.0, 0.821, 0.4)))
-	# The season as the SAVE holds it: stars, record, and each objective's own
-	# progress. The first three rows below the header are the season's objectives
-	# written by the last match (`seasonObjectives`), not the fresh season-1 pool.
-	col.add_child(_label("BILANCIO  %d vinte · %d perse · %d stelle (stagione %d) · %d trofei  ·  albo %d" % [
+	var season := int(saved.get("season", 1))
+	var current := int(saved.get("matchIndex", 0))
+	var total := CareerRules.career_matches()
+	var gold := Color("ffdb70")
+	var cyan := Color("68e4ed")
+	var muted := Color("9cafc8")
+	_start_row(col, ("GIOCA LA PARTITA %d  >" if italian else "PLAY MATCH %d  >") % (current + 1), true)
+	var start := col.get_child(col.get_child_count() - 1)
+
+	col.add_child(_label(("STAGIONE %d   /   PARTITA %d DI %d" if italian else "SEASON %d   /   MATCH %d OF %d") % [season, current + 1, total], 15, gold))
+	var record := ("Bilancio  %d vinte  ·  %d perse  ·  Stelle %d  ·  Trofei %d  ·  Promozione con %d vittorie su %d" if italian
+		else "Record  %d won  ·  %d lost  ·  Stars %d  ·  Trophies %d  ·  Promotion with %d wins of %d") % [
 		int(saved.get("wins", 0)), int(saved.get("losses", 0)), int(saved.get("stars", 0)),
-		int(saved.get("seasonStars", 0)), int(saved.get("trophies", 0)), int(saved.get("history", 0))],
-		17, Color(0.42, 0.98, 0.55)))
-	var saved_objectives: Array = saved.get("objectives", [])
-	if saved_objectives.is_empty():
-		var progress: Dictionary = CareerRules.empty_season_progress()
-		for objective in objectives:
-			var id := String(objective.get("id", objective.get("def", "?")))
-			_row("career:objective:%s" % id, "OBIETTIVO  ·  %s  ·  %s" % [id, JSON.stringify(objective)],
-				"progress %s" % JSON.stringify(progress))
-	else:
-		for objective in saved_objectives:
-			var entry: Dictionary = objective
-			_row("career:objective:%s" % String(entry.get("id", "?")),
-				"OBIETTIVO  ·  %s  ·  target %d%s%s" % [
-					String(entry.get("id", "?")), int(entry.get("target", 0)),
-					"  ·  FATTO" if bool(entry.get("done", false)) else "",
-					"  ·  stella presa" if bool(entry.get("claimed", false)) else ""],
-				"stored in career.seasonObjectives (js/ui.js:62-83)")
-	var live_fixture: Dictionary = CareerRules.career_fixture(
-		int(saved.get("season", 1)), int(saved.get("matchIndex", 0)), Config.selectable_arenas())
-	var live_arena: Dictionary = live_fixture.get("arena", {})
-	var live_ai: Dictionary = CareerRules.career_ai_profile(
-		int(saved.get("season", 1)), int(saved.get("matchIndex", 0)))
-	var live_objective: Dictionary = CareerRules.match_objective(
-		int(saved.get("season", 1)), int(saved.get("matchIndex", 0)))
-	_row("career:fixture", "PARTITA %d  ·  %s  ·  %s (%s %.2f)" % [
-		int(saved.get("matchIndex", 0)) + 1, String(live_arena.get("id", "?")),
-		String(live_ai.get("name", "?")), Locale.t("ability"), float(live_ai.get("skill", 0.0))],
-		"rival %s · obiettivo %s · ramp %s" % [
-			String(CareerRules.career_rival(int(saved.get("season", 1))).get("name", "?")),
-			JSON.stringify(live_objective),
-			JSON.stringify(CareerRules.career_ramp())])
-	_row("career:season", "STAGIONE FINALE %d  ·  esito %s" % [
-		CareerRules.career_final_season(), JSON.stringify(CareerProgress.apply_career_match(
-			CareerProgress.empty_career(), true))],
-		"empty_career %s" % JSON.stringify(CareerProgress.empty_career()))
+		int(saved.get("trophies", 0)), CareerRules.career_promotion_wins(), total]
+	col.add_child(_label(record, 14, muted))
+
+	var grid := HBoxContainer.new()
+	grid.name = "CareerCards"
+	grid.add_theme_constant_override("separation", 18)
+	col.add_child(grid)
+	for index in total:
+		var fixture: Dictionary = CareerRules.career_fixture(season, index, Config.selectable_arenas())
+		var arena: Dictionary = fixture.get("arena", {})
+		var arena_id := String(arena.get("id", ""))
+		var name_key := "arena_%s_name" % arena_id
+		var arena_name := Locale.t(name_key) if Locale.is_resolvable(name_key) else String(arena.get("name", arena_id))
+		var ai: Dictionary = CareerRules.career_ladder_profile(season, index, Config.chosen_tier())
+		var level := clampi(int(round(float(ai.get("skill", 0.0)) * 5.0)), 1, 5)
+		var status := ("GIOCATA" if italian else "PLAYED") if index < current else (("PROSSIMA SFIDA" if italian else "UP NEXT") if index == current else ("DA GIOCARE" if italian else "COMING UP"))
+		var bonus: Dictionary = CareerRules.match_objective(season, index)
+		var bonus_key := "objMatch_%s" % String(bonus.get("id", ""))
+		var bonus_text := Locale.t(bonus_key, {"n": str(int(bonus.get("target", 0)))}) if Locale.is_resolvable(bonus_key) else ""
+		var id := "career:match%d" % index
+		var button := Button.new()
+		button.name = "CareerMatch%d" % index
+		button.focus_mode = Control.FOCUS_ALL
+		button.custom_minimum_size = Vector2(0, 268)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var box := StyleBoxFlat.new()
+		box.bg_color = Color("111c37")
+		box.border_color = Color("18c6db") if index == current else Color("294365")
+		box.set_border_width_all(2)
+		box.set_corner_radius_all(14)
+		button.add_theme_stylebox_override("normal", box)
+		var focused := box.duplicate() as StyleBoxFlat
+		focused.border_color = gold
+		focused.set_border_width_all(4)
+		focused.shadow_color = Color(0, 0.8, 1, 0.25)
+		focused.shadow_size = 8
+		for slot in ["focus", "hover", "pressed"]:
+			button.add_theme_stylebox_override(slot, focused)
+		grid.add_child(button)
+		var body := VBoxContainer.new()
+		body.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		body.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		body.offset_left = 14
+		body.offset_right = -14
+		body.offset_top = 14
+		body.offset_bottom = -14
+		body.add_theme_constant_override("separation", 6)
+		button.add_child(body)
+		var art := TextureRect.new()
+		art.custom_minimum_size.y = 112
+		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		art.clip_contents = true
+		art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var image_path := preload("res://src/ui/data/UiArtPaths.gd").path_for("arenas", arena_id)
+		if image_path != "":
+			art.texture = load(image_path)
+		if index < current:
+			art.modulate = Color(1, 1, 1, 0.55)
+		body.add_child(art)
+		body.add_child(_label(("PARTITA %d" if italian else "MATCH %d") % (index + 1), 17, gold if index == current else cyan))
+		body.add_child(_label(arena_name, 17, Color.WHITE))
+		body.add_child(_label("%s   %s" % [String(ai.get("name", "")), "●".repeat(level) + "○".repeat(5 - level)], 14, muted))
+		body.add_child(_label(status, 12, Color("69e8ba") if index <= current else Color("8192ab")))
+		_career_details[id] = "%s  ·  %s  ·  %s%s" % [
+			("Partita %d" if italian else "Match %d") % (index + 1), arena_name, String(ai.get("name", "")),
+			("  ·  Bonus: " + bonus_text) if bonus_text != "" else ""]
+		button.pressed.connect(_show_career_match.bind(id))
+		button.focus_entered.connect(_show_career_match.bind(id))
+		_rows.append(button)
+		_register(id, button, id)
+
+	col.add_child(_label("OBIETTIVI DELLA STAGIONE" if italian else "SEASON OBJECTIVES", 14, gold))
+	for objective in saved.get("objectives", []):
+		var entry: Dictionary = objective
+		var key := "obj_%s" % String(entry.get("id", ""))
+		var text := Locale.t(key, {"n": str(int(entry.get("target", 0)))}) if Locale.is_resolvable(key) else String(entry.get("id", ""))
+		var done := bool(entry.get("done", false))
+		var tail := ("   —   " + Locale.t("objDone")) if done and Locale.is_resolvable("objDone") else ""
+		col.add_child(_label("–  " + text + tail, 15, Color("69e8ba") if done else Color(0.85, 0.9, 0.96)))
+
+	# The action sits under the cards and the objectives; it was registered first.
+	col.move_child(start, col.get_child_count() - 1)
+
+
+func _show_career_match(id: String) -> void:
+	if _detail != null:
+		_detail.text = String(_career_details.get(id, ""))
 
 
 func _col_make_locked(col: VBoxContainer) -> void:
@@ -750,6 +815,9 @@ func _refresh_detail() -> void:
 	# screen had to lose; `screen_report()` still answers `drill_phase` and
 	# `drill_target` as data.
 	if _mode == "drill":
+		return
+	if _mode == "career":
+		_show_career_match("career:match%d" % int(saved_state().get("matchIndex", 0)))
 		return
 	if session == null:
 		_detail.text = "Scegli una riga: il dettaglio appare qui." if _rows.size() > 0 else _detail.text
@@ -856,7 +924,10 @@ func focus_model() -> MenuFocus:
 func screen_report() -> Dictionary:
 	var labels: Array = []
 	for b in _rows:
-		labels.append(b.text if _mode != "tournament" else String(_tournament_details.get("tournament:round%d" % _rows.find(b), "")))
+		if _mode == "career":
+			labels.append(String(_career_details.get("career:match%d" % _rows.find(b), "")))
+		else:
+			labels.append(b.text if _mode != "tournament" else String(_tournament_details.get("tournament:round%d" % _rows.find(b), "")))
 	return {
 		"mode": _mode,
 		"screen": SCREEN_ID,

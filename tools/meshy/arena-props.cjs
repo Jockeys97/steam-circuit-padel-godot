@@ -9,9 +9,12 @@ const [arena,slot,poly]=process.argv.slice(2);
 if(!arena||!slot)throw Error('usage: arena-props.cjs <arena> <slot> [polycount]');
 // `crowd` is not an arena: its references live in art/crowd/, its models in godot/assets/crowd/.
 const crowd=arena==='crowd';
-const src=crowd?path.join(root,'art/crowd',slot+'.png'):path.join(root,'art/arena-kits',arena,slot+'.png');
+// `creator` (2026-09-27): the "Crea atleta" bodies and hair pieces, art/character-creator/asset-atleta/
+// -> godot/assets/custom_character/. Bodies (`corpo_*`) are asked in A-pose, ready for rigging.
+const creator=arena==='creator';
+const src=crowd?path.join(root,'art/crowd',slot+'.png'):(creator?path.join(root,'art/character-creator/asset-atleta',slot+'.png'):path.join(root,'art/arena-kits',arena,slot+'.png'));
 if(!fs.existsSync(src))throw Error('missing reference '+src);
-const outDir=crowd?path.join(root,'godot/assets/crowd'):path.join(root,'godot/assets/arenas',arena);
+const outDir=crowd?path.join(root,'godot/assets/crowd'):(creator?path.join(root,'godot/assets/custom_character'):path.join(root,'godot/assets/arenas',arena));
 const logDir=path.join(root,'docs/agent-work/meshy-arenas');
 fs.mkdirSync(outDir,{recursive:true});fs.mkdirSync(logDir,{recursive:true});
 const file=path.join(logDir,'tasks.json');
@@ -33,6 +36,7 @@ async function api(p,body){const r=await fetch('https://api.meshy.ai/openapi/v1/
   if(process.env.MESHY_FLOOR){const b=(await api('balance')).balance;if(b-15<Number(process.env.MESHY_FLOOR))throw Error('Account floor reached: balance '+b+', floor '+process.env.MESHY_FLOOR);console.log('balance',b,'floor',process.env.MESHY_FLOOR);}
   const img='data:image/png;base64,'+fs.readFileSync(src).toString('base64');
   const body={image_url:img,model_type:'smart-topology',ai_model:'meshy-t2',target_polycount:Number(poly||10000),should_texture:true,enable_pbr:false,texture_resolution:'2k'};
+  if(creator&&slot.startsWith('corpo_'))body.pose_mode='a-pose';
   state[name]={request_started:true};save();
   let d;try{d=await api('image-to-3d',body);}catch(e){if(String(e.message).startsWith('Meshy HTTP')){delete state[name];save();}throw e;}
   state[name].id=d.result;save();console.log(name,'created',d.result);

@@ -112,6 +112,13 @@ const Gate := preload("res://game/content_gate.gd")
 const Lineup := preload("res://game/lineup.gd")
 const AthleteSpawn := preload("res://src/character/athlete_spawn.gd")
 const OutfitCatalogue := preload("res://src/character/outfit_catalogue.gd")
+## ADDITIVE (create-a-character): the editor overlay and the portrait it generates.
+## Neither is a router screen, so the reference's thirteen-screen inventory is intact.
+const CharacterEditorScene := preload("res://src/ui/screens/CharacterEditorScreen.tscn")
+const CustomCharacterPortrait := preload("res://src/character/custom_character_portrait.gd")
+## The words of the create-a-character entry, from the locale lane (this file carries
+## no prose literal: `tests/ui/screen_characters_audit.gd` scans it).
+const CustomText := preload("res://src/locale/custom_character_text.gd")
 const Frozen := preload("res://src/sim/frozen.gd")
 const CardFocusRing := preload("res://src/ui/components/CardFocusRing.gd")
 const UiMotionPolicy := preload("res://src/ui/accessibility/UiMotionPolicy.gd")
@@ -269,6 +276,10 @@ const SPECIAL_HEAD := "SpecialStripHead"
 const SPECIAL_CARD_PREFIX := "SpecialPickCard_"
 const SPECIAL_NAME_PREFIX := "SpecialPickName_"
 const SPECIAL_STAT_PREFIX := "SpecialPickStat_"
+## The create-a-character entry: its own row below the roster strips, so no frozen
+## picker cell, no special-strip geometry and no head row changes.
+const CREATE_ROW := "CreateAthleteRow"
+const CREATE_BUTTON := "CreateAthleteButton"
 const OUTFIT_CARD_PREFIX := "OutfitCard_"
 const OUTFIT_NAME_PREFIX := "OutfitName_"
 const OUTFIT_ART_PREFIX := "OutfitArt_"
@@ -360,6 +371,8 @@ var _lift_refresh_queued: bool = false
 ## (`styles.css:2748-2758`) and leaves `.menu-focus` at full width. The pad's ring asks
 ## this before it pulses.
 var _motion: UiMotionPolicy = null
+## The create-a-character overlay, mounted by this screen (never by the router).
+var _editor: Control = null
 
 
 func _ready() -> void:
@@ -637,6 +650,7 @@ func _build_view() -> void:
 	_bind(_control("BackButton"), "back")
 	_bind(_control("TitleLabel"), "charactersTitle")
 	_bind(_control("SubLabel"), "charactersSub")
+	_ensure_create_entry()
 	match _view:
 		VIEW_PICKER:
 			_build_picker()
@@ -672,7 +686,7 @@ func _build_team() -> void:
 		# art when an optional preview is absent, so a stale save never draws a blank card.
 		var outfit_id := equipped_outfit_id(id)
 		var card := _make_card(TEAM_SLOT_PREFIX + role,
-			UiArt.outfit_path_for(id, outfit_id), "cyan",
+			_art_for(id) if AthleteSpawn.is_custom(StringName(id)) else UiArt.outfit_path_for(id, outfit_id), "cyan",
 			role == "player", false, wrap)
 		var dictated := _dictated.has(role)
 		# `.team-slot--dettata:hover { transform: none }` (`styles.css:3114-3116`): the
@@ -783,7 +797,12 @@ func _build_picker() -> void:
 			name_label.theme_type_variation = &"CardTitle"
 			name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			stack.add_child(name_label)
-			_bind(name_label, "athlete_%s_name" % id)
+			if bool(row.get("custom", false)):
+				# A created athlete has no locale key and never will: its name is the
+				# player's own text, shown verbatim.
+				name_label.text = String(row.get("name", ""))
+			else:
+				_bind(name_label, "athlete_%s_name" % id)
 			_add_stat_line(card, SPECIAL_STAT_PREFIX, id, id, false)
 			_wire_picker_card(card["panel"], id, false)
 
@@ -902,7 +921,7 @@ func _make_card(
 		image.set_anchors_preset(Control.PRESET_TOP_LEFT)
 		image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		image.texture = load(art_path)
+		image.texture = ImageTexture.create_from_image(Image.load_from_file(art_path)) if art_path.begins_with("user://") else load(art_path)
 		image.set_meta("portrait_texture", image.texture)
 		art.add_child(image)
 		art.resized.connect(_fit_art_image.bind(art, image))
@@ -988,12 +1007,18 @@ func _add_name_line(card: Dictionary, name_prefix: String, role_prefix: String, 
 	# token — the roster's six are not all palette names.
 	name_label.add_theme_color_override("font_color", _accent_of(athlete_id))
 	stack.add_child(name_label)
-	_bind(name_label, "athlete_%s_name" % athlete_id)
+	if AthleteSpawn.is_custom(StringName(athlete_id)):
+		name_label.text = AthleteSpawn.display_name(StringName(athlete_id))
+	else:
+		_bind(name_label, "athlete_%s_name" % athlete_id)
 	var role_label := Label.new()
 	role_label.name = role_prefix + (role if role != "" else athlete_id)
 	role_label.theme_type_variation = &"CardBody"
 	role_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	stack.add_child(role_label)
+	if AthleteSpawn.is_custom(StringName(athlete_id)):
+		role_label.text = CustomText.t("customBalanced")
+		return
 	# `js/ui.js:958-962`: the role, plus the outfit's own name when it is not the base one.
 	var outfit_id := equipped_outfit_id(athlete_id)
 	if outfit_id != "" and outfit_id != String(AthleteSpawn.DEFAULT_OUTFIT):
@@ -1004,6 +1029,8 @@ func _add_name_line(card: Dictionary, name_prefix: String, role_prefix: String, 
 
 
 func _add_desc_lines(card: Dictionary, desc_prefix: String, special_prefix: String, role: String, athlete_id: String) -> void:
+	if AthleteSpawn.is_custom(StringName(athlete_id)):
+		return
 	var stack := card["stack"] as VBoxContainer
 	var key_suffix := role if role != "" else athlete_id
 	var desc := Label.new()
@@ -2036,6 +2063,9 @@ func _wire() -> void:
 
 func _register_focus() -> void:
 	_focus_specs.clear()
+	var create := find_child(CREATE_BUTTON, true, false) as Control
+	if create != null:
+		_focus_specs[CREATE_BUTTON] = _focus_spec(CREATE_BUTTON, create, "create-athlete")
 	var controls: Array = ["BackButton", "HeadAction", "CodeSubmit"]
 	for node_name in controls:
 		var control := _control(node_name)
@@ -2102,6 +2132,9 @@ func _command_action(command: String) -> String:
 ## handler the mouse path runs, so the save rules and the locked-content refusals stay
 ## in one place.
 func activate(action: String) -> bool:
+	if action == "create-athlete":
+		_open_editor()
+		return true
 	var parts := action.split(":")
 	match String(parts[0]):
 		HEAD_ACTION:
@@ -2315,7 +2348,73 @@ func _palette(token: String) -> Color:
 
 
 func _art_for(athlete_id: String) -> String:
+	if AthleteSpawn.is_custom(StringName(athlete_id)):
+		# No shipped portrait exists for a created athlete: one is generated from its
+		# own saved appearance (a real 3D frame when a renderer is up, a painted record
+		# otherwise). The six frozen portraits are untouched.
+		return CustomCharacterPortrait.portrait_path(AthleteSpawn.custom_appearance())
 	return UiArt.path_for("athletes", athlete_id)
+
+
+# ---------------------------------------------------------------------------
+# Create-a-character (port addition)
+# ---------------------------------------------------------------------------
+
+## The roster's own entry into the editor, built in code so the screen scene keeps the
+## node tree the audits pinned. It is a row of its own below the roster strips: no
+## frozen pick card, no special-strip geometry and no head-row change.
+func _ensure_create_entry() -> void:
+	var sections := _control("Header")
+	if sections == null or sections.find_child(CREATE_ROW, false, false) != null:
+		return
+	var row := HBoxContainer.new()
+	row.name = CREATE_ROW
+	var button := Button.new()
+	button.name = CREATE_BUTTON
+	button.text = CustomText.t("customCreateEntry")
+	button.focus_mode = Control.FOCUS_ALL
+	button.custom_minimum_size = Vector2(180, 52)
+	button.pressed.connect(_open_editor)
+	row.add_child(button)
+	sections.add_child(row)
+
+
+## Opens the editor as an overlay of this screen. `closed(saved)` brings the player
+## back here either way; a save refreshes the roster and takes the created athlete as
+## the player's pick, so the roster, the spawn and the save all speak of one athlete.
+func _open_editor() -> void:
+	if _editor != null:
+		return
+	_editor = CharacterEditorScene.instantiate()
+	_editor.name = "CharacterEditor"
+	get_node("Frame").hide()
+	add_child(_editor)
+	_editor.closed.connect(_on_editor_closed)
+	_editor.open_saved()
+	for node in _editor.find_children("*", "Button", true, false):
+		if node.is_inside_tree() and node.is_visible_in_tree():
+			(node as Button).grab_focus()
+		break
+
+
+func _on_editor_closed(saved: bool) -> void:
+	if _editor != null:
+		_editor.queue_free()
+		_editor = null
+	get_node("Frame").show()
+	if saved:
+		# The athlete the player just made becomes their pick, so "create" ends where
+		# the match begins. `set_special_athlete_id` refuses an id this build does not
+		# offer, and the refusal simply puts the frozen selection back in charge.
+		Config.set_special_athlete_id(String(AthleteSpawn.custom_id()))
+	refresh_data()
+	var create := find_child(CREATE_BUTTON, true, false) as Control
+	if create != null and create.is_inside_tree() and create.is_visible_in_tree():
+		create.grab_focus()
+
+
+func modal_overlay() -> Control:
+	return _editor
 
 
 ## ` · ` (`js/ui.js:682`, `:919`), ` ` (`:921`) and `⚡` (`:948`), from code points: the

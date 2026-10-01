@@ -42,8 +42,9 @@
 ##                     non-null (`winner` decides which). The contract's note: "the
 ##                     authoritative port signal is state.result being set".
 ##
-##   Nothing else plays a sound. An id that maps to no sound is silent, on purpose:
-##   `evLet`, `evTape`, the tactic ids and the 90-odd readable-only ids are text.
+##   No other message id plays a contract sound. An id that maps to no sound is
+##   silent: `evLet`, the tactic ids and the readable-only ids are text. The
+##   English announcer below uses separate score-based voice cues.
 ##
 ## HOW IT IS PROVEN WITHOUT A SOUND DEVICE
 ##   `AudioServer.get_driver_name()` is `"Dummy"` on this host: nothing can be
@@ -60,6 +61,14 @@ const AudioPortScript := preload("res://src/audio/audio_port.gd")
 ## when the match ends (`:1438`). Until this seam existed the module was tested and never
 ## heard, which is the one open item the hand-off named ("you will hear effects only").
 const MusicScript := preload("res://src/audio/music.gd")
+const SimScript := preload("res://src/sim/sim.gd")
+const MATCH_POINT_VOICE := preload("res://assets/audio/announcer-match-point-bruno-en.wav")
+const GAME_POINT_VOICE := preload("res://assets/audio/announcer-game-point-bruno-en.wav")
+const BREAK_POINT_VOICE := preload("res://assets/audio/announcer-break-point-bruno-en.wav")
+const ACE_VOICE := preload("res://assets/audio/announcer-ace-bruno-en.wav")
+const SET_POINT_VOICE := preload("res://assets/audio/announcer-set-point-bruno-en.wav")
+const TIE_BREAK_VOICE := preload("res://assets/audio/announcer-tie-break-bruno-en.wav")
+const MATCH_OVER_VOICE := preload("res://assets/audio/announcer-match-over-bruno-en.wav")
 
 ## `js/main.js:1211` — the intensity a match opens at, before the first rally.
 const REFERENCE_START_INTENSITY := 0.12
@@ -96,6 +105,8 @@ var port: Node = null
 var music: Node = null
 var use_ost := false
 var ost: Node = null
+var announcer: AudioStreamPlayer = null
+var announcer_enabled := true
 ## How many times the score has been stopped (a match end), for the read-back.
 var music_stops: int = 0
 ## The last intensity this seam pushed into the score.
@@ -116,12 +127,24 @@ var _prev_points_total: int = -1
 var _prev_player_points: int = 0
 var _prev_ring: Array = []
 var _ticks: int = 0
+var _last_announced_points_total: int = -1
+var _prev_aces_total: int = -1
+var _announced_game_point_key := ""
+var _announced_break_point_key := ""
+var _announced_set_point_key := ""
+var _announced_tie_break_key := ""
+var _match_end_announced := false
 
 
 func _ready() -> void:
 	port = AudioPortScript.new()
 	port.name = "AudioPort"
 	add_child(port)
+	announcer = AudioStreamPlayer.new()
+	announcer.name = "EnglishScoreAnnouncer"
+	announcer.stream = MATCH_POINT_VOICE
+	announcer.bus = "SFX"
+	add_child(announcer)
 	if use_ost:
 		ost = get_node("/root/BackgroundMusic")
 		ost.set_muted(false)
@@ -141,12 +164,22 @@ func reset() -> void:
 	if ost != null:
 		ost.set_held(false)
 		ost.set_arena(preload("res://game/match_config.gd").arena_id())
+		ost.stop_match_end_announcement()
 	_prev_hit_flash = 0.0
 	_prev_serve_in_flight = false
 	_prev_had_result = false
 	_prev_points_total = -1
 	_prev_ring = []
 	_ticks = 0
+	_last_announced_points_total = -1
+	_prev_aces_total = -1
+	_announced_game_point_key = ""
+	_announced_break_point_key = ""
+	_announced_set_point_key = ""
+	_announced_tie_break_key = ""
+	_match_end_announced = false
+	if announcer != null:
+		announcer.stop()
 	requests.clear()
 	errors.clear()
 	counts.clear()
@@ -200,8 +233,109 @@ func observe(state, tick: int) -> Array:
 		played.append_array(sounds)
 	_prev_ring = ring.duplicate()
 	played.append_array(_transition_sounds(state, tick))
+	_observe_announcer(state)
 	_drive_music(state)
 	return played
+
+
+## Spoken cues are separate from the ten-event legacy SFX contract. Score cues
+## wait for the point pause, and sparse score keys prevent repeated pre-serve lines.
+func _observe_announcer(state) -> void:
+	if announcer == null:
+		return
+	if not announcer_enabled:
+		announcer.stop()
+		return
+	var aces_total := ace_total(state)
+	var new_ace := _prev_aces_total >= 0 and aces_total > _prev_aces_total
+	_prev_aces_total = aces_total
+	# The available recording is English, but the menu language must not silence it.
+	if port != null and port.is_muted():
+		announcer.stop()
+		return
+	if state.result != null:
+		announcer.stop()
+		if not _match_end_announced:
+			_match_end_announced = true
+			# The playable match changes scene immediately; the session audio node
+			# owns this last cue so it survives onto the result screen.
+			if ost != null:
+				ost.play_match_end_announcement(MATCH_OVER_VOICE, false)
+			else:
+				_play_announcer(MATCH_OVER_VOICE)
+		return
+	if float(state.pointPause) > 0.0:
+		if new_ace:
+			_play_announcer(ACE_VOICE)
+		return
+	# A short post-point ace call must finish before a new score call starts.
+	if announcer.is_playing():
+		return
+	var cue: Dictionary = score_cue(state)
+	var total := points_total(state)
+	var game_key := "%d:%d:%d:%d" % [int(state.sets["player"]), int(state.sets["ai"]), int(state.games["player"]), int(state.games["ai"])]
+	match String(cue.get("kind", "")):
+		"match-point":
+			if total != _last_announced_points_total:
+				_last_announced_points_total = total
+				_play_announcer(MATCH_POINT_VOICE)
+		"set-point":
+			if game_key != _announced_set_point_key:
+				_announced_set_point_key = game_key
+				_play_announcer(SET_POINT_VOICE)
+		"game-point":
+			if game_key != _announced_game_point_key:
+				_announced_game_point_key = game_key
+				_play_announcer(GAME_POINT_VOICE)
+		"break-point":
+			if game_key != _announced_break_point_key:
+				_announced_break_point_key = game_key
+				_play_announcer(BREAK_POINT_VOICE)
+		_:
+			if state.tieBreak:
+				var set_key := "%d:%d" % [int(state.sets["player"]), int(state.sets["ai"])]
+				if set_key != _announced_tie_break_key:
+					_announced_tie_break_key = set_key
+					_play_announcer(TIE_BREAK_VOICE)
+
+
+func _play_announcer(stream: AudioStream) -> void:
+	if announcer == null:
+		return
+	announcer.stop()
+	announcer.stream = stream
+	announcer.play()
+
+
+## Mirrors Sim.score_point's three scoring paths without changing match state.
+## A set/match point takes priority over an ordinary game point.
+static func score_cue(state) -> Dictionary:
+	if state.result != null:
+		return {}
+	var fmt: Dictionary = SimScript.match_format(state)
+	for side in ["player", "ai"]:
+		var other := "ai" if side == "player" else "player"
+		if int(state.pointsToWin) != 0:
+			if int(state.points[side]) + 1 >= int(state.pointsToWin):
+				return {"kind": "match-point", "side": side}
+			continue
+		if state.tieBreak:
+			var next_points := int(state.tieBreakPoints[side]) + 1
+			if next_points >= 7 and next_points - int(state.tieBreakPoints[other]) >= 2:
+				return {"kind": "match-point" if int(state.sets[side]) + 1 >= int(fmt["setsToWin"]) else "set-point", "side": side}
+			continue
+		if not SimScript.game_won(int(state.points[side]) + 1, int(state.points[other])):
+			continue
+		var next_games := int(state.games[side]) + 1
+		if next_games >= int(fmt["gamesToWin"]) and next_games - int(state.games[other]) >= int(fmt["gameMargin"]):
+			return {"kind": "match-point" if int(state.sets[side]) + 1 >= int(fmt["setsToWin"]) else "set-point", "side": side}
+		return {"kind": "break-point" if side != String(state.serveSide) else "game-point", "side": side}
+	return {}
+
+
+static func match_point_side(state) -> String:
+	var cue := score_cue(state)
+	return String(cue.get("side", "")) if cue.get("kind", "") == "match-point" else ""
 
 
 ## The new entries of the events ring, oldest of the new first.
@@ -269,6 +403,11 @@ func _transition_sounds(state, tick: int) -> Array:
 
 static func points_total(state) -> int:
 	return int(state.stats["pointsWon"]["player"]) + int(state.stats["pointsWon"]["ai"])
+
+
+static func ace_total(state) -> int:
+	var aces: Dictionary = state.stats.get("aces", {})
+	return int(aces.get("player", 0)) + int(aces.get("ai", 0))
 
 
 func _request(event_id: String, source: String, tick: int) -> Array:

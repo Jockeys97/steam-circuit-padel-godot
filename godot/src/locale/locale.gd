@@ -43,6 +43,12 @@ const PORT_PAUSE_ACTIONS := {
 	"en": {"changeMode": "CHANGE MODE", "changeArena": "CHANGE ARENA", "viewObjectives": "VIEW OBJECTIVES", "pauseObjectivesBack": "BACK TO MATCH", "pauseTournamentRound": "Round {n} of 3", "pauseTournamentGoal": "Win this match to advance", "pauseTournamentFinalGoal": "Win the final to claim the trophy"},
 }
 
+## Godot-only in-engine camera beats. The generated browser table has no cutscenes.
+const PORT_CINEMATICS := {
+	"it": {"cinematicArena": "L'ARENA", "cinematicRivals": "I RIVALI", "cinematicYourTeam": "LA TUA SQUADRA", "cinematicReady": "SI COMINCIA", "cinematicWinners": "I CAMPIONI", "cinematicTrophy": "IL TROFEO", "cinematicTournamentVictory": "CAMPIONI DEL CIRCUITO", "cinematicCareerVictory": "STAGIONE CONQUISTATA"},
+	"en": {"cinematicArena": "THE ARENA", "cinematicRivals": "THE RIVALS", "cinematicYourTeam": "YOUR TEAM", "cinematicReady": "READY TO PLAY", "cinematicWinners": "THE CHAMPIONS", "cinematicTrophy": "THE TROPHY", "cinematicTournamentVictory": "CIRCUIT CHAMPIONS", "cinematicCareerVictory": "SEASON CHAMPIONS"},
+}
+
 const RULES_PATH := "res://src/locale/locale_rules.json"
 
 static var _lang: String = ""
@@ -108,7 +114,9 @@ static func has_key(key: String, lang: String = "") -> bool:
 		or (PORT_OUTFIT_NAMES.get(target, {}) as Dictionary).has(key)
 		or (PORT_OUTFIT_NAMES.get(fallback_lang(), {}) as Dictionary).has(key)
 		or (PORT_PAUSE_ACTIONS.get(target, {}) as Dictionary).has(key)
-		or (PORT_PAUSE_ACTIONS.get(fallback_lang(), {}) as Dictionary).has(key))
+		or (PORT_PAUSE_ACTIONS.get(fallback_lang(), {}) as Dictionary).has(key)
+		or (PORT_CINEMATICS.get(target, {}) as Dictionary).has(key)
+		or (PORT_CINEMATICS.get(fallback_lang(), {}) as Dictionary).has(key))
 
 
 ## `t(key, params)` (js/i18n.js:1408-1414).
@@ -155,6 +163,9 @@ static func lookup(key: String, lang: String) -> String:
 	var pause_primary: Dictionary = PORT_PAUSE_ACTIONS.get(lang, {})
 	if pause_primary.has(key):
 		return String(pause_primary[key])
+	var cinematic_primary: Dictionary = PORT_CINEMATICS.get(lang, {})
+	if cinematic_primary.has(key):
+		return String(cinematic_primary[key])
 	var secondary := table(fallback_lang())
 	if secondary.has(key):
 		return String(secondary[key])
@@ -164,6 +175,9 @@ static func lookup(key: String, lang: String) -> String:
 	var pause_secondary: Dictionary = PORT_PAUSE_ACTIONS.get(fallback_lang(), {})
 	if pause_secondary.has(key):
 		return String(pause_secondary[key])
+	var cinematic_secondary: Dictionary = PORT_CINEMATICS.get(fallback_lang(), {})
+	if cinematic_secondary.has(key):
+		return String(cinematic_secondary[key])
 	return key
 
 

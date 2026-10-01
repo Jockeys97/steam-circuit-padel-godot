@@ -49,6 +49,8 @@ var playerScore: String = "0"
 var aiScore: String = "0"
 var combo: int = 1
 var rallyHits: int = 0
+## Short balls (palla corta) already played in this rally: each one is read better than the last.
+var shortBallStreak: int = 0
 var rallyEnergy: Dictionary = {"player": 1.0, "ai": 1.0}
 var rng_state: int = 0
 var rng_calls: int = 0
@@ -66,6 +68,10 @@ var specialReady: float = 1.0
 var serveSide: String = "player"
 var serveCourt: String = "right"
 var serveAttempts: int = 0
+## Serve-bounce presentation and the optional accuracy reward share one clock.
+var serveBounceTime: float = 0.0
+var serveWasCharging: bool = false
+var serveTimingBonus: float = 0.0
 var serving: bool = true
 var serveTimer: float = 0.9
 var serviceReceiverKey: Variant = null

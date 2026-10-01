@@ -47,6 +47,18 @@ var _router: Control
 var _store: RefCounted
 
 
+class LaunchProbe extends "res://src/ui/screens/DrillScreen.gd":
+	var launch_count := 0
+	var requested_dry_run := true
+	var launch_payload: Dictionary = {}
+
+	func start(dry_run := false) -> Dictionary:
+		launch_count += 1
+		requested_dry_run = dry_run
+		launch_payload = super.start(true)
+		return launch_payload
+
+
 func _initialize() -> void:
 	_wipe()
 	var audit := AuditBase.new("screen_drill")
@@ -82,6 +94,7 @@ func _run(audit: AuditBase) -> void:
 	await _records(audit, screen)
 	await _difficulty(audit, screen)
 	await _start(audit, screen)
+	await _start_button(audit)
 	await _locale(audit, screen)
 	await _fit(audit, screen)
 
@@ -184,6 +197,25 @@ func _start(audit: AuditBase, screen) -> void:
 
 
 ## 7. The words move with the language.
+func _start_button(audit: AuditBase) -> void:
+	var probe = ScreenScene.instantiate()
+	probe.set_script(LaunchProbe)
+	probe.set_store(_store)
+	root.add_child(probe)
+	await _settle()
+	probe.select_exercise("serve")
+	probe.select_difficulty("legend")
+	var button := probe.find_child("HubStart", true, false) as Button
+	audit.check_true(button != null and not button.disabled, "screen/start_button_is_enabled")
+	if button != null:
+		button.pressed.emit()
+	audit.check_eq(probe.launch_count, 1, "screen/button_requests_exactly_one_launch")
+	audit.check_eq(probe.requested_dry_run, false, "screen/button_requests_a_real_launch")
+	audit.check_eq(String(probe.launch_payload.get("exercise", "")), "serve", "screen/button_launches_selected_exercise")
+	audit.check_eq(String(probe.launch_payload.get("difficulty", "")), "legend", "screen/button_launches_selected_difficulty")
+	probe.free()
+
+
 func _locale(audit: AuditBase, screen) -> void:
 	var original := Locale.current_lang()
 	var other := ""

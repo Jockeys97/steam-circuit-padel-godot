@@ -106,6 +106,13 @@ static func take_pending_result() -> Dictionary:
 ## copy of the schema; `{}` when nothing is stored or the payload is malformed. This
 ## is the reader the review's F6 named missing: the volume, deadzone and vibration
 ## rows used to persist values that nothing read back.
+## The menu difficulty as a tier index (easy 0 .. legend 3), read from the stored prefs:
+## career and tournament climb from here (`CareerRules.ladder_start`). Unknown or absent
+## reads as the first tier, which is the reference's own starting point.
+static func chosen_tier() -> int:
+	return int(Gate.DIFFICULTY_TIERS.get(String(stored_prefs().get("aiDifficulty", "easy")), 0))
+
+
 static func stored_prefs() -> Dictionary:
 	var read: Dictionary = save_store().read_group("prefs")
 	var payload: Variant = read.get("payload", null)
@@ -156,7 +163,16 @@ static func selectable_world_arenas() -> Array:
 ## `selectable_athletes()` — that list is the reference's own roster and the slice
 ## pins its size; a special is additive content the selection asks for BY NAME.
 static func selectable_special_athletes() -> Array:
-	return Gate.special_athletes()
+	var rows: Array = Gate.special_athletes()
+	# ADDITIVE (create-a-character, 2026-09-27): the player-made athlete is offered
+	# through the same special seat, as one explicit id, never merged into
+	# `Frozen.athletes` or the outfit catalogue. Empty until the player has created one,
+	# so a build that never opened the editor offers exactly what it shipped.
+	var custom := AthleteSpawn.custom_selection_row()
+	if not custom.is_empty():
+		rows = rows.duplicate()
+		rows.append(custom)
+	return rows
 
 
 ## THE ONE ARENA CATALOG for this build (`content_gate.gd::arena_catalog()`,

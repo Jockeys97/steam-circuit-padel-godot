@@ -163,7 +163,8 @@ func _realistic_prefs() -> Dictionary:
 		"tournamentRound": 2,
 		"muted": false,
 		"volume": 0.35,
-		# PORT ADDITIONS: the Music bus level, its mute, and the now-playing toast.
+		# PORT ADDITIONS: the SFX and Music bus levels, music mute, and now-playing toast.
+		"sfxVolume": 0.73,
 		"musicVolume": 0.6,
 		"musicMuted": true,
 		"nowPlaying": false,
@@ -303,7 +304,7 @@ func _schema_anchors() -> void:
 	# for every field collectPrefs writes, plus the audio defaults, plus the port's
 	# own additions. Counted apart, so a reference field that goes missing still
 	# fails even while the port adds keys of its own.
-	const PORT_PREF_KEYS := ["cameraPreset", "musicVolume", "musicMuted", "nowPlaying", "musicSeparateContexts", "musicContinueOutsideJukebox", "pacePreset"]
+	const PORT_PREF_KEYS := ["cameraPreset", "sfxVolume", "musicVolume", "musicMuted", "nowPlaying", "musicSeparateContexts", "musicContinueOutsideJukebox", "pacePreset"]
 	var reference_prefs := Schema.PREFS_DEFAULTS.size() - PORT_PREF_KEYS.size()
 	check_eq("prefs defaults carry all 17 collectPrefs fields", reference_prefs, 17)
 	for key in PORT_PREF_KEYS:
@@ -313,6 +314,7 @@ func _schema_anchors() -> void:
 	check_eq("prefs default gamepadDeadzone is 0.15 (js/ui.js:467)", Schema.PREFS_DEFAULTS["gamepadDeadzone"], 0.15)
 	check_eq("prefs default matchLength is 'points11' (js/ui.js:470)", Schema.PREFS_DEFAULTS["matchLength"], "points11")
 	check_eq("prefs default volume is 0.5 (js/audio.js:5)", Schema.PREFS_DEFAULTS["volume"], 0.5)
+	check_eq("prefs default SFX level preserves the current mix", Schema.PREFS_DEFAULTS["sfxVolume"], 1.0)
 	check_eq("prefs default tournamentRound is 0 (js/ui.js:464)", Schema.PREFS_DEFAULTS["tournamentRound"], 0)
 	check("prefs defaults carry the lineup triple (js/ui.js:480)",
 		json_eq(Schema.PREFS_DEFAULTS["lineup"], {"playerMate": null, "opponent": null, "opponentMate": null}),

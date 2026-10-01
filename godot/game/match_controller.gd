@@ -89,6 +89,7 @@ const CourtTiming := preload("res://game/court_timing_marks.gd")
 ## on the clock.
 const Config := preload("res://game/match_config.gd")
 const MusicSettings := preload("res://src/audio/music_settings.gd")
+const SfxSettings := preload("res://src/audio/sfx_settings.gd")
 const ScriptedPlayer := preload("res://game/scripted_player.gd")
 const MatchAudioScript := preload("res://game/match_audio.gd")
 const AthletesView := preload("res://game/athletes_view.gd")
@@ -368,6 +369,10 @@ var _audio
 ## only; null in any build whose arena has no stands.
 var _crowd: Node = null
 var _cam: Camera3D
+const ModeIntro = preload("res://game/mode_intro.gd")
+const Locale = preload("res://src/locale/locale.gd")
+var _mode_intro: CanvasLayer
+var _pending_cinematic_result_route := false
 ## The arena environment currently in the scene, built by
 ## `game/arenas/arena_library.gd`. Rebuilt in place when the arena changes (the
 ## per-arena capture run does exactly that, nine times).
@@ -531,6 +536,34 @@ func _ready() -> void:
 		_adopt_session()
 	else:
 		start_match()
+	if session != null and engine_driven and load_models and capture == "" and not headless and ModeIntro.enabled(session.mode, Config.stored_prefs()):
+		_mode_intro = ModeIntro.new()
+		add_child(_mode_intro)
+		var title := ""
+		var detail := ""
+		var seconds := 2.0
+		if session.mode == "tournament":
+			title = Locale.t(["introQuarter", "introSemi", "introFinal"][clampi(session.round, 0, 2)])
+			detail = Locale.t("tournamentRewardGuide")
+			seconds = 7.0 if session.round == 2 else (5.0 if session.round == 0 else 2.0)
+		else:
+			title = Locale.t("introSeason").replace("{n}", str(session.season))
+			detail = Locale.t("careerRewardGuide")
+			seconds = 6.0 if session.match_index == 0 else 2.0
+			var rules = preload("res://src/modes/career_rules.gd")
+			var cup: Dictionary = rules.master_cup(session.season)
+			if not cup.is_empty():
+				title = Locale.t(String(cup.label))
+			var stops: Array[String] = []
+			for index in range(3):
+				var fixture: Dictionary = rules.career_fixture(session.season, index, Config.selectable_arenas())
+				stops.append(Locale.t("arena_%s_name" % String(fixture.arena.get("id", ""))))
+			detail = " → ".join(stops) + "\n" + detail
+		title += " · " + Locale.t("arena_%s_name" % String(session.arena.get("id", "")))
+		var intro_voice: AudioStream = ModeIntro.voice_for(session.mode, session.round, session.match_index, Locale.current_lang())
+		if not bool(Config.stored_prefs().get("announcerEnabled", true)) or (_audio != null and _audio.port != null and _audio.port.is_muted()):
+			intro_voice = null
+		_mode_intro.begin(_cam, title, detail, seconds, _athlete_roots, "intro", _cinematic_names(), intro_voice)
 
 	if capture != "":
 		engine_driven = false
@@ -1117,6 +1150,7 @@ func _build_scene() -> void:
 		_pause_overlay.set_match_paused(false)
 		_pause_overlay.tab_changed.connect(_on_pause_tab_changed)
 		_pause_overlay.music_volume_changed.connect(_on_pause_music_volume_changed)
+		_pause_overlay.sfx_volume_changed.connect(_on_pause_sfx_volume_changed)
 		# UIR-27's entry from the card (`js/main.js:2238-2241`): the reference hides the
 		# card and toggles the replay. The card hides through the pause echo the entry
 		# performs, and the toggle is the same seam the `r` key calls.
@@ -1305,6 +1339,7 @@ func _apply_pause_range() -> void:
 		"volume": "VolumeRow",
 		"deadzone": "DeadzoneRow",
 		"music-volume": "MusicVolumeRow",
+		"sfx-volume": "SfxVolumeRow",
 	}
 	var row_name := String(row_names.get(action, action))
 	var value := float(target.get("value", 0.0))
@@ -1329,15 +1364,24 @@ func _on_pause_music_volume_changed(value: float) -> void:
 	MusicSettings.apply(prefs)
 
 
+func _on_pause_sfx_volume_changed(value: float) -> void:
+	var prefs := Config.stored_prefs()
+	prefs["sfxVolume"] = value
+	SfxSettings.apply(prefs)
+
+
 ## The stored mixer/input prefs, applied at match boot the way the reference applies
 ## them at load (`js/main.js:2276-2278`): `volume` to the audio module's own master
 ## gain (the bus derivation stays in the module) and `gamepadDeadzone` to the pad
 ## reader, clamped to the reference's band inside `set_deadzone`.
 func _apply_stored_audio_prefs() -> void:
 	var prefs: Dictionary = Config.stored_prefs()
+	if _audio != null:
+		_audio.announcer_enabled = bool(prefs.get("announcerEnabled", true))
 	if _audio != null and _audio.port != null:
 		_audio.port.set_master_gain(float(prefs.get("volume", 0.5)))
 	MusicSettings.apply(prefs)
+	SfxSettings.apply(prefs)
 	InputSource.set_deadzone(float(prefs.get("gamepadDeadzone", 0.15)))
 
 
@@ -1578,6 +1622,8 @@ func advance_frame(delta: float) -> Dictionary:
 ##
 ## Returns `advance_frame`'s report, or a zero-step report when nothing ran.
 func apply_frame(sample: Dictionary, delta: float) -> Dictionary:
+	if is_instance_valid(_mode_intro) and _mode_intro.active:
+		return {"steps": 0, "accumulator": sim_accumulator, "ticks": ticks}
 	if state == null:
 		return {"steps": 0, "accumulator": sim_accumulator, "ticks": ticks}
 	if _replay_active:
@@ -1625,6 +1671,9 @@ func apply_frame(sample: Dictionary, delta: float) -> Dictionary:
 
 
 func _process(delta: float) -> void:
+	if is_instance_valid(_mode_intro) and _mode_intro.active:
+		_mode_intro.advance(delta)
+		return
 	if state == null:
 		return
 	if not engine_driven:
@@ -1875,19 +1924,47 @@ func _observe(prev_y: float) -> void:
 		# engine clock, no display) is left exactly as it was: it reads `summary()`
 		# and never navigates.
 		if engine_driven and load_models:
-			finish_route()
-	# The engine-driven build refreshes the HUD once per rendered frame in
-	# `_process`. A harness that owns the tick loop has no rendered frames, so the
-	# tick path also refreshes it — at 4 Hz during play, and always on the last
-	# tick — so both clocks show the same HUD and the harness can read it back.
+			if session != null and DisplayServer.get_name() != "headless" and ModeIntro.should_celebrate(
+				session.mode, session.awarded, String(state.result.get("winner", "")) == "player",
+				Config.stored_prefs()):
+				_start_victory_cinematic()
+			else:
+				finish_route()
+	# A harness owns the tick loop and still receives its final HUD update.
 	if _hud != null and not engine_driven and (finished or ticks % 30 == 0):
 		_hud.refresh(state, meta)
-		# The same rule for the mode HUD, so a harness that owns the tick loop
-		# reads the same panel a rendered frame would show.
 		if _mode_hud != null and session != null and not finished and not _page_finished():
 			_mode_hud.refresh()
 	if _ui_hud != null and not engine_driven and (finished or ticks % 30 == 0):
 		_ui_hud.refresh(state, meta)
+
+func _start_victory_cinematic() -> void:
+	_pending_cinematic_result_route = true
+	if _hud != null:
+		_hud.visible = false
+	if _mode_hud != null:
+		_mode_hud.visible = false
+	_mode_intro = ModeIntro.new()
+	add_child(_mode_intro)
+	_mode_intro.completed.connect(_on_victory_cinematic_completed)
+	var tournament: bool = session.mode == "tournament"
+	var title := Locale.t("cinematicTournamentVictory" if tournament else "cinematicCareerVictory")
+	var detail := Locale.t("tournamentRewardGuide" if tournament else "careerRewardGuide")
+	_mode_intro.begin(_cam, title, detail, 4.0, _athlete_roots, "victory", _cinematic_names())
+
+func _cinematic_names() -> Dictionary:
+	var names := {}
+	for role in _lineup:
+		var athlete: Dictionary = _lineup[role]
+		var id := String(athlete.get("id", ""))
+		if id != "":
+			names[role] = Locale.t("athlete_%s_name" % id)
+	return names
+
+func _on_victory_cinematic_completed() -> void:
+	if _pending_cinematic_result_route:
+		_pending_cinematic_result_route = false
+		call_deferred("finish_route")
 
 
 ## `awardOutfitChallenges(matchState, won)` is called before the browser branches
@@ -1931,7 +2008,7 @@ func _award_economy() -> Dictionary:
 	var won := String(state.result.get("winner", "")) == "player"
 	# The ACCUMULATED totals, not the tennis scoreboard: `state.points` resets every game.
 	var played := Economy.points_played(state.stats)
-	_economy_award = Economy.award_completion(Config.save_store(), _economy_match_id, played, won)
+	_economy_award = Economy.award_completion(Config.save_store(), _economy_match_id, played, won, session.awarded if session != null else {})
 	return _economy_award
 
 
@@ -2390,7 +2467,24 @@ func _save_frame(path: String) -> void:
 # Player-facing controls that are not the game's input struct
 # ---------------------------------------------------------------------------
 
+## A focus change drops the shot keys the game may never see released (a system
+## shortcut such as Cmd+Shift+5 swallows the Command key-up; see
+## `input_map.gd` `release_stuck_keys`).
+func _notification(what: int) -> void:
+	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_APPLICATION_FOCUS_IN,
+			NOTIFICATION_WM_WINDOW_FOCUS_OUT, NOTIFICATION_WM_WINDOW_FOCUS_IN]:
+		InputSource.release_stuck_keys()
+		if _input_source != null:
+			_input_source.forget_keys()
+		if _input_source2 != null:
+			_input_source2.forget_keys()
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if is_instance_valid(_mode_intro) and _mode_intro.active:
+		_mode_intro.handle(event)
+		get_viewport().set_input_as_handled()
+		return
 	if state == null:
 		return
 	# The pause card's stick monitor, while it is open: the overlay's own handler
@@ -2457,6 +2551,12 @@ func _unhandled_input(event: InputEvent) -> void:
 ## own. `main_menu.gd:963-968` states the same rule for every menu screen and is why
 ## this card is the only place the walk used to run.
 func _input(event: InputEvent) -> void:
+	if is_instance_valid(_mode_intro) and _mode_intro.active:
+		_mode_intro.handle(event)
+		# Leave pointer events to the visible skip button.
+		if not event is InputEventMouse:
+			get_viewport().set_input_as_handled()
+		return
 	if training_summary_up() and not _paused and event.is_action("ui_accept"):
 		# Pad confirm is sampled by the gameplay input source on release. Do not also
 		# activate the focused native Button on press.

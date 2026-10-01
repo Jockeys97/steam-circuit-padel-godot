@@ -38,6 +38,9 @@ const prompts={
  // 2026-09-26 trial: the two hand-authored clips most on screen, to compare in a match.
  ready_stance:'Right-handed padel player waiting for the ball in a ready stance, looping idle: feet shoulder-width apart, knees bent, weight on the balls of the feet, racket held in front of the chest with both hands. Small natural weight shifts from foot to foot, light breathing, tiny heel lifts, head steady looking forward. Stays in place. No steps away, no jump, no props.',
  forehand_volley:'Right-handed padel player at the net, ONE forehand volley: from a ready stance, short step forward with the left foot, compact backswing with the racket at shoulder height, firm punch forward meeting the ball in front of the body, very short follow-through, then quickly back to the ready stance. Fast and compact, no big swing, no jump, no props.',
+ // 2026-09-26: the first "backhand" (meshy-fiamma-strokes) is a forehand path (racket
+ // back on the right, left shoulder to the net, swing right to left). A true one.
+ backhand_true:'Right-handed padel player, ONE one-handed BACKHAND, feet planted, no running: from ready stance turn the shoulders LEFT so the RIGHT shoulder points at the net, take the racket back across the body to the LEFT hip, short step forward with the RIGHT foot, swing left to right meeting the ball in front of the right hip, finish with the right arm extended to the right side. No jump, no props.',
  wall_exit_forehand:'Right-handed padel player, ONE forehand after the ball rebounds off the back glass: stand side-on near the back wall, knees bent, racket back low, wait while the ball drops, then step forward with the left foot and swing a flat forehand through waist-height contact in front, follow through towards the net and return to ready. No jump, no props.',
 };
 (async()=>{

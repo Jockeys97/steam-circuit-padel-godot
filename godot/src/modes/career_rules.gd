@@ -190,11 +190,32 @@ static func tournament_fixture(round: int, available_arenas: Array = []) -> Dict
 
 
 ## `careerFixture(season, matchIndex, availableArenas = ARENAS)` (`js/data.js:932-936`).
+static func master_cup(season: int) -> Dictionary:
+	if season <= career_final_season():
+		return {}
+	var cups := [
+		{"id": "industry", "label": "cupIndustry", "arenas": ["officina", "locomotive", "cattedrale"]},
+		{"id": "elements", "label": "cupElements", "arenas": ["forgia", "tempesta", "caldera"]},
+		{"id": "cosmos", "label": "cupCosmos", "arenas": ["abissale", "orrery", "cattedrale"]},
+	]
+	return cups[posmod(season - career_final_season() - 1, cups.size())].duplicate(true)
+
+
 static func career_fixture(season: int, match_index: int, available_arenas: Array = []) -> Dictionary:
 	var pool: Array = available_arenas if available_arenas.size() > 0 else Frozen.arenas()
+	var cup := master_cup(season)
+	if not cup.is_empty():
+		var themed: Array = []
+		for id in cup["arenas"]:
+			for candidate in pool:
+				if String(candidate.get("id", "")) == id:
+					themed.append(candidate)
+		# Never lend locked arenas; retain the ordinary pool if none are available.
+		if not themed.is_empty():
+			pool = themed
 	var arena: Dictionary = {}
 	if pool.size() > 0:
-		arena = pool[posmod(season * 3 + match_index, pool.size())]
+		arena = pool[posmod(match_index if not cup.is_empty() else season * 3 + match_index, pool.size())]
 	return {
 		"arena": arena,
 		"rival": career_rival(season),
@@ -348,3 +369,64 @@ static func dictated_rivals(mode: String, season: int, match_index: int, round: 
 		"opponent": primo,
 		"opponentMate": resto[posmod(int(seme) * 3 + 1, resto.size())],
 	}
+
+
+# ---------------------------------------------------------------------------
+# The game's own ladder (2026-09-27): career and tournament follow the menu's
+# difficulty and climb PAST the Legend.
+#
+# `career_ai_profile` above stays the reference's formula (reference_grid_audit pins it).
+# The match now asks `ladder_ai_profile`: the career starts ONE TIER BELOW the difficulty
+# the player chose (Legend -> Campione, Easy -> Rivale as before), each season is the next
+# tier, each match inside a season adds `matchGain`, and once the table's last tier (the
+# Legend) is reached every further step adds `seasonGain`. Past the Legend the climb never
+# pushes `skill` to 1 (the sim reads `1 - skill` in its error, timing and reaction terms,
+# so a skill of 1 or more would turn errors negative): it closes the Legend's deliberate
+# weakness, her reactions (`reactionSkill` 0.78), and keeps raising speed and power, whose
+# caps sit above the reference ramp's so later seasons still get harder.
+# ---------------------------------------------------------------------------
+
+const BEYOND := {
+	"skillCap": 0.96,
+	"reactionCap": 0.94,
+	"reactionGain": 1.6,   # reactions close faster than the other stats
+	"speedCap": 470.0,
+	"powerCap": 1.3,
+}
+
+
+## The tier the ladder starts on for a menu difficulty (`content_gate.gd::DIFFICULTY_TIERS`):
+## one below it, never under the first.
+static func ladder_start(chosen_tier: int) -> int:
+	return maxi(0, chosen_tier - 1)
+
+
+## The opponent at ladder step `step` (0 = the table's first tier), plus `extra` growth
+## (a season's match gain). Steps past the last tier become "Oltre N" profiles.
+static func ladder_ai_profile(step: int, extra: float = 0.0) -> Dictionary:
+	var opponents: Array = Frozen.ai_opponents()
+	if opponents.is_empty():
+		return {}
+	var last := opponents.size() - 1
+	var ramp: Dictionary = career_ramp()
+	var base: Dictionary = opponents[clampi(step, 0, last)]
+	var beyond := maxi(0, step - last)
+	var growth: float = float(beyond) * float(ramp["seasonGain"]) + extra
+	var profile: Dictionary = base.duplicate()
+	if growth <= 0.0:
+		return profile
+	profile["skill"] = minf(float(BEYOND["skillCap"]), float(base["skill"]) + growth)
+	profile["speed"] = minf(float(BEYOND["speedCap"]), float(base["speed"]) + growth * 140.0)
+	profile["power"] = minf(float(BEYOND["powerCap"]), float(base["power"]) + growth)
+	if base.has("reactionSkill"):
+		profile["reactionSkill"] = minf(float(BEYOND["reactionCap"]), float(base["reactionSkill"]) + growth * float(BEYOND["reactionGain"]))
+	if beyond > 0:
+		profile["name"] = "%s · Oltre %d" % [String(base.get("name", "")), beyond]
+		profile["beyond"] = beyond
+	return profile
+
+
+## The career opponent for `season`/`match_index` at the chosen menu difficulty.
+static func career_ladder_profile(season: int, match_index: int, chosen_tier: int) -> Dictionary:
+	var step := ladder_start(chosen_tier) + maxi(season, 1) - 1
+	return ladder_ai_profile(step, float(match_index) * float(career_ramp()["matchGain"]))

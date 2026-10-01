@@ -21,6 +21,7 @@ const ModesSave := preload("res://src/modes/modes_save.gd")
 const SaveStore := preload("res://src/save/save_store.gd")
 const Schema := preload("res://src/save/save_schema.gd")
 const MusicSettings := preload("res://src/audio/music_settings.gd")
+const SfxSettings := preload("res://src/audio/sfx_settings.gd")
 const InputSource := preload("res://game/input_map.gd")
 
 const SCREEN_PATH := "res://src/ui/screens/SettingsScreen.gd"
@@ -117,10 +118,10 @@ func _groups(audit: AuditBase) -> void:
 		audit.check_true(button != null, "settings/the_%s_button_exists" % button_name)
 		if button != null:
 			audit.check_eq(button.text, button_name.substr(5).to_upper(), "settings/%s_is_capitalised" % button_name)
-	for row_name in ["ReduceMotionRow", "ColorblindRow", "VolumeRow", "MusicVolumeRow", "MusicEnabledRow", "NowPlayingRow", "SeparateMusicRow", "DeadzoneRow", "VibrationRow"]:
+	for row_name in ["ReduceMotionRow", "ColorblindRow", "VolumeRow", "SfxVolumeRow", "MusicVolumeRow", "MusicEnabledRow", "AnnouncerEnabledRow", "CareerIntroRow", "TournamentIntroRow", "NowPlayingRow", "SeparateMusicRow", "DeadzoneRow", "VibrationRow"]:
 		audit.check_true(screen.find_child(row_name, true, false) != null, "settings/the_%s_exists" % row_name)
 	var rows: Dictionary = screen.rows()
-	audit.check_eq(rows.keys().size(), 9, "settings/nine_rows_are_registered")
+	audit.check_eq(rows.keys().size(), 13, "settings/thirteen_rows_are_registered")
 	var split := (rows["SeparateMusicRow"] as RowsClass.ToggleRow).check
 	audit.check_eq(split.button_pressed, false, "settings/unified_music_is_default")
 	split.button_pressed = true
@@ -128,8 +129,15 @@ func _groups(audit: AuditBase) -> void:
 	split.button_pressed = false
 	audit.check_eq(_stored_prefs().get("musicSeparateContexts"), false, "settings/unified_toggle_persists")
 	audit.check_eq(RowsClass.kind_of(rows["VolumeRow"]), "range", "settings/the_volume_row_is_a_range")
+	audit.check_eq(RowsClass.kind_of(rows["SfxVolumeRow"]), "range", "settings/sfx_volume_is_a_range")
 	audit.check_eq(RowsClass.kind_of(rows["MusicVolumeRow"]), "range", "settings/music_volume_is_a_range")
 	audit.check_eq(RowsClass.kind_of(rows["MusicEnabledRow"]), "toggle", "settings/music_enabled_is_a_toggle")
+	audit.check_eq(RowsClass.kind_of(rows["AnnouncerEnabledRow"]), "toggle", "settings/announcer_enabled_is_a_toggle")
+	var announcer_switch := (rows["AnnouncerEnabledRow"] as RowsClass.ToggleRow).check
+	announcer_switch.button_pressed = false
+	audit.check_eq(_stored_prefs().get("announcerEnabled"), false, "settings/mouse_announcer_toggle_persists_off")
+	announcer_switch.button_pressed = true
+	audit.check_eq(_stored_prefs().get("announcerEnabled"), true, "settings/mouse_announcer_toggle_persists_on")
 	audit.check_eq(RowsClass.kind_of(rows["VibrationRow"]), "toggle", "settings/the_vibration_row_is_a_toggle")
 	audit.check_true(screen.find_child("SettingsScroll", true, false) is ScrollContainer, "settings/long_page_has_a_scroll_container")
 	audit.check_eq((screen.find_child("SettingsGrid", true, false) as GridContainer).columns, 2, "settings/cards_use_two_columns_at_1280")
@@ -152,6 +160,10 @@ func _bounds(audit: AuditBase) -> void:
 	audit.check_eq(_slider_of(volume_row).max_value, 1.0, "settings/the_volume_ceiling_is_the_reference_own")
 	audit.check_eq(_slider_of(volume_row).step, 0.01, "settings/the_volume_step_is_the_reference_own")
 	var music_row: Control = rows["MusicVolumeRow"]
+	var sfx_row: Control = rows["SfxVolumeRow"]
+	audit.check_eq(_slider_of(sfx_row).min_value, 0.0, "settings/sfx_volume_reaches_silence")
+	audit.check_eq(_slider_of(sfx_row).max_value, 1.0, "settings/sfx_volume_reaches_full")
+	audit.check_eq(_slider_of(sfx_row).step, 0.01, "settings/sfx_volume_steps_by_one_percent")
 	audit.check_eq(_slider_of(music_row).min_value, 0.0, "settings/music_volume_reaches_silence")
 	audit.check_eq(_slider_of(music_row).max_value, 1.0, "settings/music_volume_reaches_full")
 	audit.check_eq(_slider_of(music_row).step, 0.01, "settings/music_volume_steps_by_one_percent")
@@ -186,13 +198,30 @@ func _slider_of(row: Control) -> HSlider:
 
 func _persistence(audit: AuditBase) -> void:
 	var screen: Node = _screen()
+	audit.check_eq(Schema.PREFS_DEFAULTS.get("sfxVolume"), 1.0, "settings/old_profiles_default_sfx_to_the_existing_mix")
+	audit.check_eq(_snapshot().get("sfx_volume"), 1.0, "settings/a_missing_saved_sfx_level_reads_as_full")
 	screen.set_volume(0.4)
+	screen.set_sfx_volume(0.62)
 	screen.set_music_volume(0.37)
 	screen.set_music_enabled(false)
+	audit.check_eq(_snapshot().get("announcer_enabled"), true, "settings/announcer_defaults_on_for_old_profiles")
+	screen.set_announcer_enabled(false)
+	screen.set_career_intro(false)
+	screen.set_tournament_intro(false)
+	audit.check_eq(_stored_prefs().get("announcerEnabled"), false, "settings/announcer_choice_is_saved")
+	audit.check_eq(_snapshot().get("announcer_enabled"), false, "settings/announcer_choice_reads_back")
+	audit.check_eq(_stored_prefs().get("intro_career"), false, "settings/career_intro_choice_is_saved")
+	audit.check_eq(_stored_prefs().get("intro_tournament"), false, "settings/tournament_intro_choice_is_saved")
+	screen.set_announcer_enabled(true)
+	screen.set_career_intro(true)
+	screen.set_tournament_intro(true)
 	screen.set_now_playing(false)
 	screen.set_deadzone(0.12)
 	screen.set_vibration(false)
 	audit.check_true(is_equal_approx(float(_snapshot()["volume"]), 0.4), "settings/the_volume_is_in_the_profile")
+	audit.check_true(is_equal_approx(float(_snapshot()["sfx_volume"]), 0.62), "settings/sfx_level_is_saved_separately")
+	audit.check_true(is_equal_approx(float(_stored_prefs().get("sfxVolume", -1.0)), 0.62), "settings/sfx_uses_its_own_saved_pref_key")
+	audit.check_true(is_equal_approx(SfxSettings.effective_volume(_stored_prefs()), 0.62), "settings/sfx_effective_level_reads_the_saved_value")
 	audit.check_true(is_equal_approx(float(_snapshot()["music_volume"]), 0.37), "settings/music_level_is_saved_separately")
 	audit.check_eq(_stored_prefs().get("musicMuted", false), true, "settings/music_can_be_disabled_without_zeroing_its_level")
 	audit.check_eq(_snapshot()["music_muted"], true, "settings/music_disabled_reads_back")
@@ -237,6 +266,26 @@ func _applies_now(audit: AuditBase) -> void:
 	screen.set_deadzone(0.12)
 	audit.check_true(is_equal_approx(InputSource.DEADZONE, 0.12), "settings/deadzone_applies_to_the_pad_immediately")
 	var music_bus := AudioServer.get_bus_index("Music")
+	var sfx_bus := AudioServer.get_bus_index("SFX")
+	var master_before_sfx := AudioServer.get_bus_volume_db(master)
+	var music_before_sfx := AudioServer.get_bus_volume_db(music_bus)
+	var saved_master_before_sfx := float(_stored_prefs().get("volume", -1.0))
+	var saved_music_before_sfx := float(_stored_prefs().get("musicVolume", -1.0))
+	var saved_mute_before_sfx := bool(_stored_prefs().get("musicMuted", false))
+	screen.set_sfx_volume(0.5)
+	audit.check_true(sfx_bus >= 0 and not AudioServer.is_bus_mute(sfx_bus)
+		and is_equal_approx(AudioServer.get_bus_volume_db(sfx_bus), linear_to_db(0.5)), "settings/sfx_half_level_applies_to_its_bus_immediately")
+	screen.set_sfx_volume(0.0)
+	audit.check_true(AudioServer.is_bus_mute(sfx_bus)
+		and is_equal_approx(AudioServer.get_bus_volume_db(sfx_bus), -80.0), "settings/sfx_zero_is_exact_silence")
+	screen.set_sfx_volume(1.0)
+	audit.check_true(not AudioServer.is_bus_mute(sfx_bus)
+		and is_equal_approx(AudioServer.get_bus_volume_db(sfx_bus), 0.0), "settings/sfx_full_level_restores_unity")
+	audit.check_true(is_equal_approx(AudioServer.get_bus_volume_db(master), master_before_sfx)
+		and is_equal_approx(AudioServer.get_bus_volume_db(music_bus), music_before_sfx), "settings/sfx_adjustments_leave_master_and_music_buses_unchanged")
+	audit.check_true(is_equal_approx(float(_stored_prefs().get("volume", -1.0)), saved_master_before_sfx)
+		and is_equal_approx(float(_stored_prefs().get("musicVolume", -1.0)), saved_music_before_sfx)
+		and bool(_stored_prefs().get("musicMuted", false)) == saved_mute_before_sfx, "settings/sfx_adjustments_leave_master_and_music_preferences_unchanged")
 	screen.set_music_enabled(false)
 	audit.check_true(music_bus >= 0 and AudioServer.is_bus_mute(music_bus), "settings/music_switch_silences_only_music_immediately")
 	screen.set_music_volume(0.58)
@@ -274,7 +323,7 @@ func _strings(audit: AuditBase) -> void:
 	var language_at_start := Locale.current_lang()
 	var unresolved: Array = []
 	for key in ["settingsTitle", "settingsSub", "language", "accessibility", "settingsAudio", "settingsAudioHint",
-			"settingsMasterVolume", "musicVolume", "settingsMusicEnabled", "settingsNowPlaying", "settingsController",
+			"settingsMasterVolume", "settingsSfxVolume", "musicVolume", "settingsMusicEnabled", "settingsAnnouncerEnabled", "settingsCareerIntro", "settingsTournamentIntro", "settingsNowPlaying", "settingsController",
 			"deadzone", "vibration", "reduceMotion", "colorblind"]:
 		for lang in Locale.locales():
 			if not Locale.is_resolvable(key, String(lang)):
@@ -328,8 +377,12 @@ func _slots() -> Dictionary:
 		"audio_hint": "settingsAudioHint",
 		"controller": "settingsController",
 		"volume": "settingsMasterVolume",
+		"sfx_volume": "settingsSfxVolume",
 		"music_volume": "musicVolume",
 		"music_enabled": "settingsMusicEnabled",
+		"announcer_enabled": "settingsAnnouncerEnabled",
+		"career_intro": "settingsCareerIntro",
+		"tournament_intro": "settingsTournamentIntro",
 		"now_playing": "settingsNowPlaying",
 		"deadzone": "deadzone",
 		"vibration": "vibration",
@@ -343,9 +396,10 @@ func _visible_texts(screen: Node) -> Dictionary:
 	for group in [["language", "LanguageTitle"], ["accessibility", "AccessibilityTitle"], ["audio", "AudioTitle"],
 			["audio_hint", "AudioHint"], ["controller", "ControllerTitle"]]:
 		out[group[0]] = _text_of(screen, String(group[1]))
-	for row in [["volume", "VolumeRow"], ["deadzone", "DeadzoneRow"], ["vibration", "VibrationRow"],
+	for row in [["volume", "VolumeRow"], ["sfx_volume", "SfxVolumeRow"], ["deadzone", "DeadzoneRow"], ["vibration", "VibrationRow"],
 			["reduce_motion", "ReduceMotionRow"], ["colorblind", "ColorblindRow"],
-			["music_volume", "MusicVolumeRow"], ["music_enabled", "MusicEnabledRow"], ["now_playing", "NowPlayingRow"]]:
+			["music_volume", "MusicVolumeRow"], ["music_enabled", "MusicEnabledRow"], ["announcer_enabled", "AnnouncerEnabledRow"],
+			["career_intro", "CareerIntroRow"], ["tournament_intro", "TournamentIntroRow"], ["now_playing", "NowPlayingRow"]]:
 		out[row[0]] = _row_text(screen, String(row[1]))
 	return out
 
@@ -382,7 +436,7 @@ func _focus(audit: AuditBase) -> void:
 	var nav: MenuNav = focus.menu
 	focus.refresh()
 	var ids: Array = focus.ids()
-	for suffix in ["VolumeRow", "MusicVolumeRow", "MusicEnabledRow", "NowPlayingRow", "SeparateMusicRow", "DeadzoneRow", "VibrationRow", "ReduceMotionRow", "ColorblindRow", "Lang_it", "Lang_en"]:
+	for suffix in ["VolumeRow", "SfxVolumeRow", "MusicVolumeRow", "MusicEnabledRow", "AnnouncerEnabledRow", "CareerIntroRow", "TournamentIntroRow", "NowPlayingRow", "SeparateMusicRow", "DeadzoneRow", "VibrationRow", "ReduceMotionRow", "ColorblindRow", "Lang_it", "Lang_en"]:
 		audit.check_true(ids.has(screen.focus_id(suffix)), "settings/the_bridge_reads_%s" % suffix)
 	audit.check_eq(_duplicates(ids), [], "settings/no_row_registers_twice")
 	var volume_target := _target_of(nav, screen.focus_id("VolumeRow"))
@@ -400,12 +454,19 @@ func _focus(audit: AuditBase) -> void:
 	bridge.range_changed.connect(func(id: String, value: float) -> void:
 		if id == screen.focus_id("MusicVolumeRow"):
 			screen.set_row_value("MusicVolumeRow", value)
+		elif id == screen.focus_id("SfxVolumeRow"):
+			screen.set_row_value("SfxVolumeRow", value)
 	)
 	screen.set_music_volume(0.43)
 	audit.check_true(bridge.set_focus(screen.focus_id("MusicVolumeRow")), "settings/gamepad_can_focus_music_volume")
 	audit.check_eq(bridge.dispatch(_key_event(KEY_LEFT)), true, "settings/gamepad_music_step_is_handled")
 	audit.check_true(is_equal_approx(screen.music_volume(), 0.42), "settings/gamepad_music_step_uses_the_visible_slider_value")
 	audit.check_true(is_equal_approx(float(_stored_prefs().get("musicVolume", -1.0)), 0.42), "settings/gamepad_music_step_is_saved")
+	screen.set_sfx_volume(0.43)
+	audit.check_true(bridge.set_focus(screen.focus_id("SfxVolumeRow")), "settings/gamepad_can_focus_sfx_volume")
+	audit.check_eq(bridge.dispatch(_key_event(KEY_LEFT)), true, "settings/gamepad_sfx_step_is_handled")
+	audit.check_true(is_equal_approx(screen.sfx_volume(), 0.42), "settings/gamepad_sfx_step_uses_the_visible_slider_value")
+	audit.check_true(is_equal_approx(float(_stored_prefs().get("sfxVolume", -1.0)), 0.42), "settings/gamepad_sfx_step_is_saved")
 	audit.report("bridge focusables: %d, volume target kind=%s" % [ids.size(), volume_target.get("kind", "")])
 	audit.note("recorded seam request for the integrator: menu_focus._target() drops min/max/step/value (and the OSK seed keys value/max_length/field_label), so the focused range's copy in the model steps from the model's own defaults — volume target seen by the model: %s" % str(volume_target))
 

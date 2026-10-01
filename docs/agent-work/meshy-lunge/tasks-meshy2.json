@@ -19,5 +19,19 @@
     "id": "01a0dcee-bf2f-707b-a9ff-85beba21b8f8",
     "status": "SUCCEEDED",
     "credits": 3
+  },
+  "backhand_true_motion": {
+    "reserved": 10,
+    "request_started": true,
+    "id": "01a0df4f-b448-748c-b3f8-4b3122bfdd1a",
+    "status": "SUCCEEDED",
+    "credits": 10
+  },
+  "backhand_true_animation": {
+    "reserved": 3,
+    "request_started": true,
+    "id": "01a0df50-37ae-72b7-a639-c571f8407fac",
+    "status": "SUCCEEDED",
+    "credits": 3
   }
 }

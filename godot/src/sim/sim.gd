@@ -348,6 +348,7 @@ static func create_match_state(mode: String, athlete: Dictionary, arena: Diction
 	state.aiScore = "0"
 	state.combo = 1
 	state.rallyHits = 0
+	state.shortBallStreak = 0
 	state.rallyEnergy = {"player": 1.0, "ai": 1.0}
 	for athlete_paddle in [state.player, state.playerMate, state.opponent, state.opponentMate]:
 		if athlete_paddle != null:
@@ -482,6 +483,37 @@ static func serve_target_x(state: State) -> float:
 	var width: float = float(court["right"]) - float(court["left"])
 	var is_right: bool = state.serveCourt == "right"
 	return float(court["left"]) + width * (0.28 if is_right else 0.72)
+
+
+## Player aim stays inside the diagonal box before the existing, charge-dependent
+## dispersion is applied. A first serve near the T or glass is therefore useful but
+## genuinely riskier; the second serve pulls the same input towards the safe centre.
+const SERVE_AIM_EDGE_MARGIN := 20.0
+const SERVE_DEPTH_AIM_RANGE := 34.0
+const SERVE_SECOND_AIM_FACTOR := 0.72
+const SERVE_BOUNCE_PERIOD := 0.62  # athlete_rig.gd's serve_bounce animation length
+const SERVE_TIMING_PEAK := 0.72  # contact just after the displayed ground bounce
+const SERVE_TIMING_WINDOW := 0.18
+const SERVE_TIMING_SPREAD_REDUCTION := 0.18
+
+static func serve_aim_x(state: State, aim: float, second_serve: bool = false) -> float:
+	var court: Dictionary = Frozen.court()
+	var middle: float = (float(court["left"]) + float(court["right"])) * 0.5
+	var box_left: float = float(court["left"]) if state.serveCourt == "right" else middle
+	var box_right: float = middle if state.serveCourt == "right" else float(court["right"])
+	var centre: float = serve_target_x(state)
+	var steered: float = clampf(aim, -1.0, 1.0) * (SERVE_SECOND_AIM_FACTOR if second_serve else 1.0)
+	return lerpf(centre, box_right - SERVE_AIM_EDGE_MARGIN, steered) if steered >= 0.0 \
+		else lerpf(centre, box_left + SERVE_AIM_EDGE_MARGIN, -steered)
+
+
+## A generous *bonus*, never a required timing gate: starting the charge as the
+## displayed serve bounce rises reduces spread by at most 18%.
+static func serve_bounce_quality(clock: float) -> float:
+	var phase: float = fposmod(clock / SERVE_BOUNCE_PERIOD, 1.0)
+	var distance: float = absf(phase - SERVE_TIMING_PEAK)
+	distance = minf(distance, 1.0 - distance)
+	return maxf(0.0, 1.0 - distance / SERVE_TIMING_WINDOW)
 
 
 static func service_origin_x(state: State) -> float:
@@ -689,11 +721,16 @@ static func prepare_serve(state: State) -> void:
 	state.ball.z = 34.0
 	state.serving = true
 	state.serveTimer = 0.0 if state.serveSide == "player" else 0.75
+	state.serveBounceTime = 0.0
+	state.serveWasCharging = false
+	state.serveTimingBonus = 0.0
 
 
 ## `requestedCharge` is `Variant` because the JavaScript signature defaults it to
 ## `null` and falls back to the state's own charge (`js/game.js:719`).
-static func perform_serve(state: State, requested_charge: Variant = null, slice: bool = false) -> void:
+static func perform_serve(state: State, requested_charge: Variant = null, slice: bool = false,
+		requested_aim_x: float = 0.0, requested_aim_y: float = 0.0,
+		timing_quality: float = 0.0) -> void:
 	var ball := state.ball
 	var balance: Dictionary = Frozen.balance()
 	var court: Dictionary = Frozen.court()
@@ -714,16 +751,18 @@ static func perform_serve(state: State, requested_charge: Variant = null, slice:
 	var spread: float = float(balance["serveSpread"]) \
 		* (float(balance["serveSpreadBase"]) + charge * charge * (1.0 - float(balance["serveSpreadBase"]))) \
 		* clampf(1.62 - server_control, 0.3, 1.0) \
-		* (float(balance["serveSecondSafety"]) if second_serve else 1.0)
+		* (float(balance["serveSecondSafety"]) if second_serve else 1.0) \
+		* (1.0 - clampf(timing_quality, 0.0, 1.0) * SERVE_TIMING_SPREAD_REDUCTION)
 	var depth_error: float = (Rng.next_random(state) - 0.5) * 2.0 * spread * float(balance["serveDepthSpread"])
 	var lateral_error: float = (Rng.next_random(state) - 0.5) * 2.0 * spread
-	var service_box_depth: float = SERVICE_LINE_OFFSET * (0.24 + charge * 0.52) + depth_error
+	var service_box_depth: float = SERVICE_LINE_OFFSET * (0.24 + charge * 0.52) + depth_error \
+		- clampf(requested_aim_y, -1.0, 1.0) * SERVE_DEPTH_AIM_RANGE * (SERVE_SECOND_AIM_FACTOR if second_serve else 1.0)
 	var target_y: float = float(court["netY"]) - service_box_depth if is_player else float(court["netY"]) + service_box_depth
 	var time: float = float(balance["serveFlightBase"]) - charge * float(balance["serveFlightGain"])
 	var drag_rate: float = -60.0 * log(float(balance["airDrag"]))
 	var drag_distance_factor: float = (1.0 - exp(-drag_rate * time)) / (drag_rate * time) if drag_rate > 0.0001 else 1.0
 	var drag_compensation: float = 1.0 / drag_distance_factor
-	var target_x: float = serve_target_x(state) + lateral_error
+	var target_x: float = serve_aim_x(state, requested_aim_x, second_serve) + lateral_error
 	ball.serveTargetSide = "left" if state.serveCourt == "right" else "right"
 	ball.serveTargetX = target_x
 	ball.serveTargetY = target_y
@@ -750,6 +789,7 @@ static func perform_serve(state: State, requested_charge: Variant = null, slice:
 	ball.landRing = 0.0
 	state.serving = false
 	state.rallyHits = 0
+	state.shortBallStreak = 0
 	state.combo = 1
 	server.shotIntent = "serve"
 	server.actionIntent = "serve"
@@ -765,6 +805,13 @@ static func perform_serve(state: State, requested_charge: Variant = null, slice:
 ## `updateServing` (`js/game.js:2604-2672`).
 static func update_serving(state: State, dt: float, input: Dictionary, second: Dictionary) -> void:
 	var is_player: bool = state.serveSide == "player"
+	var serving_input: Dictionary = input if is_player else second
+	var charging: bool = bool(serving_input.get("charging", false)) if is_player or state.humanMode == "pvp" else false
+	if charging and not state.serveWasCharging:
+		state.serveTimingBonus = serve_bounce_quality(state.serveBounceTime)
+	elif not charging and not bool(serving_input.get("hit", false)):
+		state.serveBounceTime += dt
+	state.serveWasCharging = charging
 	if is_player and state.activePlayerKey != "player":
 		set_active_player(state, "player", false)
 	var server := state.active_player() if is_player else state.opponent
@@ -782,7 +829,8 @@ static func update_serving(state: State, dt: float, input: Dictionary, second: D
 		state.ball.x = server.x + 28.0
 		state.ball.y = server.y - 24.0
 		if bool(input.get("hit", false)) or bool(input.get("special", false)):
-			perform_serve(state, state.shotCharge, bool(input.get("slice", false)))
+			perform_serve(state, state.shotCharge, bool(input.get("slice", false)),
+				state.shotAim, state.shotAimY, state.serveTimingBonus)
 			state.shotCharge = 0.0
 			state.shotAim = 0.0
 			state.shotAimY = 0.0
@@ -805,7 +853,8 @@ static func update_serving(state: State, dt: float, input: Dictionary, second: D
 		state.ball.y = server.y + 24.0
 		control_paddle_charge(state, server, second, dt)
 		if bool(second.get("hit", false)):
-			perform_serve(state, server.charge, bool(second.get("slice", false)))
+			perform_serve(state, server.charge, bool(second.get("slice", false)),
+				server.aim, server.aimY, state.serveTimingBonus)
 			server.charge = 0.0
 			server.aim = 0.0
 			server.aimY = 0.0
@@ -1124,6 +1173,18 @@ static func ai_middle_hesitation(state: State) -> void:
 	add_event(state, "evMiddleBall")
 
 
+## The return of serve (2026-09-30, owner: "rimangono ancora molti punti diretti in
+## risposta alla battuta"). The serving pair knows where the return comes from, but the
+## read that makes a hard angled shot catch the AI "wrong-footed" treated it like any
+## rally ball: a probe of perfect, fully charged cross-court returns
+## (`game/tools/return_winner_probe.gd`) found Leggenda wrong-footed on 40-48% of them,
+## frozen ~0.4 s on average, and 28% of the slices were clean winners. From Rivale's
+## level up, the wrong-footing chance and the pressure delay on the return shrink, by
+## up to AI_RETURN_READ_RELIEF at Leggenda; Rivale reads it as before.
+const AI_RETURN_READ_FROM := 0.46
+const AI_RETURN_READ_FULL := 0.9
+const AI_RETURN_READ_RELIEF := 0.75
+
 static func lock_ai_receiver_for_incoming_shot(state: State, is_serve: bool = false) -> void:
 	var balance: Dictionary = Frozen.balance()
 	if not ball_playable_direction("ai", state.ball):
@@ -1178,6 +1239,12 @@ static func lock_ai_receiver_for_incoming_shot(state: State, is_serve: bool = fa
 	var base_reaction: float = 0.28 - reaction_skill * 0.25
 	var pressure_penalty: float = state.aiShotPressure * (1.0 - reaction_skill) * 0.42
 	var wrong_footed_chance: float = 0.0 if is_serve else clampf((state.aiShotPressure - 0.25) * (2.0 - reaction_skill * 1.8), 0.0, 0.7)
+	# The return of serve is read better by a strong pair (the human's first strike:
+	# `hit_ball` counts it after this call, so the rally is still at 0).
+	if not is_serve and state.rallyHits == 0:
+		var relief: float = AI_RETURN_READ_RELIEF * clampf((reaction_skill - AI_RETURN_READ_FROM) / (AI_RETURN_READ_FULL - AI_RETURN_READ_FROM), 0.0, 1.0)
+		pressure_penalty *= 1.0 - relief
+		wrong_footed_chance *= 1.0 - relief
 	var wrong_footed: bool = Rng.next_random(state) < wrong_footed_chance
 	var wrong_footed_delay: float = 0.28 + state.aiShotPressure * 0.22 if wrong_footed else 0.0
 	state.aiReactionDelay = 0.0 if is_serve else clampf(base_reaction + pressure_penalty, 0.07, 0.42) + wrong_footed_delay
@@ -1286,6 +1353,61 @@ static func contextual_perfect_window(state: State, paddle: Ent.SimPaddle, charg
 ## athlete read as "late": scripted rallies graded 2% of them perfect (91% of other
 ## shots) and 58% of them rolled an error.
 const WALL_EXIT_PACE := 0.14       # up to ~14% faster at quality 1
+
+## The flat drive ("palla tesa", 2026-09-27). Measured in the owner's 74 matches: his
+## groundstrokes peaked at ~2.5 m (real padel: 1.2-1.8 m) and the AI answered balls
+## peaking 2.5-3.5 m with a smash 43-46% of the time (15% under 2 m). A ball's height is
+## its flight time (a parabola to the bounce spot: apex ~ g t^2 / 8), so a low ball is a
+## QUICKER ball: the flat drive shortens the flight by up to FLAT_DRIVE_MAX. It is a
+## reward, never the default (owner: "non deve diventare troppo semplice"): every factor
+## must line up at once - perfect timing (good gives a little), a committed swing
+## (charge from FLAT_CHARGE_MIN, full at FLAT_CHARGE_FULL; the owner's median is 0.11),
+## a ball met at a flattenable height, and a clean, balanced contact. Its risk is the
+## net itself: flatter is lower over the tape, and the sim's net check takes the ones
+## that do not clear it; a random share of each flat drive keeps it from being exact.
+const FLAT_DRIVE_MAX := 0.26
+const FLAT_CHARGE_MIN := 0.35
+const FLAT_CHARGE_FULL := 0.7
+const FLAT_GOOD_SHARE := 0.3
+const FLAT_QUALITY_MIN := 0.72
+const FLAT_NET_RISK := 0.12
+const FLAT_OVERHIT_RISK := 0.25
+const FLAT_OVERHIT_FROM := 0.85
+## The AI plays flat drives too, rarely and only when skilled: chance per drive.
+const AI_FLAT_CHANCE_PER_SKILL := 0.5
+const AI_FLAT_SKILL_FROM := 0.55
+const AI_FLAT_CHANCE_MAX := 0.24
+
+## The short ball ("palla corta", 2026-09-28; the old `chiquita`, RB+A). It was never played
+## (0 of the owner's 74 matches): its ball flew 1.02 s, peaking near 3 m, so the player at the
+## net smashed it, and it bounced almost like any other. Now: a LOW, quicker flight
+## (SHORT_BALL_FLIGHT, over the tape by ~0.3 m), heavy backspin and a DEAD bounce, so the
+## receiver has to run forward for it. Charge picks how close to the net it lands (inside the
+## first rectangle, < 126 px); above SHORT_BALL_CHARGE_MAX it is an ordinary drive. It is a
+## touch shot, never the default (owner: "non deve diventare troppo semplice"): a clean one
+## needs good/perfect timing, a clean contact and the striker not far from the net, and a
+## second one in the same rally is read better (SHORT_BALL_STREAK_DECAY). A botched one dies
+## in the net (early) or floats long, an easy ball (late).
+const SHORT_BALL_FLIGHT := 0.75
+const SHORT_BALL_CHARGE_MAX := 0.45
+const SHORT_BALL_DEPTH_NEAR := 54.0
+const SHORT_BALL_DEPTH_FAR := 112.0
+const SHORT_BALL_LONG_DEPTH := 172.0
+const SHORT_BALL_BACKSPIN := 0.85
+const SHORT_BALL_BOUNCE_VZ := 0.7
+const SHORT_BALL_BOUNCE_VY := 0.5
+const SHORT_BALL_MIN_REBOUND := 60.0
+const SHORT_BALL_NEAR_PX := 150.0
+const SHORT_BALL_FAR_PX := 300.0
+const SHORT_BALL_FAR_FLOOR := 0.35
+const SHORT_BALL_GOOD_SHARE := 0.65
+const SHORT_BALL_STREAK_DECAY := 0.6
+## The AI plays it too: skilled, near the net, both opponents deep, a ball at hip height.
+const AI_SHORT_SKILL_FROM := 0.55
+const AI_SHORT_CHANCE_PER_SKILL := 0.30
+const AI_SHORT_CHANCE_MAX := 0.12
+const AI_SHORT_FORWARD_PX := 150.0
+const AI_SHORT_OPPONENTS_DEEP_PX := 170.0
 const WALL_EXIT_MIN_Z := 22.0
 static func ball_passed_distance(paddle: Ent.SimPaddle, ball: Ent.SimBall) -> float:
 	var deeper: float = (ball.y - paddle.y) * (1.0 if paddle.isPlayer else -1.0)
@@ -1457,7 +1579,9 @@ static func evaluate_shot_quality(state: State, paddle: Ent.SimPaddle, options: 
 	var split_step_bonus: float = clampf(paddle.splitStep, 0.0, 1.0) * float(balance["splitStepQualityBonus"])
 	var movement_penalty: float = clampf(paddle.moveRatio, 0.0, 1.0) * 0.22 + sprint_penalty
 	var balance_: float = clampf(1.0 - movement_penalty - maxf(0.0, lateral_distance - 0.68) * 0.32, 0.28, 1.0)
-	var perfect_window: float = float(balance["perfectTimingWindow"]) if ai_timing != null else contextual_perfect_window(state, paddle, charge)
+	var volley: float = volley_difficulty(state, paddle, variant)
+	var perfect_window: float = float(balance["perfectTimingWindow"]) if ai_timing != null \
+		else maxf(float(balance["timingWindowMin"]), contextual_perfect_window(state, paddle, charge) - volley * VOLLEY_WINDOW_PENALTY)
 	var window_ratio: float = perfect_window / float(balance["perfectTimingWindow"])
 	var early_miss: float = maxf(0.0, timing_age - perfect_window) / maxf(0.01, float(balance["goodTimingWindow"]) * float(balance["timingDecaySpan"]) * window_ratio)
 	var late_miss: float = passed_distance / (paddle.reach * float(balance["lateGraceFactor"]) * 4.6)
@@ -1486,7 +1610,8 @@ static func evaluate_shot_quality(state: State, paddle: Ent.SimPaddle, options: 
 			+ height * 0.1
 			+ energy * 0.08
 			+ control * 0.05
-			+ split_step_bonus,
+			+ split_step_bonus
+			- volley * VOLLEY_QUALITY_PENALTY,
 		0.0,
 		1.0,
 	)
@@ -1516,7 +1641,7 @@ static func evaluate_shot_quality(state: State, paddle: Ent.SimPaddle, options: 
 	return {
 		"quality": quality, "timing": timing, "timingBias": timing_bias, "position": position,
 		"balance": balance_, "height": height, "energy": energy, "aggression": aggression,
-		"risk": risk, "profile": profile, "mode": mode, "grade": grade,
+		"risk": risk, "profile": profile, "mode": mode, "grade": grade, "volley": volley,
 	}
 
 
@@ -1646,6 +1771,14 @@ static func choose_computer_shot(state: State, paddle: Ent.SimPaddle, profile: D
 		kind = "lob"
 	elif at_net and state.ball.z > 42.0 and choice < 0.78 + attack * float(balance["attackReadVolleyGain"]):
 		kind = "vibora" if Rng.next_random(state) < 0.28 + float(profile["skill"]) * 0.12 else "volley"
+	# The AI's short ball: skilled, close to the net, both opponents deep, a ball at hip height.
+	if kind == "drive" and state.rallyHits >= 2 and not pressured and contact_height >= 26.0 and contact_height <= 78.0:
+		var net_y_ai := float(court["netY"])
+		var forward: bool = absf(paddle.y - net_y_ai) <= AI_SHORT_FORWARD_PX
+		var opponents_deep: bool = absf(float(opponents[0].y) - net_y_ai) >= AI_SHORT_OPPONENTS_DEEP_PX and absf(float(opponents[1].y) - net_y_ai) >= AI_SHORT_OPPONENTS_DEEP_PX
+		var short_chance: float = clampf((float(profile["skill"]) - AI_SHORT_SKILL_FROM) * AI_SHORT_CHANCE_PER_SKILL, 0.0, AI_SHORT_CHANCE_MAX)
+		if forward and opponents_deep and short_chance > 0.0 and Rng.next_random(state) < short_chance:
+			kind = "chiquita"
 
 	var shot_setups := {
 		"lob": {"depth": 202.0, "lateral": 76.0, "margin": 92.0, "flightTime": 1.28},
@@ -1654,6 +1787,7 @@ static func choose_computer_shot(state: State, paddle: Ent.SimPaddle, profile: D
 		"vibora": {"depth": 154.0, "lateral": 184.0, "margin": 68.0, "flightTime": 0.84},
 		"volley": {"depth": 132.0, "lateral": 142.0, "margin": 76.0, "flightTime": 0.8},
 		"drive": {"depth": 168.0, "lateral": 126.0, "margin": 84.0, "flightTime": 0.98},
+		"chiquita": {"depth": 84.0, "lateral": 96.0, "margin": 96.0, "flightTime": 0.78},
 	}
 	var setup: Dictionary = shot_setups.get(kind, shot_setups["drive"])
 	# Preserve lob, smash defence and comfortable volleys. A genuine low,
@@ -1697,12 +1831,79 @@ static func ai_shot_error(state: State, profile: Dictionary, assessment: Diction
 		0.02,
 		0.38,
 	)
+	var volley_chance: float = float(assessment.get("volley", 0.0)) * AI_VOLLEY_ERROR * (1.0 - float(profile["skill"]) * AI_VOLLEY_SKILL_RELIEF)
+	var out_chance: float = chance * (0.34 if aggressive else 0.16)
+	chance = minf(chance + volley_chance, 0.6)
 	var roll: float = Rng.next_random(state)
-	if roll < chance * (0.34 if aggressive else 0.16):
+	if roll < out_chance:
 		return {"type": "out"}
 	if roll < chance:
+		if volley_chance > 0.0 and Rng.next_random(state) < AI_VOLLEY_NET_SHARE * volley_chance / chance:
+			return {"type": "net"}
 		return {"type": "short"}
 	return null
+
+
+## The víbora the human asks for (RB+X) needs a ball at shoulder height, like the real
+## overhead it is (2026-09-30, owner: "rimangono ancora molti punti diretti in risposta
+## alla battuta con rb e x"). It was 42 px (1.05 m): every víbora he played on the return
+## of serve was met at 43-49 px after the bounce, and half of them were outright winners
+## (side spin 76, a dead bounce, a finishing shot). Below this it is a plain slice.
+const VIBORA_MIN_Z := 60.0
+
+
+## The volley's price (2026-09-29, owner: "colpire al volo deve essere più tosta di
+## colpire dopo il rimbalzo come nella realtà. Anche per l'ia dovrebbe valere").
+## Measured on his 48 recorded matches it was the other way round: his volleys went
+## wrong 6.3% of the time and his shots after the bounce 12.2%; the AI's 2.2% against
+## 2.8%. A ball taken in the air leaves less time, and more so the faster it comes,
+## the lower it is (below the tape it has to be lifted) and the further from the net
+## (a ball dipping at the feet). `volley_difficulty` is that 0..1 factor; it narrows
+## the human's timing window, costs shot quality to both sides, and adds its own share
+## to the AI's error roll. Smashes keep their own rules and are not volleys here.
+const VOLLEY_PACE_EASY := 250.0        # px/s: at or below this the pace part is its floor
+const VOLLEY_PACE_HARD := 650.0        # px/s: a full-pace ball
+const VOLLEY_PACE_FLOOR := 0.35
+const VOLLEY_HIGH_Z := 110.0           # a ball this high is half as hard as one at the tape
+const VOLLEY_DEEP_FROM_PX := 130.0     # the volley zone; deeper volleys cost more...
+const VOLLEY_DEEP_FULL_PX := 230.0     # ...up to VOLLEY_DEEP_EXTRA more at this depth
+const VOLLEY_DEEP_EXTRA := 0.3
+const VOLLEY_WINDOW_PENALTY := 0.012   # s off the human's perfect window at difficulty 1
+const VOLLEY_QUALITY_PENALTY := 0.16   # shot quality lost at difficulty 1 (both sides)
+## The AI's share was raised on 2026-09-30 (owner: "l'ia non mi sembra abbia più
+## difficoltà nelle volée"): at 0.10 Leggenda paid ~2.5% more errors on his matches'
+## volleys, and the error was a soft floated ball nobody could see. At 0.30 a volley at
+## difficulty 1 failed ~16% of the time at Leggenda, most of it into the net.
+## Lowered again the same evening (0.30 -> 0.18; difficulty 1 now ~10% at Leggenda,
+## ~14% at Rivale): in his three Leggenda matches at 0.30
+## the AI's volley errors gave him 10 of 41 points (before: 18 of 319) and he won 54% of
+## the points (before: 17%). Its "out" share now comes only from the base chance, so the
+## volley's own errors are net or soft, never a ball smashed out.
+const AI_VOLLEY_ERROR := 0.18          # AI error chance added at difficulty 1...
+const AI_VOLLEY_SKILL_RELIEF := 0.5    # ...less this share of it at skill 1
+const AI_VOLLEY_NET_SHARE := 0.65      # of the volley's own errors, this many die in the net
+
+
+static func volley_difficulty(state: State, paddle: Ent.SimPaddle, variant: String = "auto") -> float:
+	var ball := state.ball
+	if state.rallyHits == 0 or ball.serveInFlight or int(ball.bounces[shot_side(paddle)]) > 0 or ball.postGlassSide != null:
+		return 0.0
+	# A smash keeps its own rules: one named as such (the AI's kinds, the human's
+	# explicit smash) or a human auto shot the sim turns into one (a high ball in the
+	# smash window at the net, `hit_ball`'s smash_ready).
+	var balance: Dictionary = Frozen.balance()
+	if variant == "smash" or variant.begins_with("smash-"):
+		return 0.0
+	if paddle.controlled and variant == "auto" and ball.z >= float(balance["smashMinHeight"]) \
+			and within_net_range(paddle, float(balance["smashNetWindow"])):
+		return 0.0
+	var pace := Vector2(ball.vx, ball.vy).length()
+	var pace_part := clampf((pace - VOLLEY_PACE_EASY) / (VOLLEY_PACE_HARD - VOLLEY_PACE_EASY), VOLLEY_PACE_FLOOR, 1.0)
+	var tape := float(Frozen.court()["netHeight"])
+	var height_part := 1.0 if ball.z <= tape else clampf(1.0 - (ball.z - tape) / (VOLLEY_HIGH_Z - tape) * 0.5, 0.5, 1.0)
+	var from_net := absf(paddle.y - float(Frozen.court()["netY"]))
+	var depth_part := 1.0 + clampf((from_net - VOLLEY_DEEP_FROM_PX) / (VOLLEY_DEEP_FULL_PX - VOLLEY_DEEP_FROM_PX), 0.0, 1.0) * VOLLEY_DEEP_EXTRA
+	return clampf(pace_part * height_part * depth_part, 0.0, 1.0)
 
 
 ## The human's error curve (2026-09-23, owner's call after his recorded matches: a
@@ -1791,6 +1992,27 @@ static func report_shot_error(state: State, paddle: Ent.SimPaddle, shot_error: D
 	add_event(state, id)
 
 
+## How flat a human drive is, 0..1 (see FLAT_DRIVE_MAX): the product of four factors, so
+## any one missing leaves the ball as it was.
+static func flat_drive_tension(assessment: Dictionary, contact_z: float, charge: float) -> float:
+	var grade := String(assessment.get("grade", ""))
+	var timing_part: float = 1.0 if grade == "perfect" else (FLAT_GOOD_SHARE if grade == "good" else 0.0)
+	if timing_part <= 0.0:
+		return 0.0
+	var charge_part: float = clampf((charge - FLAT_CHARGE_MIN) / (FLAT_CHARGE_FULL - FLAT_CHARGE_MIN), 0.0, 1.0)
+	# Waist to chest: a ball taken low has to be lifted over the net, one taken high
+	# is a volley/smash matter.
+	var height_part: float = clampf((contact_z - 14.0) / 16.0, 0.0, 1.0) * clampf((110.0 - contact_z) / 30.0, 0.0, 1.0)
+	var clean_part: float = clampf((float(assessment.get("quality", 0.0)) - FLAT_QUALITY_MIN) / 0.18, 0.0, 1.0)
+	return timing_part * charge_part * height_part * clean_part
+
+
+## The skill behind a computer paddle's flat drive: the opponents' profile, or the
+## partner's own (`computer_profile`).
+static func profile_for_flat(state: State, paddle: Ent.SimPaddle) -> float:
+	return float(computer_profile(state, paddle).get("skill", 0.0))
+
+
 static func set_computer_trajectory(ball: Ent.SimBall, target_x: float, target_y: float, flight_time: float) -> void:
 	var balance: Dictionary = Frozen.balance()
 	var drag_rate: float = -60.0 * log(float(balance["airDrag"]))
@@ -1824,7 +2046,7 @@ static func apply_computer_shot(state: State, paddle: Ent.SimPaddle, contact_hei
 		ai_timing = minf(ai_timing, 0.5)
 		target = {"kind": "volley", "x": clampf(center_x + (Rng.next_random(state) - 0.5) * 140.0, float(court["left"]) + 120.0, float(court["right"]) - 120.0),
 			"y": target_y_for_side(opponent_side, 104.0), "flightTime": 1.12}
-	var ai_charge: float = (0.38 + float(profile["skill"]) * 0.34) if (String(target["kind"]) == "lob" or String(target["kind"]) == "drive") else (0.62 + float(profile["skill"]) * 0.28)
+	var ai_charge: float = (0.38 + float(profile["skill"]) * 0.34) if (String(target["kind"]) == "lob" or String(target["kind"]) == "drive" or String(target["kind"]) == "chiquita") else (0.62 + float(profile["skill"]) * 0.28)
 	var target_aim: float = clampf(
 		(float(target["x"]) - center_x) / ((float(court["right"]) - float(court["left"])) * 0.42),
 		-1.0,
@@ -1842,6 +2064,15 @@ static func apply_computer_shot(state: State, paddle: Ent.SimPaddle, contact_hei
 		ball.shotType = "error"
 		if not paddle.isPlayer:
 			add_event(state, "evAiForced")
+		return
+
+	if error != null and String(error["type"]) == "net":
+		# A volley missed into the tape (`ai_shot_error`'s volley share).
+		var net_x: float = clampf(ball.x + (Rng.next_random(state) - 0.5) * 120.0, float(court["left"]) + 40.0, float(court["right"]) - 40.0)
+		set_computer_trajectory(ball, net_x, float(court["netY"]), 0.42)
+		ball.shotType = "error"
+		if not paddle.isPlayer:
+			add_event(state, "evAiVolleyNet")
 		return
 
 	if error != null and String(error["type"]) == "short":
@@ -1886,11 +2117,19 @@ static func apply_computer_shot(state: State, paddle: Ent.SimPaddle, contact_hei
 		else:
 			ball.spin = clampf(ball.vx * 0.04, -24.0, 24.0)
 	else:
-		set_computer_trajectory(ball, float(target["x"]), float(target["y"]), float(target["flightTime"]) / ((0.92 + power_scale * 0.08) * atleta_power))
+		var ai_flight: float = float(target["flightTime"]) / ((0.92 + power_scale * 0.08) * atleta_power)
+		# The AI's flat drive: skilled opponents only, and only on a ball at a flattenable height.
+		if kind == "drive" and contact_height >= 26.0 and contact_height <= 90.0:
+			var flat_chance: float = clampf((float(profile_for_flat(state, paddle)) - AI_FLAT_SKILL_FROM) * AI_FLAT_CHANCE_PER_SKILL, 0.0, AI_FLAT_CHANCE_MAX)
+			if flat_chance > 0.0 and Rng.next_random(state) < flat_chance:
+				ai_flight *= 1.0 - FLAT_DRIVE_MAX * (0.6 + Rng.next_random(state) * 0.3)
+		set_computer_trajectory(ball, float(target["x"]), float(target["y"]), ai_flight)
 		ball.shotType = kind
 		ball.spin = clampf(ball.vx * (0.2 if kind == "vibora" else 0.08), -72.0, 72.0)
 		if kind == "vibora":
 			ball.backspin = 0.76
+		elif kind == "chiquita":
+			ball.backspin = SHORT_BALL_BACKSPIN
 	if not paddle.isPlayer:
 		state.aiRecoveryMode = false
 		if kind == "lob":
@@ -1903,6 +2142,49 @@ static func apply_computer_shot(state: State, paddle: Ent.SimPaddle, contact_hei
 			add_event(state, "evOppSmashX2")
 		elif kind == "smash-x3":
 			add_event(state, "evOppSmashX3")
+		elif kind == "chiquita":
+			add_event(state, "evOppShortBall")
+
+
+## The human short ball (see SHORT_BALL_*). Overwrites the trajectory `hit_ball` set.
+static func apply_short_ball(state: State, paddle: Ent.SimPaddle, assessment: Dictionary, aimed_offset: float, aimed_depth: float, raw_charge: float, control: float) -> void:
+	var court: Dictionary = Frozen.court()
+	var ball := state.ball
+	var center_x: float = (float(court["left"]) + float(court["right"])) / 2.0
+	var opponent_side := "ai" if paddle.isPlayer else "player"
+	var net_y := float(court["netY"])
+	var x: float = clampf(
+		center_x + aimed_offset * (float(court["right"]) - float(court["left"])) * 0.3,
+		float(court["left"]) + 62.0,
+		float(court["right"]) - 62.0,
+	)
+	# Charge sets how close to the net it dies; the stick pulled towards you shortens it more.
+	var depth: float = lerpf(SHORT_BALL_DEPTH_NEAR + 8.0, SHORT_BALL_DEPTH_FAR, clampf(raw_charge / SHORT_BALL_CHARGE_MAX, 0.0, 1.0)) - aimed_depth * 14.0
+	depth = clampf(depth, SHORT_BALL_DEPTH_NEAR, SHORT_BALL_DEPTH_FAR)
+	var grade := String(assessment["grade"])
+	var grade_part: float = 1.0 if grade == "perfect" else (SHORT_BALL_GOOD_SHARE if grade == "good" else 0.0)
+	var from_net: float = absf(paddle.y - net_y)
+	var distance_part: float = lerpf(1.0, SHORT_BALL_FAR_FLOOR, clampf((from_net - SHORT_BALL_NEAR_PX) / (SHORT_BALL_FAR_PX - SHORT_BALL_NEAR_PX), 0.0, 1.0))
+	var clean_part: float = clampf((float(assessment["quality"]) - 0.5) / 0.3, 0.0, 1.0)
+	var streak_part: float = pow(SHORT_BALL_STREAK_DECAY, float(state.shortBallStreak))
+	var clean_chance: float = grade_part * distance_part * clean_part * streak_part
+	ball.shotType = "chiquita"
+	ball.backspin = SHORT_BALL_BACKSPIN
+	ball.spin = aimed_offset * 30.0 * control
+	if Rng.next_random(state) < clean_chance:
+		set_computer_trajectory(ball, x, target_y_for_side(opponent_side, depth), SHORT_BALL_FLIGHT)
+		state.shortBallStreak += 1
+		add_event(state, "evChiquita")
+		return
+	# Botched: an early touch drags it into the net, a late one lets it float long.
+	if grade == "early" or (grade != "late" and Rng.next_random(state) < 0.5):
+		set_computer_trajectory(ball, x, net_y, SHORT_BALL_FLIGHT * 0.66)
+		report_shot_error(state, paddle, {"type": "net"})
+	else:
+		ball.backspin = 0.0
+		ball.shotType = "drive"
+		set_computer_trajectory(ball, x, target_y_for_side(opponent_side, SHORT_BALL_LONG_DEPTH), SHORT_BALL_FLIGHT * 1.25)
+		add_event(state, "evShortBallLong")
 
 
 # ---------------------------------------------------------------------------
@@ -2009,7 +2291,9 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 			0.0,
 			1.0,
 		)
-		var shot_error: Variant = roll_shot_error(state, assessment, aimed_offset, tight, tight_depth, contact_height, raw_charge)
+		var short_ball: bool = shot_variant == "chiquita" and raw_charge <= SHORT_BALL_CHARGE_MAX
+		# A short ball rolls its own failure (`apply_short_ball`), not the drive's.
+		var shot_error: Variant = null if short_ball else roll_shot_error(state, assessment, aimed_offset, tight, tight_depth, contact_height, raw_charge)
 		var raw_target_x: float = center_x + aimed_offset * (float(court["right"]) - float(court["left"])) * aim_reach + lateral_jitter
 		var target_x: float
 		if shot_error != null and String(shot_error["type"]) == "wide":
@@ -2050,24 +2334,30 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 				and contact_height >= WALL_EXIT_MIN_Z and shot_variant not in ["lob", "defensive-lob", "globo", "chiquita"]:
 			flight_time /= 1.0 + WALL_EXIT_PACE * float(assessment["quality"])
 			add_event(state, "evWallExit")
+		if shot_error == null and smash_type == null and not smash_defence and not scrambled \
+				and shot_variant not in ["lob", "defensive-lob", "globo", "chiquita"]:
+			var tension: float = flat_drive_tension(assessment, contact_height, raw_charge) * (0.7 if slice else 1.0)
+			if tension > 0.0:
+				# The price of a low ball: a flat drive can find the tape, more so when
+				# overhit (charge past FLAT_OVERHIT_FROM). Measured on a 45 px contact, even
+				# the flattest drive clears the net by ~0.6 m, so the net check alone would
+				# make it free; this is the risk the owner asked for.
+				var net_risk: float = tension * (FLAT_NET_RISK + FLAT_OVERHIT_RISK * clampf((raw_charge - FLAT_OVERHIT_FROM) / (1.0 - FLAT_OVERHIT_FROM), 0.0, 1.0))
+				if Rng.next_random(state) < net_risk:
+					shot_error = {"type": "net"}
+					report_shot_error(state, paddle, shot_error)
+				else:
+					flight_time *= 1.0 - FLAT_DRIVE_MAX * tension * (0.8 + Rng.next_random(state) * 0.4)
+					if tension >= 0.5:
+						add_event(state, "evFlatDrive")
 		if shot_error != null and String(shot_error["type"]) == "net":
 			set_computer_trajectory(ball, target_x, float(court["netY"]), flight_time * 0.66)
 		else:
 			set_computer_trajectory(ball, target_x, target_y, flight_time)
 		ball.spin = aimed_offset * 45.0 * control
 		ball.backspin = 0.65 + shot_power * 0.35 if slice else 0.0
-		if shot_variant == "chiquita":
-			var chiquita_x: float = clampf(
-				center_x + aimed_offset * (float(court["right"]) - float(court["left"])) * 0.3,
-				float(court["left"]) + 62.0,
-				float(court["right"]) - 62.0,
-			)
-			var chiquita_depth: float = 62.0 + shot_power * 34.0 - aimed_depth * 18.0
-			set_computer_trajectory(ball, chiquita_x, target_y_for_side("ai" if paddle.isPlayer else "player", chiquita_depth), 1.02)
-			ball.backspin = 0.55
-			ball.spin = aimed_offset * 30.0 * control
-			ball.shotType = "chiquita"
-			add_event(state, "evChiquita")
+		if short_ball:
+			apply_short_ball(state, paddle, assessment, aimed_offset, aimed_depth, raw_charge, control)
 		elif shot_variant == "lob" or shot_variant == "defensive-lob":
 			var defensive_lob: bool = shot_variant == "defensive-lob"
 			var power_ratio: float = clampf((shot_power - 0.34) / 1.16, 0.0, 1.0)
@@ -2227,7 +2517,7 @@ static func hit_ball(state: State, paddle: Ent.SimPaddle, power: float = 1.0, is
 			ball.wallKill = clampf(float(assessment["quality"]), 0.0, 1.0)
 			add_event(state, "evCutVolley")
 		elif slice:
-			if vibora_range and contact_height >= (42.0 if shot_variant == "vibora" else 48.0):
+			if vibora_range and contact_height >= (VIBORA_MIN_Z if shot_variant == "vibora" else 48.0):
 				var vibora_side: float = js_sign_or(aimed_offset, 1.0)
 				var vibora_depth: float = 132.0 + shot_power * 28.0 + overcharge_risk * 96.0
 				set_computer_trajectory(
@@ -2499,6 +2789,7 @@ static func score_point(state: State, winner: String, reason: String, kind: Vari
 		state.serveSide = State.other(state.serveSide)
 	state.combo = 1
 	state.rallyHits = 0
+	state.shortBallStreak = 0
 	state.rallyEnergy = {"player": 1.0, "ai": 1.0}
 	for athlete_paddle in [state.player, state.playerMate, state.opponent, state.opponentMate]:
 		if athlete_paddle != null:
@@ -2604,6 +2895,10 @@ static func handle_ground_bounce(state: State, impact_vz: float, remaining_time:
 	ball.spin *= 0.7
 	ball.backspin *= 0.35
 	ball.topspin *= 0.72
+	# The short ball's bounce dies: low and going nowhere, the receiver runs forward for it.
+	if ball.shotType == "chiquita" and int(ball.bounces[side]) == 1:
+		rebound_vz = maxf(SHORT_BALL_MIN_REBOUND, rebound_vz * SHORT_BALL_BOUNCE_VZ)
+		ball.vy *= SHORT_BALL_BOUNCE_VY
 	if (ball.shotType == "smash-x2" or ball.shotType == "smash-x3") and ball.smashTargetSide != null and String(ball.smashTargetSide) == side:
 		ball.smashStage = int(maxi(ball.smashStage, 1))
 		add_event(state, "evSmashValid")

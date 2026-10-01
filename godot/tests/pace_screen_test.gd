@@ -228,6 +228,10 @@ func _clock(audit: AuditBase) -> void:
 		"pace/the_default_rung_reproduces_the_pre_change_clock")
 	audit.check_eq(measured, {
 		"realistic": 180,
+		# 1.25 x 120 = 150 in exact arithmetic; the fixed-step accumulator lands one
+		# float epsilon short of the 150th tick over this span (the ±2 check above
+		# holds the ratio). The table records what the clock really does.
+		"fast": 149,
 		"brisk": 120,
 		"standard": 90,
 		"relaxed": 72,

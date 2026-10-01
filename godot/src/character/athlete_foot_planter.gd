@@ -34,7 +34,12 @@ const TURN_STEP_DEG := 35.0  # the body turned this far over a pinned foot: step
 ## 0.83-1.19 m apart while shuffling. A player's feet move between about shoulder width
 ## and an open step, so no landing may open the stance past MAX_GAP, and a foot closes
 ## (steps) as soon as the stance passes CLOSE_SHARE of it.
-const MAX_GAP := 0.58        # m, widest stance
+const MAX_GAP := 0.58        # m, widest stance (lateral)
+## Measured in a real match (game/tools/stance_width_probe.gd) the lateral cap alone
+## let the feet reach p90 0.77 m / max 1.0 m on the shuffles and 1.08 m fore-aft on the
+## backpedal: turning towards the ball, reversals and stroke interruptions open the
+## stance in directions a lateral-only cap never saw. MAX_SPAN caps the real distance.
+const MAX_SPAN := 0.60       # m, feet never further apart than this, in any direction
 const CLOSE_SHARE := 0.85
 const MIN_GAP := 0.22        # m, feet never cross and never close tighter than a player's closing step (0.12 let heavy thighs meet in an X)
 ## The body follows the steps (owner 2026-09-26: "troppo rigido il busto sopra rispetto
@@ -127,7 +132,7 @@ func _process_modification_with_delta(delta: float) -> void:
 			var off := Vector2(pin.x - anim_foot.x, pin.z - anim_foot.z).length()
 			var turned := absf(rad_to_deg(angle_difference(float(foot["yaw"]), yaw)))
 			var other_swinging: bool = _feet.has(other) and bool(_feet[other]["swing"]) and float(_feet[other]["t"]) < OVERLAP_T
-			var too_wide := _stance_gap() > MAX_GAP * CLOSE_SHARE and off > 0.05
+			var too_wide := (_stance_gap() > MAX_GAP * CLOSE_SHARE or _stance_span() > MAX_SPAN * CLOSE_SHARE) and off > 0.05
 			if off > MAX_DIST or ((off > STEP_DIST or turned > TURN_STEP_DEG or too_wide) and not other_swinging):
 				foot["swing"] = true
 				foot["t"] = 0.0
@@ -214,6 +219,17 @@ func _move_body(skeleton: Skeleton3D, to_world: Transform3D, to_skel: Transform3
 		_set_global_rotation(skeleton, top, Basis(Quaternion(up, yaw_turn)) * tg.basis)
 
 
+## The real horizontal distance between the feet (pinned or landing spots).
+func _stance_span() -> float:
+	if not _feet.has("Left") or not _feet.has("Right"):
+		return 0.0
+	var l: Dictionary = _feet["Left"]
+	var r: Dictionary = _feet["Right"]
+	var lp: Vector3 = l["to"] if bool(l["swing"]) else l["pin"]
+	var rp: Vector3 = r["to"] if bool(r["swing"]) else r["pin"]
+	return Vector2(lp.x - rp.x, lp.z - rp.z).length()
+
+
 ## The current stance width along the athlete's lateral axis (pinned or landing spots).
 func _stance_gap() -> float:
 	if not _feet.has("Left") or not _feet.has("Right"):
@@ -251,6 +267,19 @@ func _keep_apart(goals: Dictionary) -> void:
 		var push := lateral * (floor_gap - gap) * 0.5
 		goals["Left"] = (goals["Left"] as Vector3) + push
 		goals["Right"] = (goals["Right"] as Vector3) - push
+	# Never wider than MAX_SPAN on screen: pull the foot in flight towards the other
+	# (a planted foot is never moved here, that would be a slide).
+	var shown_cap := MAX_SPAN + 0.05
+	for side in ["Left", "Right"]:
+		var other: String = "Right" if side == "Left" else "Left"
+		if not _feet.has(side) or not bool(_feet[side]["swing"]):
+			continue
+		var a: Vector3 = goals[side]
+		var b: Vector3 = goals[other]
+		var flat := Vector3(a.x - b.x, 0.0, a.z - b.z)
+		if flat.length() > shown_cap:
+			var keep := flat.normalized() * shown_cap
+			goals[side] = Vector3(b.x + keep.x, a.y, b.z + keep.z)
 
 
 ## A shuffle never crosses the feet: led by the velocity, the trailing foot's landing
@@ -269,6 +298,10 @@ func _uncrossed(side: String, target: Vector3, other: String) -> Vector3:
 		target += lateral * (MIN_GAP - gap) * (1.0 if side == "Left" else -1.0)
 	elif gap > MAX_GAP:
 		target -= lateral * (gap - MAX_GAP) * (1.0 if side == "Left" else -1.0)
+	var flat := Vector3(target.x - other_pos.x, 0.0, target.z - other_pos.z)
+	if flat.length() > MAX_SPAN:
+		var keep := flat.normalized() * MAX_SPAN
+		target = Vector3(other_pos.x + keep.x, target.y, other_pos.z + keep.z)
 	return target
 
 

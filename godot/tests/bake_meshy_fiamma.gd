@@ -76,7 +76,8 @@ func run():
 				if ri >= 0:
 					rest_fix[si] = src.get_bone_global_rest(si).basis.get_rotation_quaternion().inverse() * ref.get_bone_global_rest(ri).basis.get_rotation_quaternion()
 			ref_scene.free()
-	var rig = Spawn.make(athlete, outfit)
+	# Custom "Crea atleta" bodies are not in the frozen catalogue: build their rig directly.
+	var rig = Spawn.make(athlete, outfit) if not String(athlete).begins_with("cc_") else _raw_rig(athlete)
 	if rig == null:
 		quit(1)
 		return
@@ -216,3 +217,11 @@ func run():
 	source.free()
 	rig.free()
 	quit(0 if err == OK else 1)
+
+
+func _raw_rig(athlete: StringName) -> Node3D:
+	var rig = preload("res://src/character/AthleteRig.tscn").instantiate()
+	if not rig.set_athlete_asset(athlete) or rig.get_load_error() != OK:
+		rig.free()
+		return null
+	return rig

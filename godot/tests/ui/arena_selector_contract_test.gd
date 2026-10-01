@@ -109,7 +109,18 @@ func _fixture_launch(audit: AuditBase, screen: Node) -> void:
 		var launch := screen.find_child("PlayFixture", true, false) as Button
 		audit.check_true(launch != null and launch.is_visible_in_tree(), mode + "/launch_visible")
 		audit.check_true(not launch.disabled, mode + "/launch_enabled")
-		audit.check_eq(launch.get_parent().get_parent().name, &"Frame", mode + "/launch_outside_scroll")
+		var parent := launch.get_parent()
+		var outside_scroll := true
+		while parent != null and parent != screen:
+			if parent is ScrollContainer: outside_scroll = false
+			parent = parent.get_parent()
+		audit.check_true(outside_scroll and parent == screen, mode + "/launch_outside_scroll")
+		var toggle := screen.find_child("Intro_" + mode, true, false) as CheckButton
+		audit.check_true(toggle != null, mode + "/intro_setting_present")
+		var before := toggle.button_pressed
+		audit.check_true(screen.activate("intro:" + mode), mode + "/controller_toggles_intro")
+		audit.check_eq(bool(Config.stored_prefs().get("intro_" + mode, before)), not before, mode + "/intro_setting_saved")
+		screen.activate("intro:" + mode)
 		audit.check_true(launch.pressed.is_connected(screen.start_match), mode + "/mouse_uses_existing_start")
 		var registered := false
 		for spec in screen.focus_controls():

@@ -53,6 +53,7 @@ const InputSource := preload("res://game/input_map.gd")
 ## master volume at boot (`js/main.js:2278`). The bus derivation stays in the module.
 const AudioPortScript := preload("res://src/audio/audio_port.gd")
 const MusicSettings := preload("res://src/audio/music_settings.gd")
+const SfxSettings := preload("res://src/audio/sfx_settings.gd")
 
 const TIER_NAMES := ["Rivale del Circuito", "Ingegnere del Vapore", "Campione Steampunk", "Leggenda del Circuito"]
 ## The three mode entries: the keyboard/pad action id, the locale id of the label,
@@ -309,7 +310,9 @@ func _ready() -> void:
 	var world_col: VBoxContainer = null
 	if not world_list.is_empty() or not special_list.is_empty():
 		world_col = VBoxContainer.new()
-		world_col.add_theme_constant_override("separation", 8)
+		# 3 px, not the 8 of the other columns: this one stacks every world arena plus the
+		# special seats (the player-made athlete is one more), and it sets the row's height.
+		world_col.add_theme_constant_override("separation", 3)
 		lists.add_child(world_col)
 	if not world_list.is_empty():
 		var world_head := _label("MONDI (%d)" % world_list.size(), 16, Color(0.0, 0.898, 1.0))
@@ -733,6 +736,16 @@ func _create_jukebox_button() -> void:
 	_jukebox_button.z_index = 50
 	_jukebox_button.pressed.connect(toggle_jukebox)
 	add_child(_jukebox_button)
+	_ensure_jukebox_focus()
+
+
+func _ensure_jukebox_focus() -> void:
+	if _jukebox_button == null:
+		return
+	if _playable and _bridge != null:
+		_bridge.register("jukebox", _jukebox_button, "jukebox")
+	elif _focus != null:
+		_register("jukebox", _jukebox_button, "jukebox")
 
 
 func toggle_jukebox() -> void:
@@ -881,8 +894,9 @@ func _apply_stored_audio_prefs() -> void:
 		_audio_port.name = "UiAudioPort"
 		add_child(_audio_port)
 	_audio_port.set_master_gain(float(prefs.get("volume", 0.5)))
-	# AudioPort builds the buses; apply the independent saved music state after it.
+	# AudioPort builds the buses; apply the independent saved mix after it.
 	MusicSettings.apply(prefs)
+	SfxSettings.apply(prefs)
 	InputSource.set_deadzone(float(prefs.get("gamepadDeadzone", 0.15)))
 
 
@@ -916,9 +930,9 @@ func _on_screen_changed(_from_id: String, _to_id: String) -> void:
 		screen.call("set_async_delivery", _feedback_delivery)
 	_restore_menu_focus = String(screen.call("preferred_focus_id")) if screen.has_method("preferred_focus_id") else ""
 	_bridge.attach(screen as Control, _focus, _router)
-	# `attach()` rebuilds the bridge's registry from the mounted screen, which drops the
-	# host's own Emporio button: put it back so a pad can still open the shop from the
-	# menu.
+	# `attach()` rebuilds the bridge's registry from the mounted screen, dropping
+	# both host-owned launch buttons. Restore them for controller navigation.
+	_ensure_jukebox_focus()
 	_ensure_emporio_focus()
 	# The result screen's rematch is the host's decision: the screen reports the
 	# request and names its label, and the mount owns the mode.
@@ -948,8 +962,10 @@ func _on_music_enabled_changed(_enabled: bool) -> void:
 ## inert — a dictated rival slot with a single outfit is a card with no command and no
 ## click handler either — so it is not a gap and is not reported as one.
 func _on_action_requested(action: String) -> void:
-	# The Emporio launch button is the menu's own control, not a screen's: the bridge
-	# reports its action here rather than routing it to a screen.
+	# These launch buttons belong to the host, not to the mounted menu screen.
+	if action == "jukebox":
+		toggle_jukebox()
+		return
 	if action == "emporio":
 		toggle_emporio()
 		return
@@ -1098,6 +1114,8 @@ func _update_controller_scroll(delta: float) -> void:
 ## menu's own bridge dispatch (`_sync_osk`, `MenuNav.osk`), so suppressing that dispatch
 ## while the keyboard is up would break code entry. The OSK keeps its existing handling.
 func _overlay_owns_input() -> bool:
+	if _character_editor_overlay() != null:
+		return true
 	if _jukebox_overlay != null and is_instance_valid(_jukebox_overlay) and _jukebox_overlay.is_visible_in_tree():
 		return true
 	if _emporio_overlay != null and is_instance_valid(_emporio_overlay) and _emporio_overlay.is_visible_in_tree():
@@ -1105,11 +1123,21 @@ func _overlay_owns_input() -> bool:
 	return false
 
 
+func _character_editor_overlay() -> Control:
+	if _router != null:
+		var screen = _router.active_screen()
+		if screen != null and screen.has_method("modal_overlay"):
+			return screen.modal_overlay()
+	return null
+
+
 ## The UI that owns the stick this frame, or null when there is none (the ported
 ## column, which builds no scroll container, and the gameplay frame). A hidden
 ## overlay is not a surface: `is_visible_in_tree()` is the test, so the screen under a
 ## modal is inert without a second flag.
 func _scroll_surface() -> Control:
+	if _character_editor_overlay() != null:
+		return _character_editor_overlay()
 	if not _playable:
 		return null
 	if _osk_panel != null and is_instance_valid(_osk_panel) and _osk_panel.is_visible_in_tree():
@@ -1354,6 +1382,8 @@ func _read_pad_device() -> int:
 func _input(event: InputEvent) -> void:
 	if _capture or _focus == null:
 		return
+	if _character_editor_overlay() != null:
+		return
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_J:
 		toggle_jukebox()
 		get_viewport().set_input_as_handled()
@@ -1386,6 +1416,9 @@ func _input(event: InputEvent) -> void:
 			# The event can precede `Input`'s per-device state by a rendered frame on
 			# macOS. Feed it into the SAME poll model immediately; the later poll then
 			# sees the held state and its edge/repeat bookkeeping prevents a second move.
+			# Keep the viewport before dispatch: confirming an arena can replace this
+			# scene immediately, leaving get_viewport() null by the time we consume it.
+			var input_viewport := get_viewport()
 			var pad_device := (event as InputEventJoypadButton).device if event is InputEventJoypadButton else (event as InputEventJoypadMotion).device
 			_pad_device = pad_device
 			var result: Dictionary = _focus.handle_pad_event(event, _pad_device)
@@ -1397,7 +1430,8 @@ func _input(event: InputEvent) -> void:
 				# target list after a direction clears the navigation model and puts focus
 				# back on the first control, so a card can never stay selected.
 				_sync_osk()
-			get_viewport().set_input_as_handled()
+			if input_viewport != null:
+				input_viewport.set_input_as_handled()
 		return
 	if event is InputEventKey:
 		var result: Dictionary = _focus.handle_key(event as InputEventKey)

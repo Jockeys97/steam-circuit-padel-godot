@@ -130,6 +130,31 @@ func _run() -> void:
 			if String(bus_name) == "Music" else absf(db) < DB_TOLERANCE)
 	_check("the reader's bus facts are the reference's graph (SFX and Music on Master)",
 		bus_ok, ", ".join(rows))
+	var sfx_idx := AudioServer.get_bus_index("SFX")
+	var master_idx := AudioServer.get_bus_index("Master")
+	var music_idx := AudioServer.get_bus_index("Music")
+	var master_before_sfx := AudioServer.get_bus_volume_db(master_idx) if master_idx >= 0 else 0.0
+	var music_before_sfx := AudioServer.get_bus_volume_db(music_idx) if music_idx >= 0 else 0.0
+	reader.apply_sfx_volume(0.5)
+	_check("SFX at half gain is -6.02 dB on its own bus",
+		sfx_idx >= 0 and not AudioServer.is_bus_mute(sfx_idx)
+		and absf(AudioServer.get_bus_volume_db(sfx_idx) - linear_to_db(0.5)) < DB_TOLERANCE,
+		("%.4f dB" % AudioServer.get_bus_volume_db(sfx_idx)) if sfx_idx >= 0 else "no SFX bus")
+	_check("changing SFX leaves Master and Music gains untouched",
+		master_idx >= 0 and music_idx >= 0
+		and absf(AudioServer.get_bus_volume_db(master_idx) - master_before_sfx) < DB_TOLERANCE
+		and absf(AudioServer.get_bus_volume_db(music_idx) - music_before_sfx) < DB_TOLERANCE,
+		"master %.4f dB, music %.4f dB" % [AudioServer.get_bus_volume_db(master_idx), AudioServer.get_bus_volume_db(music_idx)])
+	reader.apply_sfx_volume(0.0)
+	_check("zero SFX gain mutes the SFX bus exactly",
+		sfx_idx >= 0 and AudioServer.is_bus_mute(sfx_idx)
+		and absf(AudioServer.get_bus_volume_db(sfx_idx) - -80.0) < TOLERANCE,
+		("mute=%s, %.1f dB" % [str(AudioServer.is_bus_mute(sfx_idx)), AudioServer.get_bus_volume_db(sfx_idx)]) if sfx_idx >= 0 else "no SFX bus")
+	reader.apply_sfx_volume(1.0)
+	_check("unity SFX gain restores the current mix level",
+		sfx_idx >= 0 and not AudioServer.is_bus_mute(sfx_idx)
+		and absf(AudioServer.get_bus_volume_db(sfx_idx)) < TOLERANCE,
+		("%.4f dB" % AudioServer.get_bus_volume_db(sfx_idx)) if sfx_idx >= 0 else "no SFX bus")
 
 	# --- 3/4/5. both adapters consume the reader --------------------------
 	_check("the doctored contract copy was written", _write_doctored(), DOCTORED_PATH)
