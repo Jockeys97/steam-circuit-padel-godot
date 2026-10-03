@@ -261,8 +261,13 @@ static func _base() -> Dictionary:
 		"fog_sky_affect": 0.8,
 		"glow_hdr_scale": 2.0,
 		"glow_luminance_cap": 12.0,
+		# 2 splits over 50 m (2026-10-01; was 2 over 80): the shadow map spread over four
+		# court lengths drew the sunset arenas' long shadows soft. Over 50 m the same map is
+		# sharper at no measured cost; 4 splits were sharper still but cost ~2.5 ms at Torii
+		# (`game/tools/before_after_probe.gd --only=shadows`). 50 m still reaches the far
+		# baseline from the broadcast camera (~45 m).
 		"shadow_mode": DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS,
-		"shadow_max_distance": 80.0,
+		"shadow_max_distance": 50.0,
 		"fill_rotation": Vector3(-28.0, 148.0, 0.0),
 		"sky_process_mode": Sky.PROCESS_MODE_QUALITY,
 		"sky_radiance_size": Sky.RADIANCE_SIZE_256,

@@ -207,8 +207,11 @@ func _table() -> void:
 			float(rig["ssao_radius"]) >= 1.0 and float(rig["ssao_radius"]) <= 4.0
 			and float(rig["ssao_intensity"]) >= 0.5 and float(rig["ssao_intensity"]) <= 2.0,
 			"%s/%s" % [str(rig["ssao_radius"]), str(rig["ssao_intensity"])])
-		check("look/%s_shadows_use_the_two_split_budget" % id,
-			int(rig["shadow_mode"]) == DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS, str(rig["shadow_mode"]))
+		# 2 splits over 50 m since 2026-10-01 (was over 80): sharper sunset shadows at no cost,
+		# the far baseline still inside the range from the broadcast camera.
+		check("look/%s_shadows_use_two_splits_over_the_court" % id,
+			int(rig["shadow_mode"]) == DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS
+				and is_equal_approx(float(rig["shadow_max_distance"]), 50.0), str(rig["shadow_mode"]))
 		check("look/%s_fill_rotation_is_the_shared_counter_direction" % id,
 			rig["fill_rotation"] == Vector3(-28.0, 148.0, 0.0), str(rig["fill_rotation"]))
 		check("look/%s_sky_process_mode_is_quality" % id,
